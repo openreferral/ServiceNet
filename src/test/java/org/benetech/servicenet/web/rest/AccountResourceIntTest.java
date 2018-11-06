@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Authority;
@@ -16,8 +17,6 @@ import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.benetech.servicenet.web.rest.vm.KeyAndPasswordVM;
 import org.benetech.servicenet.web.rest.vm.ManagedUserVM;
-import org.apache.commons.lang3.RandomStringUtils;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,15 +35,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the AccountResource REST controller.
@@ -628,7 +634,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(post("/api/account/change-password")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO("1"+currentPassword, "new password"))))
+            .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO("1" + currentPassword, "new password"))))
             .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-wrong-existing-password").orElse(null);
@@ -689,7 +695,8 @@ public class AccountResourceIntTest {
 
         restMvc.perform(post("/api/account/change-password")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, RandomStringUtils.random(101)))))
+            .content(
+                TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, RandomStringUtils.random(101)))))
             .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin("change-password-too-long").orElse(null);
@@ -854,7 +861,6 @@ public class AccountResourceIntTest {
         User updatedUser = userRepository.findOneByLogin(user.getLogin()).orElse(null);
         assertThat(passwordEncoder.matches(keyAndPassword.getNewPassword(), updatedUser.getPassword())).isFalse();
     }
-
 
     @Test
     @Transactional

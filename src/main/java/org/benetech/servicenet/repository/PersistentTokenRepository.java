@@ -2,9 +2,9 @@ package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.PersistentToken;
 import org.benetech.servicenet.domain.User;
-import java.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**

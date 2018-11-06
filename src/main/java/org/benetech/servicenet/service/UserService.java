@@ -10,8 +10,9 @@ import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.security.SecurityUtils;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.util.RandomUtil;
-import org.benetech.servicenet.web.rest.errors.*;
-
+import org.benetech.servicenet.web.rest.errors.EmailAlreadyUsedException;
+import org.benetech.servicenet.web.rest.errors.InvalidPasswordException;
+import org.benetech.servicenet.web.rest.errors.LoginAlreadyUsedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -22,10 +23,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +52,13 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PersistentTokenRepository persistentTokenRepository, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    private static final int DAY_IN_SECONDS = 86400;
+
+    private static final int MAX_INACTIVE_PERIOD_IN_DAYS = 3;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       PersistentTokenRepository persistentTokenRepository, AuthorityRepository authorityRepository,
+                       CacheManager cacheManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.persistentTokenRepository = persistentTokenRepository;
@@ -71,7 +82,7 @@ public class UserService {
     public Optional<User> completePasswordReset(String newPassword, String key) {
         log.debug("Reset user password for reset key {}", key);
         return userRepository.findOneByResetKey(key)
-            .filter(user -> user.getResetDate().isAfter(Instant.now().minusSeconds(86400)))
+            .filter(user -> user.getResetDate().isAfter(Instant.now().minusSeconds(DAY_IN_SECONDS)))
             .map(user -> {
                 user.setPassword(passwordEncoder.encode(newPassword));
                 user.setResetKey(null);
@@ -127,9 +138,10 @@ public class UserService {
         log.debug("Created Information for User: {}", newUser);
         return newUser;
     }
-    private boolean removeNonActivatedUser(User existingUser){
+
+    private boolean removeNonActivatedUser(User existingUser) {
         if (existingUser.getActivated()) {
-             return false;
+            return false;
         }
         userRepository.delete(existingUser);
         userRepository.flush();
@@ -172,10 +184,10 @@ public class UserService {
      * Update basic information (first name, last name, email, language) for the current user.
      *
      * @param firstName first name of user
-     * @param lastName last name of user
-     * @param email email id of user
-     * @param langKey language key
-     * @param imageUrl image URL of user
+     * @param lastName  last name of user
+     * @param email     email id of user
+     * @param langKey   language key
+     * @param imageUrl  image URL of user
      */
     public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
         SecurityUtils.getCurrentUserLogin()
@@ -286,14 +298,14 @@ public class UserService {
     }
 
     /**
-     * Not activated users should be automatically deleted after 3 days.
+     * Not activated users should be automatically deleted after MAX_INACTIVE_PERIOD_IN_DAYS
      * <p>
      * This is scheduled to get fired everyday, at 01:00 (am).
      */
     @Scheduled(cron = "0 0 1 * * ?")
     public void removeNotActivatedUsers() {
         userRepository
-            .findAllByActivatedIsFalseAndCreatedDateBefore(Instant.now().minus(3, ChronoUnit.DAYS))
+            .findAllByActivatedIsFalseAndCreatedDateBefore(Instant.now().minus(MAX_INACTIVE_PERIOD_IN_DAYS, ChronoUnit.DAYS))
             .forEach(user -> {
                 log.debug("Deleting not activated user {}", user.getLogin());
                 userRepository.delete(user);

@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
-import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.web.rest.vm.LoggerVM;
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
+import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.web.rest.vm.LoggerVM;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

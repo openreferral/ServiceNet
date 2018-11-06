@@ -1,28 +1,29 @@
 package org.benetech.servicenet.security;
 
+import io.github.jhipster.config.JHipsterProperties;
+import io.github.jhipster.security.PersistentTokenCache;
 import org.benetech.servicenet.domain.PersistentToken;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.service.util.RandomUtil;
-
-
-import io.github.jhipster.config.JHipsterProperties;
-import io.github.jhipster.security.PersistentTokenCache;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.rememberme.*;
+import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.CookieTheftException;
+import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Custom implementation of Spring Security's RememberMeServices.
@@ -45,7 +46,8 @@ import java.util.*;
  * <ul>
  * <li><a href="http://jaspan.com/improved_persistent_login_cookie_best_practice">Improved Persistent Login Cookie
  * Best Practice</a></li>
- * <li><a href="https://github.com/blog/1661-modeling-your-app-s-user-session">GitHub's "Modeling your App's User Session"</a></li>
+ * <li><a href="https://github.com/blog/1661-modeling-your-app-s-user-session">
+ *     GitHub's "Modeling your App's User Session"</a></li>
  * </ul>
  * <p>
  * The main algorithm comes from Spring Security's PersistentTokenBasedRememberMeServices, but this class
@@ -55,14 +57,14 @@ import java.util.*;
 public class PersistentTokenRememberMeServices extends
     AbstractRememberMeServices {
 
-    private final Logger log = LoggerFactory.getLogger(PersistentTokenRememberMeServices.class);
-
     // Token is valid for one month
     private static final int TOKEN_VALIDITY_DAYS = 31;
 
     private static final int TOKEN_VALIDITY_SECONDS = 60 * 60 * 24 * TOKEN_VALIDITY_DAYS;
 
-    private static final long UPGRADED_TOKEN_VALIDITY_MILLIS = 5000l;
+    private static final long UPGRADED_TOKEN_VALIDITY_MILLIS = 5000L;
+
+    private final Logger log = LoggerFactory.getLogger(PersistentTokenRememberMeServices.class);
 
     private final PersistentTokenCache<UpgradedRememberMeToken> upgradedTokenCache;
 
@@ -71,8 +73,8 @@ public class PersistentTokenRememberMeServices extends
     private final UserRepository userRepository;
 
     public PersistentTokenRememberMeServices(JHipsterProperties jHipsterProperties,
-            org.springframework.security.core.userdetails.UserDetailsService userDetailsService,
-            PersistentTokenRepository persistentTokenRepository, UserRepository userRepository) {
+        org.springframework.security.core.userdetails.UserDetailsService userDetailsService,
+        PersistentTokenRepository persistentTokenRepository, UserRepository userRepository) {
 
         super(jHipsterProperties.getSecurity().getRememberMe().getKey(), userDetailsService);
         this.persistentTokenRepository = persistentTokenRepository;
@@ -82,7 +84,7 @@ public class PersistentTokenRememberMeServices extends
 
     @Override
     protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request,
-        HttpServletResponse response) {
+                                                 HttpServletResponse response) {
 
         synchronized (this) { // prevent 2 authentication requests from the same user in parallel
             String login = null;
@@ -216,7 +218,7 @@ public class PersistentTokenRememberMeServices extends
 
         String getUserLoginIfValid(String[] currentToken) {
             if (currentToken[0].equals(this.upgradedToken[0]) &&
-                    currentToken[1].equals(this.upgradedToken[1])) {
+                currentToken[1].equals(this.upgradedToken[1])) {
                 return this.userLogin;
             }
             return null;

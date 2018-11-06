@@ -1,7 +1,6 @@
 package org.benetech.servicenet.aop.logging;
 
 import io.github.jhipster.config.JHipsterConstants;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -16,7 +15,6 @@ import java.util.Arrays;
 
 /**
  * Aspect for logging execution of service and repository Spring components.
- *
  * By default, it only runs with the "dev" profile.
  */
 @Aspect
@@ -43,8 +41,8 @@ public class LoggingAspect {
     /**
      * Pointcut that matches all Spring beans in the application's main packages.
      */
-    @Pointcut("within(org.benetech.servicenet.repository..*)"+
-        " || within(org.benetech.servicenet.service..*)"+
+    @Pointcut("within(org.benetech.servicenet.repository..*)" +
+        " || within(org.benetech.servicenet.service..*)" +
         " || within(org.benetech.servicenet.web.rest..*)")
     public void applicationPackagePointcut() {
         // Method is empty as this is just a Pointcut, the implementations are in the advices.
@@ -54,17 +52,18 @@ public class LoggingAspect {
      * Advice that logs methods throwing exceptions.
      *
      * @param joinPoint join point for advice
-     * @param e exception
+     * @param e         exception
      */
     @AfterThrowing(pointcut = "applicationPackagePointcut() && springBeanPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
         if (env.acceptsProfiles(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)) {
-            log.error("Exception in {}.{}() with cause = \'{}\' and exception = \'{}\'", joinPoint.getSignature().getDeclaringTypeName(),
-                joinPoint.getSignature().getName(), e.getCause() != null? e.getCause() : "NULL", e.getMessage(), e);
+            log.error("Exception in {}.{}() with cause = \'{}\' and exception = \'{}\'",
+                joinPoint.getSignature().getDeclaringTypeName(),
+                joinPoint.getSignature().getName(), e.getCause() != null ? e.getCause() : "NULL", e.getMessage(), e);
 
         } else {
             log.error("Exception in {}.{}() with cause = {}", joinPoint.getSignature().getDeclaringTypeName(),
-                joinPoint.getSignature().getName(), e.getCause() != null? e.getCause() : "NULL");
+                joinPoint.getSignature().getName(), e.getCause() != null ? e.getCause() : "NULL");
         }
     }
 
@@ -76,6 +75,7 @@ public class LoggingAspect {
      * @throws Throwable throws IllegalArgumentException
      */
     @Around("applicationPackagePointcut() && springBeanPointcut()")
+    @SuppressWarnings("checkstyle:illegalthrows")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         if (log.isDebugEnabled()) {
             log.debug("Enter: {}.{}() with argument[s] = {}", joinPoint.getSignature().getDeclaringTypeName(),

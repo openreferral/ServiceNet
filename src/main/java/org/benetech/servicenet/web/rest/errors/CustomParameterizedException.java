@@ -10,13 +10,10 @@ import static org.zalando.problem.Status.BAD_REQUEST;
 /**
  * Custom, parameterized exception, which can be translated on the client side.
  * For example:
- *
  * <pre>
  * throw new CustomParameterizedException(&quot;myCustomError&quot;, &quot;hello&quot;, &quot;world&quot;);
  * </pre>
- *
  * Can be translated with:
- *
  * <pre>
  * "error.myCustomError" :  "The server says {{param0}} to {{param1}}"
  * </pre>
@@ -32,7 +29,8 @@ public class CustomParameterizedException extends AbstractThrowableProblem {
     }
 
     public CustomParameterizedException(String message, Map<String, Object> paramMap) {
-        super(ErrorConstants.PARAMETERIZED_TYPE, "Parameterized Exception", BAD_REQUEST, null, null, null, toProblemParameters(message, paramMap));
+        super(ErrorConstants.PARAMETERIZED_TYPE, "Parameterized Exception", BAD_REQUEST, null, null, null,
+            toProblemParameters(message, paramMap));
     }
 
     public static Map<String, Object> toParamMap(String... params) {

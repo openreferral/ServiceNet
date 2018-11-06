@@ -1,10 +1,10 @@
 package org.benetech.servicenet.config;
 
-import org.benetech.servicenet.security.*;
-
 import io.github.jhipster.config.JHipsterProperties;
-import io.github.jhipster.security.*;
-
+import io.github.jhipster.security.AjaxAuthenticationFailureHandler;
+import io.github.jhipster.security.AjaxAuthenticationSuccessHandler;
+import io.github.jhipster.security.AjaxLogoutSuccessHandler;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,8 +46,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final SecurityProblemSupport problemSupport;
 
-    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder, UserDetailsService userDetailsService, 
-        JHipsterProperties jHipsterProperties, RememberMeServices rememberMeServices, CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
+    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder,
+        UserDetailsService userDetailsService, JHipsterProperties jHipsterProperties,
+        RememberMeServices rememberMeServices, CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.userDetailsService = userDetailsService;
         this.jHipsterProperties = jHipsterProperties;
@@ -110,17 +111,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
             .csrf()
             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-        .and()
+            .and()
             .addFilterBefore(corsFilter, CsrfFilter.class)
             .exceptionHandling()
             .authenticationEntryPoint(problemSupport)
             .accessDeniedHandler(problemSupport)
-        .and()
+            .and()
             .rememberMe()
             .rememberMeServices(rememberMeServices)
             .rememberMeParameter("remember-me")
             .key(jHipsterProperties.getSecurity().getRememberMe().getKey())
-        .and()
+            .and()
             .formLogin()
             .loginProcessingUrl("/api/authentication")
             .successHandler(ajaxAuthenticationSuccessHandler())
@@ -128,16 +129,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .usernameParameter("j_username")
             .passwordParameter("j_password")
             .permitAll()
-        .and()
+            .and()
             .logout()
             .logoutUrl("/api/logout")
             .logoutSuccessHandler(ajaxLogoutSuccessHandler())
             .permitAll()
-        .and()
+            .and()
             .headers()
             .frameOptions()
             .disable()
-        .and()
+            .and()
             .authorizeRequests()
             .antMatchers("/api/register").permitAll()
             .antMatchers("/api/activate").permitAll()

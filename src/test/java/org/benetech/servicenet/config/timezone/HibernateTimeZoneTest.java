@@ -13,7 +13,15 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static java.lang.String.format;
@@ -28,12 +36,16 @@ public class HibernateTimeZoneTest {
 
     @Autowired
     private DateTimeWrapperRepository dateTimeWrapperRepository;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     private DateTimeWrapper dateTimeWrapper;
+
     private DateTimeFormatter dateTimeFormatter;
+
     private DateTimeFormatter timeFormatter;
+
     private DateTimeFormatter dateFormatter;
 
     @Before

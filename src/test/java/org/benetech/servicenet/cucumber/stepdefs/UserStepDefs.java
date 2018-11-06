@@ -3,16 +3,16 @@ package org.benetech.servicenet.cucumber.stepdefs;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-
+import org.benetech.servicenet.web.rest.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import org.benetech.servicenet.web.rest.UserResource;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserStepDefs extends StepDefs {
 
@@ -29,7 +29,7 @@ public class UserStepDefs extends StepDefs {
     @When("I search user {string}")
     public void i_search_user(String userId) throws Throwable {
         actions = restUserMockMvc.perform(get("/api/users/" + userId)
-                .accept(MediaType.APPLICATION_JSON));
+            .accept(MediaType.APPLICATION_JSON));
     }
 
     @Then("the user is found")

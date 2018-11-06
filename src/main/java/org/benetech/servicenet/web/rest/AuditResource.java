@@ -1,16 +1,19 @@
 package org.benetech.servicenet.web.rest;
 
+import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.service.AuditEventService;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
-
-import io.github.jhipster.web.util.ResponseUtil;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -46,7 +49,7 @@ public class AuditResource {
      * GET  /audits : get a page of AuditEvents between the fromDate and toDate.
      *
      * @param fromDate the start of the time period of AuditEvents to get
-     * @param toDate the end of the time period of AuditEvents to get
+     * @param toDate   the end of the time period of AuditEvents to get
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of AuditEvents in body
      */

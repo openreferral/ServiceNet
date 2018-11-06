@@ -1,11 +1,9 @@
 package org.benetech.servicenet;
 
+import io.github.jhipster.config.JHipsterConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.config.ApplicationProperties;
 import org.benetech.servicenet.config.DefaultProfileUtil;
-
-import io.github.jhipster.config.JHipsterConstants;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -24,32 +22,12 @@ import java.util.Collection;
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 public class ServiceNetApp {
 
-    private static final Logger log = LoggerFactory.getLogger(ServiceNetApp.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNetApp.class);
 
     private final Environment env;
 
     public ServiceNetApp(Environment env) {
         this.env = env;
-    }
-
-    /**
-     * Initializes ServiceNet.
-     * <p>
-     * Spring profiles can be configured with a program argument --spring.profiles.active=your-active-profile
-     * <p>
-     * You can find more information on how profiles work with JHipster on <a href="https://www.jhipster.tech/profiles/">https://www.jhipster.tech/profiles/</a>.
-     */
-    @PostConstruct
-    public void initApplication() {
-        Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
-        if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION)) {
-            log.error("You have misconfigured your application! It should not run " +
-                "with both the 'dev' and 'prod' profiles at the same time.");
-        }
-        if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_CLOUD)) {
-            log.error("You have misconfigured your application! It should not " +
-                "run with both the 'dev' and 'cloud' profiles at the same time.");
-        }
     }
 
     /**
@@ -78,9 +56,9 @@ public class ServiceNetApp {
         try {
             hostAddress = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            log.warn("The host name could not be determined, using `localhost` as fallback");
+            LOGGER.warn("The host name could not be determined, using `localhost` as fallback");
         }
-        log.info("\n----------------------------------------------------------\n\t" +
+        LOGGER.info("\n----------------------------------------------------------\n\t" +
                 "Application '{}' is running! Access URLs:\n\t" +
                 "Local: \t\t{}://localhost:{}{}\n\t" +
                 "External: \t{}://{}:{}{}\n\t" +
@@ -94,5 +72,28 @@ public class ServiceNetApp {
             serverPort,
             contextPath,
             env.getActiveProfiles());
+    }
+
+    /**
+     * Initializes ServiceNet.
+     * <p>
+     * Spring profiles can be configured with a program argument --spring.profiles.active=your-active-profile
+     * <p>
+     * You can find more information on how profiles work with JHipster on
+     * <a href="https://www.jhipster.tech/profiles/">https://www.jhipster.tech/profiles/</a>.
+     */
+    @PostConstruct
+    public void initApplication() {
+        Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
+        if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles
+            .contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION)) {
+            LOGGER.error("You have misconfigured your application! It should not run " +
+                "with both the 'dev' and 'prod' profiles at the same time.");
+        }
+        if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles
+            .contains(JHipsterConstants.SPRING_PROFILE_CLOUD)) {
+            LOGGER.error("You have misconfigured your application! It should not " +
+                "run with both the 'dev' and 'cloud' profiles at the same time.");
+        }
     }
 }

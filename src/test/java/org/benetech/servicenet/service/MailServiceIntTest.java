@@ -1,9 +1,9 @@
 package org.benetech.servicenet.service;
-import org.benetech.servicenet.config.Constants;
 
-import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.domain.User;
 import io.github.jhipster.config.JHipsterProperties;
+import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.config.Constants;
+import org.benetech.servicenet.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,9 @@ import java.io.ByteArrayOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
@@ -129,7 +131,8 @@ public class MailServiceIntTest {
         assertThat(message.getSubject()).isEqualTo("test title");
         assertThat(message.getAllRecipients()[0].toString()).isEqualTo(user.getEmail());
         assertThat(message.getFrom()[0].toString()).isEqualTo("test@localhost");
-        assertThat(message.getContent().toString()).isEqualToNormalizingNewlines("<html>test title, http://127.0.0.1:8080, john</html>\n");
+        assertThat(message.getContent().toString())
+            .isEqualToNormalizingNewlines("<html>test title, http://127.0.0.1:8080, john</html>\n");
         assertThat(message.getDataHandler().getContentType()).isEqualTo("text/html;charset=UTF-8");
     }
 
