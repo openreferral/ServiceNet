@@ -1,0 +1,9 @@
+{
+  "home": {
+    "title": "Welcome in ServiceNet!",
+    "subtitle": "This is your homepage",
+    "logged": {
+      "message": "You are logged in as user \"{{username}}\"."
+    }
+  }
+}
