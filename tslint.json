@@ -97,6 +97,18 @@
     "space-in-parens": [true, "never"]
   },
   "rules": {
+    "import/named": 2,
+    "react/jsx-filename-extension": 0,
+    "jsx-a11y/anchor-is-valid": [ "error", {
+      "components": [ "Link" ],
+      "specialLink": [ "to", "hrefLeft", "hrefRight" ],
+      "aspects": [ "noHref" ]
+    }],
+    "jsx-a11y/label-has-for": [ 2, {
+      "components": [ "Label" ],
+      "required": "id",
+      "allowChildren": false
+    }],
     "class-name": true,
     "comment-format": [true, "check-space"],
     "eofline": true,
