@@ -63,7 +63,7 @@ public class WebConfigurerTest {
     private MetricRegistry metricRegistry;
 
     @Before
-    public void setup() {
+    public void setUp() {
         servletContext = spy(new MockServletContext());
         doReturn(mock(FilterRegistration.Dynamic.class))
             .when(servletContext).addFilter(anyString(), any(Filter.class));

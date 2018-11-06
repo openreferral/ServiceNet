@@ -69,6 +69,7 @@
         <sonar-maven-plugin.version>3.5.0.1254</sonar-maven-plugin.version>
         <git-commit-id-plugin.version>2.2.5</git-commit-id-plugin.version>
         <maven-checkstyle.version>3.0.0</maven-checkstyle.version>
+        <maven-pmd.version>3.9.0</maven-pmd.version>
 
         <!-- Sonar properties -->
         <sonar.host.url>http://localhost:9001</sonar.host.url>
@@ -399,6 +400,25 @@
                     <failsOnError>true</failsOnError>
                     <configLocation>checkstyle/checkstyle.xml</configLocation>
                     <sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd.version}</version>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <analysisCache>true</analysisCache>
+                    <rulesets>
+                        <ruleset>pmd/pmd.xml</ruleset>
+                    </rulesets>
+                    <includeTests>true</includeTests>
+                    <minimumTokens>100</minimumTokens>
+                    <failOnViolation>true</failOnViolation>
                 </configuration>
             </plugin>
             <plugin>

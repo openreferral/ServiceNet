@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
 public class ExceptionTranslatorTestController {
 
     @GetMapping("/test/concurrency-failure")

@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Utility class for testing REST controllers.
  */
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class TestUtil {
 
     /**
@@ -134,5 +135,9 @@ public class TestUtil {
         public void describeTo(Description description) {
             description.appendText("a String representing the same Instant as ").appendValue(date);
         }
+    }
+
+    private TestUtil() {
+
     }
 }

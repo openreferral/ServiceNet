@@ -39,7 +39,7 @@ public class ExceptionTranslatorIntTest {
     private MockMvc mockMvc;
 
     @Before
-    public void setup() {
+    public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
             .setControllerAdvice(exceptionTranslator)
             .setMessageConverters(jacksonMessageConverter)

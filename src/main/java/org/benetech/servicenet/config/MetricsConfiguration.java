@@ -24,7 +24,6 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -63,7 +62,7 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter implements Se
 
     // The cacheManager is injected here to force its initialization, so the JCacheGaugeSet
     // will be correctly created below.
-    public MetricsConfiguration(JHipsterProperties jHipsterProperties, CacheManager cacheManager) {
+    public MetricsConfiguration(JHipsterProperties jHipsterProperties) {
         this.jHipsterProperties = jHipsterProperties;
     }
 

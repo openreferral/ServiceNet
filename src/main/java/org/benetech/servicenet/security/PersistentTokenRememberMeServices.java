@@ -212,7 +212,7 @@ public class PersistentTokenRememberMeServices extends
         private final String userLogin;
 
         UpgradedRememberMeToken(String[] upgradedToken, String userLogin) {
-            this.upgradedToken = upgradedToken;
+            this.upgradedToken = Arrays.copyOf(upgradedToken, upgradedToken.length);
             this.userLogin = userLogin;
         }
 
