@@ -1,14 +1,13 @@
 package org.benetech.servicenet.service.dto;
 
 import org.benetech.servicenet.config.Constants;
-
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
-import javax.validation.constraints.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ public class UserDTO {
     @Size(max = 256)
     private String imageUrl;
 
-    private boolean activated = false;
+    private boolean activated;
 
     @Size(min = 2, max = 6)
     private String langKey;
@@ -63,7 +62,7 @@ public class UserDTO {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
-        this.activated = user.getActivated();
+        this.activated = user.isActivated();
         this.imageUrl = user.getImageUrl();
         this.langKey = user.getLangKey();
         this.createdBy = user.getCreatedBy();

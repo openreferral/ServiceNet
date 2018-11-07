@@ -25,7 +25,10 @@ import java.time.Instant;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the AuditResource REST controller.
@@ -35,11 +38,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 @Transactional
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class AuditResourceIntTest {
 
     private static final String SAMPLE_PRINCIPAL = "SAMPLE_PRINCIPAL";
+
     private static final String SAMPLE_TYPE = "SAMPLE_TYPE";
+
     private static final Instant SAMPLE_TIMESTAMP = Instant.parse("2015-08-04T10:11:30Z");
+
     private static final long SECONDS_PER_DAY = 60 * 60 * 24;
 
     @Autowired
@@ -62,7 +69,7 @@ public class AuditResourceIntTest {
     private MockMvc restAuditMockMvc;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         AuditEventService auditEventService =
             new AuditEventService(auditEventRepository, auditEventConverter);
@@ -112,11 +119,11 @@ public class AuditResourceIntTest {
         auditEventRepository.save(auditEvent);
 
         // Generate dates for selecting audits by date, making sure the period will contain the audit
-        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
+        String fromDate = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
         String toDate = SAMPLE_TIMESTAMP.plusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
 
         // Get the audit
-        restAuditMockMvc.perform(get("/management/audits?fromDate="+fromDate+"&toDate="+toDate))
+        restAuditMockMvc.perform(get("/management/audits?fromDate=" + fromDate + "&toDate=" + toDate))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].principal").value(hasItem(SAMPLE_PRINCIPAL)));
@@ -128,7 +135,7 @@ public class AuditResourceIntTest {
         auditEventRepository.save(auditEvent);
 
         // Generate dates for selecting audits by date, making sure the period will not contain the sample audit
-        String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(2*SECONDS_PER_DAY).toString().substring(0, 10);
+        String fromDate = SAMPLE_TIMESTAMP.minusSeconds(2 * SECONDS_PER_DAY).toString().substring(0, 10);
         String toDate = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
 
         // Query audits but expect no results

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.PersistentToken;
@@ -8,8 +9,6 @@ import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.util.RandomUtil;
-
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +23,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -43,6 +42,9 @@ import static org.mockito.Mockito.when;
 @Transactional
 public class UserServiceIntTest {
 
+    @Mock
+    DateTimeProvider dateTimeProvider;
+
     @Autowired
     private PersistentTokenRepository persistentTokenRepository;
 
@@ -54,9 +56,6 @@ public class UserServiceIntTest {
 
     @Autowired
     private AuditingHandler auditingHandler;
-
-    @Mock
-    DateTimeProvider dateTimeProvider;
 
     private User user;
 
@@ -204,7 +203,6 @@ public class UserServiceIntTest {
             .noneMatch(user -> Constants.ANONYMOUS_USER.equals(user.getLogin())))
             .isTrue();
     }
-
 
     @Test
     @Transactional

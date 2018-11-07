@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.User;
@@ -11,7 +12,6 @@ import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.mapper.UserMapper;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.benetech.servicenet.web.rest.vm.ManagedUserVM;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,13 +28,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.hasItems;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the UserResource REST controller.
@@ -43,29 +51,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class UserResourceIntTest {
 
     private static final String DEFAULT_LOGIN = "johndoe";
+
     private static final String UPDATED_LOGIN = "jhipster";
 
     private static final Long DEFAULT_ID = 1L;
 
     private static final String DEFAULT_PASSWORD = "passjohndoe";
+
     private static final String UPDATED_PASSWORD = "passjhipster";
 
     private static final String DEFAULT_EMAIL = "johndoe@localhost";
+
     private static final String UPDATED_EMAIL = "jhipster@localhost";
 
     private static final String DEFAULT_FIRSTNAME = "john";
+
     private static final String UPDATED_FIRSTNAME = "jhipsterFirstName";
 
     private static final String DEFAULT_LASTNAME = "doe";
+
     private static final String UPDATED_LASTNAME = "jhipsterLastName";
 
     private static final String DEFAULT_IMAGEURL = "http://placehold.it/50x50";
+
     private static final String UPDATED_IMAGEURL = "http://placehold.it/40x40";
 
     private static final String DEFAULT_LANGKEY = "en";
+
     private static final String UPDATED_LANGKEY = "fr";
 
     @Autowired
@@ -99,22 +115,8 @@ public class UserResourceIntTest {
 
     private User user;
 
-    @Before
-    public void setup() {
-        cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).clear();
-        cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE).clear();
-        UserResource userResource = new UserResource(userService, userRepository, mailService);
-
-        this.restUserMockMvc = MockMvcBuilders.standaloneSetup(userResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setMessageConverters(jacksonMessageConverter)
-            .build();
-    }
-
     /**
      * Create a User.
-     *
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which has a required relationship to the User entity.
      */
@@ -129,6 +131,19 @@ public class UserResourceIntTest {
         user.setImageUrl(DEFAULT_IMAGEURL);
         user.setLangKey(DEFAULT_LANGKEY);
         return user;
+    }
+
+    @Before
+    public void setUp() {
+        cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).clear();
+        cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE).clear();
+        UserResource userResource = new UserResource(userService, userRepository, mailService);
+
+        this.restUserMockMvc = MockMvcBuilders.standaloneSetup(userResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setMessageConverters(jacksonMessageConverter)
+            .build();
     }
 
     @Before
@@ -323,7 +338,7 @@ public class UserResourceIntTest {
         managedUserVM.setFirstName(UPDATED_FIRSTNAME);
         managedUserVM.setLastName(UPDATED_LASTNAME);
         managedUserVM.setEmail(UPDATED_EMAIL);
-        managedUserVM.setActivated(updatedUser.getActivated());
+        managedUserVM.setActivated(updatedUser.isActivated());
         managedUserVM.setImageUrl(UPDATED_IMAGEURL);
         managedUserVM.setLangKey(UPDATED_LANGKEY);
         managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
@@ -365,7 +380,7 @@ public class UserResourceIntTest {
         managedUserVM.setFirstName(UPDATED_FIRSTNAME);
         managedUserVM.setLastName(UPDATED_LASTNAME);
         managedUserVM.setEmail(UPDATED_EMAIL);
-        managedUserVM.setActivated(updatedUser.getActivated());
+        managedUserVM.setActivated(updatedUser.isActivated());
         managedUserVM.setImageUrl(UPDATED_IMAGEURL);
         managedUserVM.setLangKey(UPDATED_LANGKEY);
         managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
@@ -418,7 +433,7 @@ public class UserResourceIntTest {
         managedUserVM.setFirstName(updatedUser.getFirstName());
         managedUserVM.setLastName(updatedUser.getLastName());
         managedUserVM.setEmail("jhipster@localhost");// this email should already be used by anotherUser
-        managedUserVM.setActivated(updatedUser.getActivated());
+        managedUserVM.setActivated(updatedUser.isActivated());
         managedUserVM.setImageUrl(updatedUser.getImageUrl());
         managedUserVM.setLangKey(updatedUser.getLangKey());
         managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
@@ -460,7 +475,7 @@ public class UserResourceIntTest {
         managedUserVM.setFirstName(updatedUser.getFirstName());
         managedUserVM.setLastName(updatedUser.getLastName());
         managedUserVM.setEmail(updatedUser.getEmail());
-        managedUserVM.setActivated(updatedUser.getActivated());
+        managedUserVM.setActivated(updatedUser.isActivated());
         managedUserVM.setImageUrl(updatedUser.getImageUrl());
         managedUserVM.setLangKey(updatedUser.getLangKey());
         managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
@@ -548,7 +563,7 @@ public class UserResourceIntTest {
         assertThat(user.getFirstName()).isEqualTo(DEFAULT_FIRSTNAME);
         assertThat(user.getLastName()).isEqualTo(DEFAULT_LASTNAME);
         assertThat(user.getEmail()).isEqualTo(DEFAULT_EMAIL);
-        assertThat(user.getActivated()).isEqualTo(true);
+        assertThat(user.isActivated()).isEqualTo(true);
         assertThat(user.getImageUrl()).isEqualTo(DEFAULT_IMAGEURL);
         assertThat(user.getLangKey()).isEqualTo(DEFAULT_LANGKEY);
         assertThat(user.getCreatedBy()).isNull();

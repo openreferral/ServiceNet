@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
-import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.web.rest.vm.LoggerVM;
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
+import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.web.rest.vm.LoggerVM;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +27,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class LogsResourceIntTest {
 
     private MockMvc restLogsMockMvc;
 
     @Before
-    public void setup() {
+    public void setUp() {
         LogsResource logsResource = new LogsResource();
         this.restLogsMockMvc = MockMvcBuilders
             .standaloneSetup(logsResource)

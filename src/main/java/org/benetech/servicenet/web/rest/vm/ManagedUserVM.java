@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest.vm;
 
 import org.benetech.servicenet.service.dto.UserDTO;
+
 import javax.validation.constraints.Size;
 
 /**

@@ -8,11 +8,14 @@ import io.github.jhipster.config.JHipsterProperties;
 import io.github.jhipster.config.h2.H2ConfigurationHelper;
 import io.github.jhipster.web.filter.CachingHttpHeadersFilter;
 import io.undertow.UndertowOptions;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
-import org.springframework.boot.web.server.*;
+import org.springframework.boot.web.server.MimeMappings;
+import org.springframework.boot.web.server.WebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -23,12 +26,17 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import javax.servlet.*;
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Locale;
 
 import static java.net.URLDecoder.decode;
 
@@ -96,9 +104,11 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         if (server instanceof ConfigurableServletWebServerFactory) {
             MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
             // IE issue, see https://github.com/jhipster/generator-jhipster/pull/711
-            mappings.add("html", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
+            mappings.add("html", MediaType.TEXT_HTML_VALUE + ";charset=" +
+                StandardCharsets.UTF_8.name().toLowerCase(Locale.ROOT));
             // CloudFoundry issue, see https://github.com/cloudfoundry/gorouter/issues/64
-            mappings.add("json", MediaType.TEXT_HTML_VALUE + ";charset=" + StandardCharsets.UTF_8.name().toLowerCase());
+            mappings.add("json", MediaType.TEXT_HTML_VALUE + ";charset=" +
+                StandardCharsets.UTF_8.name().toLowerCase(Locale.ROOT));
             ConfigurableServletWebServerFactory servletWebServer = (ConfigurableServletWebServerFactory) server;
             servletWebServer.setMimeMappings(mappings);
         }
@@ -122,10 +132,10 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     private String resolvePathPrefix() {
         String fullExecutablePath;
         try {
-            fullExecutablePath = decode(this.getClass().getResource("").getPath(), StandardCharsets.UTF_8.name());
+            fullExecutablePath = decode(WebConfigurer.class.getResource("").getPath(), StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             /* try without decoding if this ever happens */
-            fullExecutablePath = this.getClass().getResource("").getPath();
+            fullExecutablePath = WebConfigurer.class.getResource("").getPath();
         }
         String rootPath = Paths.get(".").toUri().normalize().getPath();
         String extractedPath = fullExecutablePath.replace(rootPath, "");
@@ -182,7 +192,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = jHipsterProperties.getCors();
-        if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
+        if (CollectionUtils.isNotEmpty(config.getAllowedOrigins())) {
             log.debug("Registering CORS filter");
             source.registerCorsConfiguration("/api/**", config);
             source.registerCorsConfiguration("/management/**", config);

@@ -68,6 +68,11 @@
         <scala-maven-plugin.version>3.4.2</scala-maven-plugin.version>
         <sonar-maven-plugin.version>3.5.0.1254</sonar-maven-plugin.version>
         <git-commit-id-plugin.version>2.2.5</git-commit-id-plugin.version>
+        <maven-checkstyle.version>3.0.0</maven-checkstyle.version>
+        <maven-pmd.version>3.9.0</maven-pmd.version>
+        <findbugs-bug-pattern.version>1.4.1</findbugs-bug-pattern.version>
+        <spotbugs-maven-plugin.version>3.1.6</spotbugs-maven-plugin.version>
+        <commons-collections4.version>4.1</commons-collections4.version>
 
         <!-- Sonar properties -->
         <sonar.host.url>http://localhost:9001</sonar.host.url>
@@ -346,6 +351,11 @@
             <artifactId>cucumber-spring</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
+        </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
 
@@ -379,6 +389,71 @@
 
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle.version}</version>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <configLocation>checks/checkstyle/checkstyle.xml</configLocation>
+                    <sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd.version}</version>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <analysisCache>true</analysisCache>
+                    <rulesets>
+                        <ruleset>checks/pmd/pmd.xml</ruleset>
+                    </rulesets>
+                    <includeTests>true</includeTests>
+                    <minimumTokens>100</minimumTokens>
+                    <failOnViolation>true</failOnViolation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <plugins>
+                        <plugin>
+                            <groupId>jp.skypencil.findbugs.slf4j</groupId>
+                            <artifactId>bug-pattern</artifactId>
+                            <version>${findbugs-bug-pattern.version}</version>
+                        </plugin>
+                    </plugins>
+                    <excludeFilterFile>checks/spotbugs/ignore.xml</excludeFilterFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>analyze-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

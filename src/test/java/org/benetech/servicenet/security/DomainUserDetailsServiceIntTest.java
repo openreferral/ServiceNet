@@ -1,10 +1,9 @@
 package org.benetech.servicenet.security;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.UserRepository;
-
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +30,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DomainUserDetailsServiceIntTest {
 
     private static final String USER_ONE_LOGIN = "test-user-one";
+
     private static final String USER_ONE_EMAIL = "test-user-one@localhost";
+
     private static final String USER_TWO_LOGIN = "test-user-two";
+
     private static final String USER_TWO_EMAIL = "test-user-two@localhost";
+
     private static final String USER_THREE_LOGIN = "test-user-three";
+
     private static final String USER_THREE_EMAIL = "test-user-three@localhost";
 
     @Autowired
@@ -44,7 +48,9 @@ public class DomainUserDetailsServiceIntTest {
     private UserDetailsService domainUserDetailsService;
 
     private User userOne;
+
     private User userTwo;
+
     private User userThree;
 
     @Before
@@ -107,7 +113,7 @@ public class DomainUserDetailsServiceIntTest {
     @Test(expected = UsernameNotFoundException.class)
     @Transactional
     public void assertThatUserCanNotBeFoundByEmailIgnoreCase() {
-    domainUserDetailsService.loadUserByUsername(USER_TWO_EMAIL.toUpperCase(Locale.ENGLISH));
+        domainUserDetailsService.loadUserByUsername(USER_TWO_EMAIL.toUpperCase(Locale.ENGLISH));
     }
 
     @Test

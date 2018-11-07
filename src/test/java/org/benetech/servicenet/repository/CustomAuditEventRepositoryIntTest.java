@@ -50,7 +50,7 @@ public class CustomAuditEventRepositoryIntTest {
     private PersistentAuditEvent testOldUserEvent;
 
     @Before
-    public void setup() {
+    public void setUp() {
         customAuditEventRepository = new CustomAuditEventRepository(persistenceAuditEventRepository, auditEventConverter);
         persistenceAuditEventRepository.deleteAll();
         Instant oneHourAgo = Instant.now().minusSeconds(3600);

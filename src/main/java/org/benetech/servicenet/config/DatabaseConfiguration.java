@@ -7,14 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.sql.SQLException;
-import java.lang.NumberFormatException;
 
 @Configuration
 @EnableJpaRepositories("org.benetech.servicenet.repository")
@@ -25,6 +23,12 @@ public class DatabaseConfiguration {
     private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
 
     private final Environment env;
+
+    private static final int MIN_PORT = 10000;
+
+    private static final int MAX_PORT = 63536;
+
+    private static final int PORT_STEP = 2000;
 
     public DatabaseConfiguration(Environment env) {
         this.env = env;
@@ -43,16 +47,20 @@ public class DatabaseConfiguration {
         log.debug("H2 database is available on port {}", port);
         return H2ConfigurationHelper.createServer(port);
     }
-	
+
     private String getValidPortForH2() throws NumberFormatException {
-        int port = Integer.parseInt(env.getProperty("server.port"));
-        if (port < 10000) {
-            port = 10000 + port;
+        String serverPort = env.getProperty("server.port");
+        if (serverPort == null) {
+            throw new IllegalStateException("No property 'server.port' found!");
+        }
+        int port = Integer.parseInt(serverPort);
+        if (port < MIN_PORT) {
+            port = MIN_PORT + port;
         } else {
-            if (port < 63536) {
-                port = port + 2000;
+            if (port < MAX_PORT) {
+                port = port + PORT_STEP;
             } else {
-                port = port - 2000;
+                port = port - PORT_STEP;
             }
         }
         return String.valueOf(port);

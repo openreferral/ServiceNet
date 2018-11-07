@@ -1,7 +1,6 @@
 package org.benetech.servicenet.web.rest.errors;
 
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
-
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -42,11 +41,17 @@ public class ExceptionTranslator implements ProblemHandling {
         if (!(problem instanceof ConstraintViolationProblem || problem instanceof DefaultProblem)) {
             return entity;
         }
+
+        HttpServletRequest nativeRequest = request.getNativeRequest(HttpServletRequest.class);
+        if (nativeRequest == null) {
+            throw new IllegalArgumentException("No native request found for request: " + request);
+        }
+
         ProblemBuilder builder = Problem.builder()
             .withType(Problem.DEFAULT_TYPE.equals(problem.getType()) ? ErrorConstants.DEFAULT_TYPE : problem.getType())
             .withStatus(problem.getStatus())
             .withTitle(problem.getTitle())
-            .with("path", request.getNativeRequest(HttpServletRequest.class).getRequestURI());
+            .with("path", nativeRequest.getRequestURI());
 
         if (problem instanceof ConstraintViolationProblem) {
             builder
@@ -66,7 +71,8 @@ public class ExceptionTranslator implements ProblemHandling {
     }
 
     @Override
-    public ResponseEntity<Problem> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, @Nonnull NativeWebRequest request) {
+    public ResponseEntity<Problem> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                @Nonnull NativeWebRequest request) {
         BindingResult result = ex.getBindingResult();
         List<FieldErrorVM> fieldErrors = result.getFieldErrors().stream()
             .map(f -> new FieldErrorVM(f.getObjectName(), f.getField(), f.getCode()))
