@@ -49,7 +49,11 @@ public class DatabaseConfiguration {
     }
 
     private String getValidPortForH2() throws NumberFormatException {
-        int port = Integer.parseInt(env.getProperty("server.port"));
+        String serverPort = env.getProperty("server.port");
+        if (serverPort == null) {
+            throw new IllegalStateException("No property 'server.port' found!");
+        }
+        int port = Integer.parseInt(serverPort);
         if (port < MIN_PORT) {
             port = MIN_PORT + port;
         } else {

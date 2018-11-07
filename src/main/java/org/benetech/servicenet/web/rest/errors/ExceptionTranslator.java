@@ -41,11 +41,17 @@ public class ExceptionTranslator implements ProblemHandling {
         if (!(problem instanceof ConstraintViolationProblem || problem instanceof DefaultProblem)) {
             return entity;
         }
+
+        HttpServletRequest nativeRequest = request.getNativeRequest(HttpServletRequest.class);
+        if (nativeRequest == null) {
+            throw new IllegalArgumentException("No native request found for request: " + request);
+        }
+
         ProblemBuilder builder = Problem.builder()
             .withType(Problem.DEFAULT_TYPE.equals(problem.getType()) ? ErrorConstants.DEFAULT_TYPE : problem.getType())
             .withStatus(problem.getStatus())
             .withTitle(problem.getTitle())
-            .with("path", request.getNativeRequest(HttpServletRequest.class).getRequestURI());
+            .with("path", nativeRequest.getRequestURI());
 
         if (problem instanceof ConstraintViolationProblem) {
             builder

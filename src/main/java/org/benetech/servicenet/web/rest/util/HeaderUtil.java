@@ -9,8 +9,6 @@ import org.springframework.http.HttpHeaders;
  */
 public final class HeaderUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HeaderUtil.class);
-
     private static final String APPLICATION_NAME = "serviceNetApp";
 
     private HeaderUtil() {
@@ -36,10 +34,14 @@ public final class HeaderUtil {
     }
 
     public static HttpHeaders createFailureAlert(String entityName, String errorKey, String defaultMessage) {
-        LOGGER.error("Entity processing failed, {}", defaultMessage);
+        getLogger().error("Entity processing failed, {}", defaultMessage);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-" + APPLICATION_NAME + "-error", "error." + errorKey);
         headers.add("X-" + APPLICATION_NAME + "-params", entityName);
         return headers;
+    }
+
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(HeaderUtil.class);
     }
 }

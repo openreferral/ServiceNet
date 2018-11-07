@@ -22,8 +22,6 @@ import java.util.Collection;
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 public class ServiceNetApp {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNetApp.class);
-
     private final Environment env;
 
     public ServiceNetApp(Environment env) {
@@ -56,9 +54,9 @@ public class ServiceNetApp {
         try {
             hostAddress = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            LOGGER.warn("The host name could not be determined, using `localhost` as fallback");
+            getLogger().warn("The host name could not be determined, using `localhost` as fallback");
         }
-        LOGGER.info("\n----------------------------------------------------------\n\t" +
+        getLogger().info("\n----------------------------------------------------------\n\t" +
                 "Application '{}' is running! Access URLs:\n\t" +
                 "Local: \t\t{}://localhost:{}{}\n\t" +
                 "External: \t{}://{}:{}{}\n\t" +
@@ -87,13 +85,17 @@ public class ServiceNetApp {
         Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
         if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles
             .contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION)) {
-            LOGGER.error("You have misconfigured your application! It should not run " +
+            getLogger().error("You have misconfigured your application! It should not run " +
                 "with both the 'dev' and 'prod' profiles at the same time.");
         }
         if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles
             .contains(JHipsterConstants.SPRING_PROFILE_CLOUD)) {
-            LOGGER.error("You have misconfigured your application! It should not " +
+            getLogger().error("You have misconfigured your application! It should not " +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
+    }
+
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(ServiceNetApp.class);
     }
 }
