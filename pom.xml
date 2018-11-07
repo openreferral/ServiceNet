@@ -70,6 +70,9 @@
         <git-commit-id-plugin.version>2.2.5</git-commit-id-plugin.version>
         <maven-checkstyle.version>3.0.0</maven-checkstyle.version>
         <maven-pmd.version>3.9.0</maven-pmd.version>
+        <findbugs-bug-pattern.version>1.4.1</findbugs-bug-pattern.version>
+        <spotbugs-maven-plugin.version>3.1.6</spotbugs-maven-plugin.version>
+        <commons-collections4.version>4.1</commons-collections4.version>
 
         <!-- Sonar properties -->
         <sonar.host.url>http://localhost:9001</sonar.host.url>
@@ -351,7 +354,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
+            <version>${commons-collections4.version}</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
@@ -403,7 +406,7 @@
                 <configuration>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
-                    <configLocation>checkstyle/checkstyle.xml</configLocation>
+                    <configLocation>checks/checkstyle/checkstyle.xml</configLocation>
                     <sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
                 </configuration>
             </plugin>
@@ -419,7 +422,7 @@
                 <configuration>
                     <analysisCache>true</analysisCache>
                     <rulesets>
-                        <ruleset>pmd/pmd.xml</ruleset>
+                        <ruleset>checks/pmd/pmd.xml</ruleset>
                     </rulesets>
                     <includeTests>true</includeTests>
                     <minimumTokens>100</minimumTokens>
@@ -429,7 +432,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>3.1.6</version>
+                <version>${spotbugs-maven-plugin.version}</version>
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
@@ -437,10 +440,10 @@
                         <plugin>
                             <groupId>jp.skypencil.findbugs.slf4j</groupId>
                             <artifactId>bug-pattern</artifactId>
-                            <version>1.4.1</version>
+                            <version>${findbugs-bug-pattern.version}</version>
                         </plugin>
                     </plugins>
-                    <excludeFilterFile>spotbugs/ignore.xml</excludeFilterFile>
+                    <excludeFilterFile>checks/spotbugs/ignore.xml</excludeFilterFile>
                 </configuration>
                 <executions>
                     <execution>
