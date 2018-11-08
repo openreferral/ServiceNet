@@ -20,7 +20,7 @@ export class Home extends React.Component<IHomeProp> {
     const { account } = this.props;
     return (
       <Row>
-        <Col md="9">
+        <Col>
           <h2>
             <Translate contentKey="home.title" />
           </h2>

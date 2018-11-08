@@ -1,4 +1,5 @@
 import 'react-toastify/dist/ReactToastify.css';
+import './bootstrap.scss';
 import './app.scss';
 
 import React from 'react';
@@ -27,10 +28,10 @@ export class App extends React.Component<IAppProps> {
   }
 
   render() {
-    const paddingTop = '60px';
+    const padding = '10px';
     return (
       <Router>
-        <div className="app-container" style={{ paddingTop }}>
+        <div className="app-container">
           <ToastContainer
             position={toast.POSITION.TOP_LEFT as ToastPosition}
             className="toastify-container"
@@ -48,7 +49,7 @@ export class App extends React.Component<IAppProps> {
             />
           </ErrorBoundary>
           <div className="container-fluid view-container" id="app-view-container">
-            <Card className="jh-card">
+            <Card className="jh-card" style={{ padding }}>
               <ErrorBoundary>
                 <AppRoutes />
               </ErrorBoundary>
