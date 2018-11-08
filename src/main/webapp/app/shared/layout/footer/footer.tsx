@@ -4,11 +4,11 @@ import React from 'react';
 import { Translate } from 'react-jhipster';
 
 const Footer = props => (
-  <div className="footer page-content">
+  <footer className="footer">
     <p>
       <Translate contentKey="footer" />
     </p>
-  </div>
+  </footer>
 );
 
 export default Footer;
