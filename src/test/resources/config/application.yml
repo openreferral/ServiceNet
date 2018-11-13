@@ -30,6 +30,8 @@ spring:
     data:
         mongodb:
             uri: mongodb://localhost:27017/serviceNet
+            connection:
+                timeout: 500
     jpa:
         database-platform: io.github.jhipster.domain.util.FixedH2Dialect
         database: H2

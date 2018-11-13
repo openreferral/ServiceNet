@@ -4,10 +4,9 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
@@ -18,19 +17,16 @@ public class NoSQLDatabaseConfiguration {
 
     private static final String MONGO_DB_URI = "spring.data.mongodb.uri";
 
-    private static final int TIMEOUT_IN_MS = 500;
+    @Value("${spring.data.mongodb.uri}")
+    private String mongoUri;
 
-    @Autowired
-    private Environment env;
+    @Value("${spring.data.mongodb.connection.timeout}")
+    private int timeout;
 
     @Bean
     public MongoDbFactory mongoDbFactory() {
         MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-        optionsBuilder.serverSelectionTimeout(TIMEOUT_IN_MS);
-        String mongoUri = env.getProperty(MONGO_DB_URI);
-        if (mongoUri == null) {
-            throw new IllegalStateException(String.format("No property for %s found", MONGO_DB_URI));
-        }
+        optionsBuilder.serverSelectionTimeout(timeout);
         return new SimpleMongoDbFactory(new MongoClientURI(mongoUri, optionsBuilder));
     }
 }
