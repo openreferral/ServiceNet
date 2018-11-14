@@ -1,0 +1,7 @@
+{
+  "upload": {
+    "title": "File upload",
+    "subtitle": "Please select a file to upload:",
+    "submit": "Upload"
+  }
+}
