@@ -11,7 +11,7 @@ export const NavDropdown = props => (
   <UncontrolledDropdown nav inNavbar id={props.id}>
     <DropdownToggle nav caret className="d-flex align-items-center">
       <FontAwesomeIcon icon={props.icon} />
-      <span>{props.name}</span>
+      <span className="navbar-label">{props.name}</span>
     </DropdownToggle>
     <DropdownMenu right style={props.style}>
       {props.children}
@@ -28,8 +28,8 @@ export const BrandIcon = props => (
 export const Brand = props => (
   <NavbarBrand tag={Link} to="/" className="brand-logo">
     <BrandIcon />
-    <span className="brand-title">
-      <Translate contentKey="global.title">ServiceNet</Translate>
+    <span className="brand-title navbar-label">
+      <Translate contentKey="global.title" />
     </span>
     <span className="navbar-version">{appConfig.VERSION}</span>
   </NavbarBrand>
@@ -39,8 +39,19 @@ export const Home = props => (
   <NavItem>
     <NavLink tag={Link} to="/" className="d-flex align-items-center">
       <FontAwesomeIcon icon="home" />
-      <span>
-        <Translate contentKey="global.menu.home">Home</Translate>
+      <span className="navbar-label">
+        <Translate contentKey="global.menu.home" />
+      </span>
+    </NavLink>
+  </NavItem>
+);
+
+export const Upload = props => (
+  <NavItem>
+    <NavLink tag={Link} to="/upload" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="file-upload" />
+      <span className="navbar-label">
+        <Translate contentKey="global.menu.upload" />
       </span>
     </NavLink>
   </NavItem>

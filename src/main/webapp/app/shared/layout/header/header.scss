@@ -80,6 +80,9 @@ Navbar styles
   color: $header-color-secondary;
   padding: 0 0 0 10px;
 }
+.navbar-label {
+  margin-left: 4px;
+}
 
 .brand-logo {
   &:hover {
