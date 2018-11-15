@@ -18,7 +18,8 @@ entity Organization {
     tax_id String,
     yearIncorporated LocalDate,
     legalStatus String,
-    archived Boolean required
+    active Boolean required,
+    updatedAt ZonedDateTime
 }
 
 entity Service {
@@ -33,7 +34,9 @@ entity Service {
     waitTime TextBlob,
     fees TextBlob,
     accreditations TextBlob,
-    licenses TextBlob
+    licenses TextBlob,
+    type String,
+    updatedAt ZonedDateTime
 }
 
 entity Program {
@@ -153,6 +156,20 @@ entity OrganizationMatch {
     matchedValue TextBlob
 }
 
+entity Metadata {
+    resourceId String required,
+    lastActionDate ZonedDateTime required,
+    lastActionType ActionType required,
+    fieldName String required,
+    previousValue TextBlob,
+    replacementValue TextBlob
+    // user reference
+}
+
+enum ActionType {
+    CREATE, UPDATE, DELETE
+}
+
 relationship ManyToOne {
     Organization{sourceDocument(dateUploaded)} to DocumentUpload,
     Organization{account(name)} to SystemAccount,
@@ -163,7 +180,6 @@ relationship ManyToOne {
     Service{program(name)} to Program{services(name)},
 
     ServiceAtLocation{location(name)} to Location,
-
 
     OrganizationMatch{organizationRecord(name)} to Organization,
     OrganizationMatch{partnerVersion(name)} to Organization,
