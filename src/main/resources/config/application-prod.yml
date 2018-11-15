@@ -32,6 +32,9 @@ spring:
         password:
         hikari:
             auto-commit: false
+    data:
+        mongodb:
+            uri: mongodb://localhost:27017/serviceNet
     jpa:
         database-platform: io.github.jhipster.domain.util.FixedPostgreSQL82Dialect
         database: POSTGRESQL

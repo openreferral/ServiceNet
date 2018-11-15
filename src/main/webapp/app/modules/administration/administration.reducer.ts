@@ -58,7 +58,8 @@ export default (state: AdministrationState = initialState, action): Administrati
       return {
         ...state,
         loading: false,
-        errorMessage: action.payload
+        errorMessage: action.payload,
+        health: action.payload.response ? action.payload.response.data : null
       };
     case SUCCESS(ACTION_TYPES.FETCH_METRICS):
       return {

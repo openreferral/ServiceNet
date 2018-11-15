@@ -35,6 +35,10 @@ management:
 spring:
     application:
         name: ServiceNet
+    data:
+        mongodb:
+            connection:
+                timeout: 500
     profiles:
         # The commented value for `active` can be replaced with valid Spring profiles to load.
         # Otherwise, it will be filled in by maven when building the WAR file

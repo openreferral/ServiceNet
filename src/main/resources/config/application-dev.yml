@@ -40,6 +40,9 @@ spring:
         password:
         hikari:
             auto-commit: false
+    data:
+        mongodb:
+            uri: mongodb://localhost:27017/serviceNet
     h2:
         console:
             enabled: false
