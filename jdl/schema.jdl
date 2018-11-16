@@ -14,8 +14,8 @@ entity Organization {
     description TextBlob,
     email String maxlength(50),
     url String,
-    tax_status String,
-    tax_id String,
+    taxStatus String,
+    taxId String,
     yearIncorporated LocalDate,
     legalStatus String,
     active Boolean required,
@@ -53,9 +53,6 @@ entity Location {
     alternameName String,
     description TextBlob,
     transportation String,
-    address1 String,
-    city String,
-    zip Integer,
     latitude Double,
     longitude Double
 }
