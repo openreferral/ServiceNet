@@ -15,33 +15,61 @@ import { getSession } from 'app/shared/reducers/authentication';
 export interface IUploadPageProp extends StateProps, DispatchProps {}
 
 export interface IUploadState {
-  files: String[];
-  file: any;
+  files: any[];
+  pond: any;
+  isUploadDisabled: boolean;
 }
+
+registerPlugin(FilePondPluginFileValidateType);
+const supportedFileTypes = ['.csv', '.json', 'application/json'];
+const maxNumberOfFiles = 100;
+const valid = 'valid';
 
 export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   state: IUploadState = {
     files: [],
-    file: null
+    pond: null,
+    isUploadDisabled: true
   };
 
   onAddFile = (error, file) => {
     if (!error) {
-      this.setState({
-        file
-      });
+      file.setMetadata(valid, true);
     }
   };
 
-  onRemoveFile = file => {
-    this.setState({
-      file: null
-    });
+  uploadAll = () => {
+    this.state.pond.processFiles();
   };
 
+  isUploadDisabled = () => {
+    let result = this.state.files.length === 0;
+    this.state.files.forEach(file => {
+      if (!file.getMetadata(valid)) {
+        result = true;
+      }
+    });
+    return result;
+  };
+
+  onUpdateFiles = items => {
+    this.setState(
+      {
+        files: items
+      },
+      () =>
+        this.setState({
+          isUploadDisabled: this.isUploadDisabled()
+        })
+    );
+  };
+
+  fileValidateTypeDetectType = (source, type) =>
+    new Promise((resolve, reject) => {
+      resolve(type);
+    });
+
   render() {
-    registerPlugin(FilePondPluginFileValidateType);
-    let supportedFileTypes = ['.csv', '.json', 'application/json'];
     return (
       <Row>
         <Col>
@@ -52,25 +80,21 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
             <Translate contentKey="upload.subtitle" />
           </p>
           <FilePond
-            onaddfile={(error, file) => this.onAddFile(error, file)}
-            onremovefile={file => this.onRemoveFile(file)}
+            ref={ref => (this.state.pond = ref)}
+            allowMultiple
+            maxFiles={maxNumberOfFiles}
+            server="/api"
+            instantUpload={false}
+            onaddfile={this.onAddFile}
             acceptedFileTypes={supportedFileTypes}
-            fileValidateTypeDetectType={(source, type) =>
-              new Promise((resolve, reject) => {
-                resolve(type);
-              })
-            }
-            onupdatefiles={fileItems => {
-              this.setState({
-                files: fileItems.map(fileItem => fileItem.file)
-              });
-            }}
+            fileValidateTypeDetectType={this.fileValidateTypeDetectType}
+            onupdatefiles={this.onUpdateFiles}
           >
-            {this.state.files.map(file => (
-              <File key={file} src={file} origin="input" />
+            {this.state.files.map(fileItem => (
+              <File key={fileItem.file} src={fileItem.file} origin="input" />
             ))}
           </FilePond>
-          <Button color="primary" disabled={!this.state.file}>
+          <Button color="primary" disabled={this.state.isUploadDisabled} onClick={this.uploadAll}>
             <Translate contentKey="upload.submit" />
           </Button>
         </Col>
