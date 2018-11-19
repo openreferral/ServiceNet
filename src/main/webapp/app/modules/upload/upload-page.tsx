@@ -80,6 +80,7 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
             <Translate contentKey="upload.subtitle" />
           </p>
           <FilePond
+            className="dropArea"
             ref={ref => (this.state.pond = ref)}
             allowMultiple
             maxFiles={maxNumberOfFiles}
