@@ -14,6 +14,8 @@ export interface IMetadata {
   fieldName?: string;
   previousValue?: any;
   replacementValue?: any;
+  userLogin?: string;
+  userId?: number;
 }
 
 export const defaultValue: Readonly<IMetadata> = {};

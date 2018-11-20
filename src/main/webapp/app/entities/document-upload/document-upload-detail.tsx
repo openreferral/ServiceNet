@@ -42,6 +42,10 @@ export class DocumentUploadDetail extends React.Component<IDocumentUploadDetailP
               </span>
             </dt>
             <dd>{documentUploadEntity.documentId}</dd>
+            <dt>
+              <Translate contentKey="serviceNetApp.documentUpload.uploader">Uploader</Translate>
+            </dt>
+            <dd>{documentUploadEntity.uploaderLogin ? documentUploadEntity.uploaderLogin : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/document-upload" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

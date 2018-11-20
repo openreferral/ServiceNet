@@ -66,6 +66,10 @@ export class MetadataDetail extends React.Component<IMetadataDetailProps> {
               </span>
             </dt>
             <dd>{metadataEntity.replacementValue}</dd>
+            <dt>
+              <Translate contentKey="serviceNetApp.metadata.user">User</Translate>
+            </dt>
+            <dd>{metadataEntity.userLogin ? metadataEntity.userLogin : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/metadata" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

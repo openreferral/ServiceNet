@@ -1,5 +1,19 @@
 {
-    "name": "DocumentUpload",
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+        {
+            "relationshipName": "uploader",
+            "otherEntityName": "user",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "documentUpload"
+        }
+    ],
     "fields": [
         {
             "fieldName": "dateUploaded",
@@ -17,14 +31,11 @@
             ]
         }
     ],
-    "relationships": [],
     "changelogDate": "20181119125353",
-    "entityTableName": "document_upload",
     "dto": "mapstruct",
-    "pagination": "no",
+    "searchEngine": false,
     "service": "serviceImpl",
+    "entityTableName": "document_upload",
     "jpaMetamodelFiltering": false,
-    "fluentMethods": true,
-    "clientRootFolder": "",
-    "applications": "*"
+    "pagination": "no"
 }

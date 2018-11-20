@@ -18,6 +18,10 @@ public class DocumentUploadDTO implements Serializable {
     @NotNull
     private String documentId;
 
+    private Long uploaderId;
+
+    private String uploaderLogin;
+
     public Long getId() {
         return id;
     }
@@ -40,6 +44,22 @@ public class DocumentUploadDTO implements Serializable {
 
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
+    }
+
+    public Long getUploaderId() {
+        return uploaderId;
+    }
+
+    public void setUploaderId(Long userId) {
+        this.uploaderId = userId;
+    }
+
+    public String getUploaderLogin() {
+        return uploaderLogin;
+    }
+
+    public void setUploaderLogin(String userLogin) {
+        this.uploaderLogin = userLogin;
     }
 
     @Override
@@ -69,6 +89,8 @@ public class DocumentUploadDTO implements Serializable {
             "id=" + getId() +
             ", dateUploaded='" + getDateUploaded() + "'" +
             ", documentId='" + getDocumentId() + "'" +
+            ", uploader=" + getUploaderId() +
+            ", uploader='" + getUploaderLogin() + "'" +
             "}";
     }
 }

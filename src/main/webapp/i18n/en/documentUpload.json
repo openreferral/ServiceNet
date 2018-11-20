@@ -16,7 +16,8 @@
         "title": "Document Upload"
       },
       "dateUploaded": "Date Uploaded",
-      "documentId": "Document Id"
+      "documentId": "Document Id",
+      "uploader": "Uploader"
     }
   }
 }

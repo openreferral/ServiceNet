@@ -106,7 +106,7 @@ import organizationMatch, {
 OrganizationMatchState
  } from 'app/entities/organization-match/organization-match.reducer';
 // prettier-ignore
-import metadata, { 
+import metadata, {
 MetadataState
 } from 'app/entities/metadata/metadata.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */

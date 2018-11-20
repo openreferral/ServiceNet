@@ -1,5 +1,19 @@
 {
-    "name": "Metadata",
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+        {
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "metadata"
+        }
+    ],
     "fields": [
         {
             "fieldName": "resourceId",
@@ -41,14 +55,11 @@
             "fieldTypeBlobContent": "text"
         }
     ],
-    "relationships": [],
     "changelogDate": "20181119125415",
-    "entityTableName": "metadata",
     "dto": "mapstruct",
-    "pagination": "no",
+    "searchEngine": false,
     "service": "serviceImpl",
+    "entityTableName": "metadata",
     "jpaMetamodelFiltering": false,
-    "fluentMethods": true,
-    "clientRootFolder": "",
-    "applications": "*"
+    "pagination": "no"
 }

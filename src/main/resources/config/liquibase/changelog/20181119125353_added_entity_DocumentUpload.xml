@@ -27,6 +27,10 @@
                 <constraints nullable="false" unique="true" uniqueConstraintName="ux_document_upload_document_id"/>
             </column>
 
+            <column name="uploader_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         <dropDefaultValue tableName="document_upload" columnName="date_uploaded" columnDataType="datetime"/>

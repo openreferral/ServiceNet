@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.DocumentUpload;
+import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
@@ -49,7 +50,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ServiceNetApp.class)
 public class DocumentUploadResourceIntTest {
 
-    private static final ZonedDateTime DEFAULT_DATE_UPLOADED = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime DEFAULT_DATE_UPLOADED = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
+        ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_DATE_UPLOADED = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final String DEFAULT_DOCUMENT_ID = "AAAAAAAAAA";
@@ -90,6 +92,11 @@ public class DocumentUploadResourceIntTest {
         DocumentUpload documentUpload = new DocumentUpload()
             .dateUploaded(DEFAULT_DATE_UPLOADED)
             .documentId(DEFAULT_DOCUMENT_ID);
+        // Add required entity
+        User user = UserResourceIntTest.createEntity(em);
+        em.persist(user);
+        em.flush();
+        documentUpload.setUploader(user);
         return documentUpload;
     }
 

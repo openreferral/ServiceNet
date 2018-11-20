@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Metadata;
+import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.domain.enumeration.ActionType;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.MetadataService;
@@ -53,7 +54,8 @@ public class MetadataResourceIntTest {
     private static final String DEFAULT_RESOURCE_ID = "AAAAAAAAAA";
     private static final String UPDATED_RESOURCE_ID = "BBBBBBBBBB";
 
-    private static final ZonedDateTime DEFAULT_LAST_ACTION_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime DEFAULT_LAST_ACTION_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
+        ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_LAST_ACTION_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final ActionType DEFAULT_LAST_ACTION_TYPE = ActionType.CREATE;
@@ -107,6 +109,11 @@ public class MetadataResourceIntTest {
             .fieldName(DEFAULT_FIELD_NAME)
             .previousValue(DEFAULT_PREVIOUS_VALUE)
             .replacementValue(DEFAULT_REPLACEMENT_VALUE);
+        // Add required entity
+        User user = UserResourceIntTest.createEntity(em);
+        em.persist(user);
+        em.flush();
+        metadata.setUser(user);
         return metadata;
     }
 

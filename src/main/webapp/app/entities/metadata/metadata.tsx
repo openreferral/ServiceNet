@@ -56,6 +56,9 @@ export class Metadata extends React.Component<IMetadataProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.metadata.replacementValue">Replacement Value</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.metadata.user">User</Translate>
+                </th>
                 <th />
               </tr>
             </thead>
@@ -77,6 +80,7 @@ export class Metadata extends React.Component<IMetadataProps> {
                   <td>{metadata.fieldName}</td>
                   <td>{metadata.previousValue}</td>
                   <td>{metadata.replacementValue}</td>
+                  <td>{metadata.userLogin ? metadata.userLogin : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${metadata.id}`} color="info" size="sm">

@@ -44,6 +44,9 @@ export class DocumentUpload extends React.Component<IDocumentUploadProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.documentUpload.documentId">Document Id</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.documentUpload.uploader">Uploader</Translate>
+                </th>
                 <th />
               </tr>
             </thead>
@@ -59,6 +62,7 @@ export class DocumentUpload extends React.Component<IDocumentUploadProps> {
                     <TextFormat type="date" value={documentUpload.dateUploaded} format={APP_DATE_FORMAT} />
                   </td>
                   <td>{documentUpload.documentId}</td>
+                  <td>{documentUpload.uploaderLogin ? documentUpload.uploaderLogin : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${documentUpload.id}`} color="info" size="sm">

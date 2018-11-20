@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.benetech.servicenet.domain.enumeration.ActionType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -12,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -58,6 +60,11 @@ public class Metadata implements Serializable {
     @Lob
     @Column(name = "replacement_value")
     private String replacementValue;
+
+    @ManyToOne(optional = false)
+    @NotNull
+    @JsonIgnoreProperties("")
+    private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -143,6 +150,19 @@ public class Metadata implements Serializable {
 
     public Metadata replacementValue(String replacementValue) {
         this.replacementValue = replacementValue;
+        return this;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Metadata user(User user) {
+        this.user = user;
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

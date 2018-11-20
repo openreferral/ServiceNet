@@ -8,6 +8,8 @@ import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
+import { IUser } from 'app/shared/model/user.model';
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './document-upload.reducer';
 import { IDocumentUpload } from 'app/shared/model/document-upload.model';
 // tslint:disable-next-line:no-unused-variable
@@ -18,12 +20,14 @@ export interface IDocumentUploadUpdateProps extends StateProps, DispatchProps, R
 
 export interface IDocumentUploadUpdateState {
   isNew: boolean;
+  uploaderId: string;
 }
 
 export class DocumentUploadUpdate extends React.Component<IDocumentUploadUpdateProps, IDocumentUploadUpdateState> {
   constructor(props) {
     super(props);
     this.state = {
+      uploaderId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -40,6 +44,8 @@ export class DocumentUploadUpdate extends React.Component<IDocumentUploadUpdateP
     } else {
       this.props.getEntity(this.props.match.params.id);
     }
+
+    this.props.getUsers();
   }
 
   saveEntity = (event, errors, values) => {
@@ -65,7 +71,7 @@ export class DocumentUploadUpdate extends React.Component<IDocumentUploadUpdateP
   };
 
   render() {
-    const { documentUploadEntity, loading, updating } = this.props;
+    const { documentUploadEntity, users, loading, updating } = this.props;
     const { isNew } = this.state;
 
     return (
@@ -119,6 +125,20 @@ export class DocumentUploadUpdate extends React.Component<IDocumentUploadUpdateP
                     }}
                   />
                 </AvGroup>
+                <AvGroup>
+                  <Label for="uploader.login">
+                    <Translate contentKey="serviceNetApp.documentUpload.uploader">Uploader</Translate>
+                  </Label>
+                  <AvInput id="document-upload-uploader" type="select" className="form-control" name="uploaderId">
+                    {users
+                      ? users.map(otherEntity => (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {otherEntity.login}
+                          </option>
+                        ))
+                      : null}
+                  </AvInput>
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/document-upload" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
@@ -142,6 +162,7 @@ export class DocumentUploadUpdate extends React.Component<IDocumentUploadUpdateP
 }
 
 const mapStateToProps = (storeState: IRootState) => ({
+  users: storeState.userManagement.users,
   documentUploadEntity: storeState.documentUpload.entity,
   loading: storeState.documentUpload.loading,
   updating: storeState.documentUpload.updating,
@@ -149,6 +170,7 @@ const mapStateToProps = (storeState: IRootState) => ({
 });
 
 const mapDispatchToProps = {
+  getUsers,
   getEntity,
   updateEntity,
   createEntity,

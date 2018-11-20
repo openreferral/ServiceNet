@@ -8,6 +8,8 @@ import { Translate, translate, ICrudGetAction, ICrudGetAllAction, setFileData, b
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
+import { IUser } from 'app/shared/model/user.model';
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getEntity, updateEntity, createEntity, setBlob, reset } from './metadata.reducer';
 import { IMetadata } from 'app/shared/model/metadata.model';
 // tslint:disable-next-line:no-unused-variable
@@ -18,12 +20,14 @@ export interface IMetadataUpdateProps extends StateProps, DispatchProps, RouteCo
 
 export interface IMetadataUpdateState {
   isNew: boolean;
+  userId: string;
 }
 
 export class MetadataUpdate extends React.Component<IMetadataUpdateProps, IMetadataUpdateState> {
   constructor(props) {
     super(props);
     this.state = {
+      userId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -40,6 +44,8 @@ export class MetadataUpdate extends React.Component<IMetadataUpdateProps, IMetad
     } else {
       this.props.getEntity(this.props.match.params.id);
     }
+
+    this.props.getUsers();
   }
 
   onBlobChange = (isAnImage, name) => event => {
@@ -73,7 +79,7 @@ export class MetadataUpdate extends React.Component<IMetadataUpdateProps, IMetad
   };
 
   render() {
-    const { metadataEntity, loading, updating } = this.props;
+    const { metadataEntity, users, loading, updating } = this.props;
     const { isNew } = this.state;
 
     const { previousValue, replacementValue } = metadataEntity;
@@ -176,6 +182,20 @@ export class MetadataUpdate extends React.Component<IMetadataUpdateProps, IMetad
                   </Label>
                   <AvInput id="metadata-replacementValue" type="textarea" name="replacementValue" />
                 </AvGroup>
+                <AvGroup>
+                  <Label for="user.login">
+                    <Translate contentKey="serviceNetApp.metadata.user">User</Translate>
+                  </Label>
+                  <AvInput id="metadata-user" type="select" className="form-control" name="userId">
+                    {users
+                      ? users.map(otherEntity => (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {otherEntity.login}
+                          </option>
+                        ))
+                      : null}
+                  </AvInput>
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/metadata" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
@@ -199,6 +219,7 @@ export class MetadataUpdate extends React.Component<IMetadataUpdateProps, IMetad
 }
 
 const mapStateToProps = (storeState: IRootState) => ({
+  users: storeState.userManagement.users,
   metadataEntity: storeState.metadata.entity,
   loading: storeState.metadata.loading,
   updating: storeState.metadata.updating,
@@ -206,6 +227,7 @@ const mapStateToProps = (storeState: IRootState) => ({
 });
 
 const mapDispatchToProps = {
+  getUsers,
   getEntity,
   updateEntity,
   setBlob,

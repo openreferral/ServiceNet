@@ -20,7 +20,8 @@
       "lastActionType": "Last Action Type",
       "fieldName": "Field Name",
       "previousValue": "Previous Value",
-      "replacementValue": "Replacement Value"
+      "replacementValue": "Replacement Value",
+      "user": "User"
     }
   }
 }

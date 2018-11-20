@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -8,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -37,6 +39,11 @@ public class DocumentUpload implements Serializable {
     @NotNull
     @Column(name = "document_id", nullable = false, unique = true)
     private String documentId;
+
+    @ManyToOne(optional = false)
+    @NotNull
+    @JsonIgnoreProperties("")
+    private User uploader;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -70,6 +77,19 @@ public class DocumentUpload implements Serializable {
 
     public DocumentUpload documentId(String documentId) {
         this.documentId = documentId;
+        return this;
+    }
+
+    public User getUploader() {
+        return uploader;
+    }
+
+    public void setUploader(User user) {
+        this.uploader = user;
+    }
+
+    public DocumentUpload uploader(User user) {
+        this.uploader = user;
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
