@@ -1,0 +1,33 @@
+{
+    "name": "AccessibilityForDisabilities",
+    "fields": [
+        {
+            "fieldName": "accessibility",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "details",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "location",
+            "otherEntityName": "location",
+            "otherEntityField": "name"
+        }
+    ],
+    "changelogDate": "20181119125411",
+    "entityTableName": "accessibility_for_disabilities",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

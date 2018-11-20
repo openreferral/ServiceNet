@@ -1,0 +1,26 @@
+{
+  "serviceNetApp": {
+    "metadata": {
+      "home": {
+        "title": "Metadata",
+        "createLabel": "Create a new Metadata",
+        "createOrEditLabel": "Create or edit a Metadata"
+      },
+      "created": "A new Metadata is created with identifier {{ param }}",
+      "updated": "A Metadata is updated with identifier {{ param }}",
+      "deleted": "A Metadata is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Metadata {{ id }}?"
+      },
+      "detail": {
+        "title": "Metadata"
+      },
+      "resourceId": "Resource Id",
+      "lastActionDate": "Last Action Date",
+      "lastActionType": "Last Action Type",
+      "fieldName": "Field Name",
+      "previousValue": "Previous Value",
+      "replacementValue": "Replacement Value"
+    }
+  }
+}

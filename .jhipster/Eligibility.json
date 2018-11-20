@@ -1,0 +1,31 @@
+{
+    "name": "Eligibility",
+    "fields": [
+        {
+            "fieldName": "eligibility",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "srvc",
+            "otherEntityName": "service",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "eligibility"
+        }
+    ],
+    "changelogDate": "20181119125406",
+    "entityTableName": "eligibility",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

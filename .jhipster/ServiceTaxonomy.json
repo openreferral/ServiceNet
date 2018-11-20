@@ -1,0 +1,33 @@
+{
+    "name": "ServiceTaxonomy",
+    "fields": [
+        {
+            "fieldName": "taxonomyDetails",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "srvc",
+            "otherEntityName": "service",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "taxonomy",
+            "otherEntityName": "taxonomy",
+            "otherEntityField": "name"
+        }
+    ],
+    "changelogDate": "20181119125412",
+    "entityTableName": "service_taxonomy",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

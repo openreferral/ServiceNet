@@ -1,0 +1,123 @@
+package org.benetech.servicenet.service.impl;
+
+import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.repository.ServiceAtLocationRepository;
+import org.benetech.servicenet.service.ServiceAtLocationService;
+import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
+import org.benetech.servicenet.service.mapper.ServiceAtLocationMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+/**
+ * Service Implementation for managing ServiceAtLocation.
+ */
+@Service
+@Transactional
+public class ServiceAtLocationServiceImpl implements ServiceAtLocationService {
+
+    private final Logger log = LoggerFactory.getLogger(ServiceAtLocationServiceImpl.class);
+
+    private final ServiceAtLocationRepository serviceAtLocationRepository;
+
+    private final ServiceAtLocationMapper serviceAtLocationMapper;
+
+    public ServiceAtLocationServiceImpl(ServiceAtLocationRepository serviceAtLocationRepository,
+                                        ServiceAtLocationMapper serviceAtLocationMapper) {
+        this.serviceAtLocationRepository = serviceAtLocationRepository;
+        this.serviceAtLocationMapper = serviceAtLocationMapper;
+    }
+
+    /**
+     * Save a serviceAtLocation.
+     *
+     * @param serviceAtLocationDTO the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public ServiceAtLocationDTO save(ServiceAtLocationDTO serviceAtLocationDTO) {
+        log.debug("Request to save ServiceAtLocation : {}", serviceAtLocationDTO);
+
+        ServiceAtLocation serviceAtLocation = serviceAtLocationMapper.toEntity(serviceAtLocationDTO);
+        serviceAtLocation = serviceAtLocationRepository.save(serviceAtLocation);
+        return serviceAtLocationMapper.toDto(serviceAtLocation);
+    }
+
+    /**
+     * Get all the serviceAtLocations.
+     *
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ServiceAtLocationDTO> findAll() {
+        log.debug("Request to get all ServiceAtLocations");
+        return serviceAtLocationRepository.findAll().stream()
+            .map(serviceAtLocationMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+
+    /**
+     * get all the serviceAtLocations where RegularSchedule is null.
+     *
+     * @return the list of entities
+     */
+    @Transactional(readOnly = true)
+    public List<ServiceAtLocationDTO> findAllWhereRegularScheduleIsNull() {
+        log.debug("Request to get all serviceAtLocations where RegularSchedule is null");
+        return StreamSupport
+            .stream(serviceAtLocationRepository.findAll().spliterator(), false)
+            .filter(serviceAtLocation -> serviceAtLocation.getRegularSchedule() == null)
+            .map(serviceAtLocationMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+
+    /**
+     * get all the serviceAtLocations where HolidaySchedule is null.
+     *
+     * @return the list of entities
+     */
+    @Transactional(readOnly = true)
+    public List<ServiceAtLocationDTO> findAllWhereHolidayScheduleIsNull() {
+        log.debug("Request to get all serviceAtLocations where HolidaySchedule is null");
+        return StreamSupport
+            .stream(serviceAtLocationRepository.findAll().spliterator(), false)
+            .filter(serviceAtLocation -> serviceAtLocation.getHolidaySchedule() == null)
+            .map(serviceAtLocationMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Get one serviceAtLocation by id.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<ServiceAtLocationDTO> findOne(Long id) {
+        log.debug("Request to get ServiceAtLocation : {}", id);
+        return serviceAtLocationRepository.findById(id)
+            .map(serviceAtLocationMapper::toDto);
+    }
+
+    /**
+     * Delete the serviceAtLocation by id.
+     *
+     * @param id the id of the entity
+     */
+    @Override
+    public void delete(Long id) {
+        log.debug("Request to delete ServiceAtLocation : {}", id);
+        serviceAtLocationRepository.deleteById(id);
+    }
+}

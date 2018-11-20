@@ -1,0 +1,23 @@
+{
+  "serviceNetApp": {
+    "accessibilityForDisabilities": {
+      "home": {
+        "title": "Accessibility For Disabilities",
+        "createLabel": "Create a new Accessibility For Disabilities",
+        "createOrEditLabel": "Create or edit a Accessibility For Disabilities"
+      },
+      "created": "A new Accessibility For Disabilities is created with identifier {{ param }}",
+      "updated": "A Accessibility For Disabilities is updated with identifier {{ param }}",
+      "deleted": "A Accessibility For Disabilities is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Accessibility For Disabilities {{ id }}?"
+      },
+      "detail": {
+        "title": "Accessibility For Disabilities"
+      },
+      "accessibility": "Accessibility",
+      "details": "Details",
+      "location": "Location"
+    }
+  }
+}

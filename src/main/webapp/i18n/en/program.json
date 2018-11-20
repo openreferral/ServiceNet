@@ -1,0 +1,24 @@
+{
+  "serviceNetApp": {
+    "program": {
+      "home": {
+        "title": "Programs",
+        "createLabel": "Create a new Program",
+        "createOrEditLabel": "Create or edit a Program"
+      },
+      "created": "A new Program is created with identifier {{ param }}",
+      "updated": "A Program is updated with identifier {{ param }}",
+      "deleted": "A Program is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Program {{ id }}?"
+      },
+      "detail": {
+        "title": "Program"
+      },
+      "name": "Name",
+      "alternateName": "Alternate Name",
+      "organization": "Organization",
+      "services": "Services"
+    }
+  }
+}

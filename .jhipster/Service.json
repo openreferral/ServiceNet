@@ -1,0 +1,159 @@
+{
+    "name": "Service",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "alternateName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "url",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "interpretationServices",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "applicationProcess",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "waitTime",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "fees",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "accreditations",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "licenses",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "type",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "updatedAt",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "organization",
+            "otherEntityName": "organization",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "program",
+            "otherEntityName": "program",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "location",
+            "otherEntityName": "serviceAtLocation",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "regularSchedule",
+            "otherEntityName": "regularSchedule",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "holidaySchedule",
+            "otherEntityName": "holidaySchedule",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "funding",
+            "otherEntityName": "funding",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "eligibility",
+            "otherEntityName": "eligibility",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "areas",
+            "otherEntityName": "serviceArea",
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "docs",
+            "otherEntityName": "requiredDocument",
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "paymentsAccepted",
+            "otherEntityName": "paymentAccepted",
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "langs",
+            "otherEntityName": "language",
+            "otherEntityRelationshipName": "srvc"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "taxonomies",
+            "otherEntityName": "serviceTaxonomy",
+            "otherEntityRelationshipName": "srvc"
+        }
+    ],
+    "changelogDate": "20181119125355",
+    "entityTableName": "service",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

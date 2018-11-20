@@ -1,0 +1,28 @@
+{
+  "serviceNetApp": {
+    "postalAddress": {
+      "home": {
+        "title": "Postal Addresses",
+        "createLabel": "Create a new Postal Address",
+        "createOrEditLabel": "Create or edit a Postal Address"
+      },
+      "created": "A new Postal Address is created with identifier {{ param }}",
+      "updated": "A Postal Address is updated with identifier {{ param }}",
+      "deleted": "A Postal Address is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Postal Address {{ id }}?"
+      },
+      "detail": {
+        "title": "Postal Address"
+      },
+      "attention": "Attention",
+      "address1": "Address 1",
+      "city": "City",
+      "region": "Region",
+      "stateProvince": "State Province",
+      "postalCode": "Postal Code",
+      "country": "Country",
+      "location": "Location"
+    }
+  }
+}

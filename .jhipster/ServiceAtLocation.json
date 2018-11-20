@@ -1,0 +1,55 @@
+{
+    "name": "ServiceAtLocation",
+    "fields": [
+        {
+            "fieldName": "description",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "srvc",
+            "otherEntityName": "service",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "location(name)"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "location",
+            "otherEntityName": "location",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "regularSchedule",
+            "otherEntityName": "regularSchedule",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "serviceAtlocation"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "holidaySchedule",
+            "otherEntityName": "holidaySchedule",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "serviceAtlocation"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "phones",
+            "otherEntityName": "phone",
+            "otherEntityRelationshipName": "serviceAtLocation"
+        }
+    ],
+    "changelogDate": "20181119125357",
+    "entityTableName": "service_at_location",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}
