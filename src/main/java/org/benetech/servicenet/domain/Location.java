@@ -42,8 +42,8 @@ public class Location implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "altername_name")
-    private String alternameName;
+    @Column(name = "alternate_name")
+    private String alternateName;
 
     @Lob
     @Column(name = "description")
@@ -77,6 +77,7 @@ public class Location implements Serializable {
     @OneToMany(mappedBy = "location")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
+
     @OneToMany(mappedBy = "location")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
@@ -103,16 +104,16 @@ public class Location implements Serializable {
         return this;
     }
 
-    public String getAlternameName() {
-        return alternameName;
+    public String getAlternateName() {
+        return alternateName;
     }
 
-    public void setAlternameName(String alternameName) {
-        this.alternameName = alternameName;
+    public void setAlternateName(String alternateName) {
+        this.alternateName = alternateName;
     }
 
-    public Location alternameName(String alternameName) {
-        this.alternameName = alternameName;
+    public Location alternateName(String alternateName) {
+        this.alternateName = alternateName;
         return this;
     }
 
@@ -296,7 +297,7 @@ public class Location implements Serializable {
         return "Location{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", alternameName='" + getAlternameName() + "'" +
+            ", alternateName='" + getAlternateName() + "'" +
             ", description='" + getDescription() + "'" +
             ", transportation='" + getTransportation() + "'" +
             ", latitude=" + getLatitude() +

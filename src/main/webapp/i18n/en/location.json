@@ -16,7 +16,7 @@
         "title": "Location"
       },
       "name": "Name",
-      "alternameName": "Altername Name",
+      "alternateName": "Alternate Name",
       "description": "Description",
       "transportation": "Transportation",
       "latitude": "Latitude",

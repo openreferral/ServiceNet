@@ -4,7 +4,7 @@ import { IAccessibilityForDisabilities } from 'app/shared/model//accessibility-f
 export interface ILocation {
   id?: number;
   name?: string;
-  alternameName?: string;
+  alternateName?: string;
   description?: any;
   transportation?: string;
   latitude?: number;

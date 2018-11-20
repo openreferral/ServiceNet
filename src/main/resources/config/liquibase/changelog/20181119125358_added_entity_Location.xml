@@ -27,7 +27,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="altername_name" type="varchar(255)">
+            <column name="alternate_name" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
 

@@ -9,7 +9,7 @@
             ]
         },
         {
-            "fieldName": "alternameName",
+            "fieldName": "alternateName",
             "fieldType": "String"
         },
         {

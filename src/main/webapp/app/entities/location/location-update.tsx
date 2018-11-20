@@ -134,10 +134,10 @@ export class LocationUpdate extends React.Component<ILocationUpdateProps, ILocat
                   />
                 </AvGroup>
                 <AvGroup>
-                  <Label id="alternameNameLabel" for="alternameName">
-                    <Translate contentKey="serviceNetApp.location.alternameName">Altername Name</Translate>
+                  <Label id="alternateNameLabel" for="alternateName">
+                    <Translate contentKey="serviceNetApp.location.alternateName">Alternate Name</Translate>
                   </Label>
-                  <AvField id="location-alternameName" type="text" name="alternameName" />
+                  <AvField id="location-alternateName" type="text" name="alternateName" />
                 </AvGroup>
                 <AvGroup>
                   <Label id="descriptionLabel" for="description">

@@ -50,7 +50,7 @@ entity ServiceAtLocation {
 
 entity Location {
     name String required,
-    alternameName String,
+    alternateName String,
     description TextBlob,
     transportation String,
     latitude Double,

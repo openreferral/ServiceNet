@@ -97,7 +97,7 @@ public class LocationResourceIntTest {
     public static Location createEntity(EntityManager em) {
         Location location = new Location()
             .name(DEFAULT_NAME)
-            .alternameName(DEFAULT_ALTERNAME_NAME)
+            .alternateName(DEFAULT_ALTERNAME_NAME)
             .description(DEFAULT_DESCRIPTION)
             .transportation(DEFAULT_TRANSPORTATION)
             .latitude(DEFAULT_LATITUDE)
@@ -138,7 +138,7 @@ public class LocationResourceIntTest {
         assertThat(locationList).hasSize(databaseSizeBeforeCreate + 1);
         Location testLocation = locationList.get(locationList.size() - 1);
         assertThat(testLocation.getName()).isEqualTo(DEFAULT_NAME);
-        assertThat(testLocation.getAlternameName()).isEqualTo(DEFAULT_ALTERNAME_NAME);
+        assertThat(testLocation.getAlternateName()).isEqualTo(DEFAULT_ALTERNAME_NAME);
         assertThat(testLocation.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testLocation.getTransportation()).isEqualTo(DEFAULT_TRANSPORTATION);
         assertThat(testLocation.getLatitude()).isEqualTo(DEFAULT_LATITUDE);
@@ -196,7 +196,7 @@ public class LocationResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(location.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].alternameName").value(hasItem(DEFAULT_ALTERNAME_NAME.toString())))
+            .andExpect(jsonPath("$.[*].alternateName").value(hasItem(DEFAULT_ALTERNAME_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].transportation").value(hasItem(DEFAULT_TRANSPORTATION.toString())))
             .andExpect(jsonPath("$.[*].latitude").value(hasItem(DEFAULT_LATITUDE.doubleValue())))
@@ -215,7 +215,7 @@ public class LocationResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(location.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.alternameName").value(DEFAULT_ALTERNAME_NAME.toString()))
+            .andExpect(jsonPath("$.alternateName").value(DEFAULT_ALTERNAME_NAME.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
             .andExpect(jsonPath("$.transportation").value(DEFAULT_TRANSPORTATION.toString()))
             .andExpect(jsonPath("$.latitude").value(DEFAULT_LATITUDE.doubleValue()))
@@ -244,7 +244,7 @@ public class LocationResourceIntTest {
         em.detach(updatedLocation);
         updatedLocation
             .name(UPDATED_NAME)
-            .alternameName(UPDATED_ALTERNAME_NAME)
+            .alternateName(UPDATED_ALTERNAME_NAME)
             .description(UPDATED_DESCRIPTION)
             .transportation(UPDATED_TRANSPORTATION)
             .latitude(UPDATED_LATITUDE)
@@ -261,7 +261,7 @@ public class LocationResourceIntTest {
         assertThat(locationList).hasSize(databaseSizeBeforeUpdate);
         Location testLocation = locationList.get(locationList.size() - 1);
         assertThat(testLocation.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testLocation.getAlternameName()).isEqualTo(UPDATED_ALTERNAME_NAME);
+        assertThat(testLocation.getAlternateName()).isEqualTo(UPDATED_ALTERNAME_NAME);
         assertThat(testLocation.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testLocation.getTransportation()).isEqualTo(UPDATED_TRANSPORTATION);
         assertThat(testLocation.getLatitude()).isEqualTo(UPDATED_LATITUDE);

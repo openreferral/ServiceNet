@@ -104,6 +104,7 @@ public class Organization implements Serializable {
     @OneToMany(mappedBy = "organization")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Program> programs = new HashSet<>();
+
     @OneToMany(mappedBy = "organization")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Service> services = new HashSet<>();

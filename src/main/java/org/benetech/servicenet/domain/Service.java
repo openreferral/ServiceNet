@@ -122,15 +122,19 @@ public class Service implements Serializable {
     @OneToMany(mappedBy = "srvc")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceArea> areas = new HashSet<>();
+
     @OneToMany(mappedBy = "srvc")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RequiredDocument> docs = new HashSet<>();
+
     @OneToMany(mappedBy = "srvc")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<PaymentAccepted> paymentsAccepteds = new HashSet<>();
+
     @OneToMany(mappedBy = "srvc")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
+
     @OneToMany(mappedBy = "srvc")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceTaxonomy> taxonomies = new HashSet<>();

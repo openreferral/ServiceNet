@@ -16,7 +16,7 @@ public class LocationDTO implements Serializable {
     @NotNull
     private String name;
 
-    private String alternameName;
+    private String alternateName;
 
     @Lob
     private String description;
@@ -43,12 +43,12 @@ public class LocationDTO implements Serializable {
         this.name = name;
     }
 
-    public String getAlternameName() {
-        return alternameName;
+    public String getAlternateName() {
+        return alternateName;
     }
 
-    public void setAlternameName(String alternameName) {
-        this.alternameName = alternameName;
+    public void setAlternateName(String alternateName) {
+        this.alternateName = alternateName;
     }
 
     public String getDescription() {
@@ -109,7 +109,7 @@ public class LocationDTO implements Serializable {
         return "LocationDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", alternameName='" + getAlternameName() + "'" +
+            ", alternateName='" + getAlternateName() + "'" +
             ", description='" + getDescription() + "'" +
             ", transportation='" + getTransportation() + "'" +
             ", latitude=" + getLatitude() +

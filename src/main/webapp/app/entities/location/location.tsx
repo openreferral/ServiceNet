@@ -42,7 +42,7 @@ export class Location extends React.Component<ILocationProps> {
                   <Translate contentKey="serviceNetApp.location.name">Name</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="serviceNetApp.location.alternameName">Altername Name</Translate>
+                  <Translate contentKey="serviceNetApp.location.alternateName">Alternate Name</Translate>
                 </th>
                 <th>
                   <Translate contentKey="serviceNetApp.location.description">Description</Translate>
@@ -68,7 +68,7 @@ export class Location extends React.Component<ILocationProps> {
                     </Button>
                   </td>
                   <td>{location.name}</td>
-                  <td>{location.alternameName}</td>
+                  <td>{location.alternateName}</td>
                   <td>{location.description}</td>
                   <td>{location.transportation}</td>
                   <td>{location.latitude}</td>
