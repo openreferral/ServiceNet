@@ -11,12 +11,16 @@
     <property name="floatType" value="float4" dbms="postgresql, h2"/>
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
+    <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
+    <property name="uuidFunction" value="uid.uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
+
     <!--
         Added the entity Location.
     -->
     <changeSet id="20181119125358-1" author="jhipster">
         <createTable tableName="location">
-            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(255)">

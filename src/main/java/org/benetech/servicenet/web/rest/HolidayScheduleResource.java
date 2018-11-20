@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing HolidaySchedule.
@@ -104,7 +105,7 @@ public class HolidayScheduleResource {
      */
     @GetMapping("/holiday-schedules/{id}")
     @Timed
-    public ResponseEntity<HolidayScheduleDTO> getHolidaySchedule(@PathVariable Long id) {
+    public ResponseEntity<HolidayScheduleDTO> getHolidaySchedule(@PathVariable UUID id) {
         log.debug("REST request to get HolidaySchedule : {}", id);
         Optional<HolidayScheduleDTO> holidayScheduleDTO = holidayScheduleService.findOne(id);
         return ResponseUtil.wrapOrNotFound(holidayScheduleDTO);
@@ -118,7 +119,7 @@ public class HolidayScheduleResource {
      */
     @DeleteMapping("/holiday-schedules/{id}")
     @Timed
-    public ResponseEntity<Void> deleteHolidaySchedule(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteHolidaySchedule(@PathVariable UUID id) {
         log.debug("REST request to delete HolidaySchedule : {}", id);
         holidayScheduleService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.repository.HolidayScheduleRepository;
 import org.benetech.servicenet.service.HolidayScheduleService;
@@ -147,7 +148,7 @@ public class HolidayScheduleResourceIntTest {
         int databaseSizeBeforeCreate = holidayScheduleRepository.findAll().size();
 
         // Create the HolidaySchedule with an existing ID
-        holidaySchedule.setId(1L);
+        holidaySchedule.setId(TestConstants.UUID_1);
         HolidayScheduleDTO holidayScheduleDTO = holidayScheduleMapper.toDto(holidaySchedule);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -228,7 +229,7 @@ public class HolidayScheduleResourceIntTest {
         restHolidayScheduleMockMvc.perform(get("/api/holiday-schedules?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(holidaySchedule.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(holidaySchedule.getId().toString())))
             .andExpect(jsonPath("$.[*].closed").value(hasItem(DEFAULT_CLOSED.booleanValue())))
             .andExpect(jsonPath("$.[*].opensAt").value(hasItem(DEFAULT_OPENS_AT.toString())))
             .andExpect(jsonPath("$.[*].closesAt").value(hasItem(DEFAULT_CLOSES_AT.toString())))
@@ -246,7 +247,7 @@ public class HolidayScheduleResourceIntTest {
         restHolidayScheduleMockMvc.perform(get("/api/holiday-schedules/{id}", holidaySchedule.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(holidaySchedule.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(holidaySchedule.getId().toString()))
             .andExpect(jsonPath("$.closed").value(DEFAULT_CLOSED.booleanValue()))
             .andExpect(jsonPath("$.opensAt").value(DEFAULT_OPENS_AT.toString()))
             .andExpect(jsonPath("$.closesAt").value(DEFAULT_CLOSES_AT.toString()))
@@ -258,7 +259,7 @@ public class HolidayScheduleResourceIntTest {
     @Transactional
     public void getNonExistingHolidaySchedule() throws Exception {
         // Get the holidaySchedule
-        restHolidayScheduleMockMvc.perform(get("/api/holiday-schedules/{id}", Long.MAX_VALUE))
+        restHolidayScheduleMockMvc.perform(get("/api/holiday-schedules/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -340,11 +341,11 @@ public class HolidayScheduleResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(HolidaySchedule.class);
         HolidaySchedule holidaySchedule1 = new HolidaySchedule();
-        holidaySchedule1.setId(1L);
+        holidaySchedule1.setId(TestConstants.UUID_1);
         HolidaySchedule holidaySchedule2 = new HolidaySchedule();
         holidaySchedule2.setId(holidaySchedule1.getId());
         assertThat(holidaySchedule1).isEqualTo(holidaySchedule2);
-        holidaySchedule2.setId(2L);
+        holidaySchedule2.setId(TestConstants.UUID_2);
         assertThat(holidaySchedule1).isNotEqualTo(holidaySchedule2);
         holidaySchedule1.setId(null);
         assertThat(holidaySchedule1).isNotEqualTo(holidaySchedule2);
@@ -355,12 +356,12 @@ public class HolidayScheduleResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(HolidayScheduleDTO.class);
         HolidayScheduleDTO holidayScheduleDTO1 = new HolidayScheduleDTO();
-        holidayScheduleDTO1.setId(1L);
+        holidayScheduleDTO1.setId(TestConstants.UUID_1);
         HolidayScheduleDTO holidayScheduleDTO2 = new HolidayScheduleDTO();
         assertThat(holidayScheduleDTO1).isNotEqualTo(holidayScheduleDTO2);
         holidayScheduleDTO2.setId(holidayScheduleDTO1.getId());
         assertThat(holidayScheduleDTO1).isEqualTo(holidayScheduleDTO2);
-        holidayScheduleDTO2.setId(2L);
+        holidayScheduleDTO2.setId(TestConstants.UUID_2);
         assertThat(holidayScheduleDTO1).isNotEqualTo(holidayScheduleDTO2);
         holidayScheduleDTO1.setId(null);
         assertThat(holidayScheduleDTO1).isNotEqualTo(holidayScheduleDTO2);
@@ -369,7 +370,7 @@ public class HolidayScheduleResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(holidayScheduleMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(holidayScheduleMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(holidayScheduleMapper.fromId(null)).isNull();
     }
 }

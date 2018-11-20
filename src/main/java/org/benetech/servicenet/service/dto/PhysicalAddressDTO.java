@@ -3,13 +3,14 @@ package org.benetech.servicenet.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the PhysicalAddress entity.
  */
 public class PhysicalAddressDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     private String attention;
 
@@ -30,15 +31,15 @@ public class PhysicalAddressDTO implements Serializable {
     @NotNull
     private String country;
 
-    private Long locationId;
+    private UUID locationId;
 
     private String locationName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -98,11 +99,11 @@ public class PhysicalAddressDTO implements Serializable {
         this.country = country;
     }
 
-    public Long getLocationId() {
+    public UUID getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Long locationId) {
+    public void setLocationId(UUID locationId) {
         this.locationId = locationId;
     }
 

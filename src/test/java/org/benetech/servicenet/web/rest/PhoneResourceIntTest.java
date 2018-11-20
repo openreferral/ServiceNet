@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.service.PhoneService;
@@ -145,7 +146,7 @@ public class PhoneResourceIntTest {
         int databaseSizeBeforeCreate = phoneRepository.findAll().size();
 
         // Create the Phone with an existing ID
-        phone.setId(1L);
+        phone.setId(TestConstants.UUID_1);
         PhoneDTO phoneDTO = phoneMapper.toDto(phone);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -188,7 +189,7 @@ public class PhoneResourceIntTest {
         restPhoneMockMvc.perform(get("/api/phones?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(phone.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(phone.getId().toString())))
             .andExpect(jsonPath("$.[*].number").value(hasItem(DEFAULT_NUMBER.toString())))
             .andExpect(jsonPath("$.[*].extension").value(hasItem(DEFAULT_EXTENSION)))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
@@ -206,7 +207,7 @@ public class PhoneResourceIntTest {
         restPhoneMockMvc.perform(get("/api/phones/{id}", phone.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(phone.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(phone.getId().toString()))
             .andExpect(jsonPath("$.number").value(DEFAULT_NUMBER.toString()))
             .andExpect(jsonPath("$.extension").value(DEFAULT_EXTENSION))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
@@ -218,7 +219,7 @@ public class PhoneResourceIntTest {
     @Transactional
     public void getNonExistingPhone() throws Exception {
         // Get the phone
-        restPhoneMockMvc.perform(get("/api/phones/{id}", Long.MAX_VALUE))
+        restPhoneMockMvc.perform(get("/api/phones/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -300,11 +301,11 @@ public class PhoneResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Phone.class);
         Phone phone1 = new Phone();
-        phone1.setId(1L);
+        phone1.setId(TestConstants.UUID_1);
         Phone phone2 = new Phone();
         phone2.setId(phone1.getId());
         assertThat(phone1).isEqualTo(phone2);
-        phone2.setId(2L);
+        phone2.setId(TestConstants.UUID_2);
         assertThat(phone1).isNotEqualTo(phone2);
         phone1.setId(null);
         assertThat(phone1).isNotEqualTo(phone2);
@@ -315,12 +316,12 @@ public class PhoneResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(PhoneDTO.class);
         PhoneDTO phoneDTO1 = new PhoneDTO();
-        phoneDTO1.setId(1L);
+        phoneDTO1.setId(TestConstants.UUID_1);
         PhoneDTO phoneDTO2 = new PhoneDTO();
         assertThat(phoneDTO1).isNotEqualTo(phoneDTO2);
         phoneDTO2.setId(phoneDTO1.getId());
         assertThat(phoneDTO1).isEqualTo(phoneDTO2);
-        phoneDTO2.setId(2L);
+        phoneDTO2.setId(TestConstants.UUID_2);
         assertThat(phoneDTO1).isNotEqualTo(phoneDTO2);
         phoneDTO1.setId(null);
         assertThat(phoneDTO1).isNotEqualTo(phoneDTO2);
@@ -329,7 +330,7 @@ public class PhoneResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(phoneMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(phoneMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(phoneMapper.fromId(null)).isNull();
     }
 }

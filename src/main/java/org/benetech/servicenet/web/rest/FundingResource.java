@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Funding.
@@ -102,7 +103,7 @@ public class FundingResource {
      */
     @GetMapping("/fundings/{id}")
     @Timed
-    public ResponseEntity<FundingDTO> getFunding(@PathVariable Long id) {
+    public ResponseEntity<FundingDTO> getFunding(@PathVariable UUID id) {
         log.debug("REST request to get Funding : {}", id);
         Optional<FundingDTO> fundingDTO = fundingService.findOne(id);
         return ResponseUtil.wrapOrNotFound(fundingDTO);
@@ -116,7 +117,7 @@ public class FundingResource {
      */
     @DeleteMapping("/fundings/{id}")
     @Timed
-    public ResponseEntity<Void> deleteFunding(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFunding(@PathVariable UUID id) {
         log.debug("REST request to delete Funding : {}", id);
         fundingService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

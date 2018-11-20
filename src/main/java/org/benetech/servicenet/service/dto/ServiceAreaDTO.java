@@ -3,26 +3,27 @@ package org.benetech.servicenet.service.dto;
 import javax.persistence.Lob;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the ServiceArea entity.
  */
 public class ServiceAreaDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @Lob
     private String description;
 
-    private Long srvcId;
+    private UUID srvcId;
 
     private String srvcName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -34,11 +35,11 @@ public class ServiceAreaDTO implements Serializable {
         this.description = description;
     }
 
-    public Long getSrvcId() {
+    public UUID getSrvcId() {
         return srvcId;
     }
 
-    public void setSrvcId(Long serviceId) {
+    public void setSrvcId(UUID serviceId) {
         this.srvcId = serviceId;
     }
 

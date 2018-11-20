@@ -4,13 +4,14 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the Phone entity.
  */
 public class PhoneDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String number;
@@ -24,29 +25,29 @@ public class PhoneDTO implements Serializable {
     @Lob
     private String description;
 
-    private Long locationId;
+    private UUID locationId;
 
     private String locationName;
 
-    private Long srvcId;
+    private UUID srvcId;
 
     private String srvcName;
 
-    private Long organizationId;
+    private UUID organizationId;
 
     private String organizationName;
 
-    private Long contactId;
+    private UUID contactId;
 
     private String contactName;
 
-    private Long serviceAtLocationId;
+    private UUID serviceAtLocationId;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -90,11 +91,11 @@ public class PhoneDTO implements Serializable {
         this.description = description;
     }
 
-    public Long getLocationId() {
+    public UUID getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Long locationId) {
+    public void setLocationId(UUID locationId) {
         this.locationId = locationId;
     }
 
@@ -106,11 +107,11 @@ public class PhoneDTO implements Serializable {
         this.locationName = locationName;
     }
 
-    public Long getSrvcId() {
+    public UUID getSrvcId() {
         return srvcId;
     }
 
-    public void setSrvcId(Long serviceId) {
+    public void setSrvcId(UUID serviceId) {
         this.srvcId = serviceId;
     }
 
@@ -122,11 +123,11 @@ public class PhoneDTO implements Serializable {
         this.srvcName = serviceName;
     }
 
-    public Long getOrganizationId() {
+    public UUID getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(UUID organizationId) {
         this.organizationId = organizationId;
     }
 
@@ -138,11 +139,11 @@ public class PhoneDTO implements Serializable {
         this.organizationName = organizationName;
     }
 
-    public Long getContactId() {
+    public UUID getContactId() {
         return contactId;
     }
 
-    public void setContactId(Long contactId) {
+    public void setContactId(UUID contactId) {
         this.contactId = contactId;
     }
 
@@ -154,11 +155,11 @@ public class PhoneDTO implements Serializable {
         this.contactName = contactName;
     }
 
-    public Long getServiceAtLocationId() {
+    public UUID getServiceAtLocationId() {
         return serviceAtLocationId;
     }
 
-    public void setServiceAtLocationId(Long serviceAtLocationId) {
+    public void setServiceAtLocationId(UUID serviceAtLocationId) {
         this.serviceAtLocationId = serviceAtLocationId;
     }
 

@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity RequiredDocument and its DTO RequiredDocumentDTO.
  */
@@ -18,7 +20,7 @@ public interface RequiredDocumentMapper extends EntityMapper<RequiredDocumentDTO
     @Mapping(source = "srvcId", target = "srvc")
     RequiredDocument toEntity(RequiredDocumentDTO requiredDocumentDTO);
 
-    default RequiredDocument fromId(Long id) {
+    default RequiredDocument fromId(UUID id) {
         if (id == null) {
             return null;
         }

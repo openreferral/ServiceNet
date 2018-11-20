@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.LocationDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity Location and its DTO LocationDTO.
  */
@@ -19,7 +21,7 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
     @Mapping(target = "accessibilities", ignore = true)
     Location toEntity(LocationDTO locationDTO);
 
-    default Location fromId(Long id) {
+    default Location fromId(UUID id) {
         if (id == null) {
             return null;
         }

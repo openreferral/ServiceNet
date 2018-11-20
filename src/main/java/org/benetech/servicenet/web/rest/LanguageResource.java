@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Language.
@@ -104,7 +105,7 @@ public class LanguageResource {
      */
     @GetMapping("/languages/{id}")
     @Timed
-    public ResponseEntity<LanguageDTO> getLanguage(@PathVariable Long id) {
+    public ResponseEntity<LanguageDTO> getLanguage(@PathVariable UUID id) {
         log.debug("REST request to get Language : {}", id);
         Optional<LanguageDTO> languageDTO = languageService.findOne(id);
         return ResponseUtil.wrapOrNotFound(languageDTO);
@@ -118,7 +119,7 @@ public class LanguageResource {
      */
     @DeleteMapping("/languages/{id}")
     @Timed
-    public ResponseEntity<Void> deleteLanguage(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLanguage(@PathVariable UUID id) {
         log.debug("REST request to delete Language : {}", id);
         languageService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

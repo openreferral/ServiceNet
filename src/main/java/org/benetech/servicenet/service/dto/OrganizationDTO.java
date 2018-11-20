@@ -7,13 +7,14 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the Organization entity.
  */
 public class OrganizationDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String name;
@@ -41,25 +42,25 @@ public class OrganizationDTO implements Serializable {
 
     private ZonedDateTime updatedAt;
 
-    private Long locationId;
+    private UUID locationId;
 
     private String locationName;
 
-    private Long replacedById;
+    private UUID replacedById;
 
-    private Long sourceDocumentId;
+    private UUID sourceDocumentId;
 
     private String sourceDocumentDateUploaded;
 
-    private Long accountId;
+    private UUID accountId;
 
     private String accountName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -151,11 +152,11 @@ public class OrganizationDTO implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Long getLocationId() {
+    public UUID getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Long locationId) {
+    public void setLocationId(UUID locationId) {
         this.locationId = locationId;
     }
 
@@ -167,19 +168,19 @@ public class OrganizationDTO implements Serializable {
         this.locationName = locationName;
     }
 
-    public Long getReplacedById() {
+    public UUID getReplacedById() {
         return replacedById;
     }
 
-    public void setReplacedById(Long organizationId) {
+    public void setReplacedById(UUID organizationId) {
         this.replacedById = organizationId;
     }
 
-    public Long getSourceDocumentId() {
+    public UUID getSourceDocumentId() {
         return sourceDocumentId;
     }
 
-    public void setSourceDocumentId(Long documentUploadId) {
+    public void setSourceDocumentId(UUID documentUploadId) {
         this.sourceDocumentId = documentUploadId;
     }
 
@@ -191,11 +192,11 @@ public class OrganizationDTO implements Serializable {
         this.sourceDocumentDateUploaded = documentUploadDateUploaded;
     }
 
-    public Long getAccountId() {
+    public UUID getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Long systemAccountId) {
+    public void setAccountId(UUID systemAccountId) {
         this.accountId = systemAccountId;
     }
 

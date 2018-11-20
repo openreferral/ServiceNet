@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.service.FundingService;
@@ -125,7 +126,7 @@ public class FundingResourceIntTest {
         int databaseSizeBeforeCreate = fundingRepository.findAll().size();
 
         // Create the Funding with an existing ID
-        funding.setId(1L);
+        funding.setId(TestConstants.UUID_1);
         FundingDTO fundingDTO = fundingMapper.toDto(funding);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -168,7 +169,7 @@ public class FundingResourceIntTest {
         restFundingMockMvc.perform(get("/api/fundings?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(funding.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(funding.getId().toString())))
             .andExpect(jsonPath("$.[*].source").value(hasItem(DEFAULT_SOURCE.toString())));
     }
 
@@ -182,7 +183,7 @@ public class FundingResourceIntTest {
         restFundingMockMvc.perform(get("/api/fundings/{id}", funding.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(funding.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(funding.getId().toString()))
             .andExpect(jsonPath("$.source").value(DEFAULT_SOURCE.toString()));
     }
 
@@ -190,7 +191,7 @@ public class FundingResourceIntTest {
     @Transactional
     public void getNonExistingFunding() throws Exception {
         // Get the funding
-        restFundingMockMvc.perform(get("/api/fundings/{id}", Long.MAX_VALUE))
+        restFundingMockMvc.perform(get("/api/fundings/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -264,11 +265,11 @@ public class FundingResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Funding.class);
         Funding funding1 = new Funding();
-        funding1.setId(1L);
+        funding1.setId(TestConstants.UUID_1);
         Funding funding2 = new Funding();
         funding2.setId(funding1.getId());
         assertThat(funding1).isEqualTo(funding2);
-        funding2.setId(2L);
+        funding2.setId(TestConstants.UUID_2);
         assertThat(funding1).isNotEqualTo(funding2);
         funding1.setId(null);
         assertThat(funding1).isNotEqualTo(funding2);
@@ -279,12 +280,12 @@ public class FundingResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(FundingDTO.class);
         FundingDTO fundingDTO1 = new FundingDTO();
-        fundingDTO1.setId(1L);
+        fundingDTO1.setId(TestConstants.UUID_1);
         FundingDTO fundingDTO2 = new FundingDTO();
         assertThat(fundingDTO1).isNotEqualTo(fundingDTO2);
         fundingDTO2.setId(fundingDTO1.getId());
         assertThat(fundingDTO1).isEqualTo(fundingDTO2);
-        fundingDTO2.setId(2L);
+        fundingDTO2.setId(TestConstants.UUID_2);
         assertThat(fundingDTO1).isNotEqualTo(fundingDTO2);
         fundingDTO1.setId(null);
         assertThat(fundingDTO1).isNotEqualTo(fundingDTO2);
@@ -293,7 +294,7 @@ public class FundingResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(fundingMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(fundingMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(fundingMapper.fromId(null)).isNull();
     }
 }

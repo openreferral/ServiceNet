@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
 import org.benetech.servicenet.service.PhysicalAddressService;
@@ -155,7 +156,7 @@ public class PhysicalAddressResourceIntTest {
         int databaseSizeBeforeCreate = physicalAddressRepository.findAll().size();
 
         // Create the PhysicalAddress with an existing ID
-        physicalAddress.setId(1L);
+        physicalAddress.setId(TestConstants.UUID_1);
         PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -274,7 +275,7 @@ public class PhysicalAddressResourceIntTest {
         restPhysicalAddressMockMvc.perform(get("/api/physical-addresses?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(physicalAddress.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(physicalAddress.getId().toString())))
             .andExpect(jsonPath("$.[*].attention").value(hasItem(DEFAULT_ATTENTION.toString())))
             .andExpect(jsonPath("$.[*].address1").value(hasItem(DEFAULT_ADDRESS_1.toString())))
             .andExpect(jsonPath("$.[*].city").value(hasItem(DEFAULT_CITY.toString())))
@@ -294,7 +295,7 @@ public class PhysicalAddressResourceIntTest {
         restPhysicalAddressMockMvc.perform(get("/api/physical-addresses/{id}", physicalAddress.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(physicalAddress.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(physicalAddress.getId().toString()))
             .andExpect(jsonPath("$.attention").value(DEFAULT_ATTENTION.toString()))
             .andExpect(jsonPath("$.address1").value(DEFAULT_ADDRESS_1.toString()))
             .andExpect(jsonPath("$.city").value(DEFAULT_CITY.toString()))
@@ -308,7 +309,7 @@ public class PhysicalAddressResourceIntTest {
     @Transactional
     public void getNonExistingPhysicalAddress() throws Exception {
         // Get the physicalAddress
-        restPhysicalAddressMockMvc.perform(get("/api/physical-addresses/{id}", Long.MAX_VALUE))
+        restPhysicalAddressMockMvc.perform(get("/api/physical-addresses/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -394,11 +395,11 @@ public class PhysicalAddressResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(PhysicalAddress.class);
         PhysicalAddress physicalAddress1 = new PhysicalAddress();
-        physicalAddress1.setId(1L);
+        physicalAddress1.setId(TestConstants.UUID_1);
         PhysicalAddress physicalAddress2 = new PhysicalAddress();
         physicalAddress2.setId(physicalAddress1.getId());
         assertThat(physicalAddress1).isEqualTo(physicalAddress2);
-        physicalAddress2.setId(2L);
+        physicalAddress2.setId(TestConstants.UUID_2);
         assertThat(physicalAddress1).isNotEqualTo(physicalAddress2);
         physicalAddress1.setId(null);
         assertThat(physicalAddress1).isNotEqualTo(physicalAddress2);
@@ -409,12 +410,12 @@ public class PhysicalAddressResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(PhysicalAddressDTO.class);
         PhysicalAddressDTO physicalAddressDTO1 = new PhysicalAddressDTO();
-        physicalAddressDTO1.setId(1L);
+        physicalAddressDTO1.setId(TestConstants.UUID_1);
         PhysicalAddressDTO physicalAddressDTO2 = new PhysicalAddressDTO();
         assertThat(physicalAddressDTO1).isNotEqualTo(physicalAddressDTO2);
         physicalAddressDTO2.setId(physicalAddressDTO1.getId());
         assertThat(physicalAddressDTO1).isEqualTo(physicalAddressDTO2);
-        physicalAddressDTO2.setId(2L);
+        physicalAddressDTO2.setId(TestConstants.UUID_2);
         assertThat(physicalAddressDTO1).isNotEqualTo(physicalAddressDTO2);
         physicalAddressDTO1.setId(null);
         assertThat(physicalAddressDTO1).isNotEqualTo(physicalAddressDTO2);
@@ -423,7 +424,7 @@ public class PhysicalAddressResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(physicalAddressMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(physicalAddressMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(physicalAddressMapper.fromId(null)).isNull();
     }
 }

@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.ProgramDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing Program.
@@ -32,12 +33,12 @@ public interface ProgramService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<ProgramDTO> findOne(Long id);
+    Optional<ProgramDTO> findOne(UUID id);
 
     /**
      * Delete the "id" program.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

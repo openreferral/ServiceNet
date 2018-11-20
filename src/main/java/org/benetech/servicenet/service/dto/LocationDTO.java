@@ -4,13 +4,14 @@ import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the Location entity.
  */
 public class LocationDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String name;
@@ -26,11 +27,11 @@ public class LocationDTO implements Serializable {
 
     private Double longitude;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -112,7 +113,7 @@ public class LocationDTO implements Serializable {
             ", description='" + getDescription() + "'" +
             ", transportation='" + getTransportation() + "'" +
             ", latitude=" + getLatitude() +
-            ", longitude=" + getLongitude() +
+            ", Longitude=" + getLongitude() +
             "}";
     }
 }

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.ServiceArea;
 import org.benetech.servicenet.repository.ServiceAreaRepository;
 import org.benetech.servicenet.service.ServiceAreaService;
@@ -125,7 +126,7 @@ public class ServiceAreaResourceIntTest {
         int databaseSizeBeforeCreate = serviceAreaRepository.findAll().size();
 
         // Create the ServiceArea with an existing ID
-        serviceArea.setId(1L);
+        serviceArea.setId(TestConstants.UUID_1);
         ServiceAreaDTO serviceAreaDTO = serviceAreaMapper.toDto(serviceArea);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -149,7 +150,7 @@ public class ServiceAreaResourceIntTest {
         restServiceAreaMockMvc.perform(get("/api/service-areas?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(serviceArea.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(serviceArea.getId().toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
     }
 
@@ -163,7 +164,7 @@ public class ServiceAreaResourceIntTest {
         restServiceAreaMockMvc.perform(get("/api/service-areas/{id}", serviceArea.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(serviceArea.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(serviceArea.getId().toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
     }
 
@@ -171,7 +172,7 @@ public class ServiceAreaResourceIntTest {
     @Transactional
     public void getNonExistingServiceArea() throws Exception {
         // Get the serviceArea
-        restServiceAreaMockMvc.perform(get("/api/service-areas/{id}", Long.MAX_VALUE))
+        restServiceAreaMockMvc.perform(get("/api/service-areas/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -245,11 +246,11 @@ public class ServiceAreaResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(ServiceArea.class);
         ServiceArea serviceArea1 = new ServiceArea();
-        serviceArea1.setId(1L);
+        serviceArea1.setId(TestConstants.UUID_1);
         ServiceArea serviceArea2 = new ServiceArea();
         serviceArea2.setId(serviceArea1.getId());
         assertThat(serviceArea1).isEqualTo(serviceArea2);
-        serviceArea2.setId(2L);
+        serviceArea2.setId(TestConstants.UUID_2);
         assertThat(serviceArea1).isNotEqualTo(serviceArea2);
         serviceArea1.setId(null);
         assertThat(serviceArea1).isNotEqualTo(serviceArea2);
@@ -260,12 +261,12 @@ public class ServiceAreaResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(ServiceAreaDTO.class);
         ServiceAreaDTO serviceAreaDTO1 = new ServiceAreaDTO();
-        serviceAreaDTO1.setId(1L);
+        serviceAreaDTO1.setId(TestConstants.UUID_1);
         ServiceAreaDTO serviceAreaDTO2 = new ServiceAreaDTO();
         assertThat(serviceAreaDTO1).isNotEqualTo(serviceAreaDTO2);
         serviceAreaDTO2.setId(serviceAreaDTO1.getId());
         assertThat(serviceAreaDTO1).isEqualTo(serviceAreaDTO2);
-        serviceAreaDTO2.setId(2L);
+        serviceAreaDTO2.setId(TestConstants.UUID_2);
         assertThat(serviceAreaDTO1).isNotEqualTo(serviceAreaDTO2);
         serviceAreaDTO1.setId(null);
         assertThat(serviceAreaDTO1).isNotEqualTo(serviceAreaDTO2);
@@ -274,7 +275,7 @@ public class ServiceAreaResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(serviceAreaMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(serviceAreaMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(serviceAreaMapper.fromId(null)).isNull();
     }
 }

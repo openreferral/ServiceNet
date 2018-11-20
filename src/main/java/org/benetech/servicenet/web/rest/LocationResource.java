@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Location.
@@ -122,7 +123,7 @@ public class LocationResource {
      */
     @GetMapping("/locations/{id}")
     @Timed
-    public ResponseEntity<LocationDTO> getLocation(@PathVariable Long id) {
+    public ResponseEntity<LocationDTO> getLocation(@PathVariable UUID id) {
         log.debug("REST request to get Location : {}", id);
         Optional<LocationDTO> locationDTO = locationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(locationDTO);
@@ -136,7 +137,7 @@ public class LocationResource {
      */
     @DeleteMapping("/locations/{id}")
     @Timed
-    public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLocation(@PathVariable UUID id) {
         log.debug("REST request to delete Location : {}", id);
         locationService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

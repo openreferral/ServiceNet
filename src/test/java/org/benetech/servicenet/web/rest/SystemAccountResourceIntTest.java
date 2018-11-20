@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.SystemAccountService;
@@ -125,7 +126,7 @@ public class SystemAccountResourceIntTest {
         int databaseSizeBeforeCreate = systemAccountRepository.findAll().size();
 
         // Create the SystemAccount with an existing ID
-        systemAccount.setId(1L);
+        systemAccount.setId(TestConstants.UUID_1);
         SystemAccountDTO systemAccountDTO = systemAccountMapper.toDto(systemAccount);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -168,7 +169,7 @@ public class SystemAccountResourceIntTest {
         restSystemAccountMockMvc.perform(get("/api/system-accounts?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(systemAccount.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(systemAccount.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
     }
 
@@ -182,7 +183,7 @@ public class SystemAccountResourceIntTest {
         restSystemAccountMockMvc.perform(get("/api/system-accounts/{id}", systemAccount.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(systemAccount.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(systemAccount.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
     }
 
@@ -190,7 +191,7 @@ public class SystemAccountResourceIntTest {
     @Transactional
     public void getNonExistingSystemAccount() throws Exception {
         // Get the systemAccount
-        restSystemAccountMockMvc.perform(get("/api/system-accounts/{id}", Long.MAX_VALUE))
+        restSystemAccountMockMvc.perform(get("/api/system-accounts/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -264,11 +265,11 @@ public class SystemAccountResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(SystemAccount.class);
         SystemAccount systemAccount1 = new SystemAccount();
-        systemAccount1.setId(1L);
+        systemAccount1.setId(TestConstants.UUID_1);
         SystemAccount systemAccount2 = new SystemAccount();
         systemAccount2.setId(systemAccount1.getId());
         assertThat(systemAccount1).isEqualTo(systemAccount2);
-        systemAccount2.setId(2L);
+        systemAccount2.setId(TestConstants.UUID_2);
         assertThat(systemAccount1).isNotEqualTo(systemAccount2);
         systemAccount1.setId(null);
         assertThat(systemAccount1).isNotEqualTo(systemAccount2);
@@ -279,12 +280,12 @@ public class SystemAccountResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(SystemAccountDTO.class);
         SystemAccountDTO systemAccountDTO1 = new SystemAccountDTO();
-        systemAccountDTO1.setId(1L);
+        systemAccountDTO1.setId(TestConstants.UUID_1);
         SystemAccountDTO systemAccountDTO2 = new SystemAccountDTO();
         assertThat(systemAccountDTO1).isNotEqualTo(systemAccountDTO2);
         systemAccountDTO2.setId(systemAccountDTO1.getId());
         assertThat(systemAccountDTO1).isEqualTo(systemAccountDTO2);
-        systemAccountDTO2.setId(2L);
+        systemAccountDTO2.setId(TestConstants.UUID_2);
         assertThat(systemAccountDTO1).isNotEqualTo(systemAccountDTO2);
         systemAccountDTO1.setId(null);
         assertThat(systemAccountDTO1).isNotEqualTo(systemAccountDTO2);
@@ -293,7 +294,7 @@ public class SystemAccountResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(systemAccountMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(systemAccountMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(systemAccountMapper.fromId(null)).isNull();
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,7 @@ public class ProgramServiceImpl implements ProgramService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<ProgramDTO> findOne(Long id) {
+    public Optional<ProgramDTO> findOne(UUID id) {
         log.debug("Request to get Program : {}", id);
         return programRepository.findById(id)
             .map(programMapper::toDto);
@@ -83,7 +84,7 @@ public class ProgramServiceImpl implements ProgramService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Program : {}", id);
         programRepository.deleteById(id);
     }

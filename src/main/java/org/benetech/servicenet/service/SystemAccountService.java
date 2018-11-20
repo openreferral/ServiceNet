@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.SystemAccountDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing SystemAccount.
@@ -32,12 +33,12 @@ public interface SystemAccountService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<SystemAccountDTO> findOne(Long id);
+    Optional<SystemAccountDTO> findOne(UUID id);
 
     /**
      * Delete the "id" systemAccount.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

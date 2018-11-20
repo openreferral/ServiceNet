@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.FundingDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity Funding and its DTO FundingDTO.
  */
@@ -21,7 +23,7 @@ public interface FundingMapper extends EntityMapper<FundingDTO, Funding> {
     @Mapping(source = "srvcId", target = "srvc")
     Funding toEntity(FundingDTO fundingDTO);
 
-    default Funding fromId(Long id) {
+    default Funding fromId(UUID id) {
         if (id == null) {
             return null;
         }

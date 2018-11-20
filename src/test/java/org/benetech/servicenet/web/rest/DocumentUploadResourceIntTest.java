@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
@@ -142,7 +143,7 @@ public class DocumentUploadResourceIntTest {
         int databaseSizeBeforeCreate = documentUploadRepository.findAll().size();
 
         // Create the DocumentUpload with an existing ID
-        documentUpload.setId(1L);
+        documentUpload.setId(TestConstants.UUID_1);
         DocumentUploadDTO documentUploadDTO = documentUploadMapper.toDto(documentUpload);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -204,7 +205,7 @@ public class DocumentUploadResourceIntTest {
         restDocumentUploadMockMvc.perform(get("/api/document-uploads?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(documentUpload.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(documentUpload.getId().toString())))
             .andExpect(jsonPath("$.[*].dateUploaded").value(hasItem(sameInstant(DEFAULT_DATE_UPLOADED))))
             .andExpect(jsonPath("$.[*].documentId").value(hasItem(DEFAULT_DOCUMENT_ID.toString())));
     }
@@ -219,7 +220,7 @@ public class DocumentUploadResourceIntTest {
         restDocumentUploadMockMvc.perform(get("/api/document-uploads/{id}", documentUpload.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(documentUpload.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(documentUpload.getId().toString()))
             .andExpect(jsonPath("$.dateUploaded").value(sameInstant(DEFAULT_DATE_UPLOADED)))
             .andExpect(jsonPath("$.documentId").value(DEFAULT_DOCUMENT_ID.toString()));
     }
@@ -228,7 +229,7 @@ public class DocumentUploadResourceIntTest {
     @Transactional
     public void getNonExistingDocumentUpload() throws Exception {
         // Get the documentUpload
-        restDocumentUploadMockMvc.perform(get("/api/document-uploads/{id}", Long.MAX_VALUE))
+        restDocumentUploadMockMvc.perform(get("/api/document-uploads/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -304,11 +305,11 @@ public class DocumentUploadResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(DocumentUpload.class);
         DocumentUpload documentUpload1 = new DocumentUpload();
-        documentUpload1.setId(1L);
+        documentUpload1.setId(TestConstants.UUID_1);
         DocumentUpload documentUpload2 = new DocumentUpload();
         documentUpload2.setId(documentUpload1.getId());
         assertThat(documentUpload1).isEqualTo(documentUpload2);
-        documentUpload2.setId(2L);
+        documentUpload2.setId(TestConstants.UUID_2);
         assertThat(documentUpload1).isNotEqualTo(documentUpload2);
         documentUpload1.setId(null);
         assertThat(documentUpload1).isNotEqualTo(documentUpload2);
@@ -319,12 +320,12 @@ public class DocumentUploadResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(DocumentUploadDTO.class);
         DocumentUploadDTO documentUploadDTO1 = new DocumentUploadDTO();
-        documentUploadDTO1.setId(1L);
+        documentUploadDTO1.setId(TestConstants.UUID_1);
         DocumentUploadDTO documentUploadDTO2 = new DocumentUploadDTO();
         assertThat(documentUploadDTO1).isNotEqualTo(documentUploadDTO2);
         documentUploadDTO2.setId(documentUploadDTO1.getId());
         assertThat(documentUploadDTO1).isEqualTo(documentUploadDTO2);
-        documentUploadDTO2.setId(2L);
+        documentUploadDTO2.setId(TestConstants.UUID_2);
         assertThat(documentUploadDTO1).isNotEqualTo(documentUploadDTO2);
         documentUploadDTO1.setId(null);
         assertThat(documentUploadDTO1).isNotEqualTo(documentUploadDTO2);
@@ -333,7 +334,7 @@ public class DocumentUploadResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(documentUploadMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(documentUploadMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(documentUploadMapper.fromId(null)).isNull();
     }
 }

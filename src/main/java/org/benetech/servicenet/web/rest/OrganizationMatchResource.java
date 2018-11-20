@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing OrganizationMatch.
@@ -103,7 +104,7 @@ public class OrganizationMatchResource {
      */
     @GetMapping("/organization-matches/{id}")
     @Timed
-    public ResponseEntity<OrganizationMatchDTO> getOrganizationMatch(@PathVariable Long id) {
+    public ResponseEntity<OrganizationMatchDTO> getOrganizationMatch(@PathVariable UUID id) {
         log.debug("REST request to get OrganizationMatch : {}", id);
         Optional<OrganizationMatchDTO> organizationMatchDTO = organizationMatchService.findOne(id);
         return ResponseUtil.wrapOrNotFound(organizationMatchDTO);
@@ -117,7 +118,7 @@ public class OrganizationMatchResource {
      */
     @DeleteMapping("/organization-matches/{id}")
     @Timed
-    public ResponseEntity<Void> deleteOrganizationMatch(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOrganizationMatch(@PathVariable UUID id) {
         log.debug("REST request to delete OrganizationMatch : {}", id);
         organizationMatchService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

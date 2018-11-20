@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,7 @@ public class PhoneServiceImpl implements PhoneService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<PhoneDTO> findOne(Long id) {
+    public Optional<PhoneDTO> findOne(UUID id) {
         log.debug("Request to get Phone : {}", id);
         return phoneRepository.findById(id)
             .map(phoneMapper::toDto);
@@ -83,7 +84,7 @@ public class PhoneServiceImpl implements PhoneService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Phone : {}", id);
         phoneRepository.deleteById(id);
     }

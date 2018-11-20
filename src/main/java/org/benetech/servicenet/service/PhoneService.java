@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.PhoneDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing Phone.
@@ -32,12 +33,12 @@ public interface PhoneService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<PhoneDTO> findOne(Long id);
+    Optional<PhoneDTO> findOne(UUID id);
 
     /**
      * Delete the "id" phone.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

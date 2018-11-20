@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,7 @@ public class FundingServiceImpl implements FundingService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<FundingDTO> findOne(Long id) {
+    public Optional<FundingDTO> findOne(UUID id) {
         log.debug("Request to get Funding : {}", id);
         return fundingRepository.findById(id)
             .map(fundingMapper::toDto);
@@ -83,7 +84,7 @@ public class FundingServiceImpl implements FundingService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Funding : {}", id);
         fundingRepository.deleteById(id);
     }

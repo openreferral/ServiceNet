@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.repository.PostalAddressRepository;
 import org.benetech.servicenet.service.PostalAddressService;
@@ -155,7 +156,7 @@ public class PostalAddressResourceIntTest {
         int databaseSizeBeforeCreate = postalAddressRepository.findAll().size();
 
         // Create the PostalAddress with an existing ID
-        postalAddress.setId(1L);
+        postalAddress.setId(TestConstants.UUID_1);
         PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -274,7 +275,7 @@ public class PostalAddressResourceIntTest {
         restPostalAddressMockMvc.perform(get("/api/postal-addresses?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(postalAddress.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(postalAddress.getId().toString())))
             .andExpect(jsonPath("$.[*].attention").value(hasItem(DEFAULT_ATTENTION.toString())))
             .andExpect(jsonPath("$.[*].address1").value(hasItem(DEFAULT_ADDRESS_1.toString())))
             .andExpect(jsonPath("$.[*].city").value(hasItem(DEFAULT_CITY.toString())))
@@ -294,7 +295,7 @@ public class PostalAddressResourceIntTest {
         restPostalAddressMockMvc.perform(get("/api/postal-addresses/{id}", postalAddress.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(postalAddress.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(postalAddress.getId().toString()))
             .andExpect(jsonPath("$.attention").value(DEFAULT_ATTENTION.toString()))
             .andExpect(jsonPath("$.address1").value(DEFAULT_ADDRESS_1.toString()))
             .andExpect(jsonPath("$.city").value(DEFAULT_CITY.toString()))
@@ -308,7 +309,7 @@ public class PostalAddressResourceIntTest {
     @Transactional
     public void getNonExistingPostalAddress() throws Exception {
         // Get the postalAddress
-        restPostalAddressMockMvc.perform(get("/api/postal-addresses/{id}", Long.MAX_VALUE))
+        restPostalAddressMockMvc.perform(get("/api/postal-addresses/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -394,11 +395,11 @@ public class PostalAddressResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(PostalAddress.class);
         PostalAddress postalAddress1 = new PostalAddress();
-        postalAddress1.setId(1L);
+        postalAddress1.setId(TestConstants.UUID_1);
         PostalAddress postalAddress2 = new PostalAddress();
         postalAddress2.setId(postalAddress1.getId());
         assertThat(postalAddress1).isEqualTo(postalAddress2);
-        postalAddress2.setId(2L);
+        postalAddress2.setId(TestConstants.UUID_2);
         assertThat(postalAddress1).isNotEqualTo(postalAddress2);
         postalAddress1.setId(null);
         assertThat(postalAddress1).isNotEqualTo(postalAddress2);
@@ -409,12 +410,12 @@ public class PostalAddressResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(PostalAddressDTO.class);
         PostalAddressDTO postalAddressDTO1 = new PostalAddressDTO();
-        postalAddressDTO1.setId(1L);
+        postalAddressDTO1.setId(TestConstants.UUID_1);
         PostalAddressDTO postalAddressDTO2 = new PostalAddressDTO();
         assertThat(postalAddressDTO1).isNotEqualTo(postalAddressDTO2);
         postalAddressDTO2.setId(postalAddressDTO1.getId());
         assertThat(postalAddressDTO1).isEqualTo(postalAddressDTO2);
-        postalAddressDTO2.setId(2L);
+        postalAddressDTO2.setId(TestConstants.UUID_2);
         assertThat(postalAddressDTO1).isNotEqualTo(postalAddressDTO2);
         postalAddressDTO1.setId(null);
         assertThat(postalAddressDTO1).isNotEqualTo(postalAddressDTO2);
@@ -423,7 +424,7 @@ public class PostalAddressResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(postalAddressMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(postalAddressMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(postalAddressMapper.fromId(null)).isNull();
     }
 }

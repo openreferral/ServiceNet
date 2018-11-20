@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -135,7 +136,7 @@ public class LocationServiceImpl implements LocationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<LocationDTO> findOne(Long id) {
+    public Optional<LocationDTO> findOne(UUID id) {
         log.debug("Request to get Location : {}", id);
         return locationRepository.findById(id)
             .map(locationMapper::toDto);
@@ -147,7 +148,7 @@ public class LocationServiceImpl implements LocationService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Location : {}", id);
         locationRepository.deleteById(id);
     }

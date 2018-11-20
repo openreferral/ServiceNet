@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,7 @@ public class ServiceAreaServiceImpl implements ServiceAreaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<ServiceAreaDTO> findOne(Long id) {
+    public Optional<ServiceAreaDTO> findOne(UUID id) {
         log.debug("Request to get ServiceArea : {}", id);
         return serviceAreaRepository.findById(id)
             .map(serviceAreaMapper::toDto);
@@ -83,7 +84,7 @@ public class ServiceAreaServiceImpl implements ServiceAreaService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete ServiceArea : {}", id);
         serviceAreaRepository.deleteById(id);
     }

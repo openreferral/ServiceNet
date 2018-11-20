@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.PostalAddressDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity PostalAddress and its DTO PostalAddressDTO.
  */
@@ -18,7 +20,7 @@ public interface PostalAddressMapper extends EntityMapper<PostalAddressDTO, Post
     @Mapping(source = "locationId", target = "location")
     PostalAddress toEntity(PostalAddressDTO postalAddressDTO);
 
-    default PostalAddress fromId(Long id) {
+    default PostalAddress fromId(UUID id) {
         if (id == null) {
             return null;
         }

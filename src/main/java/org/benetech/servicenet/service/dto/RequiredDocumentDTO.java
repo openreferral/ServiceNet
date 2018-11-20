@@ -3,26 +3,27 @@ package org.benetech.servicenet.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the RequiredDocument entity.
  */
 public class RequiredDocumentDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String document;
 
-    private Long srvcId;
+    private UUID srvcId;
 
     private String srvcName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -34,11 +35,11 @@ public class RequiredDocumentDTO implements Serializable {
         this.document = document;
     }
 
-    public Long getSrvcId() {
+    public UUID getSrvcId() {
         return srvcId;
     }
 
-    public void setSrvcId(Long serviceId) {
+    public void setSrvcId(UUID serviceId) {
         this.srvcId = serviceId;
     }
 

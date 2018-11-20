@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.OrganizationService;
@@ -80,7 +81,8 @@ public class OrganizationResourceIntTest {
     private static final Boolean DEFAULT_ACTIVE = false;
     private static final Boolean UPDATED_ACTIVE = true;
 
-    private static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
+        ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
@@ -181,7 +183,7 @@ public class OrganizationResourceIntTest {
         int databaseSizeBeforeCreate = organizationRepository.findAll().size();
 
         // Create the Organization with an existing ID
-        organization.setId(1L);
+        organization.setId(TestConstants.UUID_1);
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -243,7 +245,7 @@ public class OrganizationResourceIntTest {
         restOrganizationMockMvc.perform(get("/api/organizations?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(organization.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(organization.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].alternateName").value(hasItem(DEFAULT_ALTERNATE_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
@@ -267,7 +269,7 @@ public class OrganizationResourceIntTest {
         restOrganizationMockMvc.perform(get("/api/organizations/{id}", organization.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(organization.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(organization.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.alternateName").value(DEFAULT_ALTERNATE_NAME.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
@@ -285,7 +287,7 @@ public class OrganizationResourceIntTest {
     @Transactional
     public void getNonExistingOrganization() throws Exception {
         // Get the organization
-        restOrganizationMockMvc.perform(get("/api/organizations/{id}", Long.MAX_VALUE))
+        restOrganizationMockMvc.perform(get("/api/organizations/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -379,11 +381,11 @@ public class OrganizationResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Organization.class);
         Organization organization1 = new Organization();
-        organization1.setId(1L);
+        organization1.setId(TestConstants.UUID_1);
         Organization organization2 = new Organization();
         organization2.setId(organization1.getId());
         assertThat(organization1).isEqualTo(organization2);
-        organization2.setId(2L);
+        organization2.setId(TestConstants.UUID_2);
         assertThat(organization1).isNotEqualTo(organization2);
         organization1.setId(null);
         assertThat(organization1).isNotEqualTo(organization2);
@@ -394,12 +396,12 @@ public class OrganizationResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(OrganizationDTO.class);
         OrganizationDTO organizationDTO1 = new OrganizationDTO();
-        organizationDTO1.setId(1L);
+        organizationDTO1.setId(TestConstants.UUID_1);
         OrganizationDTO organizationDTO2 = new OrganizationDTO();
         assertThat(organizationDTO1).isNotEqualTo(organizationDTO2);
         organizationDTO2.setId(organizationDTO1.getId());
         assertThat(organizationDTO1).isEqualTo(organizationDTO2);
-        organizationDTO2.setId(2L);
+        organizationDTO2.setId(TestConstants.UUID_2);
         assertThat(organizationDTO1).isNotEqualTo(organizationDTO2);
         organizationDTO1.setId(null);
         assertThat(organizationDTO1).isNotEqualTo(organizationDTO2);
@@ -408,7 +410,7 @@ public class OrganizationResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(organizationMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(organizationMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(organizationMapper.fromId(null)).isNull();
     }
 }

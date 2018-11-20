@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Program.
@@ -102,7 +103,7 @@ public class ProgramResource {
      */
     @GetMapping("/programs/{id}")
     @Timed
-    public ResponseEntity<ProgramDTO> getProgram(@PathVariable Long id) {
+    public ResponseEntity<ProgramDTO> getProgram(@PathVariable UUID id) {
         log.debug("REST request to get Program : {}", id);
         Optional<ProgramDTO> programDTO = programService.findOne(id);
         return ResponseUtil.wrapOrNotFound(programDTO);
@@ -116,7 +117,7 @@ public class ProgramResource {
      */
     @DeleteMapping("/programs/{id}")
     @Timed
-    public ResponseEntity<Void> deleteProgram(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProgram(@PathVariable UUID id) {
         log.debug("REST request to delete Program : {}", id);
         programService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity Language and its DTO LanguageDTO.
  */
@@ -21,7 +23,7 @@ public interface LanguageMapper extends EntityMapper<LanguageDTO, Language> {
     @Mapping(source = "locationId", target = "location")
     Language toEntity(LanguageDTO languageDTO);
 
-    default Language fromId(Long id) {
+    default Language fromId(UUID id) {
         if (id == null) {
             return null;
         }

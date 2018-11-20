@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.repository.LanguageRepository;
 import org.benetech.servicenet.service.LanguageService;
@@ -125,7 +126,7 @@ public class LanguageResourceIntTest {
         int databaseSizeBeforeCreate = languageRepository.findAll().size();
 
         // Create the Language with an existing ID
-        language.setId(1L);
+        language.setId(TestConstants.UUID_1);
         LanguageDTO languageDTO = languageMapper.toDto(language);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -168,7 +169,7 @@ public class LanguageResourceIntTest {
         restLanguageMockMvc.perform(get("/api/languages?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(language.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(language.getId().toString())))
             .andExpect(jsonPath("$.[*].language").value(hasItem(DEFAULT_LANGUAGE.toString())));
     }
 
@@ -182,7 +183,7 @@ public class LanguageResourceIntTest {
         restLanguageMockMvc.perform(get("/api/languages/{id}", language.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(language.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(language.getId().toString()))
             .andExpect(jsonPath("$.language").value(DEFAULT_LANGUAGE.toString()));
     }
 
@@ -190,7 +191,7 @@ public class LanguageResourceIntTest {
     @Transactional
     public void getNonExistingLanguage() throws Exception {
         // Get the language
-        restLanguageMockMvc.perform(get("/api/languages/{id}", Long.MAX_VALUE))
+        restLanguageMockMvc.perform(get("/api/languages/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -264,11 +265,11 @@ public class LanguageResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Language.class);
         Language language1 = new Language();
-        language1.setId(1L);
+        language1.setId(TestConstants.UUID_1);
         Language language2 = new Language();
         language2.setId(language1.getId());
         assertThat(language1).isEqualTo(language2);
-        language2.setId(2L);
+        language2.setId(TestConstants.UUID_2);
         assertThat(language1).isNotEqualTo(language2);
         language1.setId(null);
         assertThat(language1).isNotEqualTo(language2);
@@ -279,12 +280,12 @@ public class LanguageResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(LanguageDTO.class);
         LanguageDTO languageDTO1 = new LanguageDTO();
-        languageDTO1.setId(1L);
+        languageDTO1.setId(TestConstants.UUID_1);
         LanguageDTO languageDTO2 = new LanguageDTO();
         assertThat(languageDTO1).isNotEqualTo(languageDTO2);
         languageDTO2.setId(languageDTO1.getId());
         assertThat(languageDTO1).isEqualTo(languageDTO2);
-        languageDTO2.setId(2L);
+        languageDTO2.setId(TestConstants.UUID_2);
         assertThat(languageDTO1).isNotEqualTo(languageDTO2);
         languageDTO1.setId(null);
         assertThat(languageDTO1).isNotEqualTo(languageDTO2);
@@ -293,7 +294,7 @@ public class LanguageResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(languageMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(languageMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(languageMapper.fromId(null)).isNull();
     }
 }

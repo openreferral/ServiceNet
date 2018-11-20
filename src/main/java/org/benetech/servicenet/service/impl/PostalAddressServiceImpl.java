@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -72,7 +73,7 @@ public class PostalAddressServiceImpl implements PostalAddressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<PostalAddressDTO> findOne(Long id) {
+    public Optional<PostalAddressDTO> findOne(UUID id) {
         log.debug("Request to get PostalAddress : {}", id);
         return postalAddressRepository.findById(id)
             .map(postalAddressMapper::toDto);
@@ -84,7 +85,7 @@ public class PostalAddressServiceImpl implements PostalAddressService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete PostalAddress : {}", id);
         postalAddressRepository.deleteById(id);
     }

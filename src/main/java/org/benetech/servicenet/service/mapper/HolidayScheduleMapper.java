@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity HolidaySchedule and its DTO HolidayScheduleDTO.
  */
@@ -23,7 +25,7 @@ public interface HolidayScheduleMapper extends EntityMapper<HolidayScheduleDTO, 
     @Mapping(source = "serviceAtlocationId", target = "serviceAtlocation")
     HolidaySchedule toEntity(HolidayScheduleDTO holidayScheduleDTO);
 
-    default HolidaySchedule fromId(Long id) {
+    default HolidaySchedule fromId(UUID id) {
         if (id == null) {
             return null;
         }

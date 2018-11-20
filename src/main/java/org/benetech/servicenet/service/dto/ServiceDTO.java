@@ -5,13 +5,14 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the Service entity.
  */
 public class ServiceDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String name;
@@ -49,19 +50,19 @@ public class ServiceDTO implements Serializable {
 
     private ZonedDateTime updatedAt;
 
-    private Long organizationId;
+    private UUID organizationId;
 
     private String organizationName;
 
-    private Long programId;
+    private UUID programId;
 
     private String programName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -177,11 +178,11 @@ public class ServiceDTO implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Long getOrganizationId() {
+    public UUID getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(UUID organizationId) {
         this.organizationId = organizationId;
     }
 
@@ -193,11 +194,11 @@ public class ServiceDTO implements Serializable {
         this.organizationName = organizationName;
     }
 
-    public Long getProgramId() {
+    public UUID getProgramId() {
         return programId;
     }
 
-    public void setProgramId(Long programId) {
+    public void setProgramId(UUID programId) {
         this.programId = programId;
     }
 

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.repository.ServiceAtLocationRepository;
 import org.benetech.servicenet.service.ServiceAtLocationService;
@@ -125,7 +126,7 @@ public class ServiceAtLocationResourceIntTest {
         int databaseSizeBeforeCreate = serviceAtLocationRepository.findAll().size();
 
         // Create the ServiceAtLocation with an existing ID
-        serviceAtLocation.setId(1L);
+        serviceAtLocation.setId(TestConstants.UUID_1);
         ServiceAtLocationDTO serviceAtLocationDTO = serviceAtLocationMapper.toDto(serviceAtLocation);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -149,7 +150,7 @@ public class ServiceAtLocationResourceIntTest {
         restServiceAtLocationMockMvc.perform(get("/api/service-at-locations?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(serviceAtLocation.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(serviceAtLocation.getId().toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
     }
 
@@ -163,7 +164,7 @@ public class ServiceAtLocationResourceIntTest {
         restServiceAtLocationMockMvc.perform(get("/api/service-at-locations/{id}", serviceAtLocation.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(serviceAtLocation.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(serviceAtLocation.getId().toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
     }
 
@@ -171,7 +172,7 @@ public class ServiceAtLocationResourceIntTest {
     @Transactional
     public void getNonExistingServiceAtLocation() throws Exception {
         // Get the serviceAtLocation
-        restServiceAtLocationMockMvc.perform(get("/api/service-at-locations/{id}", Long.MAX_VALUE))
+        restServiceAtLocationMockMvc.perform(get("/api/service-at-locations/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -245,11 +246,11 @@ public class ServiceAtLocationResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(ServiceAtLocation.class);
         ServiceAtLocation serviceAtLocation1 = new ServiceAtLocation();
-        serviceAtLocation1.setId(1L);
+        serviceAtLocation1.setId(TestConstants.UUID_1);
         ServiceAtLocation serviceAtLocation2 = new ServiceAtLocation();
         serviceAtLocation2.setId(serviceAtLocation1.getId());
         assertThat(serviceAtLocation1).isEqualTo(serviceAtLocation2);
-        serviceAtLocation2.setId(2L);
+        serviceAtLocation2.setId(TestConstants.UUID_2);
         assertThat(serviceAtLocation1).isNotEqualTo(serviceAtLocation2);
         serviceAtLocation1.setId(null);
         assertThat(serviceAtLocation1).isNotEqualTo(serviceAtLocation2);
@@ -260,12 +261,12 @@ public class ServiceAtLocationResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(ServiceAtLocationDTO.class);
         ServiceAtLocationDTO serviceAtLocationDTO1 = new ServiceAtLocationDTO();
-        serviceAtLocationDTO1.setId(1L);
+        serviceAtLocationDTO1.setId(TestConstants.UUID_1);
         ServiceAtLocationDTO serviceAtLocationDTO2 = new ServiceAtLocationDTO();
         assertThat(serviceAtLocationDTO1).isNotEqualTo(serviceAtLocationDTO2);
         serviceAtLocationDTO2.setId(serviceAtLocationDTO1.getId());
         assertThat(serviceAtLocationDTO1).isEqualTo(serviceAtLocationDTO2);
-        serviceAtLocationDTO2.setId(2L);
+        serviceAtLocationDTO2.setId(TestConstants.UUID_2);
         assertThat(serviceAtLocationDTO1).isNotEqualTo(serviceAtLocationDTO2);
         serviceAtLocationDTO1.setId(null);
         assertThat(serviceAtLocationDTO1).isNotEqualTo(serviceAtLocationDTO2);
@@ -274,7 +275,7 @@ public class ServiceAtLocationResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(serviceAtLocationMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(serviceAtLocationMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(serviceAtLocationMapper.fromId(null)).isNull();
     }
 }

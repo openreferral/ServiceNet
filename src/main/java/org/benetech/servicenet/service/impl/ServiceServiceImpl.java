@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -150,7 +151,7 @@ public class ServiceServiceImpl implements ServiceService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<ServiceDTO> findOne(Long id) {
+    public Optional<ServiceDTO> findOne(UUID id) {
         log.debug("Request to get Service : {}", id);
         return serviceRepository.findById(id)
             .map(serviceMapper::toDto);
@@ -162,7 +163,7 @@ public class ServiceServiceImpl implements ServiceService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Service : {}", id);
         serviceRepository.deleteById(id);
     }

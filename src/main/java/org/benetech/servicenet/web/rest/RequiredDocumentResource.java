@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing RequiredDocument.
@@ -104,7 +105,7 @@ public class RequiredDocumentResource {
      */
     @GetMapping("/required-documents/{id}")
     @Timed
-    public ResponseEntity<RequiredDocumentDTO> getRequiredDocument(@PathVariable Long id) {
+    public ResponseEntity<RequiredDocumentDTO> getRequiredDocument(@PathVariable UUID id) {
         log.debug("REST request to get RequiredDocument : {}", id);
         Optional<RequiredDocumentDTO> requiredDocumentDTO = requiredDocumentService.findOne(id);
         return ResponseUtil.wrapOrNotFound(requiredDocumentDTO);
@@ -118,7 +119,7 @@ public class RequiredDocumentResource {
      */
     @DeleteMapping("/required-documents/{id}")
     @Timed
-    public ResponseEntity<Void> deleteRequiredDocument(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRequiredDocument(@PathVariable UUID id) {
         log.debug("REST request to delete RequiredDocument : {}", id);
         requiredDocumentService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.service.LocationService;
@@ -150,7 +151,7 @@ public class LocationResourceIntTest {
         int databaseSizeBeforeCreate = locationRepository.findAll().size();
 
         // Create the Location with an existing ID
-        location.setId(1L);
+        location.setId(TestConstants.UUID_1);
         LocationDTO locationDTO = locationMapper.toDto(location);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -193,7 +194,7 @@ public class LocationResourceIntTest {
         restLocationMockMvc.perform(get("/api/locations?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(location.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(location.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].alternameName").value(hasItem(DEFAULT_ALTERNAME_NAME.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
@@ -212,7 +213,7 @@ public class LocationResourceIntTest {
         restLocationMockMvc.perform(get("/api/locations/{id}", location.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(location.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(location.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.alternameName").value(DEFAULT_ALTERNAME_NAME.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
@@ -225,7 +226,7 @@ public class LocationResourceIntTest {
     @Transactional
     public void getNonExistingLocation() throws Exception {
         // Get the location
-        restLocationMockMvc.perform(get("/api/locations/{id}", Long.MAX_VALUE))
+        restLocationMockMvc.perform(get("/api/locations/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -309,11 +310,11 @@ public class LocationResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Location.class);
         Location location1 = new Location();
-        location1.setId(1L);
+        location1.setId(TestConstants.UUID_1);
         Location location2 = new Location();
         location2.setId(location1.getId());
         assertThat(location1).isEqualTo(location2);
-        location2.setId(2L);
+        location2.setId(TestConstants.UUID_2);
         assertThat(location1).isNotEqualTo(location2);
         location1.setId(null);
         assertThat(location1).isNotEqualTo(location2);
@@ -324,12 +325,12 @@ public class LocationResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(LocationDTO.class);
         LocationDTO locationDTO1 = new LocationDTO();
-        locationDTO1.setId(1L);
+        locationDTO1.setId(TestConstants.UUID_1);
         LocationDTO locationDTO2 = new LocationDTO();
         assertThat(locationDTO1).isNotEqualTo(locationDTO2);
         locationDTO2.setId(locationDTO1.getId());
         assertThat(locationDTO1).isEqualTo(locationDTO2);
-        locationDTO2.setId(2L);
+        locationDTO2.setId(TestConstants.UUID_2);
         assertThat(locationDTO1).isNotEqualTo(locationDTO2);
         locationDTO1.setId(null);
         assertThat(locationDTO1).isNotEqualTo(locationDTO2);
@@ -338,7 +339,7 @@ public class LocationResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(locationMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(locationMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(locationMapper.fromId(null)).isNull();
     }
 }

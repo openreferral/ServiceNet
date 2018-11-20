@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing OrganizationMatch.
@@ -32,12 +33,12 @@ public interface OrganizationMatchService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<OrganizationMatchDTO> findOne(Long id);
+    Optional<OrganizationMatchDTO> findOne(UUID id);
 
     /**
      * Delete the "id" organizationMatch.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

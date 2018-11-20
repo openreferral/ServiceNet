@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity RegularSchedule and its DTO RegularScheduleDTO.
  */
@@ -23,7 +25,7 @@ public interface RegularScheduleMapper extends EntityMapper<RegularScheduleDTO, 
     @Mapping(source = "serviceAtlocationId", target = "serviceAtlocation")
     RegularSchedule toEntity(RegularScheduleDTO regularScheduleDTO);
 
-    default RegularSchedule fromId(Long id) {
+    default RegularSchedule fromId(UUID id) {
         if (id == null) {
             return null;
         }

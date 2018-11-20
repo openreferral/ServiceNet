@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Service.
@@ -124,7 +125,7 @@ public class ServiceResource {
      */
     @GetMapping("/services/{id}")
     @Timed
-    public ResponseEntity<ServiceDTO> getService(@PathVariable Long id) {
+    public ResponseEntity<ServiceDTO> getService(@PathVariable UUID id) {
         log.debug("REST request to get Service : {}", id);
         Optional<ServiceDTO> serviceDTO = serviceService.findOne(id);
         return ResponseUtil.wrapOrNotFound(serviceDTO);
@@ -138,7 +139,7 @@ public class ServiceResource {
      */
     @DeleteMapping("/services/{id}")
     @Timed
-    public ResponseEntity<Void> deleteService(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteService(@PathVariable UUID id) {
         log.debug("REST request to delete Service : {}", id);
         serviceService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

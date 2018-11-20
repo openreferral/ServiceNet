@@ -3,13 +3,14 @@ package org.benetech.servicenet.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the Contact entity.
  */
 public class ContactDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String name;
@@ -20,21 +21,21 @@ public class ContactDTO implements Serializable {
 
     private String email;
 
-    private Long organizationId;
+    private UUID organizationId;
 
     private String organizationName;
 
-    private Long srvcId;
+    private UUID srvcId;
 
     private String srvcName;
 
-    private Long serviceAtLocationId;
+    private UUID serviceAtLocationId;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -70,11 +71,11 @@ public class ContactDTO implements Serializable {
         this.email = email;
     }
 
-    public Long getOrganizationId() {
+    public UUID getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(UUID organizationId) {
         this.organizationId = organizationId;
     }
 
@@ -86,11 +87,11 @@ public class ContactDTO implements Serializable {
         this.organizationName = organizationName;
     }
 
-    public Long getSrvcId() {
+    public UUID getSrvcId() {
         return srvcId;
     }
 
-    public void setSrvcId(Long serviceId) {
+    public void setSrvcId(UUID serviceId) {
         this.srvcId = serviceId;
     }
 
@@ -102,11 +103,11 @@ public class ContactDTO implements Serializable {
         this.srvcName = serviceName;
     }
 
-    public Long getServiceAtLocationId() {
+    public UUID getServiceAtLocationId() {
         return serviceAtLocationId;
     }
 
-    public void setServiceAtLocationId(Long serviceAtLocationId) {
+    public void setServiceAtLocationId(UUID serviceAtLocationId) {
         this.serviceAtLocationId = serviceAtLocationId;
     }
 

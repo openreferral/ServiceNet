@@ -3,13 +3,14 @@ package org.benetech.servicenet.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the RegularSchedule entity.
  */
 public class RegularScheduleDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private Integer weekday;
@@ -18,21 +19,21 @@ public class RegularScheduleDTO implements Serializable {
 
     private String closesAt;
 
-    private Long srvcId;
+    private UUID srvcId;
 
     private String srvcName;
 
-    private Long locationId;
+    private UUID locationId;
 
     private String locationName;
 
-    private Long serviceAtlocationId;
+    private UUID serviceAtlocationId;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -60,11 +61,11 @@ public class RegularScheduleDTO implements Serializable {
         this.closesAt = closesAt;
     }
 
-    public Long getSrvcId() {
+    public UUID getSrvcId() {
         return srvcId;
     }
 
-    public void setSrvcId(Long serviceId) {
+    public void setSrvcId(UUID serviceId) {
         this.srvcId = serviceId;
     }
 
@@ -76,11 +77,11 @@ public class RegularScheduleDTO implements Serializable {
         this.srvcName = serviceName;
     }
 
-    public Long getLocationId() {
+    public UUID getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Long locationId) {
+    public void setLocationId(UUID locationId) {
         this.locationId = locationId;
     }
 
@@ -92,11 +93,11 @@ public class RegularScheduleDTO implements Serializable {
         this.locationName = locationName;
     }
 
-    public Long getServiceAtlocationId() {
+    public UUID getServiceAtlocationId() {
         return serviceAtlocationId;
     }
 
-    public void setServiceAtlocationId(Long serviceAtLocationId) {
+    public void setServiceAtlocationId(UUID serviceAtLocationId) {
         this.serviceAtlocationId = serviceAtLocationId;
     }
 

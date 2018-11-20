@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.repository.ServiceTaxonomyRepository;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
@@ -125,7 +126,7 @@ public class ServiceTaxonomyResourceIntTest {
         int databaseSizeBeforeCreate = serviceTaxonomyRepository.findAll().size();
 
         // Create the ServiceTaxonomy with an existing ID
-        serviceTaxonomy.setId(1L);
+        serviceTaxonomy.setId(TestConstants.UUID_1);
         ServiceTaxonomyDTO serviceTaxonomyDTO = serviceTaxonomyMapper.toDto(serviceTaxonomy);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -149,7 +150,7 @@ public class ServiceTaxonomyResourceIntTest {
         restServiceTaxonomyMockMvc.perform(get("/api/service-taxonomies?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(serviceTaxonomy.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(serviceTaxonomy.getId().toString())))
             .andExpect(jsonPath("$.[*].taxonomyDetails").value(hasItem(DEFAULT_TAXONOMY_DETAILS.toString())));
     }
 
@@ -163,7 +164,7 @@ public class ServiceTaxonomyResourceIntTest {
         restServiceTaxonomyMockMvc.perform(get("/api/service-taxonomies/{id}", serviceTaxonomy.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(serviceTaxonomy.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(serviceTaxonomy.getId().toString()))
             .andExpect(jsonPath("$.taxonomyDetails").value(DEFAULT_TAXONOMY_DETAILS.toString()));
     }
 
@@ -171,7 +172,7 @@ public class ServiceTaxonomyResourceIntTest {
     @Transactional
     public void getNonExistingServiceTaxonomy() throws Exception {
         // Get the serviceTaxonomy
-        restServiceTaxonomyMockMvc.perform(get("/api/service-taxonomies/{id}", Long.MAX_VALUE))
+        restServiceTaxonomyMockMvc.perform(get("/api/service-taxonomies/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -245,11 +246,11 @@ public class ServiceTaxonomyResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(ServiceTaxonomy.class);
         ServiceTaxonomy serviceTaxonomy1 = new ServiceTaxonomy();
-        serviceTaxonomy1.setId(1L);
+        serviceTaxonomy1.setId(TestConstants.UUID_1);
         ServiceTaxonomy serviceTaxonomy2 = new ServiceTaxonomy();
         serviceTaxonomy2.setId(serviceTaxonomy1.getId());
         assertThat(serviceTaxonomy1).isEqualTo(serviceTaxonomy2);
-        serviceTaxonomy2.setId(2L);
+        serviceTaxonomy2.setId(TestConstants.UUID_2);
         assertThat(serviceTaxonomy1).isNotEqualTo(serviceTaxonomy2);
         serviceTaxonomy1.setId(null);
         assertThat(serviceTaxonomy1).isNotEqualTo(serviceTaxonomy2);
@@ -260,12 +261,12 @@ public class ServiceTaxonomyResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(ServiceTaxonomyDTO.class);
         ServiceTaxonomyDTO serviceTaxonomyDTO1 = new ServiceTaxonomyDTO();
-        serviceTaxonomyDTO1.setId(1L);
+        serviceTaxonomyDTO1.setId(TestConstants.UUID_1);
         ServiceTaxonomyDTO serviceTaxonomyDTO2 = new ServiceTaxonomyDTO();
         assertThat(serviceTaxonomyDTO1).isNotEqualTo(serviceTaxonomyDTO2);
         serviceTaxonomyDTO2.setId(serviceTaxonomyDTO1.getId());
         assertThat(serviceTaxonomyDTO1).isEqualTo(serviceTaxonomyDTO2);
-        serviceTaxonomyDTO2.setId(2L);
+        serviceTaxonomyDTO2.setId(TestConstants.UUID_2);
         assertThat(serviceTaxonomyDTO1).isNotEqualTo(serviceTaxonomyDTO2);
         serviceTaxonomyDTO1.setId(null);
         assertThat(serviceTaxonomyDTO1).isNotEqualTo(serviceTaxonomyDTO2);
@@ -274,7 +275,7 @@ public class ServiceTaxonomyResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(serviceTaxonomyMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(serviceTaxonomyMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(serviceTaxonomyMapper.fromId(null)).isNull();
     }
 }

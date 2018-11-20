@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.PaymentAcceptedDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing PaymentAccepted.
@@ -32,12 +33,12 @@ public interface PaymentAcceptedService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<PaymentAcceptedDTO> findOne(Long id);
+    Optional<PaymentAcceptedDTO> findOne(UUID id);
 
     /**
      * Delete the "id" paymentAccepted.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

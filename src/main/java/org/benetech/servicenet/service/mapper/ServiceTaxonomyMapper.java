@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.ServiceTaxonomyDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity ServiceTaxonomy and its DTO ServiceTaxonomyDTO.
  */
@@ -21,7 +23,7 @@ public interface ServiceTaxonomyMapper extends EntityMapper<ServiceTaxonomyDTO, 
     @Mapping(source = "taxonomyId", target = "taxonomy")
     ServiceTaxonomy toEntity(ServiceTaxonomyDTO serviceTaxonomyDTO);
 
-    default ServiceTaxonomy fromId(Long id) {
+    default ServiceTaxonomy fromId(UUID id) {
         if (id == null) {
             return null;
         }

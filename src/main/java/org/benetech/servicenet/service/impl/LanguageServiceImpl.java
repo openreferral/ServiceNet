@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,7 @@ public class LanguageServiceImpl implements LanguageService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<LanguageDTO> findOne(Long id) {
+    public Optional<LanguageDTO> findOne(UUID id) {
         log.debug("Request to get Language : {}", id);
         return languageRepository.findById(id)
             .map(languageMapper::toDto);
@@ -83,7 +84,7 @@ public class LanguageServiceImpl implements LanguageService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Language : {}", id);
         languageRepository.deleteById(id);
     }

@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing SystemAccount.
@@ -104,7 +105,7 @@ public class SystemAccountResource {
      */
     @GetMapping("/system-accounts/{id}")
     @Timed
-    public ResponseEntity<SystemAccountDTO> getSystemAccount(@PathVariable Long id) {
+    public ResponseEntity<SystemAccountDTO> getSystemAccount(@PathVariable UUID id) {
         log.debug("REST request to get SystemAccount : {}", id);
         Optional<SystemAccountDTO> systemAccountDTO = systemAccountService.findOne(id);
         return ResponseUtil.wrapOrNotFound(systemAccountDTO);
@@ -118,7 +119,7 @@ public class SystemAccountResource {
      */
     @DeleteMapping("/system-accounts/{id}")
     @Timed
-    public ResponseEntity<Void> deleteSystemAccount(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSystemAccount(@PathVariable UUID id) {
         log.debug("REST request to delete SystemAccount : {}", id);
         systemAccountService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

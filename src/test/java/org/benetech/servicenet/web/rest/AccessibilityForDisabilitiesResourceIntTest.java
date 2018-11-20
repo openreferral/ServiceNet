@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.repository.AccessibilityForDisabilitiesRepository;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
@@ -91,7 +92,8 @@ public class AccessibilityForDisabilitiesResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final AccessibilityForDisabilitiesResource accessibilityForDisabilitiesResource = new AccessibilityForDisabilitiesResource(accessibilityForDisabilitiesService);
+        final AccessibilityForDisabilitiesResource accessibilityForDisabilitiesResource =
+            new AccessibilityForDisabilitiesResource(accessibilityForDisabilitiesService);
         this.restAccessibilityForDisabilitiesMockMvc = MockMvcBuilders.standaloneSetup(accessibilityForDisabilitiesResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -110,16 +112,19 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         int databaseSizeBeforeCreate = accessibilityForDisabilitiesRepository.findAll().size();
 
         // Create the AccessibilityForDisabilities
-        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO = accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
+        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO =
+            accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
         restAccessibilityForDisabilitiesMockMvc.perform(post("/api/accessibility-for-disabilities")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(accessibilityForDisabilitiesDTO)))
             .andExpect(status().isCreated());
 
         // Validate the AccessibilityForDisabilities in the database
-        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList = accessibilityForDisabilitiesRepository.findAll();
+        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList =
+            accessibilityForDisabilitiesRepository.findAll();
         assertThat(accessibilityForDisabilitiesList).hasSize(databaseSizeBeforeCreate + 1);
-        AccessibilityForDisabilities testAccessibilityForDisabilities = accessibilityForDisabilitiesList.get(accessibilityForDisabilitiesList.size() - 1);
+        AccessibilityForDisabilities testAccessibilityForDisabilities =
+            accessibilityForDisabilitiesList.get(accessibilityForDisabilitiesList.size() - 1);
         assertThat(testAccessibilityForDisabilities.getAccessibility()).isEqualTo(DEFAULT_ACCESSIBILITY);
         assertThat(testAccessibilityForDisabilities.getDetails()).isEqualTo(DEFAULT_DETAILS);
     }
@@ -130,8 +135,9 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         int databaseSizeBeforeCreate = accessibilityForDisabilitiesRepository.findAll().size();
 
         // Create the AccessibilityForDisabilities with an existing ID
-        accessibilityForDisabilities.setId(1L);
-        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO = accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
+        accessibilityForDisabilities.setId(TestConstants.UUID_1);
+        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO =
+            accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restAccessibilityForDisabilitiesMockMvc.perform(post("/api/accessibility-for-disabilities")
@@ -140,7 +146,8 @@ public class AccessibilityForDisabilitiesResourceIntTest {
             .andExpect(status().isBadRequest());
 
         // Validate the AccessibilityForDisabilities in the database
-        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList = accessibilityForDisabilitiesRepository.findAll();
+        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList =
+            accessibilityForDisabilitiesRepository.findAll();
         assertThat(accessibilityForDisabilitiesList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -152,14 +159,16 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         accessibilityForDisabilities.setAccessibility(null);
 
         // Create the AccessibilityForDisabilities, which fails.
-        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO = accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
+        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO =
+            accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
 
         restAccessibilityForDisabilitiesMockMvc.perform(post("/api/accessibility-for-disabilities")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(accessibilityForDisabilitiesDTO)))
             .andExpect(status().isBadRequest());
 
-        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList = accessibilityForDisabilitiesRepository.findAll();
+        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList =
+            accessibilityForDisabilitiesRepository.findAll();
         assertThat(accessibilityForDisabilitiesList).hasSize(databaseSizeBeforeTest);
     }
 
@@ -173,7 +182,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         restAccessibilityForDisabilitiesMockMvc.perform(get("/api/accessibility-for-disabilities?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(accessibilityForDisabilities.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(accessibilityForDisabilities.getId().toString())))
             .andExpect(jsonPath("$.[*].accessibility").value(hasItem(DEFAULT_ACCESSIBILITY.toString())))
             .andExpect(jsonPath("$.[*].details").value(hasItem(DEFAULT_DETAILS.toString())));
     }
@@ -185,10 +194,11 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         accessibilityForDisabilitiesRepository.saveAndFlush(accessibilityForDisabilities);
 
         // Get the accessibilityForDisabilities
-        restAccessibilityForDisabilitiesMockMvc.perform(get("/api/accessibility-for-disabilities/{id}", accessibilityForDisabilities.getId()))
+        restAccessibilityForDisabilitiesMockMvc.perform(get("/api/accessibility-for-disabilities/{id}",
+            accessibilityForDisabilities.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(accessibilityForDisabilities.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(accessibilityForDisabilities.getId().toString()))
             .andExpect(jsonPath("$.accessibility").value(DEFAULT_ACCESSIBILITY.toString()))
             .andExpect(jsonPath("$.details").value(DEFAULT_DETAILS.toString()));
     }
@@ -197,7 +207,8 @@ public class AccessibilityForDisabilitiesResourceIntTest {
     @Transactional
     public void getNonExistingAccessibilityForDisabilities() throws Exception {
         // Get the accessibilityForDisabilities
-        restAccessibilityForDisabilitiesMockMvc.perform(get("/api/accessibility-for-disabilities/{id}", Long.MAX_VALUE))
+        restAccessibilityForDisabilitiesMockMvc.perform(get("/api/accessibility-for-disabilities/{id}",
+            TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -210,13 +221,15 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         int databaseSizeBeforeUpdate = accessibilityForDisabilitiesRepository.findAll().size();
 
         // Update the accessibilityForDisabilities
-        AccessibilityForDisabilities updatedAccessibilityForDisabilities = accessibilityForDisabilitiesRepository.findById(accessibilityForDisabilities.getId()).get();
+        AccessibilityForDisabilities updatedAccessibilityForDisabilities =
+            accessibilityForDisabilitiesRepository.findById(accessibilityForDisabilities.getId()).get();
         // Disconnect from session so that the updates on updatedAccessibilityForDisabilities are not directly saved in db
         em.detach(updatedAccessibilityForDisabilities);
         updatedAccessibilityForDisabilities
             .accessibility(UPDATED_ACCESSIBILITY)
             .details(UPDATED_DETAILS);
-        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO = accessibilityForDisabilitiesMapper.toDto(updatedAccessibilityForDisabilities);
+        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO =
+            accessibilityForDisabilitiesMapper.toDto(updatedAccessibilityForDisabilities);
 
         restAccessibilityForDisabilitiesMockMvc.perform(put("/api/accessibility-for-disabilities")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -224,9 +237,11 @@ public class AccessibilityForDisabilitiesResourceIntTest {
             .andExpect(status().isOk());
 
         // Validate the AccessibilityForDisabilities in the database
-        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList = accessibilityForDisabilitiesRepository.findAll();
+        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList =
+            accessibilityForDisabilitiesRepository.findAll();
         assertThat(accessibilityForDisabilitiesList).hasSize(databaseSizeBeforeUpdate);
-        AccessibilityForDisabilities testAccessibilityForDisabilities = accessibilityForDisabilitiesList.get(accessibilityForDisabilitiesList.size() - 1);
+        AccessibilityForDisabilities testAccessibilityForDisabilities =
+            accessibilityForDisabilitiesList.get(accessibilityForDisabilitiesList.size() - 1);
         assertThat(testAccessibilityForDisabilities.getAccessibility()).isEqualTo(UPDATED_ACCESSIBILITY);
         assertThat(testAccessibilityForDisabilities.getDetails()).isEqualTo(UPDATED_DETAILS);
     }
@@ -237,7 +252,8 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         int databaseSizeBeforeUpdate = accessibilityForDisabilitiesRepository.findAll().size();
 
         // Create the AccessibilityForDisabilities
-        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO = accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
+        AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO =
+            accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAccessibilityForDisabilitiesMockMvc.perform(put("/api/accessibility-for-disabilities")
@@ -246,7 +262,8 @@ public class AccessibilityForDisabilitiesResourceIntTest {
             .andExpect(status().isBadRequest());
 
         // Validate the AccessibilityForDisabilities in the database
-        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList = accessibilityForDisabilitiesRepository.findAll();
+        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList =
+            accessibilityForDisabilitiesRepository.findAll();
         assertThat(accessibilityForDisabilitiesList).hasSize(databaseSizeBeforeUpdate);
     }
 
@@ -259,12 +276,14 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         int databaseSizeBeforeDelete = accessibilityForDisabilitiesRepository.findAll().size();
 
         // Get the accessibilityForDisabilities
-        restAccessibilityForDisabilitiesMockMvc.perform(delete("/api/accessibility-for-disabilities/{id}", accessibilityForDisabilities.getId())
+        restAccessibilityForDisabilitiesMockMvc.perform(delete("/api/accessibility-for-disabilities/{id}",
+            accessibilityForDisabilities.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk());
 
         // Validate the database is empty
-        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList = accessibilityForDisabilitiesRepository.findAll();
+        List<AccessibilityForDisabilities> accessibilityForDisabilitiesList =
+            accessibilityForDisabilitiesRepository.findAll();
         assertThat(accessibilityForDisabilitiesList).hasSize(databaseSizeBeforeDelete - 1);
     }
 
@@ -273,11 +292,11 @@ public class AccessibilityForDisabilitiesResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(AccessibilityForDisabilities.class);
         AccessibilityForDisabilities accessibilityForDisabilities1 = new AccessibilityForDisabilities();
-        accessibilityForDisabilities1.setId(1L);
+        accessibilityForDisabilities1.setId(TestConstants.UUID_1);
         AccessibilityForDisabilities accessibilityForDisabilities2 = new AccessibilityForDisabilities();
         accessibilityForDisabilities2.setId(accessibilityForDisabilities1.getId());
         assertThat(accessibilityForDisabilities1).isEqualTo(accessibilityForDisabilities2);
-        accessibilityForDisabilities2.setId(2L);
+        accessibilityForDisabilities2.setId(TestConstants.UUID_2);
         assertThat(accessibilityForDisabilities1).isNotEqualTo(accessibilityForDisabilities2);
         accessibilityForDisabilities1.setId(null);
         assertThat(accessibilityForDisabilities1).isNotEqualTo(accessibilityForDisabilities2);
@@ -288,12 +307,12 @@ public class AccessibilityForDisabilitiesResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(AccessibilityForDisabilitiesDTO.class);
         AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO1 = new AccessibilityForDisabilitiesDTO();
-        accessibilityForDisabilitiesDTO1.setId(1L);
+        accessibilityForDisabilitiesDTO1.setId(TestConstants.UUID_1);
         AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO2 = new AccessibilityForDisabilitiesDTO();
         assertThat(accessibilityForDisabilitiesDTO1).isNotEqualTo(accessibilityForDisabilitiesDTO2);
         accessibilityForDisabilitiesDTO2.setId(accessibilityForDisabilitiesDTO1.getId());
         assertThat(accessibilityForDisabilitiesDTO1).isEqualTo(accessibilityForDisabilitiesDTO2);
-        accessibilityForDisabilitiesDTO2.setId(2L);
+        accessibilityForDisabilitiesDTO2.setId(TestConstants.UUID_2);
         assertThat(accessibilityForDisabilitiesDTO1).isNotEqualTo(accessibilityForDisabilitiesDTO2);
         accessibilityForDisabilitiesDTO1.setId(null);
         assertThat(accessibilityForDisabilitiesDTO1).isNotEqualTo(accessibilityForDisabilitiesDTO2);
@@ -302,7 +321,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(accessibilityForDisabilitiesMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(accessibilityForDisabilitiesMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(accessibilityForDisabilitiesMapper.fromId(null)).isNull();
     }
 }

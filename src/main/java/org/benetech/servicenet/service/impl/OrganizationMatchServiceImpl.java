@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -72,7 +73,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrganizationMatchDTO> findOne(Long id) {
+    public Optional<OrganizationMatchDTO> findOne(UUID id) {
         log.debug("Request to get OrganizationMatch : {}", id);
         return organizationMatchRepository.findById(id)
             .map(organizationMatchMapper::toDto);
@@ -84,7 +85,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete OrganizationMatch : {}", id);
         organizationMatchRepository.deleteById(id);
     }

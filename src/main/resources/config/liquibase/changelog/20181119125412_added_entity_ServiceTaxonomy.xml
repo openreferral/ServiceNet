@@ -11,23 +11,27 @@
     <property name="floatType" value="float4" dbms="postgresql, h2"/>
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
+    <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
+    <property name="uuidFunction" value="uid.uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
+
     <!--
         Added the entity ServiceTaxonomy.
     -->
     <changeSet id="20181119125412-1" author="jhipster">
         <createTable tableName="service_taxonomy">
-            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="taxonomy_details" type="clob">
                 <constraints nullable="true"/>
             </column>
 
-            <column name="srvc_id" type="bigint">
+            <column name="srvc_id" type="${uuidType}">
                 <constraints nullable="true"/>
             </column>
 
-            <column name="taxonomy_id" type="bigint">
+            <column name="taxonomy_id" type="${uuidType}">
                 <constraints nullable="true"/>
             </column>
 

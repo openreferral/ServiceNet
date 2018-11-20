@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing ServiceAtLocation.
@@ -113,7 +114,7 @@ public class ServiceAtLocationResource {
      */
     @GetMapping("/service-at-locations/{id}")
     @Timed
-    public ResponseEntity<ServiceAtLocationDTO> getServiceAtLocation(@PathVariable Long id) {
+    public ResponseEntity<ServiceAtLocationDTO> getServiceAtLocation(@PathVariable UUID id) {
         log.debug("REST request to get ServiceAtLocation : {}", id);
         Optional<ServiceAtLocationDTO> serviceAtLocationDTO = serviceAtLocationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(serviceAtLocationDTO);
@@ -127,7 +128,7 @@ public class ServiceAtLocationResource {
      */
     @DeleteMapping("/service-at-locations/{id}")
     @Timed
-    public ResponseEntity<Void> deleteServiceAtLocation(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteServiceAtLocation(@PathVariable UUID id) {
         log.debug("REST request to delete ServiceAtLocation : {}", id);
         serviceAtLocationService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

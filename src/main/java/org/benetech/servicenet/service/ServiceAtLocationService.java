@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing ServiceAtLocation.
@@ -46,12 +47,12 @@ public interface ServiceAtLocationService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<ServiceAtLocationDTO> findOne(Long id);
+    Optional<ServiceAtLocationDTO> findOne(UUID id);
 
     /**
      * Delete the "id" serviceAtLocation.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

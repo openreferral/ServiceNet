@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.ContactDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity Contact and its DTO ContactDTO.
  */
@@ -23,7 +25,7 @@ public interface ContactMapper extends EntityMapper<ContactDTO, Contact> {
     @Mapping(source = "serviceAtLocationId", target = "serviceAtLocation")
     Contact toEntity(ContactDTO contactDTO);
 
-    default Contact fromId(Long id) {
+    default Contact fromId(UUID id) {
         if (id == null) {
             return null;
         }

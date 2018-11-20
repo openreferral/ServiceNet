@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.PostalAddressDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing PostalAddress.
@@ -32,12 +33,12 @@ public interface PostalAddressService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<PostalAddressDTO> findOne(Long id);
+    Optional<PostalAddressDTO> findOne(UUID id);
 
     /**
      * Delete the "id" postalAddress.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

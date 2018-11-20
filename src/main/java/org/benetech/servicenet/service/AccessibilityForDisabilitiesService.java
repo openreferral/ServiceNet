@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.AccessibilityForDisabilitiesDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing AccessibilityForDisabilities.
@@ -32,12 +33,12 @@ public interface AccessibilityForDisabilitiesService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<AccessibilityForDisabilitiesDTO> findOne(Long id);
+    Optional<AccessibilityForDisabilitiesDTO> findOne(UUID id);
 
     /**
      * Delete the "id" accessibilityForDisabilities.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

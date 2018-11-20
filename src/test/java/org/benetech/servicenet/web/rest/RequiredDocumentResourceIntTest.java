@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.repository.RequiredDocumentRepository;
 import org.benetech.servicenet.service.RequiredDocumentService;
@@ -125,7 +126,7 @@ public class RequiredDocumentResourceIntTest {
         int databaseSizeBeforeCreate = requiredDocumentRepository.findAll().size();
 
         // Create the RequiredDocument with an existing ID
-        requiredDocument.setId(1L);
+        requiredDocument.setId(TestConstants.UUID_1);
         RequiredDocumentDTO requiredDocumentDTO = requiredDocumentMapper.toDto(requiredDocument);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -168,7 +169,7 @@ public class RequiredDocumentResourceIntTest {
         restRequiredDocumentMockMvc.perform(get("/api/required-documents?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(requiredDocument.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(requiredDocument.getId().toString())))
             .andExpect(jsonPath("$.[*].document").value(hasItem(DEFAULT_DOCUMENT.toString())));
     }
 
@@ -182,7 +183,7 @@ public class RequiredDocumentResourceIntTest {
         restRequiredDocumentMockMvc.perform(get("/api/required-documents/{id}", requiredDocument.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(requiredDocument.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(requiredDocument.getId().toString()))
             .andExpect(jsonPath("$.document").value(DEFAULT_DOCUMENT.toString()));
     }
 
@@ -190,7 +191,7 @@ public class RequiredDocumentResourceIntTest {
     @Transactional
     public void getNonExistingRequiredDocument() throws Exception {
         // Get the requiredDocument
-        restRequiredDocumentMockMvc.perform(get("/api/required-documents/{id}", Long.MAX_VALUE))
+        restRequiredDocumentMockMvc.perform(get("/api/required-documents/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -264,11 +265,11 @@ public class RequiredDocumentResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(RequiredDocument.class);
         RequiredDocument requiredDocument1 = new RequiredDocument();
-        requiredDocument1.setId(1L);
+        requiredDocument1.setId(TestConstants.UUID_1);
         RequiredDocument requiredDocument2 = new RequiredDocument();
         requiredDocument2.setId(requiredDocument1.getId());
         assertThat(requiredDocument1).isEqualTo(requiredDocument2);
-        requiredDocument2.setId(2L);
+        requiredDocument2.setId(TestConstants.UUID_2);
         assertThat(requiredDocument1).isNotEqualTo(requiredDocument2);
         requiredDocument1.setId(null);
         assertThat(requiredDocument1).isNotEqualTo(requiredDocument2);
@@ -279,12 +280,12 @@ public class RequiredDocumentResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(RequiredDocumentDTO.class);
         RequiredDocumentDTO requiredDocumentDTO1 = new RequiredDocumentDTO();
-        requiredDocumentDTO1.setId(1L);
+        requiredDocumentDTO1.setId(TestConstants.UUID_1);
         RequiredDocumentDTO requiredDocumentDTO2 = new RequiredDocumentDTO();
         assertThat(requiredDocumentDTO1).isNotEqualTo(requiredDocumentDTO2);
         requiredDocumentDTO2.setId(requiredDocumentDTO1.getId());
         assertThat(requiredDocumentDTO1).isEqualTo(requiredDocumentDTO2);
-        requiredDocumentDTO2.setId(2L);
+        requiredDocumentDTO2.setId(TestConstants.UUID_2);
         assertThat(requiredDocumentDTO1).isNotEqualTo(requiredDocumentDTO2);
         requiredDocumentDTO1.setId(null);
         assertThat(requiredDocumentDTO1).isNotEqualTo(requiredDocumentDTO2);
@@ -293,7 +294,7 @@ public class RequiredDocumentResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(requiredDocumentMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(requiredDocumentMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(requiredDocumentMapper.fromId(null)).isNull();
     }
 }

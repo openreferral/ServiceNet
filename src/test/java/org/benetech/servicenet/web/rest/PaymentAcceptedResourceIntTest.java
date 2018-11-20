@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PaymentAccepted;
 import org.benetech.servicenet.repository.PaymentAcceptedRepository;
 import org.benetech.servicenet.service.PaymentAcceptedService;
@@ -125,7 +126,7 @@ public class PaymentAcceptedResourceIntTest {
         int databaseSizeBeforeCreate = paymentAcceptedRepository.findAll().size();
 
         // Create the PaymentAccepted with an existing ID
-        paymentAccepted.setId(1L);
+        paymentAccepted.setId(TestConstants.UUID_1);
         PaymentAcceptedDTO paymentAcceptedDTO = paymentAcceptedMapper.toDto(paymentAccepted);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -149,7 +150,7 @@ public class PaymentAcceptedResourceIntTest {
         restPaymentAcceptedMockMvc.perform(get("/api/payment-accepteds?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(paymentAccepted.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(paymentAccepted.getId().toString())))
             .andExpect(jsonPath("$.[*].payment").value(hasItem(DEFAULT_PAYMENT.toString())));
     }
 
@@ -163,7 +164,7 @@ public class PaymentAcceptedResourceIntTest {
         restPaymentAcceptedMockMvc.perform(get("/api/payment-accepteds/{id}", paymentAccepted.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(paymentAccepted.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(paymentAccepted.getId().toString()))
             .andExpect(jsonPath("$.payment").value(DEFAULT_PAYMENT.toString()));
     }
 
@@ -171,7 +172,7 @@ public class PaymentAcceptedResourceIntTest {
     @Transactional
     public void getNonExistingPaymentAccepted() throws Exception {
         // Get the paymentAccepted
-        restPaymentAcceptedMockMvc.perform(get("/api/payment-accepteds/{id}", Long.MAX_VALUE))
+        restPaymentAcceptedMockMvc.perform(get("/api/payment-accepteds/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -245,11 +246,11 @@ public class PaymentAcceptedResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(PaymentAccepted.class);
         PaymentAccepted paymentAccepted1 = new PaymentAccepted();
-        paymentAccepted1.setId(1L);
+        paymentAccepted1.setId(TestConstants.UUID_1);
         PaymentAccepted paymentAccepted2 = new PaymentAccepted();
         paymentAccepted2.setId(paymentAccepted1.getId());
         assertThat(paymentAccepted1).isEqualTo(paymentAccepted2);
-        paymentAccepted2.setId(2L);
+        paymentAccepted2.setId(TestConstants.UUID_2);
         assertThat(paymentAccepted1).isNotEqualTo(paymentAccepted2);
         paymentAccepted1.setId(null);
         assertThat(paymentAccepted1).isNotEqualTo(paymentAccepted2);
@@ -260,12 +261,12 @@ public class PaymentAcceptedResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(PaymentAcceptedDTO.class);
         PaymentAcceptedDTO paymentAcceptedDTO1 = new PaymentAcceptedDTO();
-        paymentAcceptedDTO1.setId(1L);
+        paymentAcceptedDTO1.setId(TestConstants.UUID_1);
         PaymentAcceptedDTO paymentAcceptedDTO2 = new PaymentAcceptedDTO();
         assertThat(paymentAcceptedDTO1).isNotEqualTo(paymentAcceptedDTO2);
         paymentAcceptedDTO2.setId(paymentAcceptedDTO1.getId());
         assertThat(paymentAcceptedDTO1).isEqualTo(paymentAcceptedDTO2);
-        paymentAcceptedDTO2.setId(2L);
+        paymentAcceptedDTO2.setId(TestConstants.UUID_2);
         assertThat(paymentAcceptedDTO1).isNotEqualTo(paymentAcceptedDTO2);
         paymentAcceptedDTO1.setId(null);
         assertThat(paymentAcceptedDTO1).isNotEqualTo(paymentAcceptedDTO2);
@@ -274,7 +275,7 @@ public class PaymentAcceptedResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(paymentAcceptedMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(paymentAcceptedMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(paymentAcceptedMapper.fromId(null)).isNull();
     }
 }

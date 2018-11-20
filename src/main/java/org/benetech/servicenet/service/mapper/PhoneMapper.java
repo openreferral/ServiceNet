@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity Phone and its DTO PhoneDTO.
  */
@@ -30,7 +32,7 @@ public interface PhoneMapper extends EntityMapper<PhoneDTO, Phone> {
     @Mapping(source = "serviceAtLocationId", target = "serviceAtLocation")
     Phone toEntity(PhoneDTO phoneDTO);
 
-    default Phone fromId(Long id) {
+    default Phone fromId(UUID id) {
         if (id == null) {
             return null;
         }

@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing PaymentAccepted.
@@ -103,7 +104,7 @@ public class PaymentAcceptedResource {
      */
     @GetMapping("/payment-accepteds/{id}")
     @Timed
-    public ResponseEntity<PaymentAcceptedDTO> getPaymentAccepted(@PathVariable Long id) {
+    public ResponseEntity<PaymentAcceptedDTO> getPaymentAccepted(@PathVariable UUID id) {
         log.debug("REST request to get PaymentAccepted : {}", id);
         Optional<PaymentAcceptedDTO> paymentAcceptedDTO = paymentAcceptedService.findOne(id);
         return ResponseUtil.wrapOrNotFound(paymentAcceptedDTO);
@@ -117,7 +118,7 @@ public class PaymentAcceptedResource {
      */
     @DeleteMapping("/payment-accepteds/{id}")
     @Timed
-    public ResponseEntity<Void> deletePaymentAccepted(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePaymentAccepted(@PathVariable UUID id) {
         log.debug("REST request to delete PaymentAccepted : {}", id);
         paymentAcceptedService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

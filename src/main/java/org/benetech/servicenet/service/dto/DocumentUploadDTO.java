@@ -4,13 +4,14 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the DocumentUpload entity.
  */
 public class DocumentUploadDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private ZonedDateTime dateUploaded;
@@ -18,15 +19,15 @@ public class DocumentUploadDTO implements Serializable {
     @NotNull
     private String documentId;
 
-    private Long uploaderId;
+    private UUID uploaderId;
 
     private String uploaderLogin;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -46,11 +47,11 @@ public class DocumentUploadDTO implements Serializable {
         this.documentId = documentId;
     }
 
-    public Long getUploaderId() {
+    public UUID getUploaderId() {
         return uploaderId;
     }
 
-    public void setUploaderId(Long userId) {
+    public void setUploaderId(UUID userId) {
         this.uploaderId = userId;
     }
 

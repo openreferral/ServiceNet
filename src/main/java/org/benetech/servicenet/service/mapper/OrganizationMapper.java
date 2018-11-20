@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity Organization and its DTO OrganizationDTO.
  */
@@ -29,7 +31,7 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     @Mapping(target = "services", ignore = true)
     Organization toEntity(OrganizationDTO organizationDTO);
 
-    default Organization fromId(Long id) {
+    default Organization fromId(UUID id) {
         if (id == null) {
             return null;
         }

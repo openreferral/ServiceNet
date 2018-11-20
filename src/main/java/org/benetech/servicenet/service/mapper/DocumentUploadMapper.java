@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity DocumentUpload and its DTO DocumentUploadDTO.
  */
@@ -18,7 +20,7 @@ public interface DocumentUploadMapper extends EntityMapper<DocumentUploadDTO, Do
     @Mapping(source = "uploaderId", target = "uploader")
     DocumentUpload toEntity(DocumentUploadDTO documentUploadDTO);
 
-    default DocumentUpload fromId(Long id) {
+    default DocumentUpload fromId(UUID id) {
         if (id == null) {
             return null;
         }

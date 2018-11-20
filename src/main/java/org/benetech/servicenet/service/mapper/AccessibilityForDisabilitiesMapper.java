@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.AccessibilityForDisabilitiesDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity AccessibilityForDisabilities and its DTO AccessibilityForDisabilitiesDTO.
  */
@@ -19,7 +21,7 @@ public interface AccessibilityForDisabilitiesMapper
     @Mapping(source = "locationId", target = "location")
     AccessibilityForDisabilities toEntity(AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO);
 
-    default AccessibilityForDisabilities fromId(Long id) {
+    default AccessibilityForDisabilities fromId(UUID id) {
         if (id == null) {
             return null;
         }

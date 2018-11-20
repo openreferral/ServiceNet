@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Organization.
@@ -110,7 +111,7 @@ public class OrganizationResource {
      */
     @GetMapping("/organizations/{id}")
     @Timed
-    public ResponseEntity<OrganizationDTO> getOrganization(@PathVariable Long id) {
+    public ResponseEntity<OrganizationDTO> getOrganization(@PathVariable UUID id) {
         log.debug("REST request to get Organization : {}", id);
         Optional<OrganizationDTO> organizationDTO = organizationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(organizationDTO);
@@ -124,7 +125,7 @@ public class OrganizationResource {
      */
     @DeleteMapping("/organizations/{id}")
     @Timed
-    public ResponseEntity<Void> deleteOrganization(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOrganization(@PathVariable UUID id) {
         log.debug("REST request to delete Organization : {}", id);
         organizationService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

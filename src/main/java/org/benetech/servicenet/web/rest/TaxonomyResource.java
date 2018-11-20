@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Taxonomy.
@@ -101,7 +102,7 @@ public class TaxonomyResource {
      */
     @GetMapping("/taxonomies/{id}")
     @Timed
-    public ResponseEntity<TaxonomyDTO> getTaxonomy(@PathVariable Long id) {
+    public ResponseEntity<TaxonomyDTO> getTaxonomy(@PathVariable UUID id) {
         log.debug("REST request to get Taxonomy : {}", id);
         Optional<TaxonomyDTO> taxonomyDTO = taxonomyService.findOne(id);
         return ResponseUtil.wrapOrNotFound(taxonomyDTO);
@@ -115,7 +116,7 @@ public class TaxonomyResource {
      */
     @DeleteMapping("/taxonomies/{id}")
     @Timed
-    public ResponseEntity<Void> deleteTaxonomy(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTaxonomy(@PathVariable UUID id) {
         log.debug("REST request to delete Taxonomy : {}", id);
         taxonomyService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

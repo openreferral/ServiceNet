@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing RegularSchedule.
@@ -104,7 +105,7 @@ public class RegularScheduleResource {
      */
     @GetMapping("/regular-schedules/{id}")
     @Timed
-    public ResponseEntity<RegularScheduleDTO> getRegularSchedule(@PathVariable Long id) {
+    public ResponseEntity<RegularScheduleDTO> getRegularSchedule(@PathVariable UUID id) {
         log.debug("REST request to get RegularSchedule : {}", id);
         Optional<RegularScheduleDTO> regularScheduleDTO = regularScheduleService.findOne(id);
         return ResponseUtil.wrapOrNotFound(regularScheduleDTO);
@@ -118,7 +119,7 @@ public class RegularScheduleResource {
      */
     @DeleteMapping("/regular-schedules/{id}")
     @Timed
-    public ResponseEntity<Void> deleteRegularSchedule(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRegularSchedule(@PathVariable UUID id) {
         log.debug("REST request to delete RegularSchedule : {}", id);
         regularScheduleService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

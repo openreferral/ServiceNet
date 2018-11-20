@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -72,7 +73,7 @@ public class PaymentAcceptedServiceImpl implements PaymentAcceptedService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<PaymentAcceptedDTO> findOne(Long id) {
+    public Optional<PaymentAcceptedDTO> findOne(UUID id) {
         log.debug("Request to get PaymentAccepted : {}", id);
         return paymentAcceptedRepository.findById(id)
             .map(paymentAcceptedMapper::toDto);
@@ -84,7 +85,7 @@ public class PaymentAcceptedServiceImpl implements PaymentAcceptedService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete PaymentAccepted : {}", id);
         paymentAcceptedRepository.deleteById(id);
     }

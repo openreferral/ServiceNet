@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -74,7 +75,7 @@ public class AccessibilityForDisabilitiesServiceImpl implements AccessibilityFor
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<AccessibilityForDisabilitiesDTO> findOne(Long id) {
+    public Optional<AccessibilityForDisabilitiesDTO> findOne(UUID id) {
         log.debug("Request to get AccessibilityForDisabilities : {}", id);
         return accessibilityForDisabilitiesRepository.findById(id)
             .map(accessibilityForDisabilitiesMapper::toDto);
@@ -86,7 +87,7 @@ public class AccessibilityForDisabilitiesServiceImpl implements AccessibilityFor
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete AccessibilityForDisabilities : {}", id);
         accessibilityForDisabilitiesRepository.deleteById(id);
     }

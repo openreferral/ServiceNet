@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing ServiceArea.
@@ -104,7 +105,7 @@ public class ServiceAreaResource {
      */
     @GetMapping("/service-areas/{id}")
     @Timed
-    public ResponseEntity<ServiceAreaDTO> getServiceArea(@PathVariable Long id) {
+    public ResponseEntity<ServiceAreaDTO> getServiceArea(@PathVariable UUID id) {
         log.debug("REST request to get ServiceArea : {}", id);
         Optional<ServiceAreaDTO> serviceAreaDTO = serviceAreaService.findOne(id);
         return ResponseUtil.wrapOrNotFound(serviceAreaDTO);
@@ -118,7 +119,7 @@ public class ServiceAreaResource {
      */
     @DeleteMapping("/service-areas/{id}")
     @Timed
-    public ResponseEntity<Void> deleteServiceArea(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteServiceArea(@PathVariable UUID id) {
         log.debug("REST request to delete ServiceArea : {}", id);
         serviceAreaService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

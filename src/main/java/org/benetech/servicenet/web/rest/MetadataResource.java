@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Metadata.
@@ -104,7 +105,7 @@ public class MetadataResource {
      */
     @GetMapping("/metadata/{id}")
     @Timed
-    public ResponseEntity<MetadataDTO> getMetadata(@PathVariable Long id) {
+    public ResponseEntity<MetadataDTO> getMetadata(@PathVariable UUID id) {
         log.debug("REST request to get Metadata : {}", id);
         Optional<MetadataDTO> metadataDTO = metadataService.findOne(id);
         return ResponseUtil.wrapOrNotFound(metadataDTO);
@@ -118,7 +119,7 @@ public class MetadataResource {
      */
     @DeleteMapping("/metadata/{id}")
     @Timed
-    public ResponseEntity<Void> deleteMetadata(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMetadata(@PathVariable UUID id) {
         log.debug("REST request to delete Metadata : {}", id);
         metadataService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

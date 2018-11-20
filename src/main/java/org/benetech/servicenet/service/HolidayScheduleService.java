@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing HolidaySchedule.
@@ -32,12 +33,12 @@ public interface HolidayScheduleService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<HolidayScheduleDTO> findOne(Long id);
+    Optional<HolidayScheduleDTO> findOne(UUID id);
 
     /**
      * Delete the "id" holidaySchedule.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

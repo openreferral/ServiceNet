@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.EligibilityDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing Eligibility.
@@ -32,12 +33,12 @@ public interface EligibilityService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<EligibilityDTO> findOne(Long id);
+    Optional<EligibilityDTO> findOne(UUID id);
 
     /**
      * Delete the "id" eligibility.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

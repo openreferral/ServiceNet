@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing DocumentUpload.
@@ -104,7 +105,7 @@ public class DocumentUploadResource {
      */
     @GetMapping("/document-uploads/{id}")
     @Timed
-    public ResponseEntity<DocumentUploadDTO> getDocumentUpload(@PathVariable Long id) {
+    public ResponseEntity<DocumentUploadDTO> getDocumentUpload(@PathVariable UUID id) {
         log.debug("REST request to get DocumentUpload : {}", id);
         Optional<DocumentUploadDTO> documentUploadDTO = documentUploadService.findOne(id);
         return ResponseUtil.wrapOrNotFound(documentUploadDTO);
@@ -118,7 +119,7 @@ public class DocumentUploadResource {
      */
     @DeleteMapping("/document-uploads/{id}")
     @Timed
-    public ResponseEntity<Void> deleteDocumentUpload(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDocumentUpload(@PathVariable UUID id) {
         log.debug("REST request to delete DocumentUpload : {}", id);
         documentUploadService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

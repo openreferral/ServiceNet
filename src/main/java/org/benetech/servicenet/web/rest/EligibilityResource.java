@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Eligibility.
@@ -104,7 +105,7 @@ public class EligibilityResource {
      */
     @GetMapping("/eligibilities/{id}")
     @Timed
-    public ResponseEntity<EligibilityDTO> getEligibility(@PathVariable Long id) {
+    public ResponseEntity<EligibilityDTO> getEligibility(@PathVariable UUID id) {
         log.debug("REST request to get Eligibility : {}", id);
         Optional<EligibilityDTO> eligibilityDTO = eligibilityService.findOne(id);
         return ResponseUtil.wrapOrNotFound(eligibilityDTO);
@@ -118,7 +119,7 @@ public class EligibilityResource {
      */
     @DeleteMapping("/eligibilities/{id}")
     @Timed
-    public ResponseEntity<Void> deleteEligibility(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteEligibility(@PathVariable UUID id) {
         log.debug("REST request to delete Eligibility : {}", id);
         eligibilityService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

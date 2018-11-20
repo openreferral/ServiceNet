@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.PaymentAcceptedDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity PaymentAccepted and its DTO PaymentAcceptedDTO.
  */
@@ -18,7 +20,7 @@ public interface PaymentAcceptedMapper extends EntityMapper<PaymentAcceptedDTO, 
     @Mapping(source = "srvcId", target = "srvc")
     PaymentAccepted toEntity(PaymentAcceptedDTO paymentAcceptedDTO);
 
-    default PaymentAccepted fromId(Long id) {
+    default PaymentAccepted fromId(UUID id) {
         if (id == null) {
             return null;
         }

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.repository.ProgramRepository;
 import org.benetech.servicenet.service.ProgramService;
@@ -130,7 +131,7 @@ public class ProgramResourceIntTest {
         int databaseSizeBeforeCreate = programRepository.findAll().size();
 
         // Create the Program with an existing ID
-        program.setId(1L);
+        program.setId(TestConstants.UUID_1);
         ProgramDTO programDTO = programMapper.toDto(program);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -173,7 +174,7 @@ public class ProgramResourceIntTest {
         restProgramMockMvc.perform(get("/api/programs?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(program.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(program.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].alternateName").value(hasItem(DEFAULT_ALTERNATE_NAME.toString())));
     }
@@ -188,7 +189,7 @@ public class ProgramResourceIntTest {
         restProgramMockMvc.perform(get("/api/programs/{id}", program.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(program.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(program.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.alternateName").value(DEFAULT_ALTERNATE_NAME.toString()));
     }
@@ -197,7 +198,7 @@ public class ProgramResourceIntTest {
     @Transactional
     public void getNonExistingProgram() throws Exception {
         // Get the program
-        restProgramMockMvc.perform(get("/api/programs/{id}", Long.MAX_VALUE))
+        restProgramMockMvc.perform(get("/api/programs/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -273,11 +274,11 @@ public class ProgramResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Program.class);
         Program program1 = new Program();
-        program1.setId(1L);
+        program1.setId(TestConstants.UUID_1);
         Program program2 = new Program();
         program2.setId(program1.getId());
         assertThat(program1).isEqualTo(program2);
-        program2.setId(2L);
+        program2.setId(TestConstants.UUID_2);
         assertThat(program1).isNotEqualTo(program2);
         program1.setId(null);
         assertThat(program1).isNotEqualTo(program2);
@@ -288,12 +289,12 @@ public class ProgramResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(ProgramDTO.class);
         ProgramDTO programDTO1 = new ProgramDTO();
-        programDTO1.setId(1L);
+        programDTO1.setId(TestConstants.UUID_1);
         ProgramDTO programDTO2 = new ProgramDTO();
         assertThat(programDTO1).isNotEqualTo(programDTO2);
         programDTO2.setId(programDTO1.getId());
         assertThat(programDTO1).isEqualTo(programDTO2);
-        programDTO2.setId(2L);
+        programDTO2.setId(TestConstants.UUID_2);
         assertThat(programDTO1).isNotEqualTo(programDTO2);
         programDTO1.setId(null);
         assertThat(programDTO1).isNotEqualTo(programDTO2);
@@ -302,7 +303,7 @@ public class ProgramResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(programMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(programMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(programMapper.fromId(null)).isNull();
     }
 }

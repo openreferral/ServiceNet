@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing PostalAddress.
@@ -104,7 +105,7 @@ public class PostalAddressResource {
      */
     @GetMapping("/postal-addresses/{id}")
     @Timed
-    public ResponseEntity<PostalAddressDTO> getPostalAddress(@PathVariable Long id) {
+    public ResponseEntity<PostalAddressDTO> getPostalAddress(@PathVariable UUID id) {
         log.debug("REST request to get PostalAddress : {}", id);
         Optional<PostalAddressDTO> postalAddressDTO = postalAddressService.findOne(id);
         return ResponseUtil.wrapOrNotFound(postalAddressDTO);
@@ -118,7 +119,7 @@ public class PostalAddressResource {
      */
     @DeleteMapping("/postal-addresses/{id}")
     @Timed
-    public ResponseEntity<Void> deletePostalAddress(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePostalAddress(@PathVariable UUID id) {
         log.debug("REST request to delete PostalAddress : {}", id);
         postalAddressService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.ServiceAreaDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing ServiceArea.
@@ -32,12 +33,12 @@ public interface ServiceAreaService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<ServiceAreaDTO> findOne(Long id);
+    Optional<ServiceAreaDTO> findOne(UUID id);
 
     /**
      * Delete the "id" serviceArea.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

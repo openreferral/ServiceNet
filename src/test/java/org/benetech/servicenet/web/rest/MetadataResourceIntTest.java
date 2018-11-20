@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.domain.enumeration.ActionType;
@@ -163,7 +164,7 @@ public class MetadataResourceIntTest {
         int databaseSizeBeforeCreate = metadataRepository.findAll().size();
 
         // Create the Metadata with an existing ID
-        metadata.setId(1L);
+        metadata.setId(TestConstants.UUID_1);
         MetadataDTO metadataDTO = metadataMapper.toDto(metadata);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -263,7 +264,7 @@ public class MetadataResourceIntTest {
         restMetadataMockMvc.perform(get("/api/metadata?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(metadata.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(metadata.getId().toString())))
             .andExpect(jsonPath("$.[*].resourceId").value(hasItem(DEFAULT_RESOURCE_ID.toString())))
             .andExpect(jsonPath("$.[*].lastActionDate").value(hasItem(sameInstant(DEFAULT_LAST_ACTION_DATE))))
             .andExpect(jsonPath("$.[*].lastActionType").value(hasItem(DEFAULT_LAST_ACTION_TYPE.toString())))
@@ -282,7 +283,7 @@ public class MetadataResourceIntTest {
         restMetadataMockMvc.perform(get("/api/metadata/{id}", metadata.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(metadata.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(metadata.getId().toString()))
             .andExpect(jsonPath("$.resourceId").value(DEFAULT_RESOURCE_ID.toString()))
             .andExpect(jsonPath("$.lastActionDate").value(sameInstant(DEFAULT_LAST_ACTION_DATE)))
             .andExpect(jsonPath("$.lastActionType").value(DEFAULT_LAST_ACTION_TYPE.toString()))
@@ -295,7 +296,7 @@ public class MetadataResourceIntTest {
     @Transactional
     public void getNonExistingMetadata() throws Exception {
         // Get the metadata
-        restMetadataMockMvc.perform(get("/api/metadata/{id}", Long.MAX_VALUE))
+        restMetadataMockMvc.perform(get("/api/metadata/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -379,11 +380,11 @@ public class MetadataResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Metadata.class);
         Metadata metadata1 = new Metadata();
-        metadata1.setId(1L);
+        metadata1.setId(TestConstants.UUID_1);
         Metadata metadata2 = new Metadata();
         metadata2.setId(metadata1.getId());
         assertThat(metadata1).isEqualTo(metadata2);
-        metadata2.setId(2L);
+        metadata2.setId(TestConstants.UUID_2);
         assertThat(metadata1).isNotEqualTo(metadata2);
         metadata1.setId(null);
         assertThat(metadata1).isNotEqualTo(metadata2);
@@ -394,12 +395,12 @@ public class MetadataResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(MetadataDTO.class);
         MetadataDTO metadataDTO1 = new MetadataDTO();
-        metadataDTO1.setId(1L);
+        metadataDTO1.setId(TestConstants.UUID_1);
         MetadataDTO metadataDTO2 = new MetadataDTO();
         assertThat(metadataDTO1).isNotEqualTo(metadataDTO2);
         metadataDTO2.setId(metadataDTO1.getId());
         assertThat(metadataDTO1).isEqualTo(metadataDTO2);
-        metadataDTO2.setId(2L);
+        metadataDTO2.setId(TestConstants.UUID_2);
         assertThat(metadataDTO1).isNotEqualTo(metadataDTO2);
         metadataDTO1.setId(null);
         assertThat(metadataDTO1).isNotEqualTo(metadataDTO2);
@@ -408,7 +409,7 @@ public class MetadataResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(metadataMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(metadataMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(metadataMapper.fromId(null)).isNull();
     }
 }

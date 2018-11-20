@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing DocumentUpload.
@@ -32,12 +33,12 @@ public interface DocumentUploadService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<DocumentUploadDTO> findOne(Long id);
+    Optional<DocumentUploadDTO> findOne(UUID id);
 
     /**
      * Delete the "id" documentUpload.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

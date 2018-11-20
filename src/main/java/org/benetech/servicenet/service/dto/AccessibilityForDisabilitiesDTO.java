@@ -3,28 +3,29 @@ package org.benetech.servicenet.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the AccessibilityForDisabilities entity.
  */
 public class AccessibilityForDisabilitiesDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String accessibility;
 
     private String details;
 
-    private Long locationId;
+    private UUID locationId;
 
     private String locationName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -44,11 +45,11 @@ public class AccessibilityForDisabilitiesDTO implements Serializable {
         this.details = details;
     }
 
-    public Long getLocationId() {
+    public UUID getLocationId() {
         return locationId;
     }
 
-    public void setLocationId(Long locationId) {
+    public void setLocationId(UUID locationId) {
         this.locationId = locationId;
     }
 

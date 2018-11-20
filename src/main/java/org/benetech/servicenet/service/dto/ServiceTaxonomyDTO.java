@@ -3,30 +3,31 @@ package org.benetech.servicenet.service.dto;
 import javax.persistence.Lob;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the ServiceTaxonomy entity.
  */
 public class ServiceTaxonomyDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @Lob
     private String taxonomyDetails;
 
-    private Long srvcId;
+    private UUID srvcId;
 
     private String srvcName;
 
-    private Long taxonomyId;
+    private UUID taxonomyId;
 
     private String taxonomyName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -38,11 +39,11 @@ public class ServiceTaxonomyDTO implements Serializable {
         this.taxonomyDetails = taxonomyDetails;
     }
 
-    public Long getSrvcId() {
+    public UUID getSrvcId() {
         return srvcId;
     }
 
-    public void setSrvcId(Long serviceId) {
+    public void setSrvcId(UUID serviceId) {
         this.srvcId = serviceId;
     }
 
@@ -54,11 +55,11 @@ public class ServiceTaxonomyDTO implements Serializable {
         this.srvcName = serviceName;
     }
 
-    public Long getTaxonomyId() {
+    public UUID getTaxonomyId() {
         return taxonomyId;
     }
 
-    public void setTaxonomyId(Long taxonomyId) {
+    public void setTaxonomyId(UUID taxonomyId) {
         this.taxonomyId = taxonomyId;
     }
 

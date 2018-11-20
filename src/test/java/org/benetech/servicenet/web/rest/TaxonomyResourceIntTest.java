@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.repository.TaxonomyRepository;
 import org.benetech.servicenet.service.TaxonomyService;
@@ -130,7 +131,7 @@ public class TaxonomyResourceIntTest {
         int databaseSizeBeforeCreate = taxonomyRepository.findAll().size();
 
         // Create the Taxonomy with an existing ID
-        taxonomy.setId(1L);
+        taxonomy.setId(TestConstants.UUID_1);
         TaxonomyDTO taxonomyDTO = taxonomyMapper.toDto(taxonomy);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -154,7 +155,7 @@ public class TaxonomyResourceIntTest {
         restTaxonomyMockMvc.perform(get("/api/taxonomies?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(taxonomy.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(taxonomy.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].vocabulary").value(hasItem(DEFAULT_VOCABULARY.toString())));
     }
@@ -169,7 +170,7 @@ public class TaxonomyResourceIntTest {
         restTaxonomyMockMvc.perform(get("/api/taxonomies/{id}", taxonomy.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(taxonomy.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(taxonomy.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.vocabulary").value(DEFAULT_VOCABULARY.toString()));
     }
@@ -178,7 +179,7 @@ public class TaxonomyResourceIntTest {
     @Transactional
     public void getNonExistingTaxonomy() throws Exception {
         // Get the taxonomy
-        restTaxonomyMockMvc.perform(get("/api/taxonomies/{id}", Long.MAX_VALUE))
+        restTaxonomyMockMvc.perform(get("/api/taxonomies/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -254,11 +255,11 @@ public class TaxonomyResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Taxonomy.class);
         Taxonomy taxonomy1 = new Taxonomy();
-        taxonomy1.setId(1L);
+        taxonomy1.setId(TestConstants.UUID_1);
         Taxonomy taxonomy2 = new Taxonomy();
         taxonomy2.setId(taxonomy1.getId());
         assertThat(taxonomy1).isEqualTo(taxonomy2);
-        taxonomy2.setId(2L);
+        taxonomy2.setId(TestConstants.UUID_2);
         assertThat(taxonomy1).isNotEqualTo(taxonomy2);
         taxonomy1.setId(null);
         assertThat(taxonomy1).isNotEqualTo(taxonomy2);
@@ -269,12 +270,12 @@ public class TaxonomyResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(TaxonomyDTO.class);
         TaxonomyDTO taxonomyDTO1 = new TaxonomyDTO();
-        taxonomyDTO1.setId(1L);
+        taxonomyDTO1.setId(TestConstants.UUID_1);
         TaxonomyDTO taxonomyDTO2 = new TaxonomyDTO();
         assertThat(taxonomyDTO1).isNotEqualTo(taxonomyDTO2);
         taxonomyDTO2.setId(taxonomyDTO1.getId());
         assertThat(taxonomyDTO1).isEqualTo(taxonomyDTO2);
-        taxonomyDTO2.setId(2L);
+        taxonomyDTO2.setId(TestConstants.UUID_2);
         assertThat(taxonomyDTO1).isNotEqualTo(taxonomyDTO2);
         taxonomyDTO1.setId(null);
         assertThat(taxonomyDTO1).isNotEqualTo(taxonomyDTO2);
@@ -283,7 +284,7 @@ public class TaxonomyResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(taxonomyMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(taxonomyMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(taxonomyMapper.fromId(null)).isNull();
     }
 }

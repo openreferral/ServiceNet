@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.repository.ContactRepository;
 import org.benetech.servicenet.service.ContactService;
@@ -140,7 +141,7 @@ public class ContactResourceIntTest {
         int databaseSizeBeforeCreate = contactRepository.findAll().size();
 
         // Create the Contact with an existing ID
-        contact.setId(1L);
+        contact.setId(TestConstants.UUID_1);
         ContactDTO contactDTO = contactMapper.toDto(contact);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -183,7 +184,7 @@ public class ContactResourceIntTest {
         restContactMockMvc.perform(get("/api/contacts?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(contact.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(contact.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
             .andExpect(jsonPath("$.[*].department").value(hasItem(DEFAULT_DEPARTMENT.toString())))
@@ -200,7 +201,7 @@ public class ContactResourceIntTest {
         restContactMockMvc.perform(get("/api/contacts/{id}", contact.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(contact.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(contact.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE.toString()))
             .andExpect(jsonPath("$.department").value(DEFAULT_DEPARTMENT.toString()))
@@ -211,7 +212,7 @@ public class ContactResourceIntTest {
     @Transactional
     public void getNonExistingContact() throws Exception {
         // Get the contact
-        restContactMockMvc.perform(get("/api/contacts/{id}", Long.MAX_VALUE))
+        restContactMockMvc.perform(get("/api/contacts/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -291,11 +292,11 @@ public class ContactResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Contact.class);
         Contact contact1 = new Contact();
-        contact1.setId(1L);
+        contact1.setId(TestConstants.UUID_1);
         Contact contact2 = new Contact();
         contact2.setId(contact1.getId());
         assertThat(contact1).isEqualTo(contact2);
-        contact2.setId(2L);
+        contact2.setId(TestConstants.UUID_2);
         assertThat(contact1).isNotEqualTo(contact2);
         contact1.setId(null);
         assertThat(contact1).isNotEqualTo(contact2);
@@ -306,12 +307,12 @@ public class ContactResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(ContactDTO.class);
         ContactDTO contactDTO1 = new ContactDTO();
-        contactDTO1.setId(1L);
+        contactDTO1.setId(TestConstants.UUID_1);
         ContactDTO contactDTO2 = new ContactDTO();
         assertThat(contactDTO1).isNotEqualTo(contactDTO2);
         contactDTO2.setId(contactDTO1.getId());
         assertThat(contactDTO1).isEqualTo(contactDTO2);
-        contactDTO2.setId(2L);
+        contactDTO2.setId(TestConstants.UUID_2);
         assertThat(contactDTO1).isNotEqualTo(contactDTO2);
         contactDTO1.setId(null);
         assertThat(contactDTO1).isNotEqualTo(contactDTO2);
@@ -320,7 +321,7 @@ public class ContactResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(contactMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(contactMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(contactMapper.fromId(null)).isNull();
     }
 }

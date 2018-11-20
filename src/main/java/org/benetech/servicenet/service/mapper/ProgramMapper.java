@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.ProgramDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity Program and its DTO ProgramDTO.
  */
@@ -19,7 +21,7 @@ public interface ProgramMapper extends EntityMapper<ProgramDTO, Program> {
     @Mapping(target = "services", ignore = true)
     Program toEntity(ProgramDTO programDTO);
 
-    default Program fromId(Long id) {
+    default Program fromId(UUID id) {
         if (id == null) {
             return null;
         }

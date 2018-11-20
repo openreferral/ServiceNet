@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity Eligibility and its DTO EligibilityDTO.
  */
@@ -18,7 +20,7 @@ public interface EligibilityMapper extends EntityMapper<EligibilityDTO, Eligibil
     @Mapping(source = "srvcId", target = "srvc")
     Eligibility toEntity(EligibilityDTO eligibilityDTO);
 
-    default Eligibility fromId(Long id) {
+    default Eligibility fromId(UUID id) {
         if (id == null) {
             return null;
         }

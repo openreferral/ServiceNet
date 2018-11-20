@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.ServiceDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing Service.
@@ -67,12 +68,12 @@ public interface ServiceService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<ServiceDTO> findOne(Long id);
+    Optional<ServiceDTO> findOne(UUID id);
 
     /**
      * Delete the "id" service.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

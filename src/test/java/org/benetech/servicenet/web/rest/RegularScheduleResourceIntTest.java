@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.service.RegularScheduleService;
@@ -135,7 +136,7 @@ public class RegularScheduleResourceIntTest {
         int databaseSizeBeforeCreate = regularScheduleRepository.findAll().size();
 
         // Create the RegularSchedule with an existing ID
-        regularSchedule.setId(1L);
+        regularSchedule.setId(TestConstants.UUID_1);
         RegularScheduleDTO regularScheduleDTO = regularScheduleMapper.toDto(regularSchedule);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -178,7 +179,7 @@ public class RegularScheduleResourceIntTest {
         restRegularScheduleMockMvc.perform(get("/api/regular-schedules?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(regularSchedule.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(regularSchedule.getId().toString())))
             .andExpect(jsonPath("$.[*].weekday").value(hasItem(DEFAULT_WEEKDAY)))
             .andExpect(jsonPath("$.[*].opensAt").value(hasItem(DEFAULT_OPENS_AT.toString())))
             .andExpect(jsonPath("$.[*].closesAt").value(hasItem(DEFAULT_CLOSES_AT.toString())));
@@ -194,7 +195,7 @@ public class RegularScheduleResourceIntTest {
         restRegularScheduleMockMvc.perform(get("/api/regular-schedules/{id}", regularSchedule.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(regularSchedule.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(regularSchedule.getId().toString()))
             .andExpect(jsonPath("$.weekday").value(DEFAULT_WEEKDAY))
             .andExpect(jsonPath("$.opensAt").value(DEFAULT_OPENS_AT.toString()))
             .andExpect(jsonPath("$.closesAt").value(DEFAULT_CLOSES_AT.toString()));
@@ -204,7 +205,7 @@ public class RegularScheduleResourceIntTest {
     @Transactional
     public void getNonExistingRegularSchedule() throws Exception {
         // Get the regularSchedule
-        restRegularScheduleMockMvc.perform(get("/api/regular-schedules/{id}", Long.MAX_VALUE))
+        restRegularScheduleMockMvc.perform(get("/api/regular-schedules/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -282,11 +283,11 @@ public class RegularScheduleResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(RegularSchedule.class);
         RegularSchedule regularSchedule1 = new RegularSchedule();
-        regularSchedule1.setId(1L);
+        regularSchedule1.setId(TestConstants.UUID_1);
         RegularSchedule regularSchedule2 = new RegularSchedule();
         regularSchedule2.setId(regularSchedule1.getId());
         assertThat(regularSchedule1).isEqualTo(regularSchedule2);
-        regularSchedule2.setId(2L);
+        regularSchedule2.setId(TestConstants.UUID_2);
         assertThat(regularSchedule1).isNotEqualTo(regularSchedule2);
         regularSchedule1.setId(null);
         assertThat(regularSchedule1).isNotEqualTo(regularSchedule2);
@@ -297,12 +298,12 @@ public class RegularScheduleResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(RegularScheduleDTO.class);
         RegularScheduleDTO regularScheduleDTO1 = new RegularScheduleDTO();
-        regularScheduleDTO1.setId(1L);
+        regularScheduleDTO1.setId(TestConstants.UUID_1);
         RegularScheduleDTO regularScheduleDTO2 = new RegularScheduleDTO();
         assertThat(regularScheduleDTO1).isNotEqualTo(regularScheduleDTO2);
         regularScheduleDTO2.setId(regularScheduleDTO1.getId());
         assertThat(regularScheduleDTO1).isEqualTo(regularScheduleDTO2);
-        regularScheduleDTO2.setId(2L);
+        regularScheduleDTO2.setId(TestConstants.UUID_2);
         assertThat(regularScheduleDTO1).isNotEqualTo(regularScheduleDTO2);
         regularScheduleDTO1.setId(null);
         assertThat(regularScheduleDTO1).isNotEqualTo(regularScheduleDTO2);
@@ -311,7 +312,7 @@ public class RegularScheduleResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(regularScheduleMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(regularScheduleMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(regularScheduleMapper.fromId(null)).isNull();
     }
 }

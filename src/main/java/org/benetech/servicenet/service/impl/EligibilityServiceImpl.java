@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,7 @@ public class EligibilityServiceImpl implements EligibilityService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<EligibilityDTO> findOne(Long id) {
+    public Optional<EligibilityDTO> findOne(UUID id) {
         log.debug("Request to get Eligibility : {}", id);
         return eligibilityRepository.findById(id)
             .map(eligibilityMapper::toDto);
@@ -83,7 +84,7 @@ public class EligibilityServiceImpl implements EligibilityService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete Eligibility : {}", id);
         eligibilityRepository.deleteById(id);
     }

@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing Contact.
@@ -102,7 +103,7 @@ public class ContactResource {
      */
     @GetMapping("/contacts/{id}")
     @Timed
-    public ResponseEntity<ContactDTO> getContact(@PathVariable Long id) {
+    public ResponseEntity<ContactDTO> getContact(@PathVariable UUID id) {
         log.debug("REST request to get Contact : {}", id);
         Optional<ContactDTO> contactDTO = contactService.findOne(id);
         return ResponseUtil.wrapOrNotFound(contactDTO);
@@ -116,7 +117,7 @@ public class ContactResource {
      */
     @DeleteMapping("/contacts/{id}")
     @Timed
-    public ResponseEntity<Void> deleteContact(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteContact(@PathVariable UUID id) {
         log.debug("REST request to delete Contact : {}", id);
         contactService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.repository.EligibilityRepository;
 import org.benetech.servicenet.service.EligibilityService;
@@ -125,7 +126,7 @@ public class EligibilityResourceIntTest {
         int databaseSizeBeforeCreate = eligibilityRepository.findAll().size();
 
         // Create the Eligibility with an existing ID
-        eligibility.setId(1L);
+        eligibility.setId(TestConstants.UUID_1);
         EligibilityDTO eligibilityDTO = eligibilityMapper.toDto(eligibility);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -168,7 +169,7 @@ public class EligibilityResourceIntTest {
         restEligibilityMockMvc.perform(get("/api/eligibilities?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(eligibility.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(eligibility.getId().toString())))
             .andExpect(jsonPath("$.[*].eligibility").value(hasItem(DEFAULT_ELIGIBILITY.toString())));
     }
 
@@ -182,7 +183,7 @@ public class EligibilityResourceIntTest {
         restEligibilityMockMvc.perform(get("/api/eligibilities/{id}", eligibility.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(eligibility.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(eligibility.getId().toString()))
             .andExpect(jsonPath("$.eligibility").value(DEFAULT_ELIGIBILITY.toString()));
     }
 
@@ -190,7 +191,7 @@ public class EligibilityResourceIntTest {
     @Transactional
     public void getNonExistingEligibility() throws Exception {
         // Get the eligibility
-        restEligibilityMockMvc.perform(get("/api/eligibilities/{id}", Long.MAX_VALUE))
+        restEligibilityMockMvc.perform(get("/api/eligibilities/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -264,11 +265,11 @@ public class EligibilityResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Eligibility.class);
         Eligibility eligibility1 = new Eligibility();
-        eligibility1.setId(1L);
+        eligibility1.setId(TestConstants.UUID_1);
         Eligibility eligibility2 = new Eligibility();
         eligibility2.setId(eligibility1.getId());
         assertThat(eligibility1).isEqualTo(eligibility2);
-        eligibility2.setId(2L);
+        eligibility2.setId(TestConstants.UUID_2);
         assertThat(eligibility1).isNotEqualTo(eligibility2);
         eligibility1.setId(null);
         assertThat(eligibility1).isNotEqualTo(eligibility2);
@@ -279,12 +280,12 @@ public class EligibilityResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(EligibilityDTO.class);
         EligibilityDTO eligibilityDTO1 = new EligibilityDTO();
-        eligibilityDTO1.setId(1L);
+        eligibilityDTO1.setId(TestConstants.UUID_1);
         EligibilityDTO eligibilityDTO2 = new EligibilityDTO();
         assertThat(eligibilityDTO1).isNotEqualTo(eligibilityDTO2);
         eligibilityDTO2.setId(eligibilityDTO1.getId());
         assertThat(eligibilityDTO1).isEqualTo(eligibilityDTO2);
-        eligibilityDTO2.setId(2L);
+        eligibilityDTO2.setId(TestConstants.UUID_2);
         assertThat(eligibilityDTO1).isNotEqualTo(eligibilityDTO2);
         eligibilityDTO1.setId(null);
         assertThat(eligibilityDTO1).isNotEqualTo(eligibilityDTO2);
@@ -293,7 +294,7 @@ public class EligibilityResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(eligibilityMapper.fromId(42L).getId()).isEqualTo(42);
+        assertThat(eligibilityMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(eligibilityMapper.fromId(null)).isNull();
     }
 }

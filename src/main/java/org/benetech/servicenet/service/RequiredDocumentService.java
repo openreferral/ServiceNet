@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing RequiredDocument.
@@ -32,12 +33,12 @@ public interface RequiredDocumentService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<RequiredDocumentDTO> findOne(Long id);
+    Optional<RequiredDocumentDTO> findOne(UUID id);
 
     /**
      * Delete the "id" requiredDocument.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing AccessibilityForDisabilities.
@@ -106,7 +107,7 @@ public class AccessibilityForDisabilitiesResource {
      */
     @GetMapping("/accessibility-for-disabilities/{id}")
     @Timed
-    public ResponseEntity<AccessibilityForDisabilitiesDTO> getAccessibilityForDisabilities(@PathVariable Long id) {
+    public ResponseEntity<AccessibilityForDisabilitiesDTO> getAccessibilityForDisabilities(@PathVariable UUID id) {
         log.debug("REST request to get AccessibilityForDisabilities : {}", id);
         Optional<AccessibilityForDisabilitiesDTO> accessibilityForDisabilitiesDTO =
             accessibilityForDisabilitiesService.findOne(id);
@@ -121,7 +122,7 @@ public class AccessibilityForDisabilitiesResource {
      */
     @DeleteMapping("/accessibility-for-disabilities/{id}")
     @Timed
-    public ResponseEntity<Void> deleteAccessibilityForDisabilities(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAccessibilityForDisabilities(@PathVariable UUID id) {
         log.debug("REST request to delete AccessibilityForDisabilities : {}", id);
         accessibilityForDisabilitiesService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

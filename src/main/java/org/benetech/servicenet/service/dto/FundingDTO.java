@@ -3,30 +3,31 @@ package org.benetech.servicenet.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the Funding entity.
  */
 public class FundingDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String source;
 
-    private Long organizationId;
+    private UUID organizationId;
 
     private String organizationName;
 
-    private Long srvcId;
+    private UUID srvcId;
 
     private String srvcName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -38,11 +39,11 @@ public class FundingDTO implements Serializable {
         this.source = source;
     }
 
-    public Long getOrganizationId() {
+    public UUID getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(Long organizationId) {
+    public void setOrganizationId(UUID organizationId) {
         this.organizationId = organizationId;
     }
 
@@ -54,11 +55,11 @@ public class FundingDTO implements Serializable {
         this.organizationName = organizationName;
     }
 
-    public Long getSrvcId() {
+    public UUID getSrvcId() {
         return srvcId;
     }
 
-    public void setSrvcId(Long serviceId) {
+    public void setSrvcId(UUID serviceId) {
         this.srvcId = serviceId;
     }
 

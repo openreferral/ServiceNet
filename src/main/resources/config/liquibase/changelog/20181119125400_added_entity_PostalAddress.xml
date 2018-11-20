@@ -11,12 +11,16 @@
     <property name="floatType" value="float4" dbms="postgresql, h2"/>
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
+    <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
+    <property name="uuidFunction" value="uid.uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
+
     <!--
         Added the entity PostalAddress.
     -->
     <changeSet id="20181119125400-1" author="jhipster">
         <createTable tableName="postal_address">
-            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="attention" type="varchar(255)">
@@ -46,7 +50,7 @@
             <column name="country" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="location_id" type="bigint">
+            <column name="location_id" type="${uuidType}">
                 <constraints unique="true" nullable="true" uniqueConstraintName="ux_postal_address_location_id"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->

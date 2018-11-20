@@ -5,6 +5,8 @@ import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 /**
  * Mapper for the entity PhysicalAddress and its DTO PhysicalAddressDTO.
  */
@@ -18,7 +20,7 @@ public interface PhysicalAddressMapper extends EntityMapper<PhysicalAddressDTO, 
     @Mapping(source = "locationId", target = "location")
     PhysicalAddress toEntity(PhysicalAddressDTO physicalAddressDTO);
 
-    default PhysicalAddress fromId(Long id) {
+    default PhysicalAddress fromId(UUID id) {
         if (id == null) {
             return null;
         }

@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST controller for managing PhysicalAddress.
@@ -104,7 +105,7 @@ public class PhysicalAddressResource {
      */
     @GetMapping("/physical-addresses/{id}")
     @Timed
-    public ResponseEntity<PhysicalAddressDTO> getPhysicalAddress(@PathVariable Long id) {
+    public ResponseEntity<PhysicalAddressDTO> getPhysicalAddress(@PathVariable UUID id) {
         log.debug("REST request to get PhysicalAddress : {}", id);
         Optional<PhysicalAddressDTO> physicalAddressDTO = physicalAddressService.findOne(id);
         return ResponseUtil.wrapOrNotFound(physicalAddressDTO);
@@ -118,7 +119,7 @@ public class PhysicalAddressResource {
      */
     @DeleteMapping("/physical-addresses/{id}")
     @Timed
-    public ResponseEntity<Void> deletePhysicalAddress(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePhysicalAddress(@PathVariable UUID id) {
         log.debug("REST request to delete PhysicalAddress : {}", id);
         physicalAddressService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

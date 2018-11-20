@@ -7,13 +7,14 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the Metadata entity.
  */
 public class MetadataDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     @NotNull
     private String resourceId;
@@ -33,15 +34,15 @@ public class MetadataDTO implements Serializable {
     @Lob
     private String replacementValue;
 
-    private Long userId;
+    private UUID userId;
 
     private String userLogin;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -93,11 +94,11 @@ public class MetadataDTO implements Serializable {
         this.replacementValue = replacementValue;
     }
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

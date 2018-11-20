@@ -2,27 +2,28 @@ package org.benetech.servicenet.service.dto;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the Taxonomy entity.
  */
 public class TaxonomyDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     private String name;
 
     private String vocabulary;
 
-    private Long parentId;
+    private UUID parentId;
 
     private String parentName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -42,11 +43,11 @@ public class TaxonomyDTO implements Serializable {
         this.vocabulary = vocabulary;
     }
 
-    public Long getParentId() {
+    public UUID getParentId() {
         return parentId;
     }
 
-    public void setParentId(Long taxonomyId) {
+    public void setParentId(UUID taxonomyId) {
         this.parentId = taxonomyId;
     }
 

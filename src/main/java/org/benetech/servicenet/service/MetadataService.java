@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.MetadataDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing Metadata.
@@ -32,12 +33,12 @@ public interface MetadataService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<MetadataDTO> findOne(Long id);
+    Optional<MetadataDTO> findOne(UUID id);
 
     /**
      * Delete the "id" metadata.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

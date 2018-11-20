@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.UserRepository;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -58,7 +60,7 @@ public class UserResourceIntTest {
 
     private static final String UPDATED_LOGIN = "jhipster";
 
-    private static final Long DEFAULT_ID = 1L;
+    private static final UUID DEFAULT_ID = TestConstants.UUID_1;
 
     private static final String DEFAULT_PASSWORD = "passjohndoe";
 
@@ -193,7 +195,7 @@ public class UserResourceIntTest {
         int databaseSizeBeforeCreate = userRepository.findAll().size();
 
         ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setId(1L);
+        managedUserVM.setId(TestConstants.UUID_1);
         managedUserVM.setLogin(DEFAULT_LOGIN);
         managedUserVM.setPassword(DEFAULT_PASSWORD);
         managedUserVM.setFirstName(DEFAULT_FIRSTNAME);
@@ -526,11 +528,11 @@ public class UserResourceIntTest {
     public void testUserEquals() throws Exception {
         TestUtil.equalsVerifier(User.class);
         User user1 = new User();
-        user1.setId(1L);
+        user1.setId(TestConstants.UUID_1);
         User user2 = new User();
         user2.setId(user1.getId());
         assertThat(user1).isEqualTo(user2);
-        user2.setId(2L);
+        user2.setId(TestConstants.UUID_2);
         assertThat(user1).isNotEqualTo(user2);
         user1.setId(null);
         assertThat(user1).isNotEqualTo(user2);

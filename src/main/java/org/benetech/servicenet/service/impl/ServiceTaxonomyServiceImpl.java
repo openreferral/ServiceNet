@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -72,7 +73,7 @@ public class ServiceTaxonomyServiceImpl implements ServiceTaxonomyService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<ServiceTaxonomyDTO> findOne(Long id) {
+    public Optional<ServiceTaxonomyDTO> findOne(UUID id) {
         log.debug("Request to get ServiceTaxonomy : {}", id);
         return serviceTaxonomyRepository.findById(id)
             .map(serviceTaxonomyMapper::toDto);
@@ -84,7 +85,7 @@ public class ServiceTaxonomyServiceImpl implements ServiceTaxonomyService {
      * @param id the id of the entity
      */
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         log.debug("Request to delete ServiceTaxonomy : {}", id);
         serviceTaxonomyRepository.deleteById(id);
     }

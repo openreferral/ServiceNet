@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.ServiceTaxonomyDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing ServiceTaxonomy.
@@ -32,12 +33,12 @@ public interface ServiceTaxonomyService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<ServiceTaxonomyDTO> findOne(Long id);
+    Optional<ServiceTaxonomyDTO> findOne(UUID id);
 
     /**
      * Delete the "id" serviceTaxonomy.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }

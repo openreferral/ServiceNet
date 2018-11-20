@@ -4,13 +4,14 @@ import javax.persistence.Lob;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A DTO for the OrganizationMatch entity.
  */
 public class OrganizationMatchDTO implements Serializable {
 
-    private Long id;
+    private UUID id;
 
     private String fieldName;
 
@@ -23,19 +24,19 @@ public class OrganizationMatchDTO implements Serializable {
     @Lob
     private String matchedValue;
 
-    private Long organizationRecordId;
+    private UUID organizationRecordId;
 
     private String organizationRecordName;
 
-    private Long partnerVersionId;
+    private UUID partnerVersionId;
 
     private String partnerVersionName;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -79,11 +80,11 @@ public class OrganizationMatchDTO implements Serializable {
         this.matchedValue = matchedValue;
     }
 
-    public Long getOrganizationRecordId() {
+    public UUID getOrganizationRecordId() {
         return organizationRecordId;
     }
 
-    public void setOrganizationRecordId(Long organizationId) {
+    public void setOrganizationRecordId(UUID organizationId) {
         this.organizationRecordId = organizationId;
     }
 
@@ -95,11 +96,11 @@ public class OrganizationMatchDTO implements Serializable {
         this.organizationRecordName = organizationName;
     }
 
-    public Long getPartnerVersionId() {
+    public UUID getPartnerVersionId() {
         return partnerVersionId;
     }
 
-    public void setPartnerVersionId(Long organizationId) {
+    public void setPartnerVersionId(UUID organizationId) {
         this.partnerVersionId = organizationId;
     }
 

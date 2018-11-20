@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.ContactDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Interface for managing Contact.
@@ -32,12 +33,12 @@ public interface ContactService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<ContactDTO> findOne(Long id);
+    Optional<ContactDTO> findOne(UUID id);
 
     /**
      * Delete the "id" contact.
      *
      * @param id the id of the entity
      */
-    void delete(Long id);
+    void delete(UUID id);
 }
