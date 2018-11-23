@@ -1,0 +1,23 @@
+{
+  "serviceNetApp": {
+    "taxonomy": {
+      "home": {
+        "title": "Taxonomies",
+        "createLabel": "Create a new Taxonomy",
+        "createOrEditLabel": "Create or edit a Taxonomy"
+      },
+      "created": "A new Taxonomy is created with identifier {{ param }}",
+      "updated": "A Taxonomy is updated with identifier {{ param }}",
+      "deleted": "A Taxonomy is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Taxonomy {{ id }}?"
+      },
+      "detail": {
+        "title": "Taxonomy"
+      },
+      "name": "Name",
+      "vocabulary": "Vocabulary",
+      "parent": "Parent"
+    }
+  }
+}

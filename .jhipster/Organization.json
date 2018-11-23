@@ -1,0 +1,118 @@
+{
+    "name": "Organization",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "alternateName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 50
+        },
+        {
+            "fieldName": "url",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "taxStatus",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "taxId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "yearIncorporated",
+            "fieldType": "LocalDate"
+        },
+        {
+            "fieldName": "legalStatus",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "active",
+            "fieldType": "Boolean",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "updatedAt",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "location",
+            "otherEntityName": "location",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "organization"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "replacedBy",
+            "otherEntityName": "organization",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "organization"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "sourceDocument",
+            "otherEntityName": "documentUpload",
+            "otherEntityField": "dateUploaded"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "account",
+            "otherEntityName": "systemAccount",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "funding",
+            "otherEntityName": "funding",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "organization"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "programs",
+            "otherEntityName": "program",
+            "otherEntityRelationshipName": "organization"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "services",
+            "otherEntityName": "service",
+            "otherEntityRelationshipName": "organization"
+        }
+    ],
+    "changelogDate": "20181119125354",
+    "entityTableName": "organization",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

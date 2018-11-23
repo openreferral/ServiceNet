@@ -1,0 +1,84 @@
+{
+    "name": "Location",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "alternateName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "transportation",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "latitude",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "longitude",
+            "fieldType": "Double"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "physicalAddress",
+            "otherEntityName": "physicalAddress",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "location"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "postalAddress",
+            "otherEntityName": "postalAddress",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "location"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "regularSchedule",
+            "otherEntityName": "regularSchedule",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "location"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "holidaySchedule",
+            "otherEntityName": "holidaySchedule",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "location"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "langs",
+            "otherEntityName": "language",
+            "otherEntityRelationshipName": "location"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "accessibilities",
+            "otherEntityName": "accessibilityForDisabilities",
+            "otherEntityRelationshipName": "location"
+        }
+    ],
+    "changelogDate": "20181119125358",
+    "entityTableName": "location",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

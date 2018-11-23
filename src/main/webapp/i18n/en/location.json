@@ -1,0 +1,32 @@
+{
+  "serviceNetApp": {
+    "location": {
+      "home": {
+        "title": "Locations",
+        "createLabel": "Create a new Location",
+        "createOrEditLabel": "Create or edit a Location"
+      },
+      "created": "A new Location is created with identifier {{ param }}",
+      "updated": "A Location is updated with identifier {{ param }}",
+      "deleted": "A Location is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Location {{ id }}?"
+      },
+      "detail": {
+        "title": "Location"
+      },
+      "name": "Name",
+      "alternateName": "Alternate Name",
+      "description": "Description",
+      "transportation": "Transportation",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "physicalAddress": "Physical Address",
+      "postalAddress": "Postal Address",
+      "regularSchedule": "Regular Schedule",
+      "holidaySchedule": "Holiday Schedule",
+      "langs": "Langs",
+      "accessibilities": "Accessibilities"
+    }
+  }
+}

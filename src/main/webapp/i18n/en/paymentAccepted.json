@@ -1,0 +1,22 @@
+{
+  "serviceNetApp": {
+    "paymentAccepted": {
+      "home": {
+        "title": "Payment Accepteds",
+        "createLabel": "Create a new Payment Accepted",
+        "createOrEditLabel": "Create or edit a Payment Accepted"
+      },
+      "created": "A new Payment Accepted is created with identifier {{ param }}",
+      "updated": "A Payment Accepted is updated with identifier {{ param }}",
+      "deleted": "A Payment Accepted is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Payment Accepted {{ id }}?"
+      },
+      "detail": {
+        "title": "Payment Accepted"
+      },
+      "payment": "Payment",
+      "srvc": "Srvc"
+    }
+  }
+}

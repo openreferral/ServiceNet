@@ -4,6 +4,10 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+    <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
+    <property name="uuidFunction" value="uid.uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
+
     <changeSet id="00000000000000" author="jhipster">
         <createSequence sequenceName="hibernate_sequence" startValue="1000" incrementBy="50"/>
     </changeSet>
@@ -14,7 +18,7 @@
     -->
     <changeSet id="00000000000001" author="jhipster">
         <createTable tableName="jhi_user">
-            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="login" type="varchar(50)">
@@ -51,7 +55,7 @@
         </createTable>
 
         <createTable tableName="jhi_user_authority">
-            <column name="user_id" type="bigint">
+            <column name="user_id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints nullable="false"/>
             </column>
             <column name="authority_name" type="varchar(50)">
@@ -65,7 +69,7 @@
             <column name="series" type="varchar(20)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="user_id" type="bigint"/>
+            <column name="user_id" type="${uuidType}" defaultValueComputed="${uuidFunction}"/>
             <column name="token_value" type="varchar(20)">
                 <constraints nullable="false"/>
             </column>
@@ -113,7 +117,7 @@
                   separator=";"
                   tableName="jhi_user_authority"/>
         <createTable tableName="jhi_persistent_audit_event">
-            <column name="event_id" type="bigint" autoIncrement="${autoIncrement}">
+            <column name="event_id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="principal" type="varchar(50)">
@@ -124,7 +128,7 @@
         </createTable>
 
         <createTable tableName="jhi_persistent_audit_evt_data">
-            <column name="event_id" type="bigint">
+            <column name="event_id" type="${uuidType}">
                 <constraints nullable="false"/>
             </column>
             <column name="name" type="varchar(150)">
@@ -144,7 +148,7 @@
         <createIndex indexName="idx_persistent_audit_evt_data"
                      tableName="jhi_persistent_audit_evt_data"
                      unique="false">
-            <column name="event_id" type="bigint"/>
+            <column name="event_id" type="${uuidType}"/>
         </createIndex>
 
         <addForeignKeyConstraint baseColumnNames="event_id"

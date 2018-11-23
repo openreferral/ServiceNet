@@ -1,0 +1,23 @@
+{
+  "serviceNetApp": {
+    "serviceTaxonomy": {
+      "home": {
+        "title": "Service Taxonomies",
+        "createLabel": "Create a new Service Taxonomy",
+        "createOrEditLabel": "Create or edit a Service Taxonomy"
+      },
+      "created": "A new Service Taxonomy is created with identifier {{ param }}",
+      "updated": "A Service Taxonomy is updated with identifier {{ param }}",
+      "deleted": "A Service Taxonomy is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Service Taxonomy {{ id }}?"
+      },
+      "detail": {
+        "title": "Service Taxonomy"
+      },
+      "taxonomyDetails": "Taxonomy Details",
+      "srvc": "Srvc",
+      "taxonomy": "Taxonomy"
+    }
+  }
+}

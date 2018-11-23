@@ -1,0 +1,29 @@
+{
+    "name": "RequiredDocument",
+    "fields": [
+        {
+            "fieldName": "document",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "srvc",
+            "otherEntityName": "service",
+            "otherEntityField": "name"
+        }
+    ],
+    "changelogDate": "20181119125408",
+    "entityTableName": "required_document",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

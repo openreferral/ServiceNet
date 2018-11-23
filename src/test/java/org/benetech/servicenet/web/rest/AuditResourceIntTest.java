@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.config.audit.AuditEventConverter;
 import org.benetech.servicenet.domain.PersistentAuditEvent;
 import org.benetech.servicenet.repository.PersistenceAuditEventRepository;
@@ -148,7 +149,7 @@ public class AuditResourceIntTest {
     @Test
     public void getNonExistingAudit() throws Exception {
         // Get the audit
-        restAuditMockMvc.perform(get("/management/audits/{id}", Long.MAX_VALUE))
+        restAuditMockMvc.perform(get("/management/audits/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -157,11 +158,11 @@ public class AuditResourceIntTest {
     public void testPersistentAuditEventEquals() throws Exception {
         TestUtil.equalsVerifier(PersistentAuditEvent.class);
         PersistentAuditEvent auditEvent1 = new PersistentAuditEvent();
-        auditEvent1.setId(1L);
+        auditEvent1.setId(TestConstants.UUID_1);
         PersistentAuditEvent auditEvent2 = new PersistentAuditEvent();
         auditEvent2.setId(auditEvent1.getId());
         assertThat(auditEvent1).isEqualTo(auditEvent2);
-        auditEvent2.setId(2L);
+        auditEvent2.setId(TestConstants.UUID_2);
         assertThat(auditEvent1).isNotEqualTo(auditEvent2);
         auditEvent1.setId(null);
         assertThat(auditEvent1).isNotEqualTo(auditEvent2);

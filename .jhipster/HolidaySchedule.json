@@ -1,0 +1,69 @@
+{
+    "name": "HolidaySchedule",
+    "fields": [
+        {
+            "fieldName": "closed",
+            "fieldType": "Boolean",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "opensAt",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "closesAt",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "startDate",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "endDate",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "srvc",
+            "otherEntityName": "service",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "holidaySchedule"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "location",
+            "otherEntityName": "location",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "holidaySchedule"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "serviceAtlocation",
+            "otherEntityName": "serviceAtLocation",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "holidaySchedule"
+        }
+    ],
+    "changelogDate": "20181119125404",
+    "entityTableName": "holiday_schedule",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

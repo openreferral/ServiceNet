@@ -1,0 +1,22 @@
+{
+  "serviceNetApp": {
+    "serviceArea": {
+      "home": {
+        "title": "Service Areas",
+        "createLabel": "Create a new Service Area",
+        "createOrEditLabel": "Create or edit a Service Area"
+      },
+      "created": "A new Service Area is created with identifier {{ param }}",
+      "updated": "A Service Area is updated with identifier {{ param }}",
+      "deleted": "A Service Area is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Service Area {{ id }}?"
+      },
+      "detail": {
+        "title": "Service Area"
+      },
+      "description": "Description",
+      "srvc": "Srvc"
+    }
+  }
+}

@@ -50,7 +50,7 @@ entity ServiceAtLocation {
 
 entity Location {
     name String required,
-    alternameName String,
+    alternateName String,
     description TextBlob,
     transportation String,
     latitude Double,
@@ -130,7 +130,7 @@ entity Language {
     language String required
 }
 
-entity AccessibilityForDissabilities {
+entity AccessibilityForDisabilities {
     accessibility String required,
     details String
 }
@@ -200,7 +200,7 @@ relationship ManyToOne {
     Language{srvc(name)} to Service{langs(language)},
     Language{location(name)} to Location{langs(language)},
 
-    AccessibilityForDissabilities{location(name)} to Location{langs(accessibility)},
+    AccessibilityForDisabilities{location(name)} to Location{accessibilities(accessibility)},
 
     Taxonomy{parent(name)} to Taxonomy,
 
@@ -209,7 +209,7 @@ relationship ManyToOne {
 }
 
 relationship OneToOne {
-    Organization{location(address1)} to Location,
+    Organization{location(name)} to Location,
     Organization{replacedBy} to Organization,
     
     ServiceAtLocation{srvc(name)} to Service{location(name)},
@@ -230,3 +230,53 @@ relationship OneToOne {
 
     Eligibility{srvc(name)} to Service{eligibility}
 }
+
+service SystemAccount with serviceImpl
+service DocumentUpload with serviceImpl
+service Organization with serviceImpl
+service Service with serviceImpl
+service Program with serviceImpl
+service ServiceAtLocation with serviceImpl
+service Location with serviceImpl
+service PhysicalAddress with serviceImpl
+service PostalAddress with serviceImpl
+service Phone with serviceImpl
+service Contact with serviceImpl
+service RegularSchedule with serviceImpl
+service HolidaySchedule with serviceImpl
+service Funding with serviceImpl
+service Eligibility with serviceImpl
+service ServiceArea with serviceImpl
+service RequiredDocument with serviceImpl
+service PaymentAccepted with serviceImpl
+service Language with serviceImpl
+service AccessibilityForDisabilities with serviceImpl
+service ServiceTaxonomy with serviceImpl
+service Taxonomy with serviceImpl
+service OrganizationMatch with serviceImpl
+service Metadata with serviceImpl
+
+dto SystemAccount with mapstruct
+dto DocumentUpload with mapstruct
+dto Organization with mapstruct
+dto Service with mapstruct
+dto Program with mapstruct
+dto ServiceAtLocation with mapstruct
+dto Location with mapstruct
+dto PhysicalAddress with mapstruct
+dto PostalAddress with mapstruct
+dto Phone with mapstruct
+dto Contact with mapstruct
+dto RegularSchedule with mapstruct
+dto HolidaySchedule with mapstruct
+dto Funding with mapstruct
+dto Eligibility with mapstruct
+dto ServiceArea with mapstruct
+dto RequiredDocument with mapstruct
+dto PaymentAccepted with mapstruct
+dto Language with mapstruct
+dto AccessibilityForDisabilities with mapstruct
+dto ServiceTaxonomy with mapstruct
+dto Taxonomy with mapstruct
+dto OrganizationMatch with mapstruct
+dto Metadata with mapstruct

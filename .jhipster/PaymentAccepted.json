@@ -1,0 +1,26 @@
+{
+    "name": "PaymentAccepted",
+    "fields": [
+        {
+            "fieldName": "payment",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "srvc",
+            "otherEntityName": "service",
+            "otherEntityField": "name"
+        }
+    ],
+    "changelogDate": "20181119125409",
+    "entityTableName": "payment_accepted",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

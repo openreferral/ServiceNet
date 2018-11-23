@@ -1,0 +1,23 @@
+{
+  "serviceNetApp": {
+    "documentUpload": {
+      "home": {
+        "title": "Document Uploads",
+        "createLabel": "Create a new Document Upload",
+        "createOrEditLabel": "Create or edit a Document Upload"
+      },
+      "created": "A new Document Upload is created with identifier {{ param }}",
+      "updated": "A Document Upload is updated with identifier {{ param }}",
+      "deleted": "A Document Upload is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Document Upload {{ id }}?"
+      },
+      "detail": {
+        "title": "Document Upload"
+      },
+      "dateUploaded": "Date Uploaded",
+      "documentId": "Document Id",
+      "uploader": "Uploader"
+    }
+  }
+}

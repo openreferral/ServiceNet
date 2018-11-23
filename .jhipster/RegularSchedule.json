@@ -1,0 +1,55 @@
+{
+    "name": "RegularSchedule",
+    "fields": [
+        {
+            "fieldName": "weekday",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "opensAt",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "closesAt",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "srvc",
+            "otherEntityName": "service",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "regularSchedule"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "location",
+            "otherEntityName": "location",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "regularSchedule"
+        },
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "serviceAtlocation",
+            "otherEntityName": "serviceAtLocation",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "regularSchedule"
+        }
+    ],
+    "changelogDate": "20181119125403",
+    "entityTableName": "regular_schedule",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

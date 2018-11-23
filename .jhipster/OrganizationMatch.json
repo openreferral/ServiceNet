@@ -1,0 +1,49 @@
+{
+    "name": "OrganizationMatch",
+    "fields": [
+        {
+            "fieldName": "fieldName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "timestamp",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "deleted",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "fieldPath",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "matchedValue",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "organizationRecord",
+            "otherEntityName": "organization",
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "partnerVersion",
+            "otherEntityName": "organization",
+            "otherEntityField": "name"
+        }
+    ],
+    "changelogDate": "20181119125414",
+    "entityTableName": "organization_match",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

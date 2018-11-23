@@ -1,0 +1,23 @@
+{
+  "serviceNetApp": {
+    "language": {
+      "home": {
+        "title": "Languages",
+        "createLabel": "Create a new Language",
+        "createOrEditLabel": "Create or edit a Language"
+      },
+      "created": "A new Language is created with identifier {{ param }}",
+      "updated": "A Language is updated with identifier {{ param }}",
+      "deleted": "A Language is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Language {{ id }}?"
+      },
+      "detail": {
+        "title": "Language"
+      },
+      "language": "Language",
+      "srvc": "Srvc",
+      "location": "Location"
+    }
+  }
+}

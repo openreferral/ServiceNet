@@ -38,9 +38,53 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.repository.UserRepository.USERS_BY_EMAIL_CACHE, jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Authority.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".authorities",
+                jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.PersistentToken.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".persistentTokens", jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".persistentTokens",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.SystemAccount.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.DocumentUpload.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".programs",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".services",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Service.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".areas", jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".docs", jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".paymentsAccepteds",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".langs", jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".taxonomies",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Program.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Program.class.getName() + ".services",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.ServiceAtLocation.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.ServiceAtLocation.class.getName() + ".phones",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Location.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".langs", jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".accessibilities",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.PhysicalAddress.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.PostalAddress.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Phone.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Contact.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.RegularSchedule.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.HolidaySchedule.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Funding.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Eligibility.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.ServiceArea.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.RequiredDocument.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.PaymentAccepted.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Language.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.AccessibilityForDisabilities.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.ServiceTaxonomy.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Taxonomy.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.OrganizationMatch.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Metadata.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

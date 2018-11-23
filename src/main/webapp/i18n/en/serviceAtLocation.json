@@ -1,0 +1,26 @@
+{
+  "serviceNetApp": {
+    "serviceAtLocation": {
+      "home": {
+        "title": "Service At Locations",
+        "createLabel": "Create a new Service At Location",
+        "createOrEditLabel": "Create or edit a Service At Location"
+      },
+      "created": "A new Service At Location is created with identifier {{ param }}",
+      "updated": "A Service At Location is updated with identifier {{ param }}",
+      "deleted": "A Service At Location is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Service At Location {{ id }}?"
+      },
+      "detail": {
+        "title": "Service At Location"
+      },
+      "description": "Description",
+      "srvc": "Srvc",
+      "location": "Location",
+      "regularSchedule": "Regular Schedule",
+      "holidaySchedule": "Holiday Schedule",
+      "phones": "Phones"
+    }
+  }
+}

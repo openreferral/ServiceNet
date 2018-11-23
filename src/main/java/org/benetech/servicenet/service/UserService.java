@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -272,7 +273,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthorities(Long id) {
+    public Optional<User> getUserWithAuthorities(UUID id) {
         return userRepository.findOneWithAuthoritiesById(id);
     }
 
