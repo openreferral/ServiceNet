@@ -2,9 +2,11 @@
 @import '../../bootstrap-variables';
 
 .filepond--panel-root {
-  background-color: $secondary;
+  background-color: transparent;
 }
 
-.filepond--item-panel {
-  background-color: $success;
+.dropArea {
+  border: 3px dashed;
+  border-color: $primary;
+  border-radius: 10px;
 }
