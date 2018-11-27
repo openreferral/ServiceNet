@@ -10,11 +10,15 @@ import org.hibernate.persister.entity.EntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class HibernatePostUpdateListener implements PostUpdateEventListener {
+
+    private static final long MINUTE_IN_SECONDS = 60;
 
     @Autowired
     private MetadataService metadataService;
@@ -42,9 +46,22 @@ public class HibernatePostUpdateListener implements PostUpdateEventListener {
     private List<Integer> getIdsOfChangedFields(Object[] oldState, Object[] newState) {
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < oldState.length; i++) {
-            if (oldState[i] != null && !oldState[i].equals(newState[i])) {
+            if (areFieldsDifferent(oldState[i], newState[i])) {
                 result.add(i);
             }
+        }
+        return result;
+    }
+
+    private boolean areFieldsDifferent(Object field1, Object field2) {
+        return field1 != null && !areValuesEquals(field1, field2);
+    }
+
+    private boolean areValuesEquals(Object value1, Object value2) {
+        boolean result = value1.equals(value2);
+        if (value1 instanceof ZonedDateTime) {
+            result = Math.abs(Duration.between((ZonedDateTime) value1,
+                (ZonedDateTime) value2).getSeconds()) < MINUTE_IN_SECONDS;
         }
         return result;
     }
