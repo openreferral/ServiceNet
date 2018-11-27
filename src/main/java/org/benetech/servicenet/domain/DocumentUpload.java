@@ -48,6 +48,13 @@ public class DocumentUpload implements Serializable {
     @JsonIgnoreProperties("")
     private User uploader;
 
+    public DocumentUpload() {
+    }
+
+    public DocumentUpload(@NotNull String documentId) {
+        this.documentId = documentId;
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public UUID getId() {
         return id;

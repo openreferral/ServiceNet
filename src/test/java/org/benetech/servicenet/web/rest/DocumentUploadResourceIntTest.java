@@ -79,6 +79,9 @@ public class DocumentUploadResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private DocumentUploadResource documentUploadResource;
+
     private MockMvc restDocumentUploadMockMvc;
 
     private DocumentUpload documentUpload;
@@ -104,7 +107,6 @@ public class DocumentUploadResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final DocumentUploadResource documentUploadResource = new DocumentUploadResource(documentUploadService);
         this.restDocumentUploadMockMvc = MockMvcBuilders.standaloneSetup(documentUploadResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

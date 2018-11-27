@@ -5,12 +5,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Button } from 'reactstrap';
+import { Row, Col, Alert, Button, Label, Input } from 'reactstrap';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
+import { faThList } from '@fortawesome/free-solid-svg-icons/faThList';
 
 export interface IUploadPageProp extends StateProps, DispatchProps {}
 
@@ -18,24 +19,41 @@ export interface IUploadState {
   files: any[];
   pond: any;
   isUploadDisabled: boolean;
+  delimiter: symbol;
 }
 
 registerPlugin(FilePondPluginFileValidateType);
-const supportedFileTypes = ['.csv', '.json', 'application/json'];
+const supportedFileTypes = ['.csv', 'text/csv', '.json', 'application/json'];
 const maxNumberOfFiles = 100;
 const valid = 'valid';
+const delimiter = 'delimiter';
 
 export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   state: IUploadState = {
     files: [],
     pond: null,
-    isUploadDisabled: true
+    isUploadDisabled: true,
+    delimiter: null
+  };
+
+  getToken = () => {
+    const value = '; ' + document.cookie;
+    const parts = value.split('; ' + 'XSRF-TOKEN' + '=');
+    if (parts.length === 2) {
+      return parts
+        .pop()
+        .split(';')
+        .shift();
+    }
   };
 
   onAddFile = (error, file) => {
     if (!error) {
       file.setMetadata(valid, true);
     }
+    this.setState({
+      isUploadDisabled: this.isUploadDisabled()
+    });
   };
 
   uploadAll = () => {
@@ -69,6 +87,10 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
       resolve(type);
     });
 
+  delimiterChange = event => {
+    this.setState({ delimiter: event.target.value });
+  };
+
   render() {
     return (
       <Row>
@@ -83,8 +105,17 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
             className="dropArea"
             ref={ref => (this.state.pond = ref)}
             allowMultiple
+            allowRevert={false}
             maxFiles={maxNumberOfFiles}
-            server="/api"
+            server={{
+              url: '/api/file',
+              process: {
+                headers: {
+                  'X-XSRF-TOKEN': this.getToken(),
+                  DELIMITER: this.state.delimiter
+                }
+              }
+            }}
             instantUpload={false}
             onaddfile={this.onAddFile}
             acceptedFileTypes={supportedFileTypes}
@@ -95,6 +126,17 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
               <File key={fileItem.file} src={fileItem.file} origin="input" />
             ))}
           </FilePond>
+          <p className="lead">
+            <Translate contentKey="upload.delimiter" />
+          </p>
+          <Input className="col-sm-1" value={this.state.delimiter} type="select" name="select" onChange={this.delimiterChange}>
+            <option />
+            <option>,</option>
+            <option>;</option>
+            <option>^</option>
+            <option>|</option>
+          </Input>
+          <br />
           <Button color="primary" disabled={this.state.isUploadDisabled} onClick={this.uploadAll}>
             <Translate contentKey="upload.submit" />
           </Button>
