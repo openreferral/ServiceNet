@@ -113,17 +113,23 @@ export class DocumentUploadUpdate extends React.Component<IDocumentUploadUpdateP
                   />
                 </AvGroup>
                 <AvGroup>
-                  <Label id="documentIdLabel" for="documentId">
-                    <Translate contentKey="serviceNetApp.documentUpload.documentId">Document Id</Translate>
+                  <Label id="originalDocumentIdLabel" for="originalDocumentId">
+                    <Translate contentKey="serviceNetApp.documentUpload.originalDocumentId">Original Document Id</Translate>
                   </Label>
                   <AvField
-                    id="document-upload-documentId"
+                    id="document-upload-originalDocumentId"
                     type="text"
-                    name="documentId"
+                    name="originalDocumentId"
                     validate={{
                       required: { value: true, errorMessage: translate('entity.validation.required') }
                     }}
                   />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="parsedDocumentIdLabel" for="parsedDocumentId">
+                    <Translate contentKey="serviceNetApp.documentUpload.parsedDocumentId">Parsed Document Id</Translate>
+                  </Label>
+                  <AvField id="document-upload-parsedDocumentId" type="text" name="parsedDocumentId" validate={{}} />
                 </AvGroup>
                 <AvGroup>
                   <Label for="uploader.login">

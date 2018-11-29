@@ -42,7 +42,10 @@ export class DocumentUpload extends React.Component<IDocumentUploadProps> {
                   <Translate contentKey="serviceNetApp.documentUpload.dateUploaded">Date Uploaded</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="serviceNetApp.documentUpload.documentId">Document Id</Translate>
+                  <Translate contentKey="serviceNetApp.documentUpload.originalDocumentId">Original Document Id</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.documentUpload.parsedDocumentId">Parsed Document Id</Translate>
                 </th>
                 <th>
                   <Translate contentKey="serviceNetApp.documentUpload.uploader">Uploader</Translate>
@@ -61,7 +64,8 @@ export class DocumentUpload extends React.Component<IDocumentUploadProps> {
                   <td>
                     <TextFormat type="date" value={documentUpload.dateUploaded} format={APP_DATE_FORMAT} />
                   </td>
-                  <td>{documentUpload.documentId}</td>
+                  <td>{documentUpload.originalDocumentId}</td>
+                  <td>{documentUpload.parsedDocumentId}</td>
                   <td>{documentUpload.uploaderLogin ? documentUpload.uploaderLogin : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">

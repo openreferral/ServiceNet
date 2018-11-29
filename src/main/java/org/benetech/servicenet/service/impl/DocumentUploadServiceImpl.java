@@ -48,12 +48,19 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     private MongoDbService mongoDbService;
 
     @Override
-    public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter) throws IOException, IllegalArgumentException {
-        AbstractFileConverter converter = FileConverterFactory.getConverter(file, delimiter);
+    public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter) throws IllegalArgumentException, IOException {
 
-        String documentId = mongoDbService.saveDocument(converter.convert(file));
+        String parsedDocumentId = null;
+        try {
+            AbstractFileConverter converter = FileConverterFactory.getConverter(file, delimiter);
+            parsedDocumentId = mongoDbService.saveParsedDocument(converter.convert(file));
+        } catch (IOException ex) {
+            log.error(ex.getMessage(), ex);
+        }
 
-        return documentUploadMapper.toDto(saveForCurrentUser(new DocumentUpload(documentId)));
+        String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
+
+        return documentUploadMapper.toDto(saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId)));
     }
 
     @Override

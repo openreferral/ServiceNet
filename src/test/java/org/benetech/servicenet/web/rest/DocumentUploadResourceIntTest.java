@@ -55,8 +55,11 @@ public class DocumentUploadResourceIntTest {
         ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_DATE_UPLOADED = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    private static final String DEFAULT_DOCUMENT_ID = "AAAAAAAAAA";
-    private static final String UPDATED_DOCUMENT_ID = "BBBBBBBBBB";
+    private static final String DEFAULT_ORIGINAL_DOCUMENT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_ORIGINAL_DOCUMENT_ID = "BBBBBBBBBB";
+
+    private static final String DEFAULT_PARSED_DOCUMENT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_PARSED_DOCUMENT_ID = "BBBBBBBBBB";
 
     @Autowired
     private DocumentUploadRepository documentUploadRepository;
@@ -95,7 +98,8 @@ public class DocumentUploadResourceIntTest {
     public static DocumentUpload createEntity(EntityManager em) {
         DocumentUpload documentUpload = new DocumentUpload()
             .dateUploaded(DEFAULT_DATE_UPLOADED)
-            .documentId(DEFAULT_DOCUMENT_ID);
+            .originalDocumentId(DEFAULT_ORIGINAL_DOCUMENT_ID)
+            .parsedDocumentId(DEFAULT_PARSED_DOCUMENT_ID);
         // Add required entity
         User user = UserResourceIntTest.createEntity(em);
         em.persist(user);
@@ -136,7 +140,8 @@ public class DocumentUploadResourceIntTest {
         assertThat(documentUploadList).hasSize(databaseSizeBeforeCreate + 1);
         DocumentUpload testDocumentUpload = documentUploadList.get(documentUploadList.size() - 1);
         assertThat(testDocumentUpload.getDateUploaded()).isEqualTo(DEFAULT_DATE_UPLOADED);
-        assertThat(testDocumentUpload.getDocumentId()).isEqualTo(DEFAULT_DOCUMENT_ID);
+        assertThat(testDocumentUpload.getOriginalDocumentId()).isEqualTo(DEFAULT_ORIGINAL_DOCUMENT_ID);
+        assertThat(testDocumentUpload.getParsedDocumentId()).isEqualTo(DEFAULT_PARSED_DOCUMENT_ID);
     }
 
     @Test
@@ -183,7 +188,7 @@ public class DocumentUploadResourceIntTest {
     public void checkDocumentIdIsRequired() throws Exception {
         int databaseSizeBeforeTest = documentUploadRepository.findAll().size();
         // set the field null
-        documentUpload.setDocumentId(null);
+        documentUpload.setOriginalDocumentId(null);
 
         // Create the DocumentUpload, which fails.
         DocumentUploadDTO documentUploadDTO = documentUploadMapper.toDto(documentUpload);
@@ -209,7 +214,8 @@ public class DocumentUploadResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(documentUpload.getId().toString())))
             .andExpect(jsonPath("$.[*].dateUploaded").value(hasItem(sameInstant(DEFAULT_DATE_UPLOADED))))
-            .andExpect(jsonPath("$.[*].documentId").value(hasItem(DEFAULT_DOCUMENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].originalDocumentId").value(hasItem(DEFAULT_ORIGINAL_DOCUMENT_ID)))
+            .andExpect(jsonPath("$.[*].parsedDocumentId").value(hasItem(DEFAULT_PARSED_DOCUMENT_ID)));
     }
 
     @Test
@@ -224,7 +230,8 @@ public class DocumentUploadResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(documentUpload.getId().toString()))
             .andExpect(jsonPath("$.dateUploaded").value(sameInstant(DEFAULT_DATE_UPLOADED)))
-            .andExpect(jsonPath("$.documentId").value(DEFAULT_DOCUMENT_ID.toString()));
+            .andExpect(jsonPath("$.originalDocumentId").value(DEFAULT_ORIGINAL_DOCUMENT_ID))
+            .andExpect(jsonPath("$.parsedDocumentId").value(DEFAULT_PARSED_DOCUMENT_ID));
     }
 
     @Test
@@ -249,7 +256,8 @@ public class DocumentUploadResourceIntTest {
         em.detach(updatedDocumentUpload);
         updatedDocumentUpload
             .dateUploaded(UPDATED_DATE_UPLOADED)
-            .documentId(UPDATED_DOCUMENT_ID);
+            .originalDocumentId(UPDATED_ORIGINAL_DOCUMENT_ID)
+            .parsedDocumentId(UPDATED_PARSED_DOCUMENT_ID);
         DocumentUploadDTO documentUploadDTO = documentUploadMapper.toDto(updatedDocumentUpload);
 
         restDocumentUploadMockMvc.perform(put("/api/document-uploads")
@@ -262,7 +270,8 @@ public class DocumentUploadResourceIntTest {
         assertThat(documentUploadList).hasSize(databaseSizeBeforeUpdate);
         DocumentUpload testDocumentUpload = documentUploadList.get(documentUploadList.size() - 1);
         assertThat(testDocumentUpload.getDateUploaded()).isEqualTo(UPDATED_DATE_UPLOADED);
-        assertThat(testDocumentUpload.getDocumentId()).isEqualTo(UPDATED_DOCUMENT_ID);
+        assertThat(testDocumentUpload.getOriginalDocumentId()).isEqualTo(UPDATED_ORIGINAL_DOCUMENT_ID);
+        assertThat(testDocumentUpload.getParsedDocumentId()).isEqualTo(UPDATED_PARSED_DOCUMENT_ID);
     }
 
     @Test

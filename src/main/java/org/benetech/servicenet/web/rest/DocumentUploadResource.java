@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -71,11 +72,13 @@ public class DocumentUploadResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new documentUploadDTO,
      * or with status 400 (Bad Request) if file is of wrong type
      * @throws java.io.IOException if there's problem with reading the file
+     * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/file")
     @Timed
-    public ResponseEntity<DocumentUploadDTO> uploadDocument(HttpServletRequest request,
-                                                            @RequestParam("filepond") MultipartFile file) throws Exception {
+    public ResponseEntity<DocumentUploadDTO> uploadDocument(@RequestParam("filepond") MultipartFile file,
+                                                            HttpServletRequest request)
+        throws URISyntaxException, IOException {
         try {
             DocumentUploadDTO result = documentUploadService.uploadFile(file, request.getHeader("DELIMITER"));
             return ResponseEntity.created(new URI("/api/document-uploads/" + result.getId()))

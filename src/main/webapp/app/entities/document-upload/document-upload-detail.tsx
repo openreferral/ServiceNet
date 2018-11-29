@@ -37,11 +37,17 @@ export class DocumentUploadDetail extends React.Component<IDocumentUploadDetailP
               <TextFormat value={documentUploadEntity.dateUploaded} type="date" format={APP_DATE_FORMAT} />
             </dd>
             <dt>
-              <span id="documentId">
-                <Translate contentKey="serviceNetApp.documentUpload.documentId">Document Id</Translate>
+              <span id="originalDocumentId">
+                <Translate contentKey="serviceNetApp.documentUpload.originalDocumentId">Original Document Id</Translate>
               </span>
             </dt>
-            <dd>{documentUploadEntity.documentId}</dd>
+            <dd>{documentUploadEntity.originalDocumentId}</dd>
+            <dt>
+              <span id="parsedDocumentId">
+                <Translate contentKey="serviceNetApp.documentUpload.parsedDocumentId">Parsed Document Id</Translate>
+              </span>
+            </dt>
+            <dd>{documentUploadEntity.parsedDocumentId}</dd>
             <dt>
               <Translate contentKey="serviceNetApp.documentUpload.uploader">Uploader</Translate>
             </dt>

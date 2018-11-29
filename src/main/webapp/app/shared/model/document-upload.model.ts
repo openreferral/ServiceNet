@@ -3,7 +3,8 @@ import { Moment } from 'moment';
 export interface IDocumentUpload {
   id?: number;
   dateUploaded?: Moment;
-  documentId?: string;
+  originalDocumentId?: string;
+  parsedDocumentId?: string;
   uploaderLogin?: string;
   uploaderId?: number;
 }
