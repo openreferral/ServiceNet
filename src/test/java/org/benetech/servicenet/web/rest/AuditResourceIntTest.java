@@ -4,11 +4,17 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.config.audit.AuditEventConverter;
 import org.benetech.servicenet.domain.PersistentAuditEvent;
+import org.benetech.servicenet.listener.HibernatePostCreateListener;
+import org.benetech.servicenet.listener.HibernatePostDeleteListener;
+import org.benetech.servicenet.listener.HibernatePostUpdateListener;
 import org.benetech.servicenet.repository.PersistenceAuditEventRepository;
 import org.benetech.servicenet.service.AuditEventService;
+import org.benetech.servicenet.service.MetadataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +55,21 @@ public class AuditResourceIntTest {
     private static final Instant SAMPLE_TIMESTAMP = Instant.parse("2015-08-04T10:11:30Z");
 
     private static final long SECONDS_PER_DAY = 60 * 60 * 24;
+
+    @Mock
+    private MetadataService metadataService;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostUpdateListener hibernatePostUpdateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostCreateListener hibernatePostCreateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostDeleteListener hibernatePostDeleteListener;
 
     @Autowired
     private PersistenceAuditEventRepository auditEventRepository;

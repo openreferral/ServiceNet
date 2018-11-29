@@ -54,7 +54,7 @@ public class HibernatePostUpdateListener implements PostUpdateEventListener {
     }
 
     private boolean areFieldsDifferent(Object field1, Object field2) {
-        return field1 != null && !areValuesEquals(field1, field2);
+        return field1 != null && field2 != null && !areValuesEquals(field1, field2);
     }
 
     private boolean areValuesEquals(Object value1, Object value2) {

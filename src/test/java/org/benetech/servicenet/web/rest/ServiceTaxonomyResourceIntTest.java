@@ -3,7 +3,11 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.listener.HibernatePostCreateListener;
+import org.benetech.servicenet.listener.HibernatePostDeleteListener;
+import org.benetech.servicenet.listener.HibernatePostUpdateListener;
 import org.benetech.servicenet.repository.ServiceTaxonomyRepository;
+import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.dto.ServiceTaxonomyDTO;
 import org.benetech.servicenet.service.mapper.ServiceTaxonomyMapper;
@@ -11,6 +15,8 @@ import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,6 +53,21 @@ public class ServiceTaxonomyResourceIntTest {
 
     private static final String DEFAULT_TAXONOMY_DETAILS = "AAAAAAAAAA";
     private static final String UPDATED_TAXONOMY_DETAILS = "BBBBBBBBBB";
+
+    @Mock
+    private MetadataService metadataService;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostUpdateListener hibernatePostUpdateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostCreateListener hibernatePostCreateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostDeleteListener hibernatePostDeleteListener;
 
     @Autowired
     private ServiceTaxonomyRepository serviceTaxonomyRepository;

@@ -19,4 +19,7 @@ public class HibernateListenerUtils {
         result.setLastActionType(actionType);
         return result;
     }
+
+    private HibernateListenerUtils() {
+    }
 }

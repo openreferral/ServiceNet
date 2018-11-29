@@ -5,6 +5,9 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.PersistentToken;
 import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.listener.HibernatePostCreateListener;
+import org.benetech.servicenet.listener.HibernatePostDeleteListener;
+import org.benetech.servicenet.listener.HibernatePostUpdateListener;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.service.dto.UserDTO;
@@ -12,7 +15,9 @@ import org.benetech.servicenet.service.util.RandomUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.auditing.AuditingHandler;
@@ -45,6 +50,21 @@ public class UserServiceIntTest {
     @Mock
     DateTimeProvider dateTimeProvider;
 
+    @Mock
+    private MetadataService metadataService;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostUpdateListener hibernatePostUpdateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostCreateListener hibernatePostCreateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostDeleteListener hibernatePostDeleteListener;
+
     @Autowired
     private PersistentTokenRepository persistentTokenRepository;
 
@@ -61,6 +81,7 @@ public class UserServiceIntTest {
 
     @Before
     public void init() {
+        MockitoAnnotations.initMocks(this);
         persistentTokenRepository.deleteAll();
         user = new User();
         user.setLogin("johndoe");

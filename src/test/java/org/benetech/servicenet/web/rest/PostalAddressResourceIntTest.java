@@ -3,7 +3,11 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.listener.HibernatePostCreateListener;
+import org.benetech.servicenet.listener.HibernatePostDeleteListener;
+import org.benetech.servicenet.listener.HibernatePostUpdateListener;
 import org.benetech.servicenet.repository.PostalAddressRepository;
+import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.dto.PostalAddressDTO;
 import org.benetech.servicenet.service.mapper.PostalAddressMapper;
@@ -11,6 +15,8 @@ import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,6 +71,21 @@ public class PostalAddressResourceIntTest {
 
     private static final String DEFAULT_COUNTRY = "AAAAAAAAAA";
     private static final String UPDATED_COUNTRY = "BBBBBBBBBB";
+
+    @Mock
+    private MetadataService metadataService;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostUpdateListener hibernatePostUpdateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostCreateListener hibernatePostCreateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostDeleteListener hibernatePostDeleteListener;
 
     @Autowired
     private PostalAddressRepository postalAddressRepository;

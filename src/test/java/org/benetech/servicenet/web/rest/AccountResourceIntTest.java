@@ -3,14 +3,18 @@ package org.benetech.servicenet.web.rest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
-import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.PersistentToken;
 import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.listener.HibernatePostCreateListener;
+import org.benetech.servicenet.listener.HibernatePostDeleteListener;
+import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.mother.UserMother;
 import org.benetech.servicenet.repository.AuthorityRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.MailService;
+import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.PasswordChangeDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
@@ -20,6 +24,7 @@ import org.benetech.servicenet.web.rest.vm.ManagedUserVM;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +43,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -88,6 +92,21 @@ public class AccountResourceIntTest {
     @Mock
     private MailService mockMailService;
 
+    @Mock
+    private MetadataService metadataService;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostUpdateListener hibernatePostUpdateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostCreateListener hibernatePostCreateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostDeleteListener hibernatePostDeleteListener;
+
     private MockMvc restMvc;
 
     private MockMvc restUserMockMvc;
@@ -132,20 +151,7 @@ public class AccountResourceIntTest {
 
     @Test
     public void testGetExistingAccount() throws Exception {
-        Set<Authority> authorities = new HashSet<>();
-        Authority authority = new Authority();
-        authority.setName(AuthoritiesConstants.ADMIN);
-        authorities.add(authority);
-
-        User user = new User();
-        user.setLogin("test");
-        user.setFirstName("john");
-        user.setLastName("doe");
-        user.setEmail("john.doe@jhipster.com");
-        user.setImageUrl("http://placehold.it/50x50");
-        user.setLangKey("en");
-        user.setAuthorities(authorities);
-        when(mockUserService.getUserWithAuthorities()).thenReturn(Optional.of(user));
+        when(mockUserService.getUserWithAuthorities()).thenReturn(Optional.of(UserMother.admin()));
 
         restUserMockMvc.perform(get("/api/account")
             .accept(MediaType.APPLICATION_JSON))

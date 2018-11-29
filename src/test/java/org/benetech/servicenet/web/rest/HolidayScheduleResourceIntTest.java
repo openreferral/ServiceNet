@@ -3,14 +3,20 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.HolidaySchedule;
+import org.benetech.servicenet.listener.HibernatePostCreateListener;
+import org.benetech.servicenet.listener.HibernatePostDeleteListener;
+import org.benetech.servicenet.listener.HibernatePostUpdateListener;
 import org.benetech.servicenet.repository.HolidayScheduleRepository;
 import org.benetech.servicenet.service.HolidayScheduleService;
+import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
 import org.benetech.servicenet.service.mapper.HolidayScheduleMapper;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,6 +67,21 @@ public class HolidayScheduleResourceIntTest {
 
     private static final LocalDate DEFAULT_END_DATE = LocalDate.ofEpochDay(0L);
     private static final LocalDate UPDATED_END_DATE = LocalDate.now(ZoneId.systemDefault());
+
+    @Mock
+    private MetadataService metadataService;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostUpdateListener hibernatePostUpdateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostCreateListener hibernatePostCreateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostDeleteListener hibernatePostDeleteListener;
 
     @Autowired
     private HolidayScheduleRepository holidayScheduleRepository;
