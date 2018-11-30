@@ -3,11 +3,8 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.listener.HibernatePostCreateListener;
-import org.benetech.servicenet.listener.HibernatePostDeleteListener;
-import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.OrganizationRepository;
-import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
@@ -15,8 +12,6 @@ import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -91,20 +86,8 @@ public class OrganizationResourceIntTest {
         ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    @Mock
-    private MetadataService metadataService;
-
     @Autowired
-    @InjectMocks
-    private HibernatePostUpdateListener hibernatePostUpdateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostCreateListener hibernatePostCreateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostDeleteListener hibernatePostDeleteListener;
+    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private OrganizationRepository organizationRepository;
@@ -155,6 +138,7 @@ public class OrganizationResourceIntTest {
 
     @Before
     public void setup() {
+        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final OrganizationResource organizationResource = new OrganizationResource(organizationService);
         this.restOrganizationMockMvc = MockMvcBuilders.standaloneSetup(organizationResource)

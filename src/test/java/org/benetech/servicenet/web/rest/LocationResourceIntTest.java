@@ -3,20 +3,15 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.listener.HibernatePostCreateListener;
-import org.benetech.servicenet.listener.HibernatePostDeleteListener;
-import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.service.LocationService;
-import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -69,20 +64,8 @@ public class LocationResourceIntTest {
     private static final Double DEFAULT_LONGITUDE = 1D;
     private static final Double UPDATED_LONGITUDE = 2D;
 
-    @Mock
-    private MetadataService metadataService;
-
     @Autowired
-    @InjectMocks
-    private HibernatePostUpdateListener hibernatePostUpdateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostCreateListener hibernatePostCreateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostDeleteListener hibernatePostDeleteListener;
+    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private LocationRepository locationRepository;
@@ -128,6 +111,7 @@ public class LocationResourceIntTest {
 
     @Before
     public void setup() {
+        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final LocationResource locationResource = new LocationResource(locationService);
         this.restLocationMockMvc = MockMvcBuilders.standaloneSetup(locationResource)

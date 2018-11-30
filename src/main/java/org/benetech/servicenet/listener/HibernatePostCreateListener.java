@@ -33,6 +33,6 @@ public class HibernatePostCreateListener implements PostInsertEventListener {
         metadataService.saveForCurrentUser(
             Collections.singletonList(
                 HibernateListenerUtils.prepareMetadataForAllFields(
-                    event.getId().toString(), ActionType.CREATE)));
+                    event.getId().toString(), ActionType.CREATE, event.getEntity().getClass().getSimpleName())));
     }
 }

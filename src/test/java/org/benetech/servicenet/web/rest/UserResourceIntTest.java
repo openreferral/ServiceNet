@@ -5,13 +5,10 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.User;
-import org.benetech.servicenet.listener.HibernatePostCreateListener;
-import org.benetech.servicenet.listener.HibernatePostDeleteListener;
-import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.MailService;
-import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.mapper.UserMapper;
@@ -20,8 +17,6 @@ import org.benetech.servicenet.web.rest.vm.ManagedUserVM;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
@@ -92,20 +87,8 @@ public class UserResourceIntTest {
 
     private static final String UPDATED_LANGKEY = "fr";
 
-    @Mock
-    private MetadataService metadataService;
-
     @Autowired
-    @InjectMocks
-    private HibernatePostUpdateListener hibernatePostUpdateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostCreateListener hibernatePostCreateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostDeleteListener hibernatePostDeleteListener;
+    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private UserRepository userRepository;
@@ -158,6 +141,7 @@ public class UserResourceIntTest {
 
     @Before
     public void setUp() {
+        hibernateInterceptor.disableEventListeners();
         cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).clear();
         cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE).clear();
         UserResource userResource = new UserResource(userService, userRepository, mailService);

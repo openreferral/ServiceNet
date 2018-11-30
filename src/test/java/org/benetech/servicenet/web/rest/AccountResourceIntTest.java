@@ -5,16 +5,13 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.PersistentToken;
 import org.benetech.servicenet.domain.User;
-import org.benetech.servicenet.listener.HibernatePostCreateListener;
-import org.benetech.servicenet.listener.HibernatePostDeleteListener;
-import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.mother.UserMother;
 import org.benetech.servicenet.repository.AuthorityRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.MailService;
-import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.PasswordChangeDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
@@ -24,7 +21,6 @@ import org.benetech.servicenet.web.rest.vm.ManagedUserVM;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,20 +88,8 @@ public class AccountResourceIntTest {
     @Mock
     private MailService mockMailService;
 
-    @Mock
-    private MetadataService metadataService;
-
     @Autowired
-    @InjectMocks
-    private HibernatePostUpdateListener hibernatePostUpdateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostCreateListener hibernatePostCreateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostDeleteListener hibernatePostDeleteListener;
+    private HibernateInterceptor hibernateInterceptor;
 
     private MockMvc restMvc;
 
@@ -113,6 +97,7 @@ public class AccountResourceIntTest {
 
     @Before
     public void setUp() {
+        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         doNothing().when(mockMailService).sendActivationEmail(any());
         AccountResource accountResource =

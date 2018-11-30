@@ -3,20 +3,15 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Funding;
-import org.benetech.servicenet.listener.HibernatePostCreateListener;
-import org.benetech.servicenet.listener.HibernatePostDeleteListener;
-import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.service.FundingService;
-import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.dto.FundingDTO;
 import org.benetech.servicenet.service.mapper.FundingMapper;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,20 +49,8 @@ public class FundingResourceIntTest {
     private static final String DEFAULT_SOURCE = "AAAAAAAAAA";
     private static final String UPDATED_SOURCE = "BBBBBBBBBB";
 
-    @Mock
-    private MetadataService metadataService;
-
     @Autowired
-    @InjectMocks
-    private HibernatePostUpdateListener hibernatePostUpdateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostCreateListener hibernatePostCreateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostDeleteListener hibernatePostDeleteListener;
+    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private FundingRepository fundingRepository;
@@ -108,6 +91,7 @@ public class FundingResourceIntTest {
 
     @Before
     public void setup() {
+        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final FundingResource fundingResource = new FundingResource(fundingService);
         this.restFundingMockMvc = MockMvcBuilders.standaloneSetup(fundingResource)

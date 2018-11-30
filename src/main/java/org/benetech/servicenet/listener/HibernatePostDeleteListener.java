@@ -33,6 +33,6 @@ public class HibernatePostDeleteListener implements PostDeleteEventListener {
         metadataService.saveForCurrentUser(
             Collections.singletonList(
                 HibernateListenerUtils.prepareMetadataForAllFields(
-                    event.getId().toString(), ActionType.DELETE)));
+                    event.getId().toString(), ActionType.DELETE, event.getEntity().getClass().getSimpleName())));
     }
 }

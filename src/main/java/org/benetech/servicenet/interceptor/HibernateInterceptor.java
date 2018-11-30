@@ -28,12 +28,21 @@ public class HibernateInterceptor {
     @Autowired
     private HibernatePostDeleteListener postDeleteListener;
 
+    public void disableEventListeners() {
+        getRegistry().getEventListenerGroup(EventType.POST_INSERT).clear();
+        getRegistry().getEventListenerGroup(EventType.POST_UPDATE).clear();
+        getRegistry().getEventListenerGroup(EventType.POST_DELETE).clear();
+    }
+
     @PostConstruct
     public void init() {
+        getRegistry().getEventListenerGroup(EventType.POST_INSERT).appendListener(postCreateListener);
+        getRegistry().getEventListenerGroup(EventType.POST_UPDATE).appendListener(postUpdateListener);
+        getRegistry().getEventListenerGroup(EventType.POST_DELETE).appendListener(postDeleteListener);
+    }
+
+    private EventListenerRegistry getRegistry() {
         SessionFactoryImpl sessionFactory = entityManagerFactory.unwrap(SessionFactoryImpl.class);
-        EventListenerRegistry registry = sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
-        registry.getEventListenerGroup(EventType.POST_INSERT).appendListener(postCreateListener);
-        registry.getEventListenerGroup(EventType.POST_UPDATE).appendListener(postUpdateListener);
-        registry.getEventListenerGroup(EventType.POST_DELETE).appendListener(postDeleteListener);
+        return sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
     }
 }

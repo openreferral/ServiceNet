@@ -3,11 +3,8 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.listener.HibernatePostCreateListener;
-import org.benetech.servicenet.listener.HibernatePostDeleteListener;
-import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
-import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.PhysicalAddressService;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.benetech.servicenet.service.mapper.PhysicalAddressMapper;
@@ -15,8 +12,6 @@ import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -72,20 +67,8 @@ public class PhysicalAddressResourceIntTest {
     private static final String DEFAULT_COUNTRY = "AAAAAAAAAA";
     private static final String UPDATED_COUNTRY = "BBBBBBBBBB";
 
-    @Mock
-    private MetadataService metadataService;
-
     @Autowired
-    @InjectMocks
-    private HibernatePostUpdateListener hibernatePostUpdateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostCreateListener hibernatePostCreateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostDeleteListener hibernatePostDeleteListener;
+    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private PhysicalAddressRepository physicalAddressRepository;
@@ -132,6 +115,7 @@ public class PhysicalAddressResourceIntTest {
 
     @Before
     public void setup() {
+        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final PhysicalAddressResource physicalAddressResource = new PhysicalAddressResource(physicalAddressService);
         this.restPhysicalAddressMockMvc = MockMvcBuilders.standaloneSetup(physicalAddressResource)

@@ -67,12 +67,12 @@ public class HibernatePostUpdateListener implements PostUpdateEventListener {
     }
 
     private Metadata extractMetadata(PostUpdateEvent event, Integer fieldId) {
-        Metadata result = new Metadata();
-        result.setResourceId(event.getId().toString());
-        result.setFieldName(event.getPersister().getPropertyNames()[fieldId]);
-        result.setPreviousValue(event.getOldState()[fieldId].toString());
-        result.setReplacementValue(event.getState()[fieldId].toString());
-        result.setLastActionType(ActionType.UPDATE);
-        return result;
+        return new Metadata()
+            .resourceId(event.getId().toString())
+            .fieldName(event.getPersister().getPropertyNames()[fieldId])
+            .previousValue(event.getOldState()[fieldId].toString())
+            .replacementValue(event.getState()[fieldId].toString())
+            .lastActionType(ActionType.UPDATE)
+            .resourceClass(event.getEntity().getClass().getSimpleName());
     }
 }

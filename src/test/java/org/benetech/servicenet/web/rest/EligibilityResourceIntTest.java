@@ -3,20 +3,15 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.listener.HibernatePostCreateListener;
-import org.benetech.servicenet.listener.HibernatePostDeleteListener;
-import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.EligibilityRepository;
 import org.benetech.servicenet.service.EligibilityService;
-import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.benetech.servicenet.service.mapper.EligibilityMapper;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,20 +49,8 @@ public class EligibilityResourceIntTest {
     private static final String DEFAULT_ELIGIBILITY = "AAAAAAAAAA";
     private static final String UPDATED_ELIGIBILITY = "BBBBBBBBBB";
 
-    @Mock
-    private MetadataService metadataService;
-
     @Autowired
-    @InjectMocks
-    private HibernatePostUpdateListener hibernatePostUpdateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostCreateListener hibernatePostCreateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostDeleteListener hibernatePostDeleteListener;
+    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private EligibilityRepository eligibilityRepository;
@@ -108,6 +91,7 @@ public class EligibilityResourceIntTest {
 
     @Before
     public void setup() {
+        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final EligibilityResource eligibilityResource = new EligibilityResource(eligibilityService);
         this.restEligibilityMockMvc = MockMvcBuilders.standaloneSetup(eligibilityResource)

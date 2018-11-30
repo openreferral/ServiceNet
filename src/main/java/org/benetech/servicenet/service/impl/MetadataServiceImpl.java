@@ -43,12 +43,6 @@ public class MetadataServiceImpl implements MetadataService {
         this.metadataMapper = metadataMapper;
     }
 
-    /**
-     * Save a metadata.
-     *
-     * @param metadataDTO the entity to save
-     * @return the persisted entity
-     */
     @Override
     public MetadataDTO save(MetadataDTO metadataDTO) {
         log.debug("Request to save Metadata : {}", metadataDTO);
@@ -58,12 +52,6 @@ public class MetadataServiceImpl implements MetadataService {
         return metadataMapper.toDto(metadata);
     }
 
-    /**
-     * Save all metadata objects, with current user reference
-     *
-     * @param metadata the entities to save
-     * @return the persisted entities
-     */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<Metadata> saveForCurrentUser(List<Metadata> metadata) {
@@ -79,11 +67,6 @@ public class MetadataServiceImpl implements MetadataService {
         }
     }
 
-    /**
-     * Get all the metadata.
-     *
-     * @return the list of entities
-     */
     @Override
     @Transactional(readOnly = true)
     public List<MetadataDTO> findAll() {
@@ -93,13 +76,6 @@ public class MetadataServiceImpl implements MetadataService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-
-    /**
-     * Get one metadata by id.
-     *
-     * @param id the id of the entity
-     * @return the entity
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<MetadataDTO> findOne(UUID id) {
@@ -108,11 +84,6 @@ public class MetadataServiceImpl implements MetadataService {
             .map(metadataMapper::toDto);
     }
 
-    /**
-     * Delete the metadata by id.
-     *
-     * @param id the id of the entity
-     */
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Metadata : {}", id);
