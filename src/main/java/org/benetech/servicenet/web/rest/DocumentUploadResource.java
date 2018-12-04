@@ -80,7 +80,8 @@ public class DocumentUploadResource {
                                                             HttpServletRequest request)
         throws URISyntaxException, IOException {
         try {
-            DocumentUploadDTO result = documentUploadService.uploadFile(file, request.getHeader("DELIMITER"));
+            DocumentUploadDTO result = documentUploadService.uploadFile(file, request.getHeader("DELIMITER"),
+                request.getHeader("PROVIDER"));
             return ResponseEntity.created(new URI("/api/document-uploads/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
                 .body(result);
