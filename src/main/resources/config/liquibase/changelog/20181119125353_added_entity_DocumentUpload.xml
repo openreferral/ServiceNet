@@ -27,8 +27,12 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="document_id" type="varchar(255)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="ux_document_upload_document_id"/>
+            <column name="original_document_id" type="varchar(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_document_upload_original_document_id" />
+            </column>
+
+            <column name="parsed_document_id" type="varchar(255)">
+                <constraints nullable="true" unique="true" uniqueConstraintName="ux_document_upload_parsed_document_id" />
             </column>
 
             <column name="uploader_id" type="${uuidType}">
@@ -38,7 +42,7 @@
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         <dropDefaultValue tableName="document_upload" columnName="date_uploaded" columnDataType="datetime"/>
-
+        
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

@@ -1,15 +1,25 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.converter.AbstractFileConverter;
+import org.benetech.servicenet.converter.FileConverterFactory;
 import org.benetech.servicenet.domain.DocumentUpload;
+import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DocumentUploadService;
+import org.benetech.servicenet.service.MongoDbService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -25,22 +35,28 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     private final Logger log = LoggerFactory.getLogger(DocumentUploadServiceImpl.class);
 
-    private final DocumentUploadRepository documentUploadRepository;
+    @Autowired
+    private DocumentUploadRepository documentUploadRepository;
 
-    private final DocumentUploadMapper documentUploadMapper;
+    @Autowired
+    private DocumentUploadMapper documentUploadMapper;
 
-    public DocumentUploadServiceImpl(DocumentUploadRepository documentUploadRepository,
-                                     DocumentUploadMapper documentUploadMapper) {
-        this.documentUploadRepository = documentUploadRepository;
-        this.documentUploadMapper = documentUploadMapper;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private MongoDbService mongoDbService;
+
+    @Override
+    public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter) throws IllegalArgumentException, IOException {
+
+        AbstractFileConverter converter = FileConverterFactory.getConverter(file, delimiter);
+        String parsedDocumentId = mongoDbService.saveParsedDocument(converter.convert(file));
+        String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
+
+        return documentUploadMapper.toDto(saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId)));
     }
 
-    /**
-     * Save a documentUpload.
-     *
-     * @param documentUploadDTO the entity to save
-     * @return the persisted entity
-     */
     @Override
     public DocumentUploadDTO save(DocumentUploadDTO documentUploadDTO) {
         log.debug("Request to save DocumentUpload : {}", documentUploadDTO);
@@ -50,11 +66,18 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         return documentUploadMapper.toDto(documentUpload);
     }
 
-    /**
-     * Get all the documentUploads.
-     *
-     * @return the list of entities
-     */
+    @Override
+    public DocumentUpload saveForCurrentUser(DocumentUpload documentUpload) {
+        Optional<User> currentUser = userService.getUserWithAuthorities();
+        if (currentUser.isPresent()) {
+            documentUpload.setDateUploaded(ZonedDateTime.now(ZoneId.systemDefault()));
+            documentUpload.setUploader(currentUser.get());
+            return documentUploadRepository.save(documentUpload);
+        } else {
+            throw new IllegalStateException("No current user found");
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<DocumentUploadDTO> findAll() {
@@ -64,13 +87,6 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-
-    /**
-     * Get one documentUpload by id.
-     *
-     * @param id the id of the entity
-     * @return the entity
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<DocumentUploadDTO> findOne(UUID id) {
@@ -79,11 +95,6 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .map(documentUploadMapper::toDto);
     }
 
-    /**
-     * Delete the documentUpload by id.
-     *
-     * @param id the id of the entity
-     */
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete DocumentUpload : {}", id);

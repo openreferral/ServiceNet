@@ -22,14 +22,21 @@
                 "required"
             ]
         },
-        {
-            "fieldName": "documentId",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "unique",
-                "required"
-            ]
-        }
+      {
+        "fieldName": "originalDocumentId",
+        "fieldType": "String",
+        "fieldValidateRules": [
+          "unique",
+          "required"
+        ]
+      },
+      {
+        "fieldName": "parsedDocumentId",
+        "fieldType": "String",
+        "fieldValidateRules": [
+          "unique"
+        ]
+      }
     ],
     "changelogDate": "20181119125353",
     "dto": "mapstruct",

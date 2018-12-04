@@ -16,7 +16,8 @@
         "title": "Document Upload"
       },
       "dateUploaded": "Date Uploaded",
-      "documentId": "Document Id",
+      "originalDocumentId": "Original Document Id",
+      "parsedDocumentId": "Parsed Document Id",
       "uploader": "Uploader"
     }
   }

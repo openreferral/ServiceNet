@@ -17,7 +17,9 @@ public class DocumentUploadDTO implements Serializable {
     private ZonedDateTime dateUploaded;
 
     @NotNull
-    private String documentId;
+    private String originalDocumentId;
+
+    private String parsedDocumentId;
 
     private UUID uploaderId;
 
@@ -39,12 +41,20 @@ public class DocumentUploadDTO implements Serializable {
         this.dateUploaded = dateUploaded;
     }
 
-    public String getDocumentId() {
-        return documentId;
+    public String getOriginalDocumentId() {
+        return originalDocumentId;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
+    public void setOriginalDocumentId(String originalDocumentId) {
+        this.originalDocumentId = originalDocumentId;
+    }
+
+    public String getParsedDocumentId() {
+        return parsedDocumentId;
+    }
+
+    public void setParsedDocumentId(String parsedDocumentId) {
+        this.parsedDocumentId = parsedDocumentId;
     }
 
     public UUID getUploaderId() {
@@ -89,7 +99,8 @@ public class DocumentUploadDTO implements Serializable {
         return "DocumentUploadDTO{" +
             "id=" + getId() +
             ", dateUploaded='" + getDateUploaded() + "'" +
-            ", documentId='" + getDocumentId() + "'" +
+            ", originalDocumentId='" + getOriginalDocumentId() + "'" +
+            ", parsedDocumentId='" + getParsedDocumentId() + "'" +
             ", uploader=" + getUploaderId() +
             ", uploader='" + getUploaderLogin() + "'" +
             "}";

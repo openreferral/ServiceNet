@@ -2,6 +2,7 @@
   "upload": {
     "title": "File upload",
     "subtitle": "Please select files to upload:",
-    "submit": "Upload all"
+    "submit": "Upload all",
+    "delimiter": "Select delimiter for records, if needed:"
   }
 }
