@@ -15,19 +15,9 @@ public interface FirstProviderDataMapper {
 
     FirstProviderDataMapper INSTANCE = Mappers.getMapper(FirstProviderDataMapper.class);
 
-    PhysicalAddress toPhysicalAddress(RawData rawData);
+    PhysicalAddress extractPhysicalAddress(RawData rawData);
 
-    PostalAddress toPostalAddress(RawData rawData);
-
-    default PhysicalAddress extractPhysicalAddress(RawData rawData) {
-        return FirstProviderDataMapper.INSTANCE.toPhysicalAddress(rawData)
-            .postalCode("").country("");
-    }
-
-    default PostalAddress extractPostalAddress(RawData rawData) {
-        return FirstProviderDataMapper.INSTANCE.toPostalAddress(rawData)
-            .postalCode("").country("");
-    }
+    PostalAddress extractPostalAddress(RawData rawData);
 
     default Location extractLocation(RawData rawData, PhysicalAddress physicalAddress, PostalAddress postalAddress) {
         return new Location().name(extractLocationName(rawData))
