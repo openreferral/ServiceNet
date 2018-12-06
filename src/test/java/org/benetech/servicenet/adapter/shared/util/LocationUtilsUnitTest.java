@@ -15,7 +15,7 @@ public class LocationUtilsUnitTest {
 
     @Test
     public void shouldReturnCoordinatesFromString() {
-        Optional<Coordinates> result = LocationUtils.getCoordinatesFromString("54.678983, 12.332445", ", ");
+        Optional<Coordinates> result = LocationUtils.getCoordinatesFromString("54.678983,12.332445", ",");
         assertTrue(result.isPresent());
         assertEquals(54.678983, result.get().getLatitude(), PRECISION);
         assertEquals(12.332445, result.get().getLongitude(), PRECISION);
@@ -23,7 +23,7 @@ public class LocationUtilsUnitTest {
 
     @Test
     public void shouldReturnEmptyIfUnableToParseCoordinates() {
-        Optional<Coordinates> result = LocationUtils.getCoordinatesFromString("54.67.89.83, 12.33.24.45", ", ");
+        Optional<Coordinates> result = LocationUtils.getCoordinatesFromString("54.67.89.83,12.33.24.45", ",");
         assertFalse(result.isPresent());
     }
 

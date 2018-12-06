@@ -58,16 +58,18 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
         String parsedDocument = FileConverterFactory.getConverter(file, delimiter).convert(file);
 
-        AbstractDataAdapter adapter = new DataAdapterFactory(applicationContext).getAdapter(providerName);
-        if (adapter.isUsedForSingleObjects()) {
-            adapter.persistData(parsedDocument);
-        }
-        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
-
         String parsedDocumentId = mongoDbService.saveParsedDocument(parsedDocument);
         String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
 
-        return documentUploadMapper.toDto(saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId)));
+        DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
+
+        AbstractDataAdapter adapter = new DataAdapterFactory(applicationContext).getAdapter(providerName);
+        if (adapter.isUsedForSingleObjects()) {
+            adapter.persistData(parsedDocument, documentUpload);
+        }
+        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
+
+        return documentUploadMapper.toDto(documentUpload);
     }
 
     @Override

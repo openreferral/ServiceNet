@@ -1,65 +1,110 @@
 package org.benetech.servicenet.adapter.firstprovider;
 
+import com.google.gson.Gson;
+import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.firstprovider.model.RawData;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
+import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.Program;
+import org.benetech.servicenet.domain.Service;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
 public class FirstProviderDataMapperUnitTest {
 
-    private static final String ADDRESS_1 = "Address 1";
-    private static final String CITY = "City";
-    private static final String STATE_PROVINCE = "State Province";
-    private static final String PHONE = "123456789";
-    private static final String LATITUDE = "54.380478";
-    private static final String LONGITUDE = "18.606646";
-
     private RawData rawData;
 
     @Before
-    public void init() {
-        rawData = new RawData();
-        rawData.setAddress1(ADDRESS_1);
-        rawData.setCity(CITY);
-        rawData.setStateProvince(STATE_PROVINCE);
-        rawData.setPhone(PHONE);
-        rawData.setGeoLocation(LATITUDE + ", " + LONGITUDE);
+    public void init() throws IOException {
+        String data = AdapterTestsUtils.readResourceAsString("FirstProviderDataSingleEntry.json");
+        rawData = new Gson().fromJson(data, RawData.class);
     }
 
     @Test
     public void shouldExtractPhysicalAddressFromRawData() {
         PhysicalAddress extracted = FirstProviderDataMapper.INSTANCE.extractPhysicalAddress(rawData);
-        assertEquals(ADDRESS_1, extracted.getAddress1());
-        assertEquals(CITY, extracted.getCity());
-        assertEquals(STATE_PROVINCE, extracted.getStateProvince());
+        assertEquals("1234 Address", extracted.getAddress1());
+        assertEquals("Super City", extracted.getCity());
+        assertEquals("CA", extracted.getStateProvince());
     }
 
     @Test
     public void shouldExtractPostalAddressFromRawData() {
         PostalAddress extracted = FirstProviderDataMapper.INSTANCE.extractPostalAddress(rawData);
-        assertEquals(ADDRESS_1, extracted.getAddress1());
-        assertEquals(CITY, extracted.getCity());
-        assertEquals(STATE_PROVINCE, extracted.getStateProvince());
+        assertEquals("1234 Address", extracted.getAddress1());
+        assertEquals("Super City", extracted.getCity());
+        assertEquals("CA", extracted.getStateProvince());
     }
 
     @Test
     public void shouldExtractLocationFromRawData() {
         Location extracted = FirstProviderDataMapper.INSTANCE.extractLocation(rawData);
-        String expectedName = LocationUtils.buildLocationName(CITY, STATE_PROVINCE, ADDRESS_1);
+        String expectedName = LocationUtils.buildLocationName("Super City", "CA", "1234 Address");
         assertEquals(expectedName, extracted.getName());
-        assertEquals(Double.valueOf(LATITUDE), extracted.getLatitude());
-        assertEquals(Double.valueOf(LONGITUDE), extracted.getLongitude());
+        assertEquals(Double.valueOf("30.7149303"), extracted.getLatitude());
+        assertEquals(Double.valueOf("-180.0893568"), extracted.getLongitude());
     }
 
     @Test
     public void shouldExtractPhoneFromRawData() {
         Phone extracted = FirstProviderDataMapper.INSTANCE.extractPhone(rawData);
-        assertEquals(PHONE, extracted.getNumber());
+        assertEquals("12345671234", extracted.getNumber());
+        assertEquals(48, (int) extracted.getExtension());
+    }
+
+    @Test
+    public void shouldExtractOrganizationFromRawData() {
+        Organization extracted = FirstProviderDataMapper.INSTANCE.extractOrganization(rawData);
+        assertEquals("e@mail.com", extracted.getEmail());
+        assertEquals("Org name", extracted.getName());
+    }
+
+    @Test
+    public void shouldExtractEligibilityFromRawData() {
+        Eligibility extracted = FirstProviderDataMapper.INSTANCE.extractEligibility(rawData);
+        assertEquals("Alzheimer's disease", extracted.getEligibility());
+    }
+
+    @Test
+    public void shouldExtractServiceFromRawData() {
+        Service extracted = FirstProviderDataMapper.INSTANCE.extractService(rawData);
+        assertEquals("One + First", extracted.getName());
+        assertEquals("https://example.com/1111", extracted.getUrl());
+        assertEquals("Required items: Id", extracted.getApplicationProcess());
+        assertEquals("from 4$ to 50$", extracted.getFees());
+        assertEquals("description info", extracted.getDescription());
+    }
+
+    @Test
+    public void shouldExtractProgramsFromRawData() {
+        Set<Program> extracted = new LinkedHashSet<>(FirstProviderDataMapper.INSTANCE.extractPrograms(rawData));
+        assertEquals(2, extracted.size());
+
+        Iterator<Program> iterator = extracted.iterator();
+        assertEquals("Medical care", iterator.next().getName());
+        assertEquals("Memory care", iterator.next().getName());
+    }
+
+    @Test
+    public void shouldExtractLangsFromRawData() {
+        Set<Language> extracted = new LinkedHashSet<>(FirstProviderDataMapper.INSTANCE.extractLangs(rawData));
+        assertEquals(2, extracted.size());
+
+        Iterator<Language> iterator = extracted.iterator();
+        assertEquals("English", iterator.next().getLanguage());
+        assertEquals("Spanish", iterator.next().getLanguage());
     }
 }
