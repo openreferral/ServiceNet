@@ -34,16 +34,16 @@ public class FirstProviderDataAdapter extends AbstractDataAdapter {
         FirstProviderDataMapper mapper = FirstProviderDataMapper.INSTANCE;
 
         for (RawData rawData : entries) {
-            PhysicalAddress physicalAddress = mapper.extractPhysicalAddress(rawData);
-            em.persist(physicalAddress);
-
-            PostalAddress postalAddress = mapper.extractPostalAddress(rawData);
-            em.persist(postalAddress);
-
-            Location location = mapper.extractLocation(rawData, physicalAddress, postalAddress);
+            Location location = mapper.extractLocation(rawData);
             em.persist(location);
 
-            Phone phone = mapper.extractPhone(rawData, location);
+            PhysicalAddress physicalAddress = mapper.extractPhysicalAddress(rawData).location(location);
+            em.persist(physicalAddress);
+
+            PostalAddress postalAddress = mapper.extractPostalAddress(rawData).location(location);
+            em.persist(postalAddress);
+
+            Phone phone = mapper.extractPhone(rawData).location(location);
             em.persist(phone);
 
             //TODO: map other entities as well
