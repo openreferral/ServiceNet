@@ -1,7 +1,8 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.adapter.AbstractDataAdapter;
 import org.benetech.servicenet.adapter.DataAdapterFactory;
+import org.benetech.servicenet.adapter.SingleDataAdapter;
+import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.converter.FileConverterFactory;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.User;
@@ -63,10 +64,8 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
         DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
 
-        AbstractDataAdapter adapter = new DataAdapterFactory(applicationContext).getAdapter(providerName);
-        if (adapter.isUsedForSingleObjects()) {
-            adapter.persistData(parsedDocument, documentUpload);
-        }
+        Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext).getSingleDataAdapter(providerName);
+        adapter.ifPresent(a -> a.importData(new SingleImportData(parsedDocument, documentUpload)));
         //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
 
         return documentUploadMapper.toDto(documentUpload);

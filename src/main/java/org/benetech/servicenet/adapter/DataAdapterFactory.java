@@ -3,21 +3,31 @@ package org.benetech.servicenet.adapter;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Optional;
+
 public class DataAdapterFactory {
 
     private static final String DATA_ADAPTER_SUFFIX = "DataAdapter";
 
-    private final ApplicationContext applicationContext;
+    private final ApplicationContext context;
 
-    public DataAdapterFactory(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public DataAdapterFactory(ApplicationContext context) {
+        this.context = context;
     }
 
-    public AbstractDataAdapter getAdapter(String providerName) {
+    public Optional<SingleDataAdapter> getSingleDataAdapter(String providerName) {
         try {
-            return applicationContext.getBean(providerName + DATA_ADAPTER_SUFFIX, AbstractDataAdapter.class);
+            return Optional.of(context.getBean(providerName + DATA_ADAPTER_SUFFIX, SingleDataAdapter.class));
         } catch (NoSuchBeanDefinitionException e) {
-            throw new IllegalArgumentException("No adapter found for " + providerName);
+            return Optional.empty();
+        }
+    }
+
+    public Optional<MultipleDataAdapter> getMultipleDataAdapter(String providerName) {
+        try {
+            return Optional.of(context.getBean(providerName + DATA_ADAPTER_SUFFIX, MultipleDataAdapter.class));
+        } catch (NoSuchBeanDefinitionException e) {
+            return Optional.empty();
         }
     }
 }

@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class LocationUtilsUnitTest {
@@ -21,10 +20,9 @@ public class LocationUtilsUnitTest {
         assertEquals(12.332445, result.get().getLongitude(), PRECISION);
     }
 
-    @Test
-    public void shouldReturnEmptyIfUnableToParseCoordinates() {
-        Optional<Coordinates> result = LocationUtils.getCoordinatesFromString("54.67.89.83,12.33.24.45", ",");
-        assertFalse(result.isPresent());
+    @Test(expected = NumberFormatException.class)
+    public void shouldThrowAnErrorReturnIfUnableToParseCoordinates() {
+        LocationUtils.getCoordinatesFromString("54.67.89.83,12.33.24.45", ",");
     }
 
     @Test

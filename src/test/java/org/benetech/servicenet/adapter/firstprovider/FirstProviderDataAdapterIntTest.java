@@ -1,8 +1,8 @@
 package org.benetech.servicenet.adapter.firstprovider;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
+import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LanguageService;
@@ -32,7 +32,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -81,7 +80,7 @@ public class FirstProviderDataAdapterIntTest {
     @Before
     public void persistData() throws IOException {
         String data = AdapterTestsUtils.readResourceAsString("FirstProviderData.json");
-        adapter.persistData(data, null);
+        adapter.importData(new SingleImportData(data, null));
     }
 
     @Test
@@ -140,10 +139,5 @@ public class FirstProviderDataAdapterIntTest {
         for (ProgramDTO program : programs) {
             assertEquals(program.getOrganizationId(), firstOrganization.getId());
         }
-    }
-
-    @Test(expected = NotImplementedException.class)
-    public void shouldThrowExceptionWhenUsedForWrongTypeOfData() {
-        adapter.persistData(new ArrayList<>(), null);
     }
 }

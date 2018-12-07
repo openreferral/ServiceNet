@@ -2,10 +2,9 @@ package org.benetech.servicenet.adapter.firstprovider;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang3.NotImplementedException;
-import org.benetech.servicenet.adapter.AbstractDataAdapter;
+import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.firstprovider.model.RawData;
-import org.benetech.servicenet.domain.DocumentUpload;
+import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
@@ -21,15 +20,16 @@ import java.util.List;
  * DataAdapter for the first example data set
  */
 @Component("FirstProviderDataAdapter")
-public class FirstProviderDataAdapter extends AbstractDataAdapter {
+public class FirstProviderDataAdapter extends SingleDataAdapter {
 
     @Autowired
     private EntityManager em;
 
     @Override
-    public void persistData(String data, DocumentUpload documentUpload) {
-        Type listType = new TypeToken<ArrayList<RawData>>() { }.getType();
-        List<RawData> entries = new Gson().fromJson(data, listType);
+    public void importData(SingleImportData data) {
+        Type listType = new TypeToken<ArrayList<RawData>>() {
+        }.getType();
+        List<RawData> entries = new Gson().fromJson(data.getSingleObjectData(), listType);
 
         FirstProviderDataMapper mapper = FirstProviderDataMapper.INSTANCE;
 
@@ -39,7 +39,7 @@ public class FirstProviderDataAdapter extends AbstractDataAdapter {
             em.persist(location);
 
             Organization organization = mapper.extractOrganization(rawData)
-                .location(location).active(true).sourceDocument(documentUpload);
+                .location(location).active(true).sourceDocument(data.getDocumentUpload());
             em.persist(organization);
 
             Service service = mapper.extractService(rawData).organization(organization);
@@ -58,16 +58,7 @@ public class FirstProviderDataAdapter extends AbstractDataAdapter {
             mapper.extractLangs(rawData)
                 .stream().map(loc -> loc.srvc(service).location(location))
                 .forEach(p -> em.persist(p));
+
         }
-    }
-
-    @Override
-    public void persistData(List<String> data, DocumentUpload documentUpload) {
-        throw new NotImplementedException(MULTIPLE_MAPPING_NOT_SUPPORTED);
-    }
-
-    @Override
-    public boolean isUsedForSingleObjects() {
-        return true;
     }
 }

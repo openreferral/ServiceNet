@@ -9,8 +9,9 @@ public final class AdapterTestsUtils {
 
     public static String readResourceAsString(String resourceName) throws IOException {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classloader.getResourceAsStream(RESOURCE_PACKAGE + resourceName);
-        return new String(is.readAllBytes());
+        try (InputStream is = classloader.getResourceAsStream(RESOURCE_PACKAGE + resourceName)) {
+            return new String(is.readAllBytes());
+        }
     }
 
     private AdapterTestsUtils() {
