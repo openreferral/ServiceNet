@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
 import org.benetech.servicenet.service.PhysicalAddressService;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see PhysicalAddressResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class PhysicalAddressResourceIntTest {
 
     private static final String DEFAULT_ATTENTION = "AAAAAAAAAA";
@@ -66,9 +66,6 @@ public class PhysicalAddressResourceIntTest {
 
     private static final String DEFAULT_COUNTRY = "AAAAAAAAAA";
     private static final String UPDATED_COUNTRY = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private PhysicalAddressRepository physicalAddressRepository;
@@ -115,7 +112,6 @@ public class PhysicalAddressResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final PhysicalAddressResource physicalAddressResource = new PhysicalAddressResource(physicalAddressService);
         this.restPhysicalAddressMockMvc = MockMvcBuilders.standaloneSetup(physicalAddressResource)

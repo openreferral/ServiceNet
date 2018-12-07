@@ -4,7 +4,6 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.config.audit.AuditEventConverter;
 import org.benetech.servicenet.domain.PersistentAuditEvent;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.PersistenceAuditEventRepository;
 import org.benetech.servicenet.service.AuditEventService;
 import org.junit.Before;
@@ -52,9 +51,6 @@ public class AuditResourceIntTest {
     private static final long SECONDS_PER_DAY = 60 * 60 * 24;
 
     @Autowired
-    private HibernateInterceptor hibernateInterceptor;
-
-    @Autowired
     private PersistenceAuditEventRepository auditEventRepository;
 
     @Autowired
@@ -75,7 +71,6 @@ public class AuditResourceIntTest {
 
     @Before
     public void setUp() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         AuditEventService auditEventService =
             new AuditEventService(auditEventRepository, auditEventConverter);

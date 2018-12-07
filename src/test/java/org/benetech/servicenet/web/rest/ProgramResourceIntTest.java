@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Program;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.ProgramRepository;
 import org.benetech.servicenet.service.ProgramService;
 import org.benetech.servicenet.service.dto.ProgramDTO;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see ProgramResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class ProgramResourceIntTest {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
@@ -51,9 +51,6 @@ public class ProgramResourceIntTest {
 
     private static final String DEFAULT_ALTERNATE_NAME = "AAAAAAAAAA";
     private static final String UPDATED_ALTERNATE_NAME = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private ProgramRepository programRepository;
@@ -94,9 +91,7 @@ public class ProgramResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
-        //when(userService.getUserWithAuthorities()).thenReturn(Optional.of(UserMother.admin()));
         final ProgramResource programResource = new ProgramResource(programService);
         this.restProgramMockMvc = MockMvcBuilders.standaloneSetup(programResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

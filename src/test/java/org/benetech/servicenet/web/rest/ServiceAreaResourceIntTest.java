@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.ServiceArea;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.ServiceAreaRepository;
 import org.benetech.servicenet.service.ServiceAreaService;
 import org.benetech.servicenet.service.dto.ServiceAreaDTO;
@@ -43,14 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see ServiceAreaResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class ServiceAreaResourceIntTest {
 
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private ServiceAreaRepository serviceAreaRepository;
@@ -91,7 +88,6 @@ public class ServiceAreaResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final ServiceAreaResource serviceAreaResource = new ServiceAreaResource(serviceAreaService);
         this.restServiceAreaMockMvc = MockMvcBuilders.standaloneSetup(serviceAreaResource)

@@ -1,11 +1,11 @@
 package org.benetech.servicenet.web.rest;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.PersistentToken;
 import org.benetech.servicenet.domain.User;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.mother.UserMother;
 import org.benetech.servicenet.repository.AuthorityRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
@@ -58,7 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see AccountResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class AccountResourceIntTest {
 
     @Autowired
@@ -88,16 +88,12 @@ public class AccountResourceIntTest {
     @Mock
     private MailService mockMailService;
 
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
-
     private MockMvc restMvc;
 
     private MockMvc restUserMockMvc;
 
     @Before
     public void setUp() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         doNothing().when(mockMailService).sendActivationEmail(any());
         AccountResource accountResource =

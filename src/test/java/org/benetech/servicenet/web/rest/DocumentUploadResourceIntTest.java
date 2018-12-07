@@ -1,10 +1,10 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.User;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
@@ -49,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see DocumentUploadResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class DocumentUploadResourceIntTest {
 
     private static final ZonedDateTime DEFAULT_DATE_UPLOADED = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
@@ -78,9 +78,6 @@ public class DocumentUploadResourceIntTest {
     private ExceptionTranslator exceptionTranslator;
 
     @Autowired
-    private HibernateInterceptor hibernateInterceptor;
-
-    @Autowired
     private EntityManager em;
 
     private MockMvc restDocumentUploadMockMvc;
@@ -107,7 +104,6 @@ public class DocumentUploadResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final DocumentUploadResource documentUploadResource = new DocumentUploadResource(documentUploadService);
         this.restDocumentUploadMockMvc = MockMvcBuilders.standaloneSetup(documentUploadResource)

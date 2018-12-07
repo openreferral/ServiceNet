@@ -3,7 +3,6 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.ServiceTaxonomyRepository;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.dto.ServiceTaxonomyDTO;
@@ -50,9 +49,6 @@ public class ServiceTaxonomyResourceIntTest {
     private static final String UPDATED_TAXONOMY_DETAILS = "BBBBBBBBBB";
 
     @Autowired
-    private HibernateInterceptor hibernateInterceptor;
-
-    @Autowired
     private ServiceTaxonomyRepository serviceTaxonomyRepository;
 
     @Autowired
@@ -91,7 +87,6 @@ public class ServiceTaxonomyResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final ServiceTaxonomyResource serviceTaxonomyResource = new ServiceTaxonomyResource(serviceTaxonomyService);
         this.restServiceTaxonomyMockMvc = MockMvcBuilders.standaloneSetup(serviceTaxonomyResource)

@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PostalAddress;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.PostalAddressRepository;
 import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.dto.PostalAddressDTO;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see PostalAddressResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class PostalAddressResourceIntTest {
 
     private static final String DEFAULT_ATTENTION = "AAAAAAAAAA";
@@ -66,9 +66,6 @@ public class PostalAddressResourceIntTest {
 
     private static final String DEFAULT_COUNTRY = "AAAAAAAAAA";
     private static final String UPDATED_COUNTRY = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private PostalAddressRepository postalAddressRepository;
@@ -115,7 +112,6 @@ public class PostalAddressResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final PostalAddressResource postalAddressResource = new PostalAddressResource(postalAddressService);
         this.restPostalAddressMockMvc = MockMvcBuilders.standaloneSetup(postalAddressResource)

@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.RequiredDocument;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.RequiredDocumentRepository;
 import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
@@ -43,14 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see RequiredDocumentResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class RequiredDocumentResourceIntTest {
 
     private static final String DEFAULT_DOCUMENT = "AAAAAAAAAA";
     private static final String UPDATED_DOCUMENT = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private RequiredDocumentRepository requiredDocumentRepository;
@@ -91,7 +88,6 @@ public class RequiredDocumentResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final RequiredDocumentResource requiredDocumentResource = new RequiredDocumentResource(requiredDocumentService);
         this.restRequiredDocumentMockMvc = MockMvcBuilders.standaloneSetup(requiredDocumentResource)

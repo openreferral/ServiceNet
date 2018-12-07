@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Taxonomy;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.TaxonomyRepository;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see TaxonomyResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class TaxonomyResourceIntTest {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
@@ -51,9 +51,6 @@ public class TaxonomyResourceIntTest {
 
     private static final String DEFAULT_VOCABULARY = "AAAAAAAAAA";
     private static final String UPDATED_VOCABULARY = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private TaxonomyRepository taxonomyRepository;
@@ -95,7 +92,6 @@ public class TaxonomyResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final TaxonomyResource taxonomyResource = new TaxonomyResource(taxonomyService);
         this.restTaxonomyMockMvc = MockMvcBuilders.standaloneSetup(taxonomyResource)

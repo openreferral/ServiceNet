@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.SystemAccount;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.dto.SystemAccountDTO;
@@ -43,14 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see SystemAccountResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class SystemAccountResourceIntTest {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private SystemAccountRepository systemAccountRepository;
@@ -91,7 +88,6 @@ public class SystemAccountResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final SystemAccountResource systemAccountResource = new SystemAccountResource(systemAccountService);
         this.restSystemAccountMockMvc = MockMvcBuilders.standaloneSetup(systemAccountResource)

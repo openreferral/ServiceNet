@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Phone;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.dto.PhoneDTO;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see PhoneResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class PhoneResourceIntTest {
 
     private static final String DEFAULT_NUMBER = "AAAAAAAAAA";
@@ -60,9 +60,6 @@ public class PhoneResourceIntTest {
 
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private PhoneRepository phoneRepository;
@@ -107,7 +104,6 @@ public class PhoneResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final PhoneResource phoneResource = new PhoneResource(phoneService);
         this.restPhoneMockMvc = MockMvcBuilders.standaloneSetup(phoneResource)

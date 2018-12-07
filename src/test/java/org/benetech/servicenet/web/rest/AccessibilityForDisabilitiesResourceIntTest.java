@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.AccessibilityForDisabilitiesRepository;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.dto.AccessibilityForDisabilitiesDTO;
@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see AccessibilityForDisabilitiesResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class AccessibilityForDisabilitiesResourceIntTest {
 
     private static final String DEFAULT_ACCESSIBILITY = "AAAAAAAAAA";
@@ -51,9 +51,6 @@ public class AccessibilityForDisabilitiesResourceIntTest {
 
     private static final String DEFAULT_DETAILS = "AAAAAAAAAA";
     private static final String UPDATED_DETAILS = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private AccessibilityForDisabilitiesRepository accessibilityForDisabilitiesRepository;
@@ -95,7 +92,6 @@ public class AccessibilityForDisabilitiesResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final AccessibilityForDisabilitiesResource accessibilityForDisabilitiesResource =
             new AccessibilityForDisabilitiesResource(accessibilityForDisabilitiesService);

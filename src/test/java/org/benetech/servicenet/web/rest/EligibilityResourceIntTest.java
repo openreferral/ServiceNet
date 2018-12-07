@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.EligibilityRepository;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.dto.EligibilityDTO;
@@ -43,14 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see EligibilityResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class EligibilityResourceIntTest {
 
     private static final String DEFAULT_ELIGIBILITY = "AAAAAAAAAA";
     private static final String UPDATED_ELIGIBILITY = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private EligibilityRepository eligibilityRepository;
@@ -91,7 +88,6 @@ public class EligibilityResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final EligibilityResource eligibilityResource = new EligibilityResource(eligibilityService);
         this.restEligibilityMockMvc = MockMvcBuilders.standaloneSetup(eligibilityResource)

@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Language;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.LanguageRepository;
 import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.dto.LanguageDTO;
@@ -43,14 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see LanguageResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class LanguageResourceIntTest {
 
     private static final String DEFAULT_LANGUAGE = "AAAAAAAAAA";
     private static final String UPDATED_LANGUAGE = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private LanguageRepository languageRepository;
@@ -91,7 +88,6 @@ public class LanguageResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final LanguageResource languageResource = new LanguageResource(languageService);
         this.restLanguageMockMvc = MockMvcBuilders.standaloneSetup(languageResource)

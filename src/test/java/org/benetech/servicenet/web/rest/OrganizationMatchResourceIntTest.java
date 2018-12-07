@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.OrganizationMatch;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see OrganizationMatchResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class OrganizationMatchResourceIntTest {
 
     private static final String DEFAULT_FIELD_NAME = "AAAAAAAAAA";
@@ -65,9 +65,6 @@ public class OrganizationMatchResourceIntTest {
 
     private static final String DEFAULT_MATCHED_VALUE = "AAAAAAAAAA";
     private static final String UPDATED_MATCHED_VALUE = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private OrganizationMatchRepository organizationMatchRepository;
@@ -112,7 +109,6 @@ public class OrganizationMatchResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final OrganizationMatchResource organizationMatchResource = new OrganizationMatchResource(organizationMatchService);
         this.restOrganizationMatchMockMvc = MockMvcBuilders.standaloneSetup(organizationMatchResource)

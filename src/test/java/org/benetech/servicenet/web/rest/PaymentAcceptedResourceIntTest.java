@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PaymentAccepted;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.PaymentAcceptedRepository;
 import org.benetech.servicenet.service.PaymentAcceptedService;
 import org.benetech.servicenet.service.dto.PaymentAcceptedDTO;
@@ -43,14 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see PaymentAcceptedResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class PaymentAcceptedResourceIntTest {
 
     private static final String DEFAULT_PAYMENT = "AAAAAAAAAA";
     private static final String UPDATED_PAYMENT = "BBBBBBBBBB";
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private PaymentAcceptedRepository paymentAcceptedRepository;
@@ -91,7 +88,6 @@ public class PaymentAcceptedResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final PaymentAcceptedResource paymentAcceptedResource = new PaymentAcceptedResource(paymentAcceptedService);
         this.restPaymentAcceptedMockMvc = MockMvcBuilders.standaloneSetup(paymentAcceptedResource)

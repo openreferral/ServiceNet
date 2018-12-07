@@ -1,11 +1,11 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.domain.enumeration.ActionType;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.dto.MetadataDTO;
@@ -51,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see MetadataResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class MetadataResourceIntTest {
 
     private static final String DEFAULT_RESOURCE_ID = "AAAAAAAAAA";
@@ -97,9 +97,6 @@ public class MetadataResourceIntTest {
     @Autowired
     private EntityManager em;
 
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
-
     private MockMvc restMetadataMockMvc;
 
     private Metadata metadata;
@@ -129,7 +126,6 @@ public class MetadataResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final MetadataResource metadataResource = new MetadataResource(metadataService);
         this.restMetadataMockMvc = MockMvcBuilders.standaloneSetup(metadataResource)

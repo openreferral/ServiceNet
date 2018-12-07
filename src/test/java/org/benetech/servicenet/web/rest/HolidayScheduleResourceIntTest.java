@@ -1,9 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.HolidaySchedule;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.HolidayScheduleRepository;
 import org.benetech.servicenet.service.HolidayScheduleService;
 import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see HolidayScheduleResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class HolidayScheduleResourceIntTest {
 
     private static final Boolean DEFAULT_CLOSED = false;
@@ -62,9 +62,6 @@ public class HolidayScheduleResourceIntTest {
 
     private static final LocalDate DEFAULT_END_DATE = LocalDate.ofEpochDay(0L);
     private static final LocalDate UPDATED_END_DATE = LocalDate.now(ZoneId.systemDefault());
-
-    @Autowired
-    private HibernateInterceptor hibernateInterceptor;
 
     @Autowired
     private HolidayScheduleRepository holidayScheduleRepository;
@@ -109,7 +106,6 @@ public class HolidayScheduleResourceIntTest {
 
     @Before
     public void setup() {
-        hibernateInterceptor.disableEventListeners();
         MockitoAnnotations.initMocks(this);
         final HolidayScheduleResource holidayScheduleResource = new HolidayScheduleResource(holidayScheduleService);
         this.restHolidayScheduleMockMvc = MockMvcBuilders.standaloneSetup(holidayScheduleResource)

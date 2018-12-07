@@ -5,7 +5,6 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.User;
-import org.benetech.servicenet.interceptor.HibernateInterceptor;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.MailService;
@@ -88,9 +87,6 @@ public class UserResourceIntTest {
     private static final String UPDATED_LANGKEY = "fr";
 
     @Autowired
-    private HibernateInterceptor hibernateInterceptor;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -141,7 +137,6 @@ public class UserResourceIntTest {
 
     @Before
     public void setUp() {
-        hibernateInterceptor.disableEventListeners();
         cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).clear();
         cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE).clear();
         UserResource userResource = new UserResource(userService, userRepository, mailService);
