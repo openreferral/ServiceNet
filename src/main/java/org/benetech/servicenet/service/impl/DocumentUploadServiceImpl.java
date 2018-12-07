@@ -1,6 +1,8 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.converter.AbstractFileConverter;
+import org.benetech.servicenet.adapter.DataAdapterFactory;
+import org.benetech.servicenet.adapter.SingleDataAdapter;
+import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.converter.FileConverterFactory;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.User;
@@ -13,6 +15,7 @@ import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,14 +50,25 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     @Autowired
     private MongoDbService mongoDbService;
 
-    @Override
-    public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter) throws IllegalArgumentException, IOException {
+    @Autowired
+    private ApplicationContext applicationContext;
 
-        AbstractFileConverter converter = FileConverterFactory.getConverter(file, delimiter);
-        String parsedDocumentId = mongoDbService.saveParsedDocument(converter.convert(file));
+    @Override
+    public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter, String providerName)
+        throws IllegalArgumentException, IOException {
+
+        String parsedDocument = FileConverterFactory.getConverter(file, delimiter).convert(file);
+
+        String parsedDocumentId = mongoDbService.saveParsedDocument(parsedDocument);
         String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
 
-        return documentUploadMapper.toDto(saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId)));
+        DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
+
+        Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext).getSingleDataAdapter(providerName);
+        adapter.ifPresent(a -> a.importData(new SingleImportData(parsedDocument, documentUpload)));
+        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
+
+        return documentUploadMapper.toDto(documentUpload);
     }
 
     @Override

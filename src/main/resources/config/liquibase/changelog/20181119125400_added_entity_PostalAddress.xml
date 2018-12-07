@@ -44,11 +44,11 @@
             </column>
 
             <column name="postal_code" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
 
             <column name="country" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="location_id" type="${uuidType}">
                 <constraints unique="true" nullable="true" uniqueConstraintName="ux_postal_address_location_id"/>

@@ -20,20 +20,21 @@ export interface IUploadState {
   pond: any;
   isUploadDisabled: boolean;
   delimiter: symbol;
+  provider: string;
 }
 
 registerPlugin(FilePondPluginFileValidateType);
 const supportedFileTypes = ['.csv', 'text/csv', '.json', 'application/json'];
 const maxNumberOfFiles = 100;
 const valid = 'valid';
-const delimiter = 'delimiter';
 
 export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   state: IUploadState = {
     files: [],
     pond: null,
     isUploadDisabled: true,
-    delimiter: null
+    delimiter: null,
+    provider: null
   };
 
   getToken = () => {
@@ -91,6 +92,10 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
     this.setState({ delimiter: event.target.value });
   };
 
+  providerChange = event => {
+    this.setState({ provider: event.target.value });
+  };
+
   render() {
     return (
       <Row>
@@ -112,7 +117,8 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
               process: {
                 headers: {
                   'X-XSRF-TOKEN': this.getToken(),
-                  DELIMITER: this.state.delimiter
+                  DELIMITER: this.state.delimiter,
+                  PROVIDER: this.state.provider
                 }
               }
             }}
@@ -135,6 +141,15 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
             <option>;</option>
             <option>^</option>
             <option>|</option>
+          </Input>
+          <br />
+          <p className="lead">
+            <Translate contentKey="upload.provider" />
+          </p>
+          <Input className="col-sm-1" value={this.state.provider} type="select" name="select" onChange={this.providerChange}>
+            <option />
+            <option>FirstProvider</option>
+            <option>SecondProvider</option>
           </Input>
           <br />
           <Button color="primary" disabled={this.state.isUploadDisabled} onClick={this.uploadAll}>

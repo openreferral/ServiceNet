@@ -52,12 +52,10 @@ public class PostalAddress implements Serializable {
     @Column(name = "state_province", nullable = false)
     private String stateProvince;
 
-    @NotNull
-    @Column(name = "postal_code", nullable = false)
+    @Column(name = "postal_code")
     private String postalCode;
 
-    @NotNull
-    @Column(name = "country", nullable = false)
+    @Column(name = "country")
     private String country;
 
     @OneToOne

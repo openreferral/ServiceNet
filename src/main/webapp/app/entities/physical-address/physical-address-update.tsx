@@ -150,27 +150,13 @@ export class PhysicalAddressUpdate extends React.Component<IPhysicalAddressUpdat
                   <Label id="postalCodeLabel" for="postalCode">
                     <Translate contentKey="serviceNetApp.physicalAddress.postalCode">Postal Code</Translate>
                   </Label>
-                  <AvField
-                    id="physical-address-postalCode"
-                    type="text"
-                    name="postalCode"
-                    validate={{
-                      required: { value: true, errorMessage: translate('entity.validation.required') }
-                    }}
-                  />
+                  <AvField id="physical-address-postalCode" type="text" name="postalCode" />
                 </AvGroup>
                 <AvGroup>
                   <Label id="countryLabel" for="country">
                     <Translate contentKey="serviceNetApp.physicalAddress.country">Country</Translate>
                   </Label>
-                  <AvField
-                    id="physical-address-country"
-                    type="text"
-                    name="country"
-                    validate={{
-                      required: { value: true, errorMessage: translate('entity.validation.required') }
-                    }}
-                  />
+                  <AvField id="physical-address-country" type="text" name="country" />
                 </AvGroup>
                 <AvGroup>
                   <Label for="location.name">

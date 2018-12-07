@@ -60,6 +60,8 @@ spring:
             enabled: false
     thymeleaf:
         mode: HTML
+    servlet.multipart:
+        max-request-size: 100MB
 
 server:
     servlet:

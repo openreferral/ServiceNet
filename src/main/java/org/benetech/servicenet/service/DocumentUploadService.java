@@ -19,11 +19,13 @@ public interface DocumentUploadService {
      *
      * @param file file to be saved
      * @param delimiter delimiter used to separate entry values (if needed)
+     * @param providerName name of the provider, to correctly persist the data
      * @return entity with information about the uploaded file
      * @throws IOException if there's problem with reading the file
      * @throws IllegalArgumentException if file type is not supported
      */
-    DocumentUploadDTO uploadFile(MultipartFile file, String delimiter) throws IOException, IllegalArgumentException;
+    DocumentUploadDTO uploadFile(MultipartFile file, String delimiter, String providerName) throws IOException,
+        IllegalArgumentException;
 
     /**
      * Save a documentUpload.
