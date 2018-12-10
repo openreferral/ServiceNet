@@ -98,6 +98,16 @@ jhipster:
             enabled: true
             report-frequency: 60 # in seconds
 
+similarity-ratio:
+    weight:
+        name: 1.0
+        location: 0.9
+        email: 0.1
+        url: 0.1
+        year-incorporated: 0.4
+        alternate-name: 0.5
+        description: 0.1
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
