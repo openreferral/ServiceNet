@@ -33,10 +33,6 @@ public interface FirstProviderDataMapper {
 
     FirstProviderDataMapper INSTANCE = Mappers.getMapper(FirstProviderDataMapper.class);
 
-    PhysicalAddress extractPhysicalAddress(RawData rawData);
-
-    PostalAddress extractPostalAddress(RawData rawData);
-
     @Mapping(source = "resourceSiteEmail", target = "email")
     @Mapping(source = "organizationName", target = "name")
     Organization extractOrganization(RawData rawData);
@@ -48,11 +44,32 @@ public interface FirstProviderDataMapper {
     @Mapping(source = "eligibilityList", target = "eligibility")
     Eligibility extractEligibility(RawData rawData);
 
+    default PhysicalAddress extractPhysicalAddress(RawData rawData) {
+        String address2 = StringUtils.isNotBlank(rawData.getAddress2()) ? " " + rawData.getAddress2() : "";
+        return new PhysicalAddress()
+            .city(rawData.getCity())
+            .stateProvince(rawData.getStateProvince())
+            .address1(rawData.getAddress1() + address2);
+    }
+
+    default PostalAddress extractPostalAddress(RawData rawData) {
+        String address2 = StringUtils.isNotBlank(rawData.getAddress2()) ? " " + rawData.getAddress2() : "";
+        return new PostalAddress()
+            .city(rawData.getCity())
+            .stateProvince(rawData.getStateProvince())
+            .address1(rawData.getAddress1() + address2);
+
+    }
+
     default Service extractService(RawData rawData) {
-        return new Service().name(rawData.getServiceName()).url(rawData.getAppURL())
+        //TODO: extract fees from the description
+        //TODO: extract application procedure from the description
+        String additionalInfo = StringUtils.isNotBlank(rawData.getServiceAdditionalInfo())
+            ? " " + rawData.getServiceAdditionalInfo() : "";
+        return new Service().name(rawData.getServiceName()).url(rawData.getWebsite())
             .applicationProcess("Required items: " + rawData.getRequiredItems())
             .fees("from " + rawData.getCostOfServiceMinimum() + " to " + rawData.getCostOfServiceMaximum())
-            .description(rawData.getServiceDescription() + " " + rawData.getServiceAdditionalInfo());
+            .description(rawData.getServiceDescription() + additionalInfo);
     }
 
     default Set<Program> extractPrograms(RawData rawData) {
@@ -81,7 +98,9 @@ public interface FirstProviderDataMapper {
     }
 
     private String extractLocationName(RawData rawData) {
-        return LocationUtils.buildLocationName(rawData.getCity(), rawData.getStateProvince(), rawData.getAddress1());
+        String address2 = StringUtils.isNotBlank(rawData.getAddress2()) ? " " + rawData.getAddress2() : "";
+        return LocationUtils.buildLocationName(rawData.getCity(), rawData.getStateProvince(),
+            rawData.getAddress1() + address2);
     }
 
     @Named("parseToInt")

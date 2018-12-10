@@ -6,23 +6,14 @@ import lombok.Data;
 @Data
 public class RawData {
 
-    private String resourceVerifiedDate;
-
-    private String resourceCreatedDate;
-
     @SerializedName("Resource Site Phone")
     private String phone;
-
-    private String programCategoryList;
-
-    private String serviceID;
-
-    private String line2;
 
     @SerializedName("Line 1")
     private String address1;
 
-    private String isCapacitySensitive;
+    @SerializedName("Line 2")
+    private String address2;
 
     @SerializedName("Resource Site Email")
     private String resourceSiteEmail;
@@ -45,6 +36,7 @@ public class RawData {
     @SerializedName("Service Description")
     private String serviceDescription;
 
+    @SerializedName("Weekly Open Hours Raw")
     private String weeklyOpenHoursRaw;
 
     @SerializedName("Language List")
@@ -52,8 +44,6 @@ public class RawData {
 
     @SerializedName("Service Additional Info")
     private String serviceAdditionalInfo;
-
-    private String organisationID;
 
     @SerializedName("City")
     private String city;
@@ -63,10 +53,6 @@ public class RawData {
 
     @SerializedName("Service Name")
     private String serviceName;
-
-    private String resourceSiteId;
-
-    private String isHidden;
 
     @SerializedName("Cost of Service Minimum")
     private String costOfServiceMinimum;
@@ -80,8 +66,6 @@ public class RawData {
     @SerializedName("Cost of Service Maximum")
     private String costOfServiceMaximum;
 
-    @SerializedName("App URL")
-    private String appURL;
-
-    private String serviceNextSteps;
+    @SerializedName("Website")
+    private String website;
 }

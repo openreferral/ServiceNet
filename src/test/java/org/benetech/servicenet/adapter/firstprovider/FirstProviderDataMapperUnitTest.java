@@ -36,7 +36,7 @@ public class FirstProviderDataMapperUnitTest {
     @Test
     public void shouldExtractPhysicalAddressFromRawData() {
         PhysicalAddress extracted = FirstProviderDataMapper.INSTANCE.extractPhysicalAddress(rawData);
-        assertEquals("1234 Address", extracted.getAddress1());
+        assertEquals("1234 Address 2nd floor", extracted.getAddress1());
         assertEquals("Super City", extracted.getCity());
         assertEquals("CA", extracted.getStateProvince());
     }
@@ -44,7 +44,7 @@ public class FirstProviderDataMapperUnitTest {
     @Test
     public void shouldExtractPostalAddressFromRawData() {
         PostalAddress extracted = FirstProviderDataMapper.INSTANCE.extractPostalAddress(rawData);
-        assertEquals("1234 Address", extracted.getAddress1());
+        assertEquals("1234 Address 2nd floor", extracted.getAddress1());
         assertEquals("Super City", extracted.getCity());
         assertEquals("CA", extracted.getStateProvince());
     }
@@ -52,7 +52,7 @@ public class FirstProviderDataMapperUnitTest {
     @Test
     public void shouldExtractLocationFromRawData() {
         Location extracted = FirstProviderDataMapper.INSTANCE.extractLocation(rawData);
-        String expectedName = LocationUtils.buildLocationName("Super City", "CA", "1234 Address");
+        String expectedName = LocationUtils.buildLocationName("Super City", "CA", "1234 Address 2nd floor");
         assertEquals(expectedName, extracted.getName());
         assertEquals(Double.valueOf("30.7149303"), extracted.getLatitude());
         assertEquals(Double.valueOf("-180.0893568"), extracted.getLongitude());
@@ -82,7 +82,7 @@ public class FirstProviderDataMapperUnitTest {
     public void shouldExtractServiceFromRawData() {
         Service extracted = FirstProviderDataMapper.INSTANCE.extractService(rawData);
         assertEquals("One + First", extracted.getName());
-        assertEquals("https://example.com/1111", extracted.getUrl());
+        assertEquals("https://www.example.com", extracted.getUrl());
         assertEquals("Required items: Id", extracted.getApplicationProcess());
         assertEquals("from 4$ to 50$", extracted.getFees());
         assertEquals("description info", extracted.getDescription());
