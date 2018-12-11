@@ -1,11 +1,18 @@
 package org.benetech.servicenet.config.timezone;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.listener.HibernatePostCreateListener;
+import org.benetech.servicenet.listener.HibernatePostDeleteListener;
+import org.benetech.servicenet.listener.HibernatePostUpdateListener;
 import org.benetech.servicenet.repository.timezone.DateTimeWrapper;
 import org.benetech.servicenet.repository.timezone.DateTimeWrapperRepository;
+import org.benetech.servicenet.service.MetadataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,6 +41,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = ServiceNetApp.class)
 public class HibernateTimeZoneTest {
 
+    @Mock
+    private MetadataService metadataService;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostUpdateListener hibernatePostUpdateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostCreateListener hibernatePostCreateListener;
+
+    @Autowired
+    @InjectMocks
+    private HibernatePostDeleteListener hibernatePostDeleteListener;
+
     @Autowired
     private DateTimeWrapperRepository dateTimeWrapperRepository;
 
@@ -50,6 +72,7 @@ public class HibernateTimeZoneTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         dateTimeWrapper = new DateTimeWrapper();
         dateTimeWrapper.setInstant(Instant.parse("2014-11-12T05:50:00.0Z"));
         dateTimeWrapper.setLocalDateTime(LocalDateTime.parse("2014-11-12T07:50:00.0"));

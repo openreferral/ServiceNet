@@ -47,6 +47,10 @@
                 <constraints nullable="true"/>
             </column>
 
+            <column name="resource_class" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
             <column name="user_id" type="${uuidType}">
                 <constraints nullable="false"/>
             </column>

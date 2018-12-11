@@ -21,6 +21,7 @@
       "fieldName": "Field Name",
       "previousValue": "Previous Value",
       "replacementValue": "Replacement Value",
+      "resourceClass": "Resource Class",
       "user": "User"
     }
   }
