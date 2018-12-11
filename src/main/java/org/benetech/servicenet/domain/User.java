@@ -121,6 +121,11 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.id = id;
     }
 
+    public User id(UUID id) {
+        this.id = id;
+        return this;
+    }
+
     public String getLogin() {
         return login;
     }

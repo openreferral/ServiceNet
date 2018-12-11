@@ -28,6 +28,7 @@ import ServiceTaxonomy from './service-taxonomy';
 import Taxonomy from './taxonomy';
 import OrganizationMatch from './organization-match';
 import Metadata from './metadata';
+import Activity from './activity';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ match }) => (
@@ -58,6 +59,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute path={`${match.url}/taxonomy`} component={Taxonomy} />
       <ErrorBoundaryRoute path={`${match.url}/organization-match`} component={OrganizationMatch} />
       <ErrorBoundaryRoute path={`${match.url}/metadata`} component={Metadata} />
+      <ErrorBoundaryRoute path={`${match.url}/activity`} component={Activity} />
       {/* jhipster-needle-add-route-path - JHipster will routes here */}
     </Switch>
   </div>

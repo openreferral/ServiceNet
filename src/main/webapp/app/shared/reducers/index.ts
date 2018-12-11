@@ -109,6 +109,10 @@ OrganizationMatchState
 import metadata, {
 MetadataState
 } from 'app/entities/metadata/metadata.reducer';
+// prettier-ignore
+import activity, {
+  ActivityState
+} from 'app/entities/activity/activity.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -147,6 +151,7 @@ export interface IRootState {
   readonly taxonomy: TaxonomyState;
   readonly organizationMatch: OrganizationMatchState;
   readonly metadata: MetadataState;
+  readonly activity: ActivityState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -187,6 +192,7 @@ const rootReducer = combineReducers<IRootState>({
   taxonomy,
   organizationMatch,
   metadata,
+  activity,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

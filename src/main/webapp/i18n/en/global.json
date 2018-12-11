@@ -32,6 +32,7 @@
         "taxonomy": "Taxonomy",
         "organizationMatch": "Organization Match",
         "metadata": "Metadata",
+        "activity": "Activity",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
