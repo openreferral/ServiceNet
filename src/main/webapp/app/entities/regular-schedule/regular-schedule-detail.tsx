@@ -30,24 +30,6 @@ export class RegularScheduleDetail extends React.Component<IRegularScheduleDetai
           </h2>
           <dl className="jh-entity-details">
             <dt>
-              <span id="weekday">
-                <Translate contentKey="serviceNetApp.regularSchedule.weekday">Weekday</Translate>
-              </span>
-            </dt>
-            <dd>{regularScheduleEntity.weekday}</dd>
-            <dt>
-              <span id="opensAt">
-                <Translate contentKey="serviceNetApp.regularSchedule.opensAt">Opens At</Translate>
-              </span>
-            </dt>
-            <dd>{regularScheduleEntity.opensAt}</dd>
-            <dt>
-              <span id="closesAt">
-                <Translate contentKey="serviceNetApp.regularSchedule.closesAt">Closes At</Translate>
-              </span>
-            </dt>
-            <dd>{regularScheduleEntity.closesAt}</dd>
-            <dt>
               <Translate contentKey="serviceNetApp.regularSchedule.srvc">Srvc</Translate>
             </dt>
             <dd>{regularScheduleEntity.srvcName ? regularScheduleEntity.srvcName : ''}</dd>

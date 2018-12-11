@@ -1,0 +1,37 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+        {
+          "relationshipType": "many-to-one",
+          "relationshipName": "regularSchedule",
+          "otherEntityName": "regularSchedule",
+          "ownerSide": false,
+          "otherEntityRelationshipName": "openingHours"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "weekday",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+          "fieldName": "opensAt",
+          "fieldType": "String"
+        },
+        {
+          "fieldName": "closesAt",
+          "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20181211064830",
+    "dto": "mapstruct",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "opening_hours",
+    "jpaMetamodelFiltering": false,
+    "pagination": "no"
+}

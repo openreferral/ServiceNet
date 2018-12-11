@@ -15,12 +15,10 @@
       "detail": {
         "title": "Regular Schedule"
       },
-      "weekday": "Weekday",
-      "opensAt": "Opens At",
-      "closesAt": "Closes At",
       "srvc": "Srvc",
       "location": "Location",
-      "serviceAtlocation": "Service Atlocation"
+      "serviceAtlocation": "Service Atlocation",
+      "openingHours": "Opening Hours"
     }
   }
 }

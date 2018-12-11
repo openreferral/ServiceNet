@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <property name="now" value="now()" dbms="h2"/>
 
@@ -16,25 +18,32 @@
     <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
 
     <!--
-        Added the entity RegularSchedule.
+        Added the entity OpeningHours.
     -->
-    <changeSet id="20181119125403-1" author="jhipster">
-        <createTable tableName="regular_schedule">
+    <changeSet id="20181211064830-1" author="jhipster">
+        <createTable tableName="opening_hours">
             <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="srvc_id" type="${uuidType}">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_regular_schedule_srvc_id"/>
+            <column name="weekday" type="integer">
+                <constraints nullable="false" />
             </column>
-            <column name="location_id" type="${uuidType}">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_regular_schedule_location_id"/>
+
+            <column name="opens_at" type="varchar(255)">
+                <constraints nullable="true" />
             </column>
-            <column name="service_atlocation_id" type="${uuidType}">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_regular_schedule_service_atlocation_id"/>
+
+            <column name="closes_at" type="varchar(255)">
+                <constraints nullable="true" />
             </column>
+
+            <column name="regular_schedule_id" type="${uuidType}">
+                <constraints nullable="true" />
+            </column>
+
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
-
+        
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

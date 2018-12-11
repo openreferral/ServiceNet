@@ -4,16 +4,17 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -34,16 +35,6 @@ public class RegularSchedule implements Serializable {
     )
     private UUID id;
 
-    @NotNull
-    @Column(name = "weekday", nullable = false)
-    private Integer weekday;
-
-    @Column(name = "opens_at")
-    private String opensAt;
-
-    @Column(name = "closes_at")
-    private String closesAt;
-
     @OneToOne
     @JoinColumn(unique = true)
     private Service srvc;
@@ -56,6 +47,10 @@ public class RegularSchedule implements Serializable {
     @JoinColumn(unique = true)
     private ServiceAtLocation serviceAtlocation;
 
+    @OneToMany(mappedBy = "regularSchedule")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<OpeningHours> openingHours = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public UUID getId() {
         return id;
@@ -65,51 +60,8 @@ public class RegularSchedule implements Serializable {
         this.id = id;
     }
 
-    public Integer getWeekday() {
-        return weekday;
-    }
-
-    public void setWeekday(Integer weekday) {
-        this.weekday = weekday;
-    }
-
-    public RegularSchedule weekday(Integer weekday) {
-        this.weekday = weekday;
-        return this;
-    }
-
-    public String getOpensAt() {
-        return opensAt;
-    }
-
-    public void setOpensAt(String opensAt) {
-        this.opensAt = opensAt;
-    }
-
-    public RegularSchedule opensAt(String opensAt) {
-        this.opensAt = opensAt;
-        return this;
-    }
-
-    public String getClosesAt() {
-        return closesAt;
-    }
-
-    public void setClosesAt(String closesAt) {
-        this.closesAt = closesAt;
-    }
-
-    public RegularSchedule closesAt(String closesAt) {
-        this.closesAt = closesAt;
-        return this;
-    }
-
     public Service getSrvc() {
         return srvc;
-    }
-
-    public void setSrvc(Service service) {
-        this.srvc = service;
     }
 
     public RegularSchedule srvc(Service service) {
@@ -117,12 +69,12 @@ public class RegularSchedule implements Serializable {
         return this;
     }
 
-    public Location getLocation() {
-        return location;
+    public void setSrvc(Service service) {
+        this.srvc = service;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public Location getLocation() {
+        return location;
     }
 
     public RegularSchedule location(Location location) {
@@ -130,17 +82,46 @@ public class RegularSchedule implements Serializable {
         return this;
     }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     public ServiceAtLocation getServiceAtlocation() {
         return serviceAtlocation;
+    }
+
+    public RegularSchedule serviceAtlocation(ServiceAtLocation serviceAtLocation) {
+        this.serviceAtlocation = serviceAtLocation;
+        return this;
     }
 
     public void setServiceAtlocation(ServiceAtLocation serviceAtLocation) {
         this.serviceAtlocation = serviceAtLocation;
     }
 
-    public RegularSchedule serviceAtlocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtlocation = serviceAtLocation;
+    public Set<OpeningHours> getOpeningHours() {
+        return openingHours;
+    }
+
+    public RegularSchedule openingHours(Set<OpeningHours> openingHours) {
+        this.openingHours = openingHours;
         return this;
+    }
+
+    public RegularSchedule addOpeningHours(OpeningHours openingHours) {
+        this.openingHours.add(openingHours);
+        openingHours.setRegularSchedule(this);
+        return this;
+    }
+
+    public RegularSchedule removeOpeningHours(OpeningHours openingHours) {
+        this.openingHours.remove(openingHours);
+        openingHours.setRegularSchedule(null);
+        return this;
+    }
+
+    public void setOpeningHours(Set<OpeningHours> openingHours) {
+        this.openingHours = openingHours;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -168,9 +149,6 @@ public class RegularSchedule implements Serializable {
     public String toString() {
         return "RegularSchedule{" +
             "id=" + getId() +
-            ", weekday=" + getWeekday() +
-            ", opensAt='" + getOpensAt() + "'" +
-            ", closesAt='" + getClosesAt() + "'" +
             "}";
     }
 }

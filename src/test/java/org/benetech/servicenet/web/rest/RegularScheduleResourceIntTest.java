@@ -45,15 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ServiceNetApp.class)
 public class RegularScheduleResourceIntTest {
 
-    private static final Integer DEFAULT_WEEKDAY = 1;
-    private static final Integer UPDATED_WEEKDAY = 2;
-
-    private static final String DEFAULT_OPENS_AT = "AAAAAAAAAA";
-    private static final String UPDATED_OPENS_AT = "BBBBBBBBBB";
-
-    private static final String DEFAULT_CLOSES_AT = "AAAAAAAAAA";
-    private static final String UPDATED_CLOSES_AT = "BBBBBBBBBB";
-
     @Autowired
     private RegularScheduleRepository regularScheduleRepository;
 
@@ -86,10 +77,7 @@ public class RegularScheduleResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static RegularSchedule createEntity(EntityManager em) {
-        RegularSchedule regularSchedule = new RegularSchedule()
-            .weekday(DEFAULT_WEEKDAY)
-            .opensAt(DEFAULT_OPENS_AT)
-            .closesAt(DEFAULT_CLOSES_AT);
+        RegularSchedule regularSchedule = new RegularSchedule();
         return regularSchedule;
     }
 
@@ -125,9 +113,6 @@ public class RegularScheduleResourceIntTest {
         List<RegularSchedule> regularScheduleList = regularScheduleRepository.findAll();
         assertThat(regularScheduleList).hasSize(databaseSizeBeforeCreate + 1);
         RegularSchedule testRegularSchedule = regularScheduleList.get(regularScheduleList.size() - 1);
-        assertThat(testRegularSchedule.getWeekday()).isEqualTo(DEFAULT_WEEKDAY);
-        assertThat(testRegularSchedule.getOpensAt()).isEqualTo(DEFAULT_OPENS_AT);
-        assertThat(testRegularSchedule.getClosesAt()).isEqualTo(DEFAULT_CLOSES_AT);
     }
 
     @Test
@@ -152,25 +137,6 @@ public class RegularScheduleResourceIntTest {
 
     @Test
     @Transactional
-    public void checkWeekdayIsRequired() throws Exception {
-        int databaseSizeBeforeTest = regularScheduleRepository.findAll().size();
-        // set the field null
-        regularSchedule.setWeekday(null);
-
-        // Create the RegularSchedule, which fails.
-        RegularScheduleDTO regularScheduleDTO = regularScheduleMapper.toDto(regularSchedule);
-
-        restRegularScheduleMockMvc.perform(post("/api/regular-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(regularScheduleDTO)))
-            .andExpect(status().isBadRequest());
-
-        List<RegularSchedule> regularScheduleList = regularScheduleRepository.findAll();
-        assertThat(regularScheduleList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     public void getAllRegularSchedules() throws Exception {
         // Initialize the database
         regularScheduleRepository.saveAndFlush(regularSchedule);
@@ -179,12 +145,9 @@ public class RegularScheduleResourceIntTest {
         restRegularScheduleMockMvc.perform(get("/api/regular-schedules?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(regularSchedule.getId().toString())))
-            .andExpect(jsonPath("$.[*].weekday").value(hasItem(DEFAULT_WEEKDAY)))
-            .andExpect(jsonPath("$.[*].opensAt").value(hasItem(DEFAULT_OPENS_AT.toString())))
-            .andExpect(jsonPath("$.[*].closesAt").value(hasItem(DEFAULT_CLOSES_AT.toString())));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(regularSchedule.getId().toString())));
     }
-
+    
     @Test
     @Transactional
     public void getRegularSchedule() throws Exception {
@@ -195,10 +158,7 @@ public class RegularScheduleResourceIntTest {
         restRegularScheduleMockMvc.perform(get("/api/regular-schedules/{id}", regularSchedule.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(regularSchedule.getId().toString()))
-            .andExpect(jsonPath("$.weekday").value(DEFAULT_WEEKDAY))
-            .andExpect(jsonPath("$.opensAt").value(DEFAULT_OPENS_AT.toString()))
-            .andExpect(jsonPath("$.closesAt").value(DEFAULT_CLOSES_AT.toString()));
+            .andExpect(jsonPath("$.id").value(regularSchedule.getId().toString()));
     }
 
     @Test
@@ -221,10 +181,6 @@ public class RegularScheduleResourceIntTest {
         RegularSchedule updatedRegularSchedule = regularScheduleRepository.findById(regularSchedule.getId()).get();
         // Disconnect from session so that the updates on updatedRegularSchedule are not directly saved in db
         em.detach(updatedRegularSchedule);
-        updatedRegularSchedule
-            .weekday(UPDATED_WEEKDAY)
-            .opensAt(UPDATED_OPENS_AT)
-            .closesAt(UPDATED_CLOSES_AT);
         RegularScheduleDTO regularScheduleDTO = regularScheduleMapper.toDto(updatedRegularSchedule);
 
         restRegularScheduleMockMvc.perform(put("/api/regular-schedules")
@@ -236,9 +192,6 @@ public class RegularScheduleResourceIntTest {
         List<RegularSchedule> regularScheduleList = regularScheduleRepository.findAll();
         assertThat(regularScheduleList).hasSize(databaseSizeBeforeUpdate);
         RegularSchedule testRegularSchedule = regularScheduleList.get(regularScheduleList.size() - 1);
-        assertThat(testRegularSchedule.getWeekday()).isEqualTo(UPDATED_WEEKDAY);
-        assertThat(testRegularSchedule.getOpensAt()).isEqualTo(UPDATED_OPENS_AT);
-        assertThat(testRegularSchedule.getClosesAt()).isEqualTo(UPDATED_CLOSES_AT);
     }
 
     @Test

@@ -23,6 +23,7 @@ public interface RegularScheduleMapper extends EntityMapper<RegularScheduleDTO, 
     @Mapping(source = "srvcId", target = "srvc")
     @Mapping(source = "locationId", target = "location")
     @Mapping(source = "serviceAtlocationId", target = "serviceAtlocation")
+    @Mapping(target = "openingHours", ignore = true)
     RegularSchedule toEntity(RegularScheduleDTO regularScheduleDTO);
 
     default RegularSchedule fromId(UUID id) {

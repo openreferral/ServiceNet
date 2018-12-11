@@ -1,6 +1,5 @@
 package org.benetech.servicenet.service.dto;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,13 +10,6 @@ import java.util.UUID;
 public class RegularScheduleDTO implements Serializable {
 
     private UUID id;
-
-    @NotNull
-    private Integer weekday;
-
-    private String opensAt;
-
-    private String closesAt;
 
     private UUID srvcId;
 
@@ -35,30 +27,6 @@ public class RegularScheduleDTO implements Serializable {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public Integer getWeekday() {
-        return weekday;
-    }
-
-    public void setWeekday(Integer weekday) {
-        this.weekday = weekday;
-    }
-
-    public String getOpensAt() {
-        return opensAt;
-    }
-
-    public void setOpensAt(String opensAt) {
-        this.opensAt = opensAt;
-    }
-
-    public String getClosesAt() {
-        return closesAt;
-    }
-
-    public void setClosesAt(String closesAt) {
-        this.closesAt = closesAt;
     }
 
     public UUID getSrvcId() {
@@ -126,9 +94,6 @@ public class RegularScheduleDTO implements Serializable {
     public String toString() {
         return "RegularScheduleDTO{" +
             "id=" + getId() +
-            ", weekday=" + getWeekday() +
-            ", opensAt='" + getOpensAt() + "'" +
-            ", closesAt='" + getClosesAt() + "'" +
             ", srvc=" + getSrvcId() +
             ", srvc='" + getSrvcName() + "'" +
             ", location=" + getLocationId() +
