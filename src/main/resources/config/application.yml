@@ -111,7 +111,10 @@ similarity-ratio:
     weight:
         name: 1.0
         location: 0.9
-        email: 0.1
+        email:
+            base: 0.1
+            same-domain: 0.01
+            same-normalized-local-parts: 0.9
         url: 0.1
         year-incorporated: 0.4
         alternate-name: 0.5

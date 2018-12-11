@@ -37,7 +37,8 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
         result += descriptionSimilarityCounter.countSimilarityRatio(org1.getDescription(), org2.getDescription());
         result += emailSimilarityCounter.countSimilarityRatio(org1.getEmail(), org2.getEmail());
         result += urlSimilarityCounter.countSimilarityRatio(org1.getUrl(), org2.getUrl());
-        result += yearIncorporatedSimilarityCounter.countSimilarityRatio(org1.getYearIncorporated(), org2.getYearIncorporated());
+        result += yearIncorporatedSimilarityCounter.countSimilarityRatio(org1.getYearIncorporated(),
+            org2.getYearIncorporated());
         return result;
     }
 }
