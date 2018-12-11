@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.DocumentUpload;
@@ -48,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see DocumentUploadResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class DocumentUploadResourceIntTest {
 
     private static final ZonedDateTime DEFAULT_DATE_UPLOADED = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
@@ -116,10 +117,6 @@ public class DocumentUploadResourceIntTest {
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
-    }
-
-    @Before
-    public void initTest() {
         documentUpload = createEntity(em);
     }
 

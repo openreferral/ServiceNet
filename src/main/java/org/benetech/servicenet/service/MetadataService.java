@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.service.dto.MetadataDTO;
 
 import java.util.List;
@@ -18,6 +19,14 @@ public interface MetadataService {
      * @return the persisted entity
      */
     MetadataDTO save(MetadataDTO metadataDTO);
+
+    /**
+     * Save all metadata objects, with current user reference
+     *
+     * @param metadata the entities to save
+     * @return the persisted entities
+     */
+    List<Metadata> saveForCurrentUser(List<Metadata> metadata);
 
     /**
      * Get all the metadata.

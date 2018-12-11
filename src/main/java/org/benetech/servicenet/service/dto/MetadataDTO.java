@@ -34,6 +34,9 @@ public class MetadataDTO implements Serializable {
     @Lob
     private String replacementValue;
 
+    @NotNull
+    private String resourceClass;
+
     private UUID userId;
 
     private String userLogin;
@@ -94,6 +97,14 @@ public class MetadataDTO implements Serializable {
         this.replacementValue = replacementValue;
     }
 
+    public String getResourceClass() {
+        return resourceClass;
+    }
+
+    public void setResourceClass(String resourceClass) {
+        this.resourceClass = resourceClass;
+    }
+
     public UUID getUserId() {
         return userId;
     }
@@ -141,6 +152,7 @@ public class MetadataDTO implements Serializable {
             ", fieldName='" + getFieldName() + "'" +
             ", previousValue='" + getPreviousValue() + "'" +
             ", replacementValue='" + getReplacementValue() + "'" +
+            ", resourceClass='" + getResourceClass() + "'" +
             ", user=" + getUserId() +
             ", user='" + getUserLogin() + "'" +
             "}";

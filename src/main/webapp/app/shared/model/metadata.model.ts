@@ -14,6 +14,7 @@ export interface IMetadata {
   fieldName?: string;
   previousValue?: any;
   replacementValue?: any;
+  resourceClass?: string;
   userLogin?: string;
   userId?: number;
 }

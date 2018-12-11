@@ -183,6 +183,19 @@ export class MetadataUpdate extends React.Component<IMetadataUpdateProps, IMetad
                   <AvInput id="metadata-replacementValue" type="textarea" name="replacementValue" />
                 </AvGroup>
                 <AvGroup>
+                  <Label id="resourceClassLabel" for="resourceClass">
+                    <Translate contentKey="serviceNetApp.metadata.resourceClass">Resource Class</Translate>
+                  </Label>
+                  <AvField
+                    id="metadata-resourceClass"
+                    type="text"
+                    name="resourceClass"
+                    validate={{
+                      required: { value: true, errorMessage: translate('entity.validation.required') }
+                    }}
+                  />
+                </AvGroup>
+                <AvGroup>
                   <Label for="user.login">
                     <Translate contentKey="serviceNetApp.metadata.user">User</Translate>
                   </Label>

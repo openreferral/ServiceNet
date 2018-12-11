@@ -57,6 +57,9 @@ export class Metadata extends React.Component<IMetadataProps> {
                   <Translate contentKey="serviceNetApp.metadata.replacementValue">Replacement Value</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="serviceNetApp.metadata.resourceClass">Resource Class</Translate>
+                </th>
+                <th>
                   <Translate contentKey="serviceNetApp.metadata.user">User</Translate>
                 </th>
                 <th />
@@ -80,6 +83,7 @@ export class Metadata extends React.Component<IMetadataProps> {
                   <td>{metadata.fieldName}</td>
                   <td>{metadata.previousValue}</td>
                   <td>{metadata.replacementValue}</td>
+                  <td>{metadata.resourceClass}</td>
                   <td>{metadata.userLogin ? metadata.userLogin : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
