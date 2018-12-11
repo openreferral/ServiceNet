@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
-public class UrlSimilarityCounterUnitTest {
+public class UrlSimilarityCounterIntTest {
 
     private static final float PRECISION = 0.001f;
 
