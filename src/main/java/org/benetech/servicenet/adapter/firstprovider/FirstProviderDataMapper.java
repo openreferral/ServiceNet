@@ -4,10 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.firstprovider.model.RawData;
 import org.benetech.servicenet.adapter.shared.model.Coordinates;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
+import org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
@@ -20,6 +22,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,7 +61,6 @@ public interface FirstProviderDataMapper {
             .city(rawData.getCity())
             .stateProvince(rawData.getStateProvince())
             .address1(rawData.getAddress1() + address2);
-
     }
 
     default Service extractService(RawData rawData) {
@@ -80,6 +82,21 @@ public interface FirstProviderDataMapper {
     default Set<Language> extractLangs(RawData rawData) {
         String[] langs = rawData.getLanguageList().split(LISTS_DELIMITER);
         return Arrays.stream(langs).map(lang -> new Language().language(lang)).collect(Collectors.toSet());
+    }
+
+    default Set<OpeningHours> extractOpeningHours(RawData rawData) {
+        String[] rawOpeningHours = rawData.getWeeklyOpenHoursRaw().split(", ");
+        Set<OpeningHours> result = new HashSet<>();
+        int weekday = 0;
+        for (String openingHoursString : rawOpeningHours) {
+            OpeningHours openingHours = new OpeningHours().weekday(weekday++);
+            OpeningHoursUtils.getHoursFromString(openingHoursString, "-").ifPresent(hours -> {
+                openingHours.setOpensAt(hours.getOpen());
+                openingHours.setClosesAt(hours.getClose());
+            });
+            result.add(openingHours);
+        }
+        return result;
     }
 
     default AccessibilityForDisabilities extractAccessibilityForDisabilities(RawData rawData) {

@@ -7,6 +7,7 @@ import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.LocationService;
+import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.PhysicalAddressService;
@@ -72,6 +73,9 @@ public class FirstProviderDataAdapterIntTest {
     private LanguageService languageService;
 
     @Autowired
+    private OpeningHoursService openingHoursService;
+
+    @Autowired
     private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
 
     @Autowired
@@ -97,6 +101,7 @@ public class FirstProviderDataAdapterIntTest {
         assertEquals(entriesNumber, serviceService.findAll().size());
         assertEquals(6, programService.findAll().size());
         assertEquals(4, languageService.findAll().size());
+        assertEquals(14, openingHoursService.findAll().size());
         assertEquals(entriesNumber, accessibilityForDisabilitiesService.findAll().size());
     }
 

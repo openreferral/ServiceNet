@@ -58,7 +58,8 @@ public class FirstProviderDataAdapter extends SingleDataAdapter {
             mapper.extractLangs(rawData)
                 .stream().map(loc -> loc.srvc(service).location(location))
                 .forEach(p -> em.persist(p));
-
+            mapper.extractOpeningHours(rawData)
+                .forEach(p -> em.persist(p));
         }
     }
 }

@@ -7,6 +7,7 @@ import org.benetech.servicenet.adapter.shared.util.LocationUtils;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
@@ -22,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class FirstProviderDataMapperUnitTest {
 
@@ -106,5 +108,25 @@ public class FirstProviderDataMapperUnitTest {
         Iterator<Language> iterator = extracted.iterator();
         assertEquals("English", iterator.next().getLanguage());
         assertEquals("Spanish", iterator.next().getLanguage());
+    }
+
+    @Test
+    public void shouldExtractOpeningHoursFromRawData() {
+        Set<OpeningHours> extracted = new LinkedHashSet<>(FirstProviderDataMapper.INSTANCE.extractOpeningHours(rawData));
+
+        assertEquals(7, extracted.size());
+        Iterator<OpeningHours> iterator = extracted.iterator();
+        OpeningHours day = iterator.next();
+        assertEquals(0, (int) day.getWeekday());
+        assertEquals("09:00AM", day.getOpensAt());
+        assertEquals("08:00PM", day.getClosesAt());
+
+        while (iterator.hasNext()) {
+            day = iterator.next();
+        }
+
+        assertEquals(6, (int) day.getWeekday());
+        assertEquals("CLOSED", day.getOpensAt());
+        assertNull(day.getClosesAt());
     }
 }
