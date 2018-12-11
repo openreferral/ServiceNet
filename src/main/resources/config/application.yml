@@ -115,7 +115,9 @@ similarity-ratio:
             base: 0.1
             same-domain: 0.01
             same-normalized-local-parts: 0.9
-        url: 0.1
+        url:
+            base: 0.1
+            equal-upper-cased: 0.95
         year-incorporated: 0.4
         alternate-name: 0.5
         description: 0.1
