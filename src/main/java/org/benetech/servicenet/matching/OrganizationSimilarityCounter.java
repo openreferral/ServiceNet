@@ -28,17 +28,27 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
     @Autowired
     private YearIncorporatedSimilarityCounter yearIncorporatedSimilarityCounter;
 
+    @Autowired
+    private WeightProvider weightProvider;
+
     @Override
     public float countSimilarityRatio(Organization org1, Organization org2) {
         float result = 0;
-        result += nameSimilarityCounter.countSimilarityRatio(org1.getName(), org2.getName());
-        result += alternateNameSimilarityCounter.countSimilarityRatio(org1.getAlternateName(), org2.getAlternateName());
-        result += locationSimilarityCounter.countSimilarityRatio(org1.getLocation(), org2.getLocation());
-        result += descriptionSimilarityCounter.countSimilarityRatio(org1.getDescription(), org2.getDescription());
-        result += emailSimilarityCounter.countSimilarityRatio(org1.getEmail(), org2.getEmail());
-        result += urlSimilarityCounter.countSimilarityRatio(org1.getUrl(), org2.getUrl());
+        result += nameSimilarityCounter.countSimilarityRatio(org1.getName(), org2.getName())
+            * weightProvider.getNameWeight();
+        result += alternateNameSimilarityCounter.countSimilarityRatio(org1.getAlternateName(), org2.getAlternateName())
+            * weightProvider.getAlternateNameWeight();
+        result += locationSimilarityCounter.countSimilarityRatio(org1.getLocation(), org2.getLocation())
+            * weightProvider.getLocationWeight();
+        result += descriptionSimilarityCounter.countSimilarityRatio(org1.getDescription(), org2.getDescription())
+            * weightProvider.getDescriptionWeight();
+        result += emailSimilarityCounter.countSimilarityRatio(org1.getEmail(), org2.getEmail())
+            * weightProvider.getEmailWeight();
+        result += urlSimilarityCounter.countSimilarityRatio(org1.getUrl(), org2.getUrl())
+            * weightProvider.getUrlWeight();
         result += yearIncorporatedSimilarityCounter.countSimilarityRatio(org1.getYearIncorporated(),
-            org2.getYearIncorporated());
+            org2.getYearIncorporated())
+            * weightProvider.getYearsIncorporatedWeight();
         return result;
     }
 }

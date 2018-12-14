@@ -12,18 +12,11 @@ public class UrlSimilarityCounter extends AbstractSimilarityCounter<String> {
     public static final String HTTPS = "HTTPS://";
     public static final String HTTP = "HTTP://";
 
-    @Value("${similarity-ratio.weight.url.base}")
-    private float baseWeight;
-    
     @Value("${similarity-ratio.weight.url.equal-upper-cased}")
     private float uppercasedWeight;
 
     @Override
-    public float countSimilarityRatio(String url1, String ulr2) {
-        return countRawSimilarityRatio(url1, ulr2) * baseWeight;
-    }
-
-    private float countRawSimilarityRatio(String url1, String url2) {
+    public float countSimilarityRatio(String url1, String url2) {
         if (areNormalizedAndUpperCasedDifferent(url1, url2)) {
             return NO_MATCH_RATIO;
         }
@@ -36,16 +29,17 @@ public class UrlSimilarityCounter extends AbstractSimilarityCounter<String> {
     }
 
     private String normalize(String url) {
-        if (url.toUpperCase(Locale.ROOT).startsWith(HTTP)) {
-            url = url.substring(HTTP.length());
+        String result = url;
+        if (result.toUpperCase(Locale.ROOT).startsWith(HTTP)) {
+            result = result.substring(HTTP.length());
         }
-        if (url.toUpperCase(Locale.ROOT).startsWith(HTTPS)) {
-            url = url.substring(HTTPS.length());
+        if (result.toUpperCase(Locale.ROOT).startsWith(HTTPS)) {
+            result = result.substring(HTTPS.length());
         }
-        if (url.toUpperCase(Locale.ROOT).startsWith(WWW)) {
-            url = url.substring(WWW.length());
+        if (result.toUpperCase(Locale.ROOT).startsWith(WWW)) {
+            result = result.substring(WWW.length());
         }
-        return url;
+        return result;
     }
 
     private boolean areNormalizedAndUpperCasedDifferent(String url1, String url2) {

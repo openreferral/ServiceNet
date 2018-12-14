@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 public class OrganizationSimilarityCounterIntTest {
 
     private static final float PRECISION = 0.01f;
+    public static final float BASE_WEIGHT = 1.0f;
     private static float NAME_RATIO = 0.1f;
     private static float ALTERNATE_NAME_RATIO = 0.2f;
     private static float DESCRIPTION_RATION = 0.3f;
@@ -48,12 +49,23 @@ public class OrganizationSimilarityCounterIntTest {
     @Mock
     private YearIncorporatedSimilarityCounter yearIncorporatedSimilarityCounter;
 
+    @Mock
+    private WeightProvider weightProvider;
+
     @Spy
     @InjectMocks
     private OrganizationSimilarityCounter organizationSimilarityCounter;
 
     @Before
     public void setUp() {
+        when(weightProvider.getNameWeight()).thenReturn(BASE_WEIGHT);
+        when(weightProvider.getAlternateNameWeight()).thenReturn(BASE_WEIGHT);
+        when(weightProvider.getDescriptionWeight()).thenReturn(BASE_WEIGHT);
+        when(weightProvider.getEmailWeight()).thenReturn(BASE_WEIGHT);
+        when(weightProvider.getLocationWeight()).thenReturn(BASE_WEIGHT);
+        when(weightProvider.getUrlWeight()).thenReturn(BASE_WEIGHT);
+        when(weightProvider.getYearsIncorporatedWeight()).thenReturn(BASE_WEIGHT);
+
         when(nameSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(NAME_RATIO);
         when(alternateNameSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(ALTERNATE_NAME_RATIO);
         when(descriptionSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(DESCRIPTION_RATION);

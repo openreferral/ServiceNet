@@ -25,11 +25,11 @@ public class UrlSimilarityCounterIntTest {
 
     @Test
     public void shouldReturnProperRatioForSameNormalizedAndUpperCased() {
-        assertEquals(0.095, urlSimilarityCounter.countSimilarityRatio("one.com", "http://ONE.com"), PRECISION);
+        assertEquals(0.95, urlSimilarityCounter.countSimilarityRatio("one.com", "http://ONE.com"), PRECISION);
     }
 
     @Test
     public void shouldReturnMaxRatioForSameNormalized() {
-        assertEquals(0.1, urlSimilarityCounter.countSimilarityRatio("www.one.com", "https://one.com"), PRECISION);
+        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("www.one.com", "https://one.com"), PRECISION);
     }
 }

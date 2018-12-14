@@ -12,9 +12,6 @@ public class EmailSimilarityCounter extends AbstractSimilarityCounter<String> {
     private static final int DOMAIN_PART = 1;
     private static final int LOCAL_PART = 0;
 
-    @Value("${similarity-ratio.weight.email.base}")
-    private float baseWeight;
-
     @Value("${similarity-ratio.weight.email.same-domain}")
     private float domainWeight;
 
@@ -23,10 +20,6 @@ public class EmailSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Override
     public float countSimilarityRatio(String email1, String email2) {
-        return countRawSimilarityRatio(email1, email2) * baseWeight;
-    }
-
-    private float countRawSimilarityRatio(String email1, String email2) {
         if (areDomainsDifferent(email1, email2)) {
             return NO_MATCH_RATIO;
         }

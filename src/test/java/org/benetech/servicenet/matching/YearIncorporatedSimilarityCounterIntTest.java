@@ -29,7 +29,7 @@ public class YearIncorporatedSimilarityCounterIntTest {
 
     @Test
     public void shouldReturnProperRatioForSameYear() {
-        assertEquals(0.08, yearIncorporatedSimilarityCounter.countSimilarityRatio(
+        assertEquals(0.2, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2012, 12, 21),
             LocalDate.of(2012, 1, 21)), PRECISION);
     }
@@ -43,21 +43,21 @@ public class YearIncorporatedSimilarityCounterIntTest {
 
     @Test
     public void shouldReturnProperRatioForSameMonth() {
-        assertEquals(0.32, yearIncorporatedSimilarityCounter.countSimilarityRatio(
+        assertEquals(0.8, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2011, 12, 1),
             LocalDate.of(2011, 12, 21)), PRECISION);
     }
 
     @Test
     public void shouldReturnMaxRatioForSameDay() {
-        assertEquals(0.4, yearIncorporatedSimilarityCounter.countSimilarityRatio(
+        assertEquals(1.0, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2011, 12, 21),
             LocalDate.of(2011, 12, 21)), PRECISION);
     }
 
     @Test
     public void shouldReturnProperRatioForSameDayButDifferentMonths() {
-        assertEquals(0.08, yearIncorporatedSimilarityCounter.countSimilarityRatio(
+        assertEquals(0.2, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2012, 11, 1),
             LocalDate.of(2012, 12, 1)), PRECISION);
     }

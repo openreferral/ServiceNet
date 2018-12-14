@@ -8,9 +8,6 @@ import java.time.LocalDate;
 @Component
 public class YearIncorporatedSimilarityCounter extends AbstractSimilarityCounter<LocalDate> {
 
-    @Value("${similarity-ratio.weight.year-incorporated.base}")
-    private float baseWeight;
-
     @Value("${similarity-ratio.weight.year-incorporated.same-year}")
     private float sameYearWeight;
 
@@ -19,10 +16,6 @@ public class YearIncorporatedSimilarityCounter extends AbstractSimilarityCounter
 
     @Override
     public float countSimilarityRatio(LocalDate date1, LocalDate date2) {
-        return countRawSimilarityRatio(date1, date2) * baseWeight;
-    }
-
-    private float countRawSimilarityRatio(LocalDate date1, LocalDate date2) {
         if (areYearsDifferent(date1, date2)) {
             return NO_MATCH_RATIO;
         }
