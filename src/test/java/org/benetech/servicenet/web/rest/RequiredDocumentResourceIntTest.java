@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.RequiredDocument;
@@ -42,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see RequiredDocumentResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class RequiredDocumentResourceIntTest {
 
     private static final String DEFAULT_DOCUMENT = "AAAAAAAAAA";

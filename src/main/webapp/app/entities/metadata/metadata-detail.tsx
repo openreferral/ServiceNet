@@ -67,6 +67,12 @@ export class MetadataDetail extends React.Component<IMetadataDetailProps> {
             </dt>
             <dd>{metadataEntity.replacementValue}</dd>
             <dt>
+              <span id="resourceClass">
+                <Translate contentKey="serviceNetApp.metadata.resourceClass">Resource Class</Translate>
+              </span>
+            </dt>
+            <dd>{metadataEntity.resourceClass}</dd>
+            <dt>
               <Translate contentKey="serviceNetApp.metadata.user">User</Translate>
             </dt>
             <dd>{metadataEntity.userLogin ? metadataEntity.userLogin : ''}</dd>

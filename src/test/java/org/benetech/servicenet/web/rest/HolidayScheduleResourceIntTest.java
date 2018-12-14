@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.HolidaySchedule;
@@ -44,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see HolidayScheduleResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class HolidayScheduleResourceIntTest {
 
     private static final Boolean DEFAULT_CLOSED = false;

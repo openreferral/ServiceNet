@@ -1,15 +1,21 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.Metadata;
+import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.MetadataService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.MetadataDTO;
 import org.benetech.servicenet.service.mapper.MetadataMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +29,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class MetadataServiceImpl implements MetadataService {
 
+    @Autowired
+    private UserService userService;
+
     private final Logger log = LoggerFactory.getLogger(MetadataServiceImpl.class);
 
     private final MetadataRepository metadataRepository;
@@ -34,12 +43,6 @@ public class MetadataServiceImpl implements MetadataService {
         this.metadataMapper = metadataMapper;
     }
 
-    /**
-     * Save a metadata.
-     *
-     * @param metadataDTO the entity to save
-     * @return the persisted entity
-     */
     @Override
     public MetadataDTO save(MetadataDTO metadataDTO) {
         log.debug("Request to save Metadata : {}", metadataDTO);
@@ -49,11 +52,21 @@ public class MetadataServiceImpl implements MetadataService {
         return metadataMapper.toDto(metadata);
     }
 
-    /**
-     * Get all the metadata.
-     *
-     * @return the list of entities
-     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public List<Metadata> saveForCurrentUser(List<Metadata> metadata) {
+        Optional<User> currentUser = userService.getUserWithAuthorities();
+        if (currentUser.isPresent()) {
+            for (Metadata entry : metadata) {
+                entry.setUser(currentUser.get());
+                entry.setLastActionDate(ZonedDateTime.now(ZoneId.systemDefault()));
+            }
+            return metadataRepository.saveAll(metadata);
+        } else {
+            throw new IllegalStateException("No current user found");
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<MetadataDTO> findAll() {
@@ -63,13 +76,6 @@ public class MetadataServiceImpl implements MetadataService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-
-    /**
-     * Get one metadata by id.
-     *
-     * @param id the id of the entity
-     * @return the entity
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<MetadataDTO> findOne(UUID id) {
@@ -78,11 +84,6 @@ public class MetadataServiceImpl implements MetadataService {
             .map(metadataMapper::toDto);
     }
 
-    /**
-     * Delete the metadata by id.
-     *
-     * @param id the id of the entity
-     */
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Metadata : {}", id);

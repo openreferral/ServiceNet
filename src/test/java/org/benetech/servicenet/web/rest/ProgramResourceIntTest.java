@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Program;
@@ -42,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @see ProgramResource
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class ProgramResourceIntTest {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
@@ -83,10 +84,9 @@ public class ProgramResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static Program createEntity(EntityManager em) {
-        Program program = new Program()
+        return new Program()
             .name(DEFAULT_NAME)
             .alternateName(DEFAULT_ALTERNATE_NAME);
-        return program;
     }
 
     @Before

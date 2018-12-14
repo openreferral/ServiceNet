@@ -64,6 +64,10 @@ public class Metadata implements Serializable {
     @Column(name = "replacement_value")
     private String replacementValue;
 
+    @NotNull
+    @Column(name = "resource_class", nullable = false)
+    private String resourceClass;
+
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties("")
@@ -147,13 +151,26 @@ public class Metadata implements Serializable {
         return replacementValue;
     }
 
+    public Metadata replacementValue(String replacementValue) {
+        this.replacementValue = replacementValue;
+        return this;
+    }
+
     public void setReplacementValue(String replacementValue) {
         this.replacementValue = replacementValue;
     }
 
-    public Metadata replacementValue(String replacementValue) {
-        this.replacementValue = replacementValue;
+    public String getResourceClass() {
+        return resourceClass;
+    }
+
+    public Metadata resourceClass(String resourceClass) {
+        this.resourceClass = resourceClass;
         return this;
+    }
+
+    public void setResourceClass(String resourceClass) {
+        this.resourceClass = resourceClass;
     }
 
     public User getUser() {
@@ -200,6 +217,7 @@ public class Metadata implements Serializable {
             ", fieldName='" + getFieldName() + "'" +
             ", previousValue='" + getPreviousValue() + "'" +
             ", replacementValue='" + getReplacementValue() + "'" +
+            ", resourceClass='" + getResourceClass() + "'" +
             "}";
     }
 }
