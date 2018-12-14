@@ -3,8 +3,10 @@ package org.benetech.servicenet.service.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.benetech.servicenet.domain.enumeration.ActionType;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -27,6 +29,12 @@ public class ActivityDTO implements Serializable {
     private Set<UserDTO> reviewers = new HashSet<>();
 
     private UUID metadataId;
+
+    private ActionType metadataActionType;
+
+    private ZonedDateTime metadataActionDate;
+
+    private String metadataFieldName;
 
     private UUID organizationId;
 

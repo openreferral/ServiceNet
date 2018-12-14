@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -111,7 +112,6 @@ public class ActivityResourceIntTest {
         User user = UserResourceIntTest.createEntity(em);
         em.persist(user);
         em.flush();
-        activity.setUser(user);
         // Add required entity
         Metadata metadata = MetadataResourceIntTest.createEntity(em);
         em.persist(metadata);
@@ -224,7 +224,15 @@ public class ActivityResourceIntTest {
         restActivityMockMvc.perform(get("/api/activities/{id}", activity.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(activity.getId().toString()));
+            .andExpect(jsonPath("$.id").value(activity.getId().toString()))
+            .andExpect(jsonPath("$.userId").value(activity.getMetadata().getUser().getId().toString()))
+            .andExpect(jsonPath("$.userLogin").value(activity.getMetadata().getUser().getLogin()))
+            .andExpect(jsonPath("$.metadataActionType").value(
+                activity.getMetadata().getLastActionType().toString()))
+            .andExpect(jsonPath("$.metadataActionDate").value(
+                sameInstant(activity.getMetadata().getLastActionDate())))
+            .andExpect(jsonPath("$.metadataFieldName").value(
+                activity.getMetadata().getFieldName()));
     }
 
     @Test

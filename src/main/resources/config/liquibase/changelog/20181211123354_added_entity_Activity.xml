@@ -25,9 +25,6 @@
             <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="user_id" type="${uuidType}">
-                <constraints nullable="false" />
-            </column>
 
             <column name="metadata_id" type="${uuidType}">
                 <constraints nullable="false" />

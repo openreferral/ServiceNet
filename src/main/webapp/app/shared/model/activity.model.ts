@@ -6,6 +6,9 @@ export interface IActivity {
   userId?: number;
   reviewers?: IUser[];
   metadataId?: number;
+  metadataActionType?: string;
+  metadataActionDate?: string;
+  metadataFieldName?: string;
   organizationId?: number;
 }
 

@@ -18,7 +18,7 @@ import java.util.UUID;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, UUID> {
 
-    @Query("select activity from Activity activity where activity.user.login = ?#{principal.username}")
+    @Query("select activity from Activity activity where activity.metadata.user.login = ?#{principal.username}")
     List<Activity> findByUserIsCurrentUser();
 
     @Query(value = "select distinct activity from Activity activity left join fetch activity.reviewers",

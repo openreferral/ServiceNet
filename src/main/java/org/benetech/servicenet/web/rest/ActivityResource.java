@@ -64,9 +64,6 @@ public class ActivityResource {
         if (activityDTO.getId() != null) {
             throw new BadRequestAlertException("A new activity cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        if (activityDTO.getUserId() == null) {
-            throw new BadRequestAlertException("A new activity cannot already have an user", ENTITY_NAME, "nouser");
-        }
         if (activityDTO.getMetadataId() == null) {
             throw new BadRequestAlertException("A new activity cannot already have a metadata", ENTITY_NAME, "nometadata");
         }

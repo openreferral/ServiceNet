@@ -7,12 +7,6 @@
         Added the constraints for entity Activity.
     -->
     <changeSet id="20181211123354-2" author="jhipster">
-        
-        <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="activity"
-                                 constraintName="fk_activity_user_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="jhi_user"/>
 
         <addForeignKeyConstraint baseColumnNames="activities_id"
                                  baseTableName="activity_reviewers"

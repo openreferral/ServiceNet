@@ -18,27 +18,47 @@ import java.util.UUID;
 @Mapper(componentModel = "spring", uses = {UserMapper.class, MetadataMapper.class, OrganizationMapper.class})
 public interface ActivityMapper extends EntityMapper<ActivityDTO, Activity> {
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "user.login", target = "userLogin")
+    @Mapping(source = "metadata.user.id", target = "userId")
+    @Mapping(source = "metadata.user.login", target = "userLogin")
     @Mapping(source = "metadata.id", target = "metadataId")
+    @Mapping(source = "metadata.lastActionType", target = "metadataActionType")
+    @Mapping(source = "metadata.lastActionDate", target = "metadataActionDate")
+    @Mapping(source = "metadata.fieldName", target = "metadataFieldName")
     @Mapping(source = "organization.id", target = "organizationId")
+    @Mapping(source = "reviewers", target = "reviewers", qualifiedByName = "mapReviewersToLogin")
     ActivityDTO toDto(Activity activity);
 
-    @Mapping(source = "userId", target = "user")
     @Mapping(source = "metadataId", target = "metadata")
     @Mapping(source = "organizationId", target = "organization")
-    @Mapping(source = "reviewers", target = "reviewers", qualifiedByName = "mapReviewers")
+    @Mapping(source = "reviewers", target = "reviewers", qualifiedByName = "mapReviewersToUsers")
     Activity toEntity(ActivityDTO activityDTO);
 
-    @Named("mapReviewers")
-    default Set<User> mapReviewers(Set<UserDTO> dtos) {
-        if (dtos == null) {
+    @Named("mapReviewersToLogin")
+    default Set<UserDTO> mapReviewersToLogin(Set<User> users) {
+        if (users == null) {
+            return null;
+        }
+
+        Set<UserDTO> reviewers = new HashSet<>();
+        for (User user : users) {
+            UserDTO dto = new UserDTO();
+            dto.setId(user.getId());
+            dto.setLogin(user.getLogin());
+            reviewers.add(dto);
+        }
+
+        return reviewers;
+    }
+
+    @Named("mapReviewersToUsers")
+    default Set<User> mapReviewersToUsers(Set<UserDTO> reviewers) {
+        if (reviewers == null) {
             return null;
         }
 
         Set<User> users = new HashSet<>();
-        for (UserDTO userDTO : dtos) {
-            users.add(new User().id(userDTO.getId()));
+        for (UserDTO dto : reviewers) {
+            users.add(new User().id(dto.getId()));
         }
 
         return users;

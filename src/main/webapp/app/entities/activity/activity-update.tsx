@@ -109,20 +109,6 @@ export class ActivityUpdate extends React.Component<IActivityUpdateProps, IActiv
                   </AvGroup>
                 ) : null}
                 <AvGroup>
-                  <Label for="user.login">
-                    <Translate contentKey="serviceNetApp.activity.user">User</Translate>
-                  </Label>
-                  <AvInput id="activity-user" type="select" className="form-control" name="userId">
-                    {users
-                      ? users.map(otherEntity => (
-                          <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.login}
-                          </option>
-                        ))
-                      : null}
-                  </AvInput>
-                </AvGroup>
-                <AvGroup>
                   <Label for="users">
                     <Translate contentKey="serviceNetApp.activity.reviewers">Reviewers</Translate>
                   </Label>
