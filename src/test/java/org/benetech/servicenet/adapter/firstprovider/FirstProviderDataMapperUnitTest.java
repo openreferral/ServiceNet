@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -112,19 +113,15 @@ public class FirstProviderDataMapperUnitTest {
 
     @Test
     public void shouldExtractOpeningHoursFromRawData() {
-        Set<OpeningHours> extracted = new LinkedHashSet<>(FirstProviderDataMapper.INSTANCE.extractOpeningHours(rawData));
+        List<OpeningHours> extracted = FirstProviderDataMapper.INSTANCE.extractOpeningHours(rawData);
 
         assertEquals(7, extracted.size());
-        Iterator<OpeningHours> iterator = extracted.iterator();
-        OpeningHours day = iterator.next();
+        OpeningHours day = extracted.get(0);
         assertEquals(0, (int) day.getWeekday());
         assertEquals("09:00AM", day.getOpensAt());
         assertEquals("08:00PM", day.getClosesAt());
 
-        while (iterator.hasNext()) {
-            day = iterator.next();
-        }
-
+        day = extracted.get(6);
         assertEquals(6, (int) day.getWeekday());
         assertEquals("CLOSED", day.getOpensAt());
         assertNull(day.getClosesAt());
