@@ -107,6 +107,24 @@ jhipster:
         license:
         license-url:
 
+similarity-ratio:
+    weight:
+        name: 1.0
+        location: 0.9
+        email:
+            base: 0.1
+            same-domain: 0.01
+            same-normalized-local-parts: 0.9
+        url:
+            base: 0.1
+            equal-upper-cased: 0.95
+        year-incorporated:
+            base: 0.4
+            same-year: 0.2
+            same:month: 0.8
+        alternate-name: 0.5
+        description: 0.1
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
