@@ -7,6 +7,7 @@ import ErrorBoundary from 'app/shared/error/error-boundary';
 
 interface IOwnProps extends RouteProps {
   hasAnyAuthorities?: string[];
+  isAdmin: any;
 }
 
 export interface IPrivateRouteProps extends IOwnProps, StateProps {}
@@ -22,7 +23,7 @@ export const PrivateRouteComponent = ({
   const checkAuthorities = props =>
     isAuthorized ? (
       <ErrorBoundary>
-        <Component {...props} />
+        <Component {...props} {...rest} />
       </ErrorBoundary>
     ) : (
       <div className="insufficient-authority">
