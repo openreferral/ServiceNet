@@ -166,6 +166,7 @@ describe('User management reducer tests', () => {
         errorMessage: null,
         users: [],
         authorities: [] as any[],
+        systemAccounts: [] as any[],
         user: defaultValue,
         updating: false,
         updateSuccess: false,

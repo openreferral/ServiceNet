@@ -7,7 +7,7 @@ import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { locales, languages } from 'app/config/translation';
-import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
+import { getUser, getRoles, getSystemAccounts, updateUser, createUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
@@ -28,6 +28,7 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
       this.props.getUser(this.props.match.params.login);
     }
     this.props.getRoles();
+    this.props.getSystemAccounts();
   }
 
   componentWillUnmount() {
@@ -49,7 +50,7 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
 
   render() {
     const isInvalid = false;
-    const { user, loading, updating, roles } = this.props;
+    const { user, loading, updating, roles, systemAccounts } = this.props;
     return (
       <div>
         <Row className="justify-content-center">
@@ -193,6 +194,19 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
                     ))}
                   </AvInput>
                 </AvGroup>
+                <AvGroup>
+                  <Label for="systemAccountId">
+                    <Translate contentKey="userManagement.systemAccount">System Account</Translate>
+                  </Label>
+                  <AvInput type="select" className="form-control" name="systemAccountId">
+                    <option value="" key="0" />
+                    {systemAccounts.map(systemAccount => (
+                      <option value={systemAccount.id} key={systemAccount.id}>
+                        {systemAccount.name}
+                      </option>
+                    ))}
+                  </AvInput>
+                </AvGroup>
                 <Button tag={Link} to="/admin/user-management" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
@@ -218,11 +232,12 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
 const mapStateToProps = (storeState: IRootState) => ({
   user: storeState.userManagement.user,
   roles: storeState.userManagement.authorities,
+  systemAccounts: storeState.userManagement.systemAccounts,
   loading: storeState.userManagement.loading,
   updating: storeState.userManagement.updating
 });
 
-const mapDispatchToProps = { getUser, getRoles, updateUser, createUser, reset };
+const mapDispatchToProps = { getUser, getRoles, getSystemAccounts, updateUser, createUser, reset };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

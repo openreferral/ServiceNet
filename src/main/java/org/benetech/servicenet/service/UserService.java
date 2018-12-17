@@ -2,9 +2,11 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Authority;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.AuthorityRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
+import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.security.SecurityUtils;
@@ -56,6 +58,9 @@ public class UserService {
 
     @Autowired
     private AuthorityRepository authorityRepository;
+
+    @Autowired
+    private SystemAccountRepository systemAccountRepository;
 
     @Autowired
     private CacheManager cacheManager;
@@ -131,6 +136,7 @@ public class UserService {
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
+        newUser.setSystemAccount(getSystemAccount(userDTO));
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
@@ -172,6 +178,7 @@ public class UserService {
                 .collect(Collectors.toSet());
             user.setAuthorities(authorities);
         }
+        user.setSystemAccount(getSystemAccount(userDTO));
         userRepository.save(user);
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
@@ -228,6 +235,7 @@ public class UserService {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
+                user.setSystemAccount(getSystemAccount(userDTO));
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
                 return user;
@@ -327,5 +335,13 @@ public class UserService {
         } else {
             throw new IllegalStateException("No login/email cache found!");
         }
+    }
+
+    private SystemAccount getSystemAccount(UserDTO userDTO) {
+        UUID systemAccountId = userDTO.getSystemAccountId();
+        if (systemAccountId != null) {
+            return systemAccountRepository.findById(systemAccountId).orElse(null);
+        }
+        return null;
     }
 }
