@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.mapper;
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.service.dto.UserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserMapper {
+
+    @Autowired
+    private SystemAccountMapper systemAccountMapper;
 
     public UserDTO userToUserDTO(User user) {
         return new UserDTO(user);
@@ -47,6 +51,7 @@ public class UserMapper {
             if (authorities != null) {
                 user.setAuthorities(authorities);
             }
+            user.setSystemAccount(systemAccountMapper.fromId(userDTO.getSystemAccountId()));
             return user;
         }
     }

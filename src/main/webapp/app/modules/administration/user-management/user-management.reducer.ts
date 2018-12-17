@@ -6,6 +6,7 @@ import { IUser, defaultValue } from 'app/shared/model/user.model';
 
 export const ACTION_TYPES = {
   FETCH_ROLES: 'userManagement/FETCH_ROLES',
+  FETCH_SYSTEM_ACCOUNTS: 'userManagement/FETCH_SYSTEM_ACCOUNTS',
   FETCH_USERS: 'userManagement/FETCH_USERS',
   FETCH_USER: 'userManagement/FETCH_USER',
   CREATE_USER: 'userManagement/CREATE_USER',
@@ -19,6 +20,7 @@ const initialState = {
   errorMessage: null,
   users: [] as ReadonlyArray<IUser>,
   authorities: [] as any[],
+  systemAccounts: [] as any[],
   user: defaultValue,
   updating: false,
   updateSuccess: false,
@@ -31,6 +33,10 @@ export type UserManagementState = Readonly<typeof initialState>;
 export default (state: UserManagementState = initialState, action): UserManagementState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_ROLES):
+      return {
+        ...state
+      };
+    case REQUEST(ACTION_TYPES.FETCH_SYSTEM_ACCOUNTS):
       return {
         ...state
       };
@@ -54,6 +60,7 @@ export default (state: UserManagementState = initialState, action): UserManageme
     case FAILURE(ACTION_TYPES.FETCH_USERS):
     case FAILURE(ACTION_TYPES.FETCH_USER):
     case FAILURE(ACTION_TYPES.FETCH_ROLES):
+    case FAILURE(ACTION_TYPES.FETCH_SYSTEM_ACCOUNTS):
     case FAILURE(ACTION_TYPES.CREATE_USER):
     case FAILURE(ACTION_TYPES.UPDATE_USER):
     case FAILURE(ACTION_TYPES.DELETE_USER):
@@ -68,6 +75,11 @@ export default (state: UserManagementState = initialState, action): UserManageme
       return {
         ...state,
         authorities: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_SYSTEM_ACCOUNTS):
+      return {
+        ...state,
+        systemAccounts: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_USERS):
       return {
@@ -106,7 +118,8 @@ export default (state: UserManagementState = initialState, action): UserManageme
   }
 };
 
-const apiUrl = 'api/users';
+const baseApiUrl = 'api';
+const apiUrl = baseApiUrl + '/users';
 // Actions
 export const getUsers: ICrudGetAllAction<IUser> = (page, size, sort) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
@@ -119,6 +132,11 @@ export const getUsers: ICrudGetAllAction<IUser> = (page, size, sort) => {
 export const getRoles = () => ({
   type: ACTION_TYPES.FETCH_ROLES,
   payload: axios.get(`${apiUrl}/authorities`)
+});
+
+export const getSystemAccounts = () => ({
+  type: ACTION_TYPES.FETCH_SYSTEM_ACCOUNTS,
+  payload: axios.get(`${baseApiUrl}/system-accounts`)
 });
 
 export const getUser: ICrudGetAction<IUser> = id => {

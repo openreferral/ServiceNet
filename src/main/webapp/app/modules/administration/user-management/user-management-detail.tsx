@@ -92,6 +92,12 @@ export class UserManagementDetail extends React.Component<IUserManagementDetailP
                   : null}
               </ul>
             </dd>
+            <dl className="jh-entity-details">
+              <dt>
+                <Translate contentKey="userManagement.systemAccount" />
+              </dt>
+              <dd>{user.systemAccountName}</dd>
+            </dl>
           </dl>
         </Row>
         <Button tag={Link} to="/admin/user-management" replace color="info">

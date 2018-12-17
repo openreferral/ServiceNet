@@ -12,6 +12,8 @@ export interface IUser {
   lastModifiedBy?: string;
   lastModifiedDate?: Date;
   password?: string;
+  systemAccountName?: string;
+  systemAccountId?: number;
 }
 
 export const defaultValue: Readonly<IUser> = {
@@ -21,11 +23,13 @@ export const defaultValue: Readonly<IUser> = {
   lastName: '',
   email: '',
   activated: false,
-  langKey: '',
+  langKey: 'en',
   authorities: [],
   createdBy: '',
   createdDate: null,
   lastModifiedBy: '',
   lastModifiedDate: null,
-  password: ''
+  password: '',
+  systemAccountName: '',
+  systemAccountId: null
 };
