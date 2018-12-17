@@ -2,12 +2,15 @@ package org.benetech.servicenet.adapter.firstprovider;
 
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.firstprovider.model.RawData;
+import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.shared.model.Coordinates;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
+import org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
@@ -19,7 +22,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,10 +38,6 @@ public interface FirstProviderDataMapper {
 
     FirstProviderDataMapper INSTANCE = Mappers.getMapper(FirstProviderDataMapper.class);
 
-    PhysicalAddress extractPhysicalAddress(RawData rawData);
-
-    PostalAddress extractPostalAddress(RawData rawData);
-
     @Mapping(source = "resourceSiteEmail", target = "email")
     @Mapping(source = "organizationName", target = "name")
     Organization extractOrganization(RawData rawData);
@@ -48,11 +49,28 @@ public interface FirstProviderDataMapper {
     @Mapping(source = "eligibilityList", target = "eligibility")
     Eligibility extractEligibility(RawData rawData);
 
+    default PhysicalAddress extractPhysicalAddress(RawData rawData) {
+        return new PhysicalAddress()
+            .city(rawData.getCity())
+            .stateProvince(rawData.getStateProvince())
+            .address1(MapperUtils.joinNotBlank(" ", rawData.getAddress1(), rawData.getAddress2()));
+    }
+
+    default PostalAddress extractPostalAddress(RawData rawData) {
+        return new PostalAddress()
+            .city(rawData.getCity())
+            .stateProvince(rawData.getStateProvince())
+            .address1(MapperUtils.joinNotBlank(" ", rawData.getAddress1(), rawData.getAddress2()));
+    }
+
     default Service extractService(RawData rawData) {
-        return new Service().name(rawData.getServiceName()).url(rawData.getAppURL())
+        //TODO: extract fees from the description
+        //TODO: extract application procedure from the description
+        return new Service().name(rawData.getServiceName()).url(rawData.getWebsite())
             .applicationProcess("Required items: " + rawData.getRequiredItems())
             .fees("from " + rawData.getCostOfServiceMinimum() + " to " + rawData.getCostOfServiceMaximum())
-            .description(rawData.getServiceDescription() + " " + rawData.getServiceAdditionalInfo());
+            .description(MapperUtils.joinNotBlank(" ", rawData.getServiceDescription(),
+                rawData.getServiceAdditionalInfo()));
     }
 
     default Set<Program> extractPrograms(RawData rawData) {
@@ -63,6 +81,21 @@ public interface FirstProviderDataMapper {
     default Set<Language> extractLangs(RawData rawData) {
         String[] langs = rawData.getLanguageList().split(LISTS_DELIMITER);
         return Arrays.stream(langs).map(lang -> new Language().language(lang)).collect(Collectors.toSet());
+    }
+
+    default List<OpeningHours> extractOpeningHours(RawData rawData) {
+        String[] rawOpeningHours = rawData.getWeeklyOpenHoursRaw().split(", ");
+        List<OpeningHours> result = new ArrayList<>();
+        int weekday = 0;
+        for (String openingHoursString : rawOpeningHours) {
+            OpeningHours openingHours = new OpeningHours().weekday(weekday++);
+            OpeningHoursUtils.getHoursFromString(openingHoursString, "-").ifPresent(hours -> {
+                openingHours.setOpensAt(hours.getOpen());
+                openingHours.setClosesAt(hours.getClose());
+            });
+            result.add(openingHours);
+        }
+        return result;
     }
 
     default AccessibilityForDisabilities extractAccessibilityForDisabilities(RawData rawData) {
@@ -81,7 +114,8 @@ public interface FirstProviderDataMapper {
     }
 
     private String extractLocationName(RawData rawData) {
-        return LocationUtils.buildLocationName(rawData.getCity(), rawData.getStateProvince(), rawData.getAddress1());
+        return LocationUtils.buildLocationName(rawData.getCity(), rawData.getStateProvince(),
+            MapperUtils.joinNotBlank(" ", rawData.getAddress1(), rawData.getAddress2()));
     }
 
     @Named("parseToInt")

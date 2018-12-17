@@ -33,7 +33,7 @@ public class FirstProviderDataAdapter extends SingleDataAdapter {
 
         FirstProviderDataMapper mapper = FirstProviderDataMapper.INSTANCE;
 
-        //TODO: do note persist some entities if they already exists
+        //TODO: do not persist some entities if they already exists
         for (RawData rawData : entries) {
             Location location = mapper.extractLocation(rawData);
             em.persist(location);
@@ -58,7 +58,8 @@ public class FirstProviderDataAdapter extends SingleDataAdapter {
             mapper.extractLangs(rawData)
                 .stream().map(loc -> loc.srvc(service).location(location))
                 .forEach(p -> em.persist(p));
-
+            mapper.extractOpeningHours(rawData)
+                .forEach(p -> em.persist(p));
         }
     }
 }

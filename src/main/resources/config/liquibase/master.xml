@@ -43,6 +43,8 @@
     <include file="config/liquibase/changelog/20181119125415_added_entity_Metadata.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181119125353_added_entity_DocumentUpload.xml"
              relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181211064830_added_entity_OpeningHours.xml"
+             relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
              relativeToChangelogFile="false"/>
@@ -87,6 +89,8 @@
     <include file="config/liquibase/changelog/20181119125353_added_entity_constraints_DocumentUpload.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181119125415_added_entity_constraints_Metadata.xml"
+             relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181211064830_added_entity_constraints_OpeningHours.xml"
              relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

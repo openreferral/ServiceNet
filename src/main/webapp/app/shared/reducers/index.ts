@@ -109,6 +109,10 @@ OrganizationMatchState
 import metadata, {
 MetadataState
 } from 'app/entities/metadata/metadata.reducer';
+// prettier-ignore
+import openingHours, {
+  OpeningHoursState
+} from 'app/entities/opening-hours/opening-hours.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -147,6 +151,7 @@ export interface IRootState {
   readonly taxonomy: TaxonomyState;
   readonly organizationMatch: OrganizationMatchState;
   readonly metadata: MetadataState;
+  readonly openingHours: OpeningHoursState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -187,6 +192,7 @@ const rootReducer = combineReducers<IRootState>({
   taxonomy,
   organizationMatch,
   metadata,
+  openingHours,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

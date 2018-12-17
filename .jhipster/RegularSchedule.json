@@ -1,21 +1,6 @@
 {
     "name": "RegularSchedule",
     "fields": [
-        {
-            "fieldName": "weekday",
-            "fieldType": "Integer",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
-            "fieldName": "opensAt",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "closesAt",
-            "fieldType": "String"
-        }
     ],
     "relationships": [
         {
@@ -35,12 +20,20 @@
             "otherEntityRelationshipName": "regularSchedule"
         },
         {
-            "relationshipType": "one-to-one",
-            "relationshipName": "serviceAtlocation",
-            "otherEntityName": "serviceAtLocation",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "regularSchedule"
+          "relationshipType": "one-to-one",
+          "relationshipName": "serviceAtlocation",
+          "otherEntityName": "serviceAtLocation",
+          "otherEntityField": "id",
+          "ownerSide": true,
+          "otherEntityRelationshipName": "regularSchedule"
+        },
+        {
+          "relationshipType": "one-to-many",
+          "relationshipName": "openingHours",
+          "otherEntityName": "openingHours",
+          "otherEntityField": "id",
+          "ownerSide": true,
+          "otherEntityRelationshipName": "regularSchedule"
         }
     ],
     "changelogDate": "20181119125403",

@@ -106,33 +106,6 @@ export class RegularScheduleUpdate extends React.Component<IRegularScheduleUpdat
                   </AvGroup>
                 ) : null}
                 <AvGroup>
-                  <Label id="weekdayLabel" for="weekday">
-                    <Translate contentKey="serviceNetApp.regularSchedule.weekday">Weekday</Translate>
-                  </Label>
-                  <AvField
-                    id="regular-schedule-weekday"
-                    type="string"
-                    className="form-control"
-                    name="weekday"
-                    validate={{
-                      required: { value: true, errorMessage: translate('entity.validation.required') },
-                      number: { value: true, errorMessage: translate('entity.validation.number') }
-                    }}
-                  />
-                </AvGroup>
-                <AvGroup>
-                  <Label id="opensAtLabel" for="opensAt">
-                    <Translate contentKey="serviceNetApp.regularSchedule.opensAt">Opens At</Translate>
-                  </Label>
-                  <AvField id="regular-schedule-opensAt" type="text" name="opensAt" />
-                </AvGroup>
-                <AvGroup>
-                  <Label id="closesAtLabel" for="closesAt">
-                    <Translate contentKey="serviceNetApp.regularSchedule.closesAt">Closes At</Translate>
-                  </Label>
-                  <AvField id="regular-schedule-closesAt" type="text" name="closesAt" />
-                </AvGroup>
-                <AvGroup>
                   <Label for="srvc.name">
                     <Translate contentKey="serviceNetApp.regularSchedule.srvc">Srvc</Translate>
                   </Label>
