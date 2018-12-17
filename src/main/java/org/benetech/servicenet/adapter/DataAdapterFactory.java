@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter;
 
+import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
@@ -18,7 +19,7 @@ public class DataAdapterFactory {
     public Optional<SingleDataAdapter> getSingleDataAdapter(String providerName) {
         try {
             return Optional.of(context.getBean(providerName + DATA_ADAPTER_SUFFIX, SingleDataAdapter.class));
-        } catch (NoSuchBeanDefinitionException e) {
+        } catch (NoSuchBeanDefinitionException | BeanNotOfRequiredTypeException e) {
             return Optional.empty();
         }
     }
@@ -26,7 +27,7 @@ public class DataAdapterFactory {
     public Optional<MultipleDataAdapter> getMultipleDataAdapter(String providerName) {
         try {
             return Optional.of(context.getBean(providerName + DATA_ADAPTER_SUFFIX, MultipleDataAdapter.class));
-        } catch (NoSuchBeanDefinitionException e) {
+        } catch (NoSuchBeanDefinitionException | BeanNotOfRequiredTypeException e) {
             return Optional.empty();
         }
     }

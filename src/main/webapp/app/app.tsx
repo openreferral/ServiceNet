@@ -51,7 +51,7 @@ export class App extends React.Component<IAppProps> {
           <div className="container-fluid view-container" id="app-view-container">
             <Card className="jh-card" style={{ padding }}>
               <ErrorBoundary>
-                <AppRoutes />
+                <AppRoutes isAdmin={this.props.isAdmin} />
               </ErrorBoundary>
             </Card>
           </div>
