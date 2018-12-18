@@ -6,7 +6,9 @@ import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.firstprovider.model.RawData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -58,8 +61,9 @@ public class FirstProviderDataAdapter extends SingleDataAdapter {
             mapper.extractLangs(rawData)
                 .stream().map(loc -> loc.srvc(service).location(location))
                 .forEach(p -> em.persist(p));
-            mapper.extractOpeningHours(rawData)
-                .forEach(p -> em.persist(p));
+            List<OpeningHours> openingHours = mapper.extractOpeningHours(rawData);
+            openingHours.forEach(o -> em.persist(o));
+            em.persist(new RegularSchedule().openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
         }
     }
 }
