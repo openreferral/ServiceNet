@@ -7,7 +7,7 @@ import ErrorBoundary from 'app/shared/error/error-boundary';
 
 interface IOwnProps extends RouteProps {
   hasAnyAuthorities?: string[];
-  isAdmin: any;
+  isAdmin: boolean;
 }
 
 export interface IPrivateRouteProps extends IOwnProps, StateProps {}

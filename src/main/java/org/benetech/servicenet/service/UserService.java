@@ -321,9 +321,8 @@ public class UserService {
     /**
      * @return true if any user is logged, and he has admin role
      */
-    public boolean isAdmin() {
-        return getUserWithAuthorities().map(u -> u.getAuthorities().stream()
-            .anyMatch(a -> a.getName().equals(AuthoritiesConstants.ADMIN)))
+    public boolean isCurrentUserAdmin() {
+        return getUserWithAuthorities().map(User::isAdmin)
             .orElse(false);
     }
 
