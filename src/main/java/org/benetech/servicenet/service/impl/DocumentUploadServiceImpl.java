@@ -120,9 +120,15 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             return currentProviderName;
         }
 
-        //TODO: Replace with provider name connected to the user
-        return userService.getUserWithAuthorities().map(User::getLogin).orElseThrow(
-            () -> new IllegalStateException("User has to be authorized to determine the provider")
-        );
+        Optional<User> user = userService.getUserWithAuthorities();
+        if (user.isPresent()) {
+            if (user.get().getSystemAccount() != null) {
+                return user.get().getSystemAccount().getName();
+            } else {
+                throw new IllegalStateException("No System Account is attached to the user");
+            }
+        } else {
+            throw new IllegalStateException("User has to be authorized to determine the provider");
+        }
     }
 }
