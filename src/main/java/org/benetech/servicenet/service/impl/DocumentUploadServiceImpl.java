@@ -116,7 +116,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     }
 
     private String getRealProviderName(String currentProviderName) {
-        if (userService.isAdmin()) {
+        if (userService.isCurrentUserAdmin()) {
             return currentProviderName;
         }
 
