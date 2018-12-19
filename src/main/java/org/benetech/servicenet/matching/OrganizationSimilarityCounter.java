@@ -11,9 +11,6 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
     private NameSimilarityCounter nameSimilarityCounter;
 
     @Autowired
-    private AlternateNameSimilarityCounter alternateNameSimilarityCounter;
-
-    @Autowired
     private LocationSimilarityCounter locationSimilarityCounter;
 
     @Autowired
@@ -36,7 +33,7 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
         float result = 0;
         result += nameSimilarityCounter.countSimilarityRatio(org1.getName(), org2.getName())
             * weightProvider.getNameWeight();
-        result += alternateNameSimilarityCounter.countSimilarityRatio(org1.getAlternateName(), org2.getAlternateName())
+        result += nameSimilarityCounter.countSimilarityRatio(org1.getAlternateName(), org2.getAlternateName())
             * weightProvider.getAlternateNameWeight();
         result += locationSimilarityCounter.countSimilarityRatio(org1.getLocation(), org2.getLocation())
             * weightProvider.getLocationWeight();

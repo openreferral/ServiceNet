@@ -109,7 +109,13 @@ jhipster:
 
 similarity-ratio:
     weight:
-        name: 1.0
+        name:
+            base: 1.0
+            similar-initials-sorted: 0.1
+            similar-initials: 0.2
+            similar-words-sorted: 0.95
+            fuzzy-similarity-threshold: 0.8
+            fuzzy-partial-similarity-threshold: 0.9
         location: 0.9
         email:
             base: 0.1
