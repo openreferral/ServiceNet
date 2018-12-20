@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.config.Constants;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -238,6 +239,11 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setPersistentTokens(Set<PersistentToken> persistentTokens) {
         this.persistentTokens = persistentTokens;
+    }
+
+    public boolean isAdmin() {
+        return authorities.stream()
+            .anyMatch(a -> a.getName().equals(AuthoritiesConstants.ADMIN));
     }
 
     @Override

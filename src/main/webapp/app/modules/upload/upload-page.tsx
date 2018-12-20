@@ -21,6 +21,7 @@ export interface IUploadState {
   isUploadDisabled: boolean;
   delimiter: symbol;
   provider: string;
+  isAdmin: boolean;
 }
 
 registerPlugin(FilePondPluginFileValidateType);
@@ -34,7 +35,8 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
     pond: null,
     isUploadDisabled: true,
     delimiter: null,
-    provider: null
+    provider: null,
+    isAdmin: false
   };
 
   getToken = () => {
@@ -97,6 +99,22 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   };
 
   render() {
+    const { isAdmin } = this.props;
+
+    const selectProvider = isAdmin ? (
+      <div>
+        <br />
+        <p className="lead">
+          <Translate contentKey="upload.provider" />
+        </p>
+        <Input className="col-sm-1" value={this.state.provider} type="select" name="select" onChange={this.providerChange}>
+          <option />
+          <option>FirstProvider</option>
+          <option>SecondProvider</option>
+        </Input>
+      </div>
+    ) : null;
+
     return (
       <Row>
         <Col>
@@ -142,15 +160,7 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
             <option>^</option>
             <option>|</option>
           </Input>
-          <br />
-          <p className="lead">
-            <Translate contentKey="upload.provider" />
-          </p>
-          <Input className="col-sm-1" value={this.state.provider} type="select" name="select" onChange={this.providerChange}>
-            <option />
-            <option>FirstProvider</option>
-            <option>SecondProvider</option>
-          </Input>
+          {selectProvider}
           <br />
           <Button color="primary" disabled={this.state.isUploadDisabled} onClick={this.uploadAll}>
             <Translate contentKey="upload.submit" />
@@ -161,7 +171,9 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   }
 }
 
-const mapStateToProps = storeState => ({});
+const mapStateToProps = ({ isAdmin }: IUploadState) => ({
+  isAdmin
+});
 
 const mapDispatchToProps = { getSession };
 

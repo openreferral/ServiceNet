@@ -58,13 +58,13 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         throws IllegalArgumentException, IOException {
 
         String parsedDocument = FileConverterFactory.getConverter(file, delimiter).convert(file);
-
         String parsedDocumentId = mongoDbService.saveParsedDocument(parsedDocument);
         String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
 
         DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
 
-        Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext).getSingleDataAdapter(providerName);
+        Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
+            .getSingleDataAdapter(getRealProviderName(providerName));
         adapter.ifPresent(a -> a.importData(new SingleImportData(parsedDocument, documentUpload)));
         //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
 
@@ -113,5 +113,22 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     public void delete(UUID id) {
         log.debug("Request to delete DocumentUpload : {}", id);
         documentUploadRepository.deleteById(id);
+    }
+
+    private String getRealProviderName(String currentProviderName) {
+        if (userService.isCurrentUserAdmin()) {
+            return currentProviderName;
+        }
+
+        Optional<User> user = userService.getUserWithAuthorities();
+        if (user.isPresent()) {
+            if (user.get().getSystemAccount() != null) {
+                return user.get().getSystemAccount().getName();
+            } else {
+                throw new IllegalStateException("No System Account is attached to the user");
+            }
+        } else {
+            throw new IllegalStateException("User has to be authorized to determine the provider");
+        }
     }
 }
