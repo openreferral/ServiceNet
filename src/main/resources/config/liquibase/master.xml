@@ -94,4 +94,6 @@
     <include file="config/liquibase/changelog/20181211064830_added_entity_constraints_OpeningHours.xml"
              relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
+    <include file="config/liquibase/changelog/20181220100327_insert_initial_SystemAccounts.xml"
+             relativeToChangelogFile="false"/>
 </databaseChangeLog>
