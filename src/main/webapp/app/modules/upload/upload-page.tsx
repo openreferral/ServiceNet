@@ -8,7 +8,6 @@ import { Row, Col, Button, Input } from 'reactstrap';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 
-import { IRootState } from 'app/shared/reducers';
 import { getSystemAccounts } from './upload-page.reducer';
 
 export interface IUploadPageProp extends StateProps, DispatchProps {}
@@ -19,6 +18,7 @@ export interface IUploadState {
   isUploadDisabled: boolean;
   delimiter: string;
   provider: string;
+  isAdmin: boolean;
 }
 
 registerPlugin(FilePondPluginFileValidateType);
@@ -32,7 +32,8 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
     pond: null,
     isUploadDisabled: true,
     delimiter: '',
-    provider: ''
+    provider: '',
+    isAdmin: false
   };
 
   componentDidMount() {
@@ -99,7 +100,25 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   };
 
   render() {
-    const { systemAccounts } = this.props;
+    const { isAdmin, systemAccounts } = this.props;
+
+    const selectProvider = isAdmin ? (
+      <div>
+        <br />
+        <p className="lead">
+          <Translate contentKey="upload.provider" />
+        </p>
+        <Input className="col-sm-1" value={this.state.provider} type="select" name="select" onChange={this.providerChange}>
+          <option />
+          {systemAccounts.map(systemAccount => (
+            <option value={systemAccount.name} key={systemAccount.id}>
+              {systemAccount.name}
+            </option>
+          ))}
+        </Input>
+      </div>
+    ) : null;
+
     return (
       <Row>
         <Col>
@@ -145,18 +164,7 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
             <option>^</option>
             <option>|</option>
           </Input>
-          <br />
-          <p className="lead">
-            <Translate contentKey="upload.provider" />
-          </p>
-          <Input className="col-sm-1" value={this.state.provider} type="select" name="select" onChange={this.providerChange}>
-            <option />
-            {systemAccounts.map(systemAccount => (
-              <option value={systemAccount.name} key={systemAccount.id}>
-                {systemAccount.name}
-              </option>
-            ))}
-          </Input>
+          {selectProvider}
           <br />
           <Button color="primary" disabled={this.state.isUploadDisabled} onClick={this.uploadAll}>
             <Translate contentKey="upload.submit" />
@@ -167,7 +175,8 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   }
 }
 
-const mapStateToProps = storeState => ({
+const mapStateToProps = (storeState, { isAdmin }: IUploadState) => ({
+  isAdmin,
   systemAccounts: storeState.uploadPage.systemAccounts
 });
 
