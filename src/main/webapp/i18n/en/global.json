@@ -51,6 +51,7 @@
         "metrics": "Metrics",
         "health": "Health",
         "configuration": "Configuration",
+        "scheduler": "Scheduler",
         "logs": "Logs",
         "audits": "Audits",
         "apidocs": "API",

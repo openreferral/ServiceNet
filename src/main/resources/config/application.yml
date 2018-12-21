@@ -62,6 +62,9 @@ spring:
         mode: HTML
     servlet.multipart:
         max-request-size: 100MB
+    quartz:
+        job-store-type: jdbc
+        properties.org.quarts.threadPool.threadCount: 1
 
 server:
     servlet:
@@ -124,6 +127,10 @@ similarity-ratio:
             same:month: 0.8
         alternate-name: 0.5
         description: 0.1
+
+scheduler:
+    interval:
+        example: 3600
 
 # ===================================================================
 # Application specific properties
