@@ -29,6 +29,7 @@ import Taxonomy from './taxonomy';
 import OrganizationMatch from './organization-match';
 import Metadata from './metadata';
 import OpeningHours from './opening-hours';
+import Conflict from './conflict';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ match }) => (
@@ -60,6 +61,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute path={`${match.url}/organization-match`} component={OrganizationMatch} />
       <ErrorBoundaryRoute path={`${match.url}/metadata`} component={Metadata} />
       <ErrorBoundaryRoute path={`${match.url}/opening-hours`} component={OpeningHours} />
+      <ErrorBoundaryRoute path={`${match.url}/conflict`} component={Conflict} />
       {/* jhipster-needle-add-route-path - JHipster will routes here */}
     </Switch>
   </div>

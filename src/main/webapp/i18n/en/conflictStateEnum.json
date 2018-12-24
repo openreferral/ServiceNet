@@ -1,0 +1,10 @@
+{
+  "serviceNetApp": {
+    "ConflictStateEnum": {
+      "null": "",
+      "PENDING": "PENDING",
+      "ACCEPTED": "ACCEPTED",
+      "REJECTED": "REJECTED"
+    }
+  }
+}
