@@ -1,0 +1,11 @@
+{
+  "scheduler": {
+    "title": "Scheduler administation",
+    "name": "Job name",
+    "description": "Description",
+    "nextFireDate": "Next Fire Date",
+    "prevFireDate": "Previous Fire Date",
+    "trigger": "Fire now",
+    "disable": "Disable"
+  }
+}
