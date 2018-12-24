@@ -130,7 +130,8 @@ similarity-ratio:
 
 scheduler:
     interval:
-        example: 3600
+        eden-data-update: 604800 #one week
+        eden-api-key: ${ICAROL_API_KEY}
 
 # ===================================================================
 # Application specific properties

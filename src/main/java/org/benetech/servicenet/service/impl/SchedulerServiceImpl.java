@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.scheduler.ExampleJob;
+import org.benetech.servicenet.scheduler.BaseJob;
+import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
 import org.benetech.servicenet.service.SchedulerService;
 import org.benetech.servicenet.service.dto.JobDTO;
 import org.quartz.JobKey;
@@ -23,7 +24,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     private SchedulerFactoryBean schedulerFactoryBean;
 
     @Autowired
-    private ExampleJob exampleJob;
+    private EdenDataUpdateJob edenDataUpdateJob;
 
     @Override
     public List<JobDTO> getAllJobsDetails() throws SchedulerException {
@@ -32,34 +33,35 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Override
     public void triggerJob(String name) throws SchedulerException {
-        getTriggersByName(name).forEach(t -> rescheduleJob());
+        getTriggersByName(name).forEach(this::rescheduleJob);
     }
 
     @Override
     public void pauseJob(String name) throws SchedulerException {
-        getTriggersByName(name).forEach(t -> pauseJob());
+        getTriggersByName(name).forEach(this::pauseJob);
     }
 
     private List<Trigger> getTriggersByName(String name) throws SchedulerException {
         return getAllTriggers().stream().filter(t -> t.getJobKey().getName().equals(name)).collect(Collectors.toList());
     }
 
-    private void rescheduleJob() {
+    private void rescheduleJob(Trigger trigger) {
         try {
             Scheduler scheduler = schedulerFactoryBean.getScheduler();
-            scheduler.rescheduleJob(exampleJob.getTrigger().getKey(), exampleJob.getTrigger());
+
+            scheduler.rescheduleJob(trigger.getKey(), getBeanTrigger(trigger.getJobKey().getName()));
         } catch (SchedulerException e) {
-            throw new IllegalStateException("Cannot reschedule job " + exampleJob.getTrigger().getJobKey().getName());
+            throw new IllegalStateException("Cannot reschedule job " + trigger.getJobKey().getName());
         }
     }
 
-    private void pauseJob() {
+    private void pauseJob(Trigger trigger) {
         try {
             Scheduler scheduler = schedulerFactoryBean.getScheduler();
-            scheduler.pauseTrigger(exampleJob.getTrigger().getKey());
-            scheduler.pauseJob(exampleJob.getTrigger().getJobKey());
+            scheduler.pauseTrigger(trigger.getKey());
+            scheduler.pauseJob(trigger.getJobKey());
         } catch (SchedulerException e) {
-            throw new IllegalStateException("Cannot unschedule job " + exampleJob.getTrigger().getJobKey().getName());
+            throw new IllegalStateException("Cannot pause job " + trigger.getJobKey().getName());
         }
     }
 
@@ -82,5 +84,15 @@ public class SchedulerServiceImpl implements SchedulerService {
         } catch (SchedulerException e) {
             throw new IllegalStateException("Cannot get details of " + trigger.getJobKey());
         }
+    }
+
+    private Trigger getBeanTrigger(String name) {
+        List<BaseJob> allBeans = new ArrayList<>();
+        allBeans.add(edenDataUpdateJob);
+
+        return allBeans.stream()
+            .filter(b -> b.getFullName().equals(name))
+            .map(BaseJob::getTrigger)
+            .findFirst().orElseThrow();
     }
 }

@@ -60,6 +60,7 @@
         <lombok.version>1.18.2</lombok.version>
         <apache.commons-text.version>1.6</apache.commons-text.version>
         <quartz.version>2.3.0</quartz.version>
+        <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
 
         <!-- Plugin versions -->
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
@@ -426,6 +427,11 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>${quartz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${apache.httpcomponents.version}</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
