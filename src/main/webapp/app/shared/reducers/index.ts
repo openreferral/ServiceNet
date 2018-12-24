@@ -114,6 +114,10 @@ MetadataState
 import openingHours, {
   OpeningHoursState
 } from 'app/entities/opening-hours/opening-hours.reducer';
+// prettier-ignore
+import uploadPage, {
+  UploadPageState
+} from 'app/modules/upload/upload-page.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -154,6 +158,7 @@ export interface IRootState {
   readonly organizationMatch: OrganizationMatchState;
   readonly metadata: MetadataState;
   readonly openingHours: OpeningHoursState;
+  readonly uploadPage: UploadPageState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -196,6 +201,7 @@ const rootReducer = combineReducers<IRootState>({
   organizationMatch,
   metadata,
   openingHours,
+  uploadPage,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });
