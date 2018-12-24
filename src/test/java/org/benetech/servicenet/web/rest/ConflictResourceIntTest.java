@@ -28,17 +28,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.benetech.servicenet.TestConstants.CONFLICT_RESOURCE_UUID_1;
-import static org.benetech.servicenet.TestConstants.CONFLICT_RESOURCE_UUID_2;
-import static org.benetech.servicenet.TestConstants.CONFLICT_UUID_1;
-import static org.benetech.servicenet.TestConstants.CONFLICT_UUID_2;
-import static org.benetech.servicenet.TestConstants.CONFLICT_UUID_42;
+import static org.benetech.servicenet.TestConstants.NON_EXISTING_UUID;
+import static org.benetech.servicenet.TestConstants.UUID_1;
+import static org.benetech.servicenet.TestConstants.UUID_2;
+import static org.benetech.servicenet.TestConstants.UUID_42;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -65,14 +67,16 @@ public class ConflictResourceIntTest {
     private static final String DEFAULT_CURRENT_VALUE = "AAAAAAAAAA";
     private static final String UPDATED_CURRENT_VALUE = "BBBBBBBBBB";
 
-    private static final Instant DEFAULT_CURRENT_VALUE_DATE = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_CURRENT_VALUE_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final ZonedDateTime DEFAULT_CURRENT_VALUE_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
+        ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CURRENT_VALUE_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final String DEFAULT_OFFERED_VALUE = "AAAAAAAAAA";
     private static final String UPDATED_OFFERED_VALUE = "BBBBBBBBBB";
 
-    private static final Instant DEFAULT_OFFERED_VALUE_DATE = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_OFFERED_VALUE_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final ZonedDateTime DEFAULT_OFFERED_VALUE_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
+        ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_OFFERED_VALUE_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final String DEFAULT_FIELD_NAME = "AAAAAAAAAA";
     private static final String UPDATED_FIELD_NAME = "BBBBBBBBBB";
@@ -83,11 +87,13 @@ public class ConflictResourceIntTest {
     private static final ConflictStateEnum DEFAULT_STATE = ConflictStateEnum.PENDING;
     private static final ConflictStateEnum UPDATED_STATE = ConflictStateEnum.ACCEPTED;
 
-    private static final Instant DEFAULT_STATE_DATE = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_STATE_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final ZonedDateTime DEFAULT_STATE_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
+        ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_STATE_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    private static final Instant DEFAULT_CREATED_DATE = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_CREATED_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
+        ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
     private ConflictRepository conflictRepository;
@@ -148,7 +154,7 @@ public class ConflictResourceIntTest {
             .state(DEFAULT_STATE)
             .stateDate(DEFAULT_STATE_DATE)
             .createdDate(DEFAULT_CREATED_DATE)
-            .resourceId(CONFLICT_RESOURCE_UUID_1)
+            .resourceId(UUID_1)
             .build();
         // Add required entity
         SystemAccount systemAccount = SystemAccountResourceIntTest.createEntity(em);
@@ -188,7 +194,7 @@ public class ConflictResourceIntTest {
         assertThat(testConflict.getState()).isEqualTo(DEFAULT_STATE);
         assertThat(testConflict.getStateDate()).isEqualTo(DEFAULT_STATE_DATE);
         assertThat(testConflict.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
-        assertThat(testConflict.getResourceId()).isEqualTo(CONFLICT_RESOURCE_UUID_1);
+        assertThat(testConflict.getResourceId()).isEqualTo(UUID_1);
     }
 
     @Test
@@ -197,7 +203,7 @@ public class ConflictResourceIntTest {
         int databaseSizeBeforeCreate = conflictRepository.findAll().size();
 
         // Create the Conflict with an existing ID
-        conflict.setId(CONFLICT_UUID_1);
+        conflict.setId(UUID_1);
         ConflictDTO conflictDTO = conflictMapper.toDto(conflict);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -223,17 +229,17 @@ public class ConflictResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(conflict.getId().toString())))
             .andExpect(jsonPath("$.[*].currentValue").value(hasItem(DEFAULT_CURRENT_VALUE.toString())))
-            .andExpect(jsonPath("$.[*].currentValueDate").value(hasItem(DEFAULT_CURRENT_VALUE_DATE.toString())))
+            .andExpect(jsonPath("$.[*].currentValueDate").value(hasItem(sameInstant(DEFAULT_CURRENT_VALUE_DATE))))
             .andExpect(jsonPath("$.[*].offeredValue").value(hasItem(DEFAULT_OFFERED_VALUE.toString())))
-            .andExpect(jsonPath("$.[*].offeredValueDate").value(hasItem(DEFAULT_OFFERED_VALUE_DATE.toString())))
+            .andExpect(jsonPath("$.[*].offeredValueDate").value(hasItem(sameInstant(DEFAULT_OFFERED_VALUE_DATE))))
             .andExpect(jsonPath("$.[*].fieldName").value(hasItem(DEFAULT_FIELD_NAME.toString())))
             .andExpect(jsonPath("$.[*].entityPath").value(hasItem(DEFAULT_ENTITY_PATH.toString())))
             .andExpect(jsonPath("$.[*].state").value(hasItem(DEFAULT_STATE.toString())))
-            .andExpect(jsonPath("$.[*].stateDate").value(hasItem(DEFAULT_STATE_DATE.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(DEFAULT_CREATED_DATE.toString())))
-            .andExpect(jsonPath("$.[*].resourceId").value(hasItem(CONFLICT_RESOURCE_UUID_1.toString())));
+            .andExpect(jsonPath("$.[*].stateDate").value(hasItem(sameInstant(DEFAULT_STATE_DATE))))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].resourceId").value(hasItem(UUID_1.toString())));
     }
-    
+
     @SuppressWarnings({"unchecked"})
     public void getAllConflictsWithEagerRelationshipsIsEnabled() throws Exception {
         ConflictResource conflictResource = new ConflictResource(conflictServiceMock);
@@ -279,23 +285,22 @@ public class ConflictResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(conflict.getId().toString()))
             .andExpect(jsonPath("$.currentValue").value(DEFAULT_CURRENT_VALUE.toString()))
-            .andExpect(jsonPath("$.currentValueDate").value(DEFAULT_CURRENT_VALUE_DATE.toString()))
+            .andExpect(jsonPath("$.currentValueDate").value(sameInstant(DEFAULT_CURRENT_VALUE_DATE)))
             .andExpect(jsonPath("$.offeredValue").value(DEFAULT_OFFERED_VALUE.toString()))
-            .andExpect(jsonPath("$.offeredValueDate").value(DEFAULT_OFFERED_VALUE_DATE.toString()))
+            .andExpect(jsonPath("$.offeredValueDate").value(sameInstant(DEFAULT_OFFERED_VALUE_DATE)))
             .andExpect(jsonPath("$.fieldName").value(DEFAULT_FIELD_NAME.toString()))
             .andExpect(jsonPath("$.entityPath").value(DEFAULT_ENTITY_PATH.toString()))
             .andExpect(jsonPath("$.state").value(DEFAULT_STATE.toString()))
-            .andExpect(jsonPath("$.stateDate").value(DEFAULT_STATE_DATE.toString()))
-            .andExpect(jsonPath("$.createdDate").value(DEFAULT_CREATED_DATE.toString()))
-            .andExpect(jsonPath("$.resourceId").value(CONFLICT_RESOURCE_UUID_1.toString()));
+            .andExpect(jsonPath("$.stateDate").value(sameInstant(DEFAULT_STATE_DATE)))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.resourceId").value(UUID_1.toString()));
     }
 
     @Test
     @Transactional
     public void getNonExistingConflict() throws Exception {
         // Get the conflict
-        restConflictMockMvc.perform(get("/api/conflicts/{id}",
-            java.util.UUID.fromString("bf6f6441-a00f-46c6-b337-585c8bc0f42a")))
+        restConflictMockMvc.perform(get("/api/conflicts/{id}", NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -323,7 +328,7 @@ public class ConflictResourceIntTest {
             .state(UPDATED_STATE)
             .stateDate(UPDATED_STATE_DATE)
             .createdDate(UPDATED_CREATED_DATE)
-            .resourceId(CONFLICT_RESOURCE_UUID_2)
+            .resourceId(UUID_2)
             .build();
         ConflictDTO conflictDTO = conflictMapper.toDto(updatedConflict);
 
@@ -345,7 +350,7 @@ public class ConflictResourceIntTest {
         assertThat(testConflict.getState()).isEqualTo(UPDATED_STATE);
         assertThat(testConflict.getStateDate()).isEqualTo(UPDATED_STATE_DATE);
         assertThat(testConflict.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
-        assertThat(testConflict.getResourceId()).isEqualTo(CONFLICT_RESOURCE_UUID_2);
+        assertThat(testConflict.getResourceId()).isEqualTo(UUID_2);
     }
 
     @Test
@@ -390,11 +395,11 @@ public class ConflictResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Conflict.class);
         Conflict conflict1 = new Conflict();
-        conflict1.setId(CONFLICT_UUID_1);
+        conflict1.setId(UUID_1);
         Conflict conflict2 = new Conflict();
         conflict2.setId(conflict1.getId());
         assertThat(conflict1).isEqualTo(conflict2);
-        conflict2.setId(CONFLICT_UUID_2);
+        conflict2.setId(UUID_2);
         assertThat(conflict1).isNotEqualTo(conflict2);
         conflict1.setId(null);
         assertThat(conflict1).isNotEqualTo(conflict2);
@@ -405,12 +410,12 @@ public class ConflictResourceIntTest {
     public void dtoEqualsVerifier() throws Exception {
         TestUtil.equalsVerifier(ConflictDTO.class);
         ConflictDTO conflictDTO1 = new ConflictDTO();
-        conflictDTO1.setId(CONFLICT_UUID_1);
+        conflictDTO1.setId(UUID_1);
         ConflictDTO conflictDTO2 = new ConflictDTO();
         assertThat(conflictDTO1).isNotEqualTo(conflictDTO2);
         conflictDTO2.setId(conflictDTO1.getId());
         assertThat(conflictDTO1).isEqualTo(conflictDTO2);
-        conflictDTO2.setId(CONFLICT_UUID_2);
+        conflictDTO2.setId(UUID_2);
         assertThat(conflictDTO1).isNotEqualTo(conflictDTO2);
         conflictDTO1.setId(null);
         assertThat(conflictDTO1).isNotEqualTo(conflictDTO2);
@@ -419,7 +424,7 @@ public class ConflictResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(conflictMapper.fromId(CONFLICT_UUID_42).getId()).isEqualTo(CONFLICT_UUID_42);
+        assertThat(conflictMapper.fromId(UUID_42).getId()).isEqualTo(UUID_42);
         assertThat(conflictMapper.fromId(null)).isNull();
     }
 }

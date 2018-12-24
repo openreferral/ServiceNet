@@ -22,7 +22,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -57,13 +57,13 @@ public class Conflict implements Serializable {
     private String currentValue;
 
     @Column(name = "current_value_date")
-    private Instant currentValueDate;
+    private ZonedDateTime currentValueDate;
 
     @Column(name = "offered_value")
     private String offeredValue;
 
     @Column(name = "offered_value_date")
-    private Instant offeredValueDate;
+    private ZonedDateTime offeredValueDate;
 
     @Column(name = "field_name")
     private String fieldName;
@@ -76,10 +76,10 @@ public class Conflict implements Serializable {
     private ConflictStateEnum state;
 
     @Column(name = "state_date")
-    private Instant stateDate;
+    private ZonedDateTime stateDate;
 
     @Column(name = "created_date")
-    private Instant createdDate;
+    private ZonedDateTime createdDate;
 
     @Column(name = "resource_id")
     private UUID resourceId;

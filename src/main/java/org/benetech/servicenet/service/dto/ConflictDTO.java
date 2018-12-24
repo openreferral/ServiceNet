@@ -1,7 +1,7 @@
 package org.benetech.servicenet.service.dto;
 
-import java.time.Instant;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -27,11 +27,11 @@ public class ConflictDTO implements Serializable {
 
     private String currentValue;
 
-    private Instant currentValueDate;
+    private ZonedDateTime currentValueDate;
 
     private String offeredValue;
 
-    private Instant offeredValueDate;
+    private ZonedDateTime offeredValueDate;
 
     private String fieldName;
 
@@ -39,9 +39,9 @@ public class ConflictDTO implements Serializable {
 
     private ConflictStateEnum state;
 
-    private Instant stateDate;
+    private ZonedDateTime stateDate;
 
-    private Instant createdDate;
+    private ZonedDateTime createdDate;
 
     private UUID resourceId;
 
