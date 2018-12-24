@@ -5,7 +5,7 @@ import { Table, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { APP_TIMESTAMP_FORMAT } from 'app/config/constants';
 
-import { getJobs, triggerJob } from './scheduler.reducer';
+import { getJobs, triggerJob, pauseJob } from './scheduler.reducer';
 
 export interface ISchedulerStateProp extends StateProps, DispatchProps {}
 
@@ -16,6 +16,11 @@ export class SchedulerAdministration extends React.Component<ISchedulerStateProp
 
   triggerJob = job => () => {
     this.props.triggerJob(job);
+    this.props.getJobs();
+  };
+
+  pauseJob = job => () => {
+    this.props.pauseJob(job);
     this.props.getJobs();
   };
 
@@ -51,7 +56,7 @@ export class SchedulerAdministration extends React.Component<ISchedulerStateProp
                 <td>{job.description}</td>
                 <td>{job.prevFireDate ? <TextFormat value={job.prevFireDate} type="date" format={APP_TIMESTAMP_FORMAT} /> : null}</td>
                 <td>
-                  <TextFormat value={job.nextFireDate} type="date" format={APP_TIMESTAMP_FORMAT} />
+                  {job.state != 'PAUSED' ? <TextFormat value={job.nextFireDate} type="date" format={APP_TIMESTAMP_FORMAT} /> : 'DISABLED'}
                 </td>
                 <td>
                   <Button color="success" onClick={this.triggerJob(job)}>
@@ -60,6 +65,14 @@ export class SchedulerAdministration extends React.Component<ISchedulerStateProp
                       <Translate contentKey="scheduler.trigger" />
                     </span>
                   </Button>
+                  {job.state != 'PAUSED' ? (
+                    <Button color="danger" onClick={this.pauseJob(job)}>
+                      <FontAwesomeIcon icon="bell-slash" />{' '}
+                      <span className="d-none d-md-inline">
+                        <Translate contentKey="scheduler.disable" />
+                      </span>
+                    </Button>
+                  ) : null}
                 </td>
               </tr>
             ))}
@@ -74,7 +87,7 @@ const mapStateToProps = storeState => ({
   jobs: storeState.scheduler.jobs
 });
 
-const mapDispatchToProps = { getJobs, triggerJob };
+const mapDispatchToProps = { getJobs, triggerJob, pauseJob };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

@@ -5,6 +5,7 @@
     "description": "Description",
     "nextFireDate": "Next Fire Date",
     "prevFireDate": "Previous Fire Date",
-    "trigger": "Fire now"
+    "trigger": "Fire now",
+    "disable": "Disable"
   }
 }

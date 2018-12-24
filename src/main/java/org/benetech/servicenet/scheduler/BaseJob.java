@@ -18,7 +18,7 @@ public abstract class BaseJob extends QuartzJobBean {
     public abstract int getIntervalInSeconds();
 
     public JobDetail getJobDetail() {
-        return JobBuilder.newJob(ExampleJob.class)
+        return JobBuilder.newJob(getClass())
             .withIdentity(getFullName())
             .storeDurably()
             .build();

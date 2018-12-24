@@ -32,7 +32,16 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Override
     public void triggerJob(String name) throws SchedulerException {
-        getAllTriggers().stream().filter(t -> t.getJobKey().getName().equals(name)).forEach(t -> rescheduleJob());
+        getTriggersByName(name).forEach(t -> rescheduleJob());
+    }
+
+    @Override
+    public void pauseJob(String name) throws SchedulerException {
+        getTriggersByName(name).forEach(t -> pauseJob());
+    }
+
+    private List<Trigger> getTriggersByName(String name) throws SchedulerException {
+        return getAllTriggers().stream().filter(t -> t.getJobKey().getName().equals(name)).collect(Collectors.toList());
     }
 
     private void rescheduleJob() {
@@ -41,6 +50,16 @@ public class SchedulerServiceImpl implements SchedulerService {
             scheduler.rescheduleJob(exampleJob.getTrigger().getKey(), exampleJob.getTrigger());
         } catch (SchedulerException e) {
             throw new IllegalStateException("Cannot reschedule job " + exampleJob.getTrigger().getJobKey().getName());
+        }
+    }
+
+    private void pauseJob() {
+        try {
+            Scheduler scheduler = schedulerFactoryBean.getScheduler();
+            scheduler.pauseTrigger(exampleJob.getTrigger().getKey());
+            scheduler.pauseJob(exampleJob.getTrigger().getJobKey());
+        } catch (SchedulerException e) {
+            throw new IllegalStateException("Cannot unschedule job " + exampleJob.getTrigger().getJobKey().getName());
         }
     }
 
@@ -56,7 +75,12 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     private JobDTO mapToJobDTO(Trigger trigger) {
-        return new JobDTO(trigger.getJobKey().getName(), trigger.getDescription(),
-            trigger.getNextFireTime(), trigger.getPreviousFireTime());
+        try {
+            Trigger.TriggerState state = schedulerFactoryBean.getScheduler().getTriggerState(trigger.getKey());
+            return new JobDTO(trigger.getJobKey().getName(), trigger.getDescription(),
+                trigger.getNextFireTime(), trigger.getPreviousFireTime(), state.name());
+        } catch (SchedulerException e) {
+            throw new IllegalStateException("Cannot get details of " + trigger.getJobKey());
+        }
     }
 }

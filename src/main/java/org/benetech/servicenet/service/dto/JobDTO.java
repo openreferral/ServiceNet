@@ -19,4 +19,6 @@ public class JobDTO implements Serializable {
     private Date nextFireDate;
 
     private Date prevFireDate;
+
+    private String state;
 }

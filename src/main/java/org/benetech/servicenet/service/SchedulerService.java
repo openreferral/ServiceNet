@@ -10,4 +10,6 @@ public interface SchedulerService {
     List<JobDTO> getAllJobsDetails() throws SchedulerException;
 
     void triggerJob(String name) throws SchedulerException;
+
+    void pauseJob(String name) throws SchedulerException;
 }
