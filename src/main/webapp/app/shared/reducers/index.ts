@@ -6,6 +6,7 @@ import authentication, { AuthenticationState } from './authentication';
 import applicationProfile, { ApplicationProfileState } from './application-profile';
 
 import administration, { AdministrationState } from 'app/modules/administration/administration.reducer';
+import scheduler, { SchedulerState } from 'app/modules/administration/scheduler/scheduler.reducer';
 import userManagement, { UserManagementState } from 'app/modules/administration/user-management/user-management.reducer';
 import register, { RegisterState } from 'app/modules/account/register/register.reducer';
 import activate, { ActivateState } from 'app/modules/account/activate/activate.reducer';
@@ -114,6 +115,10 @@ import openingHours, {
   OpeningHoursState
 } from 'app/entities/opening-hours/opening-hours.reducer';
 // prettier-ignore
+import uploadPage, {
+  UploadPageState
+} from 'app/modules/upload/upload-page.reducer';
+// prettier-ignore
 import conflict, {
   ConflictState
 } from 'app/entities/conflict/conflict.reducer';
@@ -124,6 +129,7 @@ export interface IRootState {
   readonly locale: LocaleState;
   readonly applicationProfile: ApplicationProfileState;
   readonly administration: AdministrationState;
+  readonly scheduler: SchedulerState;
   readonly userManagement: UserManagementState;
   readonly register: RegisterState;
   readonly activate: ActivateState;
@@ -156,6 +162,7 @@ export interface IRootState {
   readonly organizationMatch: OrganizationMatchState;
   readonly metadata: MetadataState;
   readonly openingHours: OpeningHoursState;
+  readonly uploadPage: UploadPageState;
   readonly conflict: ConflictState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
@@ -166,6 +173,7 @@ const rootReducer = combineReducers<IRootState>({
   locale,
   applicationProfile,
   administration,
+  scheduler,
   userManagement,
   register,
   activate,
@@ -198,6 +206,7 @@ const rootReducer = combineReducers<IRootState>({
   organizationMatch,
   metadata,
   openingHours,
+  uploadPage,
   conflict,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar

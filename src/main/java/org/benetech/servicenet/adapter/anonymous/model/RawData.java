@@ -1,4 +1,4 @@
-package org.benetech.servicenet.adapter.firstprovider.model;
+package org.benetech.servicenet.adapter.anonymous.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;

@@ -1,9 +1,9 @@
-package org.benetech.servicenet.adapter.firstprovider;
+package org.benetech.servicenet.adapter.anonymous;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
-import org.benetech.servicenet.adapter.firstprovider.model.RawData;
+import org.benetech.servicenet.adapter.anonymous.model.RawData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
@@ -19,8 +19,8 @@ import java.util.List;
 /**
  * DataAdapter for the first example data set
  */
-@Component("FirstProviderDataAdapter")
-public class FirstProviderDataAdapter extends SingleDataAdapter {
+@Component("AnonymousDataAdapter")
+public class AnonymousDataAdapter extends SingleDataAdapter {
 
     @Autowired
     private EntityManager em;
@@ -31,7 +31,7 @@ public class FirstProviderDataAdapter extends SingleDataAdapter {
         }.getType();
         List<RawData> entries = new Gson().fromJson(data.getSingleObjectData(), listType);
 
-        FirstProviderDataMapper mapper = FirstProviderDataMapper.INSTANCE;
+        AnonymousDataMapper mapper = AnonymousDataMapper.INSTANCE;
 
         //TODO: do not persist some entities if they already exists
         for (RawData rawData : entries) {

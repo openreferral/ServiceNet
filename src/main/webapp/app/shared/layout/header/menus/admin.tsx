@@ -19,6 +19,9 @@ const adminMenuItems = (
     <DropdownItem tag={Link} to="/admin/configuration">
       <FontAwesomeIcon icon="list" /> <Translate contentKey="global.menu.admin.configuration">Configuration</Translate>
     </DropdownItem>
+    <DropdownItem tag={Link} to="/admin/scheduler">
+      <FontAwesomeIcon icon="clock" /> <Translate contentKey="global.menu.admin.scheduler" />
+    </DropdownItem>
     <DropdownItem tag={Link} to="/admin/audits">
       <FontAwesomeIcon icon="bell" /> <Translate contentKey="global.menu.admin.audits">Audits</Translate>
     </DropdownItem>

@@ -1,7 +1,7 @@
-package org.benetech.servicenet.adapter.firstprovider;
+package org.benetech.servicenet.adapter.anonymous;
 
 import org.apache.commons.lang3.StringUtils;
-import org.benetech.servicenet.adapter.firstprovider.model.RawData;
+import org.benetech.servicenet.adapter.anonymous.model.RawData;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.shared.model.Coordinates;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
 import static org.mapstruct.ReportingPolicy.IGNORE;
 
 @Mapper(unmappedTargetPolicy = IGNORE)
-public interface FirstProviderDataMapper {
+public interface AnonymousDataMapper {
 
     String LISTS_DELIMITER = "; ";
 
-    FirstProviderDataMapper INSTANCE = Mappers.getMapper(FirstProviderDataMapper.class);
+    AnonymousDataMapper INSTANCE = Mappers.getMapper(AnonymousDataMapper.class);
 
     @Mapping(source = "resourceSiteEmail", target = "email")
     @Mapping(source = "organizationName", target = "name")

@@ -13,7 +13,7 @@ import Entities from 'app/entities';
 import PrivateRoute from 'app/shared/auth/private-route';
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import { AUTHORITIES } from 'app/config/constants';
-import { UploadPage } from './modules/upload/upload-page';
+import UploadPage from './modules/upload/upload-page';
 
 // tslint:disable:space-in-parens
 const Account = Loadable({
