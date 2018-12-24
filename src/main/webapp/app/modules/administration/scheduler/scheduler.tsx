@@ -56,7 +56,7 @@ export class SchedulerAdministration extends React.Component<ISchedulerStateProp
                 <td>{job.description}</td>
                 <td>{job.prevFireDate ? <TextFormat value={job.prevFireDate} type="date" format={APP_TIMESTAMP_FORMAT} /> : null}</td>
                 <td>
-                  {job.state != 'PAUSED' ? <TextFormat value={job.nextFireDate} type="date" format={APP_TIMESTAMP_FORMAT} /> : 'DISABLED'}
+                  {job.state !== 'PAUSED' ? <TextFormat value={job.nextFireDate} type="date" format={APP_TIMESTAMP_FORMAT} /> : 'DISABLED'}
                 </td>
                 <td>
                   <Button color="success" onClick={this.triggerJob(job)}>
@@ -65,7 +65,7 @@ export class SchedulerAdministration extends React.Component<ISchedulerStateProp
                       <Translate contentKey="scheduler.trigger" />
                     </span>
                   </Button>
-                  {job.state != 'PAUSED' ? (
+                  {job.state !== 'PAUSED' ? (
                     <Button color="danger" onClick={this.pauseJob(job)}>
                       <FontAwesomeIcon icon="bell-slash" />{' '}
                       <span className="d-none d-md-inline">
