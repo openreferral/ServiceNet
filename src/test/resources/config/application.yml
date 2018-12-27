@@ -122,6 +122,10 @@ similarity-ratio:
         alternate-name: 0.5
         description: 0.1
 
+scheduler:
+    interval:
+        example: 3600
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

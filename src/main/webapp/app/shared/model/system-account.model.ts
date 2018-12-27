@@ -1,5 +1,5 @@
 export interface ISystemAccount {
-  id?: number;
+  id?: any;
   name?: string;
 }
 
