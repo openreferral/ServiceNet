@@ -47,6 +47,8 @@ public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
+    private static final String SYSTEM = "system";
+
     @Autowired
     private UserRepository userRepository;
 
@@ -324,6 +326,10 @@ public class UserService {
      */
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
+    }
+
+    public Optional<User> getSystemUser() {
+        return userRepository.findOneByLogin(SYSTEM);
     }
 
     /**

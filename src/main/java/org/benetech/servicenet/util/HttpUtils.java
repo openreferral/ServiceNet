@@ -3,6 +3,7 @@ package org.benetech.servicenet.util;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
@@ -27,13 +28,23 @@ public final class HttpUtils {
     }
 
     public static String executePOST(String urlString, String body, Map<String, String> headers) throws IOException {
-        HttpClient httpclient = HttpClients.createDefault();
-        HttpPost httppost = new HttpPost(urlString);
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(urlString);
 
-        httppost.setEntity(new StringEntity(body));
-        headers.keySet().forEach(k -> httppost.addHeader(k, headers.get(k)));
+        httpPost.setEntity(new StringEntity(body));
+        headers.keySet().forEach(k -> httpPost.addHeader(k, headers.get(k)));
 
-        HttpResponse response = httpclient.execute(httppost);
+        HttpResponse response = httpClient.execute(httpPost);
+        return readContentAsString(response.getEntity());
+    }
+
+    public static String executeGET(String urlString, Map<String, String> headers) throws IOException {
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(urlString);
+
+        headers.keySet().forEach(k -> httpGet.addHeader(k, headers.get(k)));
+
+        HttpResponse response = httpClient.execute(httpGet);
         return readContentAsString(response.getEntity());
     }
 
