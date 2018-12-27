@@ -1,4 +1,4 @@
-package org.benetech.servicenet.adapter.firstprovider;
+package org.benetech.servicenet.adapter.anonymous;
 
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
@@ -42,10 +42,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 @Transactional
-public class FirstProviderDataAdapterIntTest {
+public class AnonymousDataAdapterIntTest {
 
     @Autowired
-    private FirstProviderDataAdapter adapter;
+    private AnonymousDataAdapter adapter;
 
     @Autowired
     private LocationService locationService;
@@ -88,7 +88,7 @@ public class FirstProviderDataAdapterIntTest {
 
     @Before
     public void persistData() throws IOException {
-        String data = AdapterTestsUtils.readResourceAsString("FirstProviderData.json");
+        String data = AdapterTestsUtils.readResourceAsString("anonymous/AnonymousData.json");
         adapter.importData(new SingleImportData(data, null));
     }
 

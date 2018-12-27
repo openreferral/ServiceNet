@@ -326,6 +326,14 @@ public class UserService {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
     }
 
+    /**
+     * @return true if any user is logged, and he has admin role
+     */
+    public boolean isCurrentUserAdmin() {
+        return getUserWithAuthorities().map(User::isAdmin)
+            .orElse(false);
+    }
+
     private void clearUserCaches(User user) {
         Cache login = cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE);
         Cache email = cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE);

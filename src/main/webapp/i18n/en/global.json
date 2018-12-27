@@ -33,6 +33,7 @@
         "organizationMatch": "Organization Match",
         "metadata": "Metadata",
         "openingHours": "Opening Hours",
+        "conflict": "Conflict",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
@@ -51,6 +52,7 @@
         "metrics": "Metrics",
         "health": "Health",
         "configuration": "Configuration",
+        "scheduler": "Scheduler",
         "logs": "Logs",
         "audits": "Audits",
         "apidocs": "API",
