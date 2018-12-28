@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,15 +49,20 @@ public class ActivityServiceImpl implements ActivityService {
         List<OrganizationDTO> orgs = organizationService.findAllWithOwnerId(systemAccountId);
 
         // TODO: get organization-entities mapping for every organization
-        // to-remove-start
-        // mock for int tests will be removed when Organization matching will be available
-        Map<UUID, UUID> orgToEntity = new HashMap<>();
-        orgToEntity.put(orgs.get(0).getId(), UUID.fromString(EXAMPLE_DATA));
-        // to-remove-end
+        // this mock below will be removed when Organization matching will be available
+        List<UUID> entities = Collections.singletonList(UUID.fromString(EXAMPLE_DATA));
+        UUID orgId = null;
+        if (orgs.get(0) != null) {
+            orgId = orgs.get(0).getId();
+        }
 
-        for (Map.Entry<UUID, UUID> entry : orgToEntity.entrySet()) {
-            Optional<ActivityDTO> activityOpt = getEntityActivity(entry.getKey(), entry.getValue());
-            activityOpt.ifPresent(activity -> activities.add(activity));
+        try {
+            for (UUID entityId : entities) {
+                Optional<ActivityDTO> activityOpt = getEntityActivity(orgId, entityId);
+                activityOpt.ifPresent(activity -> activities.add(activity));
+            }
+        } catch (ActivityCreationException ex) {
+            log.error(ex.getMessage());
         }
 
         return activities;
@@ -84,25 +87,20 @@ public class ActivityServiceImpl implements ActivityService {
         return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), activities.size());
     }
 
-    private Optional<ActivityDTO> getEntityActivity(UUID orgId, UUID resourceId) {
+    private Optional<ActivityDTO> getEntityActivity(UUID orgId, UUID resourceId) throws ActivityCreationException {
         log.debug("Creating Activity for organization: {} with resourceId: {}", orgId, resourceId);
-        try {
-            Optional<OrganizationDTO> opt = organizationService.findOne(orgId);
-            OrganizationDTO org = opt.orElseThrow(() -> new ActivityCreationException(
-                String.format("There are no conflicts for resourceId: %s", orgId)));
+        Optional<OrganizationDTO> opt = organizationService.findOne(orgId);
+        OrganizationDTO org = opt.orElseThrow(() -> new ActivityCreationException(
+            String.format("There is no organization for orgId: %s", orgId)));
 
-            List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceIdAndOwnerId(resourceId, org.getAccountId());
-            if (conflictDTOS != null && conflictDTOS.isEmpty()) {
-                throw new ActivityCreationException(String.format("There are no conflicts for resourceId: %s", resourceId));
-            }
-
+        List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceIdAndOwnerId(resourceId, org.getAccountId());
+        if (conflictDTOS == null || conflictDTOS.isEmpty()) {
+            return Optional.empty();
+        } else {
             return Optional.of(ActivityDTO.builder()
                 .conflicts(conflictDTOS)
                 .organization(org)
                 .build());
-        } catch (ActivityCreationException ex) {
-            log.debug(ex.getMessage());
-            return Optional.empty();
         }
     }
 }
