@@ -30,5 +30,7 @@ public class Program extends BaseData {
     private CustomField[] customFields;
 
     private Hours hours;
+
+    private Coverage coverage;
 }
 

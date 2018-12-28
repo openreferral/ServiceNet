@@ -3,7 +3,7 @@ package org.benetech.servicenet.adapter.eden.model;
 import lombok.Data;
 
 @Data
-public class Agency  extends BaseData {
+public class Agency extends BaseData {
 
     private String description;
 

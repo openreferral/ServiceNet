@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.eden;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import org.apache.http.Header;
 import org.benetech.servicenet.adapter.eden.model.BaseData;
 import org.benetech.servicenet.adapter.eden.model.Related;
 import org.benetech.servicenet.adapter.eden.model.SimpleResponseElement;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public final class DataCollector {
 
@@ -21,7 +21,7 @@ public final class DataCollector {
     private static final String PARAMS_BEGINNING = "?";
     private static final String PARAMS_DELIMITER = "&";
 
-    public static JsonArray getData(Map<String, String> headers, List<SimpleResponseElement> batch) {
+    public static JsonArray getData(Header[] headers, List<SimpleResponseElement> batch) {
         String params = getIdsAsQueryParameters(batch);
         String response;
         try {
@@ -33,7 +33,7 @@ public final class DataCollector {
     }
 
     public static <T extends BaseData> List<T> collectData(List<List<SimpleResponseElement>> batches,
-                               Map<String, String> headers, Class<T> clazz) {
+                                                           Header[] headers, Class<T> clazz) {
         List<T> result = new ArrayList<>();
         JsonArray jsonArray = new JsonArray();
         for (List<SimpleResponseElement> batch : batches) {
@@ -81,5 +81,8 @@ public final class DataCollector {
             result.append(ID).append(element.getId()).append(PARAMS_DELIMITER);
         }
         return result.toString();
+    }
+
+    private DataCollector() {
     }
 }

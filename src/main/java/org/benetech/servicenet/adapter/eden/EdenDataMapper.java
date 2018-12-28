@@ -11,6 +11,7 @@ import org.benetech.servicenet.adapter.eden.model.Name;
 import org.benetech.servicenet.adapter.eden.model.Program;
 import org.benetech.servicenet.adapter.eden.model.Site;
 import org.benetech.servicenet.adapter.eden.model.Weekday;
+import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.Eligibility;
@@ -49,6 +50,19 @@ public interface EdenDataMapper {
     String POSTAL_ADDRESS = "PostalAddress";
     String ACTIVE = "Active";
 
+    @Mapping(source = "disabled", target = "accessibility")
+    AccessibilityForDisabilities mapAccessibility(Accessibility accessibility);
+
+    @Mapping(source = "line1", target = "address1")
+    @Mapping(source = "zipPostalCode", target = "postalCode")
+    PhysicalAddress mapToPhysicalAddress(Contact contact);
+
+    @Mapping(source = "line1", target = "address1")
+    @Mapping(source = "zipPostalCode", target = "postalCode")
+    PostalAddress mapToPostalAddress(Contact contact);
+
+    Phone mapContactToPhone(Contact contact);
+
     default Organization extractOrganization(Agency agency) {
         Organization result = new Organization();
 
@@ -70,7 +84,8 @@ public interface EdenDataMapper {
         result.setEmail(extractEmail(program.getContactDetails()));
         result.setUrl(extractUrl(program.getContactDetails()));
         result.setFees(program.getFees());
-        result.setApplicationProcess(program.getApplicationProcess());
+        result.setApplicationProcess(MapperUtils.joinNotBlank(" ", program.getApplicationProcess(),
+            "Required items: " + program.getRequiredDocumentation()));
 
         return result;
     }
@@ -87,10 +102,6 @@ public interface EdenDataMapper {
             .collect(Collectors.toList());
     }
 
-
-    @Mapping(source = "disabled", target = "accessibility")
-    AccessibilityForDisabilities mapAccessibility(Accessibility accessibility);
-
     default AccessibilityForDisabilities extractAccessibilityForDisabilities(Site site) {
         return site.getAccessibility() != null && site.getAccessibility().getDisabled() != null
             ? mapAccessibility(site.getAccessibility())
@@ -101,22 +112,12 @@ public interface EdenDataMapper {
         return Weekday.valueOf(weekday.toUpperCase(Locale.ROOT)).getNumber();
     }
 
-    Phone mapContactToPhone(Contact contact);
-
     default Phone extractPhone(ContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHONE_NUMBER))
             .findFirst().map(entry -> mapContactToPhone(entry.getContact()))
             .orElse(null);
     }
-
-    @Mapping(source = "line1", target = "address1")
-    @Mapping(source = "zipPostalCode", target = "postalCode")
-    PhysicalAddress mapToPhysicalAddress(Contact contact);
-
-    @Mapping(source = "line1", target = "address1")
-    @Mapping(source = "zipPostalCode", target = "postalCode")
-    PostalAddress mapToPostalAddress(Contact contact);
 
     default Location extractLocation(Contact contact) {
         Location result = new Location().name(extractLocationName(contact));

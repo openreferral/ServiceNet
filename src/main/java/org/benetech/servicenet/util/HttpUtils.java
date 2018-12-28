@@ -1,5 +1,6 @@
 package org.benetech.servicenet.util;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -7,12 +8,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class HttpUtils {
 
@@ -20,29 +22,29 @@ public final class HttpUtils {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
 
-    public static Map<String, String> getStandardHeaders(String token) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(HttpUtils.AUTHORIZATION, HttpUtils.getBearerAuthValue(token));
-        headers.put(HttpUtils.CONTENT_TYPE, HttpUtils.APPLICATION_JSON);
-        return headers;
+    public static Header[] getStandardHeaders(String token) {
+        List<Header> result = new ArrayList<>();
+        result.add(new BasicHeader(AUTHORIZATION, getBearerAuthValue(token)));
+        result.add(new BasicHeader(CONTENT_TYPE, APPLICATION_JSON));
+        return result.toArray(new Header[0]);
     }
 
-    public static String executePOST(String urlString, String body, Map<String, String> headers) throws IOException {
+    public static String executePOST(String urlString, String body, Header[] headers) throws IOException {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(urlString);
 
         httpPost.setEntity(new StringEntity(body));
-        headers.keySet().forEach(k -> httpPost.addHeader(k, headers.get(k)));
+        httpPost.setHeaders(headers);
 
         HttpResponse response = httpClient.execute(httpPost);
         return readContentAsString(response.getEntity());
     }
 
-    public static String executeGET(String urlString, Map<String, String> headers) throws IOException {
+    public static String executeGET(String urlString, Header[] headers) throws IOException {
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(urlString);
 
-        headers.keySet().forEach(k -> httpGet.addHeader(k, headers.get(k)));
+        httpGet.setHeaders(headers);
 
         HttpResponse response = httpClient.execute(httpGet);
         return readContentAsString(response.getEntity());

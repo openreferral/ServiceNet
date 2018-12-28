@@ -2,6 +2,7 @@ package org.benetech.servicenet.adapter.eden;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.http.Header;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.eden.model.Agency;
 import org.benetech.servicenet.adapter.eden.model.ComplexResponseElement;
@@ -13,7 +14,9 @@ import org.benetech.servicenet.adapter.eden.model.Site;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +26,8 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Component("EdenDataAdapter")
@@ -48,7 +51,7 @@ public class EdenDataAdapter extends SingleDataAdapter {
 
     private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements, DocumentUpload documentUpload) {
         ComplexResponseElement data = new ComplexResponseElement(responseElements);
-        Map<String, String> headers = HttpUtils.getStandardHeaders(edenApiKey);
+        Header[] headers = HttpUtils.getStandardHeaders(edenApiKey);
         persist(getDataToPersist(data, headers), documentUpload);
     }
 
@@ -84,22 +87,21 @@ public class EdenDataAdapter extends SingleDataAdapter {
         persistPrograms(mapper, null, null, data.getPrograms());
     }
 
-    private void persistAgencies(List<Program> programs, DocumentUpload documentUpload, EdenDataMapper mapper, Location location, List<Agency> relatedAgencies) {
+    private void persistAgencies(List<Program> programs, DocumentUpload documentUpload, EdenDataMapper mapper,
+                                 Location location, List<Agency> relatedAgencies) {
         for (Agency agency : relatedAgencies) {
             Organization organization = mapper.extractOrganization(agency).location(location)
                 .sourceDocument(documentUpload);
             Optional.ofNullable(organization)
                 .ifPresent(x -> em.persist(x));
 
-            mapper.extractOpeningHours(agency.getHours())
-                .forEach(p -> em.persist(p));
-
             List<Program> relatedPrograms = DataCollector.findRelatedEntities(programs, agency, PROGRAM);
             persistPrograms(mapper, location, organization, relatedPrograms);
         }
     }
 
-    private void persistPrograms(EdenDataMapper mapper, Location location, Organization organization, List<Program> relatedPrograms) {
+    private void persistPrograms(EdenDataMapper mapper, Location location, Organization organization,
+                                 List<Program> relatedPrograms) {
         for (Program program : relatedPrograms) {
             Service service = mapper.extractService(program).organization(organization);
             Optional.ofNullable(service)
@@ -112,10 +114,14 @@ public class EdenDataAdapter extends SingleDataAdapter {
             mapper.extractLangs(program)
                 .stream().map(language -> language.srvc(service).location(location))
                 .forEach(p -> em.persist(p));
+
+            List<OpeningHours> openingHours = mapper.extractOpeningHours(program.getHours());
+            openingHours.forEach(o -> em.persist(o));
+            em.persist(new RegularSchedule().openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
         }
     }
 
-    private DataToPersist getDataToPersist(ComplexResponseElement data, Map<String, String> headers) {
+    private DataToPersist getDataToPersist(ComplexResponseElement data, Header[] headers) {
         DataToPersist dataToPersist = new DataToPersist();
 
         dataToPersist.setPrograms(DataCollector.collectData(data.getProgramBatches(), headers,

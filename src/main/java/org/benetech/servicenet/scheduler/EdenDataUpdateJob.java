@@ -1,6 +1,7 @@
 package org.benetech.servicenet.scheduler;
 
 import com.google.gson.Gson;
+import org.apache.http.Header;
 import org.benetech.servicenet.adapter.eden.model.TakeAllRequest;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.util.HttpUtils;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Component
 public class EdenDataUpdateJob extends BaseJob {
@@ -38,7 +38,7 @@ public class EdenDataUpdateJob extends BaseJob {
     protected void executeInternal(JobExecutionContext context) {
         log.info(NAME + " is being executed");
 
-        Map<String, String> headers = HttpUtils.getStandardHeaders(edenApiKey);
+        Header[] headers = HttpUtils.getStandardHeaders(edenApiKey);
 
         TakeAllRequest takeAllRequest = new TakeAllRequest(getLastJobExecutionDate());
         String body = new Gson().toJson(takeAllRequest);
