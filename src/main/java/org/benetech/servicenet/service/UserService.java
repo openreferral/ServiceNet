@@ -47,6 +47,8 @@ public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
+    private static final String SYSTEM = "system";
+
     @Autowired
     private UserRepository userRepository;
 
@@ -324,6 +326,22 @@ public class UserService {
      */
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
+    }
+
+    public Optional<User> getSystemUser() {
+        return userRepository.findOneByLogin(SYSTEM);
+    }
+
+    public User getCurrentOrSystemUser() {
+        Optional<User> current = getUserWithAuthorities();
+        if (current.isPresent()) {
+            return current.get();
+        }
+        Optional<User> system = userRepository.findOneByLogin(SYSTEM);
+        if (system.isPresent()) {
+            return system.get();
+        }
+        throw new IllegalStateException("No current or system user found");
     }
 
     /**

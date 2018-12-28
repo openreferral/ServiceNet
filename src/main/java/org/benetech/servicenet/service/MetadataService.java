@@ -21,12 +21,12 @@ public interface MetadataService {
     MetadataDTO save(MetadataDTO metadataDTO);
 
     /**
-     * Save all metadata objects, with current user reference
+     * Save all metadata objects, with current user reference, or with the system user reference if no use is logged in
      *
      * @param metadata the entities to save
      * @return the persisted entities
      */
-    List<Metadata> saveForCurrentUser(List<Metadata> metadata);
+    List<Metadata> saveForCurrentOrSystemUser(List<Metadata> metadata);
 
     /**
      * Get all the metadata.

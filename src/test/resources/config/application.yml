@@ -118,7 +118,8 @@ similarity-ratio:
 
 scheduler:
     interval:
-        example: 3600
+        eden-data-update: 604800 #one week
+        eden-api-key: SECRET_KEY
 
 # ===================================================================
 # Application specific properties

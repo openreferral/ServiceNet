@@ -28,6 +28,16 @@ public interface DocumentUploadService {
         IllegalArgumentException;
 
     /**
+     * Save a result of API data collection in NoSQL database and information about it.
+     *
+     * @param json datato be saved
+     * @param providerName name of the provider, to correctly persist the data
+     * @return entity with information about the uploaded file
+     * @throws IllegalArgumentException if file type is not supported
+     */
+    DocumentUploadDTO uploadApiData(String json, String providerName) throws IllegalArgumentException;
+
+    /**
      * Save a documentUpload.
      *
      * @param documentUploadDTO the entity to save
@@ -42,6 +52,14 @@ public interface DocumentUploadService {
      * @return the persisted entity
      */
     DocumentUpload saveForCurrentUser(DocumentUpload documentUpload);
+
+    /**
+     * Save a documentUpload, with reference to the system user.
+     *
+     * @param documentUpload the entity to save
+     * @return the persisted entity
+     */
+    DocumentUpload saveForSystemUser(DocumentUpload documentUpload);
 
     /**
      * Get all the documentUploads.
