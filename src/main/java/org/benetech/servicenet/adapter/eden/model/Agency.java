@@ -21,6 +21,6 @@ public class Agency  extends BaseData {
 
     private CustomField[] customFields;
 
-    private Hours[] hours;
+    private Hours hours;
 }
 

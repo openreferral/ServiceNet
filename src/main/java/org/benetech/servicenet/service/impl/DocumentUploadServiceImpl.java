@@ -72,7 +72,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
         String originalDocumentId = mongoDbService.saveOriginalDocument(json.getBytes());
 
-        DocumentUpload documentUpload = saveForSystemUser(new DocumentUpload(originalDocumentId, json));
+        DocumentUpload documentUpload = saveForSystemUser(new DocumentUpload(originalDocumentId, null));
 
         return importDataIfNeeded(providerName, json, documentUpload);
     }

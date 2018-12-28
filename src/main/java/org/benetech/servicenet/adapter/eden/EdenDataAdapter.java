@@ -3,87 +3,128 @@ package org.benetech.servicenet.adapter.eden;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
-import org.benetech.servicenet.adapter.eden.model.BaseData;
+import org.benetech.servicenet.adapter.eden.model.Agency;
 import org.benetech.servicenet.adapter.eden.model.ComplexResponseElement;
 import org.benetech.servicenet.adapter.eden.model.DataToPersist;
+import org.benetech.servicenet.adapter.eden.model.Program;
+import org.benetech.servicenet.adapter.eden.model.ProgramAtSite;
 import org.benetech.servicenet.adapter.eden.model.SimpleResponseElement;
+import org.benetech.servicenet.adapter.eden.model.Site;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
+import org.benetech.servicenet.domain.DocumentUpload;
+import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.util.HttpUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import javax.persistence.EntityManager;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component("EdenDataAdapter")
 public class EdenDataAdapter extends SingleDataAdapter {
 
-    private static final String URL = "https://api.icarol.com/v1/Resource";
-    private static final String ID = "id=";
-    private static final String PARAMS_BEGINNING = "?";
-    private static final String PARAMS_DELIMITER = "&";
+    private static final String AGENCY = "Agency";
+    private static final String PROGRAM = "Program";
 
     @Value("${scheduler.interval.eden-api-key}")
     private String edenApiKey;
+
+    @Autowired
+    private EntityManager em;
 
     @Override
     public void importData(SingleImportData data) {
         Type collectionType = new TypeToken<Collection<SimpleResponseElement>>() { }.getType();
         Collection<SimpleResponseElement> responseElements = new Gson().fromJson(data.getSingleObjectData(), collectionType);
-        gatherMoreDetails(responseElements);
+        gatherMoreDetails(responseElements, data.getDocumentUpload());
     }
 
-    private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements) {
+    private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements, DocumentUpload documentUpload) {
         ComplexResponseElement data = new ComplexResponseElement(responseElements);
         Map<String, String> headers = HttpUtils.getStandardHeaders(edenApiKey);
-        persist(getDataToPersist(data, headers));
+        persist(getDataToPersist(data, headers), documentUpload);
     }
 
-    private void persist(DataToPersist data) {
-        //TODO: persist the data
+    //TODO: do not persist some entities if they already exists
+    private void persist(DataToPersist data, DocumentUpload documentUpload) {
+        EdenDataMapper mapper = EdenDataMapper.INSTANCE;
+
+        persistSites(data, documentUpload, mapper);
+
+        persistEntitiesWithoutLocation(data, documentUpload, mapper);
+    }
+
+    private void persistSites(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper) {
+        for (Site site : data.getSites()) {
+            Location location = mapper.extractLocation(site.getContactDetails());
+            Optional.ofNullable(location)
+                .ifPresent(x -> em.persist(x));
+
+            Optional.ofNullable(mapper.extractPhysicalAddress(site.getContactDetails()))
+                .ifPresent(x -> em.persist(x.location(location)));
+            Optional.ofNullable(mapper.extractPostalAddress(site.getContactDetails()))
+                .ifPresent(x -> em.persist(x.location(location)));
+            Optional.ofNullable(mapper.extractAccessibilityForDisabilities(site))
+                .ifPresent(x -> em.persist(x.location(location)));
+
+            List<Agency> relatedAgencies = DataCollector.findRelatedEntities(data.getAgencies(), site, AGENCY);
+            persistAgencies(data.getPrograms(), documentUpload, mapper, location, relatedAgencies);
+        }
+    }
+
+    private void persistEntitiesWithoutLocation(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper) {
+        persistAgencies(data.getPrograms(), documentUpload, mapper, null, data.getAgencies());
+        persistPrograms(mapper, null, null, data.getPrograms());
+    }
+
+    private void persistAgencies(List<Program> programs, DocumentUpload documentUpload, EdenDataMapper mapper, Location location, List<Agency> relatedAgencies) {
+        for (Agency agency : relatedAgencies) {
+            Organization organization = mapper.extractOrganization(agency).location(location)
+                .sourceDocument(documentUpload);
+            Optional.ofNullable(organization)
+                .ifPresent(x -> em.persist(x));
+
+            mapper.extractOpeningHours(agency.getHours())
+                .forEach(p -> em.persist(p));
+
+            List<Program> relatedPrograms = DataCollector.findRelatedEntities(programs, agency, PROGRAM);
+            persistPrograms(mapper, location, organization, relatedPrograms);
+        }
+    }
+
+    private void persistPrograms(EdenDataMapper mapper, Location location, Organization organization, List<Program> relatedPrograms) {
+        for (Program program : relatedPrograms) {
+            Service service = mapper.extractService(program).organization(organization);
+            Optional.ofNullable(service)
+                .ifPresent(x -> em.persist(x));
+
+            Optional.ofNullable(mapper.extractPhone(program.getContactDetails()))
+                .ifPresent(x -> em.persist(x.location(location).srvc(service)));
+            Optional.ofNullable(mapper.extractEligibility(program))
+                .ifPresent(x -> em.persist(x.srvc(service)));
+            mapper.extractLangs(program)
+                .stream().map(language -> language.srvc(service).location(location))
+                .forEach(p -> em.persist(p));
+        }
     }
 
     private DataToPersist getDataToPersist(ComplexResponseElement data, Map<String, String> headers) {
         DataToPersist dataToPersist = new DataToPersist();
 
-        dataToPersist.setPrograms(collectData(data.getProgramBatches(), headers));
-        dataToPersist.setSites(collectData(data.getSiteBatches(), headers));
-        dataToPersist.setAgencies(collectData(data.getAgencyBatches(), headers));
-        dataToPersist.setProgramAtSites(collectData(data.getProgramAtSiteBatches(), headers));
+        dataToPersist.setPrograms(DataCollector.collectData(data.getProgramBatches(), headers,
+            Program.class));
+        dataToPersist.setSites(DataCollector.collectData(data.getSiteBatches(), headers, Site.class));
+        dataToPersist.setAgencies(DataCollector.collectData(data.getAgencyBatches(), headers, Agency.class));
+        dataToPersist.setProgramAtSites(DataCollector.collectData(data.getProgramAtSiteBatches(),
+            headers, ProgramAtSite.class));
 
         return dataToPersist;
-    }
-
-    private <T extends BaseData> List<T> collectData(List<List<SimpleResponseElement>> batches,
-                                                     Map<String, String> headers) {
-        List<T> result = new ArrayList<>();
-        for (List<SimpleResponseElement> batch : batches) {
-            Type collectionType = new TypeToken<Collection<T>>() { }.getType();
-            result.addAll(new Gson().fromJson(getData(headers, batch), collectionType));
-        }
-        return result;
-    }
-
-    private String getData(Map<String, String> headers, List<SimpleResponseElement> batch) {
-        String params = getIdsAsQueryParameters(batch);
-        String response;
-        try {
-            response = HttpUtils.executeGET(URL + params, headers);
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot connect with iCarol API");
-        }
-        return response;
-    }
-
-    private String getIdsAsQueryParameters(List<SimpleResponseElement> elements) {
-        StringBuilder result = new StringBuilder(PARAMS_BEGINNING);
-        for (SimpleResponseElement element : elements) {
-            result.append(ID).append(element.getId()).append(PARAMS_DELIMITER);
-        }
-        return result.toString();
     }
 }

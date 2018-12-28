@@ -54,17 +54,13 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public List<Metadata> saveForCurrentUser(List<Metadata> metadata) {
-        Optional<User> currentUser = userService.getUserWithAuthorities();
-        if (currentUser.isPresent()) {
-            for (Metadata entry : metadata) {
-                entry.setUser(currentUser.get());
-                entry.setLastActionDate(ZonedDateTime.now(ZoneId.systemDefault()));
-            }
-            return metadataRepository.saveAll(metadata);
-        } else {
-            throw new IllegalStateException("No current user found");
+    public List<Metadata> saveForCurrentOrSystemUser(List<Metadata> metadata) {
+        User user = userService.getCurrentOrSystemUser();
+        for (Metadata entry : metadata) {
+            entry.setUser(user);
+            entry.setLastActionDate(ZonedDateTime.now(ZoneId.systemDefault()));
         }
+        return metadataRepository.saveAll(metadata);
     }
 
     @Override

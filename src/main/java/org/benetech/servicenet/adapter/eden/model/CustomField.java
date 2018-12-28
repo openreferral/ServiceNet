@@ -9,5 +9,5 @@ public class CustomField {
 
     private String label;
 
-    private Object[] selectedValues;
+    private Object selectedValues;
 }

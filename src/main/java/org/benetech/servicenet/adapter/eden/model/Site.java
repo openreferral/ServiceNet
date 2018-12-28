@@ -10,4 +10,6 @@ public class Site extends BaseData {
     private String[] translations;
 
     private Name[] names;
+
+    private Accessibility accessibility;
 }

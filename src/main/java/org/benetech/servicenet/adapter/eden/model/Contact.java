@@ -13,6 +13,8 @@ public class Contact {
 
     private String purpose;
 
+    private String address;
+
     private String number;
 
     private String label;
@@ -20,4 +22,22 @@ public class Contact {
     private String description;
 
     private String type;
+
+    private String line1;
+
+    private Double latitude;
+
+    private Double longitude;
+
+    private String precision;
+
+    private String county;
+
+    private String country;
+
+    private String stateProvince;
+
+    private String city;
+
+    private String zipPostalCode;
 }

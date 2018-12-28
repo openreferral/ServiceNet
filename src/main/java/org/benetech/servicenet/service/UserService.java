@@ -332,6 +332,18 @@ public class UserService {
         return userRepository.findOneByLogin(SYSTEM);
     }
 
+    public User getCurrentOrSystemUser() {
+        Optional<User> current = getUserWithAuthorities();
+        if (current.isPresent()) {
+            return current.get();
+        }
+        Optional<User> system = userRepository.findOneByLogin(SYSTEM);
+        if (system.isPresent()) {
+            return system.get();
+        }
+        throw new IllegalStateException("No current or system user found");
+    }
+
     /**
      * @return true if any user is logged, and he has admin role
      */
