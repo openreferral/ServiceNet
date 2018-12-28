@@ -1,5 +1,9 @@
 package org.benetech.servicenet.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -17,6 +21,10 @@ import java.util.UUID;
 /**
  * A SystemAccount.
  */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "system_account")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -36,28 +44,10 @@ public class SystemAccount implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public SystemAccount name(String name) {
         this.name = name;
         return this;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -77,13 +67,5 @@ public class SystemAccount implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "SystemAccount{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            "}";
     }
 }

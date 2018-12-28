@@ -28,4 +28,8 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
     @Query("select conflict from Conflict conflict left join fetch conflict.acceptedThisChanges where conflict.id =:id")
     Optional<Conflict> findOneWithEagerRelationships(@Param("id") UUID id);
 
+    @Query("select conflict from Conflict conflict where conflict.resourceId =:resourceId and conflict.owner.id =:ownerId")
+    List<Conflict> findAllWithResourceIdAndOwnerId(
+        @Param("resourceId") UUID resourceId, @Param("ownerId") UUID ownerId);
+
 }

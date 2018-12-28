@@ -48,4 +48,7 @@ public interface OrganizationService {
      * @param id the id of the entity
      */
     void delete(UUID id);
+
+    List<OrganizationDTO> findAllWithOwnerId(UUID ownerId);
+
 }

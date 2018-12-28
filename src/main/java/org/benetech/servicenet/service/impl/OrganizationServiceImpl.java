@@ -104,4 +104,10 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to delete Organization : {}", id);
         organizationRepository.deleteById(id);
     }
+
+    @Override
+    public List<OrganizationDTO> findAllWithOwnerId(UUID ownerId) {
+        return organizationRepository.findAllWithOwnerId(ownerId).stream().map(organizationMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
 }
