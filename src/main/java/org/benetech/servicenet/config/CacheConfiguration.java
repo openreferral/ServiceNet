@@ -88,6 +88,9 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.OpeningHours.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.RegularSchedule.class.getName() + ".openingHours",
                 jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Conflict.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Conflict.class.getName() + ".acceptedThisChanges",
+                jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

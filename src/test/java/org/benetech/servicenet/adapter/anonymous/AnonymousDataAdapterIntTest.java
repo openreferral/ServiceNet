@@ -1,4 +1,4 @@
-package org.benetech.servicenet.adapter.firstprovider;
+package org.benetech.servicenet.adapter.anonymous;
 
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
@@ -13,6 +13,7 @@ import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.PhysicalAddressService;
 import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.ProgramService;
+import org.benetech.servicenet.service.RegularScheduleService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.dto.AccessibilityForDisabilitiesDTO;
 import org.benetech.servicenet.service.dto.LanguageDTO;
@@ -22,6 +23,7 @@ import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.benetech.servicenet.service.dto.PostalAddressDTO;
 import org.benetech.servicenet.service.dto.ProgramDTO;
+import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.junit.Before;
@@ -40,10 +42,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 @Transactional
-public class FirstProviderDataAdapterIntTest {
+public class AnonymousDataAdapterIntTest {
 
     @Autowired
-    private FirstProviderDataAdapter adapter;
+    private AnonymousDataAdapter adapter;
 
     @Autowired
     private LocationService locationService;
@@ -79,11 +81,14 @@ public class FirstProviderDataAdapterIntTest {
     private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
 
     @Autowired
+    private RegularScheduleService regularScheduleService;
+
+    @Autowired
     private LocationMapper locationMapper;
 
     @Before
     public void persistData() throws IOException {
-        String data = AdapterTestsUtils.readResourceAsString("FirstProviderData.json");
+        String data = AdapterTestsUtils.readResourceAsString("anonymous/AnonymousData.json");
         adapter.importData(new SingleImportData(data, null));
     }
 
@@ -103,6 +108,7 @@ public class FirstProviderDataAdapterIntTest {
         assertEquals(4, languageService.findAll().size());
         assertEquals(14, openingHoursService.findAll().size());
         assertEquals(entriesNumber, accessibilityForDisabilitiesService.findAll().size());
+        assertEquals(2, regularScheduleService.findAll().size());
     }
 
     @Test
@@ -113,22 +119,26 @@ public class FirstProviderDataAdapterIntTest {
         PhoneDTO firstPhone = phoneService.findAll().get(0);
         OrganizationDTO firstOrganization = organizationService.findAll().get(0);
         AccessibilityForDisabilitiesDTO firstAccessibility = accessibilityForDisabilitiesService.findAll().get(0);
+        RegularScheduleDTO firstRegularSchedule = regularScheduleService.findAll().get(0);
 
         assertEquals(firstPostalAddress.getLocationId(), firstLocation.getId());
         assertEquals(firstPhysicalAddress.getLocationId(), firstLocation.getId());
         assertEquals(firstPhone.getLocationId(), firstLocation.getId());
         assertEquals(firstOrganization.getLocationId(), firstLocation.getId());
         assertEquals(firstAccessibility.getLocationId(), firstLocation.getId());
+        assertEquals(firstRegularSchedule.getLocationId(), firstLocation.getId());
     }
 
     @Test
     public void shouldPersistEntitiesWithReferenceToTheService() {
         ServiceDTO firstService = serviceService.findAll().get(0);
         PhoneDTO firstPhone = phoneService.findAll().get(0);
+        RegularScheduleDTO firstRegularSchedule = regularScheduleService.findAll().get(0);
         List<LanguageDTO> langs = languageService.findAll().subList(0, 1);
 
         assertEquals(firstPhone.getSrvcId(), firstService.getId());
         assertEquals(firstPhone.getSrvcId(), firstService.getId());
+        assertEquals(firstRegularSchedule.getSrvcId(), firstService.getId());
         for (LanguageDTO language : langs) {
             assertEquals(language.getSrvcId(), firstService.getId());
         }

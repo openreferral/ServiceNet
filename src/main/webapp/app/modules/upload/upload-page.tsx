@@ -2,16 +2,13 @@ import 'filepond/dist/filepond.min.css';
 import './upload-page.scss';
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Button, Label, Input } from 'reactstrap';
+import { Row, Col, Button, Input } from 'reactstrap';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 
-import { IRootState } from 'app/shared/reducers';
-import { getSession } from 'app/shared/reducers/authentication';
-import { faThList } from '@fortawesome/free-solid-svg-icons/faThList';
+import { getSystemAccounts } from './upload-page.reducer';
 
 export interface IUploadPageProp extends StateProps, DispatchProps {}
 
@@ -19,7 +16,7 @@ export interface IUploadState {
   files: any[];
   pond: any;
   isUploadDisabled: boolean;
-  delimiter: symbol;
+  delimiter: string;
   provider: string;
   isAdmin: boolean;
 }
@@ -34,10 +31,14 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
     files: [],
     pond: null,
     isUploadDisabled: true,
-    delimiter: null,
-    provider: null,
+    delimiter: '',
+    provider: '',
     isAdmin: false
   };
+
+  componentDidMount() {
+    this.props.getSystemAccounts();
+  }
 
   getToken = () => {
     const value = '; ' + document.cookie;
@@ -99,7 +100,7 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   };
 
   render() {
-    const { isAdmin } = this.props;
+    const { isAdmin, systemAccounts } = this.props;
 
     const selectProvider = isAdmin ? (
       <div>
@@ -109,8 +110,11 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
         </p>
         <Input className="col-sm-1" value={this.state.provider} type="select" name="select" onChange={this.providerChange}>
           <option />
-          <option>FirstProvider</option>
-          <option>SecondProvider</option>
+          {systemAccounts.map(systemAccount => (
+            <option value={systemAccount.name} key={systemAccount.id}>
+              {systemAccount.name}
+            </option>
+          ))}
         </Input>
       </div>
     ) : null;
@@ -171,11 +175,12 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   }
 }
 
-const mapStateToProps = ({ isAdmin }: IUploadState) => ({
-  isAdmin
+const mapStateToProps = (storeState, { isAdmin }: IUploadState) => ({
+  isAdmin,
+  systemAccounts: storeState.uploadPage.systemAccounts
 });
 
-const mapDispatchToProps = { getSession };
+const mapDispatchToProps = { getSystemAccounts };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
