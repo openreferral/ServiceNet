@@ -40,7 +40,7 @@ public class HibernatePostUpdateListener implements PostUpdateEventListener {
         for (Integer fieldId : getIdsOfChangedFields(event.getOldState(), event.getState())) {
             metadata.add(extractMetadata(event, fieldId));
         }
-        metadataService.saveForCurrentUser(metadata);
+        metadataService.saveForCurrentOrSystemUser(metadata);
     }
 
     private List<Integer> getIdsOfChangedFields(Object[] oldState, Object[] newState) {

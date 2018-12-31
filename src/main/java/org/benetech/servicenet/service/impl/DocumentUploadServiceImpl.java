@@ -63,12 +63,18 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
         DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
 
-        Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
-            .getSingleDataAdapter(getRealProviderName(providerName));
-        adapter.ifPresent(a -> a.importData(new SingleImportData(parsedDocument, documentUpload)));
-        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
+        return importDataIfNeeded(getRealProviderName(providerName), parsedDocument, documentUpload);
+    }
 
-        return documentUploadMapper.toDto(documentUpload);
+    @Override
+    public DocumentUploadDTO uploadApiData(String json, String providerName)
+        throws IllegalArgumentException {
+
+        String originalDocumentId = mongoDbService.saveOriginalDocument(json.getBytes());
+
+        DocumentUpload documentUpload = saveForSystemUser(new DocumentUpload(originalDocumentId, null));
+
+        return importDataIfNeeded(providerName, json, documentUpload);
     }
 
     @Override
@@ -93,6 +99,18 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     }
 
     @Override
+    public DocumentUpload saveForSystemUser(DocumentUpload documentUpload) {
+        Optional<User> currentUser = userService.getSystemUser();
+        if (currentUser.isPresent()) {
+            documentUpload.setDateUploaded(ZonedDateTime.now(ZoneId.systemDefault()));
+            documentUpload.setUploader(currentUser.get());
+            return documentUploadRepository.save(documentUpload);
+        } else {
+            throw new IllegalStateException("No system user found");
+        }
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<DocumentUploadDTO> findAll() {
         log.debug("Request to get all DocumentUploads");
@@ -113,6 +131,15 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     public void delete(UUID id) {
         log.debug("Request to delete DocumentUpload : {}", id);
         documentUploadRepository.deleteById(id);
+    }
+
+    private DocumentUploadDTO importDataIfNeeded(String providerName, String parsedDocument, DocumentUpload documentUpload) {
+        Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
+            .getSingleDataAdapter(providerName);
+        adapter.ifPresent(a -> a.importData(new SingleImportData(parsedDocument, documentUpload)));
+        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
+
+        return documentUploadMapper.toDto(documentUpload);
     }
 
     private String getRealProviderName(String currentProviderName) {

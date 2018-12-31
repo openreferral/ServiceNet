@@ -1,10 +1,12 @@
 package org.benetech.servicenet.config;
 
+import org.benetech.servicenet.scheduler.AutowiringBeanJobFactory;
 import org.benetech.servicenet.scheduler.BaseJob;
-import org.benetech.servicenet.scheduler.ExampleJob;
+import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -17,14 +19,21 @@ import java.util.stream.Collectors;
 public class QuartzConfig {
 
     @Autowired
-    private ExampleJob exampleJob;
+    private EdenDataUpdateJob edenDataUpdateJob;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
 
+        AutowiringBeanJobFactory jobFactory = new AutowiringBeanJobFactory();
+        jobFactory.setApplicationContext(applicationContext);
+        scheduler.setJobFactory(jobFactory);
+
         List<BaseJob> jobs = new ArrayList<>();
-        jobs.add(exampleJob);
+        jobs.add(edenDataUpdateJob);
 
         scheduler.setTriggers(mapToTriggers(jobs));
         scheduler.setJobDetails(mapToJobDetails(jobs));

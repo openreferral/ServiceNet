@@ -60,6 +60,7 @@
         <lombok.version>1.18.2</lombok.version>
         <apache.commons-text.version>1.6</apache.commons-text.version>
         <quartz.version>2.3.0</quartz.version>
+        <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
         <fuzzywuzzy.version>1.2.0</fuzzywuzzy.version>
 
         <!-- Plugin versions -->
@@ -427,6 +428,11 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>${quartz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${apache.httpcomponents.version}</version>
         </dependency>
         <dependency>
             <groupId>me.xdrop</groupId>
