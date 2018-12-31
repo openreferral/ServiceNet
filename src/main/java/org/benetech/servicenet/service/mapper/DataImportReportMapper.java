@@ -10,14 +10,13 @@ import java.util.UUID;
 /**
  * Mapper for the entity DataImportReport and its DTO DataImportReportDTO.
  */
-@Mapper(componentModel = "spring", uses = {UserMapper.class})
+@Mapper(componentModel = "spring", uses = {DocumentUploadMapper.class})
 public interface DataImportReportMapper extends EntityMapper<DataImportReportDTO, DataImportReport> {
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "user.login", target = "userLogin")
+    @Mapping(source = "documentUpload.id", target = "documentUploadId")
     DataImportReportDTO toDto(DataImportReport dataImportReport);
 
-    @Mapping(source = "userId", target = "user")
+    @Mapping(source = "documentUploadId", target = "documentUpload")
     DataImportReport toEntity(DataImportReportDTO dataImportReportDTO);
 
     default DataImportReport fromId(UUID id) {

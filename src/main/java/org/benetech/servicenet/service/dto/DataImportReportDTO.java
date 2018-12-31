@@ -31,9 +31,7 @@ public class DataImportReportDTO implements Serializable {
     @NotNull
     private ZonedDateTime endDate;
 
-    private UUID userId;
-
-    private String userLogin;
+    private UUID documentUploadId;
 
     public UUID getId() {
         return id;
@@ -91,20 +89,12 @@ public class DataImportReportDTO implements Serializable {
         this.endDate = endDate;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getDocumentUploadId() {
+        return documentUploadId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public String getUserLogin() {
-        return userLogin;
-    }
-
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
+    public void setDocumentUploadId(UUID documentUploadId) {
+        this.documentUploadId = documentUploadId;
     }
 
     @Override
@@ -138,8 +128,7 @@ public class DataImportReportDTO implements Serializable {
             ", numberOfCreatedOrgs=" + getNumberOfCreatedOrgs() +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
-            ", user=" + getUserId() +
-            ", user='" + getUserLogin() + "'" +
+            ", documentUpload=" + getDocumentUploadId() +
             "}";
     }
 }

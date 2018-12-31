@@ -57,7 +57,7 @@ export class DataImportReport extends React.Component<IDataImportReportProps> {
                   <Translate contentKey="serviceNetApp.dataImportReport.endDate">End Date</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="serviceNetApp.dataImportReport.user">User</Translate>
+                  <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
                 </th>
                 <th />
               </tr>
@@ -80,7 +80,13 @@ export class DataImportReport extends React.Component<IDataImportReportProps> {
                   <td>
                     <TextFormat type="date" value={dataImportReport.endDate} format={APP_DATE_FORMAT} />
                   </td>
-                  <td>{dataImportReport.userLogin ? dataImportReport.userLogin : ''}</td>
+                  <td>
+                    {dataImportReport.documentUploadId ? (
+                      <Link to={`document-upload/${dataImportReport.documentUploadId}`}>{dataImportReport.documentUploadId}</Link>
+                    ) : (
+                      ''
+                    )}
+                  </td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${dataImportReport.id}`} color="info" size="sm">

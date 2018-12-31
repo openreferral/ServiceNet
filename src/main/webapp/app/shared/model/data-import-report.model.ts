@@ -8,8 +8,7 @@ export interface IDataImportReport {
   numberOfCreatedOrgs?: number;
   startDate?: Moment;
   endDate?: Moment;
-  userLogin?: string;
-  userId?: number;
+  documentUploadId?: number;
 }
 
 export const defaultValue: Readonly<IDataImportReport> = {};

@@ -48,11 +48,9 @@
             <column name="end_date" type="datetime">
                 <constraints nullable="false" />
             </column>
-
-            <column name="user_id" type="${uuidType}">
-                <constraints nullable="true" />
+            <column name="document_upload_id" type="${uuidType}">
+                <constraints unique="true" nullable="true" uniqueConstraintName="ux_data_import_report_document_upload_id" />
             </column>
-
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         <dropDefaultValue tableName="data_import_report" columnName="start_date" columnDataType="datetime"/>

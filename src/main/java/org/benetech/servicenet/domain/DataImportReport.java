@@ -1,6 +1,5 @@
 package org.benetech.servicenet.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,7 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -59,9 +59,9 @@ public class DataImportReport implements Serializable {
     @Column(name = "end_date", nullable = false)
     private ZonedDateTime endDate;
 
-    @ManyToOne
-    @JsonIgnoreProperties("")
-    private User user;
+    @OneToOne
+    @JoinColumn(unique = true)
+    private DocumentUpload documentUpload;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public UUID getId() {
@@ -150,17 +150,17 @@ public class DataImportReport implements Serializable {
         this.endDate = endDate;
     }
 
-    public User getUser() {
-        return user;
+    public DocumentUpload getDocumentUpload() {
+        return documentUpload;
     }
 
-    public DataImportReport user(User user) {
-        this.user = user;
+    public DataImportReport documentUpload(DocumentUpload documentUpload) {
+        this.documentUpload = documentUpload;
         return this;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setDocumentUpload(DocumentUpload documentUpload) {
+        this.documentUpload = documentUpload;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

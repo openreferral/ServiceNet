@@ -8,8 +8,8 @@ import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
-import { IUser } from 'app/shared/model/user.model';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { IDocumentUpload } from 'app/shared/model/document-upload.model';
+import { getEntities as getDocumentUploads } from 'app/entities/document-upload/document-upload.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './data-import-report.reducer';
 import { IDataImportReport } from 'app/shared/model/data-import-report.model';
 // tslint:disable-next-line:no-unused-variable
@@ -20,14 +20,14 @@ export interface IDataImportReportUpdateProps extends StateProps, DispatchProps,
 
 export interface IDataImportReportUpdateState {
   isNew: boolean;
-  userId: string;
+  documentUploadId: string;
 }
 
 export class DataImportReportUpdate extends React.Component<IDataImportReportUpdateProps, IDataImportReportUpdateState> {
   constructor(props) {
     super(props);
     this.state = {
-      userId: '0',
+      documentUploadId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -45,7 +45,7 @@ export class DataImportReportUpdate extends React.Component<IDataImportReportUpd
       this.props.getEntity(this.props.match.params.id);
     }
 
-    this.props.getUsers();
+    this.props.getDocumentUploads();
   }
 
   saveEntity = (event, errors, values) => {
@@ -72,7 +72,7 @@ export class DataImportReportUpdate extends React.Component<IDataImportReportUpd
   };
 
   render() {
-    const { dataImportReportEntity, users, loading, updating } = this.props;
+    const { dataImportReportEntity, documentUploads, loading, updating } = this.props;
     const { isNew } = this.state;
 
     return (
@@ -189,15 +189,15 @@ export class DataImportReportUpdate extends React.Component<IDataImportReportUpd
                   />
                 </AvGroup>
                 <AvGroup>
-                  <Label for="user.login">
-                    <Translate contentKey="serviceNetApp.dataImportReport.user">User</Translate>
+                  <Label for="documentUpload.id">
+                    <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
                   </Label>
-                  <AvInput id="data-import-report-user" type="select" className="form-control" name="userId">
+                  <AvInput id="data-import-report-documentUpload" type="select" className="form-control" name="documentUploadId">
                     <option value="" key="0" />
-                    {users
-                      ? users.map(otherEntity => (
+                    {documentUploads
+                      ? documentUploads.map(otherEntity => (
                           <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.login}
+                            {otherEntity.id}
                           </option>
                         ))
                       : null}
@@ -226,7 +226,7 @@ export class DataImportReportUpdate extends React.Component<IDataImportReportUpd
 }
 
 const mapStateToProps = (storeState: IRootState) => ({
-  users: storeState.userManagement.users,
+  documentUploads: storeState.documentUpload.entities,
   dataImportReportEntity: storeState.dataImportReport.entity,
   loading: storeState.dataImportReport.loading,
   updating: storeState.dataImportReport.updating,
@@ -234,7 +234,7 @@ const mapStateToProps = (storeState: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getUsers,
+  getDocumentUploads,
   getEntity,
   updateEntity,
   createEntity,

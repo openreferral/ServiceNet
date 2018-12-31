@@ -70,9 +70,9 @@ export class DataImportReportDetail extends React.Component<IDataImportReportDet
               <TextFormat value={dataImportReportEntity.endDate} type="date" format={APP_DATE_FORMAT} />
             </dd>
             <dt>
-              <Translate contentKey="serviceNetApp.dataImportReport.user">User</Translate>
+              <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
             </dt>
-            <dd>{dataImportReportEntity.userLogin ? dataImportReportEntity.userLogin : ''}</dd>
+            <dd>{dataImportReportEntity.documentUploadId ? dataImportReportEntity.documentUploadId : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/data-import-report" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}
