@@ -100,4 +100,17 @@ public class ConflictServiceImpl implements ConflictService {
         log.debug("Request to delete Conflict : {}", id);
         conflictRepository.deleteById(id);
     }
+
+    /**
+     * Get all the Conflict with resourceId and ownerId.
+     *
+     * @param resourceId the id of the resource entity
+     * @param ownerId the id of the owner entity
+     */
+    @Override
+    public List<ConflictDTO> findAllWithResourceIdAndOwnerId(UUID resourceId, UUID ownerId) {
+        log.debug("Request to get all Conflicts with resourceId: {}, and ownerId: {}", resourceId, ownerId);
+        return conflictRepository.findAllWithResourceIdAndOwnerId(resourceId, ownerId).stream().map(conflictMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
 }

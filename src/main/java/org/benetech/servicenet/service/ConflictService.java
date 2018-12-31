@@ -50,4 +50,12 @@ public interface ConflictService {
      * @param id the id of the entity
      */
     void delete(UUID id);
+
+    /**
+     * Get all the Conflict with resourceId and ownerId.
+     *
+     * @param resourceId the id of the resource entity
+     * @param ownerId the id of the owner entity
+     */
+    List<ConflictDTO> findAllWithResourceIdAndOwnerId(UUID resourceId, UUID ownerId);
 }
