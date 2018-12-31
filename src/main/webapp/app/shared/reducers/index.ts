@@ -122,6 +122,10 @@ import uploadPage, {
 import conflict, {
   ConflictState
 } from 'app/entities/conflict/conflict.reducer';
+// prettier-ignore
+import dataImportReport, {
+  DataImportReportState
+} from 'app/entities/data-import-report/data-import-report.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -164,6 +168,7 @@ export interface IRootState {
   readonly openingHours: OpeningHoursState;
   readonly uploadPage: UploadPageState;
   readonly conflict: ConflictState;
+  readonly dataImportReport: DataImportReportState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -208,6 +213,7 @@ const rootReducer = combineReducers<IRootState>({
   openingHours,
   uploadPage,
   conflict,
+  dataImportReport,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

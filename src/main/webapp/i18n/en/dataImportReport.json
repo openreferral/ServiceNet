@@ -1,0 +1,27 @@
+{
+  "serviceNetApp": {
+    "dataImportReport": {
+      "home": {
+        "title": "Data Import Reports",
+        "createLabel": "Create a new Data Import Report",
+        "createOrEditLabel": "Create or edit a Data Import Report"
+      },
+      "created": "A new Data Import Report is created with identifier {{ param }}",
+      "updated": "A Data Import Report is updated with identifier {{ param }}",
+      "deleted": "A Data Import Report is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Data Import Report {{ id }}?"
+      },
+      "detail": {
+        "title": "Data Import Report"
+      },
+      "numberOfUpdatedServices": "Number Of Updated Services",
+      "numberOfCreatedServices": "Number Of Created Services",
+      "numberOfUpdatedOrgs": "Number Of Updated Orgs",
+      "numberOfCreatedOrgs": "Number Of Created Orgs",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "user": "User"
+    }
+  }
+}
