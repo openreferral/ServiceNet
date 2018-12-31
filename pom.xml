@@ -61,6 +61,7 @@
         <apache.commons-text.version>1.6</apache.commons-text.version>
         <quartz.version>2.3.0</quartz.version>
         <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
+        <fuzzywuzzy.version>1.2.0</fuzzywuzzy.version>
 
         <!-- Plugin versions -->
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
@@ -432,6 +433,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${apache.httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.xdrop</groupId>
+            <artifactId>fuzzywuzzy</artifactId>
+            <version>${fuzzywuzzy.version}</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
