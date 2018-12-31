@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,7 +95,7 @@ public class ActivityServiceImpl implements ActivityService {
             String.format("There is no organization for orgId: %s", orgId)));
 
         List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceIdAndOwnerId(resourceId, org.getAccountId());
-        if (conflictDTOS == null || conflictDTOS.isEmpty()) {
+        if (CollectionUtils.isEmpty(conflictDTOS)) {
             return Optional.empty();
         } else {
             return Optional.of(ActivityDTO.builder()
