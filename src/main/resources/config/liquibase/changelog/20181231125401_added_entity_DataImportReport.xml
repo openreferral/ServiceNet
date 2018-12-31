@@ -48,6 +48,9 @@
             <column name="end_date" type="datetime">
                 <constraints nullable="false" />
             </column>
+            <column name="job_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="document_upload_id" type="${uuidType}">
                 <constraints unique="true" nullable="true" uniqueConstraintName="ux_data_import_report_document_upload_id" />
             </column>

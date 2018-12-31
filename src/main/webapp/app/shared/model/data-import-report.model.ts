@@ -8,6 +8,7 @@ export interface IDataImportReport {
   numberOfCreatedOrgs?: number;
   startDate?: Moment;
   endDate?: Moment;
+  jobName?: string;
   documentUploadId?: number;
 }
 

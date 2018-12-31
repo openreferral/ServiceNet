@@ -70,6 +70,12 @@ export class DataImportReportDetail extends React.Component<IDataImportReportDet
               <TextFormat value={dataImportReportEntity.endDate} type="date" format={APP_DATE_FORMAT} />
             </dd>
             <dt>
+              <span id="jobName">
+                <Translate contentKey="serviceNetApp.dataImportReport.jobName">Job Name</Translate>
+              </span>
+            </dt>
+            <dd>{dataImportReportEntity.jobName}</dd>
+            <dt>
               <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
             </dt>
             <dd>{dataImportReportEntity.documentUploadId ? dataImportReportEntity.documentUploadId : ''}</dd>

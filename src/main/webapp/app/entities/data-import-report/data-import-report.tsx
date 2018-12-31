@@ -57,6 +57,9 @@ export class DataImportReport extends React.Component<IDataImportReportProps> {
                   <Translate contentKey="serviceNetApp.dataImportReport.endDate">End Date</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="serviceNetApp.dataImportReport.jobName">Job Name</Translate>
+                </th>
+                <th>
                   <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
                 </th>
                 <th />
@@ -80,6 +83,7 @@ export class DataImportReport extends React.Component<IDataImportReportProps> {
                   <td>
                     <TextFormat type="date" value={dataImportReport.endDate} format={APP_DATE_FORMAT} />
                   </td>
+                  <td>{dataImportReport.jobName}</td>
                   <td>
                     {dataImportReport.documentUploadId ? (
                       <Link to={`document-upload/${dataImportReport.documentUploadId}`}>{dataImportReport.documentUploadId}</Link>

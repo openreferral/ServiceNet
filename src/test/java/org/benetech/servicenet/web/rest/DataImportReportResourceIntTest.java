@@ -68,6 +68,9 @@ public class DataImportReportResourceIntTest {
     private static final ZonedDateTime DEFAULT_END_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_END_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
+    private static final String DEFAULT_JOB_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_JOB_NAME = "BBBBBBBBBB";
+
     @Autowired
     private DataImportReportRepository dataImportReportRepository;
 
@@ -117,7 +120,8 @@ public class DataImportReportResourceIntTest {
             .numberOfUpdatedOrgs(DEFAULT_NUMBER_OF_UPDATED_ORGS)
             .numberOfCreatedOrgs(DEFAULT_NUMBER_OF_CREATED_ORGS)
             .startDate(DEFAULT_START_DATE)
-            .endDate(DEFAULT_END_DATE);
+            .endDate(DEFAULT_END_DATE)
+            .jobName(DEFAULT_JOB_NAME);
         return dataImportReport;
     }
 
@@ -148,6 +152,7 @@ public class DataImportReportResourceIntTest {
         assertThat(testDataImportReport.getNumberOfCreatedOrgs()).isEqualTo(DEFAULT_NUMBER_OF_CREATED_ORGS);
         assertThat(testDataImportReport.getStartDate()).isEqualTo(DEFAULT_START_DATE);
         assertThat(testDataImportReport.getEndDate()).isEqualTo(DEFAULT_END_DATE);
+        assertThat(testDataImportReport.getJobName()).isEqualTo(DEFAULT_JOB_NAME);
     }
 
     @Test
@@ -300,7 +305,8 @@ public class DataImportReportResourceIntTest {
             .andExpect(jsonPath("$.[*].numberOfUpdatedOrgs").value(hasItem(DEFAULT_NUMBER_OF_UPDATED_ORGS)))
             .andExpect(jsonPath("$.[*].numberOfCreatedOrgs").value(hasItem(DEFAULT_NUMBER_OF_CREATED_ORGS)))
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(sameInstant(DEFAULT_START_DATE))))
-            .andExpect(jsonPath("$.[*].endDate").value(hasItem(sameInstant(DEFAULT_END_DATE))));
+            .andExpect(jsonPath("$.[*].endDate").value(hasItem(sameInstant(DEFAULT_END_DATE))))
+            .andExpect(jsonPath("$.[*].jobName").value(hasItem(DEFAULT_JOB_NAME.toString())));
     }
     
     @Test
@@ -319,7 +325,8 @@ public class DataImportReportResourceIntTest {
             .andExpect(jsonPath("$.numberOfUpdatedOrgs").value(DEFAULT_NUMBER_OF_UPDATED_ORGS))
             .andExpect(jsonPath("$.numberOfCreatedOrgs").value(DEFAULT_NUMBER_OF_CREATED_ORGS))
             .andExpect(jsonPath("$.startDate").value(sameInstant(DEFAULT_START_DATE)))
-            .andExpect(jsonPath("$.endDate").value(sameInstant(DEFAULT_END_DATE)));
+            .andExpect(jsonPath("$.endDate").value(sameInstant(DEFAULT_END_DATE)))
+            .andExpect(jsonPath("$.jobName").value(DEFAULT_JOB_NAME.toString()));
     }
 
     @Test
@@ -348,7 +355,8 @@ public class DataImportReportResourceIntTest {
             .numberOfUpdatedOrgs(UPDATED_NUMBER_OF_UPDATED_ORGS)
             .numberOfCreatedOrgs(UPDATED_NUMBER_OF_CREATED_ORGS)
             .startDate(UPDATED_START_DATE)
-            .endDate(UPDATED_END_DATE);
+            .endDate(UPDATED_END_DATE)
+            .jobName(UPDATED_JOB_NAME);
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(updatedDataImportReport);
 
         restDataImportReportMockMvc.perform(put("/api/data-import-reports")
@@ -366,6 +374,7 @@ public class DataImportReportResourceIntTest {
         assertThat(testDataImportReport.getNumberOfCreatedOrgs()).isEqualTo(UPDATED_NUMBER_OF_CREATED_ORGS);
         assertThat(testDataImportReport.getStartDate()).isEqualTo(UPDATED_START_DATE);
         assertThat(testDataImportReport.getEndDate()).isEqualTo(UPDATED_END_DATE);
+        assertThat(testDataImportReport.getJobName()).isEqualTo(UPDATED_JOB_NAME);
     }
 
     @Test

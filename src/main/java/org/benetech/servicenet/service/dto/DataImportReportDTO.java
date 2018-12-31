@@ -31,6 +31,8 @@ public class DataImportReportDTO implements Serializable {
     @NotNull
     private ZonedDateTime endDate;
 
+    private String jobName;
+
     private UUID documentUploadId;
 
     public UUID getId() {
@@ -89,6 +91,14 @@ public class DataImportReportDTO implements Serializable {
         this.endDate = endDate;
     }
 
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
     public UUID getDocumentUploadId() {
         return documentUploadId;
     }
@@ -128,6 +138,7 @@ public class DataImportReportDTO implements Serializable {
             ", numberOfCreatedOrgs=" + getNumberOfCreatedOrgs() +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
+            ", jobName='" + getJobName() + "'" +
             ", documentUpload=" + getDocumentUploadId() +
             "}";
     }

@@ -42,6 +42,10 @@
       "fieldValidateRules": [
         "required"
       ]
+    },
+    {
+      "fieldName": "jobName",
+      "fieldType": "String"
     }
   ],
   "relationships": [

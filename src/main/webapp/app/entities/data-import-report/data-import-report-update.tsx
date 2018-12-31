@@ -189,6 +189,12 @@ export class DataImportReportUpdate extends React.Component<IDataImportReportUpd
                   />
                 </AvGroup>
                 <AvGroup>
+                  <Label id="jobNameLabel" for="jobName">
+                    <Translate contentKey="serviceNetApp.dataImportReport.jobName">Job Name</Translate>
+                  </Label>
+                  <AvField id="data-import-report-jobName" type="text" name="jobName" />
+                </AvGroup>
+                <AvGroup>
                   <Label for="documentUpload.id">
                     <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
                   </Label>

@@ -59,8 +59,10 @@ public class DataImportReport implements Serializable {
     @Column(name = "end_date", nullable = false)
     private ZonedDateTime endDate;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @Column(name = "job_name")
+    private String jobName;
+
+    @OneToOne    @JoinColumn(unique = true)
     private DocumentUpload documentUpload;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -150,6 +152,19 @@ public class DataImportReport implements Serializable {
         this.endDate = endDate;
     }
 
+    public String getJobName() {
+        return jobName;
+    }
+
+    public DataImportReport jobName(String jobName) {
+        this.jobName = jobName;
+        return this;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
     public DocumentUpload getDocumentUpload() {
         return documentUpload;
     }
@@ -194,6 +209,7 @@ public class DataImportReport implements Serializable {
             ", numberOfCreatedOrgs=" + getNumberOfCreatedOrgs() +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
+            ", jobName='" + getJobName() + "'" +
             "}";
     }
 }
