@@ -1,7 +1,7 @@
 package org.benetech.servicenet.adapter.shared.model;
 
 import lombok.Data;
-import org.benetech.servicenet.domain.DocumentUpload;
+import org.benetech.servicenet.domain.DataImportReport;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ public class MultipleImportData extends ImportData {
 
     private List<String> multipleObjectsData;
 
-    public MultipleImportData(List<String> multipleObjectsData, DocumentUpload documentUpload) {
-        super(documentUpload);
+    public MultipleImportData(List<String> multipleObjectsData, DataImportReport report) {
+        super(report);
         this.multipleObjectsData = multipleObjectsData;
     }
 }

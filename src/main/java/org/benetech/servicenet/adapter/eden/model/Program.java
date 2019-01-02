@@ -31,6 +31,6 @@ public class Program extends BaseData {
 
     private Hours hours;
 
-    private Coverage coverage;
+    private Coverage[] coverage;
 }
 

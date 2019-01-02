@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.dto.DataImportReportDTO;
 
 import java.util.List;
@@ -20,12 +21,21 @@ public interface DataImportReportService {
     DataImportReportDTO save(DataImportReportDTO dataImportReportDTO);
 
     /**
+     * Save a dataImportReport.
+     *
+     * @param dataImportReport the entity to save
+     * @return the persisted entity
+     */
+    DataImportReport save(DataImportReport dataImportReport);
+
+    DataImportReport findLatestByJobName(String jobName);
+
+    /**
      * Get all the dataImportReports.
      *
      * @return the list of entities
      */
     List<DataImportReportDTO> findAll();
-
 
     /**
      * Get the "id" dataImportReport.

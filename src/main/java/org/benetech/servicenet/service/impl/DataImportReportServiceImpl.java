@@ -46,8 +46,26 @@ public class DataImportReportServiceImpl implements DataImportReportService {
         log.debug("Request to save DataImportReport : {}", dataImportReportDTO);
 
         DataImportReport dataImportReport = dataImportReportMapper.toEntity(dataImportReportDTO);
-        dataImportReport = dataImportReportRepository.save(dataImportReport);
+        dataImportReport = save(dataImportReport);
         return dataImportReportMapper.toDto(dataImportReport);
+    }
+
+    @Override
+    public DataImportReport findLatestByJobName(String name) {
+        return dataImportReportRepository.findFirstByJobNameOrderByEndDateDesc(name);
+    }
+
+    /**
+     * Save a dataImportReport.
+     *
+     * @param dataImportReport the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public DataImportReport save(DataImportReport dataImportReport) {
+        log.debug("Request to save DataImportReport : {}", dataImportReport);
+
+        return dataImportReportRepository.save(dataImportReport);
     }
 
     /**

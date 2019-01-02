@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,10 +33,11 @@ public interface DocumentUploadService {
      *
      * @param json datato be saved
      * @param providerName name of the provider, to correctly persist the data
+     * @param report report that should contain startDate of when the upload was started
      * @return entity with information about the uploaded file
      * @throws IllegalArgumentException if file type is not supported
      */
-    DocumentUploadDTO uploadApiData(String json, String providerName) throws IllegalArgumentException;
+    DocumentUploadDTO uploadApiData(String json, String providerName, DataImportReport report) throws IllegalArgumentException;
 
     /**
      * Save a documentUpload.

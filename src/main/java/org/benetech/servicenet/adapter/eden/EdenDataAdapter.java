@@ -12,7 +12,7 @@ import org.benetech.servicenet.adapter.eden.model.ProgramAtSite;
 import org.benetech.servicenet.adapter.eden.model.SimpleResponseElement;
 import org.benetech.servicenet.adapter.eden.model.Site;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
-import org.benetech.servicenet.domain.DocumentUpload;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
@@ -43,28 +43,30 @@ public class EdenDataAdapter extends SingleDataAdapter {
     private EntityManager em;
 
     @Override
-    public void importData(SingleImportData data) {
+    public DataImportReport importData(SingleImportData data) {
         Type collectionType = new TypeToken<Collection<SimpleResponseElement>>() { }.getType();
         Collection<SimpleResponseElement> responseElements = new Gson().fromJson(data.getSingleObjectData(), collectionType);
-        gatherMoreDetails(responseElements, data.getDocumentUpload());
+        gatherMoreDetails(responseElements, data.getReport());
+        return data.getReport();
     }
 
-    private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements, DocumentUpload documentUpload) {
+    private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements, DataImportReport report) {
         ComplexResponseElement data = new ComplexResponseElement(responseElements);
         Header[] headers = HttpUtils.getStandardHeaders(edenApiKey);
-        persist(getDataToPersist(data, headers), documentUpload);
+        persist(getDataToPersist(data, headers), report);
     }
 
     //TODO: do not persist some entities if they already exists
-    private void persist(DataToPersist data, DocumentUpload documentUpload) {
+    //TODO: handle updates in reports as well
+    private void persist(DataToPersist data, DataImportReport report) {
         EdenDataMapper mapper = EdenDataMapper.INSTANCE;
 
-        persistSites(data, documentUpload, mapper);
+        persistSites(data, mapper, report);
 
-        persistEntitiesWithoutLocation(data, documentUpload, mapper);
+        persistEntitiesWithoutLocation(data, mapper, report);
     }
 
-    private void persistSites(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper) {
+    private void persistSites(DataToPersist data, EdenDataMapper mapper, DataImportReport report) {
         for (Site site : data.getSites()) {
             Location location = mapper.extractLocation(site.getContactDetails());
             Optional.ofNullable(location)
@@ -78,34 +80,40 @@ public class EdenDataAdapter extends SingleDataAdapter {
                 .ifPresent(x -> em.persist(x.location(location)));
 
             List<Agency> relatedAgencies = DataCollector.findRelatedEntities(data.getAgencies(), site, AGENCY);
-            persistAgencies(data.getPrograms(), documentUpload, mapper, location, relatedAgencies);
+            persistAgencies(data.getPrograms(), mapper, location, relatedAgencies, report);
         }
     }
 
-    private void persistEntitiesWithoutLocation(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper) {
-        persistAgencies(data.getPrograms(), documentUpload, mapper, null, data.getAgencies());
-        persistPrograms(mapper, null, null, data.getPrograms());
+    private void persistEntitiesWithoutLocation(DataToPersist data, EdenDataMapper mapper, DataImportReport report) {
+        persistAgencies(data.getPrograms(), mapper, null, data.getAgencies(), report);
+        persistPrograms(mapper, null, null, data.getPrograms(), report);
     }
 
-    private void persistAgencies(List<Program> programs, DocumentUpload documentUpload, EdenDataMapper mapper,
-                                 Location location, List<Agency> relatedAgencies) {
+    private void persistAgencies(List<Program> programs, EdenDataMapper mapper,
+                                 Location location, List<Agency> relatedAgencies, DataImportReport report) {
         for (Agency agency : relatedAgencies) {
             Organization organization = mapper.extractOrganization(agency).location(location)
-                .sourceDocument(documentUpload);
+                .sourceDocument(report.getDocumentUpload());
             Optional.ofNullable(organization)
-                .ifPresent(x -> em.persist(x));
+                .ifPresent(x -> {
+                    em.persist(x);
+                    report.incrementNumberOfCreatedOrgs();
+                });
 
             List<Program> relatedPrograms = DataCollector.findRelatedEntities(programs, agency, PROGRAM);
-            persistPrograms(mapper, location, organization, relatedPrograms);
+            persistPrograms(mapper, location, organization, relatedPrograms, report);
         }
     }
 
     private void persistPrograms(EdenDataMapper mapper, Location location, Organization organization,
-                                 List<Program> relatedPrograms) {
+                                 List<Program> relatedPrograms, DataImportReport report) {
         for (Program program : relatedPrograms) {
             Service service = mapper.extractService(program).organization(organization);
             Optional.ofNullable(service)
-                .ifPresent(x -> em.persist(x));
+                .ifPresent(x -> {
+                    em.persist(x);
+                    report.incrementNumberOfCreatedServices();
+                });
 
             Optional.ofNullable(mapper.extractPhone(program.getContactDetails()))
                 .ifPresent(x -> em.persist(x.location(location).srvc(service)));

@@ -37,19 +37,19 @@ public class DataImportReport implements Serializable {
 
     @NotNull
     @Column(name = "number_of_updated_services", nullable = false)
-    private Integer numberOfUpdatedServices;
+    private Integer numberOfUpdatedServices = 0;
 
     @NotNull
     @Column(name = "number_of_created_services", nullable = false)
-    private Integer numberOfCreatedServices;
+    private Integer numberOfCreatedServices = 0;
 
     @NotNull
     @Column(name = "number_of_updated_orgs", nullable = false)
-    private Integer numberOfUpdatedOrgs;
+    private Integer numberOfUpdatedOrgs = 0;
 
     @NotNull
     @Column(name = "number_of_created_orgs", nullable = false)
-    private Integer numberOfCreatedOrgs;
+    private Integer numberOfCreatedOrgs = 0;
 
     @NotNull
     @Column(name = "start_date", nullable = false)
@@ -178,6 +178,22 @@ public class DataImportReport implements Serializable {
         this.documentUpload = documentUpload;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    public void incrementNumberOfCreatedOrgs() {
+        numberOfCreatedOrgs++;
+    }
+
+    public void incrementNumberOfUpdatedOrgs() {
+        numberOfUpdatedOrgs++;
+    }
+
+    public void incrementNumberOfCreatedServices() {
+        numberOfCreatedServices++;
+    }
+
+    public void incrementNumberOfUpdatedServices() {
+        numberOfUpdatedServices++;
+    }
 
     @Override
     public boolean equals(Object o) {

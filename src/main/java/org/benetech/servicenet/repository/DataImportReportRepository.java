@@ -14,4 +14,5 @@ import java.util.UUID;
 @Repository
 public interface DataImportReportRepository extends JpaRepository<DataImportReport, UUID> {
 
+    DataImportReport findFirstByJobNameOrderByEndDateDesc(String jobName);
 }

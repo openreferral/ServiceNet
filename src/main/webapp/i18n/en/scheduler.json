@@ -6,6 +6,7 @@
     "nextFireDate": "Next Fire Date",
     "prevFireDate": "Previous Fire Date",
     "trigger": "Fire now",
-    "disable": "Disable"
+    "disable": "Disable",
+    "lastReport": "Last Report"
   }
 }
