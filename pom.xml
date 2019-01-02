@@ -62,6 +62,8 @@
         <quartz.version>2.3.0</quartz.version>
         <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
         <fuzzywuzzy.version>1.2.0</fuzzywuzzy.version>
+        <google-maps.version>0.9.1</google-maps.version>
+        <slf4j-simple.version>1.7.25</slf4j-simple.version>
 
         <!-- Plugin versions -->
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
@@ -412,6 +414,16 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.maps</groupId>
+            <artifactId>google-maps-services</artifactId>
+            <version>${google-maps.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-simple.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
