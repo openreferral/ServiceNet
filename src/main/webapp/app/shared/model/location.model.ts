@@ -9,6 +9,8 @@ export interface ILocation {
   transportation?: string;
   latitude?: number;
   longitude?: number;
+  externalDbId?: string;
+  providerName?: string;
   physicalAddressId?: number;
   postalAddressId?: number;
   regularScheduleId?: number;

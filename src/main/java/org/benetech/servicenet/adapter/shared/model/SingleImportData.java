@@ -8,8 +8,8 @@ public class SingleImportData extends ImportData {
 
     private String singleObjectData;
 
-    public SingleImportData(String singleObjectsData, DocumentUpload documentUpload) {
-        super(documentUpload);
+    public SingleImportData(String singleObjectsData, DocumentUpload documentUpload, String providerName) {
+        super(documentUpload, providerName);
         this.singleObjectData = singleObjectsData;
     }
 }

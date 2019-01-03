@@ -9,4 +9,6 @@ import org.benetech.servicenet.domain.DocumentUpload;
 public class ImportData {
 
     private DocumentUpload documentUpload;
+
+    private String providerName;
 }

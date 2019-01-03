@@ -64,6 +64,18 @@ export class LocationDetail extends React.Component<ILocationDetailProps> {
               </span>
             </dt>
             <dd>{locationEntity.longitude}</dd>
+            <dt>
+              <span id="externalDbId">
+                <Translate contentKey="serviceNetApp.location.externalDbId" />
+              </span>
+            </dt>
+            <dd>{locationEntity.externalDbId}</dd>
+            <dt>
+              <span id="providerName">
+                <Translate contentKey="serviceNetApp.location.providerName" />
+              </span>
+            </dt>
+            <dd>{locationEntity.providerName}</dd>
           </dl>
           <Button tag={Link} to="/entity/location" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

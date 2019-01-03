@@ -21,6 +21,8 @@
       "transportation": "Transportation",
       "latitude": "Latitude",
       "longitude": "Longitude",
+      "externalDbId": "External Database Id",
+      "providerName": "Provider Name",
       "physicalAddress": "Physical Address",
       "postalAddress": "Postal Address",
       "regularSchedule": "Regular Schedule",

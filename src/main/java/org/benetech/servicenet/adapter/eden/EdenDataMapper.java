@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -102,10 +103,10 @@ public interface EdenDataMapper {
             .collect(Collectors.toList());
     }
 
-    default AccessibilityForDisabilities extractAccessibilityForDisabilities(Site site) {
+    default Optional<AccessibilityForDisabilities> extractAccessibilityForDisabilities(Site site) {
         return site.getAccessibility() != null && site.getAccessibility().getDisabled() != null
-            ? mapAccessibility(site.getAccessibility())
-            : null;
+            ? Optional.of(mapAccessibility(site.getAccessibility()))
+            : Optional.empty();
     }
 
     default int getIdByTheWeekday(String weekday) {
@@ -119,18 +120,19 @@ public interface EdenDataMapper {
             .orElse(null);
     }
 
-    default Location extractLocation(Contact contact) {
+    default Location extractLocation(Contact contact, String dbId, String providerName) {
         Location result = new Location().name(extractLocationName(contact));
         result.setLatitude(contact.getLatitude());
         result.setLongitude(contact.getLongitude());
+        result.setExternalDbId(dbId);
+        result.setProviderName(providerName);
         return result;
     }
 
-    default Location extractLocation(ContactDetails[] contactDetails) {
+    default Optional<Location> extractLocation(ContactDetails[] contactDetails, String dbId, String providerName) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHYSICAL_LOCATION))
-            .findFirst().map(entry -> extractLocation(entry.getContact()))
-            .orElse(null);
+            .findFirst().map(entry -> extractLocation(entry.getContact(), dbId, providerName));
     }
 
     private String extractLocationName(Contact contact) {
@@ -148,18 +150,16 @@ public interface EdenDataMapper {
             : null;
     }
 
-    default PhysicalAddress extractPhysicalAddress(ContactDetails[] contactDetails) {
+    default Optional<PhysicalAddress> extractPhysicalAddress(ContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHYSICAL_LOCATION))
-            .findFirst().map(entry -> mapToPhysicalAddress(entry.getContact()))
-            .orElse(null);
+            .findFirst().map(entry -> mapToPhysicalAddress(entry.getContact()));
     }
 
-    default PostalAddress extractPostalAddress(ContactDetails[] contactDetails) {
+    default Optional<PostalAddress> extractPostalAddress(ContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(POSTAL_ADDRESS))
-            .findFirst().map(entry -> mapToPostalAddress(entry.getContact()))
-            .orElse(null);
+            .findFirst().map(entry -> mapToPostalAddress(entry.getContact()));
     }
 
     default String extractEmail(ContactDetails[] contactDetails) {

@@ -1,12 +1,14 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -23,6 +25,7 @@ import java.util.UUID;
 /**
  * A Location.
  */
+@Data
 @Entity
 @Table(name = "location")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -58,11 +61,17 @@ public class Location implements Serializable {
     @Column(name = "longitude")
     private Double longitude;
 
-    @OneToOne(mappedBy = "location")
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
+
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private PhysicalAddress physicalAddress;
 
-    @OneToOne(mappedBy = "location")
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private PostalAddress postalAddress;
 
@@ -78,38 +87,15 @@ public class Location implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Location name(String name) {
         this.name = name;
         return this;
-    }
-
-    public String getAlternateName() {
-        return alternateName;
-    }
-
-    public void setAlternateName(String alternateName) {
-        this.alternateName = alternateName;
     }
 
     public Location alternateName(String alternateName) {
@@ -117,25 +103,9 @@ public class Location implements Serializable {
         return this;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Location description(String description) {
         this.description = description;
         return this;
-    }
-
-    public String getTransportation() {
-        return transportation;
-    }
-
-    public void setTransportation(String transportation) {
-        this.transportation = transportation;
     }
 
     public Location transportation(String transportation) {
@@ -143,25 +113,9 @@ public class Location implements Serializable {
         return this;
     }
 
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
     public Location latitude(Double latitude) {
         this.latitude = latitude;
         return this;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
     }
 
     public Location longitude(Double longitude) {
@@ -169,12 +123,14 @@ public class Location implements Serializable {
         return this;
     }
 
-    public PhysicalAddress getPhysicalAddress() {
-        return physicalAddress;
+    public Location externalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+        return this;
     }
 
-    public void setPhysicalAddress(PhysicalAddress physicalAddress) {
-        this.physicalAddress = physicalAddress;
+    public Location providerName(String providerName) {
+        this.providerName = providerName;
+        return this;
     }
 
     public Location physicalAddress(PhysicalAddress physicalAddress) {
@@ -182,25 +138,9 @@ public class Location implements Serializable {
         return this;
     }
 
-    public PostalAddress getPostalAddress() {
-        return postalAddress;
-    }
-
-    public void setPostalAddress(PostalAddress postalAddress) {
-        this.postalAddress = postalAddress;
-    }
-
     public Location postalAddress(PostalAddress postalAddress) {
         this.postalAddress = postalAddress;
         return this;
-    }
-
-    public RegularSchedule getRegularSchedule() {
-        return regularSchedule;
-    }
-
-    public void setRegularSchedule(RegularSchedule regularSchedule) {
-        this.regularSchedule = regularSchedule;
     }
 
     public Location regularSchedule(RegularSchedule regularSchedule) {
@@ -208,25 +148,9 @@ public class Location implements Serializable {
         return this;
     }
 
-    public HolidaySchedule getHolidaySchedule() {
-        return holidaySchedule;
-    }
-
-    public void setHolidaySchedule(HolidaySchedule holidaySchedule) {
-        this.holidaySchedule = holidaySchedule;
-    }
-
     public Location holidaySchedule(HolidaySchedule holidaySchedule) {
         this.holidaySchedule = holidaySchedule;
         return this;
-    }
-
-    public Set<Language> getLangs() {
-        return langs;
-    }
-
-    public void setLangs(Set<Language> languages) {
-        this.langs = languages;
     }
 
     public Location langs(Set<Language> languages) {
@@ -244,14 +168,6 @@ public class Location implements Serializable {
         this.langs.remove(language);
         language.setLocation(null);
         return this;
-    }
-
-    public Set<AccessibilityForDisabilities> getAccessibilities() {
-        return accessibilities;
-    }
-
-    public void setAccessibilities(Set<AccessibilityForDisabilities> accessibilityForDisabilities) {
-        this.accessibilities = accessibilityForDisabilities;
     }
 
     public Location accessibilities(Set<AccessibilityForDisabilities> accessibilityForDisabilities) {

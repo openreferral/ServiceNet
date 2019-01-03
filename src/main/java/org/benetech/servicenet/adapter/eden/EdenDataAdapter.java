@@ -18,6 +18,7 @@ import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,43 +43,49 @@ public class EdenDataAdapter extends SingleDataAdapter {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private ImportService importService;
+
     @Override
     public void importData(SingleImportData data) {
         Type collectionType = new TypeToken<Collection<SimpleResponseElement>>() { }.getType();
         Collection<SimpleResponseElement> responseElements = new Gson().fromJson(data.getSingleObjectData(), collectionType);
-        gatherMoreDetails(responseElements, data.getDocumentUpload());
+        gatherMoreDetails(responseElements, data.getDocumentUpload(), data.getProviderName());
     }
 
-    private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements, DocumentUpload documentUpload) {
+    private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements, DocumentUpload documentUpload,
+                                   String providerName) {
         ComplexResponseElement data = new ComplexResponseElement(responseElements);
         Header[] headers = HttpUtils.getStandardHeaders(edenApiKey);
-        persist(getDataToPersist(data, headers), documentUpload);
+        persist(getDataToPersist(data, headers), documentUpload, providerName);
     }
 
     //TODO: do not persist some entities if they already exists
-    private void persist(DataToPersist data, DocumentUpload documentUpload) {
+    private void persist(DataToPersist data, DocumentUpload documentUpload, String providerName) {
         EdenDataMapper mapper = EdenDataMapper.INSTANCE;
 
-        persistSites(data, documentUpload, mapper);
+        persistSites(data, documentUpload, mapper, providerName);
 
         persistEntitiesWithoutLocation(data, documentUpload, mapper);
     }
 
-    private void persistSites(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper) {
+    private void persistSites(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper,
+                              String providerName) {
         for (Site site : data.getSites()) {
-            Location location = mapper.extractLocation(site.getContactDetails());
-            Optional.ofNullable(location)
-                .ifPresent(x -> em.persist(x));
+            mapper.extractLocation(site.getContactDetails(), site.getId(), providerName)
+                .ifPresent(extractedLocation -> {
+                Location savedLocation = importService.createOrUpdate(extractedLocation, site.getId(), providerName);
 
-            Optional.ofNullable(mapper.extractPhysicalAddress(site.getContactDetails()))
-                .ifPresent(x -> em.persist(x.location(location)));
-            Optional.ofNullable(mapper.extractPostalAddress(site.getContactDetails()))
-                .ifPresent(x -> em.persist(x.location(location)));
-            Optional.ofNullable(mapper.extractAccessibilityForDisabilities(site))
-                .ifPresent(x -> em.persist(x.location(location)));
+                mapper.extractPhysicalAddress(site.getContactDetails()).ifPresent(
+                    x -> importService.createOrUpdate(x, savedLocation));
+                mapper.extractPostalAddress(site.getContactDetails()).ifPresent(
+                    x -> importService.createOrUpdate(x, savedLocation));
+                mapper.extractAccessibilityForDisabilities(site).ifPresent(
+                    x -> importService.createOrUpdate(x, savedLocation));
 
-            List<Agency> relatedAgencies = DataCollector.findRelatedEntities(data.getAgencies(), site, AGENCY);
-            persistAgencies(data.getPrograms(), documentUpload, mapper, location, relatedAgencies);
+                List<Agency> relatedAgencies = DataCollector.findRelatedEntities(data.getAgencies(), site, AGENCY);
+                persistAgencies(data.getPrograms(), documentUpload, mapper, savedLocation, relatedAgencies);
+            });
         }
     }
 

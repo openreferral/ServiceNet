@@ -136,7 +136,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     private DocumentUploadDTO importDataIfNeeded(String providerName, String parsedDocument, DocumentUpload documentUpload) {
         Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getSingleDataAdapter(providerName);
-        adapter.ifPresent(a -> a.importData(new SingleImportData(parsedDocument, documentUpload)));
+        adapter.ifPresent(a -> a.importData(new SingleImportData(parsedDocument, documentUpload, providerName)));
         //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
 
         return documentUploadMapper.toDto(documentUpload);
