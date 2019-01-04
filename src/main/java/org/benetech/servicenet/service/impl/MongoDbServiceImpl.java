@@ -41,8 +41,8 @@ public class MongoDbServiceImpl implements MongoDbService {
     }
 
     @Override
-    public byte[] findParsedDocumentById(String id) {
-        return (byte[]) findDocumentById(id);
+    public String findParsedDocumentById(String id) {
+        return findDocumentById(id).toString();
     }
 
     private Object findDocumentById(String id) {

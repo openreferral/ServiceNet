@@ -63,7 +63,21 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   };
 
   uploadAll = () => {
-    this.state.pond.processFiles();
+    this.state.pond.processFiles().then(files => {
+      const filesArray = [];
+      files.forEach(file => {
+        filesArray.push(file.serverId);
+      });
+      fetch('/api/map', {
+        method: 'POST',
+        body: JSON.stringify(filesArray),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': this.getToken(),
+          PROVIDER: this.state.provider
+        })
+      });
+    });
   };
 
   isUploadDisabled = () => {
