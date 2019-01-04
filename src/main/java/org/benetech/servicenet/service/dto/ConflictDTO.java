@@ -47,6 +47,9 @@ public class ConflictDTO implements Serializable {
 
     private UUID ownerId;
 
+    private String ownerName;
+
+    @Builder.Default
     private Set<SystemAccountDTO> acceptedThisChanges = new HashSet<>();
 
     public ConflictDTO addAcceptedThisChange(SystemAccountDTO systemAccount) {

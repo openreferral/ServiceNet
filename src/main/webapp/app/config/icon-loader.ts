@@ -31,6 +31,8 @@ import { faCloud } from '@fortawesome/free-solid-svg-icons/faCloud';
 import { faFileUpload } from '@fortawesome/free-solid-svg-icons/faFileUpload';
 import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
 import { faBellSlash } from '@fortawesome/free-solid-svg-icons/faBellSlash';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons/faMapMarkerAlt';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons/faAngleRight';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -68,6 +70,8 @@ export const loadIcons = () => {
     faSearch,
     faFileUpload,
     faPlay,
-    faBellSlash
+    faBellSlash,
+    faMapMarkerAlt,
+    faAngleRight
   );
 };

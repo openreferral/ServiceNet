@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,14 +48,17 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public List<ActivityDTO> getAllOrganizationActivities(UUID systemAccountId) {
         List<ActivityDTO> activities = new ArrayList<>();
-        List<OrganizationDTO> orgs = organizationService.findAllWithOwnerId(systemAccountId);
+        // TODO: search also using accountId when detecting conflicts will be implemented
+        // List<OrganizationDTO> orgs = organizationService.findAllWithOwnerId(systemAccountId);
+        List<OrganizationDTO> orgs = organizationService.findAll();
 
         // TODO: get organization-entities mapping for every organization
         // this mock below will be removed when Organization matching will be available
-        List<UUID> entities = Collections.singletonList(UUID.fromString(EXAMPLE_DATA));
+        List<UUID> entities = Collections.emptyList();
         UUID orgId = null;
-        if (orgs.get(0) != null) {
+        if (!CollectionUtils.isEmpty(orgs) && orgs.get(0) != null) {
             orgId = orgs.get(0).getId();
+            entities = Collections.singletonList(UUID.fromString(EXAMPLE_DATA));
         }
 
         try {
@@ -94,13 +98,17 @@ public class ActivityServiceImpl implements ActivityService {
         OrganizationDTO org = opt.orElseThrow(() -> new ActivityCreationException(
             String.format("There is no organization for orgId: %s", orgId)));
 
-        List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceIdAndOwnerId(resourceId, org.getAccountId());
+        // TODO: search also using accountId when detecting conflicts will be implemented
+        List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceId(resourceId);
         if (CollectionUtils.isEmpty(conflictDTOS)) {
             return Optional.empty();
         } else {
+            Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(resourceId);
+
             return Optional.of(ActivityDTO.builder()
                 .conflicts(conflictDTOS)
                 .organization(org)
+                .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
                 .build());
         }
     }
