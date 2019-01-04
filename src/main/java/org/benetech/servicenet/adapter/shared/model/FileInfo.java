@@ -13,4 +13,5 @@ public class FileInfo {
     private String parsedDocumentId;
     private String uploaderId;
     private String uploaderLogin;
+    private String filename;
 }

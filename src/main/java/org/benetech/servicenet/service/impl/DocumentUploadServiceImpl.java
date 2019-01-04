@@ -107,6 +107,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             parsedDocuments.add(parsedDoc);
 
             DocumentUpload docUpload = documentUploadRepository.findByParsedDocumentId(fileInfo.getParsedDocumentId());
+            docUpload.setFilename(fileInfo.getFilename());
             documentUploads.add(docUpload);
         }
 

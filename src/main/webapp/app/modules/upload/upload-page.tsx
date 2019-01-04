@@ -62,11 +62,16 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
     });
   };
 
+  appendFilenameToJSON = (json, filename) => {
+    const filenamePart = ', "filename" : "' + filename + '"}';
+    return json.replace(/.$/, filenamePart);
+  };
+
   uploadAll = () => {
     this.state.pond.processFiles().then(files => {
       const filesArray = [];
       files.forEach(file => {
-        filesArray.push(file.serverId);
+        filesArray.push(this.appendFilenameToJSON(file.serverId, file.filenameWithoutExtension));
       });
       fetch('/api/map', {
         method: 'POST',
