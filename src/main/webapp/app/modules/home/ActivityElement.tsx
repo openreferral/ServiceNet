@@ -1,16 +1,18 @@
+import './activity-element.scss';
+
 import React from 'react';
-import { Row, Col, Card, CardText, CardBody, CardTitle, CardGroup, Badge } from 'reactstrap';
+import { Row, Col, Card, CardText, CardBody, CardTitle, CardGroup } from 'reactstrap';
 import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 
 const ActivityElement = props => (
-  <Row style={{ marginBottom: '15px' }}>
+  <Row className="activity-row">
     <Col>
       <CardGroup>
-        <Card style={{ marginBottom: '0px' }}>
+        <Card className="activity-card">
           <CardBody>
-            <CardTitle style={{ color: '#66c4ff' }}>
+            <CardTitle className="activity-left-card-title">
               {props.activity.organization.name} <FontAwesomeIcon icon="angle-right" />
             </CardTitle>
             <CardTitle>
@@ -18,10 +20,10 @@ const ActivityElement = props => (
             </CardTitle>
           </CardBody>
         </Card>
-        <Card style={{ backgroundColor: '#f4f4f4' }}>
+        <Card className="activity-right-card">
           <CardBody>
             {props.activity.conflicts.map(conflict => (
-              <CardTitle style={{ color: '#66c4ff' }}>
+              <CardTitle className="activity-right-card-title">
                 {conflict.ownerName} {conflict.acceptedThisChanges.length > 0 && <b>+{conflict.acceptedThisChanges.length}</b>}
                 {conflict.acceptedThisChanges.length > 1 && (
                   <Translate
@@ -46,7 +48,7 @@ const ActivityElement = props => (
                 )}
               </CardTitle>
             ))}
-            <CardText style={{ color: '#6d6c6c', position: 'absolute', bottom: 5 }}>
+            <CardText className="activity-left-card-text-date">
               Last updated <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
             </CardText>
           </CardBody>

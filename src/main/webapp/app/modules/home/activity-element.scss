@@ -1,0 +1,28 @@
+@import '../../app-variables';
+@import '../../bootstrap-variables';
+
+.activity-row {
+  margin-bottom: 15px;
+}
+
+.activity-left-card {
+  margin-bottom: 0px;
+}
+
+.activity-left-card-title {
+  color: $blue-card-text;
+}
+
+.activity-right-card {
+  background-color: $gray-card-bg;
+}
+
+.activity-right-card-title {
+  color: $blue-card-text;
+}
+
+.activity-left-card-text-date {
+  color: $gray-card-timestamp;
+  position: absolute;
+  bottom: 5;
+}
