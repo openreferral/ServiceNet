@@ -45,9 +45,12 @@ public class LocationServiceImpl implements LocationService {
     public LocationDTO save(LocationDTO locationDTO) {
         log.debug("Request to save Location : {}", locationDTO);
 
-        Location location = locationMapper.toEntity(locationDTO);
-        location = locationRepository.save(location);
-        return locationMapper.toDto(location);
+        return locationMapper.toDto(save(locationMapper.toEntity(locationDTO)));
+    }
+
+    @Override
+    public Location save(Location location) {
+        return locationRepository.save(location);
     }
 
     /**
@@ -126,6 +129,11 @@ public class LocationServiceImpl implements LocationService {
             .filter(location -> location.getHolidaySchedule() == null)
             .map(locationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public Optional<Location> findForExternalDb(String externalDbId, String providerName) {
+        return locationRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
     }
 
     /**

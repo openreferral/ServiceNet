@@ -56,6 +56,12 @@ export class Location extends React.Component<ILocationProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.location.longitude">Longitude</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.location.externalDbId" />
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.location.providerName" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -73,6 +79,8 @@ export class Location extends React.Component<ILocationProps> {
                   <td>{location.transportation}</td>
                   <td>{location.latitude}</td>
                   <td>{location.longitude}</td>
+                  <td>{location.externalDbId}</td>
+                  <td>{location.providerName}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${location.id}`} color="info" size="sm">

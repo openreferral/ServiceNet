@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.dto;
 
+import lombok.Data;
+
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -9,6 +11,7 @@ import java.util.UUID;
 /**
  * A DTO for the Location entity.
  */
+@Data
 public class LocationDTO implements Serializable {
 
     private UUID id;
@@ -27,61 +30,9 @@ public class LocationDTO implements Serializable {
 
     private Double longitude;
 
-    public UUID getId() {
-        return id;
-    }
+    private String externalDbId;
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAlternateName() {
-        return alternateName;
-    }
-
-    public void setAlternateName(String alternateName) {
-        this.alternateName = alternateName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getTransportation() {
-        return transportation;
-    }
-
-    public void setTransportation(String transportation) {
-        this.transportation = transportation;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
+    private String providerName;
 
     @Override
     public boolean equals(Object o) {
