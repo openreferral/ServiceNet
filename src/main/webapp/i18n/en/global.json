@@ -34,6 +34,7 @@
         "metadata": "Metadata",
         "openingHours": "Opening Hours",
         "conflict": "Conflict",
+        "activity": "Activity",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

@@ -20,6 +20,7 @@ export interface IConflict {
   createdDate?: Moment;
   resourceId?: any;
   ownerId?: any;
+  ownerName?: string;
   acceptedThisChanges?: ISystemAccount[];
 }
 

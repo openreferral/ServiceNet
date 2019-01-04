@@ -14,6 +14,7 @@ import java.util.UUID;
 public interface ConflictMapper extends EntityMapper<ConflictDTO, Conflict> {
 
     @Mapping(source = "owner.id", target = "ownerId")
+    @Mapping(source = "owner.name", target = "ownerName")
     ConflictDTO toDto(Conflict conflict);
 
     @Mapping(source = "ownerId", target = "owner")
