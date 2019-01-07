@@ -21,6 +21,8 @@ export interface IService {
   licenses?: any;
   type?: string;
   updatedAt?: Moment;
+  externalDbId?: string;
+  providerName?: string;
   organizationName?: string;
   organizationId?: number;
   programName?: string;

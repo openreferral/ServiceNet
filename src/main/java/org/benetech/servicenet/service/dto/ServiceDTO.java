@@ -58,6 +58,10 @@ public class ServiceDTO implements Serializable {
 
     private String programName;
 
+    private String externalDbId;
+
+    private String providerName;
+
     public UUID getId() {
         return id;
     }

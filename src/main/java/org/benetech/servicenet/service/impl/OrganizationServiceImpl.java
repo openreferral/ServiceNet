@@ -80,6 +80,11 @@ public class OrganizationServiceImpl implements OrganizationService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    public Optional<Organization> findForExternalDb(String externalDbId, String providerName) {
+        return organizationRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
     /**
      * Get one organization by id.
      *

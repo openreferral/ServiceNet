@@ -31,6 +31,7 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
     @Mapping(target = "paymentsAccepteds", ignore = true)
     @Mapping(target = "langs", ignore = true)
     @Mapping(target = "taxonomies", ignore = true)
+    @Mapping(target = "phones", ignore = true)
     Service toEntity(ServiceDTO serviceDTO);
 
     default Service fromId(UUID id) {
