@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public interface OrganizationService {
      */
     List<OrganizationDTO> findAllWhereFundingIsNull();
 
+    Optional<Organization> findForExternalDb(String externalDbId, String providerName);
 
     /**
      * Get the "id" organization.

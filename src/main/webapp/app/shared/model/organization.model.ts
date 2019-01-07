@@ -15,6 +15,8 @@ export interface IOrganization {
   legalStatus?: string;
   active?: boolean;
   updatedAt?: Moment;
+  externalDbId?: string;
+  providerName?: string;
   locationName?: string;
   locationId?: number;
   replacedById?: number;

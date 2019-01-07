@@ -2,12 +2,14 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -26,6 +28,7 @@ import java.util.UUID;
 /**
  * A Service.
  */
+@Data
 @Entity
 @Table(name = "service")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -91,6 +94,12 @@ public class Service implements Serializable {
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
+
     @ManyToOne
     @JsonIgnoreProperties("services")
     private Organization organization;
@@ -115,7 +124,7 @@ public class Service implements Serializable {
     @JsonIgnore
     private Funding funding;
 
-    @OneToOne(mappedBy = "srvc")
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
     @JsonIgnore
     private Eligibility eligibility;
 
@@ -139,34 +148,15 @@ public class Service implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceTaxonomy> taxonomies = new HashSet<>();
 
+    @OneToMany(mappedBy = "srvc")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Phone> phones = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Service name(String name) {
         this.name = name;
         return this;
-    }
-
-    public String getAlternateName() {
-        return alternateName;
-    }
-
-    public void setAlternateName(String alternateName) {
-        this.alternateName = alternateName;
     }
 
     public Service alternateName(String alternateName) {
@@ -174,25 +164,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Service description(String description) {
         this.description = description;
         return this;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public Service url(String url) {
@@ -200,25 +174,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public Service email(String email) {
         this.email = email;
         return this;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public Service status(String status) {
@@ -226,25 +184,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public String getInterpretationServices() {
-        return interpretationServices;
-    }
-
-    public void setInterpretationServices(String interpretationServices) {
-        this.interpretationServices = interpretationServices;
-    }
-
     public Service interpretationServices(String interpretationServices) {
         this.interpretationServices = interpretationServices;
         return this;
-    }
-
-    public String getApplicationProcess() {
-        return applicationProcess;
-    }
-
-    public void setApplicationProcess(String applicationProcess) {
-        this.applicationProcess = applicationProcess;
     }
 
     public Service applicationProcess(String applicationProcess) {
@@ -252,25 +194,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public String getWaitTime() {
-        return waitTime;
-    }
-
-    public void setWaitTime(String waitTime) {
-        this.waitTime = waitTime;
-    }
-
     public Service waitTime(String waitTime) {
         this.waitTime = waitTime;
         return this;
-    }
-
-    public String getFees() {
-        return fees;
-    }
-
-    public void setFees(String fees) {
-        this.fees = fees;
     }
 
     public Service fees(String fees) {
@@ -278,25 +204,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public String getAccreditations() {
-        return accreditations;
-    }
-
-    public void setAccreditations(String accreditations) {
-        this.accreditations = accreditations;
-    }
-
     public Service accreditations(String accreditations) {
         this.accreditations = accreditations;
         return this;
-    }
-
-    public String getLicenses() {
-        return licenses;
-    }
-
-    public void setLicenses(String licenses) {
-        this.licenses = licenses;
     }
 
     public Service licenses(String licenses) {
@@ -304,25 +214,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public Service type(String type) {
         this.type = type;
         return this;
-    }
-
-    public ZonedDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public Service updatedAt(ZonedDateTime updatedAt) {
@@ -330,25 +224,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
-
     public Service organization(Organization organization) {
         this.organization = organization;
         return this;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
     }
 
     public Service program(Program program) {
@@ -356,25 +234,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public ServiceAtLocation getLocation() {
-        return location;
-    }
-
-    public void setLocation(ServiceAtLocation serviceAtLocation) {
-        this.location = serviceAtLocation;
-    }
-
     public Service location(ServiceAtLocation serviceAtLocation) {
         this.location = serviceAtLocation;
         return this;
-    }
-
-    public RegularSchedule getRegularSchedule() {
-        return regularSchedule;
-    }
-
-    public void setRegularSchedule(RegularSchedule regularSchedule) {
-        this.regularSchedule = regularSchedule;
     }
 
     public Service regularSchedule(RegularSchedule regularSchedule) {
@@ -382,25 +244,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public HolidaySchedule getHolidaySchedule() {
-        return holidaySchedule;
-    }
-
-    public void setHolidaySchedule(HolidaySchedule holidaySchedule) {
-        this.holidaySchedule = holidaySchedule;
-    }
-
     public Service holidaySchedule(HolidaySchedule holidaySchedule) {
         this.holidaySchedule = holidaySchedule;
         return this;
-    }
-
-    public Funding getFunding() {
-        return funding;
-    }
-
-    public void setFunding(Funding funding) {
-        this.funding = funding;
     }
 
     public Service funding(Funding funding) {
@@ -408,25 +254,9 @@ public class Service implements Serializable {
         return this;
     }
 
-    public Eligibility getEligibility() {
-        return eligibility;
-    }
-
-    public void setEligibility(Eligibility eligibility) {
-        this.eligibility = eligibility;
-    }
-
     public Service eligibility(Eligibility eligibility) {
         this.eligibility = eligibility;
         return this;
-    }
-
-    public Set<ServiceArea> getAreas() {
-        return areas;
-    }
-
-    public void setAreas(Set<ServiceArea> serviceAreas) {
-        this.areas = serviceAreas;
     }
 
     public Service areas(Set<ServiceArea> serviceAreas) {
@@ -446,14 +276,6 @@ public class Service implements Serializable {
         return this;
     }
 
-    public Set<RequiredDocument> getDocs() {
-        return docs;
-    }
-
-    public void setDocs(Set<RequiredDocument> requiredDocuments) {
-        this.docs = requiredDocuments;
-    }
-
     public Service docs(Set<RequiredDocument> requiredDocuments) {
         this.docs = requiredDocuments;
         return this;
@@ -469,14 +291,6 @@ public class Service implements Serializable {
         this.docs.remove(requiredDocument);
         requiredDocument.setSrvc(null);
         return this;
-    }
-
-    public Set<PaymentAccepted> getPaymentsAccepteds() {
-        return paymentsAccepteds;
-    }
-
-    public void setPaymentsAccepteds(Set<PaymentAccepted> paymentAccepteds) {
-        this.paymentsAccepteds = paymentAccepteds;
     }
 
     public Service paymentsAccepteds(Set<PaymentAccepted> paymentAccepteds) {
@@ -496,14 +310,6 @@ public class Service implements Serializable {
         return this;
     }
 
-    public Set<Language> getLangs() {
-        return langs;
-    }
-
-    public void setLangs(Set<Language> languages) {
-        this.langs = languages;
-    }
-
     public Service langs(Set<Language> languages) {
         this.langs = languages;
         return this;
@@ -519,14 +325,6 @@ public class Service implements Serializable {
         this.langs.remove(language);
         language.setSrvc(null);
         return this;
-    }
-
-    public Set<ServiceTaxonomy> getTaxonomies() {
-        return taxonomies;
-    }
-
-    public void setTaxonomies(Set<ServiceTaxonomy> serviceTaxonomies) {
-        this.taxonomies = serviceTaxonomies;
     }
 
     public Service taxonomies(Set<ServiceTaxonomy> serviceTaxonomies) {
@@ -545,6 +343,17 @@ public class Service implements Serializable {
         serviceTaxonomy.setSrvc(null);
         return this;
     }
+
+    public Service externalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+        return this;
+    }
+
+    public Service providerName(String providerName) {
+        this.providerName = providerName;
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

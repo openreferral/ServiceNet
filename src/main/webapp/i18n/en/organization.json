@@ -26,6 +26,8 @@
       "legalStatus": "Legal Status",
       "active": "Active",
       "updatedAt": "Updated At",
+      "externalDbId": "External Database Id",
+      "providerName": "Provider Name",
       "location": "Location",
       "replacedBy": "Replaced By",
       "sourceDocument": "Source Document",

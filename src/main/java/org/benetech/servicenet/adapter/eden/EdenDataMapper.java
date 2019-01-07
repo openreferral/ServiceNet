@@ -27,9 +27,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -64,7 +63,7 @@ public interface EdenDataMapper {
 
     Phone mapContactToPhone(Contact contact);
 
-    default Organization extractOrganization(Agency agency) {
+    default Organization extractOrganization(Agency agency, String dbId, String providerName) {
         Organization result = new Organization();
 
         result.setName(extractName(agency.getNames()));
@@ -72,11 +71,13 @@ public interface EdenDataMapper {
         result.setEmail(extractEmail(agency.getContactDetails()));
         result.setUrl(extractUrl(agency.getContactDetails()));
         result.setActive(agency.getStatus().equals(ACTIVE));
+        result.setExternalDbId(dbId);
+        result.setProviderName(providerName);
 
         return result;
     }
 
-    default Service extractService(Program program) {
+    default Service extractService(Program program, String dbId, String providerName) {
         Service result = new Service();
 
         result.setName(extractName(program.getNames()));
@@ -87,20 +88,22 @@ public interface EdenDataMapper {
         result.setFees(program.getFees());
         result.setApplicationProcess(MapperUtils.joinNotBlank(" ", program.getApplicationProcess(),
             "Required items: " + program.getRequiredDocumentation()));
+        result.setExternalDbId(dbId);
+        result.setProviderName(providerName);
 
         return result;
     }
 
-    default List<OpeningHours> extractOpeningHours(Hours hours) {
+    default Set<OpeningHours> extractOpeningHours(Hours hours) {
         if (hours == null || hours.getDays() == null) {
-            return new ArrayList<>();
+            return new HashSet<>();
         }
         Day[] days = hours.getDays();
         return Arrays.stream(days).map(day -> new OpeningHours()
             .weekday(getIdByTheWeekday(day.getDayOfWeek()))
             .opensAt(day.getOpens())
             .closesAt(day.getCloses()))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     default Optional<AccessibilityForDisabilities> extractAccessibilityForDisabilities(Site site) {
@@ -113,11 +116,11 @@ public interface EdenDataMapper {
         return Weekday.valueOf(weekday.toUpperCase(Locale.ROOT)).getNumber();
     }
 
-    default Phone extractPhone(ContactDetails[] contactDetails) {
+    default Set<Phone> extractPhones(ContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHONE_NUMBER))
-            .findFirst().map(entry -> mapContactToPhone(entry.getContact()))
-            .orElse(null);
+            .map(entry -> mapContactToPhone(entry.getContact()))
+            .collect(Collectors.toSet());
     }
 
     default Location extractLocation(Contact contact, String dbId, String providerName) {
@@ -144,10 +147,10 @@ public interface EdenDataMapper {
         return Arrays.stream(langs).map(lang -> new Language().language(lang)).collect(Collectors.toSet());
     }
 
-    default Eligibility extractEligibility(Program program) {
+    default Optional<Eligibility> extractEligibility(Program program) {
         return StringUtils.isNotBlank(program.getEligibility())
-            ? new Eligibility().eligibility(program.getEligibility())
-            : null;
+            ? Optional.of(new Eligibility().eligibility(program.getEligibility()))
+            : Optional.empty();
     }
 
     default Optional<PhysicalAddress> extractPhysicalAddress(ContactDetails[] contactDetails) {

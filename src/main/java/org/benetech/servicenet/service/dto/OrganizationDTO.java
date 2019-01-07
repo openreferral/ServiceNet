@@ -56,6 +56,10 @@ public class OrganizationDTO implements Serializable {
 
     private String accountName;
 
+    private String externalDbId;
+
+    private String providerName;
+
     public UUID getId() {
         return id;
     }

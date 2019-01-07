@@ -29,6 +29,8 @@
       "licenses": "Licenses",
       "type": "Type",
       "updatedAt": "Updated At",
+      "externalDbId": "External Database Id",
+      "providerName": "Provider Name",
       "organization": "Organization",
       "program": "Program",
       "location": "Location",

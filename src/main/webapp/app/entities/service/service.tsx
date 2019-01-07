@@ -86,6 +86,12 @@ export class Service extends React.Component<IServiceProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.service.program">Program</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.service.externalDbId" />
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.service.providerName" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -110,6 +116,8 @@ export class Service extends React.Component<IServiceProps> {
                   <td>{service.accreditations}</td>
                   <td>{service.licenses}</td>
                   <td>{service.type}</td>
+                  <td>{service.externalDbId}</td>
+                  <td>{service.providerName}</td>
                   <td>
                     <TextFormat type="date" value={service.updatedAt} format={APP_DATE_FORMAT} />
                   </td>

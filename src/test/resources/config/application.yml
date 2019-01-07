@@ -107,7 +107,10 @@ similarity-ratio:
             similar-words-sorted: 0.95
             fuzzy-similarity-threshold: 0.8
             fuzzy-partial-similarity-threshold: 0.9
-        location: 0.9
+        location:
+            base: 0.9
+            in-level-2-distance: 0.8
+            in-level-3-distance: 0.4
         email:
             base: 0.1
             same-domain: 0.01
@@ -121,11 +124,18 @@ similarity-ratio:
             same:month: 0.8
         alternate-name: 0.5
         description: 0.1
+    config:
+        location:
+            level-1-distance: 100
+            level-2-distance: 500
+            level-3-distance: 1000
+    credentials:
+        google-api: default_key
 
 scheduler:
     interval:
         eden-data-update: 604800 #one week
-        eden-api-key: SECRET_KEY
+        eden-api-key: default_key
 
 # ===================================================================
 # Application specific properties
