@@ -70,13 +70,10 @@ export class OrganizationMatch extends React.Component<IOrganizationMatchProps> 
                       {organizationMatch.id}
                     </Button>
                   </td>
-                  <td>{organizationMatch.fieldName}</td>
                   <td>
                     <TextFormat type="date" value={organizationMatch.timestamp} format={APP_DATE_FORMAT} />
                   </td>
                   <td>{organizationMatch.deleted ? 'true' : 'false'}</td>
-                  <td>{organizationMatch.fieldPath}</td>
-                  <td>{organizationMatch.matchedValue}</td>
                   <td>
                     {organizationMatch.organizationRecordName ? (
                       <Link to={`organization/${organizationMatch.organizationRecordId}`}>{organizationMatch.organizationRecordName}</Link>

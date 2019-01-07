@@ -15,11 +15,8 @@
       "detail": {
         "title": "Organization Match"
       },
-      "fieldName": "Field Name",
       "timestamp": "Timestamp",
       "deleted": "Deleted",
-      "fieldPath": "Field Path",
-      "matchedValue": "Matched Value",
       "organizationRecord": "Organization Record",
       "partnerVersion": "Partner Version"
     }
