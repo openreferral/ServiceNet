@@ -143,6 +143,11 @@ public class ServiceServiceImpl implements ServiceService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    public Optional<Service> findForExternalDb(String externalDbId, String providerName) {
+        return serviceRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
     /**
      * Get one service by id.
      *

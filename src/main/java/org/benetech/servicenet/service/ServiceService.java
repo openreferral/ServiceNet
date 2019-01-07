@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 
 import java.util.List;
@@ -61,6 +62,7 @@ public interface ServiceService {
      */
     List<ServiceDTO> findAllWhereEligibilityIsNull();
 
+    Optional<Service> findForExternalDb(String externalDbId, String providerName);
 
     /**
      * Get the "id" service.

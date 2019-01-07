@@ -275,6 +275,18 @@ export class ServiceUpdate extends React.Component<IServiceUpdateProps, IService
                       : null}
                   </AvInput>
                 </AvGroup>
+                <AvGroup>
+                  <Label id="externalDbIdLabel" for="externalDbId">
+                    <Translate contentKey="serviceNetApp.service.externalDbId" />
+                  </Label>
+                  <AvInput id="service-externalDbId" type="textarea" name="externalDbId" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="providerNameLabel" for="providerName">
+                    <Translate contentKey="serviceNetApp.service.providerName" />
+                  </Label>
+                  <AvInput id="service-providerName" type="textarea" name="providerName" />
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/service" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;

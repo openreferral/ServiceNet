@@ -114,6 +114,18 @@ export class OrganizationDetail extends React.Component<IOrganizationDetailProps
               <Translate contentKey="serviceNetApp.organization.account">Account</Translate>
             </dt>
             <dd>{organizationEntity.accountName ? organizationEntity.accountName : ''}</dd>
+            <dt>
+              <span id="externalDbId">
+                <Translate contentKey="serviceNetApp.organizationEntity.externalDbId" />
+              </span>
+            </dt>
+            <dd>{organizationEntity.externalDbId}</dd>
+            <dt>
+              <span id="providerName">
+                <Translate contentKey="serviceNetApp.organizationEntity.providerName" />
+              </span>
+            </dt>
+            <dd>{organizationEntity.providerName}</dd>
           </dl>
           <Button tag={Link} to="/entity/organization" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}
