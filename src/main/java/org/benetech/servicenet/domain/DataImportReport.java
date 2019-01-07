@@ -62,7 +62,8 @@ public class DataImportReport implements Serializable {
     @Column(name = "job_name")
     private String jobName;
 
-    @OneToOne    @JoinColumn(unique = true)
+    @OneToOne
+    @JoinColumn(unique = true)
     private DocumentUpload documentUpload;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

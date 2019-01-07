@@ -10,8 +10,8 @@ public class MultipleImportData extends ImportData {
 
     private List<String> multipleObjectsData;
 
-    public MultipleImportData(List<String> multipleObjectsData, DataImportReport report) {
-        super(report);
+    public MultipleImportData(List<String> multipleObjectsData, DataImportReport report, String providerName) {
+        super(report, providerName);
         this.multipleObjectsData = multipleObjectsData;
     }
 }

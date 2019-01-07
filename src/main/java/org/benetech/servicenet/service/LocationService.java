@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.service.dto.LocationDTO;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface LocationService {
      * @return the persisted entity
      */
     LocationDTO save(LocationDTO locationDTO);
+
+    Location save(Location location);
 
     /**
      * Get all the locations.
@@ -54,6 +57,7 @@ public interface LocationService {
      */
     List<LocationDTO> findAllWhereHolidayScheduleIsNull();
 
+    Optional<Location> findForExternalDb(String externalDbId, String providerName);
 
     /**
      * Get the "id" location.

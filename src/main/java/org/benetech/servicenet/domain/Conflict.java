@@ -90,6 +90,7 @@ public class Conflict implements Serializable {
     private SystemAccount owner;
 
     @ManyToMany
+    @Builder.Default
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "conflict_accepted_this_change",
                joinColumns = @JoinColumn(name = "conflicts_id", referencedColumnName = "id"),

@@ -19,9 +19,8 @@ import static org.mockito.Mockito.when;
 public class OrganizationSimilarityCounterIntTest {
 
     private static final float PRECISION = 0.01f;
-    public static final float BASE_WEIGHT = 1.0f;
+    private static final float BASE_WEIGHT = 1.0f;
     private static float NAME_RATIO = 0.1f;
-    private static float ALTERNATE_NAME_RATIO = 0.2f;
     private static float DESCRIPTION_RATION = 0.3f;
     private static float EMAIL_RATIO = 0.4f;
     private static float LOCATION_RATIO = 0.5f;
@@ -30,9 +29,6 @@ public class OrganizationSimilarityCounterIntTest {
 
     @Mock
     private NameSimilarityCounter nameSimilarityCounter;
-
-    @Mock
-    private AlternateNameSimilarityCounter alternateNameSimilarityCounter;
 
     @Mock
     private DescriptionSimilarityCounter descriptionSimilarityCounter;
@@ -67,7 +63,6 @@ public class OrganizationSimilarityCounterIntTest {
         when(weightProvider.getYearsIncorporatedWeight()).thenReturn(BASE_WEIGHT);
 
         when(nameSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(NAME_RATIO);
-        when(alternateNameSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(ALTERNATE_NAME_RATIO);
         when(descriptionSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(DESCRIPTION_RATION);
         when(emailSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(EMAIL_RATIO);
         when(locationSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(LOCATION_RATIO);
@@ -78,6 +73,6 @@ public class OrganizationSimilarityCounterIntTest {
     @Test
     public void shouldReturnSumOfAllFieldsSimilarityRatio() {
         float result = organizationSimilarityCounter.countSimilarityRatio(new Organization(), new Organization());
-        assertEquals(2.8f, result, PRECISION);
+        assertEquals(2.7f, result, PRECISION);
     }
 }

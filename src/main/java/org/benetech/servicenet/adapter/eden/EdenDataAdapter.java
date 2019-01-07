@@ -11,6 +11,7 @@ import org.benetech.servicenet.adapter.eden.model.Program;
 import org.benetech.servicenet.adapter.eden.model.ProgramAtSite;
 import org.benetech.servicenet.adapter.eden.model.SimpleResponseElement;
 import org.benetech.servicenet.adapter.eden.model.Site;
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
@@ -18,6 +19,7 @@ import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,45 +44,53 @@ public class EdenDataAdapter extends SingleDataAdapter {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private ImportService importService;
+
     @Override
     public DataImportReport importData(SingleImportData data) {
-        Type collectionType = new TypeToken<Collection<SimpleResponseElement>>() { }.getType();
+        Type collectionType = new TypeToken<Collection<SimpleResponseElement>>() {
+        }.getType();
         Collection<SimpleResponseElement> responseElements = new Gson().fromJson(data.getSingleObjectData(), collectionType);
-        gatherMoreDetails(responseElements, data.getReport());
+        gatherMoreDetails(responseElements, data);
         return data.getReport();
     }
 
-    private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements, DataImportReport report) {
+    private void gatherMoreDetails(Collection<SimpleResponseElement> responseElements, ImportData importData) {
         ComplexResponseElement data = new ComplexResponseElement(responseElements);
         Header[] headers = HttpUtils.getStandardHeaders(edenApiKey);
-        persist(getDataToPersist(data, headers), report);
+        persist(getDataToPersist(data, headers), importData);
     }
 
     //TODO: do not persist some entities if they already exists
     //TODO: handle updates in reports as well
-    private void persist(DataToPersist data, DataImportReport report) {
+    private void persist(DataToPersist data, ImportData importData) {
         EdenDataMapper mapper = EdenDataMapper.INSTANCE;
 
-        persistSites(data, mapper, report);
+        persistSites(data, mapper, importData);
 
-        persistEntitiesWithoutLocation(data, mapper, report);
+        persistEntitiesWithoutLocation(data, mapper, importData.getReport());
     }
 
-    private void persistSites(DataToPersist data, EdenDataMapper mapper, DataImportReport report) {
-        for (Site site : data.getSites()) {
-            Location location = mapper.extractLocation(site.getContactDetails());
-            Optional.ofNullable(location)
-                .ifPresent(x -> em.persist(x));
+    private void persistSites(DataToPersist dataToPersist, EdenDataMapper mapper, ImportData importData) {
+        for (Site site : dataToPersist.getSites()) {
+            mapper.extractLocation(site.getContactDetails(), site.getId(), importData.getProviderName())
+                .ifPresent(extractedLocation -> {
+                    Location savedLocation = importService.createOrUpdate(extractedLocation, site.getId(),
+                        importData.getProviderName());
 
-            Optional.ofNullable(mapper.extractPhysicalAddress(site.getContactDetails()))
-                .ifPresent(x -> em.persist(x.location(location)));
-            Optional.ofNullable(mapper.extractPostalAddress(site.getContactDetails()))
-                .ifPresent(x -> em.persist(x.location(location)));
-            Optional.ofNullable(mapper.extractAccessibilityForDisabilities(site))
-                .ifPresent(x -> em.persist(x.location(location)));
+                    mapper.extractPhysicalAddress(site.getContactDetails()).ifPresent(
+                        x -> importService.createOrUpdate(x, savedLocation));
+                    mapper.extractPostalAddress(site.getContactDetails()).ifPresent(
+                        x -> importService.createOrUpdate(x, savedLocation));
+                    mapper.extractAccessibilityForDisabilities(site).ifPresent(
+                        x -> importService.createOrUpdate(x, savedLocation));
 
-            List<Agency> relatedAgencies = DataCollector.findRelatedEntities(data.getAgencies(), site, AGENCY);
-            persistAgencies(data.getPrograms(), mapper, location, relatedAgencies, report);
+                    List<Agency> relatedAgencies = DataCollector.findRelatedEntities(dataToPersist.getAgencies(), site,
+                        AGENCY);
+                    persistAgencies(dataToPersist.getPrograms(), mapper, savedLocation, relatedAgencies,
+                        importData.getReport());
+                });
         }
     }
 

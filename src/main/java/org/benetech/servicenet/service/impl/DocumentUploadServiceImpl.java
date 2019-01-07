@@ -143,14 +143,16 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     private DocumentUploadDTO importDataIfNeeded(String providerName, String parsedDocument, DataImportReport report) {
         Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getSingleDataAdapter(providerName);
-        if (adapter.isPresent()) {
-            report = adapter.get().importData(new SingleImportData(parsedDocument, report));
-        }
-        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
-        report.setEndDate(ZonedDateTime.now());
-        report = dataImportReportService.save(report);
 
-        return documentUploadMapper.toDto(report.getDocumentUpload());
+        DataImportReport reportToSave = adapter
+            .map(a -> a.importData(new SingleImportData(parsedDocument, report, providerName)))
+            .orElse(report);
+
+        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
+        reportToSave.setEndDate(ZonedDateTime.now());
+        reportToSave = dataImportReportService.save(report);
+
+        return documentUploadMapper.toDto(reportToSave.getDocumentUpload());
     }
 
     private String getRealProviderName(String currentProviderName) {

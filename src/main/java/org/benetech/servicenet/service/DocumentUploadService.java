@@ -37,7 +37,8 @@ public interface DocumentUploadService {
      * @return entity with information about the uploaded file
      * @throws IllegalArgumentException if file type is not supported
      */
-    DocumentUploadDTO uploadApiData(String json, String providerName, DataImportReport report) throws IllegalArgumentException;
+    DocumentUploadDTO uploadApiData(String json, String providerName, DataImportReport report)
+        throws IllegalArgumentException;
 
     /**
      * Save a documentUpload.

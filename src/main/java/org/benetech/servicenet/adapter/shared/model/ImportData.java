@@ -9,4 +9,6 @@ import org.benetech.servicenet.domain.DataImportReport;
 public class ImportData {
 
     private DataImportReport report;
+
+    private String providerName;
 }

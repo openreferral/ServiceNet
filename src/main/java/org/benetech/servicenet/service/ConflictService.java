@@ -5,6 +5,7 @@ import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,4 +51,27 @@ public interface ConflictService {
      * @param id the id of the entity
      */
     void delete(UUID id);
+
+    /**
+     * Get all the Conflict with resourceId and ownerId.
+     *
+     * @param resourceId the id of the resource entity
+     * @param ownerId the id of the owner entity
+     */
+    List<ConflictDTO> findAllWithResourceIdAndOwnerId(UUID resourceId, UUID ownerId);
+
+    /**
+     * Get all the Conflict with resourceId.
+     *
+     * @param resourceId the id of the resource entity
+     */
+    List<ConflictDTO> findAllWithResourceId(UUID resourceId);
+
+    /**
+     * Get max offeredValueDate of Conflict with resourceId.
+     *
+     * @param resourceId the id of the resource entity
+     */
+    Optional<ZonedDateTime> findMostRecentOfferedValueDate(UUID resourceId);
+
 }

@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.anonymous;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LanguageService;
@@ -89,7 +90,7 @@ public class AnonymousDataAdapterIntTest {
     @Before
     public void persistData() throws IOException {
         String data = AdapterTestsUtils.readResourceAsString("anonymous/AnonymousData.json");
-        adapter.importData(new SingleImportData(data, null));
+        adapter.importData(new SingleImportData(data, new DataImportReport(), null));
     }
 
     @Test

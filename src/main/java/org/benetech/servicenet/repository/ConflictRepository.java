@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,4 +29,13 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
     @Query("select conflict from Conflict conflict left join fetch conflict.acceptedThisChanges where conflict.id =:id")
     Optional<Conflict> findOneWithEagerRelationships(@Param("id") UUID id);
 
+    @Query("select conflict from Conflict conflict where conflict.resourceId =:resourceId and conflict.owner.id =:ownerId")
+    List<Conflict> findAllWithResourceIdAndOwnerId(
+        @Param("resourceId") UUID resourceId, @Param("ownerId") UUID ownerId);
+
+    @Query("select conflict from Conflict conflict where conflict.resourceId =:resourceId")
+    List<Conflict> findAllWithResourceId(@Param("resourceId") UUID resourceId);
+
+    @Query("select max(conflict.offeredValueDate) from Conflict conflict where conflict.resourceId =:resourceId")
+    Optional<ZonedDateTime> findMostRecentOfferedValueDate(@Param("resourceId") UUID resourceId);
 }

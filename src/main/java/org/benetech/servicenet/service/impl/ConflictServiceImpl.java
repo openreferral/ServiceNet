@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -99,5 +100,41 @@ public class ConflictServiceImpl implements ConflictService {
     public void delete(UUID id) {
         log.debug("Request to delete Conflict : {}", id);
         conflictRepository.deleteById(id);
+    }
+
+    /**
+     * Get all the Conflict with resourceId and ownerId.
+     *
+     * @param resourceId the id of the resource entity
+     * @param ownerId the id of the owner entity
+     */
+    @Override
+    public List<ConflictDTO> findAllWithResourceIdAndOwnerId(UUID resourceId, UUID ownerId) {
+        log.debug("Request to get all Conflicts with resourceId: {}, and ownerId: {}", resourceId, ownerId);
+        return conflictRepository.findAllWithResourceIdAndOwnerId(resourceId, ownerId).stream().map(conflictMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Get all the Conflict with resourceId.
+     *
+     * @param resourceId the id of the resource entity
+     */
+    @Override
+    public List<ConflictDTO> findAllWithResourceId(UUID resourceId) {
+        log.debug("Request to get all Conflicts with resourceId: {}.", resourceId);
+        return conflictRepository.findAllWithResourceId(resourceId).stream().map(conflictMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Get max offeredValueDate of Conflict with resourceId.
+     *
+     * @param resourceId the id of the resource entity
+     */
+    @Override
+    public Optional<ZonedDateTime> findMostRecentOfferedValueDate(UUID resourceId) {
+        log.debug("Request to get conflict's  most recent offeredValueDate with conflict's resourceId: {}.", resourceId);
+        return conflictRepository.findMostRecentOfferedValueDate(resourceId);
     }
 }

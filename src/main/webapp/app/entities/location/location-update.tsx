@@ -163,6 +163,18 @@ export class LocationUpdate extends React.Component<ILocationUpdateProps, ILocat
                   </Label>
                   <AvField id="location-longitude" type="string" className="form-control" name="longitude" />
                 </AvGroup>
+                <AvGroup>
+                  <Label id="externalDbIdLabel" for="externalDbId">
+                    <Translate contentKey="serviceNetApp.location.externalDbId" />
+                  </Label>
+                  <AvInput id="location-externalDbId" type="textarea" name="externalDbId" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="providerNameLabel" for="providerName">
+                    <Translate contentKey="serviceNetApp.location.providerName" />
+                  </Label>
+                  <AvInput id="location-providerName" type="textarea" name="providerName" />
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/location" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
