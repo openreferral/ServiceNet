@@ -253,10 +253,10 @@ public class ImportServiceImplIntTest {
     public void shouldCreateOrganization() {
         Organization organization = generateNewOrganization();
 
-        int dbSize = organizationService.findAll().size();
+        int dbSize = organizationService.findAllDTOs().size();
         importService.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        assertEquals(dbSize + 1, organizationService.findAll().size());
+        assertEquals(dbSize + 1, organizationService.findAllDTOs().size());
     }
 
     @Test
@@ -265,10 +265,10 @@ public class ImportServiceImplIntTest {
         Organization newOrganization = generateNewOrganization();
         generateExistingOrganization();
 
-        int dbSize = organizationService.findAll().size();
+        int dbSize = organizationService.findAllDTOs().size();
         Organization updated = importService.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        assertEquals(dbSize, organizationService.findAll().size());
+        assertEquals(dbSize, organizationService.findAllDTOs().size());
         assertEquals(NEW_STRING, updated.getName());
         assertEquals(NEW_BOOLEAN, updated.getActive());
     }

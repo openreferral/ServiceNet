@@ -101,7 +101,7 @@ public class AnonymousDataAdapterIntTest {
         assertEquals(entriesNumber, physicalAddressService.findAll().size());
         assertEquals(entriesNumber, postalAddressService.findAll().size());
 
-        assertEquals(entriesNumber, organizationService.findAll().size());
+        assertEquals(entriesNumber, organizationService.findAllDTOs().size());
         assertEquals(entriesNumber, eligibilityService.findAll().size());
         assertEquals(entriesNumber, serviceService.findAll().size());
         assertEquals(6, programService.findAll().size());
@@ -117,7 +117,7 @@ public class AnonymousDataAdapterIntTest {
         PostalAddressDTO firstPostalAddress = postalAddressService.findAll().get(0);
         PhysicalAddressDTO firstPhysicalAddress = physicalAddressService.findAll().get(0);
         PhoneDTO firstPhone = phoneService.findAll().get(0);
-        OrganizationDTO firstOrganization = organizationService.findAll().get(0);
+        OrganizationDTO firstOrganization = organizationService.findAllDTOs().get(0);
         AccessibilityForDisabilitiesDTO firstAccessibility = accessibilityForDisabilitiesService.findAll().get(0);
         RegularScheduleDTO firstRegularSchedule = regularScheduleService.findAll().get(0);
 
@@ -146,7 +146,7 @@ public class AnonymousDataAdapterIntTest {
 
     @Test
     public void shouldPersistEntitiesWithReferenceToTheOrganization() {
-        OrganizationDTO firstOrganization = organizationService.findAll().get(0);
+        OrganizationDTO firstOrganization = organizationService.findAllDTOs().get(0);
         ServiceDTO firstService = serviceService.findAll().get(0);
         List<ProgramDTO> programs = programService.findAll().subList(0, 1);
 

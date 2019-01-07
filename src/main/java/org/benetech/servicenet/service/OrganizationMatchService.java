@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 
 import java.util.List;
@@ -19,13 +21,14 @@ public interface OrganizationMatchService {
      */
     OrganizationMatchDTO save(OrganizationMatchDTO organizationMatchDTO);
 
+    OrganizationMatch save(OrganizationMatch organizationMatch);
+
     /**
      * Get all the organizationMatches.
      *
      * @return the list of entities
      */
     List<OrganizationMatchDTO> findAll();
-
 
     /**
      * Get the "id" organizationMatch.
@@ -41,4 +44,6 @@ public interface OrganizationMatchService {
      * @param id the id of the entity
      */
     void delete(UUID id);
+
+    void createOrUpdateOrganizationMatches(Organization organization);
 }

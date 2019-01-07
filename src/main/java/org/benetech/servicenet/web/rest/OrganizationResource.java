@@ -100,7 +100,7 @@ public class OrganizationResource {
             return organizationService.findAllWhereFundingIsNull();
         }
         log.debug("REST request to get all Organizations");
-        return organizationService.findAll();
+        return organizationService.findAllDTOs();
     }
 
     /**
