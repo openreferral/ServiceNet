@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
@@ -23,9 +24,10 @@ public interface ImportService {
 
     AccessibilityForDisabilities createOrUpdateAccessibility(AccessibilityForDisabilities accessibility, Location location);
 
-    Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName);
+    Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
+                                            DataImportReport report);
 
-    Service createOrUpdateService(Service service, String externalDbId, String providerName);
+    Service createOrUpdateService(Service service, String externalDbId, String providerName, DataImportReport report);
 
     Set<Phone> createOrUpdatePhones(Set<Phone> phones, Service service, Location location);
 

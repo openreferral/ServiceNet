@@ -14,7 +14,6 @@ import org.benetech.servicenet.adapter.eden.model.Site;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
@@ -59,14 +58,12 @@ public class EdenDataAdapter extends SingleDataAdapter {
         persist(getDataToPersist(data, headers), importData);
     }
 
-    //TODO: handle updates in reports as well and normal as well too
     private void persist(DataToPersist data, ImportData importData) {
         EdenDataMapper mapper = EdenDataMapper.INSTANCE;
 
         persistSites(data, mapper, importData);
 
-        persistEntitiesWithoutLocation(data, importData.getReport().getDocumentUpload(), mapper,
-            importData.getProviderName());
+        persistEntitiesWithoutLocation(data, mapper, importData);
     }
 
     private void persistSites(DataToPersist dataToPersist, EdenDataMapper mapper, ImportData importData) {
@@ -84,40 +81,41 @@ public class EdenDataAdapter extends SingleDataAdapter {
                     x -> importService.createOrUpdateAccessibility(x, savedLocation));
 
                 List<Agency> relatedAgencies = DataCollector.findRelatedEntities(dataToPersist.getAgencies(), site, AGENCY);
-                persistAgencies(dataToPersist.getPrograms(), importData.getReport().getDocumentUpload(), mapper,
-                    savedLocation, relatedAgencies, importData.getProviderName());
+                persistAgencies(dataToPersist.getPrograms(), mapper, savedLocation, relatedAgencies, importData);
             });
         }
     }
 
-    private void persistEntitiesWithoutLocation(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper,
-                                                String providerName) {
-        persistAgencies(data.getPrograms(), documentUpload, mapper, null, data.getAgencies(), providerName);
-        persistPrograms(mapper, null, null, data.getPrograms(), providerName);
+    private void persistEntitiesWithoutLocation(DataToPersist data, EdenDataMapper mapper, ImportData importData) {
+        persistAgencies(data.getPrograms(), mapper, null, data.getAgencies(), importData);
+        persistPrograms(mapper, null, null, data.getPrograms(), importData);
     }
 
-    private void persistAgencies(List<Program> programs, DocumentUpload documentUpload, EdenDataMapper mapper,
-                                 Location location, List<Agency> relatedAgencies, String providerName) {
+    private void persistAgencies(List<Program> programs, EdenDataMapper mapper,
+                                 Location location, List<Agency> relatedAgencies, ImportData importData) {
         for (Agency agency : relatedAgencies) {
-            Organization extractedOrganization = mapper.extractOrganization(agency, agency.getId(), providerName)
-                .sourceDocument(documentUpload);
+            Organization extractedOrganization = mapper
+                .extractOrganization(agency, agency.getId(), importData.getProviderName())
+                .sourceDocument(importData.getReport().getDocumentUpload());
 
             Organization savedOrganization = importService
-                .createOrUpdateOrganization(extractedOrganization, agency.getId(), providerName);
+                .createOrUpdateOrganization(extractedOrganization, agency.getId(), importData.getProviderName(),
+                    importData.getReport());
 
             List<Program> relatedPrograms = DataCollector.findRelatedEntities(programs, agency, PROGRAM);
-            persistPrograms(mapper, location, savedOrganization, relatedPrograms, providerName);
+            persistPrograms(mapper, location, savedOrganization, relatedPrograms, importData);
         }
     }
 
     private void persistPrograms(EdenDataMapper mapper, Location location, Organization organization,
-                                 List<Program> relatedPrograms, String providerName) {
+                                 List<Program> relatedPrograms, ImportData importData) {
         for (Program program : relatedPrograms) {
-            Service extractedService = mapper.extractService(program, program.getId(), providerName)
+            Service extractedService = mapper.extractService(program, program.getId(), importData.getProviderName())
                 .organization(organization);
 
             Service savedService = importService
-                .createOrUpdateService(extractedService, program.getId(), providerName);
+                .createOrUpdateService(extractedService, program.getId(), importData.getProviderName(),
+                    importData.getReport());
 
             mapper.extractEligibility(program).ifPresent(
                 x -> importService.createOrUpdateEligibility(x, savedService));
