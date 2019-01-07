@@ -17,7 +17,7 @@ public class WeightProvider {
     @Value("${similarity-ratio.weight.email.base}")
     private float emailWeight;
 
-    @Value("${similarity-ratio.weight.location}")
+    @Value("${similarity-ratio.weight.location.base}")
     private float locationWeight;
 
     @Value("${similarity-ratio.weight.name.base}")

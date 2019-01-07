@@ -122,6 +122,18 @@ export class ServiceDetail extends React.Component<IServiceDetailProps> {
               <Translate contentKey="serviceNetApp.service.program">Program</Translate>
             </dt>
             <dd>{serviceEntity.programName ? serviceEntity.programName : ''}</dd>
+            <dt>
+              <span id="externalDbId">
+                <Translate contentKey="serviceNetApp.serviceEntity.externalDbId" />
+              </span>
+            </dt>
+            <dd>{serviceEntity.externalDbId}</dd>
+            <dt>
+              <span id="providerName">
+                <Translate contentKey="serviceNetApp.serviceEntity.providerName" />
+              </span>
+            </dt>
+            <dd>{serviceEntity.providerName}</dd>
           </dl>
           <Button tag={Link} to="/entity/service" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

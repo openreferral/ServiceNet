@@ -14,9 +14,7 @@ import org.benetech.servicenet.adapter.eden.model.Site;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.util.HttpUtils;
@@ -27,9 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 @Component("EdenDataAdapter")
 public class EdenDataAdapter extends SingleDataAdapter {
@@ -66,7 +62,7 @@ public class EdenDataAdapter extends SingleDataAdapter {
 
         persistSites(data, documentUpload, mapper, providerName);
 
-        persistEntitiesWithoutLocation(data, documentUpload, mapper);
+        persistEntitiesWithoutLocation(data, documentUpload, mapper, providerName);
     }
 
     private void persistSites(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper,
@@ -74,57 +70,56 @@ public class EdenDataAdapter extends SingleDataAdapter {
         for (Site site : data.getSites()) {
             mapper.extractLocation(site.getContactDetails(), site.getId(), providerName)
                 .ifPresent(extractedLocation -> {
-                Location savedLocation = importService.createOrUpdate(extractedLocation, site.getId(), providerName);
+                Location savedLocation = importService.createOrUpdateLocation(extractedLocation, site.getId(), providerName);
 
                 mapper.extractPhysicalAddress(site.getContactDetails()).ifPresent(
-                    x -> importService.createOrUpdate(x, savedLocation));
+                    x -> importService.createOrUpdatePhysicalAddress(x, savedLocation));
                 mapper.extractPostalAddress(site.getContactDetails()).ifPresent(
-                    x -> importService.createOrUpdate(x, savedLocation));
+                    x -> importService.createOrUpdatePostalAddress(x, savedLocation));
                 mapper.extractAccessibilityForDisabilities(site).ifPresent(
-                    x -> importService.createOrUpdate(x, savedLocation));
+                    x -> importService.createOrUpdateAccessibility(x, savedLocation));
 
                 List<Agency> relatedAgencies = DataCollector.findRelatedEntities(data.getAgencies(), site, AGENCY);
-                persistAgencies(data.getPrograms(), documentUpload, mapper, savedLocation, relatedAgencies);
+                persistAgencies(data.getPrograms(), documentUpload, mapper, savedLocation, relatedAgencies, providerName);
             });
         }
     }
 
-    private void persistEntitiesWithoutLocation(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper) {
-        persistAgencies(data.getPrograms(), documentUpload, mapper, null, data.getAgencies());
-        persistPrograms(mapper, null, null, data.getPrograms());
+    private void persistEntitiesWithoutLocation(DataToPersist data, DocumentUpload documentUpload, EdenDataMapper mapper,
+                                                String providerName) {
+        persistAgencies(data.getPrograms(), documentUpload, mapper, null, data.getAgencies(), providerName);
+        persistPrograms(mapper, null, null, data.getPrograms(), providerName);
     }
 
     private void persistAgencies(List<Program> programs, DocumentUpload documentUpload, EdenDataMapper mapper,
-                                 Location location, List<Agency> relatedAgencies) {
+                                 Location location, List<Agency> relatedAgencies, String providerName) {
         for (Agency agency : relatedAgencies) {
-            Organization organization = mapper.extractOrganization(agency).location(location)
+            Organization extractedOrganization = mapper.extractOrganization(agency, agency.getId(), providerName)
                 .sourceDocument(documentUpload);
-            Optional.ofNullable(organization)
-                .ifPresent(x -> em.persist(x));
+
+            Organization savedOrganization = importService
+                .createOrUpdateOrganization(extractedOrganization, agency.getId(), providerName);
 
             List<Program> relatedPrograms = DataCollector.findRelatedEntities(programs, agency, PROGRAM);
-            persistPrograms(mapper, location, organization, relatedPrograms);
+            persistPrograms(mapper, location, savedOrganization, relatedPrograms, providerName);
         }
     }
 
     private void persistPrograms(EdenDataMapper mapper, Location location, Organization organization,
-                                 List<Program> relatedPrograms) {
+                                 List<Program> relatedPrograms, String providerName) {
         for (Program program : relatedPrograms) {
-            Service service = mapper.extractService(program).organization(organization);
-            Optional.ofNullable(service)
-                .ifPresent(x -> em.persist(x));
+            Service extractedService = mapper.extractService(program, program.getId(), providerName)
+                .organization(organization);
 
-            Optional.ofNullable(mapper.extractPhone(program.getContactDetails()))
-                .ifPresent(x -> em.persist(x.location(location).srvc(service)));
-            Optional.ofNullable(mapper.extractEligibility(program))
-                .ifPresent(x -> em.persist(x.srvc(service)));
-            mapper.extractLangs(program)
-                .stream().map(language -> language.srvc(service).location(location))
-                .forEach(p -> em.persist(p));
+            Service savedService = importService
+                .createOrUpdateService(extractedService, program.getId(), providerName);
 
-            List<OpeningHours> openingHours = mapper.extractOpeningHours(program.getHours());
-            openingHours.forEach(o -> em.persist(o));
-            em.persist(new RegularSchedule().openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
+            mapper.extractEligibility(program).ifPresent(
+                x -> importService.createOrUpdateEligibility(x, savedService));
+
+            importService.createOrUpdatePhones(mapper.extractPhones(program.getContactDetails()), savedService, location);
+            importService.createOrUpdateLangs(mapper.extractLangs(program), savedService, location);
+            importService.createOrUpdateOpeningHours(mapper.extractOpeningHours(program.getHours()), savedService, location);
         }
     }
 

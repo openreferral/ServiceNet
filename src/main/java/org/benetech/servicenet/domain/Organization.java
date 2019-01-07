@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -29,6 +30,7 @@ import java.util.UUID;
 /**
  * A Organization.
  */
+@Data
 @Entity
 @Table(name = "organization")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -81,6 +83,12 @@ public class Organization implements Serializable {
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
+
     @OneToOne
     @JoinColumn(unique = true)
     private Location location;
@@ -110,33 +118,10 @@ public class Organization implements Serializable {
     private Set<Service> services = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Organization name(String name) {
         this.name = name;
         return this;
-    }
-
-    public String getAlternateName() {
-        return alternateName;
-    }
-
-    public void setAlternateName(String alternateName) {
-        this.alternateName = alternateName;
     }
 
     public Organization alternateName(String alternateName) {
@@ -144,25 +129,9 @@ public class Organization implements Serializable {
         return this;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Organization description(String description) {
         this.description = description;
         return this;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Organization email(String email) {
@@ -170,25 +139,9 @@ public class Organization implements Serializable {
         return this;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public Organization url(String url) {
         this.url = url;
         return this;
-    }
-
-    public String getTaxStatus() {
-        return taxStatus;
-    }
-
-    public void setTaxStatus(String taxStatus) {
-        this.taxStatus = taxStatus;
     }
 
     public Organization taxStatus(String taxStatus) {
@@ -196,38 +149,14 @@ public class Organization implements Serializable {
         return this;
     }
 
-    public String getTaxId() {
-        return taxId;
-    }
-
-    public void setTaxId(String taxId) {
-        this.taxId = taxId;
-    }
-
     public Organization taxId(String taxId) {
         this.taxId = taxId;
         return this;
     }
 
-    public LocalDate getYearIncorporated() {
-        return yearIncorporated;
-    }
-
-    public void setYearIncorporated(LocalDate yearIncorporated) {
-        this.yearIncorporated = yearIncorporated;
-    }
-
     public Organization yearIncorporated(LocalDate yearIncorporated) {
         this.yearIncorporated = yearIncorporated;
         return this;
-    }
-
-    public String getLegalStatus() {
-        return legalStatus;
-    }
-
-    public void setLegalStatus(String legalStatus) {
-        this.legalStatus = legalStatus;
     }
 
     public Organization legalStatus(String legalStatus) {
@@ -248,25 +177,9 @@ public class Organization implements Serializable {
         this.active = active;
     }
 
-    public ZonedDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public Organization updatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
         return this;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 
     public Organization location(Location location) {
@@ -274,25 +187,9 @@ public class Organization implements Serializable {
         return this;
     }
 
-    public Organization getReplacedBy() {
-        return replacedBy;
-    }
-
-    public void setReplacedBy(Organization organization) {
-        this.replacedBy = organization;
-    }
-
     public Organization replacedBy(Organization organization) {
         this.replacedBy = organization;
         return this;
-    }
-
-    public DocumentUpload getSourceDocument() {
-        return sourceDocument;
-    }
-
-    public void setSourceDocument(DocumentUpload documentUpload) {
-        this.sourceDocument = documentUpload;
     }
 
     public Organization sourceDocument(DocumentUpload documentUpload) {
@@ -300,38 +197,14 @@ public class Organization implements Serializable {
         return this;
     }
 
-    public SystemAccount getAccount() {
-        return account;
-    }
-
-    public void setAccount(SystemAccount systemAccount) {
-        this.account = systemAccount;
-    }
-
     public Organization account(SystemAccount systemAccount) {
         this.account = systemAccount;
         return this;
     }
 
-    public Funding getFunding() {
-        return funding;
-    }
-
-    public void setFunding(Funding funding) {
-        this.funding = funding;
-    }
-
     public Organization funding(Funding funding) {
         this.funding = funding;
         return this;
-    }
-
-    public Set<Program> getPrograms() {
-        return programs;
-    }
-
-    public void setPrograms(Set<Program> programs) {
-        this.programs = programs;
     }
 
     public Organization programs(Set<Program> programs) {
@@ -351,14 +224,6 @@ public class Organization implements Serializable {
         return this;
     }
 
-    public Set<Service> getServices() {
-        return services;
-    }
-
-    public void setServices(Set<Service> services) {
-        this.services = services;
-    }
-
     public Organization services(Set<Service> services) {
         this.services = services;
         return this;
@@ -373,6 +238,16 @@ public class Organization implements Serializable {
     public Organization removeServices(Service service) {
         this.services.remove(service);
         service.setOrganization(null);
+        return this;
+    }
+
+    public Organization externalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+        return this;
+    }
+
+    public Organization providerName(String providerName) {
+        this.providerName = providerName;
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
