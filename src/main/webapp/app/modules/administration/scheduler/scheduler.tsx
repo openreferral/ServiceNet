@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Table, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { APP_TIMESTAMP_FORMAT } from 'app/config/constants';
+import { Link } from 'react-router-dom';
 
 import { getJobs, triggerJob, pauseJob } from './scheduler.reducer';
 
@@ -46,6 +47,9 @@ export class SchedulerAdministration extends React.Component<ISchedulerStateProp
               <th>
                 <Translate contentKey="scheduler.nextFireDate" />
               </th>
+              <th>
+                <Translate contentKey="scheduler.lastReport" />
+              </th>
               <th />
             </tr>
           </thead>
@@ -58,6 +62,7 @@ export class SchedulerAdministration extends React.Component<ISchedulerStateProp
                 <td>
                   {job.state !== 'PAUSED' ? <TextFormat value={job.nextFireDate} type="date" format={APP_TIMESTAMP_FORMAT} /> : 'DISABLED'}
                 </td>
+                <td>{job.lastReportId ? <Link to={`/entity/data-import-report/${job.lastReportId}`}>{job.lastReportId}</Link> : ''}</td>
                 <td>
                   <Button color="success" onClick={this.triggerJob(job)}>
                     <FontAwesomeIcon icon="play" />{' '}

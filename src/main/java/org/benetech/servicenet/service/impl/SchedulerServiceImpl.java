@@ -1,7 +1,9 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
+import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.SchedulerService;
 import org.benetech.servicenet.service.dto.JobDTO;
 import org.quartz.JobKey;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -25,6 +28,9 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Autowired
     private EdenDataUpdateJob edenDataUpdateJob;
+
+    @Autowired
+    private DataImportReportService dataImportReportService;
 
     @Override
     public List<JobDTO> getAllJobsDetails() throws SchedulerException {
@@ -79,8 +85,10 @@ public class SchedulerServiceImpl implements SchedulerService {
     private JobDTO mapToJobDTO(Trigger trigger) {
         try {
             Trigger.TriggerState state = schedulerFactoryBean.getScheduler().getTriggerState(trigger.getKey());
+            DataImportReport report = dataImportReportService.findLatestByJobName(trigger.getJobKey().getName());
+            UUID lastReportId = report != null ? report.getId() : null;
             return new JobDTO(trigger.getJobKey().getName(), trigger.getDescription(),
-                trigger.getNextFireTime(), trigger.getPreviousFireTime(), state.name());
+                trigger.getNextFireTime(), trigger.getPreviousFireTime(), state.name(), lastReportId);
         } catch (SchedulerException e) {
             throw new IllegalStateException("Cannot get details of " + trigger.getJobKey());
         }

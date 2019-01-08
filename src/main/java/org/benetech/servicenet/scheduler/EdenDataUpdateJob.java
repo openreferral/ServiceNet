@@ -3,6 +3,7 @@ package org.benetech.servicenet.scheduler;
 import com.google.gson.Gson;
 import org.apache.http.Header;
 import org.benetech.servicenet.adapter.eden.model.TakeAllRequest;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.util.HttpUtils;
 import org.quartz.JobExecutionContext;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 
 @Component
 public class EdenDataUpdateJob extends BaseJob {
@@ -38,6 +40,7 @@ public class EdenDataUpdateJob extends BaseJob {
     protected void executeInternal(JobExecutionContext context) {
         log.info(NAME + " is being executed");
 
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now()).jobName(NAME);
         Header[] headers = HttpUtils.getStandardHeaders(edenApiKey);
 
         TakeAllRequest takeAllRequest = new TakeAllRequest(getLastJobExecutionDate());
@@ -50,7 +53,7 @@ public class EdenDataUpdateJob extends BaseJob {
             throw new IllegalStateException("Cannot connect with iCarol API");
         }
 
-        documentUploadService.uploadApiData(response, SYSTEM_ACCOUNT);
+        documentUploadService.uploadApiData(response, SYSTEM_ACCOUNT, report);
     }
 
     @Override
