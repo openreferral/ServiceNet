@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.dto.DataImportReportDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -9,6 +10,7 @@ import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +32,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
 public class DataImportReportResource {
 
     private final Logger log = LoggerFactory.getLogger(DataImportReportResource.class);

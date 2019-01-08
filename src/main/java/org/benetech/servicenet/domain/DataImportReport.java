@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain;
 
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -21,6 +22,7 @@ import java.util.UUID;
  * A DataImportReport.
  */
 @Entity
+@Data
 @Table(name = "data_import_report")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DataImportReport implements Serializable {
@@ -67,29 +69,10 @@ public class DataImportReport implements Serializable {
     private DocumentUpload documentUpload;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Integer getNumberOfUpdatedServices() {
-        return numberOfUpdatedServices;
-    }
 
     public DataImportReport numberOfUpdatedServices(Integer numberOfUpdatedServices) {
         this.numberOfUpdatedServices = numberOfUpdatedServices;
         return this;
-    }
-
-    public void setNumberOfUpdatedServices(Integer numberOfUpdatedServices) {
-        this.numberOfUpdatedServices = numberOfUpdatedServices;
-    }
-
-    public Integer getNumberOfCreatedServices() {
-        return numberOfCreatedServices;
     }
 
     public DataImportReport numberOfCreatedServices(Integer numberOfCreatedServices) {
@@ -97,25 +80,9 @@ public class DataImportReport implements Serializable {
         return this;
     }
 
-    public void setNumberOfCreatedServices(Integer numberOfCreatedServices) {
-        this.numberOfCreatedServices = numberOfCreatedServices;
-    }
-
-    public Integer getNumberOfUpdatedOrgs() {
-        return numberOfUpdatedOrgs;
-    }
-
     public DataImportReport numberOfUpdatedOrgs(Integer numberOfUpdatedOrgs) {
         this.numberOfUpdatedOrgs = numberOfUpdatedOrgs;
         return this;
-    }
-
-    public void setNumberOfUpdatedOrgs(Integer numberOfUpdatedOrgs) {
-        this.numberOfUpdatedOrgs = numberOfUpdatedOrgs;
-    }
-
-    public Integer getNumberOfCreatedOrgs() {
-        return numberOfCreatedOrgs;
     }
 
     public DataImportReport numberOfCreatedOrgs(Integer numberOfCreatedOrgs) {
@@ -123,25 +90,9 @@ public class DataImportReport implements Serializable {
         return this;
     }
 
-    public void setNumberOfCreatedOrgs(Integer numberOfCreatedOrgs) {
-        this.numberOfCreatedOrgs = numberOfCreatedOrgs;
-    }
-
-    public ZonedDateTime getStartDate() {
-        return startDate;
-    }
-
     public DataImportReport startDate(ZonedDateTime startDate) {
         this.startDate = startDate;
         return this;
-    }
-
-    public void setStartDate(ZonedDateTime startDate) {
-        this.startDate = startDate;
-    }
-
-    public ZonedDateTime getEndDate() {
-        return endDate;
     }
 
     public DataImportReport endDate(ZonedDateTime endDate) {
@@ -149,36 +100,15 @@ public class DataImportReport implements Serializable {
         return this;
     }
 
-    public void setEndDate(ZonedDateTime endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getJobName() {
-        return jobName;
-    }
-
     public DataImportReport jobName(String jobName) {
         this.jobName = jobName;
         return this;
-    }
-
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
-    }
-
-    public DocumentUpload getDocumentUpload() {
-        return documentUpload;
     }
 
     public DataImportReport documentUpload(DocumentUpload documentUpload) {
         this.documentUpload = documentUpload;
         return this;
     }
-
-    public void setDocumentUpload(DocumentUpload documentUpload) {
-        this.documentUpload = documentUpload;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     public void incrementNumberOfCreatedOrgs() {
         numberOfCreatedOrgs++;
@@ -214,19 +144,5 @@ public class DataImportReport implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "DataImportReport{" +
-            "id=" + getId() +
-            ", numberOfUpdatedServices=" + getNumberOfUpdatedServices() +
-            ", numberOfCreatedServices=" + getNumberOfCreatedServices() +
-            ", numberOfUpdatedOrgs=" + getNumberOfUpdatedOrgs() +
-            ", numberOfCreatedOrgs=" + getNumberOfCreatedOrgs() +
-            ", startDate='" + getStartDate() + "'" +
-            ", endDate='" + getEndDate() + "'" +
-            ", jobName='" + getJobName() + "'" +
-            "}";
     }
 }
