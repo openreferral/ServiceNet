@@ -23,7 +23,7 @@
             <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="document" type="varchar(255)">
+            <column name="document" type="text">
                 <constraints nullable="false"/>
             </column>
 
