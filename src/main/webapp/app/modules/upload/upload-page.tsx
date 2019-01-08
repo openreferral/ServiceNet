@@ -69,6 +69,7 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   };
 
   uploadAll = () => {
+    toast.info('Processing data. Please wait.');
     this.state.pond.processFiles().then(files => {
       const filesArray = [];
       files.forEach(file => {
