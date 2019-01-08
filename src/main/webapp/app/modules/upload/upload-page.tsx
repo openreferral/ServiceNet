@@ -37,7 +37,9 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   };
 
   componentDidMount() {
-    this.props.getSystemAccounts();
+    if (this.props.isAdmin) {
+      this.props.getSystemAccounts();
+    }
   }
 
   getToken = () => {
