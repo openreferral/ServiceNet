@@ -22,7 +22,8 @@ describe('Header', () => {
     onLocaleChange: localeSpy,
     ribbonEnv: 'dev',
     isInProduction: false,
-    isSwaggerEnabled: true
+    isSwaggerEnabled: true,
+    userLogin: 'user'
   };
   const prodProps = {
     ...devProps,

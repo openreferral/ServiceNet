@@ -108,7 +108,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
             {activityList.map(activity => (
               <ActivityElement activity={activity} />
             ))}
-            {activityList.length == 0 ? (
+            {activityList.length === 0 ? (
               <Row>
                 <Col md="8">
                   <Translate contentKey="serviceNetApp.activity.empty" />
