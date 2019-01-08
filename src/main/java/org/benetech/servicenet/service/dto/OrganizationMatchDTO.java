@@ -51,17 +51,4 @@ public class OrganizationMatchDTO implements Serializable {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
-
-    @Override
-    public String toString() {
-        return "OrganizationMatchDTO{" +
-            "id=" + getId() +
-            ", timestamp='" + getTimestamp() + "'" +
-            ", deleted='" + isDeleted() + "'" +
-            ", organizationRecord=" + getOrganizationRecordId() +
-            ", organizationRecord='" + getOrganizationRecordName() + "'" +
-            ", partnerVersion=" + getPartnerVersionId() +
-            ", partnerVersion='" + getPartnerVersionName() + "'" +
-            "}";
-    }
 }

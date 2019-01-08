@@ -96,13 +96,4 @@ public class OrganizationMatch implements Serializable {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
-
-    @Override
-    public String toString() {
-        return "OrganizationMatch{" +
-            "id=" + getId() +
-            ", timestamp='" + getTimestamp() + "'" +
-            ", deleted='" + isDeleted() + "'" +
-            "}";
-    }
 }
