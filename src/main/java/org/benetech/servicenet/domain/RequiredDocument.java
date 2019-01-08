@@ -42,6 +42,12 @@ public class RequiredDocument implements Serializable {
     @JsonIgnoreProperties("docs")
     private Service srvc;
 
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public UUID getId() {
         return id;

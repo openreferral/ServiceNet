@@ -39,6 +39,12 @@ public class Taxonomy implements Serializable {
     @Column(name = "vocabulary")
     private String vocabulary;
 
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
+
     @ManyToOne
     @JsonIgnoreProperties("")
     private Taxonomy parent;

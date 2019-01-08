@@ -5,6 +5,14 @@
             "fieldName": "description",
             "fieldType": "byte[]",
             "fieldTypeBlobContent": "text"
+        },
+        {
+          "fieldName": "external_db_id",
+          "fieldType": "String"
+        },
+        {
+          "fieldName": "provider_name",
+          "fieldType": "String"
         }
     ],
     "relationships": [

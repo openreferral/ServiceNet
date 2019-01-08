@@ -23,6 +23,10 @@ public class ServiceTaxonomyDTO implements Serializable {
 
     private String taxonomyName;
 
+    private String externalDbId;
+
+    private String providerName;
+
     public UUID getId() {
         return id;
     }

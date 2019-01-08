@@ -123,6 +123,18 @@ export class RequiredDocumentUpdate extends React.Component<IRequiredDocumentUpd
                       : null}
                   </AvInput>
                 </AvGroup>
+                <AvGroup>
+                  <Label id="externalDbIdLabel" for="externalDbId">
+                    <Translate contentKey="serviceNetApp.organization.externalDbId" />
+                  </Label>
+                  <AvInput id="organization-externalDbId" type="textarea" name="externalDbId" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="providerNameLabel" for="providerName">
+                    <Translate contentKey="serviceNetApp.organization.providerName" />
+                  </Label>
+                  <AvInput id="organization-providerName" type="textarea" name="providerName" />
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/required-document" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;

@@ -44,6 +44,12 @@ export class RequiredDocument extends React.Component<IRequiredDocumentProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.requiredDocument.srvc">Srvc</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.requiredDocument.externalDbId" />
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.requiredDocument.providerName" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -56,6 +62,8 @@ export class RequiredDocument extends React.Component<IRequiredDocumentProps> {
                     </Button>
                   </td>
                   <td>{requiredDocument.document}</td>
+                  <td>{requiredDocument.externalDbId}</td>
+                  <td>{requiredDocument.providerName}</td>
                   <td>
                     {requiredDocument.srvcName ? <Link to={`service/${requiredDocument.srvcId}`}>{requiredDocument.srvcName}</Link> : ''}
                   </td>

@@ -23,6 +23,10 @@ public class ServiceAtLocationDTO implements Serializable {
 
     private String locationName;
 
+    private String externalDbId;
+
+    private String providerName;
+
     public UUID getId() {
         return id;
     }

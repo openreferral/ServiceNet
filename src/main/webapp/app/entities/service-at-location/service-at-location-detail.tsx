@@ -43,6 +43,18 @@ export class ServiceAtLocationDetail extends React.Component<IServiceAtLocationD
               <Translate contentKey="serviceNetApp.serviceAtLocation.location">Location</Translate>
             </dt>
             <dd>{serviceAtLocationEntity.locationName ? serviceAtLocationEntity.locationName : ''}</dd>
+            <dt>
+              <span id="externalDbId">
+                <Translate contentKey="serviceNetApp.serviceAtLocationEntity.externalDbId" />
+              </span>
+            </dt>
+            <dd>{serviceAtLocationEntity.externalDbId}</dd>
+            <dt>
+              <span id="providerName">
+                <Translate contentKey="serviceNetApp.serviceAtLocationEntity.providerName" />
+              </span>
+            </dt>
+            <dd>{serviceAtLocationEntity.providerName}</dd>
           </dl>
           <Button tag={Link} to="/entity/service-at-location" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

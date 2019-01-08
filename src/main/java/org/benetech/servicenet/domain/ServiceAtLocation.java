@@ -52,6 +52,12 @@ public class ServiceAtLocation implements Serializable {
     @JsonIgnoreProperties("")
     private Location location;
 
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
+
     @OneToOne(mappedBy = "serviceAtlocation")
     @JsonIgnore
     private RegularSchedule regularSchedule;

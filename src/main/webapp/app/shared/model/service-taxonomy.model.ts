@@ -5,6 +5,8 @@ export interface IServiceTaxonomy {
   srvcId?: number;
   taxonomyName?: string;
   taxonomyId?: number;
+  externalDbId?: string;
+  providerName?: string;
 }
 
 export const defaultValue: Readonly<IServiceTaxonomy> = {};

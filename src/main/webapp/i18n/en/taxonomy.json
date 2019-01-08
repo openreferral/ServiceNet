@@ -17,7 +17,9 @@
       },
       "name": "Name",
       "vocabulary": "Vocabulary",
-      "parent": "Parent"
+      "parent": "Parent",
+      "externalDbId": "External Database Id",
+      "providerName": "Provider Name"
     }
   }
 }
