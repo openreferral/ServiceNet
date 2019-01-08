@@ -118,6 +118,7 @@ public class ImportServiceImpl implements ImportService {
             service.setPhones(serviceFromDb.get().getPhones());
             service.setEligibility(serviceFromDb.get().getEligibility());
             service.setId(serviceFromDb.get().getId());
+            service.setRegularSchedule(serviceFromDb.get().getRegularSchedule());
             em.merge(service);
             report.incrementNumberOfUpdatedServices();
         } else {
