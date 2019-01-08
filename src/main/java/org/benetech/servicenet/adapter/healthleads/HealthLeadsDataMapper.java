@@ -7,6 +7,7 @@ import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,22 +52,27 @@ public interface HealthLeadsDataMapper {
         return Arrays.stream(languages).map(language -> new Language().language(language.trim())).collect(Collectors.toSet());
     }
 
-    default Phone extractPhone(org.benetech.servicenet.adapter.healthleads.model.Phone phone) {
-        if (phone == null) {
-            return null;
+    default Set<Phone> extractPhones(Set<org.benetech.servicenet.adapter.healthleads.model.Phone> phones) {
+        if (phones == null || phones.isEmpty()) {
+            return new HashSet<>();
         }
 
-        Phone phone1 = new Phone();
+        Set<Phone> extractedPhones = new HashSet<>();
+        for (org.benetech.servicenet.adapter.healthleads.model.Phone phone : phones) {
+            Phone phone1 = new Phone();
 
-        phone1.setNumber( phone.getNumber() );
-        if (phone.getExtension() != null && !phone.getExtension().isEmpty()) {
-            phone1.setExtension(Integer.parseInt(phone.getExtension()));
+            phone1.setNumber( phone.getNumber() );
+            if (phone.getExtension() != null && !phone.getExtension().isEmpty()) {
+                phone1.setExtension(Integer.parseInt(phone.getExtension()));
+            }
+            phone1.setType(phone.getType());
+            phone1.setLanguage(phone.getLanguage());
+            phone1.setDescription(phone.getDescription());
+
+            extractedPhones.add(phone1);
         }
-        phone1.setType(phone.getType());
-        phone1.setLanguage(phone.getLanguage());
-        phone1.setDescription(phone.getDescription());
 
-        return phone1;
+        return extractedPhones;
     }
 
 }

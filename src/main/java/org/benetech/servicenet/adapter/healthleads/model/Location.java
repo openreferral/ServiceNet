@@ -18,10 +18,24 @@ public class Location extends BaseData {
 
     private String transportation;
 
-    private double latitude;
+    private String latitude;
 
-    private double longitude;
+    private String longitude;
 
     @SerializedName("x_schedule")
     private String schedule;
+
+    public double getLatitude() {
+        if (latitude == null || latitude.isEmpty()) {
+            return 0;
+        }
+        return Double.valueOf(latitude);
+    }
+
+    public double getLongitude() {
+        if (longitude == null || longitude.isEmpty()) {
+            return 0;
+        }
+        return Double.valueOf(longitude);
+    }
 }
