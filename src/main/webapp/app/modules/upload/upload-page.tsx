@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { Row, Col, Button, Input } from 'reactstrap';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import { toast } from 'react-toastify';
 
 import { getSystemAccounts } from './upload-page.reducer';
 
@@ -81,6 +82,12 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
           'X-XSRF-TOKEN': this.getToken(),
           PROVIDER: this.state.provider
         })
+      }).then(response => {
+        if (response.ok) {
+          toast.success('Data processed succesfully!');
+        } else {
+          toast.error(response.statusText);
+        }
       });
     });
   };
