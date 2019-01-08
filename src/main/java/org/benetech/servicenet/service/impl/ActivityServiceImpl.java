@@ -50,7 +50,7 @@ public class ActivityServiceImpl implements ActivityService {
         List<ActivityDTO> activities = new ArrayList<>();
         // TODO: search also using accountId when detecting conflicts will be implemented
         // List<OrganizationDTO> orgs = organizationService.findAllWithOwnerId(systemAccountId);
-        List<OrganizationDTO> orgs = organizationService.findAll();
+        List<OrganizationDTO> orgs = organizationService.findAllDTOs();
 
         // TODO: get organization-entities mapping for every organization
         // this mock below will be removed when Organization matching will be available

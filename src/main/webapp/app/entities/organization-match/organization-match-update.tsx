@@ -84,8 +84,6 @@ export class OrganizationMatchUpdate extends React.Component<IOrganizationMatchU
     const { organizationMatchEntity, organizations, loading, updating } = this.props;
     const { isNew } = this.state;
 
-    const { matchedValue } = organizationMatchEntity;
-
     return (
       <div>
         <Row className="justify-content-center">
@@ -110,12 +108,6 @@ export class OrganizationMatchUpdate extends React.Component<IOrganizationMatchU
                   </AvGroup>
                 ) : null}
                 <AvGroup>
-                  <Label id="fieldNameLabel" for="fieldName">
-                    <Translate contentKey="serviceNetApp.organizationMatch.fieldName">Field Name</Translate>
-                  </Label>
-                  <AvField id="organization-match-fieldName" type="text" name="fieldName" />
-                </AvGroup>
-                <AvGroup>
                   <Label id="timestampLabel" for="timestamp">
                     <Translate contentKey="serviceNetApp.organizationMatch.timestamp">Timestamp</Translate>
                   </Label>
@@ -132,18 +124,6 @@ export class OrganizationMatchUpdate extends React.Component<IOrganizationMatchU
                     <AvInput id="organization-match-deleted" type="checkbox" className="form-control" name="deleted" />
                     <Translate contentKey="serviceNetApp.organizationMatch.deleted">Deleted</Translate>
                   </Label>
-                </AvGroup>
-                <AvGroup>
-                  <Label id="fieldPathLabel" for="fieldPath">
-                    <Translate contentKey="serviceNetApp.organizationMatch.fieldPath">Field Path</Translate>
-                  </Label>
-                  <AvField id="organization-match-fieldPath" type="text" name="fieldPath" />
-                </AvGroup>
-                <AvGroup>
-                  <Label id="matchedValueLabel" for="matchedValue">
-                    <Translate contentKey="serviceNetApp.organizationMatch.matchedValue">Matched Value</Translate>
-                  </Label>
-                  <AvInput id="organization-match-matchedValue" type="textarea" name="matchedValue" />
                 </AvGroup>
                 <AvGroup>
                   <Label for="organizationRecord.name">

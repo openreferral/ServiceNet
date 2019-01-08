@@ -51,20 +51,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class OrganizationMatchResourceIntTest {
 
-    private static final String DEFAULT_FIELD_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_FIELD_NAME = "BBBBBBBBBB";
-
     private static final ZonedDateTime DEFAULT_TIMESTAMP = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_TIMESTAMP = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final Boolean DEFAULT_DELETED = false;
     private static final Boolean UPDATED_DELETED = true;
-
-    private static final String DEFAULT_FIELD_PATH = "AAAAAAAAAA";
-    private static final String UPDATED_FIELD_PATH = "BBBBBBBBBB";
-
-    private static final String DEFAULT_MATCHED_VALUE = "AAAAAAAAAA";
-    private static final String UPDATED_MATCHED_VALUE = "BBBBBBBBBB";
 
     @Autowired
     private OrganizationMatchRepository organizationMatchRepository;
@@ -98,13 +89,9 @@ public class OrganizationMatchResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static OrganizationMatch createEntity(EntityManager em) {
-        OrganizationMatch organizationMatch = new OrganizationMatch()
-            .fieldName(DEFAULT_FIELD_NAME)
+        return new OrganizationMatch()
             .timestamp(DEFAULT_TIMESTAMP)
-            .deleted(DEFAULT_DELETED)
-            .fieldPath(DEFAULT_FIELD_PATH)
-            .matchedValue(DEFAULT_MATCHED_VALUE);
-        return organizationMatch;
+            .deleted(DEFAULT_DELETED);
     }
 
     @Before
@@ -139,11 +126,8 @@ public class OrganizationMatchResourceIntTest {
         List<OrganizationMatch> organizationMatchList = organizationMatchRepository.findAll();
         assertThat(organizationMatchList).hasSize(databaseSizeBeforeCreate + 1);
         OrganizationMatch testOrganizationMatch = organizationMatchList.get(organizationMatchList.size() - 1);
-        assertThat(testOrganizationMatch.getFieldName()).isEqualTo(DEFAULT_FIELD_NAME);
         assertThat(testOrganizationMatch.getTimestamp()).isEqualTo(DEFAULT_TIMESTAMP);
         assertThat(testOrganizationMatch.isDeleted()).isEqualTo(DEFAULT_DELETED);
-        assertThat(testOrganizationMatch.getFieldPath()).isEqualTo(DEFAULT_FIELD_PATH);
-        assertThat(testOrganizationMatch.getMatchedValue()).isEqualTo(DEFAULT_MATCHED_VALUE);
     }
 
     @Test
@@ -177,11 +161,8 @@ public class OrganizationMatchResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organizationMatch.getId().toString())))
-            .andExpect(jsonPath("$.[*].fieldName").value(hasItem(DEFAULT_FIELD_NAME.toString())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
-            .andExpect(jsonPath("$.[*].deleted").value(hasItem(DEFAULT_DELETED.booleanValue())))
-            .andExpect(jsonPath("$.[*].fieldPath").value(hasItem(DEFAULT_FIELD_PATH.toString())))
-            .andExpect(jsonPath("$.[*].matchedValue").value(hasItem(DEFAULT_MATCHED_VALUE.toString())));
+            .andExpect(jsonPath("$.[*].deleted").value(hasItem(DEFAULT_DELETED)));
     }
 
     @Test
@@ -195,11 +176,8 @@ public class OrganizationMatchResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(organizationMatch.getId().toString()))
-            .andExpect(jsonPath("$.fieldName").value(DEFAULT_FIELD_NAME.toString()))
             .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
-            .andExpect(jsonPath("$.deleted").value(DEFAULT_DELETED.booleanValue()))
-            .andExpect(jsonPath("$.fieldPath").value(DEFAULT_FIELD_PATH.toString()))
-            .andExpect(jsonPath("$.matchedValue").value(DEFAULT_MATCHED_VALUE.toString()));
+            .andExpect(jsonPath("$.deleted").value(DEFAULT_DELETED));
     }
 
     @Test
@@ -223,11 +201,8 @@ public class OrganizationMatchResourceIntTest {
         // Disconnect from session so that the updates on updatedOrganizationMatch are not directly saved in db
         em.detach(updatedOrganizationMatch);
         updatedOrganizationMatch
-            .fieldName(UPDATED_FIELD_NAME)
             .timestamp(UPDATED_TIMESTAMP)
-            .deleted(UPDATED_DELETED)
-            .fieldPath(UPDATED_FIELD_PATH)
-            .matchedValue(UPDATED_MATCHED_VALUE);
+            .deleted(UPDATED_DELETED);
         OrganizationMatchDTO organizationMatchDTO = organizationMatchMapper.toDto(updatedOrganizationMatch);
 
         restOrganizationMatchMockMvc.perform(put("/api/organization-matches")
@@ -239,11 +214,8 @@ public class OrganizationMatchResourceIntTest {
         List<OrganizationMatch> organizationMatchList = organizationMatchRepository.findAll();
         assertThat(organizationMatchList).hasSize(databaseSizeBeforeUpdate);
         OrganizationMatch testOrganizationMatch = organizationMatchList.get(organizationMatchList.size() - 1);
-        assertThat(testOrganizationMatch.getFieldName()).isEqualTo(UPDATED_FIELD_NAME);
         assertThat(testOrganizationMatch.getTimestamp()).isEqualTo(UPDATED_TIMESTAMP);
         assertThat(testOrganizationMatch.isDeleted()).isEqualTo(UPDATED_DELETED);
-        assertThat(testOrganizationMatch.getFieldPath()).isEqualTo(UPDATED_FIELD_PATH);
-        assertThat(testOrganizationMatch.getMatchedValue()).isEqualTo(UPDATED_MATCHED_VALUE);
     }
 
     @Test

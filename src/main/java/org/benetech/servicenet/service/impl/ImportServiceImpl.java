@@ -14,6 +14,7 @@ import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
+import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private ServiceService serviceService;
+
+    @Autowired
+    private OrganizationMatchService organizationMatchService;
 
     @Override
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
@@ -107,6 +111,8 @@ public class ImportServiceImpl implements ImportService {
             em.persist(organization);
             report.incrementNumberOfCreatedOrgs();
         }
+
+        organizationMatchService.createOrUpdateOrganizationMatches(organization);
         return organization;
     }
 

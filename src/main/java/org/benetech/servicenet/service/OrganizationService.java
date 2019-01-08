@@ -25,7 +25,9 @@ public interface OrganizationService {
      *
      * @return the list of entities
      */
-    List<OrganizationDTO> findAll();
+    List<OrganizationDTO> findAllDTOs();
+
+    List<Organization> findAll();
 
     /**
      * Get all the OrganizationDTO where Funding is null.

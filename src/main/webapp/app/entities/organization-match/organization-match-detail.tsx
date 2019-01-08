@@ -30,12 +30,6 @@ export class OrganizationMatchDetail extends React.Component<IOrganizationMatchD
           </h2>
           <dl className="jh-entity-details">
             <dt>
-              <span id="fieldName">
-                <Translate contentKey="serviceNetApp.organizationMatch.fieldName">Field Name</Translate>
-              </span>
-            </dt>
-            <dd>{organizationMatchEntity.fieldName}</dd>
-            <dt>
               <span id="timestamp">
                 <Translate contentKey="serviceNetApp.organizationMatch.timestamp">Timestamp</Translate>
               </span>
@@ -49,18 +43,6 @@ export class OrganizationMatchDetail extends React.Component<IOrganizationMatchD
               </span>
             </dt>
             <dd>{organizationMatchEntity.deleted ? 'true' : 'false'}</dd>
-            <dt>
-              <span id="fieldPath">
-                <Translate contentKey="serviceNetApp.organizationMatch.fieldPath">Field Path</Translate>
-              </span>
-            </dt>
-            <dd>{organizationMatchEntity.fieldPath}</dd>
-            <dt>
-              <span id="matchedValue">
-                <Translate contentKey="serviceNetApp.organizationMatch.matchedValue">Matched Value</Translate>
-              </span>
-            </dt>
-            <dd>{organizationMatchEntity.matchedValue}</dd>
             <dt>
               <Translate contentKey="serviceNetApp.organizationMatch.organizationRecord">Organization Record</Translate>
             </dt>

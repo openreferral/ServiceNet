@@ -57,13 +57,19 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<OrganizationDTO> findAll() {
+    public List<OrganizationDTO> findAllDTOs() {
         log.debug("Request to get all Organizations");
-        return organizationRepository.findAll().stream()
+        return findAll().stream()
             .map(organizationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Organization> findAll() {
+        log.debug("Request to get all Organizations");
+        return organizationRepository.findAll();
+    }
 
     /**
      * get all the organizations where Funding is null.
