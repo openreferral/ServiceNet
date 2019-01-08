@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
@@ -254,7 +255,7 @@ public class ImportServiceImplIntTest {
         Organization organization = generateNewOrganization();
 
         int dbSize = organizationService.findAllDTOs().size();
-        importService.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, PROVIDER);
+        importService.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(dbSize + 1, organizationService.findAllDTOs().size());
     }
@@ -266,7 +267,8 @@ public class ImportServiceImplIntTest {
         generateExistingOrganization();
 
         int dbSize = organizationService.findAllDTOs().size();
-        Organization updated = importService.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, PROVIDER);
+        Organization updated = importService.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, PROVIDER,
+            new DataImportReport());
 
         assertEquals(dbSize, organizationService.findAllDTOs().size());
         assertEquals(NEW_STRING, updated.getName());
@@ -279,7 +281,7 @@ public class ImportServiceImplIntTest {
         Service service = generateNewService();
 
         int dbSize = serviceService.findAll().size();
-        importService.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER);
+        importService.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(dbSize + 1, serviceService.findAll().size());
     }
@@ -291,7 +293,8 @@ public class ImportServiceImplIntTest {
         generateExistingService();
 
         int dbSize = serviceService.findAll().size();
-        Service updated = importService.createOrUpdateService(newService, EXISTING_EXTERNAL_ID, PROVIDER);
+        Service updated = importService.createOrUpdateService(newService, EXISTING_EXTERNAL_ID, PROVIDER,
+            new DataImportReport());
 
         assertEquals(dbSize, serviceService.findAll().size());
         assertEquals(NEW_STRING, updated.getName());

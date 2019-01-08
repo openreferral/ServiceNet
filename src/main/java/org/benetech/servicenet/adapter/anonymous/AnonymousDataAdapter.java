@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.anonymous.model.RawData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
@@ -29,7 +30,7 @@ public class AnonymousDataAdapter extends SingleDataAdapter {
     private EntityManager em;
 
     @Override
-    public void importData(SingleImportData data) {
+    public DataImportReport importData(SingleImportData data) {
         Type listType = new TypeToken<ArrayList<RawData>>() {
         }.getType();
         List<RawData> entries = new Gson().fromJson(data.getSingleObjectData(), listType);
@@ -37,16 +38,19 @@ public class AnonymousDataAdapter extends SingleDataAdapter {
         AnonymousDataMapper mapper = AnonymousDataMapper.INSTANCE;
 
         //TODO: do not persist some entities if they already exists
+        //TODO: handle updates in reports as well
         for (RawData rawData : entries) {
             Location location = mapper.extractLocation(rawData);
             em.persist(location);
 
             Organization organization = mapper.extractOrganization(rawData)
-                .location(location).active(true).sourceDocument(data.getDocumentUpload());
+                .location(location).active(true).sourceDocument(data.getReport().getDocumentUpload());
             em.persist(organization);
+            data.getReport().incrementNumberOfCreatedOrgs();
 
             Service service = mapper.extractService(rawData).organization(organization);
             em.persist(service);
+            data.getReport().incrementNumberOfCreatedServices();
 
             em.persist(mapper.extractPhysicalAddress(rawData).location(location));
             em.persist(mapper.extractPostalAddress(rawData).location(location));
@@ -65,5 +69,6 @@ public class AnonymousDataAdapter extends SingleDataAdapter {
             openingHours.forEach(o -> em.persist(o));
             em.persist(new RegularSchedule().openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
         }
+        return data.getReport();
     }
 }

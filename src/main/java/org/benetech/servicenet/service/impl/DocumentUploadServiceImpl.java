@@ -4,9 +4,11 @@ import org.benetech.servicenet.adapter.DataAdapterFactory;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.converter.FileConverterFactory;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
+import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.MongoDbService;
 import org.benetech.servicenet.service.UserService;
@@ -45,6 +47,9 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     private DocumentUploadMapper documentUploadMapper;
 
     @Autowired
+    private DataImportReportService dataImportReportService;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -56,25 +61,27 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     @Override
     public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter, String providerName)
         throws IllegalArgumentException, IOException {
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
         String parsedDocument = FileConverterFactory.getConverter(file, delimiter).convert(file);
         String parsedDocumentId = mongoDbService.saveParsedDocument(parsedDocument);
         String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
 
         DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
+        report.setDocumentUpload(documentUpload);
 
-        return importDataIfNeeded(getRealProviderName(providerName), parsedDocument, documentUpload);
+        return importDataIfNeeded(getRealProviderName(providerName), parsedDocument, report);
     }
 
     @Override
-    public DocumentUploadDTO uploadApiData(String json, String providerName)
+    public DocumentUploadDTO uploadApiData(String json, String providerName, DataImportReport report)
         throws IllegalArgumentException {
 
         String originalDocumentId = mongoDbService.saveOriginalDocument(json.getBytes());
-
         DocumentUpload documentUpload = saveForSystemUser(new DocumentUpload(originalDocumentId, null));
+        report.setDocumentUpload(documentUpload);
 
-        return importDataIfNeeded(providerName, json, documentUpload);
+        return importDataIfNeeded(providerName, json, report);
     }
 
     @Override
@@ -133,13 +140,19 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         documentUploadRepository.deleteById(id);
     }
 
-    private DocumentUploadDTO importDataIfNeeded(String providerName, String parsedDocument, DocumentUpload documentUpload) {
+    private DocumentUploadDTO importDataIfNeeded(String providerName, String parsedDocument, DataImportReport report) {
         Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getSingleDataAdapter(providerName);
-        adapter.ifPresent(a -> a.importData(new SingleImportData(parsedDocument, documentUpload, providerName)));
-        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
 
-        return documentUploadMapper.toDto(documentUpload);
+        DataImportReport reportToSave = adapter
+            .map(a -> a.importData(new SingleImportData(parsedDocument, report, providerName)))
+            .orElse(report);
+
+        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
+        reportToSave.setEndDate(ZonedDateTime.now());
+        reportToSave = dataImportReportService.save(report);
+
+        return documentUploadMapper.toDto(reportToSave.getDocumentUpload());
     }
 
     private String getRealProviderName(String currentProviderName) {

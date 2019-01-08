@@ -112,7 +112,7 @@ public class Service implements Serializable {
     @JsonIgnore
     private ServiceAtLocation location;
 
-    @OneToOne(mappedBy = "srvc")
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
     @JsonIgnore
     private RegularSchedule regularSchedule;
 

@@ -71,19 +71,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       <div>
         <Row>
           <Col>
-            <h2>
-              <Translate contentKey="home.title" />
-            </h2>
-            <p className="lead">
-              <Translate contentKey="home.subtitle" />
-            </p>
-            {account && account.login ? (
-              <div>
-                <Alert color="success">
-                  <Translate contentKey="home.logged.message" interpolate={{ username: account.login }} />
-                </Alert>
-              </div>
-            ) : (
+            {account && account.login ? null : (
               <div>
                 <Alert color="warning">
                   <Translate contentKey="global.messages.info.authenticated.prefix">If you want to </Translate>
@@ -113,13 +101,20 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
             <Row>
               <Col md="8">
                 <h2 id="main-page-title">
-                  <Translate contentKey="serviceNetApp.activity.unresolved.title">Recent Service Net Activity</Translate>
+                  <Translate contentKey="serviceNetApp.activity.unresolved.title" />
                 </h2>
               </Col>
             </Row>
             {activityList.map(activity => (
               <ActivityElement activity={activity} />
             ))}
+            {activityList.length == 0 ? (
+              <Row>
+                <Col md="8">
+                  <Translate contentKey="serviceNetApp.activity.empty" />
+                </Col>
+              </Row>
+            ) : null}
           </div>
         ) : null}
       </div>

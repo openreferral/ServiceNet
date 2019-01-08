@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -21,4 +22,6 @@ public class JobDTO implements Serializable {
     private Date prevFireDate;
 
     private String state;
+
+    private UUID lastReportId;
 }

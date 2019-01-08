@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
@@ -99,13 +100,16 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName) {
+    public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
+                                                   DataImportReport report) {
         Optional<Organization> organizationFromDb = organizationService.findForExternalDb(externalDbId, providerName);
         if (organizationFromDb.isPresent()) {
             organization.setId(organizationFromDb.get().getId());
             em.merge(organization);
+            report.incrementNumberOfUpdatedOrgs();
         } else {
             em.persist(organization);
+            report.incrementNumberOfCreatedOrgs();
         }
 
         organizationMatchService.createOrUpdateOrganizationMatches(organization);
@@ -113,15 +117,19 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    public Service createOrUpdateService(Service service, String externalDbId, String providerName) {
+    public Service createOrUpdateService(Service service, String externalDbId, String providerName,
+                                         DataImportReport report) {
         Optional<Service> serviceFromDb = serviceService.findForExternalDb(externalDbId, providerName);
         if (serviceFromDb.isPresent()) {
             service.setPhones(serviceFromDb.get().getPhones());
             service.setEligibility(serviceFromDb.get().getEligibility());
             service.setId(serviceFromDb.get().getId());
+            service.setRegularSchedule(serviceFromDb.get().getRegularSchedule());
             em.merge(service);
+            report.incrementNumberOfUpdatedServices();
         } else {
             em.persist(service);
+            report.incrementNumberOfCreatedServices();
         }
         return service;
     }

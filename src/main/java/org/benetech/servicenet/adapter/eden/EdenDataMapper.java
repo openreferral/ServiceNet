@@ -168,14 +168,14 @@ public interface EdenDataMapper {
     default String extractEmail(ContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(EMAIL_ADDRESS))
-            .findFirst().map(entry -> entry.getContact().getAddress())
+            .findFirst().map(entry -> entry.getContact().getAddress().replace(" ", ""))
             .orElse(null);
     }
 
     default String extractUrl(ContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(WEBSITE))
-            .findFirst().map(entry -> entry.getContact().getUrl())
+            .findFirst().map(entry -> entry.getContact().getUrl().replace(" ", ""))
             .orElse(null);
     }
 
