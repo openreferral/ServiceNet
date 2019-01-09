@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.apache.http.Header;
 import org.benetech.servicenet.adapter.eden.model.TakeAllRequest;
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.util.HttpUtils;
 import org.quartz.JobExecutionContext;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class EdenDataUpdateJob extends BaseJob {
@@ -35,6 +37,9 @@ public class EdenDataUpdateJob extends BaseJob {
 
     @Autowired
     private DocumentUploadService documentUploadService;
+
+    @Autowired
+    private DataImportReportService dataImportReportService;
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
@@ -72,7 +77,11 @@ public class EdenDataUpdateJob extends BaseJob {
     }
 
     private String getLastJobExecutionDate() {
-        //TODO: return real date
-        return "2018-12-19";
+        DataImportReport lastReport = dataImportReportService.findLatestByJobName(NAME);
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        if (lastReport != null) {
+            return lastReport.getStartDate().format(formatter);
+        }
+        return "";
     }
 }
