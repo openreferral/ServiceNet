@@ -1,12 +1,12 @@
-package org.benetech.servicenet.matching;
+package org.benetech.servicenet.matching.counter;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import static org.benetech.servicenet.matching.StringMatchingUtils.extractInitials;
-import static org.benetech.servicenet.matching.StringMatchingUtils.normalize;
-import static org.benetech.servicenet.matching.StringMatchingUtils.sort;
+import static org.benetech.servicenet.matching.counter.StringMatchingUtils.extractInitials;
+import static org.benetech.servicenet.matching.counter.StringMatchingUtils.normalize;
+import static org.benetech.servicenet.matching.counter.StringMatchingUtils.sort;
 
 @Component
 public class NameSimilarityCounter extends AbstractSimilarityCounter<String> {

@@ -10,6 +10,8 @@ import com.google.maps.model.LatLng;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.matching.counter.GeoApi;
+import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

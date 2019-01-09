@@ -3,7 +3,7 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
-import org.benetech.servicenet.matching.OrganizationSimilarityCounter;
+import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;

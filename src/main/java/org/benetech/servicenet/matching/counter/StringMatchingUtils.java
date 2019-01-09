@@ -1,4 +1,4 @@
-package org.benetech.servicenet.matching;
+package org.benetech.servicenet.matching.counter;
 
 import java.util.Arrays;
 import java.util.Locale;

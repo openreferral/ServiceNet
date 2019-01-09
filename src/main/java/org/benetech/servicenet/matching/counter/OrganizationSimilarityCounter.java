@@ -1,4 +1,4 @@
-package org.benetech.servicenet.matching;
+package org.benetech.servicenet.matching.counter;
 
 import org.benetech.servicenet.domain.Organization;
 import org.springframework.beans.factory.annotation.Autowired;

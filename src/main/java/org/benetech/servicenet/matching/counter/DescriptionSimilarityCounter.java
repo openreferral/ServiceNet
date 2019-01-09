@@ -1,4 +1,4 @@
-package org.benetech.servicenet.matching;
+package org.benetech.servicenet.matching.counter;
 
 import org.springframework.stereotype.Component;
 

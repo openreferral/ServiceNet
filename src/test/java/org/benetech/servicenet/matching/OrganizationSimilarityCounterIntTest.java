@@ -2,6 +2,14 @@ package org.benetech.servicenet.matching;
 
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.matching.counter.DescriptionSimilarityCounter;
+import org.benetech.servicenet.matching.counter.EmailSimilarityCounter;
+import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
+import org.benetech.servicenet.matching.counter.NameSimilarityCounter;
+import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
+import org.benetech.servicenet.matching.counter.UrlSimilarityCounter;
+import org.benetech.servicenet.matching.counter.WeightProvider;
+import org.benetech.servicenet.matching.counter.YearIncorporatedSimilarityCounter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
