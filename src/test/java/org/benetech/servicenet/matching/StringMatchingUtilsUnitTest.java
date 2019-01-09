@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching;
 
+import org.benetech.servicenet.matching.counter.StringMatchingUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

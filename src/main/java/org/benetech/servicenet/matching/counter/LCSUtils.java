@@ -1,4 +1,4 @@
-package org.benetech.servicenet.matching;
+package org.benetech.servicenet.matching.counter;
 
 import org.apache.commons.text.similarity.LongestCommonSubsequence;
 

@@ -1,4 +1,4 @@
-package org.benetech.servicenet.matching;
+package org.benetech.servicenet.matching.counter;
 
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
