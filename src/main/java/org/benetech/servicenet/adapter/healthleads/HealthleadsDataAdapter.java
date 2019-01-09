@@ -38,7 +38,7 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
             }
         }
 
-        collector.persistData(importService, mapper, data.getProviderName());
+        collector.persistData(importService, mapper, data.getProviderName(), data.getReport());
         return data.getReport();
     }
 }

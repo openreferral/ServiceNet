@@ -112,7 +112,12 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         }
 
 
-        adapter.ifPresent(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName, false)));
+        DataImportReport reportToSave = adapter
+            .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, providerName, report)))
+            .orElse(report);
+
+        reportToSave.setEndDate(ZonedDateTime.now());
+        dataImportReportService.save(reportToSave);
 
         return true;
     }

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.adapter.healthleads;
 
 import org.benetech.servicenet.adapter.healthleads.model.*;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.ImportService;
 
 import java.util.HashMap;
@@ -65,7 +66,7 @@ public class HealthleadsDataPersistence {
         }
     }
 
-    public void persistData(ImportService importService, HealthLeadsDataMapper mapper, String providerName) {
+    public void persistData(ImportService importService, HealthLeadsDataMapper mapper, String providerName, DataImportReport report) {
         for (Location location : locations.values()) {
             Organization organization = organizations.get(location.getOrganizationId());
             Service service = services.get(organization.getId());
@@ -87,12 +88,12 @@ public class HealthleadsDataPersistence {
                     .location(savedLocation)
                     .active(true);
             extractedOrganization = importService
-                .createOrUpdateOrganization(extractedOrganization, organization.getId(), providerName);
+                .createOrUpdateOrganization(extractedOrganization, organization.getId(), providerName, report);
 
             org.benetech.servicenet.domain.Service extractedService = mapper.extractService(service)
                 .organization(extractedOrganization);
             org.benetech.servicenet.domain.Service savedService
-                = importService.createOrUpdateService(extractedService, service.getId(), providerName);
+                = importService.createOrUpdateService(extractedService, service.getId(), providerName, report);
 
             org.benetech.servicenet.domain.PhysicalAddress extractedPhysicalAdress
                 = mapper.extractPhysicalAddress(physicalAddress);
