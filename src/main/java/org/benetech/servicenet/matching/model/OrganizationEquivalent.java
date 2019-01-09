@@ -8,7 +8,7 @@ import java.util.Set;
 @Data
 public class OrganizationEquivalent extends EntityEquivalent implements WrappedEquivalent {
 
-    private Set<ServiceEquivalent> serviceEquivalents;
+    private Set<ServiceEquivalent> serviceEquivalents = new HashSet<>();
 
     @Override
     public Set<EntityEquivalent> getUnwrappedEntities() {

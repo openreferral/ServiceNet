@@ -6,7 +6,6 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.matching.model.OrganizationEquivalent;
 import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -15,7 +14,6 @@ import static org.benetech.servicenet.matching.service.EntityEquivalentTestUtils
 import static org.benetech.servicenet.matching.service.EntityEquivalentTestUtils.verifyIfEmptyResult;
 import static org.junit.Assert.assertTrue;
 
-@Ignore("Not implemented yet")
 public class OrganizationEquivalentsServiceUnitTest {
 
     private OrganizationEquivalentsService equivalentsService;
@@ -36,7 +34,7 @@ public class OrganizationEquivalentsServiceUnitTest {
         OrganizationEquivalent result = equivalentsService.generateEquivalent(org1, org2);
 
         assertTrue(isMatchBetweenEntities(result, Location.class, location1, location2));
-        assertTrue(isMatchBetweenEntities(result, Funding.class, location1, location2));
+        assertTrue(isMatchBetweenEntities(result, Funding.class, funding1, funding2));
     }
 
     @Test
@@ -54,6 +52,8 @@ public class OrganizationEquivalentsServiceUnitTest {
     }
 
     private Organization generateOrganization(UUID locationId, UUID fundingId) {
+        Organization result = new Organization();
+        result.setId(UUID.randomUUID());
         Location location = null;
         Funding funding = null;
 
@@ -67,6 +67,6 @@ public class OrganizationEquivalentsServiceUnitTest {
             funding.setId(fundingId);
         }
 
-        return new Organization().location(location).funding(funding);
+        return result.location(location).funding(funding);
     }
 }
