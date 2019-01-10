@@ -4,7 +4,7 @@ import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate, getSortState, IPaginationBaseState, TextFormat } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Card, CardText, CardBody, CardTitle, CardGroup, Badge } from 'reactstrap';
+import { Row, Col, Alert } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -106,7 +106,9 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
               </Col>
             </Row>
             {activityList.map(activity => (
-              <ActivityElement activity={activity} />
+              <Link to={`/single-record-view/${activity.organization.id}`} className="alert-link">
+                <ActivityElement activity={activity} />
+              </Link>
             ))}
             {activityList.length === 0 ? (
               <Row>
