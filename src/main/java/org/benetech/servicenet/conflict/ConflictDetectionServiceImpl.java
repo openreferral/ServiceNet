@@ -1,14 +1,15 @@
 package org.benetech.servicenet.conflict;
 
 import org.benetech.servicenet.conflict.detector.ConflictDetector;
-import org.benetech.servicenet.conflict.detector.OrganizationConflictDetector;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.matching.model.EntityEquivalent;
 import org.benetech.servicenet.matching.model.OrganizationEquivalent;
 import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsService;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.service.ConflictService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -32,22 +34,22 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
     private final EntityManager em;
 
-    private final OrganizationConflictDetector organizationConflictDetector;
-
     private final OrganizationRepository organizationRepository;
 
     private final OrganizationEquivalentsService organizationEquivalentsService;
 
+    private final ConflictService conflictService;
+
     public ConflictDetectionServiceImpl(ApplicationContext context,
                                         EntityManager em,
-                                        OrganizationConflictDetector organizationConflictDetector,
                                         OrganizationRepository organizationRepository,
-                                        OrganizationEquivalentsService organizationEquivalentsService) {
+                                        OrganizationEquivalentsService organizationEquivalentsService,
+                                        ConflictService conflictService) {
         this.context = context;
         this.em = em;
-        this.organizationConflictDetector = organizationConflictDetector;
         this.organizationRepository = organizationRepository;
         this.organizationEquivalentsService = organizationEquivalentsService;
+        this.conflictService = conflictService;
     }
 
     /**
@@ -56,7 +58,8 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
      * @param matches a list of organization matches
      */
     @Async
-    public List<Conflict> detect(List<OrganizationMatch> matches) {
+    @Override
+    public void detect(List<OrganizationMatch> matches) {
         List<Conflict> conflicts = new LinkedList<>();
 
         for (OrganizationMatch match : matches) {
@@ -64,6 +67,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
             OrganizationEquivalent orgEquivalent = organizationEquivalentsService.generateEquivalent(
                 match.getOrganizationRecord(), match.getPartnerVersion());
             Organization organization = organizationRepository.getOne(match.getOrganizationRecord().getId());
+            Organization mirrorOrganization = organizationRepository.getOne(match.getPartnerVersion().getId());
 
             List<EntityEquivalent> equivalents = new LinkedList<>(orgEquivalent.getUnwrappedEntities());
             equivalents.add(orgEquivalent);
@@ -75,14 +79,45 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
                 ConflictDetector detector = context.getBean(
                     eq.getClazz().getSimpleName() + CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
                 List<Conflict> noAccountConflicts = detector.detect(current, mirror);
+                List<Conflict> mirrorNoAccountConflicts = detector.detect(mirror, current);
 
-                for (Conflict c : noAccountConflicts) {
-                    c.setOwner(organization.getAccount());
-                    em.persist(c);
-                    conflicts.add(c);
-                }
+                conflicts.addAll(addOwner(noAccountConflicts, organization.getAccount()));
+                conflicts.addAll(addOwner(mirrorNoAccountConflicts, mirrorOrganization.getAccount()));
             }
         }
+
+        conflicts = handleDuplicates(conflicts);
+        for (Conflict c : conflicts) {
+            em.persist(c);
+        }
+    }
+
+    private List<Conflict> addOwner(List<Conflict> noAccountConflicts, SystemAccount account) {
+        List<Conflict> conflicts = new LinkedList<>();
+
+        for (Conflict conflict : noAccountConflicts) {
+            conflict.setOwner(account);
+            conflicts.add(conflict);
+        }
+
+        return conflicts;
+    }
+
+    private List<Conflict> handleDuplicates(List<Conflict> unchecked) {
+        List<Conflict> conflicts = new LinkedList<>();
+
+        for (Conflict conflict : unchecked) {
+            Optional<Conflict> fetchedOpt = conflictService.findExistingConflict(conflict.getResourceId(),
+                conflict.getCurrentValue(), conflict.getOfferedValue(), conflict.getOwner());
+            if (fetchedOpt.isPresent()) {
+                Conflict fetched = fetchedOpt.get();
+                fetched.addAcceptedThisChange(conflict.getOwner());
+                conflicts.add(fetched);
+            } else {
+                conflicts.add(conflict);
+            }
+        }
+
         return conflicts;
     }
 

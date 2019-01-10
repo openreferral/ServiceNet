@@ -1,6 +1,5 @@
 package org.benetech.servicenet.conflict;
 
-import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.OrganizationMatch;
 
 import java.util.List;
@@ -12,5 +11,5 @@ public interface ConflictDetectionService {
      *
      * @param matches a list of organization matches
      */
-    List<Conflict> detect(List<OrganizationMatch> matches);
+    void detect(List<OrganizationMatch> matches);
 }

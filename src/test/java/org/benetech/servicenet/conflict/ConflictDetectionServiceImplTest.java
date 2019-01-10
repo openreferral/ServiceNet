@@ -1,13 +1,13 @@
 package org.benetech.servicenet.conflict;
 
 import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.conflict.detector.OrganizationConflictDetector;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsService;
 import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.repository.ConflictRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.service.ConflictService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,9 +46,6 @@ public class ConflictDetectionServiceImplTest {
     private EntityManager em;
 
     @Autowired
-    private OrganizationConflictDetector organizationConflictDetector;
-
-    @Autowired
     private OrganizationRepository organizationRepository;
 
     @Autowired
@@ -56,6 +53,9 @@ public class ConflictDetectionServiceImplTest {
 
     @Autowired
     private ConflictRepository conflictRepository;
+
+    @Autowired
+    private ConflictService conflictService;
 
     @Configuration
     static class AsyncConfiguration {
@@ -70,8 +70,8 @@ public class ConflictDetectionServiceImplTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
 
-        conflictDetectionService = new ConflictDetectionServiceImpl(context, em, organizationConflictDetector,
-            organizationRepository, organizationEquivalentsService);
+        conflictDetectionService = new ConflictDetectionServiceImpl(context, em,
+            organizationRepository, organizationEquivalentsService, conflictService);
     }
 
     @Test
@@ -87,9 +87,12 @@ public class ConflictDetectionServiceImplTest {
             .deleted(false);
 
         int dbSize = conflictRepository.findAll().size();
+        int numberOfConflicts = 10;
+        int numberOfMirrorConflicts = 10;
+
         conflictDetectionService.detect(Collections.singletonList(match));
 
-        assertEquals(dbSize + 10, conflictRepository.findAll().size());
+        assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
     }
 
 }

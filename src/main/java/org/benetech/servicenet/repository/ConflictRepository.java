@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Conflict;
+import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -38,4 +40,11 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
 
     @Query("select max(conflict.offeredValueDate) from Conflict conflict where conflict.resourceId =:resourceId")
     Optional<ZonedDateTime> findMostRecentOfferedValueDate(@Param("resourceId") UUID resourceId);
+
+    Optional<Conflict>
+    findFirstByResourceIdAndCurrentValueAndOfferedValueAndStateAndOwnerOrderByStateDateDesc(UUID resourceId,
+                                                                                            String currentValue,
+                                                                                            String offeredValue,
+                                                                                            ConflictStateEnum state,
+                                                                                            SystemAccount owner);
 }

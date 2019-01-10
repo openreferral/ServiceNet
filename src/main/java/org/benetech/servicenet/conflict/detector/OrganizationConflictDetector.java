@@ -28,4 +28,11 @@ public class OrganizationConflictDetector extends Detector<Organization> impleme
 
         return conflicts;
     }
+
+    @Override
+    protected <Z> Conflict createConflict(Organization current, Z currentValue, Z offeredValue) {
+        Conflict conflict = super.createConflict(current, currentValue, offeredValue);
+        conflict.setResourceId(current.getId());
+        return conflict;
+    }
 }

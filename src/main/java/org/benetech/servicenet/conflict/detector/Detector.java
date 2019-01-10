@@ -21,19 +21,19 @@ public abstract class Detector<T> {
         return conflicts;
     }
 
-    protected <Y> List<Conflict> detectConflict(T current, Y obj, Y obj2) {
+    protected <Y> List<Conflict> detectConflict(T current, Y val, Y val2) {
         List<Conflict> conflicts = new LinkedList<>();
-        if (notEqual(obj, obj2)) {
-            conflicts.add(createConflict(current, obj, obj2));
+        if (notEqual(val, val2)) {
+            conflicts.add(createConflict(current, val, val2));
         }
         return conflicts;
     }
 
-    protected <Z> Conflict createConflict(T current, Z currentValue, Z offeredValue) {
+    protected <Z> Conflict createConflict(T obj, Z currentValue, Z offeredValue) {
         return Conflict.builder()
             .currentValue(getString(currentValue))
             .offeredValue(getString(offeredValue))
-            .entityPath(current.getClass().getCanonicalName())
+            .entityPath(obj.getClass().getCanonicalName())
             .build();
     }
 
