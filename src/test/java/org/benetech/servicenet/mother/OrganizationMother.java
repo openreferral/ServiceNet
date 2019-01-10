@@ -2,6 +2,7 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.Organization;
 
+import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -45,7 +46,7 @@ public class OrganizationMother {
     public static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     public static Organization createDefault() {
-        return new Organization()
+        Organization org = new Organization()
             .name(DEFAULT_NAME)
             .alternateName(DEFAULT_ALTERNATE_NAME)
             .description(DEFAULT_DESCRIPTION)
@@ -57,10 +58,12 @@ public class OrganizationMother {
             .legalStatus(DEFAULT_LEGAL_STATUS)
             .active(DEFAULT_ACTIVE)
             .updatedAt(DEFAULT_UPDATED_AT);
+        org.setAccount(SystemAccountMother.createDefault());
+        return org;
     }
 
     public static Organization createDifferent() {
-        return new Organization()
+        Organization org = new Organization()
             .name(UPDATED_NAME)
             .alternateName(UPDATED_ALTERNATE_NAME)
             .description(UPDATED_DESCRIPTION)
@@ -72,6 +75,22 @@ public class OrganizationMother {
             .legalStatus(UPDATED_LEGAL_STATUS)
             .active(UPDATED_ACTIVE)
             .updatedAt(UPDATED_UPDATED_AT);
+        org.setAccount(SystemAccountMother.createDifferent());
+        return org;
+    }
+
+    public static Organization createDefaultAndPersist(EntityManager em) {
+        Organization org = createDefault();
+        org.setAccount(SystemAccountMother.createDefaultAndPersist(em));
+        em.persist(org);
+        return org;
+    }
+
+    public static Organization createDifferentAndPersist(EntityManager em) {
+        Organization org = createDifferent();
+        org.setAccount(SystemAccountMother.createDifferentAndPersist(em));
+        em.persist(org);
+        return org;
     }
 
 }

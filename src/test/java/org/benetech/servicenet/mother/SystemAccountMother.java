@@ -2,6 +2,8 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.SystemAccount;
 
+import javax.persistence.EntityManager;
+
 public class SystemAccountMother {
 
     public static final String DEFAULT_NAME = "AAAAAAAAAA";
@@ -13,5 +15,17 @@ public class SystemAccountMother {
 
     public static SystemAccount createDifferent() {
         return new SystemAccount().name(UPDATED_NAME);
+    }
+
+    public static SystemAccount createDefaultAndPersist(EntityManager em) {
+        SystemAccount account = createDefault();
+        em.persist(account);
+        return account;
+    }
+
+    public static SystemAccount createDifferentAndPersist(EntityManager em) {
+        SystemAccount account = createDifferent();
+        em.persist(account);
+        return account;
     }
 }

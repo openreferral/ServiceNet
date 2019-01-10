@@ -6,6 +6,7 @@ import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
@@ -25,11 +26,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,6 +66,9 @@ public class OrganizationResourceIntTest {
 
     @Autowired
     private ExceptionTranslator exceptionTranslator;
+
+    @Autowired
+    private SystemAccountRepository systemAccountRepository;
 
     @Autowired
     private EntityManager em;
@@ -195,6 +194,7 @@ public class OrganizationResourceIntTest {
     @Transactional
     public void getAllOrganizations() throws Exception {
         // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
         organizationRepository.saveAndFlush(organization);
 
         // Get all the organizationList
@@ -219,6 +219,7 @@ public class OrganizationResourceIntTest {
     @Transactional
     public void getOrganization() throws Exception {
         // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
         organizationRepository.saveAndFlush(organization);
 
         // Get the organization
@@ -251,6 +252,7 @@ public class OrganizationResourceIntTest {
     @Transactional
     public void updateOrganization() throws Exception {
         // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
         organizationRepository.saveAndFlush(organization);
 
         int databaseSizeBeforeUpdate = organizationRepository.findAll().size();
@@ -318,6 +320,7 @@ public class OrganizationResourceIntTest {
     @Transactional
     public void deleteOrganization() throws Exception {
         // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
         organizationRepository.saveAndFlush(organization);
 
         int databaseSizeBeforeDelete = organizationRepository.findAll().size();

@@ -3,6 +3,7 @@ package org.benetech.servicenet.conflict;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.conflict.detector.OrganizationConflictDetector;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
@@ -25,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -33,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 public class ConflictDetectionServiceImplTest {
 
     @Autowired
-    private ConflictDetectionServiceImpl conflictDetectionService;
+    private ConflictDetectionService conflictDetectionService;
 
     @Autowired
     private EntityManager em;
@@ -67,20 +71,17 @@ public class ConflictDetectionServiceImplTest {
     @Test
     @Transactional
     public void shouldFindAllOrganizationConflicts() {
-        Organization org1 = OrganizationMother.createDefault();
-        SystemAccount sys1 = SystemAccountMother.createDefault();
-        org1.setAccount(sys1);
-        Organization org2 = OrganizationMother.createDifferent();
-        SystemAccount sys2 = SystemAccountMother.createDifferent();
-        org2.setAccount(sys2);
-        em.persist(sys1);
-        em.persist(sys2);
-        em.persist(org1);
-        em.persist(org2);
+        Organization org1 = OrganizationMother.createDefaultAndPersist(em);
+        Organization org2 = OrganizationMother.createDifferentAndPersist(em);
         em.flush();
+        OrganizationMatch match = new OrganizationMatch()
+            .organizationRecord(org1)
+            .partnerVersion(org2)
+            .timestamp(ZonedDateTime.now())
+            .deleted(false);
 
         int dbSize = conflictRepository.findAll().size();
-        conflictDetectionService.detect(org1.getId(), org2.getId());
+        conflictDetectionService.detect(Collections.singletonList(match));
 
         assertEquals(dbSize + 10, conflictRepository.findAll().size());
     }

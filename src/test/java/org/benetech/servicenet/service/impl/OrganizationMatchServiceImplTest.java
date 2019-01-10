@@ -1,9 +1,11 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
+import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -53,6 +55,9 @@ public class OrganizationMatchServiceImplTest {
     @Autowired
     private OrganizationMatchMapper organizationMatchMapper;
 
+    @Autowired
+    private ConflictDetectionService conflictDetectionService;
+
     private OrganizationMatchService organizationMatchService;
 
     @Autowired
@@ -72,14 +77,16 @@ public class OrganizationMatchServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         organizationMatchService = new OrganizationMatchServiceImpl(organizationMatchRepository,
-            organizationMatchMapper, organizationService, organizationSimilarityCounter, 0.4f);
+            organizationMatchMapper, organizationService, organizationSimilarityCounter, conflictDetectionService,0.4f);
     }
 
     @Test
     @Transactional
     public void shouldCreateMatchAndMirrorMatchForSimilarOrgs() {
-        Organization org1 = new Organization().name(ORG_1).active(true);
-        Organization org2 = new Organization().name(ORG_2).active(true);
+        Organization org1 = OrganizationMother.createDefaultAndPersist(em);
+        Organization org2 = OrganizationMother.createDifferentAndPersist(em);
+        org1.setName(ORG_1);
+        org2.setName(ORG_2);
         em.persist(org1);
         em.persist(org2);
         em.flush();
