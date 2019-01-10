@@ -139,6 +139,19 @@ public class PhysicalAddressConflictDetectorTest {
         assertEquals(conflicts, Collections.emptyList());
     }
 
+    @Test
+    public void shouldFindConflictWhenCurrentIsNull() {
+        PhysicalAddress address = createDefaultPhysicalAddress();
+        address.setCountry(null);
+
+        PhysicalAddress mirrorAddress = createDefaultPhysicalAddress();
+
+        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+
+        assertEquals(conflicts.size(), 1);
+        assertEquals(conflicts.get(0).getCurrentValue(), org.apache.commons.lang3.StringUtils.EMPTY);
+    }
+
     private PhysicalAddress createDefaultPhysicalAddress() {
         return new PhysicalAddress()
             .attention(DEFAULT_ATTENTION)
