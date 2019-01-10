@@ -4,9 +4,8 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.conflict.detector.OrganizationConflictDetector;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
-import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsService;
 import org.benetech.servicenet.mother.OrganizationMother;
-import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.ConflictRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.junit.Before;
@@ -15,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -40,6 +40,9 @@ public class ConflictDetectionServiceImplTest {
     private ConflictDetectionService conflictDetectionService;
 
     @Autowired
+    private ApplicationContext context;
+
+    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -47,6 +50,9 @@ public class ConflictDetectionServiceImplTest {
 
     @Autowired
     private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private OrganizationEquivalentsService organizationEquivalentsService;
 
     @Autowired
     private ConflictRepository conflictRepository;
@@ -64,8 +70,8 @@ public class ConflictDetectionServiceImplTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
 
-        conflictDetectionService = new ConflictDetectionServiceImpl(em, organizationConflictDetector,
-            organizationRepository);
+        conflictDetectionService = new ConflictDetectionServiceImpl(context, em, organizationConflictDetector,
+            organizationRepository, organizationEquivalentsService);
     }
 
     @Test
