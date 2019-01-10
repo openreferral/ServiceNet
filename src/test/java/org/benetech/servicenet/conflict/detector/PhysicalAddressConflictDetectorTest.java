@@ -1,8 +1,7 @@
-package org.benetech.servicenet.service.impl;
+package org.benetech.servicenet.conflict.detector;
 
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.conflict.detector.PhysicalAddressConflictDetector;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.junit.Test;
@@ -18,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
+@SpringBootTest(classes = { ServiceNetApp.class, MockedUserTestConfiguration.class })
 public class PhysicalAddressConflictDetectorTest {
 
     private static final String DEFAULT_ATTENTION = "AAAAAA";
@@ -39,7 +38,7 @@ public class PhysicalAddressConflictDetectorTest {
 
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
-        assertEquals(conflicts, Collections.emptyList());
+        assertEquals(Collections.emptyList(), conflicts);
     }
 
     @Test
@@ -56,7 +55,7 @@ public class PhysicalAddressConflictDetectorTest {
 
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
-        assertEquals(conflicts, Collections.emptyList());
+        assertEquals(Collections.emptyList(), conflicts);
     }
 
     @Test
@@ -68,8 +67,8 @@ public class PhysicalAddressConflictDetectorTest {
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
         assertEquals(conflicts.size(), 1);
-        assertEquals(conflicts.get(0).getCurrentValue(), address.getAddress1());
-        assertEquals(conflicts.get(0).getOfferedValue(), mirrorAddress.getAddress1());
+        assertEquals(address.getAddress1(), conflicts.get(0).getCurrentValue());
+        assertEquals(mirrorAddress.getAddress1(), conflicts.get(0).getOfferedValue());
     }
 
     @Test
@@ -86,7 +85,7 @@ public class PhysicalAddressConflictDetectorTest {
 
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
-        assertEquals(conflicts.size(), 7);
+        assertEquals(7, conflicts.size());
     }
 
 
@@ -97,7 +96,7 @@ public class PhysicalAddressConflictDetectorTest {
 
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
-        assertEquals(conflicts.size(), 7);
+        assertEquals(7, conflicts.size());
     }
 
     @Test
@@ -110,7 +109,7 @@ public class PhysicalAddressConflictDetectorTest {
 
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
-        assertEquals(conflicts, Collections.emptyList());
+        assertEquals(Collections.emptyList(), conflicts);
     }
 
     @Test
@@ -123,7 +122,7 @@ public class PhysicalAddressConflictDetectorTest {
 
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
-        assertEquals(conflicts, Collections.emptyList());
+        assertEquals(Collections.emptyList(), conflicts);
     }
 
     @Test
@@ -136,7 +135,7 @@ public class PhysicalAddressConflictDetectorTest {
 
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
-        assertEquals(conflicts, Collections.emptyList());
+        assertEquals(Collections.emptyList(), conflicts);
     }
 
     @Test
@@ -148,8 +147,8 @@ public class PhysicalAddressConflictDetectorTest {
 
         List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
 
-        assertEquals(conflicts.size(), 1);
-        assertEquals(conflicts.get(0).getCurrentValue(), org.apache.commons.lang3.StringUtils.EMPTY);
+        assertEquals(1, conflicts.size());
+        assertEquals(org.apache.commons.lang3.StringUtils.EMPTY, conflicts.get(0).getCurrentValue());
     }
 
     private PhysicalAddress createDefaultPhysicalAddress() {

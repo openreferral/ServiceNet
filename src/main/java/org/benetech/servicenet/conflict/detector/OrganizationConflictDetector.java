@@ -2,10 +2,12 @@ package org.benetech.servicenet.conflict.detector;
 
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
+import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
 
+@Service("OrganizationConflictDetector")
 public class OrganizationConflictDetector extends Detector<Organization> implements ConflictDetector<Organization> {
 
     @Override

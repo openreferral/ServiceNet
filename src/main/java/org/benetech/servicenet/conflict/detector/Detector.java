@@ -23,7 +23,7 @@ public abstract class Detector<T> {
 
     protected <Y> List<Conflict> detectConflict(T current, Y obj, Y obj2) {
         List<Conflict> conflicts = new LinkedList<>();
-        if (notEqual(obj, obj2)){
+        if (notEqual(obj, obj2)) {
             conflicts.add(createConflict(current, obj, obj2));
         }
         return conflicts;
