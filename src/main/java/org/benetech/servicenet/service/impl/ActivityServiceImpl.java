@@ -74,6 +74,11 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    public Optional<ActivityDTO> getOneByOrganizationId(UUID organizationId) {
+        return getEntityActivity(organizationId, UUID.fromString(EXAMPLE_DATA));
+    }
+
+    @Override
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
         List<ActivityDTO> activities = getAllOrganizationActivities(systemAccountId);
 

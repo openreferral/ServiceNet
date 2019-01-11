@@ -1,0 +1,18 @@
+{
+  "singleRecordView": {
+    "tabs": {
+      "details": "Details",
+      "otherTabs": "Other tabs..."
+    },
+    "details": {
+      "title": "Organization details",
+      "orgName": "Organization name",
+      "orgAlternateName": "Alternate name",
+      "orgDescription": "Description",
+      "orgEmail": "Email",
+      "orgUrl": "Website",
+      "orgTaxStatus": "Tax status",
+      "orgActive": "Active"
+    }
+  }
+}
