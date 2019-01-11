@@ -1,7 +1,30 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.domain.*;
-import org.benetech.servicenet.service.*;
+import org.benetech.servicenet.domain.AccessibilityForDisabilities;
+import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.Language;
+import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Phone;
+import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.RegularSchedule;
+import org.benetech.servicenet.domain.RequiredDocument;
+import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.service.ImportService;
+import org.benetech.servicenet.service.LocationService;
+import org.benetech.servicenet.service.OrganizationMatchService;
+import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.RequiredDocumentService;
+import org.benetech.servicenet.service.ServiceAtLocationService;
+import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.ServiceTaxonomyService;
+import org.benetech.servicenet.service.TaxonomyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
 package org.benetech.servicenet.adapter.healthleads;
 
 import com.google.gson.Gson;
-import org.benetech.servicenet.adapter.healthleads.model.*;
+import org.benetech.servicenet.adapter.healthleads.model.BaseData;
 import org.benetech.servicenet.type.ListType;
 
 import java.util.ArrayList;
