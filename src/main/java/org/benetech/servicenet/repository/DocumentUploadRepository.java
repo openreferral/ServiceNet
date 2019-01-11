@@ -19,4 +19,6 @@ public interface DocumentUploadRepository extends JpaRepository<DocumentUpload, 
         ".username}")
     List<DocumentUpload> findByUploaderIsCurrentUser();
 
+    DocumentUpload findByParsedDocumentId(String parsedDocumentId);
+
 }

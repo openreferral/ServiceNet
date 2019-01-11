@@ -42,6 +42,12 @@ public class ServiceTaxonomy implements Serializable {
     @JsonIgnoreProperties("taxonomies")
     private Service srvc;
 
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
+
     @ManyToOne
     @JsonIgnoreProperties("")
     private Taxonomy taxonomy;

@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { Row, Col, Button, Input } from 'reactstrap';
 import { FilePond, File, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import { toast } from 'react-toastify';
 
 import { getSystemAccounts } from './upload-page.reducer';
 
@@ -62,8 +63,34 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
     });
   };
 
+  appendFilenameToJSON = (json, filename) => {
+    const filenamePart = ', "filename" : "' + filename + '"}';
+    return json.replace(/.$/, filenamePart);
+  };
+
   uploadAll = () => {
-    this.state.pond.processFiles();
+    toast.info('Processing data. Please wait.');
+    this.state.pond.processFiles().then(files => {
+      const filesArray = [];
+      files.forEach(file => {
+        filesArray.push(this.appendFilenameToJSON(file.serverId, file.filenameWithoutExtension));
+      });
+      fetch('/api/map', {
+        method: 'POST',
+        body: JSON.stringify(filesArray),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': this.getToken(),
+          PROVIDER: this.state.provider
+        })
+      }).then(response => {
+        if (response.ok) {
+          toast.success('Data processed succesfully!');
+        } else {
+          toast.error(response.statusText);
+        }
+      });
+    });
   };
 
   isUploadDisabled = () => {

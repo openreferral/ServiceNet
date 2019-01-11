@@ -8,5 +8,5 @@ public interface MongoDbService {
 
     String findOriginalDocumentById(String id);
 
-    byte[] findParsedDocumentById(String id);
+    String findParsedDocumentById(String id);
 }

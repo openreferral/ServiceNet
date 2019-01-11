@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public interface RequiredDocumentService {
      * @return the entity
      */
     Optional<RequiredDocumentDTO> findOne(UUID id);
+
+    Optional<RequiredDocument> findForExternalDb(String externalDbId, String providerName);
 
     /**
      * Delete the "id" requiredDocument.

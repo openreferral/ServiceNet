@@ -40,5 +40,5 @@ const apiUrl = 'api/';
 
 export const getSystemAccounts = () => ({
   type: ACTION_TYPES.FETCH_SYSTEM_ACCOUNTS,
-  payload: axios.get(`${apiUrl}/system-accounts`)
+  payload: axios.get(`${apiUrl}system-accounts`)
 });

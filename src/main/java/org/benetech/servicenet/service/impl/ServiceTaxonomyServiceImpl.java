@@ -79,6 +79,11 @@ public class ServiceTaxonomyServiceImpl implements ServiceTaxonomyService {
             .map(serviceTaxonomyMapper::toDto);
     }
 
+    @Override
+    public Optional<ServiceTaxonomy> findForExternalDb(String externalDbId, String providerName) {
+        return serviceTaxonomyRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
     /**
      * Delete the serviceTaxonomy by id.
      *

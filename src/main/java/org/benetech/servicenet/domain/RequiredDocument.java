@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -35,12 +36,19 @@ public class RequiredDocument implements Serializable {
     private UUID id;
 
     @NotNull
+    @Lob
     @Column(name = "document", nullable = false)
     private String document;
 
     @ManyToOne
     @JsonIgnoreProperties("docs")
     private Service srvc;
+
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public UUID getId() {

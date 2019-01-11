@@ -78,6 +78,11 @@ public class TaxonomyServiceImpl implements TaxonomyService {
             .map(taxonomyMapper::toDto);
     }
 
+    @Override
+    public Optional<Taxonomy> findForExternalDb(String externalDbId, String providerName) {
+        return taxonomyRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
     /**
      * Delete the taxonomy by id.
      *

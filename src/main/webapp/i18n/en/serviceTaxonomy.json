@@ -17,7 +17,9 @@
       },
       "taxonomyDetails": "Taxonomy Details",
       "srvc": "Srvc",
-      "taxonomy": "Taxonomy"
+      "taxonomy": "Taxonomy",
+      "externalDbId": "External Database Id",
+      "providerName": "Provider Name"
     }
   }
 }

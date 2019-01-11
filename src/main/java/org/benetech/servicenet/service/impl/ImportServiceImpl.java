@@ -11,12 +11,20 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
+import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.RequiredDocumentService;
+import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.ServiceTaxonomyService;
+import org.benetech.servicenet.service.TaxonomyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +50,18 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private OrganizationMatchService organizationMatchService;
+
+    @Autowired
+    private ServiceAtLocationService serviceAtLocationService;
+
+    @Autowired
+    private TaxonomyService taxonomyService;
+
+    @Autowired
+    private ServiceTaxonomyService serviceTaxonomyService;
+
+    @Autowired
+    private RequiredDocumentService requiredDocumentService;
 
     @Override
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
@@ -142,7 +162,7 @@ public class ImportServiceImpl implements ImportService {
         });
 
         Set<Phone> common = new HashSet<>(phones);
-        common.retainAll(service.getLangs());
+        common.retainAll(service.getPhones());
 
         service.getPhones().stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
         phones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.persist(phone));
@@ -196,6 +216,72 @@ public class ImportServiceImpl implements ImportService {
         }
 
         return openingHours;
+    }
+
+    @Override
+    public ServiceAtLocation createOrUpdateServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
+                                                             String providerName, Service service, Location location) {
+        serviceAtLocation.setSrvc(service);
+        serviceAtLocation.setLocation(location);
+
+        Optional<ServiceAtLocation> serviceAtLocationFromDb
+            = serviceAtLocationService.findForExternalDb(externalDbId, providerName);
+
+        if (serviceAtLocationFromDb.isPresent()) {
+            serviceAtLocation.setId(serviceAtLocationFromDb.get().getId());
+            return em.merge(serviceAtLocation);
+        } else {
+            em.persist(serviceAtLocation);
+            return serviceAtLocation;
+        }
+    }
+
+    @Override
+    public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName) {
+        Optional<Taxonomy> taxonomyFromDb = taxonomyService.findForExternalDb(externalDbId, providerName);
+
+        if (taxonomyFromDb.isPresent()) {
+            taxonomy.setId(taxonomyFromDb.get().getId());
+            return em.merge(taxonomy);
+        } else {
+            em.persist(taxonomy);
+            return taxonomy;
+        }
+    }
+
+    @Override
+    public ServiceTaxonomy createOrUpdateServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String externalDbId,
+                                                         String providerName, Service service, Taxonomy taxonomy) {
+        serviceTaxonomy.setSrvc(service);
+        serviceTaxonomy.setTaxonomy(taxonomy);
+
+        Optional<ServiceTaxonomy> serviceTaxonomyFromDb
+            = serviceTaxonomyService.findForExternalDb(externalDbId, providerName);
+
+        if (serviceTaxonomyFromDb.isPresent()) {
+            serviceTaxonomy.setId(serviceTaxonomyFromDb.get().getId());
+            return em.merge(serviceTaxonomy);
+        } else {
+            em.persist(serviceTaxonomy);
+            return serviceTaxonomy;
+        }
+    }
+
+    @Override
+    public RequiredDocument createOrUpdateRequiredDocument(RequiredDocument requiredDocument, String externalDbId,
+                                                           String providerName, Service service) {
+        requiredDocument.setSrvc(service);
+
+        Optional<RequiredDocument> requiredDocumentFromDb
+            = requiredDocumentService.findForExternalDb(externalDbId, providerName);
+
+        if (requiredDocumentFromDb.isPresent()) {
+            requiredDocument.setId(requiredDocumentFromDb.get().getId());
+            return em.merge(requiredDocument);
+        } else {
+            em.persist(requiredDocument);
+            return requiredDocument;
+        }
     }
 
     private Optional<AccessibilityForDisabilities> getExistingAccessibility(AccessibilityForDisabilities accessibility,

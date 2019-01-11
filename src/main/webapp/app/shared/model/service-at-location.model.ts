@@ -10,6 +10,8 @@ export interface IServiceAtLocation {
   regularScheduleId?: number;
   holidayScheduleId?: number;
   phones?: IPhone[];
+  externalDbId?: string;
+  providerName?: string;
 }
 
 export const defaultValue: Readonly<IServiceAtLocation> = {};

@@ -16,7 +16,9 @@
         "title": "Required Document"
       },
       "document": "Document",
-      "srvc": "Srvc"
+      "srvc": "Srvc",
+      "externalDbId": "External Database Id",
+      "providerName": "Provider Name"
     }
   }
 }

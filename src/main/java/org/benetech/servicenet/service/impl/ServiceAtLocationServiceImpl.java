@@ -111,6 +111,11 @@ public class ServiceAtLocationServiceImpl implements ServiceAtLocationService {
             .map(serviceAtLocationMapper::toDto);
     }
 
+    @Override
+    public Optional<ServiceAtLocation> findForExternalDb(String externalDbId, String providerName) {
+        return serviceAtLocationRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
     /**
      * Delete the serviceAtLocation by id.
      *

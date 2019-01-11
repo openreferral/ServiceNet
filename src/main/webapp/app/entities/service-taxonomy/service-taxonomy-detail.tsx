@@ -43,6 +43,18 @@ export class ServiceTaxonomyDetail extends React.Component<IServiceTaxonomyDetai
               <Translate contentKey="serviceNetApp.serviceTaxonomy.taxonomy">Taxonomy</Translate>
             </dt>
             <dd>{serviceTaxonomyEntity.taxonomyName ? serviceTaxonomyEntity.taxonomyName : ''}</dd>
+            <dt>
+              <span id="externalDbId">
+                <Translate contentKey="serviceNetApp.serviceTaxonomyEntity.externalDbId" />
+              </span>
+            </dt>
+            <dd>{serviceTaxonomyEntity.externalDbId}</dd>
+            <dt>
+              <span id="providerName">
+                <Translate contentKey="serviceNetApp.serviceTaxonomyEntity.providerName" />
+              </span>
+            </dt>
+            <dd>{serviceTaxonomyEntity.providerName}</dd>
           </dl>
           <Button tag={Link} to="/entity/service-taxonomy" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

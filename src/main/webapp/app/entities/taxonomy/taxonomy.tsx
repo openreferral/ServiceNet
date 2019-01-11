@@ -47,6 +47,12 @@ export class Taxonomy extends React.Component<ITaxonomyProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.taxonomy.parent">Parent</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.taxonomy.externalDbId" />
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.taxonomy.providerName" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -61,6 +67,8 @@ export class Taxonomy extends React.Component<ITaxonomyProps> {
                   <td>{taxonomy.name}</td>
                   <td>{taxonomy.vocabulary}</td>
                   <td>{taxonomy.parentName ? <Link to={`taxonomy/${taxonomy.parentId}`}>{taxonomy.parentName}</Link> : ''}</td>
+                  <td>{taxonomy.externalDbId}</td>
+                  <td>{taxonomy.providerName}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${taxonomy.id}`} color="info" size="sm">
