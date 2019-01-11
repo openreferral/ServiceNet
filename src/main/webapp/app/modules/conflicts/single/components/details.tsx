@@ -3,9 +3,10 @@ import { Col, Row, Form, FormGroup, Label, Input } from 'reactstrap';
 import './../single-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
+import { IActivity } from 'app/shared/model/activity.model';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps {
-  activity: any;
+  activity: IActivity;
 }
 
 export interface ISingleRecordViewState {

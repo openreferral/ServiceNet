@@ -4,9 +4,10 @@ import classnames from 'classnames';
 import Details from './details';
 import { connect } from 'react-redux';
 import { Translate } from 'react-jhipster';
+import { IActivity } from 'app/shared/model/activity.model';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps {
-  activity: any;
+  activity: IActivity;
 }
 
 export interface ISingleRecordViewState {

@@ -40,5 +40,5 @@ const apiUrl = 'api/';
 
 export const getActivityDetails = orgId => ({
   type: ACTION_TYPES.FETCH_ACTIVITY_DETAILS,
-  payload: axios.get(`${apiUrl}/activities/${orgId}`)
+  payload: axios.get(`${apiUrl}activities/${orgId}`)
 });
