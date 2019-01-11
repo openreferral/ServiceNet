@@ -4,10 +4,13 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
-public class RequiredDocument extends BaseData {
+public class HealthleadsServiceAtLocation extends BaseData {
 
     @SerializedName("service_id")
     private String serviceId;
 
-    private String document;
+    @SerializedName("location_id")
+    private String locationId;
+
+    private String description;
 }

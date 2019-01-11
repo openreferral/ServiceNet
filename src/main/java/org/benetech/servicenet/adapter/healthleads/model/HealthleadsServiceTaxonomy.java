@@ -4,13 +4,14 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
-public class Language extends BaseData {
+public class HealthleadsServiceTaxonomy extends BaseData {
 
     @SerializedName("service_id")
     private String serviceId;
 
-    @SerializedName("location_id")
-    private String locationId;
+    @SerializedName("taxonomy_id")
+    private String taxonomyId;
 
-    private String language;
+    @SerializedName("taxonomy_detail")
+    private String taxonomyDetail;
 }

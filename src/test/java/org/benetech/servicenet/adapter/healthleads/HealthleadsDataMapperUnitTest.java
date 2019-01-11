@@ -13,7 +13,7 @@ public class HealthleadsDataMapperUnitTest {
     
     @Test
     public void testExtractEligibility() {
-        Eligibility eligibility = new Eligibility();
+        HealthleadsEligibility eligibility = new HealthleadsEligibility();
         eligibility.setEligibility("Eligibility  string");
 
         org.benetech.servicenet.domain.Eligibility extracted
@@ -24,7 +24,7 @@ public class HealthleadsDataMapperUnitTest {
     
     @Test
     public void testExtractLocation() {
-        Location location = new Location();
+        HealthleadsLocation location = new HealthleadsLocation();
         location.setAlternateName("alternateName");
         location.setDescription("description");
         location.setLatitude("128.0");
@@ -45,7 +45,7 @@ public class HealthleadsDataMapperUnitTest {
     
     @Test
     public void testExtractOrganization() {
-        Organization organization = new Organization();
+        HealthleadsOrganization organization = new HealthleadsOrganization();
         organization.setAlternateName("alternateName");
         organization.setDescription("description");
         organization.setName("Name");
@@ -72,7 +72,7 @@ public class HealthleadsDataMapperUnitTest {
 
     @Test
     public void testExtractPhysicalAddress() {
-        PhysicalAddress physicalAddress = new PhysicalAddress();
+        HealthleadsPhysicalAddress physicalAddress = new HealthleadsPhysicalAddress();
         physicalAddress.setAddress("address");
         physicalAddress.setAttention("attention");
         physicalAddress.setCity("city");
@@ -95,7 +95,7 @@ public class HealthleadsDataMapperUnitTest {
 
     @Test
     public void testExtractRequiredDocument() {
-        RequiredDocument requiredDocument = new RequiredDocument();
+        HealthleadsRequiredDocument requiredDocument = new HealthleadsRequiredDocument();
         requiredDocument.setDocument("Document");
 
         org.benetech.servicenet.domain.RequiredDocument extracted
@@ -106,7 +106,7 @@ public class HealthleadsDataMapperUnitTest {
     
     @Test
     public void testExtractService() {
-        Service service = new Service();
+        HealthleadsService service = new HealthleadsService();
         service.setAlternateName("alternateName");
         service.setDescription("description");
         service.setName("Name");
@@ -139,7 +139,7 @@ public class HealthleadsDataMapperUnitTest {
 
     @Test
     public void testExtractServiceAtLocation() {
-        ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
+        HealthleadsServiceAtLocation serviceAtLocation = new HealthleadsServiceAtLocation();
         serviceAtLocation.setDescription("description");
 
         org.benetech.servicenet.domain.ServiceAtLocation extracted
@@ -150,7 +150,7 @@ public class HealthleadsDataMapperUnitTest {
 
     @Test
     public void testExtractServiceTaxonomy() {
-        ServiceTaxonomy serviceTaxonomy = new ServiceTaxonomy();
+        HealthleadsServiceTaxonomy serviceTaxonomy = new HealthleadsServiceTaxonomy();
         serviceTaxonomy.setTaxonomyDetail("taxDetail");
 
         org.benetech.servicenet.domain.ServiceTaxonomy extracted
@@ -161,7 +161,7 @@ public class HealthleadsDataMapperUnitTest {
 
     @Test
     public void testExtractTaxonomy() {
-        Taxonomy taxonomy = new Taxonomy();
+        HealthleadsTaxonomy taxonomy = new HealthleadsTaxonomy();
         taxonomy.setName("Name");
         taxonomy.setVocabulary("Vocabulary");
 
@@ -174,7 +174,7 @@ public class HealthleadsDataMapperUnitTest {
 
     @Test
     public void testExtractLanguages() {
-        Language language = new Language();
+        HealthleadsLanguage language = new HealthleadsLanguage();
         language.setLanguage("English ; German ;Polish");
 
         Set<org.benetech.servicenet.domain.Language> extracted
@@ -190,15 +190,15 @@ public class HealthleadsDataMapperUnitTest {
 
     @Test
     public void testExtractPhones() {
-        Set<Phone> phones = new HashSet<>();
-        Phone phone1 = new Phone();
+        Set<HealthleadsPhone> phones = new HashSet<>();
+        HealthleadsPhone phone1 = new HealthleadsPhone();
         phone1.setDescription("description1");
         phone1.setExtension("123");
         phone1.setLanguage("English");
         phone1.setNumber("123456789");
         phone1.setType("type1");
         phones.add(phone1);
-        Phone phone2 = new Phone();
+        HealthleadsPhone phone2 = new HealthleadsPhone();
         phone2.setDescription("description2");
         phone2.setExtension("321");
         phone2.setLanguage("German");

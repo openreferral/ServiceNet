@@ -1,6 +1,11 @@
 package org.benetech.servicenet.adapter.healthleads;
 
+import org.benetech.servicenet.adapter.healthleads.model.*;
 import org.benetech.servicenet.domain.*;
+import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -21,46 +26,46 @@ public interface HealthLeadsDataMapper {
     String LISTS_DELIMITER = ";";
 
     @Mapping(target = "id", ignore = true)
-    Eligibility extractEligibility(org.benetech.servicenet.adapter.healthleads.model.Eligibility eligibility);
+    Eligibility extractEligibility(HealthleadsEligibility eligibility);
 
     @Mapping(target = "id", ignore = true)
-    Location extractLocation(org.benetech.servicenet.adapter.healthleads.model.Location location);
+    Location extractLocation(HealthleadsLocation location);
 
     @Mapping(target = "id", ignore = true)
-    Organization extractOrganization(org.benetech.servicenet.adapter.healthleads.model.Organization organization);
+    Organization extractOrganization(HealthleadsOrganization organization);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "address1", source = "address")
-    PhysicalAddress extractPhysicalAddress(org.benetech.servicenet.adapter.healthleads.model.PhysicalAddress physicalAddress);
+    PhysicalAddress extractPhysicalAddress(HealthleadsPhysicalAddress physicalAddress);
 
     @Mapping(target = "id", ignore = true)
-    RequiredDocument extractRequiredDocument(org.benetech.servicenet.adapter.healthleads.model.RequiredDocument requiredDocument);
+    RequiredDocument extractRequiredDocument(HealthleadsRequiredDocument requiredDocument);
 
     @Mapping(target = "id", ignore = true)
-    Service extractService(org.benetech.servicenet.adapter.healthleads.model.Service service);
+    Service extractService(HealthleadsService service);
 
     @Mapping(target = "id", ignore = true)
-    ServiceAtLocation extractServiceAtLocation(org.benetech.servicenet.adapter.healthleads.model.ServiceAtLocation serviceAtLocation);
+    ServiceAtLocation extractServiceAtLocation(HealthleadsServiceAtLocation serviceAtLocation);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "taxonomyDetails", source = "taxonomyDetail")
-    ServiceTaxonomy extractServiceTaxonomy(org.benetech.servicenet.adapter.healthleads.model.ServiceTaxonomy serviceTaxonomy);
+    ServiceTaxonomy extractServiceTaxonomy(HealthleadsServiceTaxonomy serviceTaxonomy);
 
     @Mapping(target = "id", ignore = true)
-    Taxonomy extractTaxonomy(org.benetech.servicenet.adapter.healthleads.model.Taxonomy taxonomy);
+    Taxonomy extractTaxonomy(HealthleadsTaxonomy taxonomy);
 
-    default Set<Language> extractLanguages(org.benetech.servicenet.adapter.healthleads.model.Language healthleadsLanguage) {
+    default Set<Language> extractLanguages(HealthleadsLanguage healthleadsLanguage) {
         String[] languages = healthleadsLanguage.getLanguage().split(LISTS_DELIMITER);
         return Arrays.stream(languages).map(language -> new Language().language(language.trim())).collect(Collectors.toSet());
     }
 
-    default Set<Phone> extractPhones(Set<org.benetech.servicenet.adapter.healthleads.model.Phone> phones) {
+    default Set<Phone> extractPhones(Set<HealthleadsPhone> phones) {
         if (CollectionUtils.isEmpty(phones)) {
             return new HashSet<>();
         }
 
         Set<Phone> extractedPhones = new HashSet<>();
-        for (org.benetech.servicenet.adapter.healthleads.model.Phone phoneToExtract : phones) {
+        for (HealthleadsPhone phoneToExtract : phones) {
             Phone phone = new Phone();
 
             phone.setNumber(phoneToExtract.getNumber());

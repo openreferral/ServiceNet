@@ -5,7 +5,7 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 @Data
-public class Location extends BaseData {
+public class HealthleadsLocation extends BaseData {
 
     @SerializedName("organization_id")
     private String organizationId;

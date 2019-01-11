@@ -92,8 +92,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof Eligibility);
-            Eligibility eligibility = (Eligibility) baseData;
+            assertTrue(baseData instanceof HealthleadsEligibility);
+            HealthleadsEligibility eligibility = (HealthleadsEligibility) baseData;
             assertEquals(ELIGIBILITY_DESCRIPTION + i, eligibility.getEligibility());
             assertEquals(SERV + i, eligibility.getServiceId());
             assertEquals(ELIG + i, eligibility.getId());
@@ -109,16 +109,16 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof Language);
-            Language language = (Language) baseData;
+            assertTrue(baseData instanceof HealthleadsLanguage);
+            HealthleadsLanguage language = (HealthleadsLanguage) baseData;
             assertEquals(LANG + i, language.getId());
             assertEquals(LOC + i, language.getLocationId());
             assertEquals(SERV + i, language.getServiceId());
             i++;
         }
-        assertEquals(ENGLISH_SPANISH, ((Language) data.get(0)).getLanguage());
-        assertEquals(ENGLISH_GERMAN, ((Language) data.get(1)).getLanguage());
-        assertEquals(ENGLISH, ((Language) data.get(2)).getLanguage());
+        assertEquals(ENGLISH_SPANISH, ((HealthleadsLanguage) data.get(0)).getLanguage());
+        assertEquals(ENGLISH_GERMAN, ((HealthleadsLanguage) data.get(1)).getLanguage());
+        assertEquals(ENGLISH, ((HealthleadsLanguage) data.get(2)).getLanguage());
     }
 
     @Test
@@ -129,8 +129,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof Location);
-            Location location = (Location) baseData;
+            assertTrue(baseData instanceof HealthleadsLocation);
+            HealthleadsLocation location = (HealthleadsLocation) baseData;
             assertEquals(ALTERNATE_NAME + i, location.getAlternateName());
             assertEquals(SCHEDULE + i, location.getSchedule());
             assertEquals(ORG + i, location.getOrganizationId());
@@ -152,8 +152,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof Organization);
-            Organization org = (Organization) baseData;
+            assertTrue(baseData instanceof HealthleadsOrganization);
+            HealthleadsOrganization org = (HealthleadsOrganization) baseData;
             assertEquals(ALTERNATE_NAME + i, org.getAlternateName());
             assertEquals(TAX_STATUS + i, org.getTaxStatus());
             assertEquals(NAME + i, org.getName());
@@ -176,8 +176,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof Phone);
-            Phone phone = (Phone) baseData;
+            assertTrue(baseData instanceof HealthleadsPhone);
+            HealthleadsPhone phone = (HealthleadsPhone) baseData;
             assertEquals(PHONE_NUMBER + i, phone.getNumber());
             assertEquals(String.valueOf(i), phone.getExtension());
             assertEquals(SERVICE_AT_LOCATION + i, phone.getServiceAtLocationId());
@@ -201,8 +201,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof PhysicalAddress);
-            PhysicalAddress physicalAddress = (PhysicalAddress) baseData;
+            assertTrue(baseData instanceof HealthleadsPhysicalAddress);
+            HealthleadsPhysicalAddress physicalAddress = (HealthleadsPhysicalAddress) baseData;
             assertEquals(COUNTRY + i, physicalAddress.getCountry());
             assertEquals(CITY + i, physicalAddress.getCity());
             assertEquals(ADDRESS + i, physicalAddress.getAddress());
@@ -224,8 +224,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof RequiredDocument);
-            RequiredDocument doc = (RequiredDocument) baseData;
+            assertTrue(baseData instanceof HealthleadsRequiredDocument);
+            HealthleadsRequiredDocument doc = (HealthleadsRequiredDocument) baseData;
             assertEquals(REQUIRED_DOC + i, doc.getId());
             assertEquals(SERV + i, doc.getServiceId());
             assertEquals(DOCUMENT + i, doc.getDocument());
@@ -241,8 +241,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof Service);
-            Service service = (Service) baseData;
+            assertTrue(baseData instanceof HealthleadsService);
+            HealthleadsService service = (HealthleadsService) baseData;
             assertEquals(ALTERNATE_NAME + i, service.getAlternateName());
             assertEquals(FEES + i, service.getFees());
             assertEquals(WAIT_TIME + i, service.getWaitTime());
@@ -272,8 +272,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof ServiceAtLocation);
-            ServiceAtLocation serviceAtLocation = (ServiceAtLocation) baseData;
+            assertTrue(baseData instanceof HealthleadsServiceAtLocation);
+            HealthleadsServiceAtLocation serviceAtLocation = (HealthleadsServiceAtLocation) baseData;
             assertEquals(DESCRIPTION + i, serviceAtLocation.getDescription());
             assertEquals(SERVICE_AT_LOCATION + i,serviceAtLocation.getId());
             assertEquals(LOC + i, serviceAtLocation.getLocationId());
@@ -290,8 +290,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof ServiceTaxonomy);
-            ServiceTaxonomy serviceTaxonomy = (ServiceTaxonomy) baseData;
+            assertTrue(baseData instanceof HealthleadsServiceTaxonomy);
+            HealthleadsServiceTaxonomy serviceTaxonomy = (HealthleadsServiceTaxonomy) baseData;
             assertEquals(TAXONOMY_DETAIL + i, serviceTaxonomy.getTaxonomyDetail());
             assertEquals(TAX + i, serviceTaxonomy.getTaxonomyId());
             assertEquals(TAXOOMY_SERVIE + i, serviceTaxonomy.getId());
@@ -308,8 +308,8 @@ public class JsonDataResolverUnitTest {
         assertEquals(THREE_ELEMENTS, data.size());
         int i = 1;
         for (BaseData baseData : data) {
-            assertTrue(baseData instanceof Taxonomy);
-            Taxonomy taxonomy = (Taxonomy) baseData;
+            assertTrue(baseData instanceof HealthleadsTaxonomy);
+            HealthleadsTaxonomy taxonomy = (HealthleadsTaxonomy) baseData;
             assertEquals(NAME + i, taxonomy.getName());
             assertEquals(PARENT_NAME + i, taxonomy.getParentName());
             assertEquals(TAX + i, taxonomy.getId());
