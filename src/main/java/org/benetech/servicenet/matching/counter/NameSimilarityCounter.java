@@ -28,6 +28,9 @@ public class NameSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Override
     public float countSimilarityRatio(String name1, String name2) {
+        if (name1 == null || name2 == null) {
+            return NO_MATCH_RATIO;
+        }
         String normalizedName1 = normalize(name1);
         String normalizedName2 = normalize(name2);
 

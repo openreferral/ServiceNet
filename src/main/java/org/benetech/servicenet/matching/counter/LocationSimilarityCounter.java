@@ -40,6 +40,9 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
 
     @Override
     public float countSimilarityRatio(Location location1, Location location2) {
+        if (location1 == null || location2 == null) {
+            return NO_MATCH_RATIO;
+        }
         float max = NO_MATCH_RATIO;
         for (GeocodingResult result1 : geocode(location1)) {
             for (GeocodingResult result2 : geocode(location2)) {

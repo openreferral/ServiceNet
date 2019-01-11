@@ -17,6 +17,9 @@ public class UrlSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Override
     public float countSimilarityRatio(String url1, String url2) {
+        if (url1 == null || url2 == null) {
+            return NO_MATCH_RATIO;
+        }
         if (areNormalizedAndUpperCasedDifferent(url1, url2)) {
             return NO_MATCH_RATIO;
         }

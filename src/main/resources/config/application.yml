@@ -141,7 +141,7 @@ similarity-ratio:
             level-1-distance: 100
             level-2-distance: 500
             level-3-distance: 1000
-        organization-match-threshold: 0.4
+        organization-match-threshold: 0.15
     credentials:
         google-api: ${GOOGLE_API_KEY:default_key}
 
