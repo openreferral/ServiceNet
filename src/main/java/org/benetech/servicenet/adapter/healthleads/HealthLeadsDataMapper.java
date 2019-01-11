@@ -1,6 +1,5 @@
 package org.benetech.servicenet.adapter.healthleads;
 
-import org.benetech.servicenet.adapter.healthleads.model.BaseData;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsEligibility;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLanguage;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLocation;
@@ -79,15 +78,14 @@ public interface HealthLeadsDataMapper {
             .collect(Collectors.toSet());
     }
 
-    default Set<Phone> extractPhones(Set<BaseData> phones) {
+    default Set<Phone> extractPhones(Set<HealthleadsPhone> phones) {
         if (CollectionUtils.isEmpty(phones)) {
             return new HashSet<>();
         }
 
         Set<Phone> extractedPhones = new HashSet<>();
-        for (BaseData baseData : phones) {
+        for (HealthleadsPhone healthleadsPhone : phones) {
             Phone phone = new Phone();
-            HealthleadsPhone healthleadsPhone = (HealthleadsPhone) baseData;
 
             phone.setNumber(healthleadsPhone.getNumber());
             if (!StringUtils.isEmpty(healthleadsPhone.getExtension())) {
