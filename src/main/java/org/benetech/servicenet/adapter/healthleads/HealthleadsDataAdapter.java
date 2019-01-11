@@ -26,7 +26,8 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
         }
         JsonDataResolver dataResolver = new JsonDataResolver();
         HealthLeadsDataMapper mapper = HealthLeadsDataMapper.INSTANCE;
-        HealthleadsDataPersistence collector = new HealthleadsDataPersistence();
+        HealthleadsDataPersistence collector =
+            new HealthleadsDataPersistence(importService, mapper, data.getProviderName(), data.getReport());
         for (int i = 0; i < data.getDocumentUploads().size(); i++) {
             String objectJson = data.getMultipleObjectsData().get(i);
             String filename = data.getDocumentUploads().get(i).getFilename();
@@ -38,7 +39,6 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
             }
         }
 
-        collector.persistData(importService, mapper, data.getProviderName(), data.getReport());
-        return data.getReport();
+        return collector.persistData();
     }
 }

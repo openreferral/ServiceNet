@@ -2,6 +2,7 @@ package org.benetech.servicenet.adapter.healthleads.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 
@@ -32,6 +33,6 @@ public class Organization extends BaseData {
     private String legalStatus;
 
     public LocalDate getYearIncorporated() {
-        return yearIncorporated != null && !yearIncorporated.isEmpty() ? LocalDate.parse(yearIncorporated) : null;
+        return StringUtils.isNotBlank(yearIncorporated) ? LocalDate.parse(yearIncorporated) : null;
     }
 }

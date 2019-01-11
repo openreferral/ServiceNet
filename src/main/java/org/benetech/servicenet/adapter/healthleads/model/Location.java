@@ -2,6 +2,7 @@ package org.benetech.servicenet.adapter.healthleads.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 public class Location extends BaseData {
@@ -26,14 +27,14 @@ public class Location extends BaseData {
     private String schedule;
 
     public double getLatitude() {
-        if (latitude == null || latitude.isEmpty()) {
+        if (StringUtils.isBlank(latitude)) {
             return 0;
         }
         return Double.valueOf(latitude);
     }
 
     public double getLongitude() {
-        if (longitude == null || longitude.isEmpty()) {
+        if (StringUtils.isBlank(longitude)) {
             return 0;
         }
         return Double.valueOf(longitude);

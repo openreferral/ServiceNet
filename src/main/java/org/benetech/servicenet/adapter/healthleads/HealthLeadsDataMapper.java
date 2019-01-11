@@ -5,6 +5,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -53,23 +55,23 @@ public interface HealthLeadsDataMapper {
     }
 
     default Set<Phone> extractPhones(Set<org.benetech.servicenet.adapter.healthleads.model.Phone> phones) {
-        if (phones == null || phones.isEmpty()) {
+        if (CollectionUtils.isEmpty(phones)) {
             return new HashSet<>();
         }
 
         Set<Phone> extractedPhones = new HashSet<>();
-        for (org.benetech.servicenet.adapter.healthleads.model.Phone phone : phones) {
-            Phone phone1 = new Phone();
+        for (org.benetech.servicenet.adapter.healthleads.model.Phone phoneToExtract : phones) {
+            Phone phone = new Phone();
 
-            phone1.setNumber( phone.getNumber() );
-            if (phone.getExtension() != null && !phone.getExtension().isEmpty()) {
-                phone1.setExtension(Integer.parseInt(phone.getExtension()));
+            phone.setNumber(phoneToExtract.getNumber());
+            if (!StringUtils.isEmpty(phoneToExtract.getExtension())) {
+                phone.setExtension(Integer.parseInt(phoneToExtract.getExtension()));
             }
-            phone1.setType(phone.getType());
-            phone1.setLanguage(phone.getLanguage());
-            phone1.setDescription(phone.getDescription());
+            phone.setType(phoneToExtract.getType());
+            phone.setLanguage(phoneToExtract.getLanguage());
+            phone.setDescription(phoneToExtract.getDescription());
 
-            extractedPhones.add(phone1);
+            extractedPhones.add(phone);
         }
 
         return extractedPhones;

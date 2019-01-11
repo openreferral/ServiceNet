@@ -91,33 +91,24 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     @Override
     public boolean processFiles(final List<FileInfo> fileInfoList, final String providerName) {
 
-        Optional<MultipleDataAdapter> adapter = new DataAdapterFactory(applicationContext).getMultipleDataAdapter(providerName);
+        Optional<MultipleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
+            .getMultipleDataAdapter(providerName);
         if (adapter.isEmpty()) {
             // No need to process files again if provider is not of MultipleDataAdapter type
             return true;
         }
 
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
-
         List<String> parsedDocuments = new ArrayList<>();
         List<DocumentUpload> documentUploads = new ArrayList<>();
 
-        for (FileInfo fileInfo : fileInfoList) {
-            String parsedDoc = mongoDbService.findParsedDocumentById(fileInfo.getParsedDocumentId());
-            parsedDocuments.add(parsedDoc);
-
-            DocumentUpload docUpload = documentUploadRepository.findByParsedDocumentId(fileInfo.getParsedDocumentId());
-            docUpload.setFilename(fileInfo.getFilename());
-            documentUploads.add(docUpload);
-        }
-
+        fillLists(fileInfoList, parsedDocuments, documentUploads);
 
         DataImportReport reportToSave = adapter
-            .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, providerName, report)))
+            .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName, false)))
             .orElse(report);
 
-        reportToSave.setEndDate(ZonedDateTime.now());
-        dataImportReportService.save(reportToSave);
+        saveReport(reportToSave);
 
         return true;
     }
@@ -184,13 +175,11 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .getSingleDataAdapter(providerName);
 
         DataImportReport reportToSave = adapter
-            .map(a -> a.importData(new SingleImportData(parsedDocument, report, providerName, isFileUpload)))
+            .map((a) -> {
+                DataImportReport importReport = a.importData(new SingleImportData(parsedDocument, report, providerName, false));
+                return saveReport(importReport);
+            })
             .orElse(report);
-
-        if (adapter.isPresent()) {
-            reportToSave.setEndDate(ZonedDateTime.now());
-            reportToSave = dataImportReportService.save(report);
-        }
 
         return documentUploadMapper.toDto(reportToSave.getDocumentUpload());
     }
@@ -210,5 +199,21 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         } else {
             throw new IllegalStateException("User has to be authorized to determine the provider");
         }
+    }
+
+    private void fillLists(List<FileInfo> fileInfoList, List<String> parsedDocuments, List<DocumentUpload> documentUploads) {
+        for (FileInfo fileInfo : fileInfoList) {
+            String parsedDoc = mongoDbService.findParsedDocumentById(fileInfo.getParsedDocumentId());
+            parsedDocuments.add(parsedDoc);
+
+            DocumentUpload docUpload = documentUploadRepository.findByParsedDocumentId(fileInfo.getParsedDocumentId());
+            docUpload.setFilename(fileInfo.getFilename());
+            documentUploads.add(docUpload);
+        }
+    }
+
+    private DataImportReport saveReport(DataImportReport report) {
+        report.setEndDate(ZonedDateTime.now());
+        return dataImportReportService.save(report);
     }
 }

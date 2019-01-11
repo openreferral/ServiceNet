@@ -11,123 +11,143 @@ import java.util.Set;
 
 public class HealthleadsDataPersistence {
 
-    private Map<String, Location> locations;
-    private Map<String, Organization> organizations;
-    private Map<String, Service> services;
-    private Map<String, PhysicalAddress> physicalAddresses;
-    private Map<String, Set<Phone>> phones;
-    private Map<String, Eligibility> eligibilities;
-    private Map<String, Language> languages;
-    private Map<String, RequiredDocument> requiredDocuments;
-    private Map<String, ServiceAtLocation> serviceAtLocations;
-    private Map<String, ServiceTaxonomy> serviceTaxonomies;
-    private Map<String, Taxonomy> taxonomies;
+    private Map<String, Location> locations = new HashMap<>();
+    private Map<String, Organization> organizations = new HashMap<>();
+    private Map<String, Service> services = new HashMap<>();
+    private Map<String, PhysicalAddress> physicalAddresses = new HashMap<>();
+    private Map<String, Set<Phone>> phones = new HashMap<>();
+    private Map<String, Eligibility> eligibilities = new HashMap<>();
+    private Map<String, Language> languages = new HashMap<>();
+    private Map<String, RequiredDocument> requiredDocuments = new HashMap<>();
+    private Map<String, ServiceAtLocation> serviceAtLocations = new HashMap<>();
+    private Map<String, ServiceTaxonomy> serviceTaxonomies = new HashMap<>();
+    private Map<String, Taxonomy> taxonomies = new HashMap<>();
 
-    public HealthleadsDataPersistence() {
-        this.locations = new HashMap<>();
-        this.organizations = new HashMap<>();
-        this.serviceAtLocations = new HashMap<>();
-        this.services = new HashMap<>();
-        this.phones = new HashMap<>();
-        this.physicalAddresses = new HashMap<>();
-        this.eligibilities = new HashMap<>();
-        this.languages = new HashMap<>();
-        this.requiredDocuments = new HashMap<>();
-        this.serviceTaxonomies = new HashMap<>();
-        this.taxonomies = new HashMap<>();
+    private ImportService importService;
+    private HealthLeadsDataMapper mapper;
+    private final String providerName;
+    private DataImportReport report;
+
+    public HealthleadsDataPersistence(ImportService importService, HealthLeadsDataMapper mapper, String providerName, DataImportReport report) {
+        this.importService = importService;
+        this.mapper = mapper;
+        this.providerName = providerName;
+        this.report = report;
     }
 
     public void addData(BaseData data) {
         if (data instanceof Eligibility) {
-            this.eligibilities.put(((Eligibility) data).getServiceId(), (Eligibility) data);
+            eligibilities.put(((Eligibility) data).getServiceId(), (Eligibility) data);
         } else if (data instanceof Language) {
             languages.put(((Language) data).getLocationId(), (Language) data);
         } else if (data instanceof Location) {
-            this.locations.put(data.getId(), (Location) data);
+            locations.put(data.getId(), (Location) data);
         } else if (data instanceof Organization) {
-            this.organizations.put(data.getId(), (Organization) data);
+            organizations.put(data.getId(), (Organization) data);
         } else if (data instanceof Phone) {
-            if (!this.phones.containsKey(((Phone) data).getLocationId())) {
-                this.phones.put(((Phone) data).getLocationId(), new HashSet<>());
+            if (!phones.containsKey(((Phone) data).getLocationId())) {
+                phones.put(((Phone) data).getLocationId(), new HashSet<>());
             }
-            this.phones.get(((Phone) data).getLocationId()).add((Phone) data);
+            phones.get(((Phone) data).getLocationId()).add((Phone) data);
         } else if (data instanceof PhysicalAddress) {
-            this.physicalAddresses.put(((PhysicalAddress) data).getLocationId(), (PhysicalAddress) data);
+            physicalAddresses.put(((PhysicalAddress) data).getLocationId(), (PhysicalAddress) data);
         } else if (data instanceof RequiredDocument) {
-            this.requiredDocuments.put(((RequiredDocument) data).getServiceId(), (RequiredDocument) data);
+            requiredDocuments.put(((RequiredDocument) data).getServiceId(), (RequiredDocument) data);
         } else if (data instanceof Service) {
-            this.services.put(((Service) data).getOrganizationId(), (Service) data);
+            services.put(((Service) data).getOrganizationId(), (Service) data);
         } else if (data instanceof ServiceAtLocation) {
-            this.serviceAtLocations.put(((ServiceAtLocation) data).getLocationId(), (ServiceAtLocation) data);
+            serviceAtLocations.put(((ServiceAtLocation) data).getLocationId(), (ServiceAtLocation) data);
         } else if (data instanceof ServiceTaxonomy) {
-            this.serviceTaxonomies.put(((ServiceTaxonomy) data).getServiceId(), (ServiceTaxonomy) data);
+            serviceTaxonomies.put(((ServiceTaxonomy) data).getServiceId(), (ServiceTaxonomy) data);
         } else if (data instanceof Taxonomy) {
-            this.taxonomies.put(data.getId(), (Taxonomy) data);
+            taxonomies.put(data.getId(), (Taxonomy) data);
         }
     }
 
-    public void persistData(ImportService importService, HealthLeadsDataMapper mapper, String providerName, DataImportReport report) {
+    public DataImportReport persistData() {
         for (Location location : locations.values()) {
             Organization organization = organizations.get(location.getOrganizationId());
             Service service = services.get(organization.getId());
             PhysicalAddress physicalAddress = physicalAddresses.get(location.getId());
-            Set<Phone> phones = this.phones.get(location.getId());
+            Set<Phone> phoneSet = phones.get(location.getId());
             Eligibility eligibility = eligibilities.get(service.getId());
-            Language languages = this.languages.get(location.getId());
+            Language language = this.languages.get(location.getId());
             ServiceTaxonomy serviceTaxonomy = serviceTaxonomies.get(service.getId());
             Taxonomy taxonomy = taxonomies.get(serviceTaxonomy.getTaxonomyId());
             ServiceAtLocation serviceAtLocation = serviceAtLocations.get(location.getId());
             RequiredDocument requiredDocument = requiredDocuments.get(service.getId());
 
-            org.benetech.servicenet.domain.Location extractedLocaton = mapper.extractLocation(location);
-            org.benetech.servicenet.domain.Location savedLocation
-                = importService.createOrUpdateLocation(extractedLocaton, location.getId(), providerName);
+            org.benetech.servicenet.domain.Location savedLocation = saveLocation(mapper.extractLocation(location), location.getId());
+            org.benetech.servicenet.domain.Organization savedOrganization
+                = saveOrganization(getOrganization(organization, savedLocation), organization.getId());
+            org.benetech.servicenet.domain.Service savedService = saveService(getService(service, savedOrganization), service.getId());
+            savePhysicalAddress(mapper.extractPhysicalAddress(physicalAddress), savedLocation);
+            saveServiceAtLocation(mapper.extractServiceAtLocation(serviceAtLocation), serviceAtLocation.getId(), savedService, savedLocation);
+            savePhones(mapper.extractPhones(phoneSet), savedService, savedLocation);
+            saveEligibility(mapper.extractEligibility(eligibility), savedService);
+            saveLanguages(mapper.extractLanguages(language), savedService, savedLocation);
+            org.benetech.servicenet.domain.Taxonomy extractedTaxonomy = saveTaxonomy(mapper.extractTaxonomy(taxonomy), taxonomy.getId());
+            saveServiceTaxonomy(mapper.extractServiceTaxonomy(serviceTaxonomy), serviceTaxonomy.getId(), savedService, extractedTaxonomy);
+            saveRequiredDocument(mapper.extractRequiredDocument(requiredDocument), requiredDocument.getId(), savedService);
+        }
+        return report;
+    }
 
-            org.benetech.servicenet.domain.Organization extractedOrganization
-                = mapper.extractOrganization(organization)
-                    .location(savedLocation)
-                    .active(true);
-            extractedOrganization = importService
-                .createOrUpdateOrganization(extractedOrganization, organization.getId(), providerName, report);
+    private org.benetech.servicenet.domain.Location saveLocation(org.benetech.servicenet.domain.Location location, String externalDbId) {
+        return importService.createOrUpdateLocation(location, externalDbId, providerName);
+    }
 
-            org.benetech.servicenet.domain.Service extractedService = mapper.extractService(service)
-                .organization(extractedOrganization);
-            org.benetech.servicenet.domain.Service savedService
-                = importService.createOrUpdateService(extractedService, service.getId(), providerName, report);
+    private org.benetech.servicenet.domain.Organization saveOrganization(org.benetech.servicenet.domain.Organization organization, String externalDbId) {
+        return importService.createOrUpdateOrganization(organization, externalDbId, providerName, report);
+    }
 
-            org.benetech.servicenet.domain.PhysicalAddress extractedPhysicalAdress
-                = mapper.extractPhysicalAddress(physicalAddress);
-            importService.createOrUpdatePhysicalAddress(extractedPhysicalAdress, savedLocation);
+    private org.benetech.servicenet.domain.Organization getOrganization(Organization organization, org.benetech.servicenet.domain.Location savedLocation) {
+        return mapper.extractOrganization(organization).location(savedLocation).active(true);
+    }
 
-            org.benetech.servicenet.domain.ServiceAtLocation extractedServiceAtLocation
-                = mapper.extractServiceAtLocation(serviceAtLocation);
-            importService.createOrUpdateServiceAtLocation(extractedServiceAtLocation, serviceAtLocation.getId(),
-                providerName, savedService, savedLocation);
+    private org.benetech.servicenet.domain.Service saveService(org.benetech.servicenet.domain.Service service, String externalDbId) {
+        return importService.createOrUpdateService(service, externalDbId, providerName, report);
+    }
 
-            Set<org.benetech.servicenet.domain.Phone> extractedPhones = mapper.extractPhones(phones);
-            importService.createOrUpdatePhones(extractedPhones, savedService, savedLocation);
+    private org.benetech.servicenet.domain.Service getService(Service service, org.benetech.servicenet.domain.Organization extractedOrganization) {
+        return mapper.extractService(service)
+            .organization(extractedOrganization);
+    }
 
-            org.benetech.servicenet.domain.Eligibility extractedEligibility
-                = mapper.extractEligibility(eligibility);
-            importService.createOrUpdateEligibility(extractedEligibility, savedService);
+    private void savePhysicalAddress(org.benetech.servicenet.domain.PhysicalAddress physicalAddress, org.benetech.servicenet.domain.Location location) {
+        importService.createOrUpdatePhysicalAddress(physicalAddress, location);
+    }
 
-            importService.createOrUpdateLangs(mapper.extractLanguages(languages), savedService, savedLocation);
+    private void saveServiceAtLocation(org.benetech.servicenet.domain.ServiceAtLocation serviceAtLocation, String externalDbId,
+                                       org.benetech.servicenet.domain.Service service, org.benetech.servicenet.domain.Location location) {
+        importService.createOrUpdateServiceAtLocation(serviceAtLocation, externalDbId, providerName, service, location);
+    }
 
-            org.benetech.servicenet.domain.Taxonomy extractedTaxonomy = mapper.extractTaxonomy(taxonomy);
-            extractedTaxonomy = importService.createOrUpdateTaxonomy(extractedTaxonomy, taxonomy.getId(),
-                providerName);
+    private void savePhones(Set<org.benetech.servicenet.domain.Phone> phones,
+                            org.benetech.servicenet.domain.Service service, org.benetech.servicenet.domain.Location location) {
+        importService.createOrUpdatePhones(phones, service, location);
+    }
 
-            org.benetech.servicenet.domain.ServiceTaxonomy extractedServiceTaxonomy
-                = mapper.extractServiceTaxonomy(serviceTaxonomy);
-            importService.createOrUpdateServiceTaxonomy(extractedServiceTaxonomy, serviceTaxonomy.getId(),
-                providerName, savedService, extractedTaxonomy);
+    private void saveEligibility(org.benetech.servicenet.domain.Eligibility eligibility, org.benetech.servicenet.domain.Service service) {
+        importService.createOrUpdateEligibility(eligibility, service);
+    }
 
-            org.benetech.servicenet.domain.RequiredDocument extractedRequiredDocument
-                = mapper.extractRequiredDocument(requiredDocument);
-            if (extractedRequiredDocument != null) {
-                importService.createOrUpdateRequiredDocument(extractedRequiredDocument, requiredDocument.getId(),
-                    providerName, savedService);
-            }
+    private void saveLanguages(Set<org.benetech.servicenet.domain.Language> languages,
+                               org.benetech.servicenet.domain.Service service, org.benetech.servicenet.domain.Location location) {
+        importService.createOrUpdateLangs(languages, service, location);
+    }
+
+    private org.benetech.servicenet.domain.Taxonomy saveTaxonomy(org.benetech.servicenet.domain.Taxonomy taxonomy, String extermalDbId) {
+        return importService.createOrUpdateTaxonomy(taxonomy, extermalDbId, providerName);
+    }
+
+    private void saveServiceTaxonomy(org.benetech.servicenet.domain.ServiceTaxonomy serviceTaxonomy, String externalDbId, org.benetech.servicenet.domain.Service service, org.benetech.servicenet.domain.Taxonomy taxonomy) {
+        importService.createOrUpdateServiceTaxonomy(serviceTaxonomy, externalDbId, providerName, service, taxonomy);
+    }
+
+    private void saveRequiredDocument(org.benetech.servicenet.domain.RequiredDocument requiredDocument, String externalDbId, org.benetech.servicenet.domain.Service service) {
+        if (requiredDocument != null) {
+            importService.createOrUpdateRequiredDocument(requiredDocument, externalDbId, providerName, service);
         }
     }
 }
