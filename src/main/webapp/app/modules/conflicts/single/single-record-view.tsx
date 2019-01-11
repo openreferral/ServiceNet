@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'reactstrap';
 import Tabs from './components/tabs';
 import { getActivityDetails } from './single-record-view.reducer';
+import { RouteComponentProps } from 'react-router-dom';
 
-export interface ISingleRecordViewProp extends StateProps, DispatchProps {}
+export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
 export interface ISingleRecordViewState {
   match: any;
@@ -28,7 +29,7 @@ export class SingleRecordView extends React.Component<ISingleRecordViewProp, ISi
       <Row>
         <Col>
           <h2>{activityDetails.organization.name}</h2>
-          <Tabs activity={activityDetails} />
+          <Tabs activity={activityDetails} {...this.props} />
         </Col>
       </Row>
     ) : (
