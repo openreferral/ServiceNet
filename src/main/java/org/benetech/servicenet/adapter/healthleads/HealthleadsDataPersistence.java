@@ -13,7 +13,6 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLoc
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.LocationRelatedData;
-import org.benetech.servicenet.adapter.healthleads.model.OrganizationRelatedData;
 import org.benetech.servicenet.adapter.healthleads.model.ServiceRelatedData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
@@ -37,7 +36,7 @@ import java.util.Set;
 public class HealthleadsDataPersistence {
 
     private Map<Class<? extends BaseData>, Map<String, BaseData>> entitiesMap = new HashMap<>();
-    private Map<String, Set<HealthleadsPhone>> phones = new HashMap<>();
+    private Map<Class<? extends BaseData>, Map<String, Set<BaseData>>> enitiiesSetsMap = new HashMap<>();
 
     private ImportService importService;
     private HealthLeadsDataMapper mapper;
@@ -56,23 +55,23 @@ public class HealthleadsDataPersistence {
 
     public void addData(BaseData data) {
         Class<? extends BaseData> clazz = data.getClass();
-        if (!entitiesMap.containsKey(clazz)) {
-            entitiesMap.put(clazz, new HashMap<>());
-        }
 
         if (data instanceof HealthleadsPhone) {
-            if (!phones.containsKey(((HealthleadsPhone) data).getLocationId())) {
-                phones.put(((HealthleadsPhone) data).getLocationId(), new HashSet<>());
-            }
-            phones.get(((HealthleadsPhone) data).getLocationId()).add((HealthleadsPhone) data);
-        } else if (data instanceof LocationRelatedData) {
-            entitiesMap.get(clazz).put(((LocationRelatedData) data).getLocationId(), data);
-        } else if (data instanceof OrganizationRelatedData) {
-            entitiesMap.get(clazz).put(((OrganizationRelatedData) data).getOrganizationId(), data);
-        } else if (data instanceof ServiceRelatedData) {
-            entitiesMap.get(clazz).put(((ServiceRelatedData) data).getServiceId(), data);
+            handlePhones(data, clazz);
+        } else if (data instanceof HealthleadsService) {
+            handleServices(data, clazz);
         } else {
-            entitiesMap.get(clazz).put(data.getId(), data);
+            if (!entitiesMap.containsKey(clazz)) {
+                entitiesMap.put(clazz, new HashMap<>());
+            }
+
+            if (data instanceof LocationRelatedData) {
+                entitiesMap.get(clazz).put(((LocationRelatedData) data).getLocationId(), data);
+            } else if (data instanceof ServiceRelatedData) {
+                entitiesMap.get(clazz).put(((ServiceRelatedData) data).getServiceId(), data);
+            } else {
+                entitiesMap.get(clazz).put(data.getId(), data);
+            }
         }
     }
 
@@ -81,42 +80,75 @@ public class HealthleadsDataPersistence {
             HealthleadsLocation location = (HealthleadsLocation) baseData;
             HealthleadsOrganization organization = (HealthleadsOrganization) entitiesMap
                 .get(HealthleadsOrganization.class).get(location.getOrganizationId());
-            HealthleadsService service = (HealthleadsService) entitiesMap
-                .get(HealthleadsService.class).get(organization.getId());
+            Set<BaseData> services = enitiiesSetsMap.get(HealthleadsService.class)
+                .get(organization.getId());
             HealthleadsPhysicalAddress physicalAddress = (HealthleadsPhysicalAddress) entitiesMap
                 .get(HealthleadsPhysicalAddress.class).get(location.getId());
-            Set<HealthleadsPhone> phoneSet = phones
-                .get(location.getId());
-            HealthleadsEligibility eligibility = (HealthleadsEligibility) entitiesMap
-                .get(HealthleadsEligibility.class).get(service.getId());
+            Set<BaseData> phoneSet = enitiiesSetsMap.get(HealthleadsPhone.class).get(location.getId());
             HealthleadsLanguage language = (HealthleadsLanguage) entitiesMap
                 .get(HealthleadsLanguage.class).get(location.getId());
-            HealthleadsServiceTaxonomy serviceTaxonomy = (HealthleadsServiceTaxonomy) entitiesMap
-                .get(HealthleadsServiceTaxonomy.class).get(service.getId());
-            HealthleadsTaxonomy taxonomy = (HealthleadsTaxonomy) entitiesMap
-                .get(HealthleadsTaxonomy.class).get(serviceTaxonomy.getTaxonomyId());
             HealthleadsServiceAtLocation serviceAtLocation = (HealthleadsServiceAtLocation) entitiesMap
                 .get(HealthleadsServiceAtLocation.class).get(location.getId());
-            HealthleadsRequiredDocument requiredDocument = (HealthleadsRequiredDocument) entitiesMap
-                .get(HealthleadsRequiredDocument.class).get(service.getId());
-
             Location savedLocation = saveLocation(mapper.extractLocation(location), location.getId());
             Organization savedOrganization
                 = saveOrganization(getOrganization(organization, savedLocation), organization.getId());
-            Service savedService = saveService(getService(service, savedOrganization), service.getId());
+
             savePhysicalAddress(mapper.extractPhysicalAddress(physicalAddress), savedLocation);
-            saveServiceAtLocation(mapper.extractServiceAtLocation(serviceAtLocation),
-                serviceAtLocation.getId(), savedService, savedLocation);
-            savePhones(mapper.extractPhones(phoneSet), savedService, savedLocation);
-            saveEligibility(mapper.extractEligibility(eligibility), savedService);
-            saveLanguages(mapper.extractLanguages(language), savedService, savedLocation);
-            Taxonomy extractedTaxonomy = saveTaxonomy(mapper.extractTaxonomy(taxonomy), taxonomy.getId());
-            saveServiceTaxonomy(mapper.extractServiceTaxonomy(serviceTaxonomy),
-                serviceTaxonomy.getId(), savedService, extractedTaxonomy);
-            saveRequiredDocument(mapper.extractRequiredDocument(requiredDocument),
-                requiredDocument.getId(), savedService);
+
+            for (BaseData baseService : services) {
+                HealthleadsService service = (HealthleadsService) baseService;
+
+                HealthleadsEligibility eligibility = (HealthleadsEligibility) entitiesMap
+                    .get(HealthleadsEligibility.class).get(service.getId());
+
+                HealthleadsServiceTaxonomy serviceTaxonomy = (HealthleadsServiceTaxonomy) entitiesMap
+                    .get(HealthleadsServiceTaxonomy.class).get(service.getId());
+
+                HealthleadsTaxonomy taxonomy = (HealthleadsTaxonomy) entitiesMap
+                    .get(HealthleadsTaxonomy.class).get(serviceTaxonomy.getTaxonomyId());
+
+                HealthleadsRequiredDocument requiredDocument = (HealthleadsRequiredDocument) entitiesMap
+                    .get(HealthleadsRequiredDocument.class).get(service.getId());
+
+                Service savedService = saveService(getService(service, savedOrganization), service.getId());
+
+                saveServiceAtLocation(mapper.extractServiceAtLocation(serviceAtLocation),
+                    serviceAtLocation.getId(), savedService, savedLocation);
+                savePhones(mapper.extractPhones(phoneSet), savedService, savedLocation);
+                saveEligibility(mapper.extractEligibility(eligibility), savedService);
+                saveLanguages(mapper.extractLanguages(language), savedService, savedLocation);
+                Taxonomy extractedTaxonomy = saveTaxonomy(mapper.extractTaxonomy(taxonomy), taxonomy.getId());
+                saveServiceTaxonomy(mapper.extractServiceTaxonomy(serviceTaxonomy),
+                    serviceTaxonomy.getId(), savedService, extractedTaxonomy);
+                saveRequiredDocument(mapper.extractRequiredDocument(requiredDocument),
+                    requiredDocument.getId(), savedService);
+            }
         }
         return report;
+    }
+
+    private void handlePhones(BaseData data, Class<? extends BaseData> clazz) {
+        if (!enitiiesSetsMap.containsKey(clazz)) {
+            enitiiesSetsMap.put(clazz, new HashMap<>());
+        }
+        Map<String, Set<BaseData>> map = enitiiesSetsMap.get(clazz);
+        if (!map.containsKey(((HealthleadsPhone) data).getLocationId())) {
+            map.put(((HealthleadsPhone) data).getLocationId(), new HashSet<>());
+        }
+        map.get(((HealthleadsPhone) data).getLocationId()).add(data);
+        enitiiesSetsMap.put(clazz, map);
+    }
+    
+    private void handleServices(BaseData data, Class<? extends BaseData> clazz) {
+        if (!enitiiesSetsMap.containsKey(clazz)) {
+            enitiiesSetsMap.put(clazz, new HashMap<>());
+        }
+        Map<String, Set<BaseData>> map = enitiiesSetsMap.get(clazz);
+        if (!map.containsKey(((HealthleadsService) data).getOrganizationId())) {
+            map.put(((HealthleadsService) data).getOrganizationId(), new HashSet<>());
+        }
+        map.get(((HealthleadsService) data).getOrganizationId()).add(data);
+        enitiiesSetsMap.put(clazz, map);
     }
 
     private Location saveLocation(Location location, String externalDbId) {

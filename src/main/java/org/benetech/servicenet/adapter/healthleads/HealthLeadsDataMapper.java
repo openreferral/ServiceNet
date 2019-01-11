@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.healthleads;
 
+import org.benetech.servicenet.adapter.healthleads.model.BaseData;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsEligibility;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLanguage;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLocation;
@@ -78,22 +79,23 @@ public interface HealthLeadsDataMapper {
             .collect(Collectors.toSet());
     }
 
-    default Set<Phone> extractPhones(Set<HealthleadsPhone> phones) {
+    default Set<Phone> extractPhones(Set<BaseData> phones) {
         if (CollectionUtils.isEmpty(phones)) {
             return new HashSet<>();
         }
 
         Set<Phone> extractedPhones = new HashSet<>();
-        for (HealthleadsPhone phoneToExtract : phones) {
+        for (BaseData baseData : phones) {
             Phone phone = new Phone();
+            HealthleadsPhone healthleadsPhone = (HealthleadsPhone) baseData;
 
-            phone.setNumber(phoneToExtract.getNumber());
-            if (!StringUtils.isEmpty(phoneToExtract.getExtension())) {
-                phone.setExtension(Integer.parseInt(phoneToExtract.getExtension()));
+            phone.setNumber(healthleadsPhone.getNumber());
+            if (!StringUtils.isEmpty(healthleadsPhone.getExtension())) {
+                phone.setExtension(Integer.parseInt(healthleadsPhone.getExtension()));
             }
-            phone.setType(phoneToExtract.getType());
-            phone.setLanguage(phoneToExtract.getLanguage());
-            phone.setDescription(phoneToExtract.getDescription());
+            phone.setType(healthleadsPhone.getType());
+            phone.setLanguage(healthleadsPhone.getLanguage());
+            phone.setDescription(healthleadsPhone.getDescription());
 
             extractedPhones.add(phone);
         }

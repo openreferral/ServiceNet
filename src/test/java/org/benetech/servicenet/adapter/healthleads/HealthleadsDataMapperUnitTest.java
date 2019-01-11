@@ -190,7 +190,7 @@ public class HealthleadsDataMapperUnitTest {
 
     @Test
     public void testExtractPhones() {
-        Set<HealthleadsPhone> phones = new HashSet<>();
+        Set<BaseData> phones = new HashSet<>();
         HealthleadsPhone phone1 = new HealthleadsPhone();
         phone1.setDescription("description1");
         phone1.setExtension("123");
