@@ -41,13 +41,13 @@ export class RequiredDocumentDetail extends React.Component<IRequiredDocumentDet
             <dd>{requiredDocumentEntity.srvcName ? requiredDocumentEntity.srvcName : ''}</dd>
             <dt>
               <span id="externalDbId">
-                <Translate contentKey="serviceNetApp.requiredDocumentEntity.externalDbId" />
+                <Translate contentKey="serviceNetApp.requiredDocument.externalDbId" />
               </span>
             </dt>
             <dd>{requiredDocumentEntity.externalDbId}</dd>
             <dt>
               <span id="providerName">
-                <Translate contentKey="serviceNetApp.requiredDocumentEntity.providerName" />
+                <Translate contentKey="serviceNetApp.requiredDocument.providerName" />
               </span>
             </dt>
             <dd>{requiredDocumentEntity.providerName}</dd>

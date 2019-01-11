@@ -158,15 +158,15 @@ export class ServiceAtLocationUpdate extends React.Component<IServiceAtLocationU
                 </AvGroup>
                 <AvGroup>
                   <Label id="externalDbIdLabel" for="externalDbId">
-                    <Translate contentKey="serviceNetApp.organization.externalDbId" />
+                    <Translate contentKey="serviceNetApp.serviceAtLocation.externalDbId" />
                   </Label>
-                  <AvInput id="organization-externalDbId" type="textarea" name="externalDbId" />
+                  <AvInput id="serviceAtLocation-externalDbId" type="textarea" name="externalDbId" />
                 </AvGroup>
                 <AvGroup>
                   <Label id="providerNameLabel" for="providerName">
-                    <Translate contentKey="serviceNetApp.organization.providerName" />
+                    <Translate contentKey="serviceNetApp.serviceAtLocation.providerName" />
                   </Label>
-                  <AvInput id="organization-providerName" type="textarea" name="providerName" />
+                  <AvInput id="serviceAtLocation-providerName" type="textarea" name="providerName" />
                 </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/service-at-location" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />

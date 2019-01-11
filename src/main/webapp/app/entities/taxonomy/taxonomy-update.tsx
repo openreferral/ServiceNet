@@ -123,15 +123,15 @@ export class TaxonomyUpdate extends React.Component<ITaxonomyUpdateProps, ITaxon
                 </AvGroup>
                 <AvGroup>
                   <Label id="externalDbIdLabel" for="externalDbId">
-                    <Translate contentKey="serviceNetApp.organization.externalDbId" />
+                    <Translate contentKey="serviceNetApp.taxonomy.externalDbId" />
                   </Label>
-                  <AvInput id="organization-externalDbId" type="textarea" name="externalDbId" />
+                  <AvInput id="taxonomy-externalDbId" type="textarea" name="externalDbId" />
                 </AvGroup>
                 <AvGroup>
                   <Label id="providerNameLabel" for="providerName">
-                    <Translate contentKey="serviceNetApp.organization.providerName" />
+                    <Translate contentKey="serviceNetApp.taxonomy.providerName" />
                   </Label>
-                  <AvInput id="organization-providerName" type="textarea" name="providerName" />
+                  <AvInput id="taxonomy-providerName" type="textarea" name="providerName" />
                 </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/taxonomy" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
