@@ -152,10 +152,14 @@ public class HealthleadsDataPersistence {
     }
 
     private Location saveLocation(Location location, String externalDbId) {
+        location.setExternalDbId(externalDbId);
+        location.setProviderName(providerName);
         return importService.createOrUpdateLocation(location, externalDbId, providerName);
     }
 
     private Organization saveOrganization(Organization organization, String externalDbId) {
+        organization.setExternalDbId(externalDbId);
+        organization.setProviderName(providerName);
         return importService.createOrUpdateOrganization(organization, externalDbId, providerName, report);
     }
 
@@ -164,6 +168,8 @@ public class HealthleadsDataPersistence {
     }
 
     private Service saveService(Service service, String externalDbId) {
+        service.setExternalDbId(externalDbId);
+        service.setProviderName(providerName);
         return importService.createOrUpdateService(service, externalDbId, providerName, report);
     }
 
@@ -178,6 +184,8 @@ public class HealthleadsDataPersistence {
 
     private void saveServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
                                        Service service, Location location) {
+        serviceAtLocation.setExternalDbId(externalDbId);
+        serviceAtLocation.setProviderName(providerName);
         importService.createOrUpdateServiceAtLocation(serviceAtLocation, externalDbId, providerName, service, location);
     }
 
@@ -196,16 +204,22 @@ public class HealthleadsDataPersistence {
     }
 
     private Taxonomy saveTaxonomy(Taxonomy taxonomy, String extermalDbId) {
+        taxonomy.setExternalDbId(extermalDbId);
+        taxonomy.setProviderName(providerName);
         return importService.createOrUpdateTaxonomy(taxonomy, extermalDbId, providerName);
     }
 
     private void saveServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String externalDbId,
                                      Service service, Taxonomy taxonomy) {
+        serviceTaxonomy.setExternalDbId(externalDbId);
+        serviceTaxonomy.setProviderName(providerName);
         importService.createOrUpdateServiceTaxonomy(serviceTaxonomy, externalDbId, providerName, service, taxonomy);
     }
 
     private void saveRequiredDocument(RequiredDocument requiredDocument, String externalDbId, Service service) {
         if (requiredDocument != null) {
+            requiredDocument.setExternalDbId(externalDbId);
+            requiredDocument.setProviderName(providerName);
             importService.createOrUpdateRequiredDocument(requiredDocument, externalDbId, providerName, service);
         }
     }
