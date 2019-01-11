@@ -105,7 +105,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         fillLists(fileInfoList, parsedDocuments, documentUploads);
 
         DataImportReport reportToSave = adapter
-            .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName, false)))
+            .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName, true)))
             .orElse(report);
 
         saveReport(reportToSave);
@@ -176,7 +176,8 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
         DataImportReport reportToSave = adapter
             .map((a) -> {
-                DataImportReport importReport = a.importData(new SingleImportData(parsedDocument, report, providerName, false));
+                DataImportReport importReport = a.importData(
+                    new SingleImportData(parsedDocument, report, providerName, isFileUpload));
                 return saveReport(importReport);
             })
             .orElse(report);
