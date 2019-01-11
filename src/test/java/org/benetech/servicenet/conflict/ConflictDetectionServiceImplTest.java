@@ -95,4 +95,74 @@ public class ConflictDetectionServiceImplTest {
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
     }
 
+    @Test
+    @Transactional
+    public void shouldNotDuplicateConflicts() {
+        Organization org1 = OrganizationMother.createDefaultAndPersist(em);
+        Organization org2 = OrganizationMother.createDifferentAndPersist(em);
+        em.flush();
+        OrganizationMatch match = new OrganizationMatch()
+            .organizationRecord(org1)
+            .partnerVersion(org2)
+            .timestamp(ZonedDateTime.now())
+            .deleted(false);
+
+        int dbSize = conflictRepository.findAll().size();
+        int numberOfConflicts = 10;
+        int numberOfMirrorConflicts = 10;
+
+        conflictDetectionService.detect(Collections.singletonList(match));
+        conflictDetectionService.detect(Collections.singletonList(match));
+
+        assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
+    }
+
+    @Test
+    @Transactional
+    public void shouldAddToAcceptedThisChangeInsteadOfDuplicatingConflict() {
+        Organization org = OrganizationMother.createDefaultAndPersist(em);
+        Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
+        theSameOrg.setEmail("user@example.com");
+        em.flush();
+        OrganizationMatch match = new OrganizationMatch()
+            .organizationRecord(org)
+            .partnerVersion(theSameOrg)
+            .timestamp(ZonedDateTime.now())
+            .deleted(false);
+
+        int dbSize = conflictRepository.findAll().size();
+        int numberOfConflicts = 1;
+        int numberOfMirrorConflicts = 1;
+
+        conflictDetectionService.detect(Collections.singletonList(match));
+        conflictDetectionService.detect(Collections.singletonList(match));
+
+        assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
+        assertEquals(conflictRepository.findAll().get(0).getAcceptedThisChanges().size(), 1);
+    }
+
+    @Test
+    @Transactional
+    public void shouldCreateMirrorConflictConflict() {
+        Organization org = OrganizationMother.createDefaultAndPersist(em);
+        Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
+        theSameOrg.setEmail("user@example.com");
+        em.flush();
+        OrganizationMatch match = new OrganizationMatch()
+            .organizationRecord(org)
+            .partnerVersion(theSameOrg)
+            .timestamp(ZonedDateTime.now())
+            .deleted(false);
+
+        int dbSize = conflictRepository.findAll().size();
+        int numberOfConflicts = 1;
+        int numberOfMirrorConflicts = 1;
+
+        conflictDetectionService.detect(Collections.singletonList(match));
+
+        assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
+        assertEquals(conflictRepository.findAll().get(0).getOfferedValue(),
+            conflictRepository.findAll().get(1).getCurrentValue());
+    }
+
 }

@@ -83,6 +83,7 @@ public class OrganizationMother {
         Organization org = createDefault();
         org.setAccount(SystemAccountMother.createDefaultAndPersist(em));
         em.persist(org);
+        em.flush();
         return org;
     }
 
@@ -90,6 +91,7 @@ public class OrganizationMother {
         Organization org = createDifferent();
         org.setAccount(SystemAccountMother.createDifferentAndPersist(em));
         em.persist(org);
+        em.flush();
         return org;
     }
 

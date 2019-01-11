@@ -14,24 +14,35 @@ public class OrganizationConflictDetector extends Detector<Organization> impleme
     public List<Conflict> detect(Organization current, Organization offered) {
         List<Conflict> conflicts = new LinkedList<>();
 
-        conflicts.addAll(detectConflict(current, current.getName(), offered.getName()));
-        conflicts.addAll(detectConflict(current, current.getAlternateName(), offered.getAlternateName()));
-        conflicts.addAll(detectConflict(current, current.getDescription(), offered.getDescription()));
-        conflicts.addAll(detectConflict(current, current.getEmail(), offered.getEmail()));
-        conflicts.addAll(detectConflict(current, current.getUrl(), offered.getUrl()));
-        conflicts.addAll(detectConflict(current, current.getTaxStatus(), offered.getTaxStatus()));
-        conflicts.addAll(detectConflict(current, current.getTaxId(), offered.getTaxId()));
-        conflicts.addAll(detectConflict(current, current.getYearIncorporated(), offered.getYearIncorporated()));
-        conflicts.addAll(detectConflict(current, current.getLegalStatus(), offered.getLegalStatus()));
-        conflicts.addAll(detectConflict(current, current.getActive(), offered.getActive()));
-        conflicts.addAll(detectConflict(current, current.getProviderName(), offered.getProviderName()));
+        conflicts.addAll(detectConflict(current, current.getName(), offered.getName()
+            , "name"));
+        conflicts.addAll(detectConflict(current, current.getAlternateName(), offered.getAlternateName()
+            , "alternateName"));
+        conflicts.addAll(detectConflict(current, current.getDescription(), offered.getDescription()
+            , "description"));
+        conflicts.addAll(detectConflict(current, current.getEmail(), offered.getEmail()
+            , "email"));
+        conflicts.addAll(detectConflict(current, current.getUrl(), offered.getUrl()
+            , "url"));
+        conflicts.addAll(detectConflict(current, current.getTaxStatus(), offered.getTaxStatus()
+            , "taxStatus"));
+        conflicts.addAll(detectConflict(current, current.getTaxId(), offered.getTaxId()
+            , "taxId"));
+        conflicts.addAll(detectConflict(current, current.getYearIncorporated(), offered.getYearIncorporated()
+            , "yearIncorporated"));
+        conflicts.addAll(detectConflict(current, current.getLegalStatus(), offered.getLegalStatus()
+            , "legalStatus"));
+        conflicts.addAll(detectConflict(current, current.getActive(), offered.getActive()
+            , "active"));
+        conflicts.addAll(detectConflict(current, current.getProviderName(), offered.getProviderName()
+            , "providerName"));
 
         return conflicts;
     }
 
     @Override
-    protected <Z> Conflict createConflict(Organization current, Z currentValue, Z offeredValue) {
-        Conflict conflict = super.createConflict(current, currentValue, offeredValue);
+    protected <Z> Conflict createConflict(Organization current, Z currentValue, Z offeredValue, String fieldName) {
+        Conflict conflict = super.createConflict(current, currentValue, offeredValue, fieldName);
         conflict.setResourceId(current.getId());
         return conflict;
     }

@@ -20,12 +20,14 @@ public class SystemAccountMother {
     public static SystemAccount createDefaultAndPersist(EntityManager em) {
         SystemAccount account = createDefault();
         em.persist(account);
+        em.flush();
         return account;
     }
 
     public static SystemAccount createDifferentAndPersist(EntityManager em) {
         SystemAccount account = createDifferent();
         em.persist(account);
+        em.flush();
         return account;
     }
 }

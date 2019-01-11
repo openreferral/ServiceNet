@@ -6,6 +6,9 @@ import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.mother.ConflictMother;
+import org.benetech.servicenet.mother.OrganizationMother;
+
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.UserService;
 
@@ -44,8 +47,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class ActivityResourceIntTest {
-
-    private static final String DEFAULT_NAME = "account_name";
 
     @Autowired
     private ActivityService activityService;
@@ -88,18 +89,11 @@ public class ActivityResourceIntTest {
 
     @Before
     public void initTest() {
-        systemAccount = SystemAccount.builder()
-            .name(DEFAULT_NAME)
-            .build();
-        em.persist(systemAccount);
-        em.flush();
+        organization = OrganizationMother.createDefaultAndPersist(em);
+        systemAccount = organization.getAccount();
 
-        organization = OrganizationResourceIntTest.createEntity(em);
-        organization.setAccount(systemAccount);
-        em.persist(organization);
-        em.flush();
-
-        conflict = ConflictResourceIntTest.createEntity(em);
+        conflict = ConflictMother.createDefaultAndPersist(em);
+        conflict.setResourceId(organization.getId());
         conflict.setOwner(systemAccount);
         em.persist(conflict);
         em.flush();
@@ -155,4 +149,5 @@ public class ActivityResourceIntTest {
             .andExpect(jsonPath("$.[*].conflicts.[*].resourceId")
                 .value(hasItem(conflict.getResourceId().toString())));
     }
+
 }

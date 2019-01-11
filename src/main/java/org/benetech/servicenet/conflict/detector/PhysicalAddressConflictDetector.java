@@ -14,20 +14,21 @@ public class PhysicalAddressConflictDetector extends Detector<PhysicalAddress> i
     public List<Conflict> detect(PhysicalAddress current, PhysicalAddress offered) {
         List<Conflict> conflicts = new LinkedList<>();
 
-        conflicts.addAll(detectConflict(current, current.getAttention(), offered.getAttention()));
-        conflicts.addAll(detectConflict(current, current.getAddress1(), offered.getAddress1()));
-        conflicts.addAll(detectConflict(current, current.getCity(), offered.getCity()));
-        conflicts.addAll(detectConflict(current, current.getRegion(), offered.getRegion()));
-        conflicts.addAll(detectConflict(current, current.getStateProvince(), offered.getStateProvince()));
-        conflicts.addAll(detectConflict(current, current.getPostalCode(), offered.getPostalCode()));
-        conflicts.addAll(detectConflict(current, current.getCountry(), offered.getCountry()));
+        conflicts.addAll(detectConflict(current, current.getAttention(), offered.getAttention(), "attention"));
+        conflicts.addAll(detectConflict(current, current.getAddress1(), offered.getAddress1(), "address1"));
+        conflicts.addAll(detectConflict(current, current.getCity(), offered.getCity(), "city"));
+        conflicts.addAll(detectConflict(current, current.getRegion(), offered.getRegion(), "region"));
+        conflicts.addAll(detectConflict(current, current.getStateProvince(), offered.getStateProvince(),
+            "stateProvince"));
+        conflicts.addAll(detectConflict(current, current.getPostalCode(), offered.getPostalCode(), "postalCode"));
+        conflicts.addAll(detectConflict(current, current.getCountry(), offered.getCountry(), "country"));
 
         return conflicts;
     }
 
     @Override
-    protected <Z> Conflict createConflict(PhysicalAddress current, Z currentValue, Z offeredValue) {
-        Conflict conflict = super.createConflict(current, currentValue, offeredValue);
+    protected <Z> Conflict createConflict(PhysicalAddress current, Z currentValue, Z offeredValue, String fieldName) {
+        Conflict conflict = super.createConflict(current, currentValue, offeredValue, fieldName);
         conflict.setResourceId(current.getId());
         return conflict;
     }

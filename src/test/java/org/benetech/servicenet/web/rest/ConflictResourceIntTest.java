@@ -4,6 +4,8 @@ import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.mother.ConflictMother;
+import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.ConflictRepository;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
@@ -27,10 +29,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +52,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 /**
  * Test class for the ConflictResource REST controller.
  *
@@ -63,37 +60,6 @@ import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class ConflictResourceIntTest {
-
-    private static final String DEFAULT_CURRENT_VALUE = "AAAAAAAAAA";
-    private static final String UPDATED_CURRENT_VALUE = "BBBBBBBBBB";
-
-    private static final ZonedDateTime DEFAULT_CURRENT_VALUE_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
-        ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_CURRENT_VALUE_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
-    private static final String DEFAULT_OFFERED_VALUE = "AAAAAAAAAA";
-    private static final String UPDATED_OFFERED_VALUE = "BBBBBBBBBB";
-
-    private static final ZonedDateTime DEFAULT_OFFERED_VALUE_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
-        ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_OFFERED_VALUE_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
-    private static final String DEFAULT_FIELD_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_FIELD_NAME = "BBBBBBBBBB";
-
-    private static final String DEFAULT_ENTITY_PATH = "AAAAAAAAAA";
-    private static final String UPDATED_ENTITY_PATH = "BBBBBBBBBB";
-
-    private static final ConflictStateEnum DEFAULT_STATE = ConflictStateEnum.PENDING;
-    private static final ConflictStateEnum UPDATED_STATE = ConflictStateEnum.ACCEPTED;
-
-    private static final ZonedDateTime DEFAULT_STATE_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
-        ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_STATE_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
-    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
-        ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
     private ConflictRepository conflictRepository;
@@ -126,6 +92,8 @@ public class ConflictResourceIntTest {
 
     private Conflict conflict;
 
+    private SystemAccount owner;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -137,36 +105,13 @@ public class ConflictResourceIntTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    /**
-     * Create an entity for this test.
-     *
-     * This is a static method, as tests for other entities might also need it,
-     * if they test an entity which requires the current entity.
-     */
-    public static Conflict createEntity(EntityManager em) {
-        Conflict conflict = Conflict.builder()
-            .currentValue(DEFAULT_CURRENT_VALUE)
-            .currentValueDate(DEFAULT_CURRENT_VALUE_DATE)
-            .offeredValue(DEFAULT_OFFERED_VALUE)
-            .offeredValueDate(DEFAULT_OFFERED_VALUE_DATE)
-            .fieldName(DEFAULT_FIELD_NAME)
-            .entityPath(DEFAULT_ENTITY_PATH)
-            .state(DEFAULT_STATE)
-            .stateDate(DEFAULT_STATE_DATE)
-            .createdDate(DEFAULT_CREATED_DATE)
-            .resourceId(UUID_1)
-            .build();
-        // Add required entity
-        SystemAccount systemAccount = SystemAccountResourceIntTest.createEntity(em);
-        em.persist(systemAccount);
-        em.flush();
-        conflict.setOwner(systemAccount);
-        return conflict;
-    }
-
     @Before
     public void initTest() {
-        conflict = createEntity(em);
+        owner = SystemAccountMother.createDefaultAndPersist(em);
+        conflict = ConflictMother.createDefault();
+        conflict.setOwner(owner);
+        em.persist(conflict);
+        em.flush();
     }
 
     @Test
@@ -175,6 +120,9 @@ public class ConflictResourceIntTest {
         int databaseSizeBeforeCreate = conflictRepository.findAll().size();
 
         // Create the Conflict
+        Conflict conflict = ConflictMother.createDefault();
+        em.persist(conflict.getOwner());
+        em.flush();
         ConflictDTO conflictDTO = conflictMapper.toDto(conflict);
         restConflictMockMvc.perform(post("/api/conflicts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -185,15 +133,15 @@ public class ConflictResourceIntTest {
         List<Conflict> conflictList = conflictRepository.findAll();
         assertThat(conflictList).hasSize(databaseSizeBeforeCreate + 1);
         Conflict testConflict = conflictList.get(conflictList.size() - 1);
-        assertThat(testConflict.getCurrentValue()).isEqualTo(DEFAULT_CURRENT_VALUE);
-        assertThat(testConflict.getCurrentValueDate()).isEqualTo(DEFAULT_CURRENT_VALUE_DATE);
-        assertThat(testConflict.getOfferedValue()).isEqualTo(DEFAULT_OFFERED_VALUE);
-        assertThat(testConflict.getOfferedValueDate()).isEqualTo(DEFAULT_OFFERED_VALUE_DATE);
-        assertThat(testConflict.getFieldName()).isEqualTo(DEFAULT_FIELD_NAME);
-        assertThat(testConflict.getEntityPath()).isEqualTo(DEFAULT_ENTITY_PATH);
-        assertThat(testConflict.getState()).isEqualTo(DEFAULT_STATE);
-        assertThat(testConflict.getStateDate()).isEqualTo(DEFAULT_STATE_DATE);
-        assertThat(testConflict.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testConflict.getCurrentValue()).isEqualTo(ConflictMother.DEFAULT_CURRENT_VALUE);
+        assertThat(testConflict.getCurrentValueDate()).isEqualTo(ConflictMother.DEFAULT_CURRENT_VALUE_DATE);
+        assertThat(testConflict.getOfferedValue()).isEqualTo(ConflictMother.DEFAULT_OFFERED_VALUE);
+        assertThat(testConflict.getOfferedValueDate()).isEqualTo(ConflictMother.DEFAULT_OFFERED_VALUE_DATE);
+        assertThat(testConflict.getFieldName()).isEqualTo(ConflictMother.DEFAULT_FIELD_NAME);
+        assertThat(testConflict.getEntityPath()).isEqualTo(ConflictMother.DEFAULT_ENTITY_PATH);
+        assertThat(testConflict.getState()).isEqualTo(ConflictMother.DEFAULT_STATE);
+        assertThat(testConflict.getStateDate()).isEqualTo(ConflictMother.DEFAULT_STATE_DATE);
+        assertThat(testConflict.getCreatedDate()).isEqualTo(ConflictMother.DEFAULT_CREATED_DATE);
         assertThat(testConflict.getResourceId()).isEqualTo(UUID_1);
     }
 
@@ -201,7 +149,7 @@ public class ConflictResourceIntTest {
     @Transactional
     public void createConflictWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = conflictRepository.findAll().size();
-
+        Conflict conflict = ConflictMother.createDefault();
         // Create the Conflict with an existing ID
         conflict.setId(UUID_1);
         ConflictDTO conflictDTO = conflictMapper.toDto(conflict);
@@ -220,23 +168,24 @@ public class ConflictResourceIntTest {
     @Test
     @Transactional
     public void getAllConflicts() throws Exception {
-        // Initialize the database
-        conflictRepository.saveAndFlush(conflict);
 
         // Get all the conflictList
         restConflictMockMvc.perform(get("/api/conflicts?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(conflict.getId().toString())))
-            .andExpect(jsonPath("$.[*].currentValue").value(hasItem(DEFAULT_CURRENT_VALUE.toString())))
-            .andExpect(jsonPath("$.[*].currentValueDate").value(hasItem(sameInstant(DEFAULT_CURRENT_VALUE_DATE))))
-            .andExpect(jsonPath("$.[*].offeredValue").value(hasItem(DEFAULT_OFFERED_VALUE.toString())))
-            .andExpect(jsonPath("$.[*].offeredValueDate").value(hasItem(sameInstant(DEFAULT_OFFERED_VALUE_DATE))))
-            .andExpect(jsonPath("$.[*].fieldName").value(hasItem(DEFAULT_FIELD_NAME.toString())))
-            .andExpect(jsonPath("$.[*].entityPath").value(hasItem(DEFAULT_ENTITY_PATH.toString())))
-            .andExpect(jsonPath("$.[*].state").value(hasItem(DEFAULT_STATE.toString())))
-            .andExpect(jsonPath("$.[*].stateDate").value(hasItem(sameInstant(DEFAULT_STATE_DATE))))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].currentValue").value(hasItem(ConflictMother.DEFAULT_CURRENT_VALUE)))
+            .andExpect(jsonPath("$.[*].currentValueDate").value(
+                hasItem(sameInstant(ConflictMother.DEFAULT_CURRENT_VALUE_DATE))))
+            .andExpect(jsonPath("$.[*].offeredValue").value(hasItem(ConflictMother.DEFAULT_OFFERED_VALUE)))
+            .andExpect(jsonPath("$.[*].offeredValueDate").value(
+                hasItem(sameInstant(ConflictMother.DEFAULT_OFFERED_VALUE_DATE))))
+            .andExpect(jsonPath("$.[*].fieldName").value(hasItem(ConflictMother.DEFAULT_FIELD_NAME)))
+            .andExpect(jsonPath("$.[*].entityPath").value(hasItem(ConflictMother.DEFAULT_ENTITY_PATH)))
+            .andExpect(jsonPath("$.[*].state").value(hasItem(ConflictMother.DEFAULT_STATE.toString())))
+            .andExpect(jsonPath("$.[*].stateDate").value(hasItem(sameInstant(ConflictMother.DEFAULT_STATE_DATE))))
+            .andExpect(jsonPath("$.[*].createdDate").value(
+                hasItem(sameInstant(ConflictMother.DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].resourceId").value(hasItem(UUID_1.toString())));
     }
 
@@ -284,15 +233,15 @@ public class ConflictResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(conflict.getId().toString()))
-            .andExpect(jsonPath("$.currentValue").value(DEFAULT_CURRENT_VALUE.toString()))
-            .andExpect(jsonPath("$.currentValueDate").value(sameInstant(DEFAULT_CURRENT_VALUE_DATE)))
-            .andExpect(jsonPath("$.offeredValue").value(DEFAULT_OFFERED_VALUE.toString()))
-            .andExpect(jsonPath("$.offeredValueDate").value(sameInstant(DEFAULT_OFFERED_VALUE_DATE)))
-            .andExpect(jsonPath("$.fieldName").value(DEFAULT_FIELD_NAME.toString()))
-            .andExpect(jsonPath("$.entityPath").value(DEFAULT_ENTITY_PATH.toString()))
-            .andExpect(jsonPath("$.state").value(DEFAULT_STATE.toString()))
-            .andExpect(jsonPath("$.stateDate").value(sameInstant(DEFAULT_STATE_DATE)))
-            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.currentValue").value(ConflictMother.DEFAULT_CURRENT_VALUE))
+            .andExpect(jsonPath("$.currentValueDate").value(sameInstant(ConflictMother.DEFAULT_CURRENT_VALUE_DATE)))
+            .andExpect(jsonPath("$.offeredValue").value(ConflictMother.DEFAULT_OFFERED_VALUE))
+            .andExpect(jsonPath("$.offeredValueDate").value(sameInstant(ConflictMother.DEFAULT_OFFERED_VALUE_DATE)))
+            .andExpect(jsonPath("$.fieldName").value(ConflictMother.DEFAULT_FIELD_NAME))
+            .andExpect(jsonPath("$.entityPath").value(ConflictMother.DEFAULT_ENTITY_PATH))
+            .andExpect(jsonPath("$.state").value(ConflictMother.DEFAULT_STATE.toString()))
+            .andExpect(jsonPath("$.stateDate").value(sameInstant(ConflictMother.DEFAULT_STATE_DATE)))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(ConflictMother.DEFAULT_CREATED_DATE)))
             .andExpect(jsonPath("$.resourceId").value(UUID_1.toString()));
     }
 
@@ -319,15 +268,15 @@ public class ConflictResourceIntTest {
         Conflict updatedConflict = Conflict.builder()
             .id(fetchedConflict.getId())
             .owner(fetchedConflict.getOwner())
-            .currentValue(UPDATED_CURRENT_VALUE)
-            .currentValueDate(UPDATED_CURRENT_VALUE_DATE)
-            .offeredValue(UPDATED_OFFERED_VALUE)
-            .offeredValueDate(UPDATED_OFFERED_VALUE_DATE)
-            .fieldName(UPDATED_FIELD_NAME)
-            .entityPath(UPDATED_ENTITY_PATH)
-            .state(UPDATED_STATE)
-            .stateDate(UPDATED_STATE_DATE)
-            .createdDate(UPDATED_CREATED_DATE)
+            .currentValue(ConflictMother.UPDATED_CURRENT_VALUE)
+            .currentValueDate(ConflictMother.UPDATED_CURRENT_VALUE_DATE)
+            .offeredValue(ConflictMother.UPDATED_OFFERED_VALUE)
+            .offeredValueDate(ConflictMother.UPDATED_OFFERED_VALUE_DATE)
+            .fieldName(ConflictMother.UPDATED_FIELD_NAME)
+            .entityPath(ConflictMother.UPDATED_ENTITY_PATH)
+            .state(ConflictMother.UPDATED_STATE)
+            .stateDate(ConflictMother.UPDATED_STATE_DATE)
+            .createdDate(ConflictMother.UPDATED_CREATED_DATE)
             .resourceId(UUID_2)
             .build();
         ConflictDTO conflictDTO = conflictMapper.toDto(updatedConflict);
@@ -341,15 +290,15 @@ public class ConflictResourceIntTest {
         List<Conflict> conflictList = conflictRepository.findAll();
         assertThat(conflictList).hasSize(databaseSizeBeforeUpdate);
         Conflict testConflict = conflictList.get(conflictList.size() - 1);
-        assertThat(testConflict.getCurrentValue()).isEqualTo(UPDATED_CURRENT_VALUE);
-        assertThat(testConflict.getCurrentValueDate()).isEqualTo(UPDATED_CURRENT_VALUE_DATE);
-        assertThat(testConflict.getOfferedValue()).isEqualTo(UPDATED_OFFERED_VALUE);
-        assertThat(testConflict.getOfferedValueDate()).isEqualTo(UPDATED_OFFERED_VALUE_DATE);
-        assertThat(testConflict.getFieldName()).isEqualTo(UPDATED_FIELD_NAME);
-        assertThat(testConflict.getEntityPath()).isEqualTo(UPDATED_ENTITY_PATH);
-        assertThat(testConflict.getState()).isEqualTo(UPDATED_STATE);
-        assertThat(testConflict.getStateDate()).isEqualTo(UPDATED_STATE_DATE);
-        assertThat(testConflict.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
+        assertThat(testConflict.getCurrentValue()).isEqualTo(ConflictMother.UPDATED_CURRENT_VALUE);
+        assertThat(testConflict.getCurrentValueDate()).isEqualTo(ConflictMother.UPDATED_CURRENT_VALUE_DATE);
+        assertThat(testConflict.getOfferedValue()).isEqualTo(ConflictMother.UPDATED_OFFERED_VALUE);
+        assertThat(testConflict.getOfferedValueDate()).isEqualTo(ConflictMother.UPDATED_OFFERED_VALUE_DATE);
+        assertThat(testConflict.getFieldName()).isEqualTo(ConflictMother.UPDATED_FIELD_NAME);
+        assertThat(testConflict.getEntityPath()).isEqualTo(ConflictMother.UPDATED_ENTITY_PATH);
+        assertThat(testConflict.getState()).isEqualTo(ConflictMother.UPDATED_STATE);
+        assertThat(testConflict.getStateDate()).isEqualTo(ConflictMother.UPDATED_STATE_DATE);
+        assertThat(testConflict.getCreatedDate()).isEqualTo(ConflictMother.UPDATED_CREATED_DATE);
         assertThat(testConflict.getResourceId()).isEqualTo(UUID_2);
     }
 
@@ -359,6 +308,9 @@ public class ConflictResourceIntTest {
         int databaseSizeBeforeUpdate = conflictRepository.findAll().size();
 
         // Create the Conflict
+        SystemAccount owner = SystemAccountMother.createDefaultAndPersist(em);
+        Conflict conflict = ConflictMother.createDefault();
+        conflict.setOwner(owner);
         ConflictDTO conflictDTO = conflictMapper.toDto(conflict);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
