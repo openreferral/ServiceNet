@@ -11,4 +11,6 @@ public class ImportData {
     private DataImportReport report;
 
     private String providerName;
+
+    private boolean isFileUpload;
 }

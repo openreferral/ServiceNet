@@ -39,19 +39,10 @@ export class OrganizationMatch extends React.Component<IOrganizationMatchProps> 
                   <Translate contentKey="global.field.id">ID</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="serviceNetApp.organizationMatch.fieldName">Field Name</Translate>
-                </th>
-                <th>
                   <Translate contentKey="serviceNetApp.organizationMatch.timestamp">Timestamp</Translate>
                 </th>
                 <th>
                   <Translate contentKey="serviceNetApp.organizationMatch.deleted">Deleted</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.organizationMatch.fieldPath">Field Path</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.organizationMatch.matchedValue">Matched Value</Translate>
                 </th>
                 <th>
                   <Translate contentKey="serviceNetApp.organizationMatch.organizationRecord">Organization Record</Translate>

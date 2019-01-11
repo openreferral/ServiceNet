@@ -90,7 +90,7 @@ public class AnonymousDataAdapterIntTest {
     @Before
     public void persistData() throws IOException {
         String data = AdapterTestsUtils.readResourceAsString("anonymous/AnonymousData.json");
-        adapter.importData(new SingleImportData(data, new DataImportReport(), null));
+        adapter.importData(new SingleImportData(data, new DataImportReport(), null, true));
     }
 
     @Test
