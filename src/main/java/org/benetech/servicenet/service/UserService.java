@@ -352,6 +352,14 @@ public class UserService {
             .orElse(false);
     }
 
+    public Optional<SystemAccount> getCurrentSystemAccount() {
+        Optional<User> current = getUserWithAuthorities();
+        if (current.isPresent()) {
+            return systemAccountRepository.findByName("Eden");
+        }
+        throw new IllegalStateException("No current system account found");
+    }
+
     private void clearUserCaches(User user) {
         Cache login = cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE);
         Cache email = cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE);

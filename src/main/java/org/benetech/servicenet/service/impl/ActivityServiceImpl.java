@@ -62,7 +62,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Optional<ActivityDTO> getOneByOrganizationId(UUID organizationId) {
-        return getEntityActivity(organizationId, UUID.fromString(EXAMPLE_DATA));
+        return getEntityActivity(organizationId, organizationId);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.dto.SystemAccountDTO;
 
 import java.util.List;
@@ -41,4 +42,12 @@ public interface SystemAccountService {
      * @param id the id of the entity
      */
     void delete(UUID id);
+
+    /**
+     * Find the systemAccount by name.
+     *
+     * @param name the name of the account
+     */
+    Optional<SystemAccount> findByName(String name);
+
 }

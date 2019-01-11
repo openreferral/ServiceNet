@@ -89,4 +89,15 @@ public class SystemAccountServiceImpl implements SystemAccountService {
         log.debug("Request to delete SystemAccount : {}", id);
         systemAccountRepository.deleteById(id);
     }
+
+    /**
+     * Find the systemAccount by name.
+     *
+     * @param name the name of the account
+     */
+    @Override
+    public Optional<SystemAccount> findByName(String name) {
+        return systemAccountRepository.findByName(name);
+    }
+
 }
