@@ -10,7 +10,7 @@ import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
 import { getEntities, reset } from 'app/shared/reducers/activity.reducer';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
-import ActivityElement from './ActivityElement';
+import ActivityElement from './activity-element';
 
 export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -105,8 +105,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                 </h2>
               </Col>
             </Row>
-            {activityList.map(activity => (
-              <Link to={`/single-record-view/${activity.organization.id}`} className="alert-link">
+            {activityList.map((activity, i) => (
+              <Link key={`linkToActivity${i}`} to={`/single-record-view/${activity.organization.id}`} className="alert-link">
                 <ActivityElement activity={activity} />
               </Link>
             ))}

@@ -22,8 +22,8 @@ const ActivityElement = props => (
         </Card>
         <Card className="activity-right-card">
           <CardBody>
-            {props.activity.conflicts.map(conflict => (
-              <CardTitle className="activity-right-card-title">
+            {props.activity.conflicts.map((conflict, i) => (
+              <CardTitle className="activity-right-card-title" key={`activityCard${i}`}>
                 {conflict.ownerName} {conflict.acceptedThisChanges.length > 0 && <b>+{conflict.acceptedThisChanges.length}</b>}
                 {conflict.acceptedThisChanges.length > 1 && (
                   <Translate
