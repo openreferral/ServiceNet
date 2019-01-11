@@ -119,6 +119,10 @@ import uploadPage, {
   UploadPageState
 } from 'app/modules/upload/upload-page.reducer';
 // prettier-ignore
+import singleRecordView, {
+  SingleRecordViewState
+} from 'app/modules/conflicts/single/single-record-view.reducer';
+// prettier-ignore
 import conflict, {
   ConflictState
 } from 'app/entities/conflict/conflict.reducer';
@@ -171,6 +175,7 @@ export interface IRootState {
   readonly metadata: MetadataState;
   readonly openingHours: OpeningHoursState;
   readonly uploadPage: UploadPageState;
+  readonly singleRecordView: SingleRecordViewState;
   readonly conflict: ConflictState;
   readonly dataImportReport: DataImportReportState;
   readonly activity: ActivityState;
@@ -217,6 +222,7 @@ const rootReducer = combineReducers<IRootState>({
   metadata,
   openingHours,
   uploadPage,
+  singleRecordView,
   conflict,
   dataImportReport,
   activity,

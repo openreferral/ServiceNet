@@ -16,6 +16,9 @@ public class YearIncorporatedSimilarityCounter extends AbstractSimilarityCounter
 
     @Override
     public float countSimilarityRatio(LocalDate date1, LocalDate date2) {
+        if (date1 == null || date2 == null) {
+            return NO_MATCH_RATIO;
+        }
         if (areYearsDifferent(date1, date2)) {
             return NO_MATCH_RATIO;
         }

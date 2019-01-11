@@ -70,7 +70,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
         report.setDocumentUpload(documentUpload);
 
-        return importDataIfNeeded(getRealProviderName(providerName), parsedDocument, report);
+        return importDataIfNeeded(getRealProviderName(providerName), parsedDocument, report, true);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         DocumentUpload documentUpload = saveForSystemUser(new DocumentUpload(originalDocumentId, null));
         report.setDocumentUpload(documentUpload);
 
-        return importDataIfNeeded(providerName, json, report);
+        return importDataIfNeeded(providerName, json, report, false);
     }
 
     @Override
@@ -140,12 +140,13 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         documentUploadRepository.deleteById(id);
     }
 
-    private DocumentUploadDTO importDataIfNeeded(String providerName, String parsedDocument, DataImportReport report) {
+    private DocumentUploadDTO importDataIfNeeded(String providerName, String parsedDocument, DataImportReport report,
+                                                 boolean isFileUpload) {
         Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getSingleDataAdapter(providerName);
 
         DataImportReport reportToSave = adapter
-            .map(a -> a.importData(new SingleImportData(parsedDocument, report, providerName)))
+            .map(a -> a.importData(new SingleImportData(parsedDocument, report, providerName, isFileUpload)))
             .orElse(report);
 
         //TODO: in other case - save in a scheduler queue to be mapped with other dependent files

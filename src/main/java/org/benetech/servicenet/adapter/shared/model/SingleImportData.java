@@ -8,8 +8,8 @@ public class SingleImportData extends ImportData {
 
     private String singleObjectData;
 
-    public SingleImportData(String singleObjectsData, DataImportReport report, String providerName) {
-        super(report, providerName);
+    public SingleImportData(String singleObjectsData, DataImportReport report, String providerName, boolean isFileUpload) {
+        super(report, providerName, isFileUpload);
         this.singleObjectData = singleObjectsData;
     }
 }

@@ -20,6 +20,9 @@ public class EmailSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Override
     public float countSimilarityRatio(String email1, String email2) {
+        if (email1 == null || email2 == null) {
+            return NO_MATCH_RATIO;
+        }
         if (areDomainsDifferent(email1, email2)) {
             return NO_MATCH_RATIO;
         }
