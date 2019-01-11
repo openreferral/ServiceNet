@@ -72,7 +72,10 @@ public interface HealthLeadsDataMapper {
 
     default Set<Language> extractLanguages(HealthleadsLanguage healthleadsLanguage) {
         String[] languages = healthleadsLanguage.getLanguage().split(LISTS_DELIMITER);
-        return Arrays.stream(languages).map(language -> new Language().language(language.trim())).collect(Collectors.toSet());
+        return Arrays.stream(languages)
+            .map(language -> new Language()
+            .language(language.trim()))
+            .collect(Collectors.toSet());
     }
 
     default Set<Phone> extractPhones(Set<HealthleadsPhone> phones) {
