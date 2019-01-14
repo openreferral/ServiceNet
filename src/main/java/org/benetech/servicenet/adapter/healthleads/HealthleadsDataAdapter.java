@@ -2,6 +2,7 @@ package org.benetech.servicenet.adapter.healthleads;
 
 import org.benetech.servicenet.adapter.MultipleDataAdapter;
 import org.benetech.servicenet.adapter.healthleads.model.BaseData;
+import org.benetech.servicenet.adapter.healthleads.persistence.HealthleadsDataPersistence;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.ImportService;
