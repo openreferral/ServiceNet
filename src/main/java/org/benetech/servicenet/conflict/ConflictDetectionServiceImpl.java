@@ -79,10 +79,8 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
                 ConflictDetector detector = context.getBean(
                     eq.getClazz().getSimpleName() + CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
                 List<Conflict> noAccountConflicts = detector.detect(current, mirror);
-                List<Conflict> mirrorNoAccountConflicts = detector.detect(mirror, current);
-
-                conflicts.addAll(addOwner(noAccountConflicts, organization.getAccount()));
-                conflicts.addAll(addOwner(mirrorNoAccountConflicts, mirrorOrganization.getAccount()));
+                conflicts.addAll(addAccounts(noAccountConflicts, organization.getAccount(),
+                    mirrorOrganization.getAccount()));
             }
         }
 
@@ -92,11 +90,12 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         }
     }
 
-    private List<Conflict> addOwner(List<Conflict> noAccountConflicts, SystemAccount account) {
+    private List<Conflict> addAccounts(List<Conflict> noAccountConflicts, SystemAccount owner, SystemAccount accepted) {
         List<Conflict> conflicts = new LinkedList<>();
 
         for (Conflict conflict : noAccountConflicts) {
-            conflict.setOwner(account);
+            conflict.setOwner(owner);
+            conflict.addAcceptedThisChange(accepted);
             conflicts.add(conflict);
         }
 
@@ -111,7 +110,8 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
                 conflict.getCurrentValue(), conflict.getOfferedValue(), conflict.getOwner());
             if (fetchedOpt.isPresent()) {
                 Conflict fetched = fetchedOpt.get();
-                fetched.addAcceptedThisChange(conflict.getOwner());
+                conflict.getAcceptedThisChanges().forEach(fetched::addAcceptedThisChange);
+
                 conflicts.add(fetched);
             } else {
                 conflicts.add(conflict);

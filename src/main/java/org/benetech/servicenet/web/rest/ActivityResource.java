@@ -50,9 +50,9 @@ public class ActivityResource {
     public ResponseEntity<List<ActivityDTO>> getAllActivities(Pageable pageable) {
         log.debug("REST request to get a page of Activities");
         Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
-        //UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
+        UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
 
-        Page<ActivityDTO> page = activityService.getAllOrganizationActivities(pageable, null);
+        Page<ActivityDTO> page = activityService.getAllOrganizationActivities(pageable, systemAccountId);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/activities");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

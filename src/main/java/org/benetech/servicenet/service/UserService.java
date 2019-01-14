@@ -352,12 +352,13 @@ public class UserService {
             .orElse(false);
     }
 
+    @Transactional(readOnly = true)
     public Optional<SystemAccount> getCurrentSystemAccount() {
-        Optional<User> current = getUserWithAuthorities();
-        if (current.isPresent()) {
-            return systemAccountRepository.findByName("Eden");
-        }
-        throw new IllegalStateException("No current system account found");
+        Optional<User> current = SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
+         User user = current.orElseThrow(() -> new IllegalStateException("No current user found"));
+
+        return (user.getSystemAccount() != null) ? Optional.of(user.getSystemAccount()) :
+            Optional.empty();
     }
 
     private void clearUserCaches(User user) {

@@ -113,6 +113,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private Set<Authority> authorities = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "system_account_id")
     @JsonIgnoreProperties("")
     private SystemAccount systemAccount;
 

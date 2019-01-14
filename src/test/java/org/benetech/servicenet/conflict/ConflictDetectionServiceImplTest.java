@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
@@ -80,17 +80,14 @@ public class ConflictDetectionServiceImplTest {
         Organization org1 = OrganizationMother.createDefaultAndPersist(em);
         Organization org2 = OrganizationMother.createDifferentAndPersist(em);
         em.flush();
-        OrganizationMatch match = new OrganizationMatch()
-            .organizationRecord(org1)
-            .partnerVersion(org2)
-            .timestamp(ZonedDateTime.now())
-            .deleted(false);
+        OrganizationMatch match = createMatch(org1, org2);
+        OrganizationMatch match2 = createMatch(org2, org1);
 
         int dbSize = conflictRepository.findAll().size();
         int numberOfConflicts = 10;
         int numberOfMirrorConflicts = 10;
 
-        conflictDetectionService.detect(Collections.singletonList(match));
+        conflictDetectionService.detect(Arrays.asList(match, match2));
 
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
     }
@@ -101,18 +98,14 @@ public class ConflictDetectionServiceImplTest {
         Organization org1 = OrganizationMother.createDefaultAndPersist(em);
         Organization org2 = OrganizationMother.createDifferentAndPersist(em);
         em.flush();
-        OrganizationMatch match = new OrganizationMatch()
-            .organizationRecord(org1)
-            .partnerVersion(org2)
-            .timestamp(ZonedDateTime.now())
-            .deleted(false);
+        OrganizationMatch match = createMatch(org1, org2);
+        OrganizationMatch match2 = createMatch(org2, org1);
 
         int dbSize = conflictRepository.findAll().size();
         int numberOfConflicts = 10;
         int numberOfMirrorConflicts = 10;
 
-        conflictDetectionService.detect(Collections.singletonList(match));
-        conflictDetectionService.detect(Collections.singletonList(match));
+        conflictDetectionService.detect(Arrays.asList(match, match2));
 
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
     }
@@ -124,21 +117,17 @@ public class ConflictDetectionServiceImplTest {
         Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
         theSameOrg.setEmail("user@example.com");
         em.flush();
-        OrganizationMatch match = new OrganizationMatch()
-            .organizationRecord(org)
-            .partnerVersion(theSameOrg)
-            .timestamp(ZonedDateTime.now())
-            .deleted(false);
+        OrganizationMatch match = createMatch(org, theSameOrg);
+        OrganizationMatch match2 = createMatch(theSameOrg, org);
 
         int dbSize = conflictRepository.findAll().size();
         int numberOfConflicts = 1;
         int numberOfMirrorConflicts = 1;
 
-        conflictDetectionService.detect(Collections.singletonList(match));
-        conflictDetectionService.detect(Collections.singletonList(match));
+        conflictDetectionService.detect(Arrays.asList(match, match2));
 
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
-        assertEquals(conflictRepository.findAll().get(0).getAcceptedThisChanges().size(), 1);
+        assertEquals(1, conflictRepository.findAll().get(0).getAcceptedThisChanges().size());
     }
 
     @Test
@@ -148,21 +137,26 @@ public class ConflictDetectionServiceImplTest {
         Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
         theSameOrg.setEmail("user@example.com");
         em.flush();
-        OrganizationMatch match = new OrganizationMatch()
-            .organizationRecord(org)
-            .partnerVersion(theSameOrg)
-            .timestamp(ZonedDateTime.now())
-            .deleted(false);
+        OrganizationMatch match = createMatch(org, theSameOrg);
+        OrganizationMatch match2 = createMatch(theSameOrg, org);
 
         int dbSize = conflictRepository.findAll().size();
         int numberOfConflicts = 1;
         int numberOfMirrorConflicts = 1;
 
-        conflictDetectionService.detect(Collections.singletonList(match));
+        conflictDetectionService.detect(Arrays.asList(match, match2));
 
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
         assertEquals(conflictRepository.findAll().get(0).getOfferedValue(),
             conflictRepository.findAll().get(1).getCurrentValue());
+    }
+
+    private static OrganizationMatch createMatch(Organization org, Organization org2) {
+        return new OrganizationMatch()
+            .organizationRecord(org)
+            .partnerVersion(org2)
+            .timestamp(ZonedDateTime.now())
+            .deleted(false);
     }
 
 }
