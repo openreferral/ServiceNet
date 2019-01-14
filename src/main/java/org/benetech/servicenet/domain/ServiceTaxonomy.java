@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -20,6 +21,7 @@ import java.util.UUID;
  * A ServiceTaxonomy.
  */
 @Entity
+@Data
 @Table(name = "service_taxonomy")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ServiceTaxonomy implements Serializable {
@@ -41,6 +43,12 @@ public class ServiceTaxonomy implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties("taxonomies")
     private Service srvc;
+
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
 
     @ManyToOne
     @JsonIgnoreProperties("")

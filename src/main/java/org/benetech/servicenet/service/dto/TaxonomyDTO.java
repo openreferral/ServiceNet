@@ -19,6 +19,10 @@ public class TaxonomyDTO implements Serializable {
 
     private String parentName;
 
+    private String externalDbId;
+
+    private String providerName;
+
     public UUID getId() {
         return id;
     }

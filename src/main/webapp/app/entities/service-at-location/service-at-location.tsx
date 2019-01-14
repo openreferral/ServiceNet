@@ -47,6 +47,12 @@ export class ServiceAtLocation extends React.Component<IServiceAtLocationProps> 
                 <th>
                   <Translate contentKey="serviceNetApp.serviceAtLocation.location">Location</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.serviceAtLocation.externalDbId" />
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.serviceAtLocation.providerName" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -59,6 +65,8 @@ export class ServiceAtLocation extends React.Component<IServiceAtLocationProps> 
                     </Button>
                   </td>
                   <td>{serviceAtLocation.description}</td>
+                  <td>{serviceAtLocation.externalDbId}</td>
+                  <td>{serviceAtLocation.providerName}</td>
                   <td>
                     {serviceAtLocation.srvcName ? <Link to={`service/${serviceAtLocation.srvcId}`}>{serviceAtLocation.srvcName}</Link> : ''}
                   </td>

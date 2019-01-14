@@ -1,7 +1,10 @@
 package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.adapter.shared.model.FileInfo;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -9,6 +12,7 @@ import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +30,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,6 +90,33 @@ public class DocumentUploadResource {
             return ResponseEntity.created(new URI("/api/document-uploads/" + result.getId()))
                 .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
                 .body(result);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestAlertException(e.getMessage(), ENTITY_NAME, "badrequest");
+        }
+    }
+
+    /**
+     * POST  /map : process files that were uploaded and map the data included in those files
+     *
+     * @param files that will be mapped
+     * @return the ResponseEntity with status 201 (Created) and with body the new documentUploadDTO,
+     * or with status 400 (Bad Request) if file is of wrong type
+     * @throws JsonSyntaxException if something is wrong with JSON documents
+     */
+    @PostMapping("/map")
+    @Timed
+    public ResponseEntity<Void> mapDocuments(@RequestBody List<String> files,  HttpServletRequest request)
+        throws JsonSyntaxException {
+        try {
+            List<FileInfo> fileInfoList = new ArrayList<>();
+            Gson gson = new Gson();
+            for (String file : files) {
+                fileInfoList.add(gson.fromJson(file, FileInfo.class));
+            }
+
+            boolean result = documentUploadService.processFiles(fileInfoList, request.getHeader("PROVIDER"));
+
+            return result ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (IllegalArgumentException e) {
             throw new BadRequestAlertException(e.getMessage(), ENTITY_NAME, "badrequest");
         }

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.adapter.shared.model.FileInfo;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,14 @@ public interface DocumentUploadService {
      */
     DocumentUploadDTO uploadFile(MultipartFile file, String delimiter, String providerName) throws IOException,
         IllegalArgumentException;
+
+    /**
+     * Processes files after upload by importing data included in those files to database.
+     * @param fileInfoList list containing necessary file information
+     * @param providerName name of selected provider
+     * @return true success, false otherwise
+     */
+    boolean processFiles(List<FileInfo> fileInfoList, String providerName);
 
     /**
      * Save a result of API data collection in NoSQL database and information about it.

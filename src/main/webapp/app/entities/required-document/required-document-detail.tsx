@@ -39,6 +39,18 @@ export class RequiredDocumentDetail extends React.Component<IRequiredDocumentDet
               <Translate contentKey="serviceNetApp.requiredDocument.srvc">Srvc</Translate>
             </dt>
             <dd>{requiredDocumentEntity.srvcName ? requiredDocumentEntity.srvcName : ''}</dd>
+            <dt>
+              <span id="externalDbId">
+                <Translate contentKey="serviceNetApp.requiredDocument.externalDbId" />
+              </span>
+            </dt>
+            <dd>{requiredDocumentEntity.externalDbId}</dd>
+            <dt>
+              <span id="providerName">
+                <Translate contentKey="serviceNetApp.requiredDocument.providerName" />
+              </span>
+            </dt>
+            <dd>{requiredDocumentEntity.providerName}</dd>
           </dl>
           <Button tag={Link} to="/entity/required-document" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

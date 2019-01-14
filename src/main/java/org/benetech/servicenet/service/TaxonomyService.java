@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public interface TaxonomyService {
      * @return the entity
      */
     Optional<TaxonomyDTO> findOne(UUID id);
+
+    Optional<Taxonomy> findForExternalDb(String externalDbId, String providerName);
 
     /**
      * Delete the "id" taxonomy.

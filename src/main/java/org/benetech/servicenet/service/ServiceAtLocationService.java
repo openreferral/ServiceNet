@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
 
 import java.util.List;
@@ -48,6 +49,8 @@ public interface ServiceAtLocationService {
      * @return the entity
      */
     Optional<ServiceAtLocationDTO> findOne(UUID id);
+
+    Optional<ServiceAtLocation> findForExternalDb(String externalDbId, String providerName);
 
     /**
      * Delete the "id" serviceAtLocation.

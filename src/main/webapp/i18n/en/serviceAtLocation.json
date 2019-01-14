@@ -20,7 +20,9 @@
       "location": "Location",
       "regularSchedule": "Regular Schedule",
       "holidaySchedule": "Holiday Schedule",
-      "phones": "Phones"
+      "phones": "Phones",
+      "externalDbId": "External Database Id",
+      "providerName": "Provider Name"
     }
   }
 }

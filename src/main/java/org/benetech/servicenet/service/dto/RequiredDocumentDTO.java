@@ -19,6 +19,10 @@ public class RequiredDocumentDTO implements Serializable {
 
     private String srvcName;
 
+    private String externalDbId;
+
+    private String providerName;
+
     public UUID getId() {
         return id;
     }

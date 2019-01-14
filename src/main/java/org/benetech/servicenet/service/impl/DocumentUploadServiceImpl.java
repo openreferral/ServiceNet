@@ -1,7 +1,10 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.adapter.DataAdapterFactory;
+import org.benetech.servicenet.adapter.MultipleDataAdapter;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
+import org.benetech.servicenet.adapter.shared.model.FileInfo;
+import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.converter.FileConverterFactory;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -27,6 +30,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -82,6 +86,31 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         report.setDocumentUpload(documentUpload);
 
         return importDataIfNeeded(providerName, json, report, false);
+    }
+
+    @Override
+    public boolean processFiles(final List<FileInfo> fileInfoList, final String providerName) {
+
+        Optional<MultipleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
+            .getMultipleDataAdapter(providerName);
+        if (adapter.isEmpty()) {
+            // No need to process files again if provider is not of MultipleDataAdapter type
+            return true;
+        }
+
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
+        List<String> parsedDocuments = new ArrayList<>();
+        List<DocumentUpload> documentUploads = new ArrayList<>();
+
+        fillLists(fileInfoList, parsedDocuments, documentUploads);
+
+        DataImportReport reportToSave = adapter
+            .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName, true)))
+            .orElse(report);
+
+        saveReport(reportToSave);
+
+        return true;
     }
 
     @Override
@@ -146,12 +175,12 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .getSingleDataAdapter(providerName);
 
         DataImportReport reportToSave = adapter
-            .map(a -> a.importData(new SingleImportData(parsedDocument, report, providerName, isFileUpload)))
+            .map((a) -> {
+                DataImportReport importReport = a.importData(
+                    new SingleImportData(parsedDocument, report, providerName, isFileUpload));
+                return saveReport(importReport);
+            })
             .orElse(report);
-
-        //TODO: in other case - save in a scheduler queue to be mapped with other dependent files
-        reportToSave.setEndDate(ZonedDateTime.now());
-        reportToSave = dataImportReportService.save(report);
 
         return documentUploadMapper.toDto(reportToSave.getDocumentUpload());
     }
@@ -171,5 +200,21 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         } else {
             throw new IllegalStateException("User has to be authorized to determine the provider");
         }
+    }
+
+    private void fillLists(List<FileInfo> fileInfoList, List<String> parsedDocuments, List<DocumentUpload> documentUploads) {
+        for (FileInfo fileInfo : fileInfoList) {
+            String parsedDoc = mongoDbService.findParsedDocumentById(fileInfo.getParsedDocumentId());
+            parsedDocuments.add(parsedDoc);
+
+            DocumentUpload docUpload = documentUploadRepository.findByParsedDocumentId(fileInfo.getParsedDocumentId());
+            docUpload.setFilename(fileInfo.getFilename());
+            documentUploads.add(docUpload);
+        }
+    }
+
+    private DataImportReport saveReport(DataImportReport report) {
+        report.setEndDate(ZonedDateTime.now());
+        return dataImportReportService.save(report);
     }
 }

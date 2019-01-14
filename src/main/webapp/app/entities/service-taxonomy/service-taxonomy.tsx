@@ -47,6 +47,12 @@ export class ServiceTaxonomy extends React.Component<IServiceTaxonomyProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.serviceTaxonomy.taxonomy">Taxonomy</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.serviceTaxonomy.externalDbId" />
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.serviceTaxonomy.providerName" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -59,6 +65,8 @@ export class ServiceTaxonomy extends React.Component<IServiceTaxonomyProps> {
                     </Button>
                   </td>
                   <td>{serviceTaxonomy.taxonomyDetails}</td>
+                  <td>{serviceTaxonomy.externalDbId}</td>
+                  <td>{serviceTaxonomy.providerName}</td>
                   <td>
                     {serviceTaxonomy.srvcName ? <Link to={`service/${serviceTaxonomy.srvcId}`}>{serviceTaxonomy.srvcName}</Link> : ''}
                   </td>

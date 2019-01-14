@@ -1,0 +1,48 @@
+package org.benetech.servicenet.adapter.healthleads.model;
+
+import com.google.gson.annotations.SerializedName;
+import lombok.Data;
+
+@Data
+public class HealthleadsService extends BaseData {
+
+    @SerializedName("organization_id")
+    private String organizationId;
+
+    @SerializedName("program_id")
+    private String programId;
+
+    private String name;
+
+    @SerializedName("alternate_name")
+    private String alternateName;
+
+    private String description;
+
+    private String url;
+
+    private String email;
+
+    private String status;
+
+    @SerializedName("interpretation_services")
+    private String interpretationServices;
+
+    @SerializedName("application_process")
+    private String applicationProcess;
+
+    @SerializedName("wait_time")
+    private String waitTime;
+
+    private String fees;
+
+    private String accreditations;
+
+    private String licenses;
+
+    @SerializedName("x_target_population")
+    private String targetPopulation;
+
+    @SerializedName("x_other_notes")
+    private String otherNotes;
+}

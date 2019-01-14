@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -26,6 +27,7 @@ import java.util.UUID;
  * A ServiceAtLocation.
  */
 @Entity
+@Data
 @Table(name = "service_at_location")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ServiceAtLocation implements Serializable {
@@ -51,6 +53,12 @@ public class ServiceAtLocation implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties("")
     private Location location;
+
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
 
     @OneToOne(mappedBy = "serviceAtlocation")
     @JsonIgnore

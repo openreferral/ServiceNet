@@ -146,6 +146,18 @@ export class ServiceTaxonomyUpdate extends React.Component<IServiceTaxonomyUpdat
                       : null}
                   </AvInput>
                 </AvGroup>
+                <AvGroup>
+                  <Label id="externalDbIdLabel" for="externalDbId">
+                    <Translate contentKey="serviceNetApp.serviceTaxonomy.externalDbId" />
+                  </Label>
+                  <AvInput id="serviceTaxonomy-externalDbId" type="textarea" name="externalDbId" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="providerNameLabel" for="providerName">
+                    <Translate contentKey="serviceNetApp.serviceTaxonomy.providerName" />
+                  </Label>
+                  <AvInput id="serviceTaxonomy-providerName" type="textarea" name="providerName" />
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/service-taxonomy" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;

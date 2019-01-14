@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -50,6 +51,9 @@ public class DocumentUpload implements Serializable {
     @NotNull
     @JsonIgnoreProperties("")
     private User uploader;
+
+    @Transient
+    private String filename;
 
     public DocumentUpload() {
     }
@@ -118,6 +122,14 @@ public class DocumentUpload implements Serializable {
 
     public void setUploader(User user) {
         this.uploader = user;
+    }
+
+    public String getFilename() {
+        return this.filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

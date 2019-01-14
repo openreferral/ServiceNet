@@ -79,6 +79,11 @@ public class RequiredDocumentServiceImpl implements RequiredDocumentService {
             .map(requiredDocumentMapper::toDto);
     }
 
+    @Override
+    public Optional<RequiredDocument> findForExternalDb(String externalDbId, String providerName) {
+        return requiredDocumentRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
     /**
      * Delete the requiredDocument by id.
      *
