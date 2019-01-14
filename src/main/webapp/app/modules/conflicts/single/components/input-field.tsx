@@ -14,7 +14,6 @@ export interface IInputFieldProp extends StateProps, DispatchProps {
   fieldName: string;
   type: string;
   defaultValue: any;
-  valueChange: any;
 }
 
 export interface IInputFieldState {
@@ -58,10 +57,6 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     });
   };
 
-  handleChange = e => {
-    this.props.valueChange({ name: this.props.fieldName, value: e.target.value });
-  };
-
   getIdentifierName(entityClass, fieldName) {
     return entityClass.charAt(0).toLowerCase() + entityClass.slice(1) + fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
   }
@@ -72,7 +67,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
 
     const input = (
       <Input
-        onChange={this.handleChange}
+        disabled
         className={classnames({ blueBorder: this.state.isConflicting })}
         type={type}
         name={identifier}

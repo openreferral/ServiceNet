@@ -1,12 +1,10 @@
 import React from 'react';
-import { Col, Row, Form, Button } from 'reactstrap';
+import { Col, Row, Form } from 'reactstrap';
 import '../single-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import InputField from './input-field';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { RouteComponentProps } from 'react-router-dom';
-import { updateOrganization } from '../single-record-view.reducer';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IOrganization } from 'app/shared/model/organization.model';
 
@@ -35,20 +33,6 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
     }
   };
 
-  save = () => {
-    updateOrganization(this.state.organization);
-    this.props.history.push('/');
-  };
-
-  handleChange = e => {
-    const { name, value } = e;
-    const updatedOrg = this.state.organization;
-    updatedOrg[name] = value;
-    this.setState({
-      organization: updatedOrg
-    });
-  };
-
   render() {
     const { activity } = this.props;
     const { organization } = this.state;
@@ -60,19 +44,11 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
             <Translate contentKey="singleRecordView.details.title" />
           </h4>
           <Form>
+            <InputField entityClass="Organization" activity={activity} type="text" fieldName="name" defaultValue={organization.name} />
             <InputField
               entityClass="Organization"
               activity={activity}
               type="text"
-              valueChange={this.handleChange}
-              fieldName="name"
-              defaultValue={organization.name}
-            />
-            <InputField
-              entityClass="Organization"
-              activity={activity}
-              type="text"
-              valueChange={this.handleChange}
               fieldName="alternateName"
               defaultValue={organization.alternateName}
             />
@@ -80,31 +56,15 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
               entityClass="Organization"
               activity={activity}
               type="textarea"
-              valueChange={this.handleChange}
               fieldName="description"
               defaultValue={organization.description}
             />
+            <InputField entityClass="Organization" activity={activity} type="text" fieldName="email" defaultValue={organization.email} />
+            <InputField entityClass="Organization" activity={activity} type="text" fieldName="url" defaultValue={organization.url} />
             <InputField
               entityClass="Organization"
               activity={activity}
               type="text"
-              valueChange={this.handleChange}
-              fieldName="email"
-              defaultValue={organization.email}
-            />
-            <InputField
-              entityClass="Organization"
-              activity={activity}
-              type="text"
-              valueChange={this.handleChange}
-              fieldName="url"
-              defaultValue={organization.url}
-            />
-            <InputField
-              entityClass="Organization"
-              activity={activity}
-              type="text"
-              valueChange={this.handleChange}
               fieldName="taxStatus"
               defaultValue={organization.taxStatus}
             />
@@ -112,15 +72,10 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
               entityClass="Organization"
               activity={activity}
               type="checkbox"
-              valueChange={this.handleChange}
               fieldName="active"
               defaultValue={organization.active}
             />
           </Form>
-          <Button color="primary" id="save" onClick={this.save}>
-            <FontAwesomeIcon icon="save" />
-            <Translate contentKey="entity.action.save" />
-          </Button>
         </Col>
       </Row>
     );
