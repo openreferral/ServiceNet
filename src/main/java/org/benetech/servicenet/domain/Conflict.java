@@ -94,16 +94,16 @@ public class Conflict implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "conflict_accepted_this_change",
                joinColumns = @JoinColumn(name = "conflicts_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "accepted_this_changes_id", referencedColumnName = "id"))
-    private Set<SystemAccount> acceptedThisChanges = new HashSet<>();
+               inverseJoinColumns = @JoinColumn(name = "accepted_this_change_id", referencedColumnName = "id"))
+    private Set<SystemAccount> acceptedThisChange = new HashSet<>();
 
     public Conflict addAcceptedThisChange(SystemAccount systemAccount) {
-        this.acceptedThisChanges.add(systemAccount);
+        this.acceptedThisChange.add(systemAccount);
         return this;
     }
 
     public Conflict removeAcceptedThisChange(SystemAccount systemAccount) {
-        this.acceptedThisChanges.remove(systemAccount);
+        this.acceptedThisChange.remove(systemAccount);
         return this;
     }
 

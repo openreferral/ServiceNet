@@ -49,16 +49,20 @@ public class ConflictDTO implements Serializable {
 
     private String ownerName;
 
+    private UUID firstAcceptedId;
+
+    private String firstAcceptedName;
+
     @Builder.Default
-    private Set<SystemAccountDTO> acceptedThisChanges = new HashSet<>();
+    private Set<SystemAccountDTO> acceptedThisChange = new HashSet<>();
 
     public ConflictDTO addAcceptedThisChange(SystemAccountDTO systemAccount) {
-        this.acceptedThisChanges.add(systemAccount);
+        this.acceptedThisChange.add(systemAccount);
         return this;
     }
 
     public ConflictDTO removeAcceptedThisChange(SystemAccountDTO systemAccount) {
-        this.acceptedThisChanges.remove(systemAccount);
+        this.acceptedThisChange.remove(systemAccount);
         return this;
     }
 

@@ -77,7 +77,7 @@
         <dropDefaultValue tableName="conflict" columnName="created_date" columnDataType="datetime"/>
         
         <createTable tableName="conflict_accepted_this_change">
-            <column name="accepted_this_changes_id" type="${uuidType}">
+            <column name="accepted_this_change_id" type="${uuidType}">
                 <constraints nullable="false"/>
             </column>
             <column name="conflicts_id" type="${uuidType}">
@@ -85,7 +85,7 @@
             </column>
         </createTable>
 
-        <addPrimaryKey columnNames="conflicts_id, accepted_this_changes_id" tableName="conflict_accepted_this_change"/>
+        <addPrimaryKey columnNames="conflicts_id, accepted_this_change_id" tableName="conflict_accepted_this_change"/>
         
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->

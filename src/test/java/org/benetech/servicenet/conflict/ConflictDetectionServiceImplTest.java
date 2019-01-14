@@ -127,7 +127,7 @@ public class ConflictDetectionServiceImplTest {
         conflictDetectionService.detect(Arrays.asList(match, match2));
 
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
-        assertEquals(1, conflictRepository.findAll().get(0).getAcceptedThisChanges().size());
+        assertEquals(1, conflictRepository.findAll().get(0).getAcceptedThisChange().size());
     }
 
     @Test

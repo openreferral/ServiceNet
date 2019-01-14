@@ -14,28 +14,22 @@ public class OrganizationConflictDetector extends Detector<Organization> impleme
     public List<Conflict> detect(Organization current, Organization offered) {
         List<Conflict> conflicts = new LinkedList<>();
 
-        conflicts.addAll(detectConflict(current, current.getName(), offered.getName()
-            , "name"));
-        conflicts.addAll(detectConflict(current, current.getAlternateName(), offered.getAlternateName()
-            , "alternateName"));
-        conflicts.addAll(detectConflict(current, current.getDescription(), offered.getDescription()
-            , "description"));
-        conflicts.addAll(detectConflict(current, current.getEmail(), offered.getEmail()
-            , "email"));
-        conflicts.addAll(detectConflict(current, current.getUrl(), offered.getUrl()
-            , "url"));
-        conflicts.addAll(detectConflict(current, current.getTaxStatus(), offered.getTaxStatus()
-            , "taxStatus"));
-        conflicts.addAll(detectConflict(current, current.getTaxId(), offered.getTaxId()
-            , "taxId"));
-        conflicts.addAll(detectConflict(current, current.getYearIncorporated(), offered.getYearIncorporated()
-            , "yearIncorporated"));
-        conflicts.addAll(detectConflict(current, current.getLegalStatus(), offered.getLegalStatus()
-            , "legalStatus"));
-        conflicts.addAll(detectConflict(current, current.getActive(), offered.getActive()
-            , "active"));
-        conflicts.addAll(detectConflict(current, current.getProviderName(), offered.getProviderName()
-            , "providerName"));
+        conflicts.addAll(detectConflict(current, current.getName(), offered.getName(), "name"));
+        conflicts.addAll(detectConflict(current, current.getAlternateName(), offered.getAlternateName(),
+            "alternateName"));
+        conflicts.addAll(detectConflict(current, current.getDescription(), offered.getDescription(),
+            "description"));
+        conflicts.addAll(detectConflict(current, current.getEmail(), offered.getEmail(), "email"));
+        conflicts.addAll(detectConflict(current, current.getUrl(), offered.getUrl(), "url"));
+        conflicts.addAll(detectConflict(current, current.getTaxStatus(), offered.getTaxStatus(), "taxStatus"));
+        conflicts.addAll(detectConflict(current, current.getTaxId(), offered.getTaxId(), "taxId"));
+        conflicts.addAll(detectConflict(current, current.getYearIncorporated(), offered.getYearIncorporated(),
+            "yearIncorporated"));
+        conflicts.addAll(detectConflict(current, current.getLegalStatus(), offered.getLegalStatus(),
+            "legalStatus"));
+        conflicts.addAll(detectConflict(current, current.getActive(), offered.getActive(), "active"));
+        conflicts.addAll(detectConflict(current, current.getProviderName(), offered.getProviderName(),
+            "providerName"));
 
         return conflicts;
     }

@@ -131,7 +131,7 @@ public class ActivityServiceImplTest {
         assertEquals(conflict.getResourceId(), actualConflict.getResourceId());
         assertEquals(conflict.getOwner().getId(), actualConflict.getOwnerId());
         assertEquals(conflict.getOwner().getName(), actualConflict.getOwnerName());
-        assertEquals(conflict.getAcceptedThisChanges(), actualConflict.getAcceptedThisChanges());
+        assertEquals(conflict.getAcceptedThisChange(), actualConflict.getAcceptedThisChange());
     }
 
 }

@@ -21,14 +21,14 @@ import java.util.UUID;
 @Repository
 public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
 
-    @Query(value = "select distinct conflict from Conflict conflict left join fetch conflict.acceptedThisChanges",
+    @Query(value = "select distinct conflict from Conflict conflict left join fetch conflict.acceptedThisChange",
         countQuery = "select count(distinct conflict) from Conflict conflict")
     Page<Conflict> findAllWithEagerRelationships(Pageable pageable);
 
-    @Query(value = "select distinct conflict from Conflict conflict left join fetch conflict.acceptedThisChanges")
+    @Query(value = "select distinct conflict from Conflict conflict left join fetch conflict.acceptedThisChange")
     List<Conflict> findAllWithEagerRelationships();
 
-    @Query("select conflict from Conflict conflict left join fetch conflict.acceptedThisChanges where conflict.id =:id")
+    @Query("select conflict from Conflict conflict left join fetch conflict.acceptedThisChange where conflict.id =:id")
     Optional<Conflict> findOneWithEagerRelationships(@Param("id") UUID id);
 
     @Query("select conflict from Conflict conflict where conflict.resourceId =:resourceId and conflict.owner.id =:ownerId")

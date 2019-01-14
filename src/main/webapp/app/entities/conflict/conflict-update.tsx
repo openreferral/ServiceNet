@@ -61,7 +61,7 @@ export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConfl
       const entity = {
         ...conflictEntity,
         ...values,
-        acceptedThisChanges: mapIdList(values.acceptedThisChanges)
+        acceptedThisChange: mapIdList(values.acceptedThisChange)
       };
 
       if (this.state.isNew) {
@@ -226,8 +226,8 @@ export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConfl
                     type="select"
                     multiple
                     className="form-control"
-                    name="acceptedThisChanges"
-                    value={conflictEntity.acceptedThisChanges && conflictEntity.acceptedThisChanges.map(e => e.id)}
+                    name="acceptedThisChange"
+                    value={conflictEntity.acceptedThisChange && conflictEntity.acceptedThisChange.map(e => e.id)}
                   >
                     <option value="" key="0" />
                     {systemAccounts

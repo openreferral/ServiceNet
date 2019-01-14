@@ -110,7 +110,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
                 conflict.getCurrentValue(), conflict.getOfferedValue(), conflict.getOwner());
             if (fetchedOpt.isPresent()) {
                 Conflict fetched = fetchedOpt.get();
-                conflict.getAcceptedThisChanges().forEach(fetched::addAcceptedThisChange);
+                conflict.getAcceptedThisChange().forEach(fetched::addAcceptedThisChange);
 
                 conflicts.add(fetched);
             } else {

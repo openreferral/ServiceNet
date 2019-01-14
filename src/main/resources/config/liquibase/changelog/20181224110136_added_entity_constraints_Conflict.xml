@@ -19,9 +19,9 @@
                                  constraintName="fk_conflict_accepted_this_change_conflicts_id"
                                  referencedColumnNames="id"
                                  referencedTableName="conflict"/>
-        <addForeignKeyConstraint baseColumnNames="accepted_this_changes_id"
+        <addForeignKeyConstraint baseColumnNames="accepted_this_change_id"
                                  baseTableName="conflict_accepted_this_change"
-                                 constraintName="fk_conflict_accepted_this_change_accepted_this_changes_id"
+                                 constraintName="fk_conflict_accepted_this_change_accepted_this_change_id"
                                  referencedColumnNames="id"
                                  referencedTableName="system_account"/>
         

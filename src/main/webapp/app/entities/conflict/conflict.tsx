@@ -107,11 +107,11 @@ export class Conflict extends React.Component<IConflictProps> {
                   <td>{conflict.resourceId}</td>
                   <td>{conflict.ownerId ? <Link to={`system-account/${conflict.ownerId}`}>{conflict.ownerId}</Link> : ''}</td>
                   <td>
-                    {conflict.acceptedThisChanges
-                      ? conflict.acceptedThisChanges.map((val, j) => (
+                    {conflict.acceptedThisChange
+                      ? conflict.acceptedThisChange.map((val, j) => (
                           <span key={j}>
                             <Link to={`system-account/${val.id}`}>{val.id}</Link>
-                            {j === conflict.acceptedThisChanges.length - 1 ? '' : ', '}
+                            {j === conflict.acceptedThisChange.length - 1 ? '' : ', '}
                           </span>
                         ))
                       : null}
