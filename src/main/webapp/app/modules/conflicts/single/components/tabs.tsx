@@ -5,8 +5,9 @@ import Details from './details';
 import { connect } from 'react-redux';
 import { Translate } from 'react-jhipster';
 import { IActivity } from 'app/shared/model/activity.model';
+import { RouteComponentProps } from 'react-router-dom';
 
-export interface ISingleRecordViewProp extends StateProps, DispatchProps {
+export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   activity: IActivity;
 }
 
@@ -44,7 +45,7 @@ export class Tabs extends React.Component<ISingleRecordViewProp, ISingleRecordVi
         </Nav>
         <TabContent activeTab={this.state.activeTab}>
           <TabPane tabId="1">
-            <Details activity={this.props.activity} />
+            <Details {...this.props} />
           </TabPane>
         </TabContent>
       </div>

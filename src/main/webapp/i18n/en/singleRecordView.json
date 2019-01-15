@@ -5,14 +5,19 @@
       "otherTabs": "Other tabs..."
     },
     "details": {
-      "title": "Organization details",
-      "orgName": "Organization name",
-      "orgAlternateName": "Alternate name",
-      "orgDescription": "Description",
-      "orgEmail": "Email",
-      "orgUrl": "Website",
-      "orgTaxStatus": "Tax status",
-      "orgActive": "Active"
+      "title": "Organization details"
+    },
+    "inputField": {
+      "organizationName": "Organization name",
+      "organizationAlternateName": "Alternate name",
+      "organizationDescription": "Description",
+      "organizationEmail": "Email",
+      "organizationUrl": "Website",
+      "organizationTaxStatus": "Tax status",
+      "organizationActive": "Active",
+      "imported": " imported ",
+      "conflictingDataOnePartner": " partner has conflicting data:",
+      "conflictingDataMultiPartners": " partners has conflicting data:"
     }
   }
 }
