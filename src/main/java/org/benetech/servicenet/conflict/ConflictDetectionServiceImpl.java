@@ -12,6 +12,7 @@ import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ConflictService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -52,11 +53,6 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         this.conflictService = conflictService;
     }
 
-    /**
-     * Detect and persist conflicts for entities asynchronously.
-     *
-     * @param matches a list of organization matches
-     */
     @Async
     @Override
     public void detect(List<OrganizationMatch> matches) {
@@ -69,25 +65,47 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
             Organization organization = organizationRepository.getOne(match.getOrganizationRecord().getId());
             Organization mirrorOrganization = organizationRepository.getOne(match.getPartnerVersion().getId());
 
-            List<EntityEquivalent> equivalents = new LinkedList<>(orgEquivalent.getUnwrappedEntities());
-            equivalents.add(orgEquivalent);
+            List<EntityEquivalent> equivalents = gatherAllEquivalents(orgEquivalent);
 
-            for (EntityEquivalent eq : equivalents) {
-                Object current = em.find(eq.getClazz(), eq.getBaseResourceId());
-                Object mirror = em.find(eq.getClazz(), eq.getPartnerResourceId());
-
-                ConflictDetector detector = context.getBean(
-                    eq.getClazz().getSimpleName() + CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
-                List<Conflict> noAccountConflicts = detector.detect(current, mirror);
-                conflicts.addAll(addAccounts(noAccountConflicts, organization.getAccount(),
-                    mirrorOrganization.getAccount()));
-            }
+            conflicts.addAll(detect(equivalents, organization.getAccount(), mirrorOrganization.getAccount()));
         }
 
-        conflicts = handleDuplicates(conflicts);
+        conflicts = updateExistingConflictsOrCreate(conflicts);
+        persistConflicts(conflicts);
+
+    }
+
+    private List<EntityEquivalent> gatherAllEquivalents(OrganizationEquivalent orgEquivalent) {
+        List<EntityEquivalent> equivalents = new LinkedList<>(orgEquivalent.getUnwrappedEntities());
+        equivalents.add(orgEquivalent);
+        return equivalents;
+    }
+
+    private void persistConflicts(List<Conflict> conflicts) {
         for (Conflict c : conflicts) {
             em.persist(c);
         }
+    }
+
+    private List<Conflict> detect(List<EntityEquivalent> equivalents, SystemAccount owner, SystemAccount accepted) {
+        List<Conflict> conflicts = new LinkedList<>();
+
+        for (EntityEquivalent eq : equivalents) {
+            Object current = em.find(eq.getClazz(), eq.getBaseResourceId());
+            Object mirror = em.find(eq.getClazz(), eq.getPartnerResourceId());
+
+            try {
+                ConflictDetector detector = context.getBean(
+                    eq.getClazz().getSimpleName() + CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
+                List<Conflict> noAccountConflicts = detector.detect(current, mirror);
+                conflicts.addAll(
+                    addAccounts(noAccountConflicts, owner, accepted));
+            } catch (NoSuchBeanDefinitionException ex) {
+                log.warn("There is no conflict detector for {}", eq.getClazz().getSimpleName());
+            }
+        }
+
+        return conflicts;
     }
 
     private List<Conflict> addAccounts(List<Conflict> noAccountConflicts, SystemAccount owner, SystemAccount accepted) {
@@ -102,17 +120,17 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         return conflicts;
     }
 
-    private List<Conflict> handleDuplicates(List<Conflict> unchecked) {
+    private List<Conflict> updateExistingConflictsOrCreate(List<Conflict> unchecked) {
         List<Conflict> conflicts = new LinkedList<>();
 
         for (Conflict conflict : unchecked) {
-            Optional<Conflict> fetchedOpt = conflictService.findExistingConflict(conflict.getResourceId(),
+            Optional<Conflict> databaseOpt = conflictService.findExistingConflict(conflict.getResourceId(),
                 conflict.getCurrentValue(), conflict.getOfferedValue(), conflict.getOwner());
-            if (fetchedOpt.isPresent()) {
-                Conflict fetched = fetchedOpt.get();
-                conflict.getAcceptedThisChange().forEach(fetched::addAcceptedThisChange);
+            if (databaseOpt.isPresent()) {
+                Conflict databaseConflict = databaseOpt.get();
+                conflict.getAcceptedThisChange().forEach(databaseConflict::addAcceptedThisChange);
 
-                conflicts.add(fetched);
+                conflicts.add(databaseConflict);
             } else {
                 conflicts.add(conflict);
             }

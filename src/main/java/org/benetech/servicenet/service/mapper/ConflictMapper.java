@@ -52,8 +52,7 @@ public interface ConflictMapper extends EntityMapper<ConflictDTO, Conflict> {
         if (CollectionUtils.isEmpty(acceptedThisChange)) {
             return null;
         } else {
-            Iterator<SystemAccount> iterator = acceptedThisChange.iterator();
-            SystemAccount account = iterator.next();
+            SystemAccount account = (acceptedThisChange.iterator()).next();
             return account.getName();
         }
     }

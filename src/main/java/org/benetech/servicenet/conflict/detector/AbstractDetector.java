@@ -8,30 +8,30 @@ import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class Detector<T> {
+public abstract class AbstractDetector<T> {
 
-    protected boolean equals(String current, String offered) {
+    protected boolean areEquals(String current, String offered) {
         return StringUtils.equalsIgnoreCase(current, offered) ||
             (StringUtils.isBlank(current) && StringUtils.isBlank(offered));
     }
 
-    protected List<Conflict> detectConflict(T current, String name, String name2, String fieldName) {
+    protected List<Conflict> detectConflicts(T current, String name, String name2, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
-        if (!this.equals(name, name2)) {
+        if (!this.areEquals(name, name2)) {
             conflicts.add(createConflict(current, name, name2, fieldName));
         }
         return conflicts;
     }
 
-    protected <Y> List<Conflict> detectConflict(T current, Y val, Y val2, String fieldName) {
+    protected<Y> List<Conflict> detectConflicts(T current, Y val, Y val2, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
-        if (notEqual(val, val2)) {
+        if (notEquals(val, val2)) {
             conflicts.add(createConflict(current, val, val2, fieldName));
         }
         return conflicts;
     }
 
-    protected <Z> Conflict createConflict(T obj, Z currentValue, Z offeredValue, String fieldName) {
+    protected<Y> Conflict createConflict(T obj, Y currentValue, Y offeredValue, String fieldName) {
         return Conflict.builder()
             .currentValue(getString(currentValue))
             .offeredValue(getString(offeredValue))
@@ -43,11 +43,11 @@ public abstract class Detector<T> {
             .build();
     }
 
-    private <Y> boolean notEqual(Y obj, Y obj2) {
+    private<Y> boolean notEquals(Y obj, Y obj2) {
         return (obj != null && !obj.equals(obj2)) || (obj2 != null && !obj2.equals(obj));
     }
 
-    private <W> String getString(W val) {
+    private<Y> String getString(Y val) {
         if (val == null) {
             return StringUtils.EMPTY;
         } else {

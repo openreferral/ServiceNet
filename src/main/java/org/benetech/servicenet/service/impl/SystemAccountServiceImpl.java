@@ -35,12 +35,6 @@ public class SystemAccountServiceImpl implements SystemAccountService {
         this.systemAccountMapper = systemAccountMapper;
     }
 
-    /**
-     * Save a systemAccount.
-     *
-     * @param systemAccountDTO the entity to save
-     * @return the persisted entity
-     */
     @Override
     public SystemAccountDTO save(SystemAccountDTO systemAccountDTO) {
         log.debug("Request to save SystemAccount : {}", systemAccountDTO);
@@ -50,11 +44,6 @@ public class SystemAccountServiceImpl implements SystemAccountService {
         return systemAccountMapper.toDto(systemAccount);
     }
 
-    /**
-     * Get all the systemAccounts.
-     *
-     * @return the list of entities
-     */
     @Override
     @Transactional(readOnly = true)
     public List<SystemAccountDTO> findAll() {
@@ -64,13 +53,6 @@ public class SystemAccountServiceImpl implements SystemAccountService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-
-    /**
-     * Get one systemAccount by id.
-     *
-     * @param id the id of the entity
-     * @return the entity
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<SystemAccountDTO> findOne(UUID id) {
@@ -79,22 +61,11 @@ public class SystemAccountServiceImpl implements SystemAccountService {
             .map(systemAccountMapper::toDto);
     }
 
-    /**
-     * Delete the systemAccount by id.
-     *
-     * @param id the id of the entity
-     */
-    @Override
     public void delete(UUID id) {
         log.debug("Request to delete SystemAccount : {}", id);
         systemAccountRepository.deleteById(id);
     }
 
-    /**
-     * Find the systemAccount by name.
-     *
-     * @param name the name of the account
-     */
     @Override
     public Optional<SystemAccount> findByName(String name) {
         return systemAccountRepository.findByName(name);

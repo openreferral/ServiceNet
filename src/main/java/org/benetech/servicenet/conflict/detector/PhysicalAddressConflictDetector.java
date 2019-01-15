@@ -8,20 +8,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component("PhysicalAddressConflictDetector")
-public class PhysicalAddressConflictDetector extends Detector<PhysicalAddress> implements ConflictDetector<PhysicalAddress> {
+public class PhysicalAddressConflictDetector extends AbstractDetector<PhysicalAddress> implements
+    ConflictDetector<PhysicalAddress> {
 
     @Override
     public List<Conflict> detect(PhysicalAddress current, PhysicalAddress offered) {
         List<Conflict> conflicts = new LinkedList<>();
 
-        conflicts.addAll(detectConflict(current, current.getAttention(), offered.getAttention(), "attention"));
-        conflicts.addAll(detectConflict(current, current.getAddress1(), offered.getAddress1(), "address1"));
-        conflicts.addAll(detectConflict(current, current.getCity(), offered.getCity(), "city"));
-        conflicts.addAll(detectConflict(current, current.getRegion(), offered.getRegion(), "region"));
-        conflicts.addAll(detectConflict(current, current.getStateProvince(), offered.getStateProvince(),
+        conflicts.addAll(detectConflicts(current, current.getAttention(), offered.getAttention(), "attention"));
+        conflicts.addAll(detectConflicts(current, current.getAddress1(), offered.getAddress1(), "address1"));
+        conflicts.addAll(detectConflicts(current, current.getCity(), offered.getCity(), "city"));
+        conflicts.addAll(detectConflicts(current, current.getRegion(), offered.getRegion(), "region"));
+        conflicts.addAll(detectConflicts(current, current.getStateProvince(), offered.getStateProvince(),
             "stateProvince"));
-        conflicts.addAll(detectConflict(current, current.getPostalCode(), offered.getPostalCode(), "postalCode"));
-        conflicts.addAll(detectConflict(current, current.getCountry(), offered.getCountry(), "country"));
+        conflicts.addAll(detectConflicts(current, current.getPostalCode(), offered.getPostalCode(), "postalCode"));
+        conflicts.addAll(detectConflicts(current, current.getCountry(), offered.getCountry(), "country"));
 
         return conflicts;
     }
