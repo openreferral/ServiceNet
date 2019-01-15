@@ -1,7 +1,7 @@
 @import '../../../app-variables';
 @import '../../../bootstrap-variables';
 
-.orgDetailsTitle {
+.title {
   margin-top: 15px;
 }
 
@@ -28,4 +28,38 @@
 
 .icon-checkbox {
   margin-left: 5px;
+}
+
+.jumbotron {
+  margin-top: 15px;
+  padding: 0;
+  background-color: transparent;
+  border: 0;
+}
+
+.jumbotron-header {
+  padding: 10px;
+  margin: 0;
+  background-color: $compare-header-bg;
+  border: 1px $compare-border solid;
+  border-bottom: 0;
+}
+
+.jumbotron-content {
+  padding: 10px;
+  margin: 0;
+  background-color: $compare-content-bg;
+  border: 1px $compare-border solid;
+}
+
+.jumbotron-header-title {
+  color: rgb(109, 108, 108); //secondary
+}
+
+.jumbotron-header-text {
+  margin: 0;
+}
+
+.review-title {
+  margin-bottom: 0;
 }

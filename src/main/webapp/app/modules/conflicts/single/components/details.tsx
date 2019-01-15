@@ -1,10 +1,10 @@
 import React from 'react';
-import { Col, Row, Form } from 'reactstrap';
+import { Col, Row, Form, Jumbotron } from 'reactstrap';
 import '../single-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import InputField from './input-field';
-import { RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IOrganization } from 'app/shared/model/organization.model';
 
@@ -40,7 +40,7 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
     return (
       <Row>
         <Col sm="6">
-          <h4 className="orgDetailsTitle">
+          <h4 className="title">
             <Translate contentKey="singleRecordView.details.title" />
           </h4>
           <Form>
@@ -77,6 +77,39 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
             />
           </Form>
         </Col>
+        {activity.conflicts.length != 0 ? (
+          <Col sm="4">
+            <Jumbotron className="jumbotron">
+              <div className="jumbotron-header">
+                <h4 className="jumbotron-header-title">
+                  <Translate contentKey="singleRecordView.details.compare.title" />
+                </h4>
+                <p className="jumbotron-header-text">
+                  {activity.conflicts.length}
+                  <Translate contentKey="singleRecordView.details.compare.header" />
+                </p>
+              </div>
+              <div className="jumbotron-content">
+                <p>
+                  <Translate contentKey="singleRecordView.details.compare.content1" />
+                </p>
+                <p>
+                  <Translate contentKey="singleRecordView.details.compare.content2" />
+                </p>
+                <p className="review-title">
+                  <Translate contentKey="singleRecordView.details.compare.review" />
+                </p>
+                {activity.conflicts.map((conflict, i) => (
+                  <div>
+                    <Link to="TODO" key={`link-${i}`}>
+                      {conflict.ownerName}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </Jumbotron>
+          </Col>
+        ) : null}
       </Row>
     );
   }
