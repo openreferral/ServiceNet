@@ -38,8 +38,6 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ConflictService conflictService;
 
-    private static final String EXAMPLE_DATA = "C56A4180-65AA-42EC-A945-5FD21DEC0538";
-
     public ActivityServiceImpl(OrganizationService organizationService, ConflictService conflictService) {
         this.organizationService = organizationService;
         this.conflictService = conflictService;
@@ -48,26 +46,15 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public List<ActivityDTO> getAllOrganizationActivities(UUID systemAccountId) {
         List<ActivityDTO> activities = new ArrayList<>();
-        // TODO: search also using accountId when detecting conflicts will be implemented
-        // List<OrganizationDTO> orgs = organizationService.findAllWithOwnerId(systemAccountId);
-        List<OrganizationDTO> orgs = organizationService.findAllDTOs();
+        List<OrganizationDTO> orgs = organizationService.findAllWithOwnerId(systemAccountId);
 
-        // TODO: get organization-entities mapping for every organization
-        // this mock below will be removed when Organization matching will be available
-        List<UUID> entities = Collections.emptyList();
-        UUID orgId = null;
-        if (!CollectionUtils.isEmpty(orgs) && orgs.get(0) != null) {
-            orgId = orgs.get(0).getId();
-            entities = Collections.singletonList(UUID.fromString(EXAMPLE_DATA));
-        }
-
-        try {
-            for (UUID entityId : entities) {
-                Optional<ActivityDTO> activityOpt = getEntityActivity(orgId, entityId);
+        for (OrganizationDTO org : orgs) {
+            try {
+                Optional<ActivityDTO> activityOpt = getEntityActivity(org.getId(), org.getId());
                 activityOpt.ifPresent(activity -> activities.add(activity));
+            } catch (ActivityCreationException ex) {
+                log.error(ex.getMessage());
             }
-        } catch (ActivityCreationException ex) {
-            log.error(ex.getMessage());
         }
 
         return activities;
@@ -75,7 +62,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Optional<ActivityDTO> getOneByOrganizationId(UUID organizationId) {
-        return getEntityActivity(organizationId, UUID.fromString(EXAMPLE_DATA));
+        return getEntityActivity(organizationId, organizationId);
     }
 
     @Override
@@ -103,7 +90,6 @@ public class ActivityServiceImpl implements ActivityService {
         OrganizationDTO org = opt.orElseThrow(() -> new ActivityCreationException(
             String.format("There is no organization for orgId: %s", orgId)));
 
-        // TODO: search also using accountId when detecting conflicts will be implemented
         List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceId(resourceId);
         if (CollectionUtils.isEmpty(conflictDTOS)) {
             return Optional.empty();

@@ -24,8 +24,8 @@ const ActivityElement = props => (
           <CardBody>
             {props.activity.conflicts.map((conflict, i) => (
               <CardTitle className="activity-right-card-title" key={`activityCard${i}`}>
-                {conflict.ownerName} {conflict.acceptedThisChanges.length > 0 && <b>+{conflict.acceptedThisChanges.length}</b>}
-                {conflict.acceptedThisChanges.length > 1 && (
+                {conflict.firstAcceptedName} {conflict.acceptedThisChange.length > 1 && <b>+{conflict.acceptedThisChange.length}</b>}
+                {conflict.acceptedThisChange.length > 2 && (
                   <Translate
                     contentKey="serviceNetApp.activity.unresolved.conflictsPlusMany"
                     interpolate={{ fieldName: conflict.fieldName }}
@@ -33,12 +33,12 @@ const ActivityElement = props => (
                     partners have a conflicting {conflict.fieldName}
                   </Translate>
                 )}
-                {conflict.acceptedThisChanges.length === 1 && (
+                {conflict.acceptedThisChange.length === 2 && (
                   <Translate contentKey="serviceNetApp.activity.unresolved.conflictPlusOne" interpolate={{ fieldName: conflict.fieldName }}>
                     partner have a conflicting {conflict.fieldName}
                   </Translate>
                 )}
-                {conflict.acceptedThisChanges.length === 0 && (
+                {conflict.acceptedThisChange.length === 1 && (
                   <Translate
                     contentKey="serviceNetApp.activity.unresolved.conflictPlusZero"
                     interpolate={{ fieldName: conflict.fieldName }}

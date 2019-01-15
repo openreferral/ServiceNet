@@ -271,22 +271,4 @@ public class Organization implements Serializable {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
-
-    @Override
-    public String toString() {
-        return "Organization{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", alternateName='" + getAlternateName() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", url='" + getUrl() + "'" +
-            ", taxStatus='" + getTaxStatus() + "'" +
-            ", taxId='" + getTaxId() + "'" +
-            ", yearIncorporated='" + getYearIncorporated() + "'" +
-            ", legalStatus='" + getLegalStatus() + "'" +
-            ", active='" + isActive() + "'" +
-            ", updatedAt='" + getUpdatedAt() + "'" +
-            "}";
-    }
 }

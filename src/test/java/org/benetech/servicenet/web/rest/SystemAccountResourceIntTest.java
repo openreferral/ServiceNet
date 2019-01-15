@@ -4,6 +4,7 @@ import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.dto.SystemAccountDTO;
@@ -46,9 +47,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class SystemAccountResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_NAME = "BBBBBBBBBB";
-
     @Autowired
     private SystemAccountRepository systemAccountRepository;
 
@@ -81,9 +79,7 @@ public class SystemAccountResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static SystemAccount createEntity(EntityManager em) {
-        SystemAccount systemAccount = new SystemAccount()
-            .name(DEFAULT_NAME);
-        return systemAccount;
+        return SystemAccountMother.createDefault();
     }
 
     @Before
@@ -118,7 +114,7 @@ public class SystemAccountResourceIntTest {
         List<SystemAccount> systemAccountList = systemAccountRepository.findAll();
         assertThat(systemAccountList).hasSize(databaseSizeBeforeCreate + 1);
         SystemAccount testSystemAccount = systemAccountList.get(systemAccountList.size() - 1);
-        assertThat(testSystemAccount.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testSystemAccount.getName()).isEqualTo(SystemAccountMother.DEFAULT_NAME);
     }
 
     @Test
@@ -171,7 +167,7 @@ public class SystemAccountResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(systemAccount.getId().toString())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(SystemAccountMother.DEFAULT_NAME)));
     }
 
     @Test
@@ -185,7 +181,7 @@ public class SystemAccountResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(systemAccount.getId().toString()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
+            .andExpect(jsonPath("$.name").value(SystemAccountMother.DEFAULT_NAME));
     }
 
     @Test
@@ -209,7 +205,7 @@ public class SystemAccountResourceIntTest {
         // Disconnect from session so that the updates on updatedSystemAccount are not directly saved in db
         em.detach(updatedSystemAccount);
         updatedSystemAccount
-            .name(UPDATED_NAME);
+            .name(SystemAccountMother.UPDATED_NAME);
         SystemAccountDTO systemAccountDTO = systemAccountMapper.toDto(updatedSystemAccount);
 
         restSystemAccountMockMvc.perform(put("/api/system-accounts")
@@ -221,7 +217,7 @@ public class SystemAccountResourceIntTest {
         List<SystemAccount> systemAccountList = systemAccountRepository.findAll();
         assertThat(systemAccountList).hasSize(databaseSizeBeforeUpdate);
         SystemAccount testSystemAccount = systemAccountList.get(systemAccountList.size() - 1);
-        assertThat(testSystemAccount.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testSystemAccount.getName()).isEqualTo(SystemAccountMother.UPDATED_NAME);
     }
 
     @Test

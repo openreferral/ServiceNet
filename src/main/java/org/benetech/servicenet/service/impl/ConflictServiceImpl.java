@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.repository.ConflictRepository;
@@ -137,4 +139,24 @@ public class ConflictServiceImpl implements ConflictService {
         log.debug("Request to get conflict's  most recent offeredValueDate with conflict's resourceId: {}.", resourceId);
         return conflictRepository.findMostRecentOfferedValueDate(resourceId);
     }
+
+    /**
+     * Get most recent, pending conflict wit specified resourceId, currentValue and offeredValue.
+     *
+     * @param resourceId the id of the resource entity
+     * @param currentValue the currentValue of the resource entity
+     * @param offeredValue the offeredValue of the resource entity
+     * @param owner the owner of the resource entity
+     */
+    @Override
+    public Optional<Conflict> findExistingConflict( UUID resourceId,
+                                                    String currentValue,
+                                                    String offeredValue,
+                                                    SystemAccount owner) {
+        log.debug("Request to get conflict's  most recent conflict with resourceId: {}, currentValue: {}, offeredValue: {}.",
+            resourceId, currentValue, offeredValue);
+        return conflictRepository.findFirstByResourceIdAndCurrentValueAndOfferedValueAndStateAndOwnerOrderByStateDateDesc(
+            resourceId, currentValue, offeredValue, ConflictStateEnum.PENDING, owner);
+    }
+
 }

@@ -4,6 +4,7 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -13,5 +14,7 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 @Repository
 public interface SystemAccountRepository extends JpaRepository<SystemAccount, UUID> {
+
+    Optional<SystemAccount> findByName(String name);
 
 }

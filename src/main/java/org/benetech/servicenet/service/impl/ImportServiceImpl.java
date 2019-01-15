@@ -16,6 +16,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -25,6 +26,7 @@ import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.TaxonomyService;
+import org.benetech.servicenet.service.SystemAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +64,9 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private RequiredDocumentService requiredDocumentService;
+
+    @Autowired
+    private SystemAccountService systemAccountService;
 
     @Override
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
@@ -125,9 +130,12 @@ public class ImportServiceImpl implements ImportService {
         Optional<Organization> organizationFromDb = organizationService.findForExternalDb(externalDbId, providerName);
         if (organizationFromDb.isPresent()) {
             organization.setId(organizationFromDb.get().getId());
+            organization.setAccount(organizationFromDb.get().getAccount());
             em.merge(organization);
             report.incrementNumberOfUpdatedOrgs();
         } else {
+            Optional<SystemAccount> systemAccount = systemAccountService.findByName(providerName);
+            organization.setAccount(systemAccount.orElse(null));
             em.persist(organization);
             report.incrementNumberOfCreatedOrgs();
         }

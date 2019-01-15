@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
@@ -39,18 +40,22 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private final OrganizationSimilarityCounter organizationSimilarityCounter;
 
+    private final ConflictDetectionService conflictDetectionService;
+
     private final float orgMatchThreshold;
 
     public OrganizationMatchServiceImpl(OrganizationMatchRepository organizationMatchRepository,
                                         OrganizationMatchMapper organizationMatchMapper,
                                         OrganizationService organizationService,
                                         OrganizationSimilarityCounter organizationSimilarityCounter,
+                                        ConflictDetectionService conflictDetectionService,
                                         @Value("${similarity-ratio.config.organization-match-threshold}")
                                             float orgMatchThreshold) {
         this.organizationMatchRepository = organizationMatchRepository;
         this.organizationMatchMapper = organizationMatchMapper;
         this.organizationService = organizationService;
         this.organizationSimilarityCounter = organizationSimilarityCounter;
+        this.conflictDetectionService = conflictDetectionService;
         this.orgMatchThreshold = orgMatchThreshold;
     }
 
@@ -121,7 +126,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .map(m -> m.getPartnerVersion().getId())
             .collect(Collectors.toList());
         List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getId());
-        findAndPersistMatches(organization, notMatchedOrgs);
+        List<OrganizationMatch> matches = findAndPersistMatches(organization, notMatchedOrgs);
+        conflictDetectionService.detect(matches);
     }
 
     private List<OrganizationMatch> findCurrentMatches(Organization organization) {
@@ -135,15 +141,18 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .collect(Collectors.toList());
     }
 
-    private void findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs) {
+    private List<OrganizationMatch> findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs) {
+        List<OrganizationMatch> matches = new LinkedList<>();
         for (Organization partner : notMatchedOrgs) {
             if (isSimilar(organization, partner)) {
-                createOrganizationMatches(organization, partner);
+                matches.addAll(createOrganizationMatches(organization, partner));
             }
         }
+        return matches;
     }
 
-    private void createOrganizationMatches(Organization organization, Organization partner) {
+    private List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner) {
+        List<OrganizationMatch> matches = new LinkedList<>();
         OrganizationMatch match = new OrganizationMatch()
             .organizationRecord(organization)
             .partnerVersion(partner)
@@ -154,8 +163,10 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .partnerVersion(organization)
             .timestamp(ZonedDateTime.now());
 
-        save(match);
-        save(mirrorMatch);
+        matches.add(save(match));
+        matches.add(save(mirrorMatch));
+
+        return matches;
     }
 
     private boolean isSimilar(Organization organization, Organization partner) {

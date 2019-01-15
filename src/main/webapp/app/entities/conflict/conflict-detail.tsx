@@ -104,11 +104,11 @@ export class ConflictDetail extends React.Component<IConflictDetailProps> {
               <Translate contentKey="serviceNetApp.conflict.acceptedThisChange">Accepted This Change</Translate>
             </dt>
             <dd>
-              {conflictEntity.acceptedThisChanges
-                ? conflictEntity.acceptedThisChanges.map((val, i) => (
+              {conflictEntity.acceptedThisChange
+                ? conflictEntity.acceptedThisChange.map((val, i) => (
                     <span key={val.id}>
                       <a>{val.id}</a>
-                      {i === conflictEntity.acceptedThisChanges.length - 1 ? '' : ', '}
+                      {i === conflictEntity.acceptedThisChange.length - 1 ? '' : ', '}
                     </span>
                   ))
                 : null}

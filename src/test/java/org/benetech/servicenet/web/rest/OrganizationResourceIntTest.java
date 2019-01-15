@@ -4,7 +4,9 @@ import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
@@ -24,11 +26,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,40 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class OrganizationResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_NAME = "BBBBBBBBBB";
-
-    private static final String DEFAULT_ALTERNATE_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_ALTERNATE_NAME = "BBBBBBBBBB";
-
-    private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
-    private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
-
-    private static final String DEFAULT_EMAIL = "AAAAAAAAAA";
-    private static final String UPDATED_EMAIL = "BBBBBBBBBB";
-
-    private static final String DEFAULT_URL = "AAAAAAAAAA";
-    private static final String UPDATED_URL = "BBBBBBBBBB";
-
-    private static final String DEFAULT_TAX_STATUS = "AAAAAAAAAA";
-    private static final String UPDATED_TAX_STATUS = "BBBBBBBBBB";
-
-    private static final String DEFAULT_TAX_ID = "AAAAAAAAAA";
-    private static final String UPDATED_TAX_ID = "BBBBBBBBBB";
-
-    private static final LocalDate DEFAULT_YEAR_INCORPORATED = LocalDate.ofEpochDay(0L);
-    private static final LocalDate UPDATED_YEAR_INCORPORATED = LocalDate.now(ZoneId.systemDefault());
-
-    private static final String DEFAULT_LEGAL_STATUS = "AAAAAAAAAA";
-    private static final String UPDATED_LEGAL_STATUS = "BBBBBBBBBB";
-
-    private static final Boolean DEFAULT_ACTIVE = false;
-    private static final Boolean UPDATED_ACTIVE = true;
-
-    private static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
-        ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
     @Autowired
     private OrganizationRepository organizationRepository;
 
@@ -105,6 +68,9 @@ public class OrganizationResourceIntTest {
     private ExceptionTranslator exceptionTranslator;
 
     @Autowired
+    private SystemAccountRepository systemAccountRepository;
+
+    @Autowired
     private EntityManager em;
 
     private MockMvc restOrganizationMockMvc;
@@ -118,19 +84,7 @@ public class OrganizationResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static Organization createEntity(EntityManager em) {
-        Organization organization = new Organization()
-            .name(DEFAULT_NAME)
-            .alternateName(DEFAULT_ALTERNATE_NAME)
-            .description(DEFAULT_DESCRIPTION)
-            .email(DEFAULT_EMAIL)
-            .url(DEFAULT_URL)
-            .taxStatus(DEFAULT_TAX_STATUS)
-            .taxId(DEFAULT_TAX_ID)
-            .yearIncorporated(DEFAULT_YEAR_INCORPORATED)
-            .legalStatus(DEFAULT_LEGAL_STATUS)
-            .active(DEFAULT_ACTIVE)
-            .updatedAt(DEFAULT_UPDATED_AT);
-        return organization;
+        return OrganizationMother.createDefault();
     }
 
     @Before
@@ -165,17 +119,17 @@ public class OrganizationResourceIntTest {
         List<Organization> organizationList = organizationRepository.findAll();
         assertThat(organizationList).hasSize(databaseSizeBeforeCreate + 1);
         Organization testOrganization = organizationList.get(organizationList.size() - 1);
-        assertThat(testOrganization.getName()).isEqualTo(DEFAULT_NAME);
-        assertThat(testOrganization.getAlternateName()).isEqualTo(DEFAULT_ALTERNATE_NAME);
-        assertThat(testOrganization.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testOrganization.getEmail()).isEqualTo(DEFAULT_EMAIL);
-        assertThat(testOrganization.getUrl()).isEqualTo(DEFAULT_URL);
-        assertThat(testOrganization.getTaxStatus()).isEqualTo(DEFAULT_TAX_STATUS);
-        assertThat(testOrganization.getTaxId()).isEqualTo(DEFAULT_TAX_ID);
-        assertThat(testOrganization.getYearIncorporated()).isEqualTo(DEFAULT_YEAR_INCORPORATED);
-        assertThat(testOrganization.getLegalStatus()).isEqualTo(DEFAULT_LEGAL_STATUS);
-        assertThat(testOrganization.isActive()).isEqualTo(DEFAULT_ACTIVE);
-        assertThat(testOrganization.getUpdatedAt()).isEqualTo(DEFAULT_UPDATED_AT);
+        assertThat(testOrganization.getName()).isEqualTo(OrganizationMother.DEFAULT_NAME);
+        assertThat(testOrganization.getAlternateName()).isEqualTo(OrganizationMother.DEFAULT_ALTERNATE_NAME);
+        assertThat(testOrganization.getDescription()).isEqualTo(OrganizationMother.DEFAULT_DESCRIPTION);
+        assertThat(testOrganization.getEmail()).isEqualTo(OrganizationMother.DEFAULT_EMAIL);
+        assertThat(testOrganization.getUrl()).isEqualTo(OrganizationMother.DEFAULT_URL);
+        assertThat(testOrganization.getTaxStatus()).isEqualTo(OrganizationMother.DEFAULT_TAX_STATUS);
+        assertThat(testOrganization.getTaxId()).isEqualTo(OrganizationMother.DEFAULT_TAX_ID);
+        assertThat(testOrganization.getYearIncorporated()).isEqualTo(OrganizationMother.DEFAULT_YEAR_INCORPORATED);
+        assertThat(testOrganization.getLegalStatus()).isEqualTo(OrganizationMother.DEFAULT_LEGAL_STATUS);
+        assertThat(testOrganization.isActive()).isEqualTo(OrganizationMother.DEFAULT_ACTIVE);
+        assertThat(testOrganization.getUpdatedAt()).isEqualTo(OrganizationMother.DEFAULT_UPDATED_AT);
     }
 
     @Test
@@ -240,6 +194,7 @@ public class OrganizationResourceIntTest {
     @Transactional
     public void getAllOrganizations() throws Exception {
         // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
         organizationRepository.saveAndFlush(organization);
 
         // Get all the organizationList
@@ -247,23 +202,24 @@ public class OrganizationResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organization.getId().toString())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].alternateName").value(hasItem(DEFAULT_ALTERNATE_NAME.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
-            .andExpect(jsonPath("$.[*].url").value(hasItem(DEFAULT_URL.toString())))
-            .andExpect(jsonPath("$.[*].taxStatus").value(hasItem(DEFAULT_TAX_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].taxId").value(hasItem(DEFAULT_TAX_ID.toString())))
-            .andExpect(jsonPath("$.[*].yearIncorporated").value(hasItem(DEFAULT_YEAR_INCORPORATED.toString())))
-            .andExpect(jsonPath("$.[*].legalStatus").value(hasItem(DEFAULT_LEGAL_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())))
-            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(DEFAULT_UPDATED_AT))));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(OrganizationMother.DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].alternateName").value(hasItem(OrganizationMother.DEFAULT_ALTERNATE_NAME.toString())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(OrganizationMother.DEFAULT_DESCRIPTION.toString())))
+            .andExpect(jsonPath("$.[*].email").value(hasItem(OrganizationMother.DEFAULT_EMAIL.toString())))
+            .andExpect(jsonPath("$.[*].url").value(hasItem(OrganizationMother.DEFAULT_URL.toString())))
+            .andExpect(jsonPath("$.[*].taxStatus").value(hasItem(OrganizationMother.DEFAULT_TAX_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].taxId").value(hasItem(OrganizationMother.DEFAULT_TAX_ID.toString())))
+            .andExpect(jsonPath("$.[*].yearIncorporated").value(hasItem(OrganizationMother.DEFAULT_YEAR_INCORPORATED.toString())))
+            .andExpect(jsonPath("$.[*].legalStatus").value(hasItem(OrganizationMother.DEFAULT_LEGAL_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].active").value(hasItem(OrganizationMother.DEFAULT_ACTIVE.booleanValue())))
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(OrganizationMother.DEFAULT_UPDATED_AT))));
     }
 
     @Test
     @Transactional
     public void getOrganization() throws Exception {
         // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
         organizationRepository.saveAndFlush(organization);
 
         // Get the organization
@@ -271,17 +227,17 @@ public class OrganizationResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(organization.getId().toString()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.alternateName").value(DEFAULT_ALTERNATE_NAME.toString()))
-            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
-            .andExpect(jsonPath("$.url").value(DEFAULT_URL.toString()))
-            .andExpect(jsonPath("$.taxStatus").value(DEFAULT_TAX_STATUS.toString()))
-            .andExpect(jsonPath("$.taxId").value(DEFAULT_TAX_ID.toString()))
-            .andExpect(jsonPath("$.yearIncorporated").value(DEFAULT_YEAR_INCORPORATED.toString()))
-            .andExpect(jsonPath("$.legalStatus").value(DEFAULT_LEGAL_STATUS.toString()))
-            .andExpect(jsonPath("$.active").value(DEFAULT_ACTIVE.booleanValue()))
-            .andExpect(jsonPath("$.updatedAt").value(sameInstant(DEFAULT_UPDATED_AT)));
+            .andExpect(jsonPath("$.name").value(OrganizationMother.DEFAULT_NAME.toString()))
+            .andExpect(jsonPath("$.alternateName").value(OrganizationMother.DEFAULT_ALTERNATE_NAME.toString()))
+            .andExpect(jsonPath("$.description").value(OrganizationMother.DEFAULT_DESCRIPTION.toString()))
+            .andExpect(jsonPath("$.email").value(OrganizationMother.DEFAULT_EMAIL.toString()))
+            .andExpect(jsonPath("$.url").value(OrganizationMother.DEFAULT_URL.toString()))
+            .andExpect(jsonPath("$.taxStatus").value(OrganizationMother.DEFAULT_TAX_STATUS.toString()))
+            .andExpect(jsonPath("$.taxId").value(OrganizationMother.DEFAULT_TAX_ID.toString()))
+            .andExpect(jsonPath("$.yearIncorporated").value(OrganizationMother.DEFAULT_YEAR_INCORPORATED.toString()))
+            .andExpect(jsonPath("$.legalStatus").value(OrganizationMother.DEFAULT_LEGAL_STATUS.toString()))
+            .andExpect(jsonPath("$.active").value(OrganizationMother.DEFAULT_ACTIVE.booleanValue()))
+            .andExpect(jsonPath("$.updatedAt").value(sameInstant(OrganizationMother.DEFAULT_UPDATED_AT)));
     }
 
     @Test
@@ -296,6 +252,7 @@ public class OrganizationResourceIntTest {
     @Transactional
     public void updateOrganization() throws Exception {
         // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
         organizationRepository.saveAndFlush(organization);
 
         int databaseSizeBeforeUpdate = organizationRepository.findAll().size();
@@ -305,17 +262,17 @@ public class OrganizationResourceIntTest {
         // Disconnect from session so that the updates on updatedOrganization are not directly saved in db
         em.detach(updatedOrganization);
         updatedOrganization
-            .name(UPDATED_NAME)
-            .alternateName(UPDATED_ALTERNATE_NAME)
-            .description(UPDATED_DESCRIPTION)
-            .email(UPDATED_EMAIL)
-            .url(UPDATED_URL)
-            .taxStatus(UPDATED_TAX_STATUS)
-            .taxId(UPDATED_TAX_ID)
-            .yearIncorporated(UPDATED_YEAR_INCORPORATED)
-            .legalStatus(UPDATED_LEGAL_STATUS)
-            .active(UPDATED_ACTIVE)
-            .updatedAt(UPDATED_UPDATED_AT);
+            .name(OrganizationMother.UPDATED_NAME)
+            .alternateName(OrganizationMother.UPDATED_ALTERNATE_NAME)
+            .description(OrganizationMother.UPDATED_DESCRIPTION)
+            .email(OrganizationMother.UPDATED_EMAIL)
+            .url(OrganizationMother.UPDATED_URL)
+            .taxStatus(OrganizationMother.UPDATED_TAX_STATUS)
+            .taxId(OrganizationMother.UPDATED_TAX_ID)
+            .yearIncorporated(OrganizationMother.UPDATED_YEAR_INCORPORATED)
+            .legalStatus(OrganizationMother.UPDATED_LEGAL_STATUS)
+            .active(OrganizationMother.UPDATED_ACTIVE)
+            .updatedAt(OrganizationMother.UPDATED_UPDATED_AT);
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
 
         restOrganizationMockMvc.perform(put("/api/organizations")
@@ -327,17 +284,17 @@ public class OrganizationResourceIntTest {
         List<Organization> organizationList = organizationRepository.findAll();
         assertThat(organizationList).hasSize(databaseSizeBeforeUpdate);
         Organization testOrganization = organizationList.get(organizationList.size() - 1);
-        assertThat(testOrganization.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testOrganization.getAlternateName()).isEqualTo(UPDATED_ALTERNATE_NAME);
-        assertThat(testOrganization.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testOrganization.getEmail()).isEqualTo(UPDATED_EMAIL);
-        assertThat(testOrganization.getUrl()).isEqualTo(UPDATED_URL);
-        assertThat(testOrganization.getTaxStatus()).isEqualTo(UPDATED_TAX_STATUS);
-        assertThat(testOrganization.getTaxId()).isEqualTo(UPDATED_TAX_ID);
-        assertThat(testOrganization.getYearIncorporated()).isEqualTo(UPDATED_YEAR_INCORPORATED);
-        assertThat(testOrganization.getLegalStatus()).isEqualTo(UPDATED_LEGAL_STATUS);
-        assertThat(testOrganization.isActive()).isEqualTo(UPDATED_ACTIVE);
-        assertThat(testOrganization.getUpdatedAt()).isEqualTo(UPDATED_UPDATED_AT);
+        assertThat(testOrganization.getName()).isEqualTo(OrganizationMother.UPDATED_NAME);
+        assertThat(testOrganization.getAlternateName()).isEqualTo(OrganizationMother.UPDATED_ALTERNATE_NAME);
+        assertThat(testOrganization.getDescription()).isEqualTo(OrganizationMother.UPDATED_DESCRIPTION);
+        assertThat(testOrganization.getEmail()).isEqualTo(OrganizationMother.UPDATED_EMAIL);
+        assertThat(testOrganization.getUrl()).isEqualTo(OrganizationMother.UPDATED_URL);
+        assertThat(testOrganization.getTaxStatus()).isEqualTo(OrganizationMother.UPDATED_TAX_STATUS);
+        assertThat(testOrganization.getTaxId()).isEqualTo(OrganizationMother.UPDATED_TAX_ID);
+        assertThat(testOrganization.getYearIncorporated()).isEqualTo(OrganizationMother.UPDATED_YEAR_INCORPORATED);
+        assertThat(testOrganization.getLegalStatus()).isEqualTo(OrganizationMother.UPDATED_LEGAL_STATUS);
+        assertThat(testOrganization.isActive()).isEqualTo(OrganizationMother.UPDATED_ACTIVE);
+        assertThat(testOrganization.getUpdatedAt()).isEqualTo(OrganizationMother.UPDATED_UPDATED_AT);
     }
 
     @Test
@@ -363,6 +320,7 @@ public class OrganizationResourceIntTest {
     @Transactional
     public void deleteOrganization() throws Exception {
         // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
         organizationRepository.saveAndFlush(organization);
 
         int databaseSizeBeforeDelete = organizationRepository.findAll().size();

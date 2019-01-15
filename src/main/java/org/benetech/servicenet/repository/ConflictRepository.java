@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Conflict;
+import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,14 +21,14 @@ import java.util.UUID;
 @Repository
 public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
 
-    @Query(value = "select distinct conflict from Conflict conflict left join fetch conflict.acceptedThisChanges",
+    @Query(value = "select distinct conflict from Conflict conflict left join fetch conflict.acceptedThisChange",
         countQuery = "select count(distinct conflict) from Conflict conflict")
     Page<Conflict> findAllWithEagerRelationships(Pageable pageable);
 
-    @Query(value = "select distinct conflict from Conflict conflict left join fetch conflict.acceptedThisChanges")
+    @Query(value = "select distinct conflict from Conflict conflict left join fetch conflict.acceptedThisChange")
     List<Conflict> findAllWithEagerRelationships();
 
-    @Query("select conflict from Conflict conflict left join fetch conflict.acceptedThisChanges where conflict.id =:id")
+    @Query("select conflict from Conflict conflict left join fetch conflict.acceptedThisChange where conflict.id =:id")
     Optional<Conflict> findOneWithEagerRelationships(@Param("id") UUID id);
 
     @Query("select conflict from Conflict conflict where conflict.resourceId =:resourceId and conflict.owner.id =:ownerId")
@@ -38,4 +40,11 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
 
     @Query("select max(conflict.offeredValueDate) from Conflict conflict where conflict.resourceId =:resourceId")
     Optional<ZonedDateTime> findMostRecentOfferedValueDate(@Param("resourceId") UUID resourceId);
+
+    Optional<Conflict>
+    findFirstByResourceIdAndCurrentValueAndOfferedValueAndStateAndOwnerOrderByStateDateDesc(UUID resourceId,
+                                                                                            String currentValue,
+                                                                                            String offeredValue,
+                                                                                            ConflictStateEnum state,
+                                                                                            SystemAccount owner);
 }
