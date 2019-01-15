@@ -30,6 +30,31 @@
   margin-left: 5px;
 }
 
+.tooltip-inner {
+  color: $tooltip-text-secondary;
+  background-color: $tooltip-bg;
+  box-shadow: 2px 2px 2px $tooltip-text-secondary;
+}
+
+.tooltip {
+  margin-left: -10px;
+}
+
+.half-rule {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: $tooltip-text-secondary;
+}
+
+.suggested {
+  color: $tooltip-text-primary;
+  text-align: left;
+}
+
+.secondary {
+  color: $tooltip-text-secondary;
+}
+
 .jumbotron {
   margin-top: 15px;
   padding: 0;

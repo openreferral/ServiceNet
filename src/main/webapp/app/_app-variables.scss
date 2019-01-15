@@ -35,7 +35,12 @@ $border-radius-sm: 0.1rem;
 // Cards
 $blue-card-text: rgb(102, 196, 255);
 $gray-card-bg: rgb(240, 240, 240);
-$gray-card-timestamp: rgb(109, 108, 108);
+$gray-card-accent: rgb(109, 108, 108);
+
+//Tooltips
+$tooltip-bg: rgb(240, 240, 240);
+$tooltip-text-primary: rgb(0, 0, 0);
+$tooltip-text-secondary: $gray-card-accent;
 
 // Compare section
 $compare-header-bg: rgb(198, 233, 255);
