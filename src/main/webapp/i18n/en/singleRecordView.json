@@ -15,7 +15,9 @@
       "organizationUrl": "Website",
       "organizationTaxStatus": "Tax status",
       "organizationActive": "Active",
-      "suggestedValue": "Suggested value: "
+      "imported": " imported ",
+      "conflictingDataOnePartner": " partner has conflicting data:",
+      "conflictingDataMultiPartners": " partners has conflicting data:"
     }
   }
 }

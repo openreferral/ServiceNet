@@ -2,9 +2,11 @@ import React from 'react';
 import { Col, Row, FormGroup, Label, Input, Tooltip } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { Translate } from 'react-jhipster';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IActivity } from 'app/shared/model/activity.model';
+import '../single-record-view.scss';
+import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 const DOMAIN_CLASS = 'org.benetech.servicenet.domain';
 
@@ -27,9 +29,9 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     isConflicting: this.isConflictingField(this.props.fieldName)
   };
 
-  getSuggestedValue(fieldName) {
+  getSuggestedValues(fieldName) {
     if (this.state.isConflicting) {
-      return this.props.activity.conflicts.filter(e => e.fieldName === fieldName)[0].offeredValue;
+      return this.props.activity.conflicts.filter(e => e.fieldName === fieldName);
     }
     return null;
   }
@@ -43,17 +45,9 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     return this.props.activity.conflicts.some(e => e.fieldName === fieldName && e.entityPath === entityPath);
   }
 
-  showTooltip = () => {
-    if (this.state.isConflicting) {
-      this.setState({
-        tooltipOpen: true
-      });
-    }
-  };
-
-  hideTooltip = () => {
+  toggleTooltip = () => {
     this.setState({
-      tooltipOpen: false
+      tooltipOpen: !this.state.tooltipOpen
     });
   };
 
@@ -80,17 +74,47 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
         <Translate contentKey={`singleRecordView.inputField.${identifier}`} />
       </Label>
     );
-    const icon = this.state.isConflicting ? <FontAwesomeIcon className={`icon icon-${type}`} size="lg" icon="question-circle" /> : null;
-    const tooltip = (
-      <Tooltip placement="right" isOpen={this.state.tooltipOpen} target={identifier}>
-        <Translate contentKey="singleRecordView.inputField.suggestedValue" />
-        {this.getSuggestedValue(fieldName)}
+    const icon = this.state.isConflicting ? (
+      <div id={`${identifier}-icon`}>
+        <FontAwesomeIcon className={`icon icon-${type}`} size="lg" icon="question-circle" />
+      </div>
+    ) : null;
+
+    const suggestedValues = this.getSuggestedValues(fieldName);
+    const tooltip = this.state.isConflicting ? (
+      <Tooltip
+        placement="right"
+        innerClassName="tooltip-inner"
+        className="tooltip"
+        autohide={false}
+        isOpen={this.state.tooltipOpen}
+        target={`${identifier}-icon`}
+        toggle={this.toggleTooltip}
+      >
+        {suggestedValues.length}
+        <Translate
+          contentKey={`singleRecordView.inputField.${
+            suggestedValues.length === 1 ? 'conflictingDataOnePartner' : 'conflictingDataMultiPartners'
+          }`}
+        />
+        {suggestedValues.map((value, i) => (
+          <div className="suggested" key={`suggested-${identifier}-${i}`}>
+            <hr className="half-rule" />
+            {value.offeredValue}
+            <br />
+            <p className="secondary">
+              {value.ownerName}
+              <Translate contentKey="singleRecordView.inputField.imported" />
+              <TextFormat value={value.offeredValueDate} type="date" format={APP_LOCAL_DATE_FORMAT} />
+            </p>
+          </div>
+        ))}
       </Tooltip>
-    );
+    ) : null;
 
     const content =
       type === 'checkbox' ? (
-        <FormGroup check onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
+        <FormGroup check>
           {input}
           {label}
           {icon}
@@ -99,7 +123,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
       ) : (
         <FormGroup>
           {label}
-          <Row onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
+          <Row>
             <Col>{input}</Col>
             {icon}
             {tooltip}
