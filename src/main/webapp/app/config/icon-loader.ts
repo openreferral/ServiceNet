@@ -33,6 +33,7 @@ import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
 import { faBellSlash } from '@fortawesome/free-solid-svg-icons/faBellSlash';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons/faMapMarkerAlt';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons/faAngleRight';
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons/faQuestionCircle';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -72,6 +73,7 @@ export const loadIcons = () => {
     faPlay,
     faBellSlash,
     faMapMarkerAlt,
-    faAngleRight
+    faAngleRight,
+    faQuestionCircle
   );
 };
