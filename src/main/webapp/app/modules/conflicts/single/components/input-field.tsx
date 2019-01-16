@@ -81,6 +81,12 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     ) : null;
 
     const suggestedValues = this.getSuggestedValues(fieldName);
+    let partnersNumber = 0;
+    if (suggestedValues) {
+      suggestedValues.forEach(v => {
+        partnersNumber += v.acceptedThisChange.length;
+      });
+    }
     const tooltip = this.state.isConflicting ? (
       <Tooltip
         placement="right"
@@ -91,7 +97,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
         target={`${identifier}-icon`}
         toggle={this.toggleTooltip}
       >
-        {suggestedValues.length}
+        {partnersNumber}
         <Translate
           contentKey={`singleRecordView.inputField.${
             suggestedValues.length === 1 ? 'conflictingDataOnePartner' : 'conflictingDataMultiPartners'
@@ -102,11 +108,15 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
             <hr className="half-rule" />
             {value.offeredValue}
             <br />
-            <p className="secondary">
-              {value.ownerName}
-              <Translate contentKey="singleRecordView.inputField.imported" />
-              <TextFormat value={value.offeredValueDate} type="date" format={APP_LOCAL_DATE_FORMAT} />
-            </p>
+            {value.acceptedThisChange.map(accepted => (
+              <div key={`accepted-${fieldName + accepted.name}`}>
+                <p className="secondary">
+                  {accepted.name}
+                  <Translate contentKey="singleRecordView.inputField.imported" />
+                  <TextFormat value={value.offeredValueDate} type="date" format={APP_LOCAL_DATE_FORMAT} />
+                </p>
+              </div>
+            ))}
           </div>
         ))}
       </Tooltip>

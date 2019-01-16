@@ -25,7 +25,7 @@
       },
       {
         "contact": {
-          "address": "health.organization@org.com",
+          "address": "organization@health.com",
           "label": "Main",
           "type": "EmailAddress"
         },
