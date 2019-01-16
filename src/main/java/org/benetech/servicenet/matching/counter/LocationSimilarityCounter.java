@@ -40,7 +40,8 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
 
     @Override
     public float countSimilarityRatio(Location location1, Location location2) {
-        if (location1 == null || location2 == null) {
+        if (location1 == null || location1.getPhysicalAddress() == null
+            || location2 == null || location2.getPhysicalAddress() == null) {
             return NO_MATCH_RATIO;
         }
         float max = NO_MATCH_RATIO;
