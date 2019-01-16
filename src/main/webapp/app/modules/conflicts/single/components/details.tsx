@@ -77,7 +77,7 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
             />
           </Form>
         </Col>
-        {activity.conflicts.length != 0 ? (
+        {activity.conflicts.length !== 0 ? (
           <Col sm="4">
             <Jumbotron className="jumbotron">
               <div className="jumbotron-header">
