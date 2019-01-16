@@ -15,6 +15,7 @@ import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import { AUTHORITIES } from 'app/config/constants';
 import UploadPage from './modules/upload/upload-page';
 import SingleRecordView from './modules/conflicts/single/single-record-view';
+import MultipleRecordView from './modules/conflicts/multiple/multiple-record-view';
 
 // tslint:disable:space-in-parens
 const Account = Loadable({
@@ -45,6 +46,12 @@ const Routes = ({ isAdmin }) => (
         path="/single-record-view/:orgId?"
         isAdmin={isAdmin}
         component={SingleRecordView}
+        hasAnyAuthorities={[AUTHORITIES.USER]}
+      />
+      <PrivateRoute
+        path="/multi-record-view/:orgId?"
+        isAdmin={isAdmin}
+        component={MultipleRecordView}
         hasAnyAuthorities={[AUTHORITIES.USER]}
       />
       <ErrorBoundaryRoute path="/" component={Home} />

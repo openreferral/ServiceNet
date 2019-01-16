@@ -1,0 +1,12 @@
+{
+  "multiRecordView": {
+    "seeAnotherMatch": "See another match",
+    "sameRecord": {
+      "question": "Does this look like it's the same record for you?",
+      "confirm": "Yes, this is the same",
+      "deny": "No, this doesn't match"
+    },
+    "yourData": "Your data",
+    "from": "From "
+  }
+}

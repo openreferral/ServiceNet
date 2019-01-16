@@ -110,6 +110,12 @@ public class OrganizationMatchResource {
         return ResponseUtil.wrapOrNotFound(organizationMatchDTO);
     }
 
+    @GetMapping("/organization-matches/organization/{id}")
+    @Timed
+    public List<OrganizationMatchDTO> getOrganizationMatchesForOrganization(@PathVariable UUID id) {
+        return organizationMatchService.findAllForOrganization(id);
+    }
+
     /**
      * DELETE  /organization-matches/:id : delete the "id" organizationMatch.
      *
