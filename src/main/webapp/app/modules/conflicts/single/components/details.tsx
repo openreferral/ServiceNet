@@ -36,6 +36,8 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
   render() {
     const { activity } = this.props;
     const { organization } = this.state;
+    const firstMatch = activity.organizationMatches.length !== 0 ? activity.organizationMatches[0] : null;
+
     return (
       <Row>
         <Col sm="6">
@@ -76,16 +78,20 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
             />
           </Form>
         </Col>
-        {activity.conflicts.length !== 0 ? (
-          <Col sm="4">
+        {firstMatch ? (
+          <Col sm="3">
             <Jumbotron className="jumbotron">
               <div className="jumbotron-header">
                 <h4 className="jumbotron-header-title">
                   <Translate contentKey="singleRecordView.details.compare.title" />
                 </h4>
                 <p className="jumbotron-header-text">
-                  {activity.conflicts.length}
-                  <Translate contentKey="singleRecordView.details.compare.header" />
+                  {activity.organizationMatches.length}
+                  {activity.organizationMatches.length === 1 ? (
+                    <Translate contentKey="singleRecordView.details.compare.singleHeader" />
+                  ) : (
+                    <Translate contentKey="singleRecordView.details.compare.multiHeader" />
+                  )}
                 </p>
               </div>
               <div className="jumbotron-content">
@@ -98,13 +104,13 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
                 <p className="review-title">
                   <Translate contentKey="singleRecordView.details.compare.review" />
                 </p>
-                {activity.conflicts.map((conflict, i) => (
-                  <div>
-                    <Link to="TODO" key={`link-${i}`}>
-                      {conflict.ownerName}
-                    </Link>
-                  </div>
-                ))}
+                <div>
+                  <Link to={`/multi-record-view/${firstMatch.organizationRecordId}`}>
+                    {activity.organizationMatches.length === 1
+                      ? `${firstMatch.partnerVersionName}`
+                      : `${firstMatch.partnerVersionName} +${activity.organizationMatches.length - 1}`}
+                  </Link>
+                </div>
               </div>
             </Jumbotron>
           </Col>

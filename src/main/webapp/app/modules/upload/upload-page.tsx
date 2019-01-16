@@ -14,7 +14,6 @@ import { getSystemAccounts } from './upload-page.reducer';
 export interface IUploadPageProp extends StateProps, DispatchProps {}
 
 export interface IUploadState {
-  files: any[];
   pond: any;
   isUploadDisabled: boolean;
   delimiter: string;
@@ -29,7 +28,6 @@ const valid = 'valid';
 
 export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   state: IUploadState = {
-    files: [],
     pond: null,
     isUploadDisabled: true,
     delimiter: '',
@@ -94,8 +92,8 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   };
 
   isUploadDisabled = () => {
-    let result = this.state.files.length === 0;
-    this.state.files.forEach(file => {
+    let result = this.state.pond.getFiles().length === 0;
+    this.state.pond.getFiles().forEach(file => {
       if (!file.getMetadata(valid)) {
         result = true;
       }
@@ -104,15 +102,9 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   };
 
   onUpdateFiles = items => {
-    this.setState(
-      {
-        files: items
-      },
-      () =>
-        this.setState({
-          isUploadDisabled: this.isUploadDisabled()
-        })
-    );
+    this.setState({
+      isUploadDisabled: this.isUploadDisabled()
+    });
   };
 
   fileValidateTypeDetectType = (source, type) =>
@@ -178,11 +170,11 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
             acceptedFileTypes={supportedFileTypes}
             fileValidateTypeDetectType={this.fileValidateTypeDetectType}
             onupdatefiles={this.onUpdateFiles}
-          >
-            {this.state.files.map(fileItem => (
-              <File key={fileItem.file} src={fileItem.file} origin="input" />
-            ))}
-          </FilePond>
+          />
+          <p className="lead">
+            <Translate contentKey="upload.filesCount" />
+            {this.state.pond ? this.state.pond.getFiles().length : 0}
+          </p>
           <p className="lead">
             <Translate contentKey="upload.delimiter" />
           </p>

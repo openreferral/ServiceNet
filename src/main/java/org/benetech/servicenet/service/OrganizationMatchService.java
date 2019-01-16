@@ -30,6 +30,8 @@ public interface OrganizationMatchService {
      */
     List<OrganizationMatchDTO> findAll();
 
+    List<OrganizationMatchDTO> findAllForOrganization(UUID orgId);
+
     /**
      * Get the "id" organizationMatch.
      *

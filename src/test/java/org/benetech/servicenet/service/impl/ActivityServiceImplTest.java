@@ -1,21 +1,18 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.ServiceNetApp;
-
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.mother.ConflictMother;
 import org.benetech.servicenet.mother.OrganizationMother;
-
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
+import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.UserService;
-
 import org.benetech.servicenet.service.dto.ActivityDTO;
-
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.web.rest.ActivityResource;
@@ -30,7 +27,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -58,6 +54,9 @@ public class ActivityServiceImplTest {
     private UserService userService;
 
     @Autowired
+    private OrganizationMatchService organizationMatchService;
+
+    @Autowired
     private EntityManager em;
 
     private Organization organization;
@@ -71,7 +70,7 @@ public class ActivityServiceImplTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        activityService = new ActivityServiceImpl(organizationService, conflictService);
+        activityService = new ActivityServiceImpl(organizationService, conflictService, organizationMatchService);
     }
 
     @Before

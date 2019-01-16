@@ -8,10 +8,13 @@
       "title": "Organization details",
       "compare": {
         "title": "Compare",
-        "header": " partners have similar records",
+        "singleHeader": " partner have similar records",
+        "multiHeader": " partners have similar records",
         "content1": "Reviewing these records will help us give you better recommendation in the future.",
         "content2": "A manual review is the easiest way to confirm that these records match.",
-        "review": "Review similar partner records:"
+        "review": "Review similar partner records:",
+        "other": "other",
+        "others": "others"
       }
     },
     "inputField": {

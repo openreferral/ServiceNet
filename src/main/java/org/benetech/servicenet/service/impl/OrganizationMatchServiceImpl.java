@@ -93,6 +93,12 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    public List<OrganizationMatchDTO> findAllForOrganization(UUID orgId) {
+        return organizationMatchRepository.findAllByOrganizationRecordId(orgId).stream()
+            .map(organizationMatchMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
 
     /**
      * Get one organizationMatch by id.

@@ -3,6 +3,7 @@
     "title": "File upload",
     "subtitle": "Please select files to upload:",
     "submit": "Upload all",
+    "filesCount": "Number of files to upload: ",
     "delimiter": "Select delimiter for records, if needed:",
     "provider": "Select partner that provided this data:"
   }
