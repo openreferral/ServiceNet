@@ -2,14 +2,15 @@ package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
+import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -36,11 +37,15 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final OrganizationService organizationService;
 
+    private final OrganizationMatchService organizationMatchService;
+
     private final ConflictService conflictService;
 
-    public ActivityServiceImpl(OrganizationService organizationService, ConflictService conflictService) {
+    public ActivityServiceImpl(OrganizationService organizationService, ConflictService conflictService,
+                               OrganizationMatchService organizationMatchService) {
         this.organizationService = organizationService;
         this.conflictService = conflictService;
+        this.organizationMatchService = organizationMatchService;
     }
 
     @Override
@@ -51,7 +56,7 @@ public class ActivityServiceImpl implements ActivityService {
         for (OrganizationDTO org : orgs) {
             try {
                 Optional<ActivityDTO> activityOpt = getEntityActivity(org.getId(), org.getId());
-                activityOpt.ifPresent(activity -> activities.add(activity));
+                activityOpt.ifPresent(activities::add);
             } catch (ActivityCreationException ex) {
                 log.error(ex.getMessage());
             }
@@ -91,14 +96,17 @@ public class ActivityServiceImpl implements ActivityService {
             String.format("There is no organization for orgId: %s", orgId)));
 
         List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceId(resourceId);
+
         if (CollectionUtils.isEmpty(conflictDTOS)) {
             return Optional.empty();
         } else {
             Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(resourceId);
+            List<OrganizationMatchDTO> matches = organizationMatchService.findAllForOrganization(orgId);
 
             return Optional.of(ActivityDTO.builder()
                 .conflicts(conflictDTOS)
                 .organization(org)
+                .organizationMatches(matches)
                 .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
                 .build());
         }
