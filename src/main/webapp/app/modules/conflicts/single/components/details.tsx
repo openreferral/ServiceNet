@@ -36,7 +36,6 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
   render() {
     const { activity } = this.props;
     const { organization } = this.state;
-
     return (
       <Row>
         <Col sm="6">
@@ -77,7 +76,7 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
             />
           </Form>
         </Col>
-        {activity.conflicts.length != 0 ? (
+        {activity.conflicts.length !== 0 ? (
           <Col sm="4">
             <Jumbotron className="jumbotron">
               <div className="jumbotron-header">
