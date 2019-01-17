@@ -303,9 +303,9 @@ public class ImportServiceImpl implements ImportService {
     }
 
     private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
-         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter(){
+         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
-            public void afterCommit(){
+            public void afterCommit() {
                 organizationMatchService.createOrUpdateOrganizationMatches(organization);
             }
         });
