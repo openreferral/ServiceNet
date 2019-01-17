@@ -29,6 +29,8 @@ import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
@@ -140,7 +142,8 @@ public class ImportServiceImpl implements ImportService {
             report.incrementNumberOfCreatedOrgs();
         }
 
-        organizationMatchService.createOrUpdateOrganizationMatches(organization);
+        registerSynchronizationOfMatchingOrganizations(organization);
+
         return organization;
     }
 
@@ -297,5 +300,14 @@ public class ImportServiceImpl implements ImportService {
         return location.getAccessibilities().stream()
             .filter(a -> a.getAccessibility().equals(accessibility.getAccessibility()))
             .findFirst();
+    }
+
+    private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
+         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter(){
+            @Override
+            public void afterCommit(){
+                organizationMatchService.createOrUpdateOrganizationMatches(organization);
+            }
+        });
     }
 }
