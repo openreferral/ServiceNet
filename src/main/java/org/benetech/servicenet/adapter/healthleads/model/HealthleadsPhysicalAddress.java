@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
-public class HealthleadsPhysicalAddress extends LocationRelatedData {
+public class HealthleadsPhysicalAddress extends LocationRelatedHealthleadsData {
 
     private String attention;
 
