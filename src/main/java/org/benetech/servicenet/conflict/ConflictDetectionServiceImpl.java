@@ -2,7 +2,6 @@ package org.benetech.servicenet.conflict;
 
 import org.benetech.servicenet.conflict.detector.ConflictDetector;
 import org.benetech.servicenet.domain.Conflict;
-import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.matching.model.EntityEquivalent;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
     private static final String CONFLICT_DETECTOR_SUFFIX = "ConflictDetector";
@@ -55,6 +53,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
     @Async
     @Override
+    @Transactional
     public void detect(List<OrganizationMatch> matches) {
         List<Conflict> conflicts = new LinkedList<>();
 
@@ -62,12 +61,11 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
             log.debug("Request to detect conflicts for {} organization", match.getOrganizationRecord().getName());
             OrganizationEquivalent orgEquivalent = organizationEquivalentsService.generateEquivalent(
                 match.getOrganizationRecord(), match.getPartnerVersion());
-            Organization organization = organizationRepository.getOne(match.getOrganizationRecord().getId());
-            Organization mirrorOrganization = organizationRepository.getOne(match.getPartnerVersion().getId());
 
             List<EntityEquivalent> equivalents = gatherAllEquivalents(orgEquivalent);
 
-            conflicts.addAll(detect(equivalents, organization.getAccount(), mirrorOrganization.getAccount()));
+            conflicts.addAll(detect(equivalents, match.getOrganizationRecord().getAccount(),
+                match.getPartnerVersion().getAccount()));
         }
 
         conflicts = updateExistingConflictsOrCreate(conflicts);

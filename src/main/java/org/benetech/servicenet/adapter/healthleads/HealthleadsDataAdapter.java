@@ -9,6 +9,7 @@ import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.web.rest.errors.IncorrectFilesNumberEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
     private ImportService importService;
 
     @Override
+    @Transactional
     public DataImportReport importData(MultipleImportData data) {
         if (data.getDocumentUploads().size() != NUMBER_OF_FILES_TO_PROCESS) {
             throw new IncorrectFilesNumberEException(NUMBER_OF_FILES_TO_PROCESS);
