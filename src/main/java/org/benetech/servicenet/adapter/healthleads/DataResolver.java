@@ -7,12 +7,12 @@ import org.benetech.servicenet.type.ListType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HealthleadsDataResolver {
+class DataResolver {
 
-    public List<HealthleadsBaseData> getDataFromJson(final String json, final String filename) {
-        HealthleadsDataType type;
+    List<HealthleadsBaseData> getDataFromJson(final String json, final String filename) {
+        DataType type;
         try {
-            type = HealthleadsDataType.valueOf(filename.toUpperCase());
+            type = DataType.valueOf(filename.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
             return new ArrayList<>();
         }

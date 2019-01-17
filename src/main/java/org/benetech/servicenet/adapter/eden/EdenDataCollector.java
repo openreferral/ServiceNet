@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public final class EdenDataCollector {
+final class EdenDataCollector {
 
     private static final String URL = "https://api.icarol.com/v1/Resource";
     private static final String ID = "id=";
     private static final String PARAMS_BEGINNING = "?";
     private static final String PARAMS_DELIMITER = "&";
 
-    public static JsonArray getData(Header[] headers, List<EdenSimpleResponseElement> batch) {
+    static JsonArray getData(Header[] headers, List<EdenSimpleResponseElement> batch) {
         String params = getIdsAsQueryParameters(batch);
         String response;
         try {
@@ -32,7 +32,7 @@ public final class EdenDataCollector {
         return new Gson().fromJson(response, JsonArray.class);
     }
 
-    public static <T extends EdenBaseData> List<T> collectData(List<List<EdenSimpleResponseElement>> batches,
+    static <T extends EdenBaseData> List<T> collectData(List<List<EdenSimpleResponseElement>> batches,
                                                                Header[] headers, Class<T> clazz) {
         List<T> result = new ArrayList<>();
         JsonArray jsonArray = new JsonArray();
@@ -48,7 +48,7 @@ public final class EdenDataCollector {
         return result;
     }
 
-    public static <T extends EdenBaseData, V extends EdenBaseData> List<T> findRelatedEntities(
+    static <T extends EdenBaseData, V extends EdenBaseData> List<T> findRelatedEntities(
         List<T> entities, V relatedEntity, String type) {
         List<String> relatedIds = findRelatedIds(relatedEntity, type);
         List<T> result = new ArrayList<>();

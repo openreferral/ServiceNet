@@ -12,7 +12,7 @@ import org.benetech.servicenet.adapter.smcconnect.model.SmcProgram;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcRegularSchedule;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcService;
 
-public enum SmcDataType {
+enum DataType {
     LOCATIONS(SmcLocation.class),
     MAIL_ADDRESSES(SmcMailAddress.class),
     ORGANIZATIONS(SmcOrganization.class),
@@ -26,7 +26,7 @@ public enum SmcDataType {
 
     private Class<? extends SmcBaseData> clazz;
 
-    SmcDataType(Class<? extends SmcBaseData> clazz) {
+    DataType(Class<? extends SmcBaseData> clazz) {
         this.clazz = clazz;
     }
 

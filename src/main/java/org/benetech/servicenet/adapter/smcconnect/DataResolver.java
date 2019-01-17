@@ -7,12 +7,12 @@ import org.benetech.servicenet.type.ListType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmcDataResolver {
+class DataResolver {
 
     public List<SmcBaseData> getDataFromJson(final String json, final String filename) {
-        SmcDataType type;
+        DataType type;
         try {
-            type = SmcDataType.valueOf(filename.toUpperCase());
+            type = DataType.valueOf(filename.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
             return new ArrayList<>();
         }

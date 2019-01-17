@@ -93,7 +93,7 @@ public class HealthleadsDataResolverUnitTest {
     private static final String PARENT_ID = "parentId";
     private static final String VOCABULARY = "vocabulary";
 
-    private HealthleadsDataResolver dataResolver = new HealthleadsDataResolver();
+    private DataResolver dataResolver = new DataResolver();
 
     @Test
     public void testGetEligibilityFromJson() throws IOException {

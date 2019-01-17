@@ -13,7 +13,7 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLoc
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
 
-public enum HealthleadsDataType {
+enum DataType {
     ELIGIBILITY(HealthleadsEligibility.class),
     LANGUAGES(HealthleadsLanguage.class),
     LOCATIONS(HealthleadsLocation.class),
@@ -28,7 +28,7 @@ public enum HealthleadsDataType {
 
     private Class<? extends HealthleadsBaseData> clazz;
 
-    HealthleadsDataType(Class<? extends HealthleadsBaseData> clazz) {
+    DataType(Class<? extends HealthleadsBaseData> clazz) {
         this.clazz = clazz;
     }
 

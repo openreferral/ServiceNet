@@ -33,7 +33,7 @@ import java.util.Set;
 
 public class HealthleadsDataPersistence {
 
-    private HealthleadsStorage storage = new HealthleadsStorage();
+    private Storage storage = new Storage();
 
     private ImportService importService;
     private HealthLeadsDataMapper mapper;

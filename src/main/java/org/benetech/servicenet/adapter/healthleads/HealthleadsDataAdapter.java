@@ -22,7 +22,7 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
     @Override
     public DataImportReport importData(MultipleImportData data) {
         verifyData(data);
-        HealthleadsDataResolver dataResolver = new HealthleadsDataResolver();
+        DataResolver dataResolver = new DataResolver();
         HealthLeadsDataMapper mapper = HealthLeadsDataMapper.INSTANCE;
         HealthleadsDataPersistence collector =
             new HealthleadsDataPersistence(importService, mapper, data.getProviderName(), data.getReport());
