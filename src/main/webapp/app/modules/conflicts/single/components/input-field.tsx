@@ -42,7 +42,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
   }
 
   isConflicting(fieldName, entityPath) {
-    return this.props.activity.conflicts.some(e => e.fieldName === fieldName && e.entityPath === entityPath);
+    return this.props.activity.conflicts.some(e => e.fieldName === fieldName);
   }
 
   toggleTooltip = () => {
