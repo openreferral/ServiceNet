@@ -64,6 +64,18 @@ export class ContactDetail extends React.Component<IContactDetailProps> {
               <Translate contentKey="serviceNetApp.contact.serviceAtLocation">Service At Location</Translate>
             </dt>
             <dd>{contactEntity.serviceAtLocationId ? contactEntity.serviceAtLocationId : ''}</dd>
+            <dt>
+              <span id="externalDbId">
+                <Translate contentKey="serviceNetApp.contact.externalDbId" />
+              </span>
+            </dt>
+            <dd>{contactEntity.externalDbId}</dd>
+            <dt>
+              <span id="providerName">
+                <Translate contentKey="serviceNetApp.contact.providerName" />
+              </span>
+            </dt>
+            <dd>{contactEntity.providerName}</dd>
           </dl>
           <Button tag={Link} to="/entity/contact" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

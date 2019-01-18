@@ -181,6 +181,18 @@ export class ContactUpdate extends React.Component<IContactUpdateProps, IContact
                       : null}
                   </AvInput>
                 </AvGroup>
+                <AvGroup>
+                  <Label id="externalDbIdLabel" for="externalDbId">
+                    <Translate contentKey="serviceNetApp.contact.externalDbId" />
+                  </Label>
+                  <AvInput id="contact-externalDbId" type="textarea" name="externalDbId" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="providerNameLabel" for="providerName">
+                    <Translate contentKey="serviceNetApp.contact.providerName" />
+                  </Label>
+                  <AvInput id="contact-providerName" type="textarea" name="providerName" />
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/contact" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;

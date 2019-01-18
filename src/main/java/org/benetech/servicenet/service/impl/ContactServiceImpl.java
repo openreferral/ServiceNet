@@ -78,6 +78,11 @@ public class ContactServiceImpl implements ContactService {
             .map(contactMapper::toDto);
     }
 
+    @Override
+    public Optional<Contact> findForExternalDb(String externalDbId, String providerNae) {
+        return contactRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerNae);
+    }
+
     /**
      * Delete the contact by id.
      *
