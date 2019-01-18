@@ -21,6 +21,7 @@ import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -37,6 +38,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -73,6 +75,9 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private SystemAccountService systemAccountService;
+
+    @Autowired
+    private ContactService contactService;
 
     @Override
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
@@ -153,6 +158,14 @@ public class ImportServiceImpl implements ImportService {
         registerSynchronizationOfMatchingOrganizations(organization);
 
         return organization;
+    }
+
+    @Override
+    public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
+                                                   Service service, Location location, DataImportReport report) {
+        organization.setServices(Collections.singleton(service));
+        organization.setLocation(location);
+        return createOrUpdateOrganization(organization, externalDbId, providerName, report);
     }
 
     @Override
