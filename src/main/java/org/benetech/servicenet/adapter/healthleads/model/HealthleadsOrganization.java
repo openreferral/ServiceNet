@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 
 @Data
-public class HealthleadsOrganization extends BaseData {
+public class HealthleadsOrganization extends HealthleadsBaseData {
 
     private String name;
 

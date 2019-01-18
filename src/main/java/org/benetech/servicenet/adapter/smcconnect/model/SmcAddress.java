@@ -1,19 +1,21 @@
-package org.benetech.servicenet.adapter.healthleads.model;
+package org.benetech.servicenet.adapter.smcconnect.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
-public class HealthleadsPhysicalAddress extends LocationRelatedHealthleadsData {
+public class SmcAddress extends SmcBaseData {
 
-    private String attention;
+    @SerializedName("location_id")
+    private String locationId;
 
     @SerializedName("address_1")
-    private String address;
+    private String address1;
+
+    @SerializedName("address_2")
+    private String address2;
 
     private String city;
-
-    private String region;
 
     @SerializedName("state_province")
     private String stateProvince;

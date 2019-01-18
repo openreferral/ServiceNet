@@ -1,6 +1,6 @@
 package org.benetech.servicenet.adapter.healthleads;
 
-import org.benetech.servicenet.adapter.healthleads.model.BaseData;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsBaseData;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsEligibility;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLanguage;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLocation;
@@ -13,7 +13,7 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLoc
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
 
-public enum DataType {
+enum DataType {
     ELIGIBILITY(HealthleadsEligibility.class),
     LANGUAGES(HealthleadsLanguage.class),
     LOCATIONS(HealthleadsLocation.class),
@@ -26,13 +26,13 @@ public enum DataType {
     SERVICES_TAXONOMY(HealthleadsServiceTaxonomy.class),
     TAXONOMY(HealthleadsTaxonomy.class);
 
-    private Class<? extends BaseData> clazz;
+    private Class<? extends HealthleadsBaseData> clazz;
 
-    DataType(Class<? extends BaseData> clazz) {
+    DataType(Class<? extends HealthleadsBaseData> clazz) {
         this.clazz = clazz;
     }
 
-    public Class<? extends BaseData> getClazz() {
+    public Class<? extends HealthleadsBaseData> getClazz() {
         return clazz;
     }
 }

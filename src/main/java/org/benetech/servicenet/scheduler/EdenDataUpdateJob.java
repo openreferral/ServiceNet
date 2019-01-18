@@ -2,7 +2,7 @@ package org.benetech.servicenet.scheduler;
 
 import com.google.gson.Gson;
 import org.apache.http.Header;
-import org.benetech.servicenet.adapter.eden.model.TakeAllRequest;
+import org.benetech.servicenet.adapter.eden.model.EdenTakeAllRequest;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
@@ -48,7 +48,7 @@ public class EdenDataUpdateJob extends BaseJob {
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now()).jobName(NAME);
         Header[] headers = HttpUtils.getStandardHeaders(edenApiKey);
 
-        TakeAllRequest takeAllRequest = new TakeAllRequest(getLastJobExecutionDate());
+        EdenTakeAllRequest takeAllRequest = new EdenTakeAllRequest(getLastJobExecutionDate());
         String body = new Gson().toJson(takeAllRequest);
 
         String response;

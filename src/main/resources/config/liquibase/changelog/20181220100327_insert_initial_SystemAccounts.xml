@@ -12,7 +12,7 @@
         <sql>INSERT INTO system_account (name) VALUES ('Eden')</sql>
         <sql>INSERT INTO system_account (name) VALUES ('ShelterTech')</sql>
         <sql>INSERT INTO system_account (name) VALUES ('UWBA')</sql>
-        <sql>INSERT INTO system_account (name) VALUES ('SMC Connect')</sql>
+        <sql>INSERT INTO system_account (name) VALUES ('SMCConnect')</sql>
         <sql>INSERT INTO system_account (name) VALUES ('healthleads')</sql>
     </changeSet>
 
