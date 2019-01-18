@@ -14,7 +14,7 @@ import java.util.List;
 @Component("healthleadsDataAdapter")
 public class HealthleadsDataAdapter extends MultipleDataAdapter {
 
-    private static final int NUMBER_OF_FILES = 10;
+    private static final int NUMBER_OF_FILES = 11;
 
     @Autowired
     private ImportService importService;
