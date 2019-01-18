@@ -1,8 +1,11 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
+import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.Funding;
+import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
@@ -10,6 +13,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
@@ -33,13 +37,21 @@ public interface ImportService {
 
     Service createOrUpdateService(Service service, String externalDbId, String providerName, DataImportReport report);
 
-    Set<Phone> createOrUpdatePhones(Set<Phone> phones, Service service, Location location);
+    Set<Phone> createOrUpdatePhonesForService(Set<Phone> phones, Service service, Location location);
 
     Eligibility createOrUpdateEligibility(Eligibility eligibility, Service service);
 
-    Set<Language> createOrUpdateLangs(Set<Language> langs, Service service, Location location);
+    Set<Language> createOrUpdateLangsForService(Set<Language> langs, Service service, Location location);
 
-    Set<OpeningHours> createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location);
+    Funding createOrUpdateFundingForOrganization(Funding funding, Organization organization);
+
+    Funding createOrUpdateFundingForService(Funding funding, Service service);
+
+    Set<OpeningHours> createOrUpdateOpeningHoursForService(Set<OpeningHours> openingHours, Service service,
+                                                           Location location);
+
+    Set<OpeningHours> createOrUpdateOpeningHoursForLocation(Set<OpeningHours> openingHours, Service service,
+                                                            Location location);
 
     ServiceAtLocation createOrUpdateServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
                                                       String providerName, Service service, Location location);
@@ -51,4 +63,14 @@ public interface ImportService {
 
     RequiredDocument createOrUpdateRequiredDocument(RequiredDocument requiredDocument, String externalDbId,
                                                     String providerName, Service service);
+
+    Set<Contact> createOrUpdateContactsForService(Set<Contact> contacts, Service service);
+
+    Set<Contact> createOrUpdateContactsForOrganization(Set<Contact> contacts, Organization organization);
+
+    HolidaySchedule createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location);
+
+    HolidaySchedule createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service);
+
+    Set<Program> createOrUpdateProgramsForOrganization(Set<Program> programs, Organization organization);
 }

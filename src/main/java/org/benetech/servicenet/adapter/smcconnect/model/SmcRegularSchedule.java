@@ -6,12 +6,6 @@ import lombok.Data;
 @Data
 public class SmcRegularSchedule extends SmcBaseData {
 
-    @SerializedName("location_id")
-    private String locationId;
-
-    @SerializedName("service_id")
-    private String serviceId;
-
     private String weekday;
 
     @SerializedName("opens_at")

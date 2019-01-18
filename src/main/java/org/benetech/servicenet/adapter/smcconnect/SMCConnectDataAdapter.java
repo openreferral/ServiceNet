@@ -2,6 +2,7 @@ package org.benetech.servicenet.adapter.smcconnect;
 
 import org.benetech.servicenet.adapter.MultipleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
+import org.benetech.servicenet.adapter.smcconnect.persistence.SmcDataManager;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.ImportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ public class SMCConnectDataAdapter extends MultipleDataAdapter {
     @Override
     public DataImportReport importData(MultipleImportData data) {
         verifyData(data);
-        return null;
+        return new SmcDataManager(importService, data)
+            .importData(data);
     }
 
     @Override

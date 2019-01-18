@@ -75,11 +75,11 @@ public class Location implements Serializable {
     @JsonIgnore
     private PostalAddress postalAddress;
 
-    @OneToOne(mappedBy = "location")
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToOne(mappedBy = "location")
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private HolidaySchedule holidaySchedule;
 
