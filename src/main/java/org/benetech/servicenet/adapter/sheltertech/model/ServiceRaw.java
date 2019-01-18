@@ -7,22 +7,31 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class OrganizationRaw {
+public class ServiceRaw {
 
     @SerializedName("alternate_name")
     private String alternateName;
 
+    @SerializedName("application_process")
+    private String applicationProcess;
+
     @SerializedName("certified")
     private Boolean certified;
+
+    @SerializedName("eligibility")
+    private String eligibility;
 
     @SerializedName("email")
     private String email;
 
+    @SerializedName("fee")
+    private String fee;
+
     @SerializedName("id")
     private String id;
 
-    @SerializedName("legal_status")
-    private String legalStatus;
+    @SerializedName("interpretation_services")
+    private String interpretationServices;
 
     @SerializedName("long_description")
     private String longDescription;
@@ -30,32 +39,23 @@ public class OrganizationRaw {
     @SerializedName("name")
     private String name;
 
-    @SerializedName("short_description")
-    private String shortDescription;
+    @SerializedName("required_documents")
+    private String requiredDocuments;
 
-    @SerializedName("status")
-    private String status;
+    @SerializedName("url")
+    private String url;
 
     @SerializedName("verified_at")
     private LocalDateTime verifiedAt;
 
-    @SerializedName("website")
-    private String website;
+    @SerializedName("wait_time")
+    private String waitTime;
 
     @SerializedName("certified_at")
     private LocalDateTime certifiedAt;
 
-    @SerializedName("services")
-    private List<ServiceRaw> services;
-
     @SerializedName("schedule")
     private ScheduleRaw schedule;
-
-    @SerializedName("phones")
-    private List<PhoneRaw> phones;
-
-    @SerializedName("address")
-    private AddressRaw address;
 
     @SerializedName("notes")
     private List<NoteRaw> notes;
@@ -63,7 +63,7 @@ public class OrganizationRaw {
     @SerializedName("categories")
     private List<CategoryRaw> categories;
 
-    @SerializedName("ratings")
-    private List<String> ratings;
+    @SerializedName("eligibilities")
+    private List<EligibilityRaw> eligibilities;
 
 }

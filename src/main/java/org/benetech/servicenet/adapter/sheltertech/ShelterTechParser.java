@@ -3,27 +3,22 @@ package org.benetech.servicenet.adapter.sheltertech;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
-import org.benetech.servicenet.adapter.sheltertech.model.OrganizationRaw;
-import org.benetech.servicenet.adapter.sheltertech.model.RawData;
+import org.benetech.servicenet.adapter.sheltertech.model.ShelterTechRawData;
+import org.benetech.servicenet.adapter.sheltertech.type.adapter.LocalDateTimeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-final class Parser {
+public final class ShelterTechParser {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShelterTechParser.class);
 
     private static final Gson GSON = getShelterTechGson();
 
-    static void collectData(String file) {
-        RawData main = GSON.fromJson(file, RawData.class);
-        List<OrganizationRaw> organizations = main.getOrganizations();
-
-        for (OrganizationRaw organization : organizations) {
-            LOG.debug(organization.toString());
-        }
+    public static ShelterTechRawData collectData(String file) {
+        LOG.debug("Parsing ShelterTech json.");
+        return GSON.fromJson(file, ShelterTechRawData.class);
     }
 
     private static Gson getShelterTechGson() {
@@ -36,7 +31,7 @@ final class Parser {
             .create();
     }
 
-    private Parser() {
+    private ShelterTechParser() {
     }
 
 }

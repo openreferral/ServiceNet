@@ -2,6 +2,7 @@ package org.benetech.servicenet.adapter.sheltertech;
 
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
+import org.benetech.servicenet.adapter.sheltertech.model.ShelterTechRawData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.ImportService;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
     @Override
     public DataImportReport importData(SingleImportData importData) {
         if (importData.isFileUpload()) {
-            Parser.collectData(importData.getSingleObjectData());
+            ShelterTechRawData data = ShelterTechParser.collectData(importData.getSingleObjectData());
         }
 
         return null;

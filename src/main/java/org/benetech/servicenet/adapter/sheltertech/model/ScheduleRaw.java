@@ -6,9 +6,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class RawData {
+public class ScheduleRaw {
 
-    @SerializedName("resources")
-    private List<OrganizationRaw> organizations;
+    @SerializedName("id")
+    private Integer id;
+
+    @SerializedName("schedule_days")
+    private List<ScheduleDayRaw> scheduleDays;
 
 }

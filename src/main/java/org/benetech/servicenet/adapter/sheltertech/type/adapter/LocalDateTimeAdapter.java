@@ -1,4 +1,4 @@
-package org.benetech.servicenet.adapter.sheltertech;
+package org.benetech.servicenet.adapter.sheltertech.type.adapter;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-final class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
+public final class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 
-    static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     @Override
     public void write(JsonWriter out, LocalDateTime value) throws UnsupportedOperationException {
