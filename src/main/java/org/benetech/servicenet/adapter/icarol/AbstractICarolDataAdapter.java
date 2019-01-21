@@ -1,4 +1,4 @@
-package org.benetech.servicenet.adapter.eden;
+package org.benetech.servicenet.adapter.icarol;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -7,13 +7,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.apache.http.Header;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
-import org.benetech.servicenet.adapter.eden.model.EdenAgency;
-import org.benetech.servicenet.adapter.eden.model.EdenComplexResponseElement;
-import org.benetech.servicenet.adapter.eden.model.EdenDataToPersist;
-import org.benetech.servicenet.adapter.eden.model.EdenProgram;
-import org.benetech.servicenet.adapter.eden.model.EdenProgramAtSite;
-import org.benetech.servicenet.adapter.eden.model.EdenSimpleResponseElement;
-import org.benetech.servicenet.adapter.eden.model.EdenSite;
+import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
+import org.benetech.servicenet.adapter.icarol.model.ICarolComplexResponseElement;
+import org.benetech.servicenet.adapter.icarol.model.ICarolDataToPersist;
+import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
+import org.benetech.servicenet.adapter.icarol.model.ICarolProgramAtSite;
+import org.benetech.servicenet.adapter.icarol.model.ICarolSimpleResponseElement;
+import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -23,25 +23,19 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
-@Component("EdenDataAdapter")
-public class EdenDataAdapter extends SingleDataAdapter {
+public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
 
     private static final String AGENCY = "Agency";
     private static final String PROGRAM = "Program";
     private static final String SITE = "Site";
-    private static final String PROGRAM_AT_SITE = "ProgramAtSite";
+    private static final String SERVICE_SITE = "ServiceSite";
     private static final String TYPE = "type";
-
-    @Value("${scheduler.interval.eden-api-key}")
-    private String edenApiKey;
 
     @Autowired
     private EntityManager em;
@@ -51,24 +45,26 @@ public class EdenDataAdapter extends SingleDataAdapter {
 
     @Override
     public DataImportReport importData(SingleImportData importData) {
-        EdenDataToPersist dataToPersist = gatherMoreDetails(importData);
+        ICarolDataToPersist dataToPersist = gatherMoreDetails(importData);
         return persist(dataToPersist, importData);
     }
 
-    private EdenDataToPersist gatherMoreDetails(SingleImportData importData) {
-        Header[] headers = HttpUtils.getStandardHeaders(edenApiKey);
+    protected abstract String getApiKey();
+
+    private ICarolDataToPersist gatherMoreDetails(SingleImportData importData) {
+        Header[] headers = HttpUtils.getStandardHeaders(getApiKey());
         return getDataToPersist(importData.getSingleObjectData(), headers, importData.isFileUpload());
     }
 
-    private DataImportReport persist(EdenDataToPersist data, ImportData importData) {
-        EdenDataMapper mapper = EdenDataMapper.INSTANCE;
+    private DataImportReport persist(ICarolDataToPersist data, ImportData importData) {
+        ICarolDataMapper mapper = ICarolDataMapper.INSTANCE;
         persistSites(data, mapper, importData);
         persistEntitiesWithoutLocation(data, mapper, importData);
         return importData.getReport();
     }
 
-    private void persistSites(EdenDataToPersist dataToPersist, EdenDataMapper mapper, ImportData importData) {
-        for (EdenSite site : dataToPersist.getSites()) {
+    private void persistSites(ICarolDataToPersist dataToPersist, ICarolDataMapper mapper, ImportData importData) {
+        for (ICarolSite site : dataToPersist.getSites()) {
             mapper.extractLocation(site.getContactDetails(), site.getId(), importData.getProviderName())
                 .ifPresent(extractedLocation -> {
                 Location savedLocation = importService.createOrUpdateLocation(extractedLocation, site.getId(),
@@ -81,21 +77,21 @@ public class EdenDataAdapter extends SingleDataAdapter {
                 mapper.extractAccessibilityForDisabilities(site).ifPresent(
                     x -> importService.createOrUpdateAccessibility(x, savedLocation));
 
-                List<EdenAgency> relatedAgencies = EdenDataCollector.findRelatedEntities(dataToPersist.getAgencies(),
+                List<ICarolAgency> relatedAgencies = ICarolDataCollector.findRelatedEntities(dataToPersist.getAgencies(),
                     site, AGENCY);
                 persistAgencies(dataToPersist.getPrograms(), mapper, savedLocation, relatedAgencies, importData);
             });
         }
     }
 
-    private void persistEntitiesWithoutLocation(EdenDataToPersist data, EdenDataMapper mapper, ImportData importData) {
+    private void persistEntitiesWithoutLocation(ICarolDataToPersist data, ICarolDataMapper mapper, ImportData importData) {
         persistAgencies(data.getPrograms(), mapper, null, data.getAgencies(), importData);
         persistPrograms(mapper, null, null, data.getPrograms(), importData);
     }
 
-    private void persistAgencies(List<EdenProgram> programs, EdenDataMapper mapper,
-                                 Location location, List<EdenAgency> relatedAgencies, ImportData importData) {
-        for (EdenAgency agency : relatedAgencies) {
+    private void persistAgencies(List<ICarolProgram> programs, ICarolDataMapper mapper,
+                                 Location location, List<ICarolAgency> relatedAgencies, ImportData importData) {
+        for (ICarolAgency agency : relatedAgencies) {
             Organization extractedOrganization = mapper
                 .extractOrganization(agency, agency.getId(), importData.getProviderName())
                 .sourceDocument(importData.getReport().getDocumentUpload());
@@ -104,14 +100,14 @@ public class EdenDataAdapter extends SingleDataAdapter {
                 .createOrUpdateOrganization(extractedOrganization, agency.getId(), importData.getProviderName(),
                     importData.getReport());
 
-            List<EdenProgram> relatedPrograms = EdenDataCollector.findRelatedEntities(programs, agency, PROGRAM);
+            List<ICarolProgram> relatedPrograms = ICarolDataCollector.findRelatedEntities(programs, agency, PROGRAM);
             persistPrograms(mapper, location, savedOrganization, relatedPrograms, importData);
         }
     }
 
-    private void persistPrograms(EdenDataMapper mapper, Location location, Organization organization,
-                                 List<EdenProgram> relatedPrograms, ImportData importData) {
-        for (EdenProgram program : relatedPrograms) {
+    private void persistPrograms(ICarolDataMapper mapper, Location location, Organization organization,
+                                 List<ICarolProgram> relatedPrograms, ImportData importData) {
+        for (ICarolProgram program : relatedPrograms) {
             Service extractedService = mapper.extractService(program, program.getId(), importData.getProviderName())
                 .organization(organization);
 
@@ -128,19 +124,19 @@ public class EdenDataAdapter extends SingleDataAdapter {
         }
     }
 
-    private EdenDataToPersist getDataToPersist(String dataString, Header[] headers, boolean isFileUpload) {
+    private ICarolDataToPersist getDataToPersist(String dataString, Header[] headers, boolean isFileUpload) {
         if (isFileUpload) {
             return collectDataDetailsFromTheFile(dataString);
         }
-        Type collectionType = new TypeToken<Collection<EdenSimpleResponseElement>>() {
+        Type collectionType = new TypeToken<Collection<ICarolSimpleResponseElement>>() {
         }.getType();
-        Collection<EdenSimpleResponseElement> responseElements = new Gson().fromJson(dataString, collectionType);
-        EdenComplexResponseElement data = new EdenComplexResponseElement(responseElements);
+        Collection<ICarolSimpleResponseElement> responseElements = new Gson().fromJson(dataString, collectionType);
+        ICarolComplexResponseElement data = new ICarolComplexResponseElement(responseElements);
         return collectDataDetailsFromTheApi(data, headers);
     }
 
-    private EdenDataToPersist collectDataDetailsFromTheFile(String file) {
-        EdenDataToPersist dataToPersist = new EdenDataToPersist();
+    private ICarolDataToPersist collectDataDetailsFromTheFile(String file) {
+        ICarolDataToPersist dataToPersist = new ICarolDataToPersist();
         JsonArray elements = new Gson().fromJson(file, JsonArray.class);
 
         for (JsonElement element : elements) {
@@ -152,30 +148,30 @@ public class EdenDataAdapter extends SingleDataAdapter {
         return dataToPersist;
     }
 
-    private void updateData(EdenDataToPersist dataToPersist, JsonObject jsonObject, String type) {
+    private void updateData(ICarolDataToPersist dataToPersist, JsonObject jsonObject, String type) {
         if (type.equals(AGENCY)) {
-            dataToPersist.addAgency(new Gson().fromJson(jsonObject, EdenAgency.class));
+            dataToPersist.addAgency(new Gson().fromJson(jsonObject, ICarolAgency.class));
         }
         if (type.equals(PROGRAM)) {
-            dataToPersist.addProgram(new Gson().fromJson(jsonObject, EdenProgram.class));
+            dataToPersist.addProgram(new Gson().fromJson(jsonObject, ICarolProgram.class));
         }
-        if (type.equals(PROGRAM_AT_SITE)) {
-            dataToPersist.addProgramAtSite(new Gson().fromJson(jsonObject, EdenProgramAtSite.class));
+        if (type.equals(SERVICE_SITE)) {
+            dataToPersist.addServiceSite(new Gson().fromJson(jsonObject, ICarolProgramAtSite.class));
         }
         if (type.equals(SITE)) {
-            dataToPersist.addSite(new Gson().fromJson(jsonObject, EdenSite.class));
+            dataToPersist.addSite(new Gson().fromJson(jsonObject, ICarolSite.class));
         }
     }
 
-    private EdenDataToPersist collectDataDetailsFromTheApi(EdenComplexResponseElement data, Header[] headers) {
-        EdenDataToPersist dataToPersist = new EdenDataToPersist();
+    private ICarolDataToPersist collectDataDetailsFromTheApi(ICarolComplexResponseElement data, Header[] headers) {
+        ICarolDataToPersist dataToPersist = new ICarolDataToPersist();
 
-        dataToPersist.setPrograms(EdenDataCollector.collectData(data.getProgramBatches(), headers,
-            EdenProgram.class));
-        dataToPersist.setSites(EdenDataCollector.collectData(data.getSiteBatches(), headers, EdenSite.class));
-        dataToPersist.setAgencies(EdenDataCollector.collectData(data.getAgencyBatches(), headers, EdenAgency.class));
-        dataToPersist.setProgramAtSites(EdenDataCollector.collectData(data.getProgramAtSiteBatches(),
-            headers, EdenProgramAtSite.class));
+        dataToPersist.setPrograms(ICarolDataCollector.collectData(data.getProgramBatches(), headers,
+            ICarolProgram.class));
+        dataToPersist.setSites(ICarolDataCollector.collectData(data.getSiteBatches(), headers, ICarolSite.class));
+        dataToPersist.setAgencies(ICarolDataCollector.collectData(data.getAgencyBatches(), headers, ICarolAgency.class));
+        dataToPersist.setProgramAtSites(ICarolDataCollector.collectData(data.getProgramAtSiteBatches(),
+            headers, ICarolProgramAtSite.class));
 
         return dataToPersist;
     }

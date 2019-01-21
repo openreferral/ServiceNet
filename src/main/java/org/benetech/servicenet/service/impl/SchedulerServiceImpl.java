@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
+import org.benetech.servicenet.scheduler.UWBADataUpdateJob;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.SchedulerService;
 import org.benetech.servicenet.service.dto.JobDTO;
@@ -28,6 +29,9 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Autowired
     private EdenDataUpdateJob edenDataUpdateJob;
+
+    @Autowired
+    private UWBADataUpdateJob uwbaDataUpdateJob;
 
     @Autowired
     private DataImportReportService dataImportReportService;
@@ -97,6 +101,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     private Trigger getBeanTrigger(String name) {
         List<BaseJob> allBeans = new ArrayList<>();
         allBeans.add(edenDataUpdateJob);
+        allBeans.add(uwbaDataUpdateJob);
 
         return allBeans.stream()
             .filter(b -> b.getFullName().equals(name))
