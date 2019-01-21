@@ -8,6 +8,7 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.ImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
     private ImportService importService;
 
     @Override
+    @Transactional
     public DataImportReport importData(MultipleImportData data) {
         verifyData(data);
         DataResolver dataResolver = new DataResolver();

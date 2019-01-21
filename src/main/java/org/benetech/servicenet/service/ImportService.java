@@ -47,11 +47,9 @@ public interface ImportService {
 
     Funding createOrUpdateFundingForService(Funding funding, Service service);
 
-    Set<OpeningHours> createOrUpdateOpeningHoursForService(Set<OpeningHours> openingHours, Service service,
-                                                           Location location);
+    Set<OpeningHours> createOrUpdateOpeningHoursForService(Set<OpeningHours> openingHours, Service service);
 
-    Set<OpeningHours> createOrUpdateOpeningHoursForLocation(Set<OpeningHours> openingHours, Service service,
-                                                            Location location);
+    Set<OpeningHours> createOrUpdateOpeningHoursForLocation(Set<OpeningHours> openingHours, Location location);
 
     ServiceAtLocation createOrUpdateServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
                                                       String providerName, Service service, Location location);

@@ -120,7 +120,7 @@ class PersistenceManager {
         Set<OpeningHours> openingHours = storage.getRelatedEntities(SmcRegularSchedule.class, relatedTo, SmcService.class)
             .stream().map(o -> mapper.extractOpeningHours(o)).collect(Collectors.toSet());
         if (!openingHours.isEmpty()) {
-            importService.createOrUpdateOpeningHoursForService(openingHours, service, null);
+            importService.createOrUpdateOpeningHoursForService(openingHours, service);
         }
     }
 
@@ -128,7 +128,7 @@ class PersistenceManager {
         Set<OpeningHours> openingHours = storage.getRelatedEntities(SmcRegularSchedule.class, relatedTo, SmcLocation.class)
             .stream().map(o -> mapper.extractOpeningHours(o)).collect(Collectors.toSet());
         if (!openingHours.isEmpty()) {
-            importService.createOrUpdateOpeningHoursForLocation(openingHours, null, location);
+            importService.createOrUpdateOpeningHoursForLocation(openingHours, location);
         }
     }
 

@@ -443,7 +443,7 @@ public class ImportServiceImplIntTest {
 
         int scheduleDbSize = regularScheduleService.findAll().size();
         int hoursDbSize = openingHoursService.findAll().size();
-        importService.createOrUpdateOpeningHoursForService(Set.of(openingHours), service, null);
+        importService.createOrUpdateOpeningHoursForService(Set.of(openingHours), service);
 
         assertEquals(scheduleDbSize + 1, regularScheduleService.findAll().size());
         assertEquals(hoursDbSize + 1, openingHoursService.findAll().size());
@@ -462,7 +462,7 @@ public class ImportServiceImplIntTest {
 
         int scheduleDbSize = regularScheduleService.findAll().size();
         int hoursDbSize = openingHoursService.findAll().size();
-        importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service, null);
+        importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
 
         assertEquals(scheduleDbSize + 1, regularScheduleService.findAll().size());
         assertEquals(hoursDbSize + 1, openingHoursService.findAll().size());
@@ -489,7 +489,7 @@ public class ImportServiceImplIntTest {
 
         int scheduleDbSize = regularScheduleService.findAll().size();
         int hoursDbSize = openingHoursService.findAll().size();
-        Set<OpeningHours> updated = importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service, null);
+        Set<OpeningHours> updated = importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
 
         assertEquals(scheduleDbSize, regularScheduleService.findAll().size());
         assertEquals(hoursDbSize - 1, openingHoursService.findAll().size());

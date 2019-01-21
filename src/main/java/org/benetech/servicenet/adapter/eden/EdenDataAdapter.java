@@ -125,8 +125,7 @@ public class EdenDataAdapter extends SingleDataAdapter {
             importService.createOrUpdatePhonesForService(mapper.extractPhones(program.getContactDetails()), savedService,
                 location);
             importService.createOrUpdateLangsForService(mapper.extractLangs(program), savedService, location);
-            importService.createOrUpdateOpeningHoursForService(mapper.extractOpeningHours(program.getHours()), savedService,
-                location);
+            importService.createOrUpdateOpeningHoursForService(mapper.extractOpeningHours(program.getHours()), savedService);
         }
     }
 

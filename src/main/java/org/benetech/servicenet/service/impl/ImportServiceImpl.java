@@ -33,6 +33,8 @@ import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
@@ -148,7 +150,8 @@ public class ImportServiceImpl implements ImportService {
             report.incrementNumberOfCreatedOrgs();
         }
 
-        organizationMatchService.createOrUpdateOrganizationMatches(organization);
+        registerSynchronizationOfMatchingOrganizations(organization);
+
         return organization;
     }
 
@@ -258,18 +261,17 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    public Set<OpeningHours> createOrUpdateOpeningHoursForService(Set<OpeningHours> openingHours, Service service,
-                                                                  Location location) {
+    public Set<OpeningHours> createOrUpdateOpeningHoursForService(Set<OpeningHours> openingHours, Service service) {
         RegularSchedule schedule = service.getRegularSchedule();
-        createOrUpdateOpeningHours(openingHours, service, location, schedule);
+        createOrUpdateOpeningHours(openingHours, service, null, schedule);
         return openingHours;
     }
 
     @Override
-    public Set<OpeningHours> createOrUpdateOpeningHoursForLocation(Set<OpeningHours> openingHours, Service service,
+    public Set<OpeningHours> createOrUpdateOpeningHoursForLocation(Set<OpeningHours> openingHours,
                                                                    Location location) {
         RegularSchedule schedule = location.getRegularSchedule();
-        createOrUpdateOpeningHours(openingHours, service, location, schedule);
+        createOrUpdateOpeningHours(openingHours, null, location, schedule);
         return openingHours;
     }
 
@@ -282,7 +284,7 @@ public class ImportServiceImpl implements ImportService {
             schedule.getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> em.remove(o));
             openingHours.stream().filter(o -> !common.contains(o)).forEach(o -> em.persist(o));
 
-            em.merge(schedule.openingHours(new HashSet<>(openingHours)).location(location));
+            em.merge(schedule.openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
         } else {
             openingHours.forEach(o -> em.persist(o));
             em.persist(new RegularSchedule().openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
@@ -409,5 +411,14 @@ public class ImportServiceImpl implements ImportService {
         return location.getAccessibilities().stream()
             .filter(a -> a.getAccessibility().equals(accessibility.getAccessibility()))
             .findFirst();
+    }
+
+    private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
+         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                organizationMatchService.createOrUpdateOrganizationMatches(organization);
+            }
+        });
     }
 }

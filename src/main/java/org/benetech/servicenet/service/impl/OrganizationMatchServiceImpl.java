@@ -125,8 +125,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         organizationMatchRepository.deleteById(id);
     }
 
-    @Override
     @Async
+    @Override
     public void createOrUpdateOrganizationMatches(Organization organization) {
         List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
             .map(m -> m.getPartnerVersion().getId())
