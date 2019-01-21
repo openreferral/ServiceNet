@@ -39,7 +39,7 @@ public interface ImportService {
 
     Set<Language> createOrUpdateLangs(Set<Language> langs, Service service, Location location);
 
-    Set<OpeningHours> createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location);
+    Set<OpeningHours> createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service);
 
     ServiceAtLocation createOrUpdateServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
                                                       String providerName, Service service, Location location);
