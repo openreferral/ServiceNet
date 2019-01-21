@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.sheltertech.mapper;
 import org.benetech.servicenet.adapter.sheltertech.model.AddressRaw;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PostalAddress;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -16,7 +17,7 @@ public interface ShelterTechLocationMapper {
     ShelterTechLocationMapper INSTANCE = Mappers.getMapper(ShelterTechLocationMapper.class);
 
     @Mapping(ignore = true, target = "id")
-    @Mapping(ignore = true, target = "name")
+    @Mapping(source = "address1", target = "name", defaultValue = "undefined")
     @Mapping(ignore = true, target = "alternateName")
     @Mapping(ignore = true, target = "description")
     @Mapping(ignore = true, target = "transportation")
@@ -24,18 +25,22 @@ public interface ShelterTechLocationMapper {
     @Mapping(source = "raw.longitude", target = "longitude")
     @Mapping(source = "raw.id", target = "externalDbId")
     @Mapping(constant = PROVIDER_NAME, target = "providerName")
-    @Mapping(source = "raw", target = "physicalAddress", qualifiedByName = "getPhysicalAddress")
-    @Mapping(ignore = true, target = "postalAddress")
+    @Mapping(source = "raw", target = "physicalAddress", qualifiedByName = "physicalAddressFromAddressRaw")
+    @Mapping(source = "raw", target = "postalAddress", qualifiedByName = "postalAddressFromAddressRaw")
     @Mapping(ignore = true, target = "regularSchedule")
     @Mapping(ignore = true, target = "holidaySchedule")
     @Mapping(ignore = true, target = "langs")
     @Mapping(ignore = true, target = "accessibilities")
     Location mapAddressRawToLocation(AddressRaw raw);
 
-    @Named("getPhysicalAddress")
-    default PhysicalAddress getPhysicalAddress(AddressRaw raw, Location source) {
-        ShelterTechPhysicalAddressMapper physicalAddressMapper  = ShelterTechPhysicalAddressMapper.INSTANCE;
-        return physicalAddressMapper.mapAddressRawToPhysicalAddress(raw, source);
+    @Named("physicalAddressFromAddressRaw")
+    default PhysicalAddress physicalAddressFromAddressRaw(AddressRaw raw) {
+        return ShelterTechPhysicalAddressMapper.INSTANCE.mapAddressRawToPhysicalAddress(raw);
+    }
+
+    @Named("postalAddressFromAddressRaw")
+    default PostalAddress postalAddressFromAddressRaw(AddressRaw raw) {
+        return ShelterTechPostalAddressMapper.INSTANCE.mapAddressRawToPostalAddress(raw);
     }
 
 }

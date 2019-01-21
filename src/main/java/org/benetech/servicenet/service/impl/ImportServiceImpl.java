@@ -29,6 +29,7 @@ import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -71,6 +72,7 @@ public class ImportServiceImpl implements ImportService {
     private SystemAccountService systemAccountService;
 
     @Override
+    @Transactional
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
         Optional<Location> locationFromDb = locationService.findForExternalDb(externalDbId, providerName);
         if (locationFromDb.isPresent()) {
@@ -86,6 +88,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public PhysicalAddress createOrUpdatePhysicalAddress(PhysicalAddress physicalAddress, Location location) {
         if (location.getPhysicalAddress() != null) {
             physicalAddress.setId(location.getPhysicalAddress().getId());
@@ -99,6 +102,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public PostalAddress createOrUpdatePostalAddress(PostalAddress postalAddress, Location location) {
         if (location.getPostalAddress() != null) {
             postalAddress.setId(location.getPostalAddress().getId());
@@ -112,6 +116,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public AccessibilityForDisabilities createOrUpdateAccessibility(AccessibilityForDisabilities accessibility,
                                                                     Location location) {
         Optional<AccessibilityForDisabilities> existingAccessibility = getExistingAccessibility(accessibility, location);
@@ -127,6 +132,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
                                                    DataImportReport report) {
         Optional<Organization> organizationFromDb = organizationService.findForExternalDb(externalDbId, providerName);
@@ -148,6 +154,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public Service createOrUpdateService(Service service, String externalDbId, String providerName,
                                          DataImportReport report) {
         Optional<Service> serviceFromDb = serviceService.findForExternalDb(externalDbId, providerName);
@@ -166,6 +173,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public Set<Phone> createOrUpdatePhones(Set<Phone> phones, Service service, Location location) {
         phones.forEach(phone ->  {
             phone.setSrvc(service);
@@ -182,6 +190,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public Eligibility createOrUpdateEligibility(Eligibility eligibility, Service service) {
         if (service.getEligibility() != null) {
             eligibility.setId(service.getEligibility().getId());
@@ -195,6 +204,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public Set<Language> createOrUpdateLangs(Set<Language> langs, Service service, Location location) {
         langs.forEach(lang ->  {
             lang.setSrvc(service);
@@ -211,6 +221,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public Set<OpeningHours> createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location) {
         RegularSchedule schedule = service.getRegularSchedule();
         if (schedule != null) {
@@ -230,6 +241,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public ServiceAtLocation createOrUpdateServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
                                                              String providerName, Service service, Location location) {
         serviceAtLocation.setSrvc(service);
@@ -248,6 +260,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName) {
         Optional<Taxonomy> taxonomyFromDb = taxonomyService.findForExternalDb(externalDbId, providerName);
 
@@ -261,6 +274,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public ServiceTaxonomy createOrUpdateServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String externalDbId,
                                                          String providerName, Service service, Taxonomy taxonomy) {
         serviceTaxonomy.setSrvc(service);
@@ -279,6 +293,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public RequiredDocument createOrUpdateRequiredDocument(RequiredDocument requiredDocument, String externalDbId,
                                                            String providerName, Service service) {
         requiredDocument.setSrvc(service);
@@ -310,4 +325,5 @@ public class ImportServiceImpl implements ImportService {
             }
         });
     }
+
 }
