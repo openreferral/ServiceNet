@@ -11,16 +11,16 @@ import org.benetech.servicenet.service.ImportService;
 
 class RelationManager {
 
-    private final Storage storage;
+    private final SmcStorage storage;
     private final PersistenceManager persistence;
 
-    RelationManager(ImportService importService, MultipleImportData data, Storage storage) {
+    RelationManager(ImportService importService, MultipleImportData data, SmcStorage storage) {
         this.storage = storage;
         this.persistence = new PersistenceManager(importService, data, storage);
     }
 
     void saveOrganizationsAndRelatedData() {
-        for (SmcOrganization smcOrganization : storage.getBaseDataSet(SmcOrganization.class)) {
+        for (SmcOrganization smcOrganization : storage.getEntitiesOfClass(SmcOrganization.class)) {
             Organization savedOrganization = persistence.importOrganization(smcOrganization);
             saveOrganizationRelatedData(smcOrganization, savedOrganization);
         }
@@ -35,14 +35,14 @@ class RelationManager {
     }
 
     private void saveLocationsAndLocationRelatedData(String relatedTo) {
-        for (SmcLocation smcLocation : storage.getBaseDataSet(SmcLocation.class, relatedTo, "L")) {
+        for (SmcLocation smcLocation : storage.getRelatedEntities(SmcLocation.class, relatedTo, SmcOrganization.class)) {
             Location savedLocation = persistence.importLocation(smcLocation);
             saveLocationRelatedData(smcLocation, savedLocation);
         }
     }
 
     private void saveServicesAndServiceRelatedData(String relatedTo, Location location) {
-        for (SmcService smcService : storage.getBaseDataSet(SmcService.class, relatedTo, "S")) {
+        for (SmcService smcService : storage.getRelatedEntities(SmcService.class, relatedTo, SmcLocation.class)) {
             Service savedService = persistence.importService(smcService);
             saveServiceRelatedData(smcService, savedService, location);
         }

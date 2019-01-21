@@ -87,12 +87,13 @@ public interface SmcConnectDataMapper {
     Phone mapPhone(SmcPhone phone);
 
     default HolidaySchedule extractHolidaySchedule(SmcHolidaySchedule source) {
+        String dateFormat = "MMMM dd, 00yy";
         HolidaySchedule result = mapHolidaySchedule(source);
         if (StringUtils.isNotBlank(source.getStartDate())) {
-            result.setStartDate(LocalDate.parse(source.getStartDate(), DateTimeFormatter.ofPattern("MMMM dd, 00yy")));
+            result.setStartDate(LocalDate.parse(source.getStartDate(), DateTimeFormatter.ofPattern(dateFormat)));
         }
         if (StringUtils.isNotBlank(source.getEndDate())) {
-            result.setEndDate(LocalDate.parse(source.getEndDate(), DateTimeFormatter.ofPattern("MMMM dd, 00yy")));
+            result.setEndDate(LocalDate.parse(source.getEndDate(), DateTimeFormatter.ofPattern(dateFormat)));
         }
         return result;
     }

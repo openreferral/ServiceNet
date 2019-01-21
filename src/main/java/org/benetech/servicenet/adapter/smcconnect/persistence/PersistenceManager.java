@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 class PersistenceManager {
 
     private final String providerName;
-    private Storage storage;
+    private SmcStorage storage;
     private ImportService importService;
     private SmcConnectDataMapper mapper;
     private DataImportReport report;
 
-    PersistenceManager(ImportService importService, MultipleImportData data, Storage storage) {
+    PersistenceManager(ImportService importService, MultipleImportData data, SmcStorage storage) {
         this.importService = importService;
         this.storage = storage;
         this.mapper = SmcConnectDataMapper.INSTANCE;
@@ -63,13 +63,13 @@ class PersistenceManager {
     }
 
     void importPhysicalAddress(String relatedTo, Location location) {
-        storage.getBaseDataSet(SmcAddress.class, relatedTo, "L")
+        storage.getRelatedEntities(SmcAddress.class, relatedTo, SmcLocation.class)
             .forEach(a -> importService.createOrUpdatePhysicalAddress(
                 mapper.extractPhysicalAddress(a), location));
     }
 
     void importPostalAddress(String relatedTo, Location location) {
-        storage.getBaseDataSet(SmcMailAddress.class, relatedTo, "L")
+        storage.getRelatedEntities(SmcMailAddress.class, relatedTo, SmcLocation.class)
             .forEach(a -> importService.createOrUpdatePostalAddress(
                 mapper.extractPostalAddress(a), location));
     }
@@ -77,7 +77,7 @@ class PersistenceManager {
     void importPhones(String relatedTo, Service service) {
         importService.createOrUpdatePhonesForService(
             mapper.extractPhones(
-                storage.getBaseDataSet(SmcPhone.class, relatedTo, "S")), service, null);
+                storage.getRelatedEntities(SmcPhone.class, relatedTo, SmcService.class)), service, null);
     }
 
     void importEligibility(SmcService smcService, Service service) {
@@ -101,36 +101,36 @@ class PersistenceManager {
     }
 
     void importContacts(String relatedTo, Organization organization) {
-        Set<Contact> contacts = storage.getBaseDataSet(SmcContact.class, relatedTo, "O").stream()
+        Set<Contact> contacts = storage.getRelatedEntities(SmcContact.class, relatedTo, SmcOrganization.class).stream()
             .map(c -> mapper.extractContact(c)).collect(Collectors.toSet());
         importService.createOrUpdateContactsForOrganization(contacts, organization);
     }
 
     void importContacts(String relatedTo, Service service) {
-        Set<Contact> contacts = storage.getBaseDataSet(SmcContact.class, relatedTo, "S").stream()
+        Set<Contact> contacts = storage.getRelatedEntities(SmcContact.class, relatedTo, SmcService.class).stream()
             .map(c -> mapper.extractContact(c)).collect(Collectors.toSet());
         importService.createOrUpdateContactsForService(contacts, service);
     }
 
     void importRegularSchedule(String relatedTo, Service service) {
-        Set<OpeningHours> openingHours = storage.getBaseDataSet(SmcRegularSchedule.class, relatedTo, "S").stream()
-            .map(o -> mapper.extractOpeningHours(o)).collect(Collectors.toSet());
+        Set<OpeningHours> openingHours = storage.getRelatedEntities(SmcRegularSchedule.class, relatedTo, SmcService.class)
+            .stream().map(o -> mapper.extractOpeningHours(o)).collect(Collectors.toSet());
         if (!openingHours.isEmpty()) {
             importService.createOrUpdateOpeningHoursForService(openingHours, service, null);
         }
     }
 
     void importRegularSchedule(String relatedTo, Location location) {
-        Set<OpeningHours> openingHours = storage.getBaseDataSet(SmcRegularSchedule.class, relatedTo, "L").stream()
-            .map(o -> mapper.extractOpeningHours(o)).collect(Collectors.toSet());
+        Set<OpeningHours> openingHours = storage.getRelatedEntities(SmcRegularSchedule.class, relatedTo, SmcLocation.class)
+            .stream().map(o -> mapper.extractOpeningHours(o)).collect(Collectors.toSet());
         if (!openingHours.isEmpty()) {
             importService.createOrUpdateOpeningHoursForLocation(openingHours, null, location);
         }
     }
 
     void importHolidaySchedule(String relatedTo, Location location) {
-        Set<HolidaySchedule> schedules = storage.getBaseDataSet(SmcHolidaySchedule.class, relatedTo, "L").stream()
-            .map(s -> mapper.extractHolidaySchedule(s)).collect(Collectors.toSet());
+        Set<HolidaySchedule> schedules = storage.getRelatedEntities(SmcHolidaySchedule.class, relatedTo, SmcLocation.class)
+            .stream().map(s -> mapper.extractHolidaySchedule(s)).collect(Collectors.toSet());
         // TODO: currently the relation is one to one, so only one is persisted
         if (!schedules.isEmpty()) {
             importService.createOrUpdateHolidayScheduleForLocation(schedules.iterator().next(), location);
@@ -138,7 +138,8 @@ class PersistenceManager {
     }
 
     void importHolidaySchedule(String relatedTo, Service service) {
-        Set<HolidaySchedule> schedules = storage.getBaseDataSet(SmcHolidaySchedule.class, relatedTo, "S").stream()
+        Set<HolidaySchedule> schedules =
+            storage.getRelatedEntities(SmcHolidaySchedule.class, relatedTo, SmcService.class).stream()
             .map(s -> mapper.extractHolidaySchedule(s)).collect(Collectors.toSet());
         // TODO: currently the relation is one to one, so only one is persisted
         if (!schedules.isEmpty()) {
@@ -148,7 +149,7 @@ class PersistenceManager {
 
     void importPrograms(String relatedTo, Organization organization) {
         importService.createOrUpdateProgramsForOrganization(
-            storage.getBaseDataSet(SmcProgram.class, relatedTo, "O").stream()
+            storage.getRelatedEntities(SmcProgram.class, relatedTo, SmcOrganization.class).stream()
                 .map(p -> mapper.extractProgram(p)).collect(Collectors.toSet()), organization);
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SmcDataManager {
 
-    private final Storage storage = new Storage();
+    private final SmcStorage storage = new SmcStorage();
     private final DataImportReport report;
     private final RelationManager relationManager;
 
@@ -30,7 +30,7 @@ public class SmcDataManager {
         List<SmcBaseData> baseDataList = dataResolver.getDataFromJson(objectJson, filename);
 
         for (SmcBaseData baseData : baseDataList) {
-            storage.addData(baseData);
+            storage.addRawData(baseData);
         }
     }
 
