@@ -14,6 +14,7 @@ import org.benetech.servicenet.adapter.smcconnect.model.SmcRegularSchedule;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcService;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
@@ -40,25 +41,28 @@ class PersistenceManager {
         this.report = data.getReport();
     }
 
-    Location importLocation(SmcLocation smcLocation) {
+    Location importLocation(SmcLocation smcLocation, Organization savedOrganization) {
         Location locationToSave = mapper.extractLocation(smcLocation);
         locationToSave.setExternalDbId(smcLocation.getId());
         locationToSave.setProviderName(providerName);
+        locationToSave.setOrganization(savedOrganization);
         return importService.createOrUpdateLocation(locationToSave, smcLocation.getId(), providerName);
     }
 
-    Organization importOrganization(SmcOrganization smcOrganization) {
+    Organization importOrganization(SmcOrganization smcOrganization, DocumentUpload sourceDocument) {
         Organization organizationToSave = mapper.extractOrganization(smcOrganization);
         organizationToSave.setExternalDbId(smcOrganization.getId());
         organizationToSave.setProviderName(providerName);
         organizationToSave.setActive(true);
+        organizationToSave.setSourceDocument(sourceDocument);
         return importService.createOrUpdateOrganization(organizationToSave, smcOrganization.getId(), providerName, report);
     }
 
-    Service importService(SmcService smcService) {
+    Service importService(SmcService smcService, Organization savedOrganization) {
         Service serviceToSave = mapper.extractService(smcService);
         serviceToSave.setExternalDbId(smcService.getId());
         serviceToSave.setProviderName(providerName);
+        serviceToSave.setOrganization(savedOrganization);
         return importService.createOrUpdateService(serviceToSave, smcService.getId(), providerName, report);
     }
 

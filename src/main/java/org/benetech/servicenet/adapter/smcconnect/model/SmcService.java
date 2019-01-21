@@ -26,6 +26,8 @@ public class SmcService extends SmcBaseData {
 
     private String email;
 
+    private String website;
+
     private String fees;
 
     @SerializedName("funding_sources")

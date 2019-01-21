@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.smcconnect.persistence;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcBaseData;
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.service.ImportService;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public class SmcDataManager {
     }
 
     public DataImportReport importData(MultipleImportData data) {
-        collectData(data);
-        return persistData();
+        DocumentUpload documentUpload = collectData(data);
+        return persistData(documentUpload);
     }
 
     private void collectData(MultipleImportData data, DataResolver dataResolver, int i) {
@@ -34,17 +35,24 @@ public class SmcDataManager {
         }
     }
 
-    private void collectData(MultipleImportData data) {
+    private DocumentUpload collectData(MultipleImportData data) {
         DataResolver dataResolver = new DataResolver();
+        DocumentUpload documentUpload = null;
         for (int i = 0; i < data.getDocumentUploads().size(); i++) {
+            if (isOrganizationsFile(data, i)) {
+                documentUpload = data.getDocumentUploads().get(i);
+            }
             collectData(data, dataResolver, i);
         }
+        return documentUpload;
     }
 
-    private DataImportReport persistData() {
-        relationManager.saveOrganizationsAndRelatedData();
-        relationManager.saveLocationsAndLocationRelatedData();
-        relationManager.saveServicesAndServiceRelatedData();
+    private boolean isOrganizationsFile(MultipleImportData data, int i) {
+        return DataType.valueOf(data.getDocumentUploads().get(i).getFilename().toUpperCase()).equals(DataType.ORGANIZATIONS);
+    }
+
+    private DataImportReport persistData(DocumentUpload sourceDocument) {
+        relationManager.saveOrganizationsAndRelatedData(sourceDocument);
         return report;
     }
 }

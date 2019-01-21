@@ -4,6 +4,7 @@ import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcLocation;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcOrganization;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcService;
+import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
@@ -19,31 +20,23 @@ class RelationManager {
         this.persistence = new PersistenceManager(importService, data, storage);
     }
 
-    void saveOrganizationsAndRelatedData() {
+    void saveOrganizationsAndRelatedData(DocumentUpload sourceDocument) {
         for (SmcOrganization smcOrganization : storage.getEntitiesOfClass(SmcOrganization.class)) {
-            Organization savedOrganization = persistence.importOrganization(smcOrganization);
+            Organization savedOrganization = persistence.importOrganization(smcOrganization, sourceDocument);
             saveOrganizationRelatedData(smcOrganization, savedOrganization);
         }
     }
 
-    void saveLocationsAndLocationRelatedData() {
-        saveLocationsAndLocationRelatedData(null);
-    }
-
-    void saveServicesAndServiceRelatedData() {
-        saveServicesAndServiceRelatedData(null, null);
-    }
-
-    private void saveLocationsAndLocationRelatedData(String relatedTo) {
+    private void saveLocationsAndLocationRelatedData(String relatedTo, Organization savedOrganization) {
         for (SmcLocation smcLocation : storage.getRelatedEntities(SmcLocation.class, relatedTo, SmcOrganization.class)) {
-            Location savedLocation = persistence.importLocation(smcLocation);
-            saveLocationRelatedData(smcLocation, savedLocation);
+            Location savedLocation = persistence.importLocation(smcLocation, savedOrganization);
+            saveLocationRelatedData(smcLocation, savedLocation, savedOrganization);
         }
     }
 
-    private void saveServicesAndServiceRelatedData(String relatedTo, Location location) {
+    private void saveServicesAndServiceRelatedData(String relatedTo, Location location, Organization savedOrganization) {
         for (SmcService smcService : storage.getRelatedEntities(SmcService.class, relatedTo, SmcLocation.class)) {
-            Service savedService = persistence.importService(smcService);
+            Service savedService = persistence.importService(smcService, savedOrganization);
             saveServiceRelatedData(smcService, savedService, location);
         }
     }
@@ -52,15 +45,15 @@ class RelationManager {
         persistence.importFunding(smcOrganization, savedOrganization);
         persistence.importContacts(smcOrganization.getId(), savedOrganization);
         persistence.importPrograms(smcOrganization.getId(), savedOrganization);
-        saveLocationsAndLocationRelatedData(smcOrganization.getId());
+        saveLocationsAndLocationRelatedData(smcOrganization.getId(), savedOrganization);
     }
 
-    private void saveLocationRelatedData(SmcLocation smcLocation, Location savedLocation) {
+    private void saveLocationRelatedData(SmcLocation smcLocation, Location savedLocation, Organization savedOrganization) {
         persistence.importRegularSchedule(smcLocation.getId(), savedLocation);
         persistence.importHolidaySchedule(smcLocation.getId(), savedLocation);
         persistence.importPhysicalAddress(smcLocation.getId(), savedLocation);
         persistence.importPostalAddress(smcLocation.getId(), savedLocation);
-        saveServicesAndServiceRelatedData(smcLocation.getId(), savedLocation);
+        saveServicesAndServiceRelatedData(smcLocation.getId(), savedLocation, savedOrganization);
     }
 
     private void saveServiceRelatedData(SmcService smcService, Service savedService, Location location) {

@@ -52,7 +52,9 @@ public interface SmcConnectDataMapper {
     Organization mapOrganization(SmcOrganization organization);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "applicationProcess", ignore = true)
     @Mapping(target = "eligibility", ignore = true)
+    @Mapping(target = "url", source = "website")
     Service mapService(SmcService service);
 
     @Mapping(target = "id", ignore = true)
@@ -119,7 +121,8 @@ public interface SmcConnectDataMapper {
 
     default Service extractService(SmcService source) {
         Service result = mapService(source);
-        result.setApplicationProcess("Required documents: " + source.getRequiredDocuments());
+        result.setApplicationProcess(MapperUtils.joinNotBlank(" ", source.getApplicationProcess(),
+            "Required documents: " + source.getRequiredDocuments()));
         return result;
     }
 
