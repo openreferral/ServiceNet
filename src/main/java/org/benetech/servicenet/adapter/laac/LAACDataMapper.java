@@ -28,7 +28,7 @@ public interface LAACDataMapper {
     LAACDataMapper INSTANCE = Mappers.getMapper(LAACDataMapper.class);
 
     DateTimeFormatter YEAR_INCORPORATED_FORMATTER = DateTimeFormatter.ofPattern("EEE, MM/dd/yyyy - HH:mm");
-    String LANGUAGES_DELIMITER = "/";
+    String LANGUAGES_DELIMITER = ",";
     String SERVICE_POSTFIX = " - Service";
     String LOCATION_POSTFIX = " - Location";
 
@@ -64,6 +64,7 @@ public interface LAACDataMapper {
         organization.setUrl(data.getWebsite());
         organization.setDescription(data.getWhoWeAre());
         organization.setExternalDbId(data.getId());
+        organization.setActive(true);
 
         return organization;
     }

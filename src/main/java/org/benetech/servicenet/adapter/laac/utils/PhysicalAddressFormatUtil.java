@@ -8,6 +8,7 @@ public final class PhysicalAddressFormatUtil {
     private static final String COMMA_DELIMITER = ",";
     private static final String SPACE_DELIMITER = " ";
     private static final String NEW_LINE_DELIMITER = "\n";
+    private static final String NOT_AVAILABLE = "N/A";
     private static final int MAX_LINES_NUMBER = 4;
 
     private PhysicalAddressFormatUtil() { }
@@ -43,6 +44,8 @@ public final class PhysicalAddressFormatUtil {
 
         if (addressIndex != -1) {
             physicalAddress.setAddress1(addressLines[addressIndex]);
+        } else {
+            physicalAddress.setAddress1(NOT_AVAILABLE);
         }
         if (attentionIndex != -1) {
             physicalAddress.setAttention(addressLines[attentionIndex]);
