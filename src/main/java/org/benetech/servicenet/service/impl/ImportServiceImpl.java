@@ -211,7 +211,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    public Set<OpeningHours> createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location) {
+    public Set<OpeningHours> createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service) {
         RegularSchedule schedule = service.getRegularSchedule();
         if (schedule != null) {
             Set<OpeningHours> common = new HashSet<>(openingHours);
@@ -220,10 +220,10 @@ public class ImportServiceImpl implements ImportService {
             schedule.getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> em.remove(o));
             openingHours.stream().filter(o -> !common.contains(o)).forEach(o -> em.persist(o));
 
-            em.merge(schedule.openingHours(new HashSet<>(openingHours)).location(location));
+            em.merge(schedule.openingHours(new HashSet<>(openingHours)));
         } else {
             openingHours.forEach(o -> em.persist(o));
-            em.persist(new RegularSchedule().openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
+            em.persist(new RegularSchedule().openingHours(new HashSet<>(openingHours)).srvc(service));
         }
 
         return openingHours;
