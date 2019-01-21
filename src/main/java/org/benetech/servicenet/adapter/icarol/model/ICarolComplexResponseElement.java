@@ -14,7 +14,6 @@ public class ICarolComplexResponseElement {
     private static final String SITE = "Site";
     private static final String SERVICE_SITE = "ServiceSite";
     private static final String AGENCY = "Agency";
-    private static final String PROGRAM_AT_SITE = "ProgramAtSite";
     private static final int BATCH_SIZE = 10;
 
     private List<List<ICarolSimpleResponseElement>> programBatches;
@@ -25,14 +24,11 @@ public class ICarolComplexResponseElement {
 
     private List<List<ICarolSimpleResponseElement>> agencyBatches;
 
-    private List<List<ICarolSimpleResponseElement>> programAtSiteBatches;
-
     public ICarolComplexResponseElement(Collection<ICarolSimpleResponseElement> elements) {
         programBatches = getBatch(elements, PROGRAM);
         siteBatches = getBatch(elements, SITE);
         serviceSiteBatches = getBatch(elements, SERVICE_SITE);
         agencyBatches = getBatch(elements, AGENCY);
-        programAtSiteBatches = getBatch(elements, PROGRAM_AT_SITE);
     }
 
     private List<List<ICarolSimpleResponseElement>> getBatch(Collection<ICarolSimpleResponseElement> elements, String type) {

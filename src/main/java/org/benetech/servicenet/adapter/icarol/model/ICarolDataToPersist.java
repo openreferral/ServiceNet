@@ -12,7 +12,7 @@ public class ICarolDataToPersist {
 
     private List<ICarolProgram> programs = new ArrayList<>();
 
-    private List<ICarolProgramAtSite> programAtSites = new ArrayList<>();
+    private List<ICarolServiceSite> serviceSites = new ArrayList<>();
 
     private List<ICarolSite> sites = new ArrayList<>();
 
@@ -24,8 +24,8 @@ public class ICarolDataToPersist {
         programs.add(program);
     }
 
-    public void addServiceSite(ICarolProgramAtSite programAtSite) {
-        programAtSites.add(programAtSite);
+    public void addServiceSite(ICarolServiceSite serviceSite) {
+        serviceSites.add(serviceSite);
     }
 
     public void addSite(ICarolSite site) {

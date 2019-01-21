@@ -11,7 +11,7 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
 import org.benetech.servicenet.adapter.icarol.model.ICarolComplexResponseElement;
 import org.benetech.servicenet.adapter.icarol.model.ICarolDataToPersist;
 import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
-import org.benetech.servicenet.adapter.icarol.model.ICarolProgramAtSite;
+import org.benetech.servicenet.adapter.icarol.model.ICarolServiceSite;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSimpleResponseElement;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
@@ -156,7 +156,7 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
             dataToPersist.addProgram(new Gson().fromJson(jsonObject, ICarolProgram.class));
         }
         if (type.equals(SERVICE_SITE)) {
-            dataToPersist.addServiceSite(new Gson().fromJson(jsonObject, ICarolProgramAtSite.class));
+            dataToPersist.addServiceSite(new Gson().fromJson(jsonObject, ICarolServiceSite.class));
         }
         if (type.equals(SITE)) {
             dataToPersist.addSite(new Gson().fromJson(jsonObject, ICarolSite.class));
@@ -170,8 +170,8 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
             ICarolProgram.class));
         dataToPersist.setSites(ICarolDataCollector.collectData(data.getSiteBatches(), headers, ICarolSite.class));
         dataToPersist.setAgencies(ICarolDataCollector.collectData(data.getAgencyBatches(), headers, ICarolAgency.class));
-        dataToPersist.setProgramAtSites(ICarolDataCollector.collectData(data.getProgramAtSiteBatches(),
-            headers, ICarolProgramAtSite.class));
+        dataToPersist.setServiceSites(ICarolDataCollector.collectData(data.getServiceSiteBatches(), headers,
+            ICarolServiceSite.class));
 
         return dataToPersist;
     }
