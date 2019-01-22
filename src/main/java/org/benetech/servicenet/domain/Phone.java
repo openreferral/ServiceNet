@@ -1,6 +1,10 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -17,10 +21,11 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * A Phone.
- */
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "phone")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Phone implements Serializable {
@@ -72,34 +77,9 @@ public class Phone implements Serializable {
     @JsonIgnoreProperties("phones")
     private ServiceAtLocation serviceAtLocation;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
     public Phone number(String number) {
         this.number = number;
         return this;
-    }
-
-    public Integer getExtension() {
-        return extension;
-    }
-
-    public void setExtension(Integer extension) {
-        this.extension = extension;
     }
 
     public Phone extension(Integer extension) {
@@ -107,25 +87,9 @@ public class Phone implements Serializable {
         return this;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public Phone type(String type) {
         this.type = type;
         return this;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     public Phone language(String language) {
@@ -133,25 +97,9 @@ public class Phone implements Serializable {
         return this;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Phone description(String description) {
         this.description = description;
         return this;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 
     public Phone location(Location location) {
@@ -159,25 +107,9 @@ public class Phone implements Serializable {
         return this;
     }
 
-    public Service getSrvc() {
-        return srvc;
-    }
-
-    public void setSrvc(Service service) {
-        this.srvc = service;
-    }
-
     public Phone srvc(Service service) {
         this.srvc = service;
         return this;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
     }
 
     public Phone organization(Organization organization) {
@@ -185,32 +117,15 @@ public class Phone implements Serializable {
         return this;
     }
 
-    public Contact getContact() {
-        return contact;
-    }
-
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
-
     public Phone contact(Contact contact) {
         this.contact = contact;
         return this;
-    }
-
-    public ServiceAtLocation getServiceAtLocation() {
-        return serviceAtLocation;
-    }
-
-    public void setServiceAtLocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtLocation = serviceAtLocation;
     }
 
     public Phone serviceAtLocation(ServiceAtLocation serviceAtLocation) {
         this.serviceAtLocation = serviceAtLocation;
         return this;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -232,15 +147,4 @@ public class Phone implements Serializable {
         return Objects.hashCode(getId());
     }
 
-    @Override
-    public String toString() {
-        return "Phone{" +
-            "id=" + getId() +
-            ", number='" + getNumber() + "'" +
-            ", extension=" + getExtension() +
-            ", type='" + getType() + "'" +
-            ", language='" + getLanguage() + "'" +
-            ", description='" + getDescription() + "'" +
-            "}";
-    }
 }

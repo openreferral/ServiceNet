@@ -26,29 +26,29 @@ public interface ShelterTechServiceMapper {
     @Mapping(source = "longDescription", target = "description")
     @Mapping(source = "url", target = "url")
     @Mapping(source = "email", target = "email")
-    @Mapping(ignore = true, target = "status", qualifiedByName = "statusFromCertified")
+    @Mapping(target = "status", qualifiedByName = "statusFromCertified")
     @Mapping(source = "interpretationServices", target = "interpretationServices")
     @Mapping(source = "applicationProcess", target = "applicationProcess")
     @Mapping(source = "waitTime", target = "waitTime")
     @Mapping(source = "fee", target = "fees")
-    @Mapping(ignore = true, target = "accreditations") // TODO
-    @Mapping(ignore = true, target = "type") // TODO
+    @Mapping(ignore = true, target = "accreditations")
+    @Mapping(ignore = true, target = "type")
     @Mapping(ignore = true, target = "updatedAt")
     @Mapping(source = "id", target = "externalDbId")
     @Mapping(constant = PROVIDER_NAME, target = "providerName")
-    @Mapping(ignore = true, target = "organization") // TODO
-    @Mapping(ignore = true, target = "program") // TODO
+    @Mapping(ignore = true, target = "organization")
+    @Mapping(ignore = true, target = "program")
     @Mapping(ignore = true, target = "location")
     @Mapping(ignore = true, target = "regularSchedule")
-    @Mapping(ignore = true, target = "holidaySchedule") // TODO
-    @Mapping(ignore = true, target = "funding") // TODO
+    @Mapping(ignore = true, target = "holidaySchedule")
+    @Mapping(ignore = true, target = "funding")
     @Mapping(source = "eligibility", target = "eligibility", qualifiedByName = "eligibilityFromString")
-    @Mapping(ignore = true, target = "areas") // TODO
+    @Mapping(ignore = true, target = "areas")
     @Mapping(source = "requiredDocuments", target = "docs", qualifiedByName = "docsFromString")
-    @Mapping(ignore = true, target = "paymentsAccepteds") // TODO
-    @Mapping(ignore = true, target = "langs") // TODO
-    @Mapping(ignore = true, target = "taxonomies") // TODO
-    @Mapping(ignore = true, target = "phones") // TODO
+    @Mapping(ignore = true, target = "paymentsAccepteds")
+    @Mapping(ignore = true, target = "langs")
+    @Mapping(ignore = true, target = "taxonomies")
+    @Mapping(ignore = true, target = "phones")
     Service mapToService(ServiceRaw serviceRaw);
 
     @Named("statusFromCertified")

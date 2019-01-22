@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.sheltertech;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechOrganizationMapper;
+import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechPhoneMapper;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechRegularScheduleMapper;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechServiceMapper;
 import org.benetech.servicenet.adapter.sheltertech.model.OrganizationRaw;
@@ -60,6 +61,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
             Organization org = ShelterTechOrganizationMapper.INSTANCE.mapToOrganization(
                 orgRaw, rawData.getReport().getDocumentUpload());
             persistOrgsLocation(org);
+            ShelterTechPhoneMapper.INSTANCE.mapToPhones(orgRaw.getPhones());
 
             org.setServices(persistServices(orgRaw));
 
