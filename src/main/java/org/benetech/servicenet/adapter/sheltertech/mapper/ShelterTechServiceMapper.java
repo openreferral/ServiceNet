@@ -39,7 +39,7 @@ public interface ShelterTechServiceMapper {
     @Mapping(ignore = true, target = "organization") // TODO
     @Mapping(ignore = true, target = "program") // TODO
     @Mapping(ignore = true, target = "location")
-    @Mapping(ignore = true, target = "regularSchedule") // TODO
+    @Mapping(ignore = true, target = "regularSchedule")
     @Mapping(ignore = true, target = "holidaySchedule") // TODO
     @Mapping(ignore = true, target = "funding") // TODO
     @Mapping(source = "eligibility", target = "eligibility", qualifiedByName = "eligibilityFromString")

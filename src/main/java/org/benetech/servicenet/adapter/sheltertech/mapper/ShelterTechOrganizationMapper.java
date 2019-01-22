@@ -56,7 +56,7 @@ public interface ShelterTechOrganizationMapper {
 
     @Named("locationFromAddressRaw")
     default Location locationFromAddressRaw(AddressRaw raw) {
-        return ShelterTechLocationMapper.INSTANCE.mapAddressRawToLocation(raw);
+        return ShelterTechLocationMapper.INSTANCE.mapToLocation(raw);
     }
 
     @Named("emailFromString")

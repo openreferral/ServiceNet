@@ -31,7 +31,7 @@ public interface ShelterTechLocationMapper {
     @Mapping(ignore = true, target = "holidaySchedule")
     @Mapping(ignore = true, target = "langs")
     @Mapping(ignore = true, target = "accessibilities")
-    Location mapAddressRawToLocation(AddressRaw raw);
+    Location mapToLocation(AddressRaw raw);
 
     @Named("physicalAddressFromAddressRaw")
     default PhysicalAddress physicalAddressFromAddressRaw(AddressRaw raw) {

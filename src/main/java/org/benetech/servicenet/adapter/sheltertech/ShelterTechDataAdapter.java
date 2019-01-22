@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.sheltertech;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechOrganizationMapper;
+import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechRegularScheduleMapper;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechServiceMapper;
 import org.benetech.servicenet.adapter.sheltertech.model.OrganizationRaw;
 import org.benetech.servicenet.adapter.sheltertech.model.ServiceRaw;
@@ -75,6 +76,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         Set<Service> services = new HashSet<>();
         for (ServiceRaw serviceRaw: organizationRaw.getServices()) {
             Service service = ShelterTechServiceMapper.INSTANCE.mapToService(serviceRaw);
+            ShelterTechRegularScheduleMapper.INSTANCE.mapToRegularSchedule(serviceRaw.getSchedule());
 
             services.add(service);
         }
