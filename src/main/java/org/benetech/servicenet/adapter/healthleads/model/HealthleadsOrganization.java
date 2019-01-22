@@ -2,11 +2,13 @@ package org.benetech.servicenet.adapter.healthleads.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class HealthleadsOrganization extends HealthleadsBaseData {
 
     private String name;

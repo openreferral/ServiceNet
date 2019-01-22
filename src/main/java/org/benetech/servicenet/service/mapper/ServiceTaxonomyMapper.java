@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity ServiceTaxonomy and its DTO ServiceTaxonomyDTO.
  */
-@Mapper(componentModel = "spring", uses = {ServiceMapper.class, TaxonomyMapper.class})
+@Mapper(componentModel = "spring", uses = {ServiceMapper.class, TaxonomyMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface ServiceTaxonomyMapper extends EntityMapper<ServiceTaxonomyDTO, ServiceTaxonomy> {
 
     @Mapping(source = "srvc.id", target = "srvcId")

@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity PhysicalAddress and its DTO PhysicalAddressDTO.
  */
-@Mapper(componentModel = "spring", uses = {LocationMapper.class})
+@Mapper(componentModel = "spring", uses = {LocationMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface PhysicalAddressMapper extends EntityMapper<PhysicalAddressDTO, PhysicalAddress> {
 
     @Mapping(source = "location.id", target = "locationId")

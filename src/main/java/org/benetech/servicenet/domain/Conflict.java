@@ -1,10 +1,11 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,24 +13,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
-
-import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * A Conflict.
@@ -41,17 +36,9 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "conflict")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Conflict implements Serializable {
+public class Conflict extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 5951338913885782058L;
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
 
     @Column(name = "current_value")
     private String currentValue;
@@ -96,6 +83,11 @@ public class Conflict implements Serializable {
                joinColumns = @JoinColumn(name = "conflicts_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "accepted_this_change_id", referencedColumnName = "id"))
     private Set<SystemAccount> acceptedThisChange = new HashSet<>();
+
+    public Conflict id(UUID id) {
+        this.setId(id);
+        return this;
+    }
 
     public Conflict addAcceptedThisChange(SystemAccount systemAccount) {
         this.acceptedThisChange.add(systemAccount);

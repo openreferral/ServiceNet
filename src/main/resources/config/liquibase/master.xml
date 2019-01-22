@@ -48,6 +48,7 @@
     <include file="config/liquibase/changelog/20181217100327_added_SystemAccount_to_User.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181224110136_added_entity_Conflict.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181231125401_added_entity_DataImportReport.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190122110136_added_entity_ConfidentialRecord.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
              relativeToChangelogFile="false"/>

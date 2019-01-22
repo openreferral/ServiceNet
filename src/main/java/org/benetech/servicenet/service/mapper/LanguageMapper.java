@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity Language and its DTO LanguageDTO.
  */
-@Mapper(componentModel = "spring", uses = {ServiceMapper.class, LocationMapper.class})
+@Mapper(componentModel = "spring", uses = {ServiceMapper.class, LocationMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface LanguageMapper extends EntityMapper<LanguageDTO, Language> {
 
     @Mapping(source = "srvc.id", target = "srvcId")

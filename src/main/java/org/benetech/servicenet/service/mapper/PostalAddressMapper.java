@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity PostalAddress and its DTO PostalAddressDTO.
  */
-@Mapper(componentModel = "spring", uses = {LocationMapper.class})
+@Mapper(componentModel = "spring", uses = {LocationMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface PostalAddressMapper extends EntityMapper<PostalAddressDTO, PostalAddress> {
 
     @Mapping(source = "location.id", target = "locationId")

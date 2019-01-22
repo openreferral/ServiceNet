@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.dto;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -7,6 +9,7 @@ import java.util.UUID;
 /**
  * A DTO for the Taxonomy entity.
  */
+@Data
 public class TaxonomyDTO implements Serializable {
 
     private UUID id;
@@ -22,46 +25,6 @@ public class TaxonomyDTO implements Serializable {
     private String externalDbId;
 
     private String providerName;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getVocabulary() {
-        return vocabulary;
-    }
-
-    public void setVocabulary(String vocabulary) {
-        this.vocabulary = vocabulary;
-    }
-
-    public UUID getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(UUID taxonomyId) {
-        this.parentId = taxonomyId;
-    }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public void setParentName(String taxonomyName) {
-        this.parentName = taxonomyName;
-    }
 
     @Override
     public boolean equals(Object o) {

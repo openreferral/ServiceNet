@@ -107,8 +107,6 @@ export class Organization extends React.Component<IOrganizationProps> {
                   <td>{organization.url}</td>
                   <td>{organization.taxStatus}</td>
                   <td>{organization.taxId}</td>
-                  <td>{organization.externalDbId}</td>
-                  <td>{organization.providerName}</td>
                   <td>
                     <TextFormat type="date" value={organization.yearIncorporated} format={APP_LOCAL_DATE_FORMAT} />
                   </td>
@@ -141,6 +139,8 @@ export class Organization extends React.Component<IOrganizationProps> {
                       ''
                     )}
                   </td>
+                  <td>{organization.externalDbId}</td>
+                  <td>{organization.providerName}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${organization.id}`} color="info" size="sm">

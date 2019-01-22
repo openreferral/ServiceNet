@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.dto;
 
+import lombok.Data;
+
 import javax.persistence.Lob;
 import java.io.Serializable;
 import java.util.Objects;
@@ -8,6 +10,7 @@ import java.util.UUID;
 /**
  * A DTO for the ServiceTaxonomy entity.
  */
+@Data
 public class ServiceTaxonomyDTO implements Serializable {
 
     private UUID id;
@@ -26,54 +29,6 @@ public class ServiceTaxonomyDTO implements Serializable {
     private String externalDbId;
 
     private String providerName;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getTaxonomyDetails() {
-        return taxonomyDetails;
-    }
-
-    public void setTaxonomyDetails(String taxonomyDetails) {
-        this.taxonomyDetails = taxonomyDetails;
-    }
-
-    public UUID getSrvcId() {
-        return srvcId;
-    }
-
-    public void setSrvcId(UUID serviceId) {
-        this.srvcId = serviceId;
-    }
-
-    public String getSrvcName() {
-        return srvcName;
-    }
-
-    public void setSrvcName(String serviceName) {
-        this.srvcName = serviceName;
-    }
-
-    public UUID getTaxonomyId() {
-        return taxonomyId;
-    }
-
-    public void setTaxonomyId(UUID taxonomyId) {
-        this.taxonomyId = taxonomyId;
-    }
-
-    public String getTaxonomyName() {
-        return taxonomyName;
-    }
-
-    public void setTaxonomyName(String taxonomyName) {
-        this.taxonomyName = taxonomyName;
-    }
 
     @Override
     public boolean equals(Object o) {

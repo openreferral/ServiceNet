@@ -7,10 +7,13 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity HolidaySchedule and its DTO HolidayScheduleDTO.
  */
-@Mapper(componentModel = "spring", uses = {ServiceMapper.class, LocationMapper.class, ServiceAtLocationMapper.class})
+@Mapper(componentModel = "spring", uses = {ServiceMapper.class, LocationMapper.class, ServiceAtLocationMapper.class},
+    unmappedTargetPolicy = IGNORE)
 public interface HolidayScheduleMapper extends EntityMapper<HolidayScheduleDTO, HolidaySchedule> {
 
     @Mapping(source = "srvc.id", target = "srvcId")

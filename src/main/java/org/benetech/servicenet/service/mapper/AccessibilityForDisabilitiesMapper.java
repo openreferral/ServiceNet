@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity AccessibilityForDisabilities and its DTO AccessibilityForDisabilitiesDTO.
  */
-@Mapper(componentModel = "spring", uses = {LocationMapper.class})
+@Mapper(componentModel = "spring", uses = {LocationMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface AccessibilityForDisabilitiesMapper
     extends EntityMapper<AccessibilityForDisabilitiesDTO, AccessibilityForDisabilities> {
 

@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity Taxonomy and its DTO TaxonomyDTO.
  */
-@Mapper(componentModel = "spring", uses = {})
+@Mapper(componentModel = "spring", uses = {}, unmappedTargetPolicy = IGNORE)
 public interface TaxonomyMapper extends EntityMapper<TaxonomyDTO, Taxonomy> {
 
     @Mapping(source = "parent.id", target = "parentId")

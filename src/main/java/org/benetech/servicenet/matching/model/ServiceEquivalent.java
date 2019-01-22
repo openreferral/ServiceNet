@@ -1,11 +1,13 @@
 package org.benetech.servicenet.matching.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ServiceEquivalent extends EntityEquivalent implements WrappedEquivalent {
 
     private ServiceAtLocationEquivalent serviceAtLocationEquivalent;
