@@ -64,11 +64,10 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
                 orgRaw, rawData.getReport().getDocumentUpload());
             persistOrgsLocation(org);
 
-            org.setServices(persistServices(orgRaw));
+            org.setServices(persistServices(orgRaw, rawData.getReport()));
 
             Organization savedOrg = importService
-                .createOrUpdateOrganization(org, org.getExternalDbId(), org.getProviderName(),
-                    rawData.getReport());
+                .createOrUpdateOrganization(org, org.getExternalDbId(), org.getProviderName(), rawData.getReport());
             organizations.add(savedOrg);
             persistPhones(orgRaw, savedOrg);
         }
@@ -76,12 +75,12 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         return organizations;
     }
 
-    private Set<Service> persistServices(OrganizationRaw organizationRaw) {
+    private Set<Service> persistServices(OrganizationRaw organizationRaw, DataImportReport report) {
         Set<Service> services = new HashSet<>();
         for (ServiceRaw serviceRaw: organizationRaw.getServices()) {
             Service service = ShelterTechServiceMapper.INSTANCE.mapToService(serviceRaw);
-            ShelterTechRegularScheduleMapper.INSTANCE.mapToRegularSchedule(serviceRaw.getSchedule());
 
+            importService.createOrUpdateService(service, service.getExternalDbId(), service.getProviderName(), report);
             services.add(service);
         }
         return services;
@@ -105,6 +104,10 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         }
 
         importService.createOrUpdatePhones(Sets.newHashSet(phones), orgSaved.getId());
+    }
+
+    private void persistRegularSchedule(ServiceRaw serviceRaw) {
+        ShelterTechRegularScheduleMapper.INSTANCE.mapToRegularSchedule(serviceRaw.getSchedule());
     }
 
 }
