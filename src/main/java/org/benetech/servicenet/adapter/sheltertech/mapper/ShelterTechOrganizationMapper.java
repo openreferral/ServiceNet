@@ -40,7 +40,6 @@ public interface ShelterTechOrganizationMapper {
     @Mapping(ignore = true, target = "account")
     @Mapping(ignore = true,  target = "funding")
     @Mapping(ignore = true, target = "programs")
-//    @Mapping(source = "services", target = "services") // TODO ServiceRaw
     @Mapping(ignore = true, target = "services")
     Organization mapToOrganization(OrganizationRaw orgRaw, DocumentUpload documentUpload);
 

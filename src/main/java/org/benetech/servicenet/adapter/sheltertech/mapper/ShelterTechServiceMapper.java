@@ -42,9 +42,9 @@ public interface ShelterTechServiceMapper {
     @Mapping(ignore = true, target = "regularSchedule")
     @Mapping(ignore = true, target = "holidaySchedule")
     @Mapping(ignore = true, target = "funding")
-    @Mapping(source = "eligibility", target = "eligibility", qualifiedByName = "eligibilityFromString")
+    @Mapping(ignore = true, target = "eligibility")
     @Mapping(ignore = true, target = "areas")
-    @Mapping(source = "requiredDocuments", target = "docs", qualifiedByName = "docsFromString")
+    @Mapping(ignore = true, target = "docs")
     @Mapping(ignore = true, target = "paymentsAccepteds")
     @Mapping(ignore = true, target = "langs")
     @Mapping(ignore = true, target = "taxonomies")
@@ -60,7 +60,6 @@ public interface ShelterTechServiceMapper {
         }
     }
 
-    @Named("eligibilityFromString")
     default Eligibility eligibilityFromString(String eligibilityString) {
         if (StringUtils.isBlank(eligibilityString)) {
             return null;
@@ -71,7 +70,6 @@ public interface ShelterTechServiceMapper {
            .build();
     }
 
-    @Named("docsFromString")
     default Set<RequiredDocument> docsFromString(String requiredDocumentsString) {
         Set<RequiredDocument> requiredDocuments = new HashSet<>();
         if (StringUtils.isBlank(requiredDocumentsString)) {

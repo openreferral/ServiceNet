@@ -11,9 +11,11 @@ import org.benetech.servicenet.adapter.sheltertech.model.OrganizationRaw;
 import org.benetech.servicenet.adapter.sheltertech.model.ServiceRaw;
 import org.benetech.servicenet.adapter.sheltertech.model.ShelterTechRawData;
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
+import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
 import org.slf4j.Logger;
@@ -79,9 +81,11 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         Set<Service> services = new HashSet<>();
         for (ServiceRaw serviceRaw: organizationRaw.getServices()) {
             Service service = ShelterTechServiceMapper.INSTANCE.mapToService(serviceRaw);
-
             importService.createOrUpdateService(service, service.getExternalDbId(), service.getProviderName(), report);
             services.add(service);
+
+            persistEligibility(serviceRaw, service);
+            persistRequiredDocuments(serviceRaw, service);
         }
         return services;
     }
@@ -106,8 +110,23 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         importService.createOrUpdatePhones(Sets.newHashSet(phones), orgSaved.getId());
     }
 
-    private void persistRegularSchedule(ServiceRaw serviceRaw) {
+    private void persistRegularSchedule(ServiceRaw serviceRaw, Service savedService) {
         ShelterTechRegularScheduleMapper.INSTANCE.mapToRegularSchedule(serviceRaw.getSchedule());
+    }
+
+    private void persistEligibility(ServiceRaw serviceRaw, Service savedService) {
+        Eligibility eligibility = ShelterTechServiceMapper.INSTANCE.eligibilityFromString(serviceRaw.getEligibility());
+        if (eligibility != null) {
+            importService.createOrUpdateEligibility(eligibility, savedService);
+        }
+    }
+
+    private void persistRequiredDocuments(ServiceRaw serviceRaw, Service savedService) {
+        Set<RequiredDocument> requiredDocuments = ShelterTechServiceMapper.INSTANCE
+            .docsFromString(serviceRaw.getRequiredDocuments());
+        for (RequiredDocument doc : requiredDocuments) {
+            importService.createOrUpdateRequiredDocument(doc, doc.getExternalDbId(), doc.getProviderName(), savedService);
+        }
     }
 
 }
