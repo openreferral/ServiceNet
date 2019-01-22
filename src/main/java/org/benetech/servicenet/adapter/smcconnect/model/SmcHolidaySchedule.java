@@ -8,12 +8,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class SmcHolidaySchedule extends SmcBaseData {
 
-    @SerializedName("location_id")
-    private String locationId;
-
-    @SerializedName("service_id")
-    private String serviceId;
-
     @SerializedName("start_date")
     private String startDate;
 

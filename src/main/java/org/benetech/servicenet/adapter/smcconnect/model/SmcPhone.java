@@ -11,15 +11,6 @@ public class SmcPhone extends SmcBaseData {
     @SerializedName("contact_id")
     private String contactId;
 
-    @SerializedName("location_id")
-    private String locationId;
-
-    @SerializedName("organization_id")
-    private String organizationId;
-
-    @SerializedName("service_id")
-    private String serviceId;
-
     @SerializedName("country_prefix")
     private String countryPrefix;
 
@@ -30,7 +21,7 @@ public class SmcPhone extends SmcBaseData {
     private String number;
 
     @SerializedName("number_type")
-    private String numberType;
+    private String type;
 
     @SerializedName("vanity_number")
     private String vanityNumber;

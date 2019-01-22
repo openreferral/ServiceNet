@@ -8,9 +8,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class SmcLocation extends SmcBaseData {
 
-    @SerializedName("organization_id")
-    private String organizationId;
-
     private String accessibility;
 
     @SerializedName("alternate_name")

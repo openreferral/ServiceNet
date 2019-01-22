@@ -8,6 +8,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -63,11 +64,11 @@ public class Location extends AbstractEntity implements Serializable {
     @JsonIgnore
     private PostalAddress postalAddress;
 
-    @OneToOne(mappedBy = "location")
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToOne(mappedBy = "location")
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private HolidaySchedule holidaySchedule;
 
@@ -78,6 +79,10 @@ public class Location extends AbstractEntity implements Serializable {
     @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
+
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
+    @JoinColumn(unique = true)
+    private Organization organization;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

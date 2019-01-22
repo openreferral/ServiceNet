@@ -104,11 +104,11 @@ public class Service extends AbstractEntity implements Serializable {
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToOne(mappedBy = "srvc")
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
     @JsonIgnore
     private HolidaySchedule holidaySchedule;
 
-    @OneToOne(mappedBy = "srvc")
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
     @JsonIgnore
     private Funding funding;
 
@@ -139,6 +139,10 @@ public class Service extends AbstractEntity implements Serializable {
     @OneToMany(mappedBy = "srvc")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
+
+    @OneToMany(mappedBy = "srvc")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Contact> contacts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

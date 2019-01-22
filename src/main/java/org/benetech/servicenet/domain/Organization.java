@@ -8,6 +8,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -93,7 +94,7 @@ public class Organization extends AbstractEntity implements Serializable {
     @JsonIgnoreProperties("")
     private SystemAccount account;
 
-    @OneToOne(mappedBy = "organization")
+    @OneToOne(mappedBy = "organization", fetch = FetchType.LAZY)
     @JsonIgnore
     private Funding funding;
 
@@ -104,6 +105,10 @@ public class Organization extends AbstractEntity implements Serializable {
     @OneToMany(mappedBy = "organization")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Service> services = new HashSet<>();
+
+    @OneToMany(mappedBy = "organization")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Contact> contacts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

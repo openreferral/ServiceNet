@@ -1,4 +1,4 @@
-package org.benetech.servicenet.adapter.smcconnect;
+package org.benetech.servicenet.adapter.smcconnect.persistence;
 
 import org.benetech.servicenet.adapter.smcconnect.model.SmcAddress;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcBaseData;

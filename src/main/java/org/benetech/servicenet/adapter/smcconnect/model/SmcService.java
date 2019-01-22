@@ -8,9 +8,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class SmcService extends SmcBaseData {
 
-    @SerializedName("location_id")
-    private String locationId;
-
     @SerializedName("program_id")
     private String programId;
 
@@ -30,6 +27,8 @@ public class SmcService extends SmcBaseData {
     private String eligibility;
 
     private String email;
+
+    private String website;
 
     private String fees;
 
