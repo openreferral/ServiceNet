@@ -107,7 +107,7 @@ public interface SmcConnectDataMapper {
     }
 
     default int getIdByTheWeekday(String weekday) {
-        return SmcWeekday.valueOf(weekday.toUpperCase(Locale.ROOT)).getNumber();
+        return SmcWeekday.valueOf(weekday.toUpperCase(Locale.ROOT)).ordinal();
     }
 
     default Organization extractOrganization(SmcOrganization source) {
