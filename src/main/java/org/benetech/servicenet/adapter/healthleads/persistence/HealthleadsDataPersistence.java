@@ -167,7 +167,7 @@ public class HealthleadsDataPersistence {
 
     private void savePhones(Set<Phone> phones,
                             Service service, Location location) {
-        importService.createOrUpdatePhones(phones, service, location);
+        importService.createOrUpdatePhonesForService(phones, service, location);
     }
 
     private void saveEligibility(Eligibility eligibility, Service service) {
@@ -176,7 +176,7 @@ public class HealthleadsDataPersistence {
 
     private void saveLanguages(Set<Language> languages,
                                Service service, Location location) {
-        importService.createOrUpdateLangs(languages, service, location);
+        importService.createOrUpdateLangsForService(languages, service, location);
     }
 
     private Taxonomy saveTaxonomy(Taxonomy taxonomy, String extermalDbId) {

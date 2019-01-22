@@ -50,6 +50,8 @@ public class CacheConfiguration {
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".services",
                 jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".contacts",
+                jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Service.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".areas", jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".docs", jcacheConfiguration);
@@ -59,6 +61,8 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".taxonomies",
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".phones",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".contacts",
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Program.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Program.class.getName() + ".services",

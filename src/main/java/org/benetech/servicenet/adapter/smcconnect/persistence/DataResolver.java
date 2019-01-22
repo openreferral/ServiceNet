@@ -1,4 +1,4 @@
-package org.benetech.servicenet.adapter.smcconnect;
+package org.benetech.servicenet.adapter.smcconnect.persistence;
 
 import com.google.gson.Gson;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcBaseData;
@@ -9,7 +9,7 @@ import java.util.List;
 
 class DataResolver {
 
-    public List<SmcBaseData> getDataFromJson(final String json, final String filename) {
+    List<SmcBaseData> getDataFromJson(final String json, final String filename) {
         DataType type;
         try {
             type = DataType.valueOf(filename.toUpperCase());

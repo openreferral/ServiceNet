@@ -6,9 +6,6 @@ import lombok.Data;
 @Data
 public class SmcAddress extends SmcBaseData {
 
-    @SerializedName("location_id")
-    private String locationId;
-
     @SerializedName("address_1")
     private String address1;
 

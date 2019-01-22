@@ -118,9 +118,10 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
             mapper.extractEligibility(program).ifPresent(
                 x -> importService.createOrUpdateEligibility(x, savedService));
 
-            importService.createOrUpdatePhones(mapper.extractPhones(program.getContactDetails()), savedService, location);
-            importService.createOrUpdateLangs(mapper.extractLangs(program), savedService, location);
-            importService.createOrUpdateOpeningHours(mapper.extractOpeningHours(program.getHours()), savedService);
+            importService.createOrUpdatePhonesForService(mapper.extractPhones(program.getContactDetails()), savedService,
+                location);
+            importService.createOrUpdateLangsForService(mapper.extractLangs(program), savedService, location);
+            importService.createOrUpdateOpeningHoursForService(mapper.extractOpeningHours(program.getHours()), savedService);
         }
     }
 
