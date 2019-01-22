@@ -10,6 +10,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
@@ -54,4 +55,12 @@ public interface ImportService {
 
     RequiredDocument createOrUpdateRequiredDocument(RequiredDocument requiredDocument, String externalDbId,
                                                     String providerName, Service service);
+
+    /**
+     * @param schedule which is respected by the service.
+     * @param service with set database uuid.
+     * @return a saved regular schedule.
+     */
+    RegularSchedule createOrUpdateRegularSchedule(RegularSchedule schedule, Service service);
+
 }

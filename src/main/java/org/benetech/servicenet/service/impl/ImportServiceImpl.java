@@ -18,6 +18,7 @@ import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.PhoneRepository;
+import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -75,6 +76,9 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private PhoneRepository phoneRepository;
+
+    @Autowired
+    private RegularScheduleRepository regularScheduleRepository;
 
     @Override
     @Transactional
@@ -313,6 +317,20 @@ public class ImportServiceImpl implements ImportService {
         } else {
             em.persist(requiredDocument);
             return requiredDocument;
+        }
+    }
+
+    @Override
+    public RegularSchedule createOrUpdateRegularSchedule(RegularSchedule schedule, Service service) {
+        schedule.setSrvc(service);
+        Optional<RegularSchedule> scheduleFromDb = regularScheduleRepository.findOneByServiceId(service.getId());
+
+        if (scheduleFromDb.isPresent()) {
+            schedule.setId(scheduleFromDb.get().getId());
+            return em.merge(schedule);
+        } else {
+            em.persist(schedule);
+            return schedule;
         }
     }
 

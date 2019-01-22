@@ -15,17 +15,13 @@ import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -36,11 +32,6 @@ import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.P
 
 @Component(PROVIDER_NAME + "DataAdapter")
 public class ShelterTechDataAdapter extends SingleDataAdapter {
-
-    private final Logger log = LoggerFactory.getLogger(ShelterTechDataAdapter.class);
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     private ImportService importService;
@@ -84,6 +75,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
             importService.createOrUpdateService(service, service.getExternalDbId(), service.getProviderName(), report);
             services.add(service);
 
+            persistRegularSchedule(serviceRaw, service);
             persistEligibility(serviceRaw, service);
             persistRequiredDocuments(serviceRaw, service);
         }
@@ -111,7 +103,10 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
     }
 
     private void persistRegularSchedule(ServiceRaw serviceRaw, Service savedService) {
-        ShelterTechRegularScheduleMapper.INSTANCE.mapToRegularSchedule(serviceRaw.getSchedule());
+        RegularSchedule schedule = ShelterTechRegularScheduleMapper.INSTANCE.mapToRegularSchedule(serviceRaw.getSchedule());
+        if (schedule != null) {
+            importService.createOrUpdateRegularSchedule(schedule, savedService);
+        }
     }
 
     private void persistEligibility(ServiceRaw serviceRaw, Service savedService) {
