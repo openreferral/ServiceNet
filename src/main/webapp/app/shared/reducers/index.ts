@@ -138,6 +138,10 @@ import dataImportReport, {
 import activity, {
   ActivityState
 } from 'app/shared/reducers/activity.reducer';
+// prettier-ignore
+import confidentialRecord, {
+  ConfidentialRecordState
+} from 'app/entities/confidential-record/confidential-record.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -184,6 +188,7 @@ export interface IRootState {
   readonly conflict: ConflictState;
   readonly dataImportReport: DataImportReportState;
   readonly activity: ActivityState;
+  readonly confidentialRecord: ConfidentialRecordState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -232,6 +237,7 @@ const rootReducer = combineReducers<IRootState>({
   conflict,
   dataImportReport,
   activity,
+  confidentialRecord,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

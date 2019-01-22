@@ -36,6 +36,7 @@
         "conflict": "Conflict",
         "dataImportReport": "Data Import Report",
         "activity": "Activity",
+        "confidentialRecord": "Confidential Record",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
