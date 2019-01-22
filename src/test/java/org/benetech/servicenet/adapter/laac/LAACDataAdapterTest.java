@@ -106,7 +106,7 @@ public class LAACDataAdapterTest {
     private void assertExtractedPhones() {
         ArgumentCaptor<Set<Phone>> captor = ArgumentCaptor.forClass(Set.class);
         verify(importService, times(THREE))
-            .createOrUpdatePhones(captor.capture(), any(Service.class), any(Location.class));
+            .createOrUpdatePhonesForService(captor.capture(), any(Service.class), any(Location.class));
 
         Set<Phone> set1 = captor.getAllValues().get(0);
         assertEquals(1, set1.size());
@@ -154,7 +154,7 @@ public class LAACDataAdapterTest {
     private void assertExtractedLanguages() {
         ArgumentCaptor<Set<Language>> captor = ArgumentCaptor.forClass(Set.class);
         verify(importService, times(THREE))
-            .createOrUpdateLangs(captor.capture(), any(Service.class), any(Location.class));
+            .createOrUpdateLangsForService(captor.capture(), any(Service.class), any(Location.class));
 
         Set<Language> set1 = captor.getAllValues().get(0);
         for (Language language : set1) {
@@ -164,12 +164,21 @@ public class LAACDataAdapterTest {
     }
 
     private void assertExtractedContact() {
-        ArgumentCaptor<Contact> captor = ArgumentCaptor.forClass(Contact.class);
+        ArgumentCaptor<Set<Contact>> captor = ArgumentCaptor.forClass(Set.class);
         verify(importService, times(TWO))
-            .createOrUpdateContact(captor.capture(), anyString(), anyString(), any(Organization.class));
+            .createOrUpdateContactsForOrganization(captor.capture(), any(Organization.class));
 
-        assertEquals("John Smith", captor.getAllValues().get(0).getName());
-        assertEquals("Jane Black", captor.getAllValues().get(1).getName());
+
+        Set<Contact> set = captor.getAllValues().get(0);
+        assertEquals(1, set.size());
+        for (Contact contact : set) {
+            assertEquals("John Smith", contact.getName());
+        }
+        set = captor.getAllValues().get(1);
+        assertEquals(1, set.size());
+        for (Contact contact : set) {
+            assertEquals("Jane Black", contact.getName());
+        }
     }
 
     private void assertExtractedEligibility() {
