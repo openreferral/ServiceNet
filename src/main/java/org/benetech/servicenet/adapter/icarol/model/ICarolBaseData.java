@@ -1,9 +1,9 @@
-package org.benetech.servicenet.adapter.eden.model;
+package org.benetech.servicenet.adapter.icarol.model;
 
 import lombok.Data;
 
 @Data
-public class EdenBaseData {
+public class ICarolBaseData {
 
     private String id;
 
@@ -11,9 +11,9 @@ public class EdenBaseData {
 
     private String uniquePriorId;
 
-    private EdenContactDetails[] contactDetails;
+    private ICarolContactDetails[] contactDetails;
 
-    private EdenRelated[] related;
+    private ICarolRelated[] related;
 
     private String cultureCode;
 
