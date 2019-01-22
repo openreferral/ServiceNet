@@ -1,10 +1,10 @@
-package org.benetech.servicenet.adapter.eden.model;
+package org.benetech.servicenet.adapter.icarol.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
-public class EdenAccessibility {
+public class ICarolAccessibility {
 
     private String disabled;
 

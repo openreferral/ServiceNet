@@ -1,9 +1,9 @@
-package org.benetech.servicenet.adapter.eden.model;
+package org.benetech.servicenet.adapter.icarol.model;
 
 import lombok.Data;
 
 @Data
-public class EdenCoverage {
+public class ICarolCoverage {
 
     private String purpose;
 

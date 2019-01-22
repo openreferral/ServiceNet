@@ -1,9 +1,9 @@
-package org.benetech.servicenet.adapter.eden.model;
+package org.benetech.servicenet.adapter.icarol.model;
 
 import lombok.Data;
 
 @Data
-public class EdenProgram extends EdenBaseData {
+public class ICarolProgram extends ICarolBaseData {
 
     private String description;
 
@@ -25,12 +25,12 @@ public class EdenProgram extends EdenBaseData {
 
     private String[] translations;
 
-    private EdenName[] names;
+    private ICarolName[] names;
 
-    private EdenCustomField[] customFields;
+    private ICarolCustomField[] customFields;
 
-    private EdenHours hours;
+    private ICarolHours hours;
 
-    private EdenCoverage[] coverage;
+    private ICarolCoverage[] coverage;
 }
 

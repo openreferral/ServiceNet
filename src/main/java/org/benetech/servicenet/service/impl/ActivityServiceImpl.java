@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.comparator.ConflictsComparator;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
@@ -96,6 +97,7 @@ public class ActivityServiceImpl implements ActivityService {
             String.format("There is no organization for orgId: %s", orgId)));
 
         List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceId(resourceId);
+        conflictDTOS.sort(new ConflictsComparator());
 
         if (CollectionUtils.isEmpty(conflictDTOS)) {
             return Optional.empty();

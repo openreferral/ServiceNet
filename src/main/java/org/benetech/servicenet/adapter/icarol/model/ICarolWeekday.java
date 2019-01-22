@@ -1,6 +1,6 @@
-package org.benetech.servicenet.adapter.eden.model;
+package org.benetech.servicenet.adapter.icarol.model;
 
-public enum EdenWeekday {
+public enum ICarolWeekday {
     MON(0),
     TUE(1),
     WED(2),
@@ -11,7 +11,7 @@ public enum EdenWeekday {
 
     private int number;
 
-    EdenWeekday(int number) {
+    ICarolWeekday(int number) {
         this.number = number;
     }
 

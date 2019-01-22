@@ -1,12 +1,12 @@
-package org.benetech.servicenet.adapter.eden;
+package org.benetech.servicenet.adapter.icarol;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import org.apache.http.Header;
-import org.benetech.servicenet.adapter.eden.model.EdenBaseData;
-import org.benetech.servicenet.adapter.eden.model.EdenRelated;
-import org.benetech.servicenet.adapter.eden.model.EdenSimpleResponseElement;
+import org.benetech.servicenet.adapter.icarol.model.ICarolBaseData;
+import org.benetech.servicenet.adapter.icarol.model.ICarolRelated;
+import org.benetech.servicenet.adapter.icarol.model.ICarolSimpleResponseElement;
 import org.benetech.servicenet.util.HttpUtils;
 
 import java.io.IOException;
@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-final class EdenDataCollector {
+final class ICarolDataCollector {
 
     private static final String URL = "https://api.icarol.com/v1/Resource";
     private static final String ID = "id=";
     private static final String PARAMS_BEGINNING = "?";
     private static final String PARAMS_DELIMITER = "&";
 
-    static JsonArray getData(Header[] headers, List<EdenSimpleResponseElement> batch) {
+    static JsonArray getData(Header[] headers, List<ICarolSimpleResponseElement> batch) {
         String params = getIdsAsQueryParameters(batch);
         String response;
         try {
@@ -32,11 +32,11 @@ final class EdenDataCollector {
         return new Gson().fromJson(response, JsonArray.class);
     }
 
-    static <T extends EdenBaseData> List<T> collectData(List<List<EdenSimpleResponseElement>> batches,
-                                                               Header[] headers, Class<T> clazz) {
+    static <T extends ICarolBaseData> List<T> collectData(List<List<ICarolSimpleResponseElement>> batches,
+                                                          Header[] headers, Class<T> clazz) {
         List<T> result = new ArrayList<>();
         JsonArray jsonArray = new JsonArray();
-        for (List<EdenSimpleResponseElement> batch : batches) {
+        for (List<ICarolSimpleResponseElement> batch : batches) {
             jsonArray.addAll(getData(headers, batch));
         }
 
@@ -48,7 +48,7 @@ final class EdenDataCollector {
         return result;
     }
 
-    static <T extends EdenBaseData, V extends EdenBaseData> List<T> findRelatedEntities(
+    static <T extends ICarolBaseData, V extends ICarolBaseData> List<T> findRelatedEntities(
         List<T> entities, V relatedEntity, String type) {
         List<String> relatedIds = findRelatedIds(relatedEntity, type);
         List<T> result = new ArrayList<>();
@@ -65,9 +65,9 @@ final class EdenDataCollector {
         return result;
     }
 
-    private static <T extends EdenBaseData> List<String> findRelatedIds(T entity, String type) {
+    private static <T extends ICarolBaseData> List<String> findRelatedIds(T entity, String type) {
         List<String> agenciesIds = new ArrayList<>();
-        for (EdenRelated related : entity.getRelated()) {
+        for (ICarolRelated related : entity.getRelated()) {
             if (related.getType().equals(type)) {
                 agenciesIds.add(related.getId());
             }
@@ -75,14 +75,14 @@ final class EdenDataCollector {
         return agenciesIds;
     }
 
-    private static String getIdsAsQueryParameters(List<EdenSimpleResponseElement> elements) {
+    private static String getIdsAsQueryParameters(List<ICarolSimpleResponseElement> elements) {
         StringBuilder result = new StringBuilder(PARAMS_BEGINNING);
-        for (EdenSimpleResponseElement element : elements) {
+        for (ICarolSimpleResponseElement element : elements) {
             result.append(ID).append(element.getId()).append(PARAMS_DELIMITER);
         }
         return result.toString();
     }
 
-    private EdenDataCollector() {
+    private ICarolDataCollector() {
     }
 }
