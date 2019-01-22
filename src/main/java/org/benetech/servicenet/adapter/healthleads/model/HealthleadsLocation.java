@@ -2,10 +2,12 @@ package org.benetech.servicenet.adapter.healthleads.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 
 @Data
-public class HealthleadsLocation extends BaseData {
+@EqualsAndHashCode(callSuper = true)
+public class HealthleadsLocation extends HealthleadsBaseData {
 
     @SerializedName("organization_id")
     private String organizationId;

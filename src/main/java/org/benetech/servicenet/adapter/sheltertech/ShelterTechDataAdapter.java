@@ -119,7 +119,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
             phone.setLocation(orgSaved.getLocation());
         }
 
-        importService.createOrUpdatePhones(Sets.newHashSet(phones), orgSaved.getId());
+        importService.createOrUpdatePhonesForOrganization(Sets.newHashSet(phones), orgSaved.getId());
     }
 
     private void persistRegularSchedule(ServiceRaw serviceRaw, Service savedService) {

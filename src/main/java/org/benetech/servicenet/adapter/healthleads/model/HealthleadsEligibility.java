@@ -1,9 +1,11 @@
 package org.benetech.servicenet.adapter.healthleads.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class HealthleadsEligibility extends ServiceRelatedData {
+@EqualsAndHashCode(callSuper = true)
+public class HealthleadsEligibility extends ServiceRelatedHealthleadsData {
 
     private String eligibility;
 }

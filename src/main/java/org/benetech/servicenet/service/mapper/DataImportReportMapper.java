@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity DataImportReport and its DTO DataImportReportDTO.
  */
-@Mapper(componentModel = "spring", uses = {DocumentUploadMapper.class})
+@Mapper(componentModel = "spring", uses = {DocumentUploadMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface DataImportReportMapper extends EntityMapper<DataImportReportDTO, DataImportReport> {
 
     @Mapping(source = "documentUpload.id", target = "documentUploadId")

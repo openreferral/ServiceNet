@@ -7,19 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -28,17 +24,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "phone")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Phone implements Serializable {
+public class Phone extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
 
     @NotNull
     @Column(name = "jhi_number", nullable = false)

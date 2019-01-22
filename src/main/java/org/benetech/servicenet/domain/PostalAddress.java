@@ -2,19 +2,15 @@ package org.benetech.servicenet.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * A PostalAddress.
@@ -22,17 +18,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "postal_address")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PostalAddress implements Serializable {
+public class PostalAddress extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
 
     @Column(name = "attention")
     private String attention;
@@ -63,13 +51,6 @@ public class PostalAddress implements Serializable {
     private Location location;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getAttention() {
         return attention;

@@ -134,9 +134,12 @@ similarity-ratio:
         google-api: default_key
 
 scheduler:
-    interval:
-        eden-data-update: 604800 #one week
-        eden-api-key: default_key
+    eden-data:
+        interval: 604800 #one week
+        api-key: default_key
+    uwba-data:
+        interval: 604800 #one week
+        api-key: default_key
 
 # ===================================================================
 # Application specific properties

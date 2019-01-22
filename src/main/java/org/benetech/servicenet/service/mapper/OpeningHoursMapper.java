@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity OpeningHours and its DTO OpeningHoursDTO.
  */
-@Mapper(componentModel = "spring", uses = {RegularScheduleMapper.class})
+@Mapper(componentModel = "spring", uses = {RegularScheduleMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface OpeningHoursMapper extends EntityMapper<OpeningHoursDTO, OpeningHours> {
 
     @Mapping(source = "regularSchedule.id", target = "regularScheduleId")

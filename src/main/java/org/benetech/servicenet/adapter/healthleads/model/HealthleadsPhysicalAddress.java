@@ -2,9 +2,11 @@ package org.benetech.servicenet.adapter.healthleads.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class HealthleadsPhysicalAddress extends LocationRelatedData {
+@EqualsAndHashCode(callSuper = true)
+public class HealthleadsPhysicalAddress extends LocationRelatedHealthleadsData {
 
     private String attention;
 

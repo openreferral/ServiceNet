@@ -5,12 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -25,7 +23,6 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * A Organization.
@@ -34,17 +31,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "organization")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Organization implements Serializable {
+public class Organization extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
 
     @NotNull
     @Column(name = "name", nullable = false)
@@ -105,7 +94,7 @@ public class Organization implements Serializable {
     @JsonIgnoreProperties("")
     private SystemAccount account;
 
-    @OneToOne(mappedBy = "organization")
+    @OneToOne(mappedBy = "organization", fetch = FetchType.LAZY)
     @JsonIgnore
     private Funding funding;
 
@@ -116,6 +105,10 @@ public class Organization implements Serializable {
     @OneToMany(mappedBy = "organization")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Service> services = new HashSet<>();
+
+    @OneToMany(mappedBy = "organization")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Contact> contacts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

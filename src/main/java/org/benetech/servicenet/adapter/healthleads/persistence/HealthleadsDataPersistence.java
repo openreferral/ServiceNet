@@ -1,7 +1,7 @@
 package org.benetech.servicenet.adapter.healthleads.persistence;
 
 import org.benetech.servicenet.adapter.healthleads.HealthLeadsDataMapper;
-import org.benetech.servicenet.adapter.healthleads.model.BaseData;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsBaseData;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsEligibility;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLanguage;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLocation;
@@ -13,8 +13,8 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsService;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLocation;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
-import org.benetech.servicenet.adapter.healthleads.model.LocationRelatedData;
-import org.benetech.servicenet.adapter.healthleads.model.ServiceRelatedData;
+import org.benetech.servicenet.adapter.healthleads.model.LocationRelatedHealthleadsData;
+import org.benetech.servicenet.adapter.healthleads.model.ServiceRelatedHealthleadsData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
@@ -50,18 +50,18 @@ public class HealthleadsDataPersistence {
         this.report = report;
     }
 
-    public void addData(BaseData data) {
-        Class<? extends BaseData> clazz = data.getClass();
+    public void addData(HealthleadsBaseData data) {
+        Class<? extends HealthleadsBaseData> clazz = data.getClass();
 
         if (data instanceof HealthleadsPhone) {
             handlePhones(data, clazz);
         } else if (data instanceof HealthleadsService) {
             handleServices(data, clazz);
         } else {
-            if (data instanceof LocationRelatedData) {
-                storage.addBaseData(clazz, ((LocationRelatedData) data).getLocationId(), data);
-            } else if (data instanceof ServiceRelatedData) {
-                storage.addBaseData(clazz, ((ServiceRelatedData) data).getServiceId(), data);
+            if (data instanceof LocationRelatedHealthleadsData) {
+                storage.addBaseData(clazz, ((LocationRelatedHealthleadsData) data).getLocationId(), data);
+            } else if (data instanceof ServiceRelatedHealthleadsData) {
+                storage.addBaseData(clazz, ((ServiceRelatedHealthleadsData) data).getServiceId(), data);
             } else {
                 storage.addBaseData(clazz, data.getId(), data);
             }
@@ -119,11 +119,11 @@ public class HealthleadsDataPersistence {
             serviceAtLocation.getId(), savedService, savedLocation);
     }
 
-    private void handlePhones(BaseData data, Class<? extends BaseData> clazz) {
+    private void handlePhones(HealthleadsBaseData data, Class<? extends HealthleadsBaseData> clazz) {
         storage.addBaseDataToSet(clazz, ((HealthleadsPhone) data).getLocationId(), data);
     }
     
-    private void handleServices(BaseData data, Class<? extends BaseData> clazz) {
+    private void handleServices(HealthleadsBaseData data, Class<? extends HealthleadsBaseData> clazz) {
         storage.addBaseDataToSet(clazz, ((HealthleadsService) data).getOrganizationId(), data);
     }
 
@@ -167,7 +167,7 @@ public class HealthleadsDataPersistence {
 
     private void savePhones(Set<Phone> phones,
                             Service service, Location location) {
-        importService.createOrUpdatePhones(phones, service, location);
+        importService.createOrUpdatePhonesForService(phones, service, location);
     }
 
     private void saveEligibility(Eligibility eligibility, Service service) {
@@ -176,7 +176,7 @@ public class HealthleadsDataPersistence {
 
     private void saveLanguages(Set<Language> languages,
                                Service service, Location location) {
-        importService.createOrUpdateLangs(languages, service, location);
+        importService.createOrUpdateLangsForService(languages, service, location);
     }
 
     private Taxonomy saveTaxonomy(Taxonomy taxonomy, String extermalDbId) {

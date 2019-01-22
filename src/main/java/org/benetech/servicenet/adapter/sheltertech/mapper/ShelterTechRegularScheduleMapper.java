@@ -1,10 +1,9 @@
 package org.benetech.servicenet.adapter.sheltertech.mapper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.benetech.servicenet.adapter.eden.model.Weekday;
-import org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants;
 import org.benetech.servicenet.adapter.sheltertech.model.ScheduleDayRaw;
 import org.benetech.servicenet.adapter.sheltertech.model.ScheduleRaw;
+import org.benetech.servicenet.adapter.sheltertech.model.ShelterTechWeekday;
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.mapstruct.Mapper;
@@ -14,6 +13,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,10 +49,7 @@ public interface ShelterTechRegularScheduleMapper {
 
     default Integer weekdaysFromScheduleDays(String day) {
         if (StringUtils.isNotBlank(day)) {
-            Weekday weekday = ShelterTechConstants.WEEKDAYS.get(day);
-            if (weekday != null) {
-                return weekday.getNumber();
-            }
+            return ShelterTechWeekday.valueOf(day.toUpperCase(Locale.ROOT)).ordinal();
         }
 
         return null;

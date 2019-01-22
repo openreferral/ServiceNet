@@ -307,7 +307,7 @@ public class ImportServiceImplIntTest {
         Phone phone = new Phone().number(NEW_STRING).srvc(service);
 
         int dbSize = phoneService.findAll().size();
-        importService.createOrUpdatePhones(Set.of(phone), service, null);
+        importService.createOrUpdatePhonesForService(Set.of(phone), service, null);
 
         assertEquals(dbSize + 1, phoneService.findAll().size());
     }
@@ -324,7 +324,7 @@ public class ImportServiceImplIntTest {
         Phone newPhone = new Phone().number(NEW_STRING).srvc(service);
 
         int dbSize = phoneService.findAll().size();
-        importService.createOrUpdatePhones(Set.of(newPhone), service, null);
+        importService.createOrUpdatePhonesForService(Set.of(newPhone), service, null);
 
         assertEquals(dbSize, phoneService.findAll().size());
     }
@@ -345,7 +345,7 @@ public class ImportServiceImplIntTest {
         Phone newPhone = new Phone().number(NEW_STRING).srvc(service);
 
         int dbSize = phoneService.findAll().size();
-        Set<Phone> updated = importService.createOrUpdatePhones(Set.of(newPhone), service, null);
+        Set<Phone> updated = importService.createOrUpdatePhonesForService(Set.of(newPhone), service, null);
 
         assertEquals(dbSize - 1, phoneService.findAll().size());
         assertEquals(1, updated.size());
@@ -390,7 +390,7 @@ public class ImportServiceImplIntTest {
         Language language = new Language().language(NEW_STRING).srvc(service);
 
         int dbSize = languageService.findAll().size();
-        importService.createOrUpdateLangs(Set.of(language), service, null);
+        importService.createOrUpdateLangsForService(Set.of(language), service, null);
 
         assertEquals(dbSize + 1, languageService.findAll().size());
     }
@@ -407,7 +407,7 @@ public class ImportServiceImplIntTest {
         Language newLanguage = new Language().language(NEW_STRING).srvc(service);
 
         int dbSize = languageService.findAll().size();
-        importService.createOrUpdateLangs(Set.of(newLanguage), service, null);
+        importService.createOrUpdateLangsForService(Set.of(newLanguage), service, null);
 
         assertEquals(dbSize, languageService.findAll().size());
     }
@@ -428,7 +428,7 @@ public class ImportServiceImplIntTest {
         Language newLanguage = new Language().language(NEW_STRING).srvc(service);
 
         int dbSize = languageService.findAll().size();
-        Set<Language> updated = importService.createOrUpdateLangs(Set.of(newLanguage), service, null);
+        Set<Language> updated = importService.createOrUpdateLangsForService(Set.of(newLanguage), service, null);
 
         assertEquals(dbSize - 1, languageService.findAll().size());
         assertEquals(1, updated.size());
@@ -443,7 +443,7 @@ public class ImportServiceImplIntTest {
 
         int scheduleDbSize = regularScheduleService.findAll().size();
         int hoursDbSize = openingHoursService.findAll().size();
-        importService.createOrUpdateOpeningHours(Set.of(openingHours), service, null);
+        importService.createOrUpdateOpeningHoursForService(Set.of(openingHours), service);
 
         assertEquals(scheduleDbSize + 1, regularScheduleService.findAll().size());
         assertEquals(hoursDbSize + 1, openingHoursService.findAll().size());
@@ -462,7 +462,7 @@ public class ImportServiceImplIntTest {
 
         int scheduleDbSize = regularScheduleService.findAll().size();
         int hoursDbSize = openingHoursService.findAll().size();
-        importService.createOrUpdateOpeningHours(Set.of(newOpeningHours), service, null);
+        importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
 
         assertEquals(scheduleDbSize + 1, regularScheduleService.findAll().size());
         assertEquals(hoursDbSize + 1, openingHoursService.findAll().size());
@@ -489,7 +489,7 @@ public class ImportServiceImplIntTest {
 
         int scheduleDbSize = regularScheduleService.findAll().size();
         int hoursDbSize = openingHoursService.findAll().size();
-        Set<OpeningHours> updated = importService.createOrUpdateOpeningHours(Set.of(newOpeningHours), service, null);
+        Set<OpeningHours> updated = importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
 
         assertEquals(scheduleDbSize, regularScheduleService.findAll().size());
         assertEquals(hoursDbSize - 1, openingHoursService.findAll().size());

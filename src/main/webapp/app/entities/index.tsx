@@ -31,6 +31,7 @@ import Metadata from './metadata';
 import OpeningHours from './opening-hours';
 import Conflict from './conflict';
 import DataImportReport from './data-import-report';
+import ConfidentialRecord from './confidential-record';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ match }) => (
@@ -64,6 +65,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute path={`${match.url}/opening-hours`} component={OpeningHours} />
       <ErrorBoundaryRoute path={`${match.url}/conflict`} component={Conflict} />
       <ErrorBoundaryRoute path={`${match.url}/data-import-report`} component={DataImportReport} />
+      <ErrorBoundaryRoute path={`${match.url}/confidential-record`} component={ConfidentialRecord} />
       {/* jhipster-needle-add-route-path - JHipster will routes here */}
     </Switch>
   </div>

@@ -1,8 +1,11 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
+import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.Funding;
+import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
@@ -10,6 +13,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
@@ -19,6 +23,7 @@ import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
+import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -36,6 +41,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -80,6 +86,9 @@ public class ImportServiceImpl implements ImportService {
     @Autowired
     private RegularScheduleRepository regularScheduleRepository;
 
+    @Autowired
+    private ContactService contactService;
+
     @Override
     @Transactional
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
@@ -89,6 +98,8 @@ public class ImportServiceImpl implements ImportService {
             location.setPostalAddress(locationFromDb.get().getPostalAddress());
             location.setAccessibilities(locationFromDb.get().getAccessibilities());
             location.setId(locationFromDb.get().getId());
+            location.setRegularSchedule(locationFromDb.get().getRegularSchedule());
+            location.setHolidaySchedule(locationFromDb.get().getHolidaySchedule());
             em.merge(location);
         } else {
             em.persist(location);
@@ -148,6 +159,8 @@ public class ImportServiceImpl implements ImportService {
         if (organizationFromDb.isPresent()) {
             organization.setId(organizationFromDb.get().getId());
             organization.setAccount(organizationFromDb.get().getAccount());
+            organization.setFunding(organizationFromDb.get().getFunding());
+            organization.setContacts(organizationFromDb.get().getContacts());
             em.merge(organization);
             report.incrementNumberOfUpdatedOrgs();
         } else {
@@ -163,6 +176,14 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
+                                                   Service service, Location location, DataImportReport report) {
+        organization.setServices(Collections.singleton(service));
+        organization.setLocation(location);
+        return createOrUpdateOrganization(organization, externalDbId, providerName, report);
+    }
+
+    @Override
     @Transactional
     public Service createOrUpdateService(Service service, String externalDbId, String providerName,
                                          DataImportReport report) {
@@ -172,6 +193,9 @@ public class ImportServiceImpl implements ImportService {
             service.setEligibility(serviceFromDb.get().getEligibility());
             service.setId(serviceFromDb.get().getId());
             service.setRegularSchedule(serviceFromDb.get().getRegularSchedule());
+            service.setFunding(serviceFromDb.get().getFunding());
+            service.setHolidaySchedule(serviceFromDb.get().getHolidaySchedule());
+            service.setContacts(serviceFromDb.get().getContacts());
             em.merge(service);
             report.incrementNumberOfUpdatedServices();
         } else {
@@ -183,7 +207,7 @@ public class ImportServiceImpl implements ImportService {
 
     @Override
     @Transactional
-    public Set<Phone> createOrUpdatePhones(Set<Phone> phones, Service service, Location location) {
+    public Set<Phone> createOrUpdatePhonesForService(Set<Phone> phones, Service service, Location location) {
         phones.forEach(phone ->  {
             phone.setSrvc(service);
             phone.setLocation(location);
@@ -194,7 +218,7 @@ public class ImportServiceImpl implements ImportService {
 
     @Override
     @Transactional
-    public Set<Phone> createOrUpdatePhones(Set<Phone> phones, UUID orgId) {
+    public Set<Phone> createOrUpdatePhonesForOrganization(Set<Phone> phones, UUID orgId) {
         Set<Phone> orgPhones = phoneRepository.findAllByOrganization(orgId);
         return persistPhones(phones, orgPhones);
     }
@@ -215,7 +239,35 @@ public class ImportServiceImpl implements ImportService {
 
     @Override
     @Transactional
-    public Set<Language> createOrUpdateLangs(Set<Language> langs, Service service, Location location) {
+    public Funding createOrUpdateFundingForOrganization(Funding funding, Organization organization) {
+        if (organization.getFunding() != null) {
+            funding.setId(organization.getFunding().getId());
+            em.merge(funding);
+        } else {
+            funding.setOrganization(organization);
+            em.persist(funding);
+        }
+
+        return funding;
+    }
+
+    @Override
+    @Transactional
+    public Funding createOrUpdateFundingForService(Funding funding, Service service) {
+        if (service.getFunding() != null) {
+            funding.setId(service.getFunding().getId());
+            em.merge(funding);
+        } else {
+            funding.setSrvc(service);
+            em.persist(funding);
+        }
+
+        return funding;
+    }
+
+    @Override
+    @Transactional
+    public Set<Language> createOrUpdateLangsForService(Set<Language> langs, Service service, Location location) {
         langs.forEach(lang ->  {
             lang.setSrvc(service);
             lang.setLocation(location);
@@ -232,8 +284,35 @@ public class ImportServiceImpl implements ImportService {
 
     @Override
     @Transactional
-    public Set<OpeningHours> createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location) {
+    public Set<Program> createOrUpdateProgramsForOrganization(Set<Program> programs, Organization organization) {
+        programs.forEach(p -> p.setOrganization(organization));
+
+        Set<Program> common = new HashSet<>(programs);
+        common.retainAll(organization.getPrograms());
+
+        organization.getPrograms().stream().filter(p -> !common.contains(p)).forEach(p -> em.remove(p));
+        programs.stream().filter(p -> !common.contains(p)).forEach(p -> em.persist(p));
+
+        return programs;
+    }
+
+    @Override
+    public Set<OpeningHours> createOrUpdateOpeningHoursForService(Set<OpeningHours> openingHours, Service service) {
         RegularSchedule schedule = service.getRegularSchedule();
+        createOrUpdateOpeningHours(openingHours, service, null, schedule);
+        return openingHours;
+    }
+
+    @Override
+    public Set<OpeningHours> createOrUpdateOpeningHoursForLocation(Set<OpeningHours> openingHours,
+                                                                   Location location) {
+        RegularSchedule schedule = location.getRegularSchedule();
+        createOrUpdateOpeningHours(openingHours, null, location, schedule);
+        return openingHours;
+    }
+
+    private void createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location,
+                                            RegularSchedule schedule) {
         if (schedule != null) {
             Set<OpeningHours> common = new HashSet<>(openingHours);
             common.retainAll(schedule.getOpeningHours());
@@ -241,13 +320,11 @@ public class ImportServiceImpl implements ImportService {
             schedule.getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> em.remove(o));
             openingHours.stream().filter(o -> !common.contains(o)).forEach(o -> em.persist(o));
 
-            em.merge(schedule.openingHours(new HashSet<>(openingHours)).location(location));
+            em.merge(schedule.openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
         } else {
             openingHours.forEach(o -> em.persist(o));
             em.persist(new RegularSchedule().openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
         }
-
-        return openingHours;
     }
 
     @Override
@@ -318,6 +395,55 @@ public class ImportServiceImpl implements ImportService {
             em.persist(requiredDocument);
             return requiredDocument;
         }
+    }
+
+    @Override
+    public Set<Contact> createOrUpdateContactsForService(Set<Contact> contacts, Service service) {
+        contacts.forEach(c -> c.setSrvc(service));
+        Set<Contact> common = new HashSet<>(contacts);
+        common.retainAll(service.getContacts());
+        createOrUpdateContacts(contacts, common, service.getContacts());
+        return contacts;
+    }
+
+    @Override
+    public Set<Contact> createOrUpdateContactsForOrganization(Set<Contact> contacts, Organization organization) {
+        contacts.forEach(c -> c.setOrganization(organization));
+        Set<Contact> common = new HashSet<>(contacts);
+        common.retainAll(organization.getContacts());
+        createOrUpdateContacts(contacts, common, organization.getContacts());
+        return contacts;
+    }
+
+    @Override
+    public HolidaySchedule createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location) {
+        if (location.getHolidaySchedule() != null) {
+            schedule.setId(location.getHolidaySchedule().getId());
+            em.merge(schedule);
+        } else {
+            schedule.setLocation(location);
+            em.persist(schedule);
+        }
+
+        return schedule;
+    }
+
+    @Override
+    public HolidaySchedule createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service) {
+        if (service.getHolidaySchedule() != null) {
+            schedule.setId(service.getHolidaySchedule().getId());
+            em.merge(schedule);
+        } else {
+            schedule.setSrvc(service);
+            em.persist(schedule);
+        }
+
+        return schedule;
+    }
+
+    private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source) {
+        source.stream().filter(c -> !common.contains(c)).forEach(c -> em.remove(c));
+        contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
     }
 
     @Override

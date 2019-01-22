@@ -11,6 +11,23 @@ public final class MapperUtils {
         return Stream.of(value1, value2).filter(StringUtils::isNotBlank).collect(Collectors.joining(delimiter));
     }
 
+    public static Double stringToDouble(String source) {
+        if (StringUtils.isNotBlank(source)) {
+            return Double.valueOf(source);
+        } else {
+            return null;
+        }
+    }
+
+    public static Integer stringToInteger(String source) {
+        String numbersOnly = source.replaceAll("\\D+", "");
+        if (StringUtils.isNotBlank(numbersOnly)) {
+            return Integer.valueOf(numbersOnly);
+        } else {
+            return null;
+        }
+    }
+
     private MapperUtils() {
     }
 }

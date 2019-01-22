@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity DocumentUpload and its DTO DocumentUploadDTO.
  */
-@Mapper(componentModel = "spring", uses = {UserMapper.class})
+@Mapper(componentModel = "spring", uses = {UserMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface DocumentUploadMapper extends EntityMapper<DocumentUploadDTO, DocumentUpload> {
 
     @Mapping(source = "uploader.id", target = "uploaderId")

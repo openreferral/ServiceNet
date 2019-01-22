@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -20,7 +18,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * A Location.
@@ -29,17 +26,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "location")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Location implements Serializable {
+public class Location extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
 
     @NotNull
     @Column(name = "name", nullable = false)
@@ -75,11 +64,11 @@ public class Location implements Serializable {
     @JsonIgnore
     private PostalAddress postalAddress;
 
-    @OneToOne(mappedBy = "location")
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToOne(mappedBy = "location")
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private HolidaySchedule holidaySchedule;
 
@@ -90,6 +79,10 @@ public class Location implements Serializable {
     @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
+
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
+    @JoinColumn(unique = true)
+    private Organization organization;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

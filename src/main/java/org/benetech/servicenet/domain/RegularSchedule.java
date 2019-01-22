@@ -2,11 +2,8 @@ package org.benetech.servicenet.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -15,7 +12,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * A RegularSchedule.
@@ -23,17 +19,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "regular_schedule")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RegularSchedule implements Serializable {
+public class RegularSchedule extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
 
     @OneToOne
     @JoinColumn(unique = true)
@@ -52,13 +40,6 @@ public class RegularSchedule implements Serializable {
     private Set<OpeningHours> openingHours = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public Service getSrvc() {
         return srvc;

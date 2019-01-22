@@ -59,6 +59,12 @@ export class Contact extends React.Component<IContactProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.contact.serviceAtLocation">Service At Location</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.contact.externalDbId" />
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.contact.providerName" />
+                </th>
                 <th />
               </tr>
             </thead>

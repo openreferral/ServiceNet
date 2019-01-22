@@ -266,7 +266,6 @@ public class ConflictResourceIntTest {
         // Disconnect from session so that the updates on updatedConflict are not directly saved in db
         em.detach(fetchedConflict);
         Conflict updatedConflict = Conflict.builder()
-            .id(fetchedConflict.getId())
             .owner(fetchedConflict.getOwner())
             .currentValue(ConflictMother.UPDATED_CURRENT_VALUE)
             .currentValueDate(ConflictMother.UPDATED_CURRENT_VALUE_DATE)
@@ -278,7 +277,8 @@ public class ConflictResourceIntTest {
             .stateDate(ConflictMother.UPDATED_STATE_DATE)
             .createdDate(ConflictMother.UPDATED_CREATED_DATE)
             .resourceId(UUID_2)
-            .build();
+            .build()
+            .id(fetchedConflict.getId());
         ConflictDTO conflictDTO = conflictMapper.toDto(updatedConflict);
 
         restConflictMockMvc.perform(put("/api/conflicts")
