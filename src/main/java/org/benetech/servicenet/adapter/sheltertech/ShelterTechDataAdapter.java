@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.sheltertech;
 
+import com.google.common.collect.Sets;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechOrganizationMapper;
@@ -12,6 +13,7 @@ import org.benetech.servicenet.adapter.sheltertech.model.ShelterTechRawData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
 import org.slf4j.Logger;
@@ -61,7 +63,6 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
             Organization org = ShelterTechOrganizationMapper.INSTANCE.mapToOrganization(
                 orgRaw, rawData.getReport().getDocumentUpload());
             persistOrgsLocation(org);
-            ShelterTechPhoneMapper.INSTANCE.mapToPhones(orgRaw.getPhones());
 
             org.setServices(persistServices(orgRaw));
 
@@ -69,6 +70,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
                 .createOrUpdateOrganization(org, org.getExternalDbId(), org.getProviderName(),
                     rawData.getReport());
             organizations.add(savedOrg);
+            persistPhones(orgRaw, savedOrg);
         }
 
         return organizations;
@@ -93,6 +95,16 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         Location location = importService.createOrUpdateLocation(
             org.getLocation(), org.getLocation().getExternalDbId(), org.getLocation().getProviderName());
         org.setLocation(location);
+    }
+
+    private void persistPhones(OrganizationRaw orgRaw, Organization orgSaved) {
+        List<Phone> phones = ShelterTechPhoneMapper.INSTANCE.mapToPhones(orgRaw.getPhones());
+        for (Phone phone : phones) {
+            phone.setOrganization(orgSaved);
+            phone.setLocation(orgSaved.getLocation());
+        }
+
+        importService.createOrUpdatePhones(Sets.newHashSet(phones), orgSaved.getId());
     }
 
 }

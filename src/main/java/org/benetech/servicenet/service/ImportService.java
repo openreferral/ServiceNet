@@ -17,6 +17,7 @@ import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 
 import java.util.Set;
+import java.util.UUID;
 
 public interface ImportService {
 
@@ -34,6 +35,8 @@ public interface ImportService {
     Service createOrUpdateService(Service service, String externalDbId, String providerName, DataImportReport report);
 
     Set<Phone> createOrUpdatePhones(Set<Phone> phones, Service service, Location location);
+
+    Set<Phone> createOrUpdatePhones(Set<Phone> phones, UUID orgId);
 
     Eligibility createOrUpdateEligibility(Eligibility eligibility, Service service);
 

@@ -17,6 +17,7 @@ import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -37,6 +38,7 @@ import javax.persistence.EntityManager;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 public class ImportServiceImpl implements ImportService {
@@ -70,6 +72,9 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private SystemAccountService systemAccountService;
+
+    @Autowired
+    private PhoneRepository phoneRepository;
 
     @Override
     @Transactional
@@ -180,13 +185,14 @@ public class ImportServiceImpl implements ImportService {
             phone.setLocation(location);
         });
 
-        Set<Phone> common = new HashSet<>(phones);
-        common.retainAll(service.getPhones());
+        return persistPhones(phones, service.getPhones());
+    }
 
-        service.getPhones().stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
-        phones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.persist(phone));
-
-        return phones;
+    @Override
+    @Transactional
+    public Set<Phone> createOrUpdatePhones(Set<Phone> phones, UUID orgId) {
+        Set<Phone> orgPhones = phoneRepository.findAllByOrganization(orgId);
+        return persistPhones(phones, orgPhones);
     }
 
     @Override
@@ -324,6 +330,16 @@ public class ImportServiceImpl implements ImportService {
                 organizationMatchService.createOrUpdateOrganizationMatches(organization);
             }
         });
+    }
+
+    private Set<Phone> persistPhones(Set<Phone> phones, Set<Phone> savedPhones) {
+        Set<Phone> common = new HashSet<>(phones);
+        common.retainAll(savedPhones);
+
+        savedPhones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
+        phones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.persist(phone));
+
+        return phones;
     }
 
 }
