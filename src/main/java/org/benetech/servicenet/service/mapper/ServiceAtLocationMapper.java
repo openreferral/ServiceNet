@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity ServiceAtLocation and its DTO ServiceAtLocationDTO.
  */
-@Mapper(componentModel = "spring", uses = {ServiceMapper.class, LocationMapper.class})
+@Mapper(componentModel = "spring", uses = {ServiceMapper.class, LocationMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface ServiceAtLocationMapper extends EntityMapper<ServiceAtLocationDTO, ServiceAtLocation> {
 
     @Mapping(source = "srvc.id", target = "srvcId")

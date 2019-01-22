@@ -1,8 +1,10 @@
 package org.benetech.servicenet.adapter.eden.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class EdenAgency extends EdenBaseData {
 
     private String description;

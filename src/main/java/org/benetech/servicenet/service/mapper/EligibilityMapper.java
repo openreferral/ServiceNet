@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity Eligibility and its DTO EligibilityDTO.
  */
-@Mapper(componentModel = "spring", uses = {ServiceMapper.class})
+@Mapper(componentModel = "spring", uses = {ServiceMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface EligibilityMapper extends EntityMapper<EligibilityDTO, Eligibility> {
 
     @Mapping(source = "srvc.id", target = "srvcId")

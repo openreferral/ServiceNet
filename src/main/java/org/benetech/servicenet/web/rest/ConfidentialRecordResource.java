@@ -45,15 +45,18 @@ public class ConfidentialRecordResource {
      * POST  /confidential-records : Create a new confidentialRecord.
      *
      * @param confidentialRecordDTO the confidentialRecordDTO to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new confidentialRecordDTO, or with status 400 (Bad Request) if the confidentialRecord has already an ID
+     * @return the ResponseEntity with status 201 (Created) and with body the new confidentialRecordDTO,
+     * or with status 400 (Bad Request) if the confidentialRecord has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/confidential-records")
     @Timed
-    public ResponseEntity<ConfidentialRecordDTO> createConfidentialRecord(@RequestBody ConfidentialRecordDTO confidentialRecordDTO) throws URISyntaxException {
+    public ResponseEntity<ConfidentialRecordDTO> createConfidentialRecord(
+        @RequestBody ConfidentialRecordDTO confidentialRecordDTO) throws URISyntaxException {
         log.debug("REST request to save ConfidentialRecord : {}", confidentialRecordDTO);
         if (confidentialRecordDTO.getId() != null) {
-            throw new BadRequestAlertException("A new confidentialRecord cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("A new confidentialRecord cannot already have an ID",
+                ENTITY_NAME, "idexists");
         }
         ConfidentialRecordDTO result = confidentialRecordService.save(confidentialRecordDTO);
         return ResponseEntity.created(new URI("/api/confidential-records/" + result.getId()))
@@ -72,7 +75,8 @@ public class ConfidentialRecordResource {
      */
     @PutMapping("/confidential-records")
     @Timed
-    public ResponseEntity<ConfidentialRecordDTO> updateConfidentialRecord(@RequestBody ConfidentialRecordDTO confidentialRecordDTO) throws URISyntaxException {
+    public ResponseEntity<ConfidentialRecordDTO> updateConfidentialRecord(
+        @RequestBody ConfidentialRecordDTO confidentialRecordDTO) throws URISyntaxException {
         log.debug("REST request to update ConfidentialRecord : {}", confidentialRecordDTO);
         if (confidentialRecordDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -99,7 +103,8 @@ public class ConfidentialRecordResource {
      * GET  /confidential-records/:id : get the "id" confidentialRecord.
      *
      * @param id the id of the confidentialRecordDTO to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the confidentialRecordDTO, or with status 404 (Not Found)
+     * @return the ResponseEntity with status 200 (OK) and with body the confidentialRecordDTO,
+     * or with status 404 (Not Found)
      */
     @GetMapping("/confidential-records/{id}")
     @Timed

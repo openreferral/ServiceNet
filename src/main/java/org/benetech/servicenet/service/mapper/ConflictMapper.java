@@ -12,10 +12,12 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity Conflict and its DTO ConflictDTO.
  */
-@Mapper(componentModel = "spring", uses = {SystemAccountMapper.class})
+@Mapper(componentModel = "spring", uses = {SystemAccountMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface ConflictMapper extends EntityMapper<ConflictDTO, Conflict> {
 
     @Mapping(source = "owner.id", target = "ownerId")

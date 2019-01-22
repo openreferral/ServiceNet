@@ -29,7 +29,8 @@ public class ConfidentialRecordServiceImpl implements ConfidentialRecordService 
 
     private final ConfidentialRecordMapper confidentialRecordMapper;
 
-    public ConfidentialRecordServiceImpl(ConfidentialRecordRepository confidentialRecordRepository, ConfidentialRecordMapper confidentialRecordMapper) {
+    public ConfidentialRecordServiceImpl(ConfidentialRecordRepository confidentialRecordRepository,
+                                         ConfidentialRecordMapper confidentialRecordMapper) {
         this.confidentialRecordRepository = confidentialRecordRepository;
         this.confidentialRecordMapper = confidentialRecordMapper;
     }

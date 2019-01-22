@@ -7,10 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 /**
  * Mapper for the entity Metadata and its DTO MetadataDTO.
  */
-@Mapper(componentModel = "spring", uses = {UserMapper.class})
+@Mapper(componentModel = "spring", uses = {UserMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface MetadataMapper extends EntityMapper<MetadataDTO, Metadata> {
 
     @Mapping(source = "user.id", target = "userId")
