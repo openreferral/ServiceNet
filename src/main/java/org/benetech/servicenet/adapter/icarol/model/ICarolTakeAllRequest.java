@@ -1,4 +1,4 @@
-package org.benetech.servicenet.adapter.eden.model;
+package org.benetech.servicenet.adapter.icarol.model;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @RequiredArgsConstructor
-public class EdenTakeAllRequest implements Serializable {
+public class ICarolTakeAllRequest implements Serializable {
 
     private static final long serialVersionUID = -2600278568932255382L;
 
