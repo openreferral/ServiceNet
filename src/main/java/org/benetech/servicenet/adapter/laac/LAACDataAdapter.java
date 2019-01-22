@@ -41,65 +41,59 @@ public class LAACDataAdapter extends SingleDataAdapter {
         LAACDataMapper mapper = LAACDataMapper.INSTANCE;
 
         for (LAACData entity : data) {
-            Service service = saveService(mapper.extractService(entity), entity.getId(), providerName, report);
-            Location location = saveLocation(mapper.extractLocation(entity), entity.getId(), providerName);
-            Organization organization = saveOrganization(mapper.extractOrganization(entity), entity.getId(),
+            Service service = importService(mapper.extractService(entity), entity.getId(), providerName, report);
+            Location location = importLocation(mapper.extractLocation(entity), entity.getId(), providerName);
+            Organization organization = importOrganization(mapper.extractOrganization(entity), entity.getId(),
                 providerName, service, location, report);
 
-            saveEligibility(mapper.extractEligibility(entity), service);
-            saveContact(mapper.extractContact(entity), organization);
-            saveLanguages(mapper.extractLanguages(entity), service, location);
-            savePhysicalAddress(mapper.extractPhysicalAddress(entity), location);
-            savePhones(Collections.singleton(mapper.extractPhone(entity)), service, location);
-            saveServiceAtLocation(entity.getId(), providerName, service, location);
+            mapper.extractEligibility(entity).ifPresent(e -> importEligibility(e, service));
+            mapper.extractContact(entity).ifPresent(c ->importContact(c, organization));
+            mapper.extractPhysicalAddress(entity).ifPresent(pa -> importPhysicalAddress(pa, location));
+            importLanguages(mapper.extractLanguages(entity), service, location);
+            importPhones(Collections.singleton(mapper.extractPhone(entity)), service, location);
+            importServiceAtLocation(entity.getId(), providerName, service, location);
         }
 
         return report;
     }
 
-    private Service saveService(Service service, String externalDbId, String providerName, DataImportReport report) {
+    private Service importService(Service service, String externalDbId, String providerName, DataImportReport report) {
         return importService.createOrUpdateService(service, externalDbId, providerName, report);
     }
 
-    private Location saveLocation(Location location, String externalDbId, String providerName) {
+    private Location importLocation(Location location, String externalDbId, String providerName) {
         return importService.createOrUpdateLocation(location, externalDbId, providerName);
     }
 
-    private Organization saveOrganization(Organization organization, String externalDbId, String providerName,
-                                          Service service, Location location, DataImportReport report) {
+    private Organization importOrganization(Organization organization, String externalDbId, String providerName,
+                                            Service service, Location location, DataImportReport report) {
         return importService.createOrUpdateOrganization(organization,
             externalDbId, providerName, service, location, report);
     }
 
-    private void saveEligibility(Eligibility eligibility, Service service) {
-        if (eligibility != null && service != null) {
-            importService.createOrUpdateEligibility(eligibility, service);
-        }
+    private void importEligibility(Eligibility eligibility, Service service) {
+        importService.createOrUpdateEligibility(eligibility, service);
     }
 
-    private void saveContact(Contact contact, Organization organization) {
-        if (contact != null) {
-            importService.createOrUpdateContactsForOrganization(Collections.singleton(contact), organization);
-        }
+    private void importContact(Contact contact, Organization organization) {
+        importService.createOrUpdateContactsForOrganization(Collections.singleton(contact), organization);
     }
 
-    private void saveLanguages(Set<Language> languages, Service service, Location location) {
+    private void importLanguages(Set<Language> languages, Service service, Location location) {
         if (CollectionUtils.isNotEmpty(languages)) {
             importService.createOrUpdateLangsForService(languages, service, location);
         }
     }
 
-    private void savePhysicalAddress(PhysicalAddress physicalAddress, Location location) {
-        if (physicalAddress != null) {
-            importService.createOrUpdatePhysicalAddress(physicalAddress, location);
-        }
+    private void importPhysicalAddress(PhysicalAddress physicalAddress, Location location) {
+        importService.createOrUpdatePhysicalAddress(physicalAddress, location);
     }
 
-    private void savePhones(Set<Phone> phones, Service service, Location location) {
+    private void importPhones(Set<Phone> phones, Service service, Location location) {
         importService.createOrUpdatePhonesForService(phones, service, location);
     }
 
-    private void saveServiceAtLocation(String externalDbId, String providerName, Service service, Location location) {
+    private void importServiceAtLocation(String externalDbId, String providerName, Service service, Location location) {
         importService.createOrUpdateServiceAtLocation(new ServiceAtLocation(),
             externalDbId, providerName, service, location);
     }

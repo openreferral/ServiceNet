@@ -3,6 +3,8 @@ package org.benetech.servicenet.adapter.laac.utils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.PhysicalAddress;
 
+import java.util.Optional;
+
 public final class PhysicalAddressFormatUtil {
 
     private static final String COMMA_DELIMITER = ",";
@@ -13,47 +15,33 @@ public final class PhysicalAddressFormatUtil {
 
     private PhysicalAddressFormatUtil() { }
 
-    public static PhysicalAddress resolveAddress(String addressString) {
+    public static Optional<PhysicalAddress> resolveAddress(String addressString) {
         if (StringUtils.isBlank(addressString)) {
-            return null;
-        }
-        PhysicalAddress physicalAddress = new PhysicalAddress();
-        String[] addressLines = addressString.split(NEW_LINE_DELIMITER);
-        if (addressLines.length < 2 || addressLines.length > MAX_LINES_NUMBER) {
-            return null;
+            return Optional.empty();
         }
         // when == 3 1st is address
         // when == 4 1st is address, 2nd is attention
         // last is Country, last - 1 is City, State Postal Code
-        final int countryIndex = addressLines.length - 1;
-        final int cityStatePostalIndex = countryIndex - 1;
-        int addressIndex = -1;
-        int attentionIndex = -1;
-        if (addressLines.length > 2) {
-            addressIndex = 0;
-            if (addressLines.length == MAX_LINES_NUMBER) {
-                attentionIndex = 1;
-            }
+        String[] addressLines = addressString.split(NEW_LINE_DELIMITER);
+        if (addressLines.length < 2 || addressLines.length > MAX_LINES_NUMBER) {
+            return Optional.empty();
         }
 
-        physicalAddress.setCountry(addressLines[countryIndex]);
-        boolean result = handleCityStateAndPostalCode(physicalAddress, addressLines[cityStatePostalIndex]);
-        if (!result) {
-            return null;
+        PhysicalAddress physicalAddress = new PhysicalAddress();
+        boolean dataPresent = setCityStateAndPostalCodeIfPresent(physicalAddress, addressLines);
+        if (!dataPresent) {
+            return Optional.empty();
         }
+        physicalAddress.setCountry(getCountry(addressLines));
+        physicalAddress.setAddress1(getAddress(addressLines));
+        physicalAddress.setAttention(getAttention(addressLines));
 
-        if (addressIndex != -1) {
-            physicalAddress.setAddress1(addressLines[addressIndex]);
-        } else {
-            physicalAddress.setAddress1(NOT_AVAILABLE);
-        }
-        if (attentionIndex != -1) {
-            physicalAddress.setAttention(addressLines[attentionIndex]);
-        }
-        return physicalAddress;
+        return Optional.of(physicalAddress);
     }
 
-    private static boolean handleCityStateAndPostalCode(PhysicalAddress physicalAddress, String cityStatePostal) {
+    private static boolean setCityStateAndPostalCodeIfPresent(PhysicalAddress physicalAddress, String[] addressLines) {
+        final int cityStatePostalIndex = addressLines.length - 2;
+        String cityStatePostal = addressLines[cityStatePostalIndex];
         String[] addressParts = cityStatePostal.split(COMMA_DELIMITER);
         if (addressParts.length != 2) {
             return false;
@@ -63,5 +51,23 @@ public final class PhysicalAddressFormatUtil {
         physicalAddress.setStateProvince(statePostalParts[statePostalParts.length - 2]);
         physicalAddress.setPostalCode(statePostalParts[statePostalParts.length - 1]);
         return true;
+    }
+
+    private static String getAddress(String[] addressLines) {
+        if (addressLines.length > 2) {
+            return addressLines[0];
+        }
+        return NOT_AVAILABLE;
+    }
+
+    private static String getAttention(String[] addressLines) {
+        if (addressLines.length == MAX_LINES_NUMBER) {
+            return addressLines[1];
+        }
+        return null;
+    }
+
+    private static String getCountry(String[] addressLines) {
+        return addressLines[addressLines.length - 1];
     }
 }

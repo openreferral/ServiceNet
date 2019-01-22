@@ -19,6 +19,7 @@ import org.mapstruct.factory.Mappers;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,24 +37,20 @@ public interface LAACDataMapper {
     @Mapping(target = "number", source = "phone")
     Phone extractPhone(LAACData data);
 
-    default Eligibility extractEligibility(LAACData data) {
+    default Optional<Eligibility> extractEligibility(LAACData data) {
         String eligibilityString = data.getEligibility();
         if (StringUtils.isBlank(eligibilityString)) {
-            return null;
+            return Optional.empty();
         }
-        Eligibility eligibility = new Eligibility();
-        eligibility.setEligibility(eligibilityString);
-        return eligibility;
+        return Optional.of(new Eligibility().eligibility(eligibilityString));
     }
 
-    default Contact extractContact(LAACData data) {
+    default Optional<Contact> extractContact(LAACData data) {
         String contactName = data.getContactName();
         if (StringUtils.isBlank(contactName)) {
-            return null;
+            return Optional.empty();
         }
-        Contact contact = new Contact();
-        contact.setName(contactName);
-        return contact;
+        return Optional.of(new Contact().name(contactName));
     }
 
     default Organization extractOrganization(LAACData data) {
@@ -69,7 +66,7 @@ public interface LAACDataMapper {
         return organization;
     }
 
-    default PhysicalAddress extractPhysicalAddress(LAACData data) {
+    default Optional<PhysicalAddress> extractPhysicalAddress(LAACData data) {
         return PhysicalAddressFormatUtil.resolveAddress(data.getAddress());
     }
 

@@ -3,9 +3,11 @@ package org.benetech.servicenet.adapter.laac.utils;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class PhysicalAddressFormatUtilTest {
 
@@ -24,53 +26,54 @@ public class PhysicalAddressFormatUtilTest {
     private static final String NEW_LINE = "\n";
     private static final String SPACE = " ";
     private static final String COMMA = ", ";
+    private static final String NOT_AVAILABLE = "N/A";
 
     @Test
     public void testAddressFormats() {
-        PhysicalAddress result = PhysicalAddressFormatUtil.resolveAddress(FORMAT_1);
+        Optional<PhysicalAddress> result = PhysicalAddressFormatUtil.resolveAddress(FORMAT_1);
 
-        assertNotNull(result);
+        assertTrue(result.isPresent());
 
-        assertEquals(CITY, result.getCity());
-        assertEquals(STATE, result.getStateProvince());
-        assertEquals(POSTAL_CODE, result.getPostalCode());
-        assertEquals(COUNTRY, result.getCountry());
-        assertNull(result.getAddress1());
-        assertNull(result.getAttention());
-        assertNull(result.getRegion());
+        assertEquals(CITY, result.get().getCity());
+        assertEquals(STATE, result.get().getStateProvince());
+        assertEquals(POSTAL_CODE, result.get().getPostalCode());
+        assertEquals(COUNTRY, result.get().getCountry());
+        assertEquals(NOT_AVAILABLE, result.get().getAddress1());
+        assertNull(result.get().getAttention());
+        assertNull(result.get().getRegion());
 
         result = PhysicalAddressFormatUtil.resolveAddress(FORMAT_2);
 
-        assertNotNull(result);
+        assertTrue(result.isPresent());
 
-        assertEquals(CITY, result.getCity());
-        assertEquals(STATE, result.getStateProvince());
-        assertEquals(POSTAL_CODE, result.getPostalCode());
-        assertEquals(COUNTRY, result.getCountry());
-        assertEquals(ADDRESS, result.getAddress1());
-        assertEquals(ATTENTION, result.getAttention());
-        assertNull(result.getRegion());
+        assertEquals(CITY, result.get().getCity());
+        assertEquals(STATE, result.get().getStateProvince());
+        assertEquals(POSTAL_CODE, result.get().getPostalCode());
+        assertEquals(COUNTRY, result.get().getCountry());
+        assertEquals(ADDRESS, result.get().getAddress1());
+        assertEquals(ATTENTION, result.get().getAttention());
+        assertNull(result.get().getRegion());
 
         result = PhysicalAddressFormatUtil.resolveAddress(FORMAT_3);
 
-        assertNotNull(result);
+        assertTrue(result.isPresent());
 
-        assertEquals(CITY, result.getCity());
-        assertEquals(STATE, result.getStateProvince());
-        assertEquals(POSTAL_CODE, result.getPostalCode());
-        assertEquals(COUNTRY, result.getCountry());
-        assertEquals(ADDRESS, result.getAddress1());
-        assertNull(result.getAttention());
-        assertNull(result.getRegion());
+        assertEquals(CITY, result.get().getCity());
+        assertEquals(STATE, result.get().getStateProvince());
+        assertEquals(POSTAL_CODE, result.get().getPostalCode());
+        assertEquals(COUNTRY, result.get().getCountry());
+        assertEquals(ADDRESS, result.get().getAddress1());
+        assertNull(result.get().getAttention());
+        assertNull(result.get().getRegion());
     }
 
     @Test
     public void testInvalidFormats() {
-        assertNull(PhysicalAddressFormatUtil.resolveAddress(INVALID_FORMAT_1));
-        assertNull(PhysicalAddressFormatUtil.resolveAddress(INVALID_FORMAT_2));
-        assertNull(PhysicalAddressFormatUtil.resolveAddress(INVALID_FORMAT_3));
-        assertNull(PhysicalAddressFormatUtil.resolveAddress(null));
-        assertNull(PhysicalAddressFormatUtil.resolveAddress(SPACE));
+        assertTrue(PhysicalAddressFormatUtil.resolveAddress(INVALID_FORMAT_1).isEmpty());
+        assertTrue(PhysicalAddressFormatUtil.resolveAddress(INVALID_FORMAT_2).isEmpty());
+        assertTrue(PhysicalAddressFormatUtil.resolveAddress(INVALID_FORMAT_3).isEmpty());
+        assertTrue(PhysicalAddressFormatUtil.resolveAddress(null).isEmpty());
+        assertTrue(PhysicalAddressFormatUtil.resolveAddress(SPACE).isEmpty());
     }
 
     static {

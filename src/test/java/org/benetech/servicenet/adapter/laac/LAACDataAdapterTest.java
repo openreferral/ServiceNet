@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
