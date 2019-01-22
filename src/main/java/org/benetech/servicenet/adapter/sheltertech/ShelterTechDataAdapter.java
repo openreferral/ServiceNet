@@ -5,8 +5,11 @@ import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechOrganizationMapper;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechPhoneMapper;
+import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechPhysicalAddressMapper;
+import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechPostalAddressMapper;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechRegularScheduleMapper;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechServiceMapper;
+import org.benetech.servicenet.adapter.sheltertech.model.AddressRaw;
 import org.benetech.servicenet.adapter.sheltertech.model.OrganizationRaw;
 import org.benetech.servicenet.adapter.sheltertech.model.ServiceRaw;
 import org.benetech.servicenet.adapter.sheltertech.model.ShelterTechRawData;
@@ -15,6 +18,8 @@ import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
+import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
@@ -24,7 +29,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -50,22 +54,18 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         return importData.getReport();
     }
 
-    private List<Organization> persistOrganizations(ShelterTechRawData parsedData, SingleImportData rawData) {
-        List<Organization> organizations = new LinkedList<>();
+    private void persistOrganizations(ShelterTechRawData parsedData, SingleImportData rawData) {
         for (OrganizationRaw orgRaw : parsedData.getOrganizations()) {
             Organization org = ShelterTechOrganizationMapper.INSTANCE.mapToOrganization(
                 orgRaw, rawData.getReport().getDocumentUpload());
-            persistOrgsLocation(org);
+            persistOrgsLocation(orgRaw, org);
 
             org.setServices(persistServices(orgRaw, rawData.getReport()));
 
             Organization savedOrg = importService
                 .createOrUpdateOrganization(org, org.getExternalDbId(), org.getProviderName(), rawData.getReport());
-            organizations.add(savedOrg);
             persistPhones(orgRaw, savedOrg);
         }
-
-        return organizations;
     }
 
     private Set<Service> persistServices(OrganizationRaw organizationRaw, DataImportReport report) {
@@ -82,7 +82,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         return services;
     }
 
-    private void persistOrgsLocation(Organization org) {
+    private void persistOrgsLocation(OrganizationRaw orgRaw, Organization org) {
         if (org.getLocation() == null) {
             return;
         }
@@ -90,6 +90,26 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         Location location = importService.createOrUpdateLocation(
             org.getLocation(), org.getLocation().getExternalDbId(), org.getLocation().getProviderName());
         org.setLocation(location);
+
+        persistPostalAddress(orgRaw.getAddress(), location);
+
+        persistPhysicalAddress(orgRaw.getAddress(), location);
+    }
+
+    private void persistPostalAddress(AddressRaw addressRaw, Location location) {
+        PostalAddress postalAddress = ShelterTechPostalAddressMapper.INSTANCE
+            .mapAddressRawToPostalAddress(addressRaw);
+        if (postalAddress != null) {
+            importService.createOrUpdatePostalAddress(postalAddress, location);
+        }
+    }
+
+    private void persistPhysicalAddress(AddressRaw addressRaw, Location location) {
+        PhysicalAddress physicalAddress = ShelterTechPhysicalAddressMapper.INSTANCE
+            .mapAddressRawToPhysicalAddress(addressRaw);
+        if (physicalAddress != null) {
+            importService.createOrUpdatePhysicalAddress(physicalAddress, location);
+        }
     }
 
     private void persistPhones(OrganizationRaw orgRaw, Organization orgSaved) {

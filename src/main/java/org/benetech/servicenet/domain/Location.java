@@ -6,7 +6,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -68,11 +67,11 @@ public class Location implements Serializable {
     @Column(name = "provider_name")
     private String providerName;
 
-    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private PhysicalAddress physicalAddress;
 
-    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
     private PostalAddress postalAddress;
 
