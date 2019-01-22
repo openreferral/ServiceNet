@@ -9,6 +9,8 @@ export interface IContact {
   srvcName?: string;
   srvcId?: number;
   serviceAtLocationId?: number;
+  externalDbId?: string;
+  providerName?: string;
 }
 
 export const defaultValue: Readonly<IContact> = {};

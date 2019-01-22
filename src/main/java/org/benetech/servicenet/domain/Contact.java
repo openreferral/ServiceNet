@@ -47,6 +47,12 @@ public class Contact implements Serializable {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "external_db_id")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    private String providerName;
+
     @ManyToOne
     @JsonIgnoreProperties("")
     private Organization organization;

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.service.dto.ContactDTO;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public interface ContactService {
      * @return the entity
      */
     Optional<ContactDTO> findOne(UUID id);
+
+    Optional<Contact> findForExternalDb(String externalDbId, String providerNae);
 
     /**
      * Delete the "id" contact.
