@@ -26,7 +26,7 @@ public interface ShelterTechServiceMapper {
     @Mapping(source = "longDescription", target = "description")
     @Mapping(source = "url", target = "url")
     @Mapping(source = "email", target = "email")
-    @Mapping(target = "status", qualifiedByName = "statusFromCertified")
+    @Mapping(source = "certified", target = "status", qualifiedByName = "statusFromCertified")
     @Mapping(source = "interpretationServices", target = "interpretationServices")
     @Mapping(source = "applicationProcess", target = "applicationProcess")
     @Mapping(source = "waitTime", target = "waitTime")

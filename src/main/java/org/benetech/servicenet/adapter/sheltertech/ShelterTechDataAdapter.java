@@ -44,12 +44,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
     @Override
     @Transactional
     public DataImportReport importData(SingleImportData importData) {
-        ShelterTechRawData data;
-        if (importData.isFileUpload()) {
-            data = ShelterTechParser.collectData(importData.getSingleObjectData());
-        } else {
-            data = ShelterTechCollector.getData();
-        }
+        ShelterTechRawData data = ShelterTechParser.collectData(importData.getSingleObjectData());
         persistOrganizations(data, importData);
 
         return importData.getReport();

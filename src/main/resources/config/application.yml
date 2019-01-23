@@ -153,6 +153,8 @@ scheduler:
     uwba-data:
         interval: 604800 #one week
         api-key: ${UWBA_API_KEY:default_key}
+    shelter-tech-data:
+        interval: 604800 #one week
 
 # ===================================================================
 # Application specific properties

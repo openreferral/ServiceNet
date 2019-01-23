@@ -3,6 +3,7 @@ package org.benetech.servicenet.config;
 import org.benetech.servicenet.scheduler.AutowiringBeanJobFactory;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
+import org.benetech.servicenet.scheduler.ShelterTechDataUpdateJob;
 import org.benetech.servicenet.scheduler.UWBADataUpdateJob;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
@@ -26,6 +27,9 @@ public class QuartzConfig {
     private UWBADataUpdateJob uwbaDataUpdateJob;
 
     @Autowired
+    private ShelterTechDataUpdateJob shelterTechDataUpdateJob;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Bean
@@ -39,6 +43,7 @@ public class QuartzConfig {
         List<BaseJob> jobs = new ArrayList<>();
         jobs.add(edenDataUpdateJob);
         jobs.add(uwbaDataUpdateJob);
+        jobs.add(shelterTechDataUpdateJob);
 
         scheduler.setTriggers(mapToTriggers(jobs));
         scheduler.setJobDetails(mapToJobDetails(jobs));
