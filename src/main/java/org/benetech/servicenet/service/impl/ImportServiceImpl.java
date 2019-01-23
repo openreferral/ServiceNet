@@ -190,9 +190,9 @@ public class ImportServiceImpl implements ImportService {
     @Override
     @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
-                                                   Service service, Location location, DataImportReport report) {
+                                                   Service service, Set<Location> locations, DataImportReport report) {
         organization.setServices(Collections.singleton(service));
-        organization.setLocation(location);
+        organization.setLocations(locations);
         return createOrUpdateOrganization(organization, externalDbId, providerName, report);
     }
 

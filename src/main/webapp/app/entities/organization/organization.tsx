@@ -72,9 +72,6 @@ export class Organization extends React.Component<IOrganizationProps> {
                   <Translate contentKey="serviceNetApp.organization.updatedAt">Updated At</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="serviceNetApp.organization.location">Location</Translate>
-                </th>
-                <th>
                   <Translate contentKey="serviceNetApp.organization.replacedBy">Replaced By</Translate>
                 </th>
                 <th>
@@ -114,9 +111,6 @@ export class Organization extends React.Component<IOrganizationProps> {
                   <td>{organization.active ? 'true' : 'false'}</td>
                   <td>
                     <TextFormat type="date" value={organization.updatedAt} format={APP_DATE_FORMAT} />
-                  </td>
-                  <td>
-                    {organization.locationName ? <Link to={`location/${organization.locationId}`}>{organization.locationName}</Link> : ''}
                   </td>
                   <td>
                     {organization.replacedById ? (

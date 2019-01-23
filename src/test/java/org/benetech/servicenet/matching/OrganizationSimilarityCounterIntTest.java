@@ -19,6 +19,8 @@ import org.mockito.Spy;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashSet;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -80,7 +82,9 @@ public class OrganizationSimilarityCounterIntTest {
 
     @Test
     public void shouldReturnSumOfAllFieldsSimilarityRatio() {
-        float result = organizationSimilarityCounter.countSimilarityRatio(new Organization(), new Organization());
-        assertEquals(2.7f, result, PRECISION);
+        float result = organizationSimilarityCounter.countSimilarityRatio(
+            new Organization().locations(new HashSet<>()),
+            new Organization().locations(new HashSet<>()));
+        assertEquals(2.2f, result, PRECISION);
     }
 }

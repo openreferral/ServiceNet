@@ -16,8 +16,6 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
     unmappedTargetPolicy = IGNORE)
 public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organization> {
 
-    @Mapping(source = "location.id", target = "locationId")
-    @Mapping(source = "location.name", target = "locationName")
     @Mapping(source = "replacedBy.id", target = "replacedById")
     @Mapping(source = "sourceDocument.id", target = "sourceDocumentId")
     @Mapping(source = "sourceDocument.dateUploaded", target = "sourceDocumentDateUploaded")
@@ -25,12 +23,12 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     @Mapping(source = "account.name", target = "accountName")
     OrganizationDTO toDto(Organization organization);
 
-    @Mapping(source = "locationId", target = "location")
     @Mapping(source = "replacedById", target = "replacedBy")
     @Mapping(source = "sourceDocumentId", target = "sourceDocument")
     @Mapping(source = "accountId", target = "account")
     @Mapping(target = "funding", ignore = true)
     @Mapping(target = "programs", ignore = true)
+    @Mapping(target = "locations", ignore = true)
     @Mapping(target = "services", ignore = true)
     Organization toEntity(OrganizationDTO organizationDTO);
 

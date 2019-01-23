@@ -8,6 +8,7 @@ import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsServ
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.UUID;
 
 import static org.benetech.servicenet.matching.service.EntityEquivalentTestUtils.isMatchBetweenEntities;
@@ -25,15 +26,13 @@ public class OrganizationEquivalentsServiceUnitTest {
 
     @Test
     public void shouldGenerateProperSimpleEntityEquivalentsForOrganization() {
-        UUID location1 = UUID.randomUUID(), location2 = UUID.randomUUID();
         UUID funding1 = UUID.randomUUID(), funding2 = UUID.randomUUID();
 
-        Organization org1 = generateOrganization(location1, funding1);
-        Organization org2 = generateOrganization(location2, funding2);
+        Organization org1 = generateOrganization(null, funding1);
+        Organization org2 = generateOrganization(null, funding2);
 
         OrganizationEquivalent result = equivalentsService.generateEquivalent(org1, org2);
 
-        assertTrue(isMatchBetweenEntities(result, Location.class, location1, location2));
         assertTrue(isMatchBetweenEntities(result, Funding.class, funding1, funding2));
     }
 
@@ -67,6 +66,6 @@ public class OrganizationEquivalentsServiceUnitTest {
             funding.setId(fundingId);
         }
 
-        return result.location(location).funding(funding);
+        return result.locations(Collections.singleton(location)).funding(funding);
     }
 }

@@ -29,6 +29,7 @@ import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.ImportService;
 
+import java.util.Collections;
 import java.util.Set;
 
 public class HealthleadsDataPersistence {
@@ -140,7 +141,8 @@ public class HealthleadsDataPersistence {
     }
 
     private Organization getOrganization(HealthleadsOrganization organization, Location savedLocation) {
-        return mapper.extractOrganization(organization).location(savedLocation).active(true);
+        // TODO Add all locations to organization
+        return mapper.extractOrganization(organization).locations(Collections.singleton(savedLocation)).active(true);
     }
 
     private Service saveService(Service service, String externalDbId) {

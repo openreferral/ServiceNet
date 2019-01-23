@@ -1,7 +1,6 @@
 package org.benetech.servicenet.matching.service.impl;
 
 import org.benetech.servicenet.domain.Funding;
-import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.matching.model.EntityEquivalent;
 import org.benetech.servicenet.matching.model.OrganizationEquivalent;
@@ -26,9 +25,7 @@ public class OrganizationEquivalentsService implements EntityEquivalentsService<
 
     private Set<EntityEquivalent> generateOtherEquivalents(Organization base, Organization partner) {
         Set<EntityEquivalent> result = new HashSet<>();
-        if (base.getLocation() != null && partner.getLocation() != null) {
-            result.add(new EntityEquivalent(base.getLocation().getId(), partner.getLocation().getId(), Location.class));
-        }
+        // TODO LocationEquivalent
         if (base.getFunding() != null && partner.getFunding() != null) {
             result.add(new EntityEquivalent(base.getFunding().getId(), partner.getFunding().getId(), Funding.class));
         }

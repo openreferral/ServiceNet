@@ -38,7 +38,7 @@ public interface ImportService {
                                             DataImportReport report);
 
     Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
-                                            Service service, Location location, DataImportReport report);
+                                            Service service, Set<Location> location, DataImportReport report);
 
     Service createOrUpdateService(Service service, String externalDbId, String providerName, DataImportReport report);
 

@@ -52,6 +52,8 @@ public class CacheConfiguration {
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".contacts",
                 jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".locations",
+                jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Service.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".areas", jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".docs", jcacheConfiguration);

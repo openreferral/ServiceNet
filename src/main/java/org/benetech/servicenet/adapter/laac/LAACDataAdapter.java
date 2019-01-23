@@ -44,7 +44,7 @@ public class LAACDataAdapter extends SingleDataAdapter {
             Service service = importService(mapper.extractService(entity), entity.getId(), providerName, report);
             Location location = importLocation(mapper.extractLocation(entity), entity.getId(), providerName);
             Organization organization = importOrganization(mapper.extractOrganization(entity), entity.getId(),
-                providerName, service, location, report);
+                providerName, service, Collections.singleton(location), report);
 
             mapper.extractEligibility(entity).ifPresent(e -> importEligibility(e, service));
             mapper.extractContact(entity).ifPresent(c ->importContact(c, organization));
@@ -66,9 +66,9 @@ public class LAACDataAdapter extends SingleDataAdapter {
     }
 
     private Organization importOrganization(Organization organization, String externalDbId, String providerName,
-                                            Service service, Location location, DataImportReport report) {
+                                            Service service, Set<Location> locations, DataImportReport report) {
         return importService.createOrUpdateOrganization(organization,
-            externalDbId, providerName, service, location, report);
+            externalDbId, providerName, service, locations, report);
     }
 
     private void importEligibility(Eligibility eligibility, Service service) {

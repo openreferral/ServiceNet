@@ -69,9 +69,6 @@
             <column name="updated_at" type="datetime">
                 <constraints nullable="true"/>
             </column>
-            <column name="location_id" type="${uuidType}">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_organization_location_id"/>
-            </column>
             <column name="replaced_by_id" type="${uuidType}">
                 <constraints unique="true" nullable="true" uniqueConstraintName="ux_organization_replaced_by_id"/>
             </column>

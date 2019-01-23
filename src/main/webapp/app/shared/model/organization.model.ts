@@ -1,6 +1,7 @@
 import { Moment } from 'moment';
 import { IProgram } from 'app/shared/model//program.model';
 import { IService } from 'app/shared/model//service.model';
+import { ILocation } from 'app/shared/model//location.model';
 
 export interface IOrganization {
   id?: number;
@@ -17,8 +18,6 @@ export interface IOrganization {
   updatedAt?: Moment;
   externalDbId?: string;
   providerName?: string;
-  locationName?: string;
-  locationId?: number;
   replacedById?: number;
   sourceDocumentDateUploaded?: string;
   sourceDocumentId?: number;
@@ -27,6 +26,7 @@ export interface IOrganization {
   fundingId?: number;
   programs?: IProgram[];
   services?: IService[];
+  locations?: ILocation[];
 }
 
 export const defaultValue: Readonly<IOrganization> = {

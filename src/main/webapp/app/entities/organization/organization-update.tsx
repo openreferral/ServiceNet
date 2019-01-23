@@ -213,21 +213,6 @@ export class OrganizationUpdate extends React.Component<IOrganizationUpdateProps
                   />
                 </AvGroup>
                 <AvGroup>
-                  <Label for="location.name">
-                    <Translate contentKey="serviceNetApp.organization.location">Location</Translate>
-                  </Label>
-                  <AvInput id="organization-location" type="select" className="form-control" name="locationId">
-                    <option value="" key="0" />
-                    {locations
-                      ? locations.map(otherEntity => (
-                          <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.name}
-                          </option>
-                        ))
-                      : null}
-                  </AvInput>
-                </AvGroup>
-                <AvGroup>
                   <Label for="replacedBy.id">
                     <Translate contentKey="serviceNetApp.organization.replacedBy">Replaced By</Translate>
                   </Label>
