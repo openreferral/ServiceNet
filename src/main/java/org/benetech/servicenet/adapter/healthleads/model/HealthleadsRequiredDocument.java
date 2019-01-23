@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class HealthleadsRequiredDocument extends ServiceRelatedHealthleadsData {
+public class HealthleadsRequiredDocument extends HealthleadsBaseData {
 
     private String document;
 }

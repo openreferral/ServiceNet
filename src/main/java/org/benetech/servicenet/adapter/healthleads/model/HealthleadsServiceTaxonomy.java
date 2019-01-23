@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class HealthleadsServiceTaxonomy extends ServiceRelatedHealthleadsData {
+public class HealthleadsServiceTaxonomy extends HealthleadsBaseData {
 
     @SerializedName("taxonomy_id")
     private String taxonomyId;

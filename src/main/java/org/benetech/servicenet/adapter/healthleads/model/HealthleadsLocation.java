@@ -9,9 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 @EqualsAndHashCode(callSuper = true)
 public class HealthleadsLocation extends HealthleadsBaseData {
 
-    @SerializedName("organization_id")
-    private String organizationId;
-
     private String name;
 
     @SerializedName("alternate_name")

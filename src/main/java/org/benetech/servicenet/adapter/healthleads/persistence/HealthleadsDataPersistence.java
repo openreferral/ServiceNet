@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.healthleads.persistence;
 
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.healthleads.HealthLeadsDataMapper;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsBaseData;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsEligibility;
@@ -10,11 +11,9 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhone;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhysicalAddress;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsRequiredDocument;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsService;
-import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLocation;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
-import org.benetech.servicenet.adapter.healthleads.model.LocationRelatedHealthleadsData;
-import org.benetech.servicenet.adapter.healthleads.model.ServiceRelatedHealthleadsData;
+import org.benetech.servicenet.adapter.shared.model.storage.EntryDictionary;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
@@ -24,17 +23,16 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.ImportService;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 public class HealthleadsDataPersistence {
 
-    private Storage storage = new Storage();
+    private EntryDictionary<HealthleadsBaseData> dictionary = new EntryDictionary<>();
 
     private ImportService importService;
     private HealthLeadsDataMapper mapper;
@@ -52,86 +50,156 @@ public class HealthleadsDataPersistence {
     }
 
     public void addData(HealthleadsBaseData data) {
-        Class<? extends HealthleadsBaseData> clazz = data.getClass();
-
-        if (data instanceof HealthleadsPhone) {
-            handlePhones(data, clazz);
-        } else if (data instanceof HealthleadsService) {
-            handleServices(data, clazz);
+        if (isLocationBased(data)) {
+            dictionary.addData(data.getLocationId(), data, HealthleadsLocation.class);
+        } else if (isServiceBased(data)) {
+            dictionary.addData(data.getServiceId(), data, HealthleadsService.class);
+        } else if (isOrganizationBased(data)) {
+            dictionary.addData(data.getOrganizationId(), data, HealthleadsOrganization.class);
         } else {
-            if (data instanceof LocationRelatedHealthleadsData) {
-                storage.addBaseData(clazz, ((LocationRelatedHealthleadsData) data).getLocationId(), data);
-            } else if (data instanceof ServiceRelatedHealthleadsData) {
-                storage.addBaseData(clazz, ((ServiceRelatedHealthleadsData) data).getServiceId(), data);
-            } else {
-                storage.addBaseData(clazz, data.getId(), data);
-            }
+            dictionary.addData(data.getId(), data, HealthleadsBaseData.class);
         }
     }
 
     public DataImportReport persistData() {
-        for (HealthleadsLocation location : storage.getValuesOfClass(HealthleadsLocation.class)) {
-            Location savedLocation = saveLocation(mapper.extractLocation(location), location.getId());
-
-            HealthleadsOrganization organization = storage
-                .getBaseData(HealthleadsOrganization.class, location.getOrganizationId());
-            Organization savedOrganization
-                = saveOrganization(getOrganization(organization, savedLocation), organization.getId());
-
-            savePhysicalAddress(mapper.extractPhysicalAddress(storage
-                .getBaseData(HealthleadsPhysicalAddress.class, location.getId())), savedLocation);
-
-            for (HealthleadsService service : storage.getBaseDataSet(HealthleadsService.class, organization.getId())) {
-                Service savedService = saveService(getService(service, savedOrganization), service.getId());
-
-                saveLocationRelatedData(location.getId(), savedService, savedLocation);
-                saveTaxonomyRelatedData(service.getId(), savedService);
-
-                saveEligibility(mapper.extractEligibility(storage
-                    .getBaseData(HealthleadsEligibility.class, service.getId())), savedService);
-
-                saveRequiredDocument(storage.getBaseData(HealthleadsRequiredDocument.class, service.getId()), savedService);
-            }
-        }
+        Set<HealthleadsService> processedServices = saveOrganizationsAndServices();
+        saveServicesWithoutOrganization(processedServices);
         return report;
     }
 
+    private void saveServicesWithoutOrganization(Set<HealthleadsService> processedServices) {
+        Set<HealthleadsService> services = dictionary.getEntitiesOfClass(HealthleadsService.class);
+        services.removeAll(processedServices);
+        saveServicesAndRelatedData(services, null);
+    }
+
+    private Set<HealthleadsService> saveOrganizationsAndServices() {
+        Set<HealthleadsService> processedServices = new HashSet<>();
+        for (HealthleadsOrganization organization : dictionary.getEntitiesOfClass(HealthleadsOrganization.class)) {
+            String organizationId = organization.getId();
+
+            Set<HealthleadsLocation> locations = dictionary.getRelatedEntities(
+                HealthleadsLocation.class, organizationId, HealthleadsOrganization.class);
+
+            Organization savedOrg = saveOrganization(getOrganization(organization), organizationId);
+
+            saveLocationsAndRelatedData(locations, savedOrg);
+
+            Set<HealthleadsService> services = dictionary.getRelatedEntities(
+                HealthleadsService.class, organizationId, HealthleadsOrganization.class);
+
+            processedServices.addAll(saveServicesAndRelatedData(services, savedOrg));
+        }
+        return processedServices;
+    }
+
+    private Set<HealthleadsService> saveServicesAndRelatedData(Set<HealthleadsService> services, Organization savedOrg) {
+        Set<HealthleadsService> processedServices = new HashSet<>();
+        for (HealthleadsService service : services) {
+            String externalServiceId = service.getId();
+            Service savedService = saveService(getService(service, savedOrg), externalServiceId);
+            processedServices.add(service);
+
+            saveTaxonomyRelatedData(externalServiceId, savedService);
+            savePhonesForService(savedService, externalServiceId);
+            saveLanguagesForService(savedService, externalServiceId);
+
+            saveEligibilities(dictionary.getRelatedEntities(
+                HealthleadsEligibility.class, service.getId(), HealthleadsService.class),
+                savedService);
+
+            saveRequiredDocuments(dictionary.getRelatedEntities(
+                HealthleadsRequiredDocument.class, externalServiceId, HealthleadsService.class),
+                savedService);
+        }
+        return processedServices;
+    }
+
+    private void saveLanguagesForService(Service savedService, String externalServiceId) {
+        saveLanguagesForService(dictionary.getRelatedEntities(
+            HealthleadsLanguage.class, externalServiceId, HealthleadsService.class), 
+            savedService);
+    }
+
+    private void saveLanguagesForService(Set<HealthleadsLanguage> healthleadsLanguages, Service savedService) {
+        for (HealthleadsLanguage language : healthleadsLanguages) {
+            saveLanguages(mapper.extractLanguages(language), savedService, null);   
+        }
+    }
+
+    private void saveLanguagesForLocation(Location savedLocation, String externalLocationId) {
+        saveLanguagesForLocation(dictionary.getRelatedEntities(
+            HealthleadsLanguage.class, externalLocationId, HealthleadsLocation.class),
+            savedLocation);
+    }
+
+    private void saveLanguagesForLocation(Set<HealthleadsLanguage> healthleadsLanguages, Location savedLocation) {
+        for (HealthleadsLanguage language : healthleadsLanguages) {
+            saveLanguages(mapper.extractLanguages(language), null, savedLocation);
+        }
+    }
+
+    private void savePhonesForService(Service savedService, String externalServiceId) {
+        savePhonesForService(dictionary.getRelatedEntities(
+            HealthleadsPhone.class, externalServiceId, HealthleadsService.class),
+            savedService);
+    }
+
+    private void savePhonesForService(Set<HealthleadsPhone> phonesForService, Service savedService) {
+        savePhones(mapper.extractPhones(phonesForService), savedService, null);
+    }
+
+    private void savePhonesForLocation(Location savedLocation, String externalLocationId) {
+        savePhonesForLocation(dictionary.getRelatedEntities(
+            HealthleadsPhone.class, externalLocationId, HealthleadsLocation.class),
+            savedLocation);
+    }
+
+    private void savePhonesForLocation(Set<HealthleadsPhone> phonesForService, Location savedLocation) {
+        savePhones(mapper.extractPhones(phonesForService), null, savedLocation);
+    }
+
+    private void savePhysicalAddresses(Location savedLocation, String locationId) {
+        dictionary.getRelatedEntities(
+            HealthleadsPhysicalAddress.class, locationId, HealthleadsLocation.class)
+            .forEach(pa -> savePhysicalAddress(mapper.extractPhysicalAddress(pa), savedLocation));
+    }
+
     private void saveTaxonomyRelatedData(String serviceId, Service savedService) {
-        HealthleadsServiceTaxonomy serviceTaxonomy = storage
-            .getBaseData(HealthleadsServiceTaxonomy.class, serviceId);
-        HealthleadsTaxonomy taxonomy = storage
-            .getBaseData(HealthleadsTaxonomy.class, serviceTaxonomy.getTaxonomyId());
-        Taxonomy extractedTaxonomy = saveTaxonomy(mapper.extractTaxonomy(taxonomy), taxonomy.getId());
-        saveServiceTaxonomy(mapper.extractServiceTaxonomy(serviceTaxonomy),
-            serviceTaxonomy.getId(), savedService, extractedTaxonomy);
+        Set<HealthleadsServiceTaxonomy> serviceTaxonomies = dictionary.getRelatedEntities(
+            HealthleadsServiceTaxonomy.class, serviceId, HealthleadsService.class);
+
+        for (HealthleadsServiceTaxonomy serviceTaxonomy : serviceTaxonomies) {
+            Set<HealthleadsTaxonomy> taxonomies = dictionary.getRelatedEntities(
+                HealthleadsTaxonomy.class, serviceTaxonomy.getTaxonomyId(), HealthleadsBaseData.class);
+            for (HealthleadsTaxonomy taxonomy : taxonomies) {
+                Taxonomy savedTaxonomy = saveTaxonomy(mapper.extractTaxonomy(taxonomy), taxonomy.getId());
+                saveServiceTaxonomy(mapper.extractServiceTaxonomy(serviceTaxonomy),
+                    serviceTaxonomy.getId(), savedService, savedTaxonomy);
+            }
+        }
     }
 
-    private void saveLocationRelatedData(String locationId, Service savedService, Location savedLocation) {
-        Set<HealthleadsPhone> phoneSet = storage.getBaseDataSet(HealthleadsPhone.class, locationId);
-        savePhones(mapper.extractPhones(phoneSet), savedService, savedLocation);
-
-        HealthleadsLanguage language = storage
-            .getBaseData(HealthleadsLanguage.class, locationId);
-        saveLanguages(mapper.extractLanguages(language), savedService, savedLocation);
-
-        HealthleadsServiceAtLocation serviceAtLocation = storage
-            .getBaseData(HealthleadsServiceAtLocation.class, locationId);
-        saveServiceAtLocation(mapper.extractServiceAtLocation(serviceAtLocation),
-            serviceAtLocation.getId(), savedService, savedLocation);
+    private void saveLocationsAndRelatedData(Set<HealthleadsLocation> healthleadsLocations,
+                                                      Organization savedOrg) {
+        for (HealthleadsLocation healthleadsLocation : healthleadsLocations) {
+            String externalLocationId = healthleadsLocation.getId();
+            Location savedLocation = saveLocation(mapper.extractLocation(healthleadsLocation),
+                externalLocationId, savedOrg);
+            if (savedLocation != null) {
+                savePhysicalAddresses(savedLocation, externalLocationId);
+                savePhonesForLocation(savedLocation, externalLocationId);
+                saveLanguagesForLocation(savedLocation, externalLocationId);
+            }
+        }
     }
 
-    private void handlePhones(HealthleadsBaseData data, Class<? extends HealthleadsBaseData> clazz) {
-        storage.addBaseDataToSet(clazz, ((HealthleadsPhone) data).getLocationId(), data);
-    }
-    
-    private void handleServices(HealthleadsBaseData data, Class<? extends HealthleadsBaseData> clazz) {
-        storage.addBaseDataToSet(clazz, ((HealthleadsService) data).getOrganizationId(), data);
-    }
-
-    private Location saveLocation(Location location, String externalDbId) {
-        location.setExternalDbId(externalDbId);
+    private Location saveLocation(Location location, String externalLocationId, Organization savedOrg) {
+        location.setExternalDbId(externalLocationId);
         location.setProviderName(providerName);
-        return importService.createOrUpdateLocation(location, externalDbId, providerName);
+        location.setOrganization(savedOrg);
+        return importService.createOrUpdateLocation(
+            location, externalLocationId, providerName);
     }
 
     private Organization saveOrganization(Organization organization, String externalDbId) {
@@ -140,9 +208,8 @@ public class HealthleadsDataPersistence {
         return importService.createOrUpdateOrganization(organization, externalDbId, providerName, report);
     }
 
-    private Organization getOrganization(HealthleadsOrganization organization, Location savedLocation) {
-        // TODO Add all locations to organization
-        return mapper.extractOrganization(organization).locations(Collections.singleton(savedLocation)).active(true);
+    private Organization getOrganization(HealthleadsOrganization organization) {
+        return mapper.extractOrganization(organization).active(true);
     }
 
     private Service saveService(Service service, String externalDbId) {
@@ -160,20 +227,15 @@ public class HealthleadsDataPersistence {
         importService.createOrUpdatePhysicalAddress(physicalAddress, location);
     }
 
-    private void saveServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
-                                       Service service, Location location) {
-        serviceAtLocation.setExternalDbId(externalDbId);
-        serviceAtLocation.setProviderName(providerName);
-        importService.createOrUpdateServiceAtLocation(serviceAtLocation, externalDbId, providerName, service, location);
-    }
-
-    private void savePhones(Set<Phone> phones,
-                            Service service, Location location) {
+    private void savePhones(Set<Phone> phones, Service service, Location location) {
         importService.createOrUpdatePhonesForService(phones, service, location);
     }
 
-    private void saveEligibility(Eligibility eligibility, Service service) {
-        importService.createOrUpdateEligibility(eligibility, service);
+    private void saveEligibilities(Set<HealthleadsEligibility> healthleadsEligibilities, Service service) {
+        for (HealthleadsEligibility healthleadsEligibility : healthleadsEligibilities) {
+            Eligibility eligibility = mapper.extractEligibility(healthleadsEligibility);
+            importService.createOrUpdateEligibility(eligibility, service);
+        }
     }
 
     private void saveLanguages(Set<Language> languages,
@@ -194,13 +256,25 @@ public class HealthleadsDataPersistence {
         importService.createOrUpdateServiceTaxonomy(serviceTaxonomy, externalDbId, providerName, service, taxonomy);
     }
 
-    private void saveRequiredDocument(HealthleadsRequiredDocument healthleadsRequiredDocument, Service service) {
-        RequiredDocument requiredDocument = mapper.extractRequiredDocument(healthleadsRequiredDocument);
-        String externalDbId = healthleadsRequiredDocument.getId();
-        if (requiredDocument != null) {
+    private void saveRequiredDocuments(Set<HealthleadsRequiredDocument> healthleadsRequiredDocuments, Service service) {
+        for (HealthleadsRequiredDocument healthleadsRequiredDocument : healthleadsRequiredDocuments) {
+            RequiredDocument requiredDocument = mapper.extractRequiredDocument(healthleadsRequiredDocument);
+            String externalDbId = healthleadsRequiredDocument.getId();
             requiredDocument.setExternalDbId(externalDbId);
             requiredDocument.setProviderName(providerName);
             importService.createOrUpdateRequiredDocument(requiredDocument, externalDbId, providerName, service);
         }
+    }
+
+    private boolean isServiceBased(HealthleadsBaseData data) {
+        return StringUtils.isNotBlank(data.getServiceId());
+    }
+
+    private boolean isLocationBased(HealthleadsBaseData data) {
+        return StringUtils.isNotBlank(data.getLocationId());
+    }
+
+    private boolean isOrganizationBased(HealthleadsBaseData data) {
+        return StringUtils.isNotBlank(data.getOrganizationId());
     }
 }
