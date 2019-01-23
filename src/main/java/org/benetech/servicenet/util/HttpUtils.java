@@ -22,9 +22,15 @@ public final class HttpUtils {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
 
-    public static Header[] getStandardHeaders(String token) {
+    public static Header[] getStandardAuthHeaders(String token) {
         List<Header> result = new ArrayList<>();
         result.add(new BasicHeader(AUTHORIZATION, getBearerAuthValue(token)));
+        result.add(new BasicHeader(CONTENT_TYPE, APPLICATION_JSON));
+        return result.toArray(new Header[0]);
+    }
+
+    public static Header[] getStandardHeaders() {
+        List<Header> result = new ArrayList<>();
         result.add(new BasicHeader(CONTENT_TYPE, APPLICATION_JSON));
         return result.toArray(new Header[0]);
     }

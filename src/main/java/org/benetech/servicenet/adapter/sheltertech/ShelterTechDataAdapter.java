@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.PROVIDER_NAME;
 
@@ -47,7 +48,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         if (importData.isFileUpload()) {
             data = ShelterTechParser.collectData(importData.getSingleObjectData());
         } else {
-            data = ShelterTechParser.collectData(importData.getSingleObjectData()); // TODO: via API
+            data = ShelterTechCollector.getData();
         }
         persistOrganizations(data, importData);
 
@@ -113,7 +114,8 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
     }
 
     private void persistPhones(OrganizationRaw orgRaw, Organization orgSaved) {
-        List<Phone> phones = ShelterTechPhoneMapper.INSTANCE.mapToPhones(orgRaw.getPhones());
+        List<Phone> phones = ShelterTechPhoneMapper.INSTANCE.mapToPhones(
+            orgRaw.getPhones().stream().filter(phone -> phone.getNumber() != null).collect(Collectors.toList()));
         for (Phone phone : phones) {
             phone.setOrganization(orgSaved);
             phone.setLocation(orgSaved.getLocation());
