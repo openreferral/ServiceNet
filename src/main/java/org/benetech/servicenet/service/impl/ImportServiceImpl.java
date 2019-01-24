@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -19,8 +20,8 @@ import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
-import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
@@ -30,8 +31,9 @@ import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
-import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.SystemAccountService;
+import org.benetech.servicenet.service.TaxonomyService;
+import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
@@ -42,7 +44,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+/**
+ * Import service for data from all providers
+ *
+ * IMPORTANT: Some objects might have isConfidential flag set to true
+ *            and we should not persist those objects in the database.
+ *            Each single-entity import method should be annotated with @ConfidentialFilter to filter it automatically.
+ *            Each collection import method should verify the flag manually.
+ */
 @Component
 public class ImportServiceImpl implements ImportService {
 
@@ -80,6 +91,7 @@ public class ImportServiceImpl implements ImportService {
     private ContactService contactService;
 
     @Override
+    @ConfidentialFilter
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
         Optional<Location> locationFromDb = locationService.findForExternalDb(externalDbId, providerName);
         if (locationFromDb.isPresent()) {
@@ -97,6 +109,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public PhysicalAddress createOrUpdatePhysicalAddress(PhysicalAddress physicalAddress, Location location) {
         if (location.getPhysicalAddress() != null) {
             physicalAddress.setId(location.getPhysicalAddress().getId());
@@ -110,6 +123,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public PostalAddress createOrUpdatePostalAddress(PostalAddress postalAddress, Location location) {
         if (location.getPostalAddress() != null) {
             postalAddress.setId(location.getPostalAddress().getId());
@@ -123,6 +137,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public AccessibilityForDisabilities createOrUpdateAccessibility(AccessibilityForDisabilities accessibility,
                                                                     Location location) {
         Optional<AccessibilityForDisabilities> existingAccessibility = getExistingAccessibility(accessibility, location);
@@ -138,6 +153,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
                                                    DataImportReport report) {
         Optional<Organization> organizationFromDb = organizationService.findForExternalDb(externalDbId, providerName);
@@ -161,6 +177,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
                                                    Service service, Location location, DataImportReport report) {
         organization.setServices(Collections.singleton(service));
@@ -169,6 +186,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public Service createOrUpdateService(Service service, String externalDbId, String providerName,
                                          DataImportReport report) {
         Optional<Service> serviceFromDb = serviceService.findForExternalDb(externalDbId, providerName);
@@ -191,6 +209,12 @@ public class ImportServiceImpl implements ImportService {
 
     @Override
     public Set<Phone> createOrUpdatePhonesForService(Set<Phone> phones, Service service, Location location) {
+        Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .collect(Collectors.toSet());
+        return createOrUpdateFilteredPhonesForService(filtered, service, location);
+    }
+
+    private Set<Phone> createOrUpdateFilteredPhonesForService(Set<Phone> phones, Service service, Location location) {
         phones.forEach(phone ->  {
             phone.setSrvc(service);
             phone.setLocation(location);
@@ -206,6 +230,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public Eligibility createOrUpdateEligibility(Eligibility eligibility, Service service) {
         if (service.getEligibility() != null) {
             eligibility.setId(service.getEligibility().getId());
@@ -219,6 +244,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public Funding createOrUpdateFundingForOrganization(Funding funding, Organization organization) {
         if (organization.getFunding() != null) {
             funding.setId(organization.getFunding().getId());
@@ -232,6 +258,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public Funding createOrUpdateFundingForService(Funding funding, Service service) {
         if (service.getFunding() != null) {
             funding.setId(service.getFunding().getId());
@@ -246,6 +273,12 @@ public class ImportServiceImpl implements ImportService {
 
     @Override
     public Set<Language> createOrUpdateLangsForService(Set<Language> langs, Service service, Location location) {
+        Set<Language> filtered = langs.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .collect(Collectors.toSet());
+        return createOrUpdateFilteredLangsForService(filtered, service, location);
+    }
+
+    private Set<Language> createOrUpdateFilteredLangsForService(Set<Language> langs, Service service, Location location) {
         langs.forEach(lang ->  {
             lang.setSrvc(service);
             lang.setLocation(location);
@@ -262,6 +295,12 @@ public class ImportServiceImpl implements ImportService {
 
     @Override
     public Set<Program> createOrUpdateProgramsForOrganization(Set<Program> programs, Organization organization) {
+        Set<Program> filtered = programs.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .collect(Collectors.toSet());
+        return createOrUpdateFilteredProgramsForOrganization(filtered, organization);
+    }
+
+    private Set<Program> createOrUpdateFilteredProgramsForOrganization(Set<Program> programs, Organization organization) {
         programs.forEach(p -> p.setOrganization(organization));
 
         Set<Program> common = new HashSet<>(programs);
@@ -290,6 +329,13 @@ public class ImportServiceImpl implements ImportService {
 
     private void createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location,
                                             RegularSchedule schedule) {
+        Set<OpeningHours> filtered = openingHours.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .collect(Collectors.toSet());
+        createOrUpdateFilteredOpeningHours(filtered, service, location, schedule);
+    }
+
+    private void createOrUpdateFilteredOpeningHours(Set<OpeningHours> openingHours, Service service, Location location,
+                                            RegularSchedule schedule) {
         if (schedule != null) {
             Set<OpeningHours> common = new HashSet<>(openingHours);
             common.retainAll(schedule.getOpeningHours());
@@ -305,6 +351,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public ServiceAtLocation createOrUpdateServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
                                                              String providerName, Service service, Location location) {
         serviceAtLocation.setSrvc(service);
@@ -323,6 +370,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName) {
         Optional<Taxonomy> taxonomyFromDb = taxonomyService.findForExternalDb(externalDbId, providerName);
 
@@ -336,6 +384,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public ServiceTaxonomy createOrUpdateServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String externalDbId,
                                                          String providerName, Service service, Taxonomy taxonomy) {
         serviceTaxonomy.setSrvc(service);
@@ -354,6 +403,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public RequiredDocument createOrUpdateRequiredDocument(RequiredDocument requiredDocument, String externalDbId,
                                                            String providerName, Service service) {
         requiredDocument.setSrvc(service);
@@ -388,7 +438,19 @@ public class ImportServiceImpl implements ImportService {
         return contacts;
     }
 
+    private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source) {
+        Set<Contact> filtered = contacts.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .collect(Collectors.toSet());
+        createOrUpdateFilteredContacts(filtered, common, source);
+    }
+
+    private void createOrUpdateFilteredContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source) {
+        source.stream().filter(c -> !common.contains(c)).forEach(c -> em.remove(c));
+        contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
+    }
+
     @Override
+    @ConfidentialFilter
     public HolidaySchedule createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location) {
         if (location.getHolidaySchedule() != null) {
             schedule.setId(location.getHolidaySchedule().getId());
@@ -402,6 +464,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @ConfidentialFilter
     public HolidaySchedule createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service) {
         if (service.getHolidaySchedule() != null) {
             schedule.setId(service.getHolidaySchedule().getId());
@@ -412,11 +475,6 @@ public class ImportServiceImpl implements ImportService {
         }
 
         return schedule;
-    }
-
-    private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source) {
-        source.stream().filter(c -> !common.contains(c)).forEach(c -> em.remove(c));
-        contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
     }
 
     private Optional<AccessibilityForDisabilities> getExistingAccessibility(AccessibilityForDisabilities accessibility,

@@ -3,7 +3,7 @@ package org.benetech.servicenet.adapter.icarol.model;
 import lombok.Data;
 
 @Data
-public class ICarolRelated {
+public class ICarolRelated extends ICarolElement {
 
     private String id;
 

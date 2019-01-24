@@ -3,7 +3,7 @@ package org.benetech.servicenet.adapter.icarol.model;
 import lombok.Data;
 
 @Data
-public class ICarolDay {
+public class ICarolDay extends ICarolElement {
 
     private String dayOfWeek;
 

@@ -3,7 +3,6 @@ package org.benetech.servicenet.listener;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.enumeration.ActionType;
 import org.benetech.servicenet.service.MetadataService;
-import org.benetech.servicenet.util.HibernateListenerUtils;
 import org.hibernate.event.spi.PostUpdateEvent;
 import org.hibernate.event.spi.PostUpdateEventListener;
 import org.hibernate.persister.entity.EntityPersister;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class HibernatePostUpdateListener implements PostUpdateEventListener {
+public class HibernatePostUpdateListener extends AbstractHibernateListener implements PostUpdateEventListener {
 
     private static final long MINUTE_IN_SECONDS = 60;
 
@@ -30,7 +29,7 @@ public class HibernatePostUpdateListener implements PostUpdateEventListener {
 
     @Override
     public void onPostUpdate(PostUpdateEvent event) {
-        if (HibernateListenerUtils.shouldTrackMetadata(event.getEntity())) {
+        if (shouldTrackMetadata(event.getEntity())) {
             persistMetaData(event);
         }
     }

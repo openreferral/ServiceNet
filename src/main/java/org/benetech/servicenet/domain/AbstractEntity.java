@@ -22,5 +22,5 @@ public abstract class AbstractEntity {
     private UUID id;
 
     @Transient
-    private boolean isConfidential;
+    private Boolean isConfidential;
 }

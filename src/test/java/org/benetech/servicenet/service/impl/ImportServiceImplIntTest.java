@@ -349,7 +349,7 @@ public class ImportServiceImplIntTest {
 
         assertEquals(dbSize - 1, phoneService.findAll().size());
         assertEquals(1, updated.size());
-        assertTrue(updated.contains(newPhone));
+        assertTrue(updated.stream().anyMatch(phone -> phone.equals(newPhone)));
     }
 
     @Test
@@ -432,7 +432,7 @@ public class ImportServiceImplIntTest {
 
         assertEquals(dbSize - 1, languageService.findAll().size());
         assertEquals(1, updated.size());
-        assertTrue(updated.contains(newLanguage));
+        assertTrue(updated.stream().anyMatch(lang -> lang.equals(newLanguage)));
     }
 
     @Test
@@ -493,7 +493,7 @@ public class ImportServiceImplIntTest {
 
         assertEquals(scheduleDbSize, regularScheduleService.findAll().size());
         assertEquals(hoursDbSize - 1, openingHoursService.findAll().size());
-        assertTrue(updated.contains(newOpeningHours));
+        assertTrue(updated.stream().anyMatch(hours -> hours.equals(newOpeningHours)));
     }
 
     private Location generateNewLocation() {
