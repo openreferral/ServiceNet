@@ -41,11 +41,14 @@ class PersistenceManager {
             mapper.extractPhones(program.getContactDetails()), service, location);
     }
     
-    Optional<Location> importLocation(ImportData importData, ICarolSite site) {
+    Optional<Location> importLocation(ImportData importData, ICarolSite site, Organization savedOrg) {
         return mapper.extractLocation(
             site.getContactDetails(), site.getId(), importData.getProviderName())
-            .flatMap(extractedLocation -> Optional.ofNullable(importService.createOrUpdateLocation(
-                    extractedLocation, site.getId(), importData.getProviderName())));
+            .flatMap(extractedLocation -> {
+                extractedLocation.setOrganization(savedOrg);
+                return Optional.ofNullable(importService.createOrUpdateLocation(
+                    extractedLocation, site.getId(), importData.getProviderName()));
+            });
     }
 
     void importPhysicalAddress(ICarolSite site, Location location) {
