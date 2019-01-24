@@ -13,6 +13,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
@@ -21,6 +22,7 @@ import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 
 import java.util.Set;
+import java.util.UUID;
 
 public interface ImportService {
 
@@ -41,6 +43,8 @@ public interface ImportService {
     Service createOrUpdateService(Service service, String externalDbId, String providerName, DataImportReport report);
 
     Set<Phone> createOrUpdatePhonesForService(Set<Phone> phones, Service service, Location location);
+
+    Set<Phone> createOrUpdatePhonesForOrganization(Set<Phone> phones, UUID orgId);
 
     Eligibility createOrUpdateEligibility(Eligibility eligibility, Service service);
 
@@ -74,4 +78,12 @@ public interface ImportService {
     HolidaySchedule createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service);
 
     Set<Program> createOrUpdateProgramsForOrganization(Set<Program> programs, Organization organization);
+
+    /**
+     * @param schedule which is respected by the service.
+     * @param service with set database uuid.
+     * @return a saved regular schedule.
+     */
+    RegularSchedule createOrUpdateRegularSchedule(RegularSchedule schedule, Service service);
+
 }

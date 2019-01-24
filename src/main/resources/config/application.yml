@@ -62,7 +62,7 @@ spring:
         mode: HTML
     servlet.multipart:
         max-request-size: 100MB
-        max-file-size: 5MB
+        max-file-size: 10MB
     quartz:
         job-store-type: jdbc
         properties.org.quarts.threadPool.threadCount: 1
@@ -153,6 +153,8 @@ scheduler:
     uwba-data:
         interval: 604800 #one week
         api-key: ${UWBA_API_KEY:default_key}
+    shelter-tech-data:
+        interval: 604800 #one week
 
 # ===================================================================
 # Application specific properties

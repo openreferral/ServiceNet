@@ -33,7 +33,7 @@ public abstract class AbstractICarolUpdateJob extends BaseJob {
         log.info(getFullName() + " is being executed");
 
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now()).jobName(getFullName());
-        Header[] headers = HttpUtils.getStandardHeaders(getApiKey());
+        Header[] headers = HttpUtils.getStandardAuthHeaders(getApiKey());
 
         ICarolTakeAllRequest takeAllRequest = new ICarolTakeAllRequest(getLastJobExecutionDate());
         String body = new Gson().toJson(takeAllRequest);
