@@ -75,22 +75,28 @@ public interface ShelterTechRegularScheduleMapper {
         Matcher hourMatcher = hourSchema.matcher(nonFormatted);
 
         if (fullHourMatcher.find()) {
-            String hourAndMin = fullHourMatcher.group();
-            int start = 0;
-            int mid = 2;
-            int end = 4;
-            result = StringUtils.mid(hourAndMin, start, mid) + ":" + StringUtils.mid(hourAndMin, mid, end);
+            result = formatFromTwoDigitHour(fullHourMatcher.group());
         } else if (hourMatcher.find()) {
-            String hourAndMin = hourMatcher.group();
-            int start = 0;
-            int mid = 1;
-            int end = 3;
-            result = "0" + StringUtils.mid(hourAndMin, start, mid) + ":" + StringUtils.mid(hourAndMin, mid, end);
+            result = formatFromOneDigitHour(hourMatcher.group());
         } else {
             result = nonFormatted;
         }
 
         return result;
+    }
+
+    default String formatFromOneDigitHour(String hourAndMin) {
+        int start = 0;
+        int mid = 1;
+        int end = 3;
+        return "0" + StringUtils.mid(hourAndMin, start, mid) + ":" + StringUtils.mid(hourAndMin, mid, end);
+    }
+
+    default String formatFromTwoDigitHour(String hourAndMin) {
+        int start = 0;
+        int mid = 2;
+        int end = 4;
+        return StringUtils.mid(hourAndMin, start, mid) + ":" + StringUtils.mid(hourAndMin, mid, end);
     }
 
 }

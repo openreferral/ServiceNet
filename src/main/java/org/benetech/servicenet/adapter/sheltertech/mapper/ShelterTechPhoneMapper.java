@@ -28,10 +28,8 @@ public interface ShelterTechPhoneMapper {
 
     @Named("languageFromCountryCode")
     default String languageFromCountryCode(String countryCode) {
-        if (StringUtils.isNotBlank(countryCode)) {
-            if (StringUtils.equalsIgnoreCase("US", countryCode)) {
-                return "en";
-            }
+        if (StringUtils.equalsIgnoreCase("US", countryCode)) {
+            return "en";
         }
         return null;
     }

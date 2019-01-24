@@ -46,6 +46,8 @@ public class RequiredDocument extends AbstractEntity implements Serializable {
     @Column(name = "provider_name")
     private String providerName;
 
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
     public RequiredDocument document(String document) {
         this.document = document;
         return this;

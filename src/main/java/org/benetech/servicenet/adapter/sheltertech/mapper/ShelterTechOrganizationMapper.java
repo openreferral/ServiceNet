@@ -60,12 +60,13 @@ public interface ShelterTechOrganizationMapper {
 
     @Named("emailFromString")
     default String emailFromString(String emailString) {
+        // pattern detects valid e-mail addresses
         Pattern email = Pattern.compile("[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}", Pattern.CASE_INSENSITIVE);
 
         if (StringUtils.isNotBlank(emailString)) {
             Matcher matcher = email.matcher(emailString);
 
-            // Consider supporting many e-mail addresses
+            // TODO: Consider supporting many e-mail addresses
             if (matcher.find()) {
                 return matcher.group();
             }

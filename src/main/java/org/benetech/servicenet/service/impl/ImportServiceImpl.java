@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Component
+@Transactional
 public class ImportServiceImpl implements ImportService {
 
     @Autowired
@@ -90,7 +91,6 @@ public class ImportServiceImpl implements ImportService {
     private ContactService contactService;
 
     @Override
-    @Transactional
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
         Optional<Location> locationFromDb = locationService.findForExternalDb(externalDbId, providerName);
         if (locationFromDb.isPresent()) {
@@ -108,7 +108,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public PhysicalAddress createOrUpdatePhysicalAddress(PhysicalAddress physicalAddress, Location location) {
         if (location.getPhysicalAddress() != null) {
             physicalAddress.setId(location.getPhysicalAddress().getId());
@@ -122,7 +121,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public PostalAddress createOrUpdatePostalAddress(PostalAddress postalAddress, Location location) {
         if (location.getPostalAddress() != null) {
             postalAddress.setId(location.getPostalAddress().getId());
@@ -136,7 +134,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public AccessibilityForDisabilities createOrUpdateAccessibility(AccessibilityForDisabilities accessibility,
                                                                     Location location) {
         Optional<AccessibilityForDisabilities> existingAccessibility = getExistingAccessibility(accessibility, location);
@@ -152,7 +149,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
                                                    DataImportReport report) {
         Optional<Organization> organizationFromDb = organizationService.findForExternalDb(externalDbId, providerName);
@@ -184,7 +180,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public Service createOrUpdateService(Service service, String externalDbId, String providerName,
                                          DataImportReport report) {
         Optional<Service> serviceFromDb = serviceService.findForExternalDb(externalDbId, providerName);
@@ -206,7 +201,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public Set<Phone> createOrUpdatePhonesForService(Set<Phone> phones, Service service, Location location) {
         phones.forEach(phone ->  {
             phone.setSrvc(service);
@@ -217,14 +211,12 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public Set<Phone> createOrUpdatePhonesForOrganization(Set<Phone> phones, UUID orgId) {
         Set<Phone> orgPhones = phoneRepository.findAllByOrganization(orgId);
         return persistPhones(phones, orgPhones);
     }
 
     @Override
-    @Transactional
     public Eligibility createOrUpdateEligibility(Eligibility eligibility, Service service) {
         if (service.getEligibility() != null) {
             eligibility.setId(service.getEligibility().getId());
@@ -238,7 +230,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public Funding createOrUpdateFundingForOrganization(Funding funding, Organization organization) {
         if (organization.getFunding() != null) {
             funding.setId(organization.getFunding().getId());
@@ -252,7 +243,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public Funding createOrUpdateFundingForService(Funding funding, Service service) {
         if (service.getFunding() != null) {
             funding.setId(service.getFunding().getId());
@@ -266,7 +256,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public Set<Language> createOrUpdateLangsForService(Set<Language> langs, Service service, Location location) {
         langs.forEach(lang ->  {
             lang.setSrvc(service);
@@ -283,7 +272,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public Set<Program> createOrUpdateProgramsForOrganization(Set<Program> programs, Organization organization) {
         programs.forEach(p -> p.setOrganization(organization));
 
@@ -328,7 +316,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public ServiceAtLocation createOrUpdateServiceAtLocation(ServiceAtLocation serviceAtLocation, String externalDbId,
                                                              String providerName, Service service, Location location) {
         serviceAtLocation.setSrvc(service);
@@ -361,7 +348,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public ServiceTaxonomy createOrUpdateServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String externalDbId,
                                                          String providerName, Service service, Taxonomy taxonomy) {
         serviceTaxonomy.setSrvc(service);
@@ -380,7 +366,6 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    @Transactional
     public RequiredDocument createOrUpdateRequiredDocument(RequiredDocument requiredDocument, String externalDbId,
                                                            String providerName, Service service) {
         requiredDocument.setSrvc(service);
