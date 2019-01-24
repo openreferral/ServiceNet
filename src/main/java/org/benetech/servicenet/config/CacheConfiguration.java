@@ -98,7 +98,6 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.Conflict.class.getName() + ".acceptedThisChange",
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.DataImportReport.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ConfidentialRecord.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }
