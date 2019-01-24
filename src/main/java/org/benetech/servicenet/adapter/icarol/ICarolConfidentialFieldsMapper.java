@@ -1,10 +1,8 @@
 package org.benetech.servicenet.adapter.icarol;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.benetech.servicenet.adapter.icarol.model.ICarolContact;
 import org.benetech.servicenet.adapter.icarol.model.ICarolContactDetails;
 import org.benetech.servicenet.adapter.icarol.model.ICarolName;
-import org.benetech.servicenet.adapter.shared.util.LocationUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
@@ -25,15 +23,6 @@ public interface ICarolConfidentialFieldsMapper {
     String PRIMARY = "Primary";
     String EMAIL_ADDRESS = "EmailAddress";
     String WEBSITE = "Website";
-
-    @Named("locationName")
-    default String extractLocationNameIfNotConfidential(ICarolContact contact) {
-        if (BooleanUtils.isTrue(contact.getIsConfidential())) {
-            return null;
-        } else {
-            return LocationUtils.buildLocationName(contact.getCity(), contact.getStateProvince(), contact.getLine1());
-        }
-    }
 
     @Named("email")
     default String extractEmailIfNotConfidential(ICarolContactDetails[] contactDetails) {

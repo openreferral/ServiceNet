@@ -1,8 +1,10 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAccessibility;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
+import org.benetech.servicenet.adapter.icarol.model.ICarolContact;
 import org.benetech.servicenet.adapter.icarol.model.ICarolContactDetails;
 import org.benetech.servicenet.adapter.icarol.model.ICarolDay;
 import org.benetech.servicenet.adapter.icarol.model.ICarolHours;
@@ -10,6 +12,7 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
 import org.benetech.servicenet.adapter.icarol.model.ICarolWeekday;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
+import org.benetech.servicenet.adapter.shared.util.LocationUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
@@ -74,9 +77,9 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     PostalAddress mapToPostalAddress(ICarolContactDetails details);
 
     @Mapping(target = "name", source = "contact", qualifiedByName = "locationName")
-    @Mapping(target = "description", source = "contact.description", qualifiedByName = "locationName")
-    @Mapping(target = "longitude", source = "contact.longitude", qualifiedByName = "locationName")
-    @Mapping(target = "latitude", source = "contact.latitude", qualifiedByName = "locationName")
+    @Mapping(target = "description", source = "contact.description")
+    @Mapping(target = "longitude", source = "contact.longitude")
+    @Mapping(target = "latitude", source = "contact.latitude")
     @Mapping(target = "id", ignore = true)
     Location mapToLocation(ICarolContactDetails details);
 
@@ -114,6 +117,18 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(target = "id", ignore = true)
     OpeningHours mapOpeningHours(ICarolDay day);
 
+    default Location mapToLocation(ICarolContactDetails details, String dbId, String providerName) {
+        Location result = mapToLocation(details);
+        result.setExternalDbId(dbId);
+        result.setProviderName(providerName);
+        return result;
+    }
+
+    @Named("locationName")
+    default String extractLocationNameIfNotConfidential(ICarolContact contact) {
+        return LocationUtils.buildLocationName(contact.getCity(), contact.getStateProvince(), contact.getLine1());
+    }
+
     default Organization extractOrganization(ICarolAgency agency, String providerName) {
         Organization result = mapOrganization(agency);
         result.setActive(agency.getStatus().equals(ACTIVE));
@@ -131,7 +146,7 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     }
 
     default Set<OpeningHours> extractOpeningHours(ICarolHours hours) {
-        if (hours == null || hours.getDays() == null || hours.getIsConfidential()) {
+        if (hours == null || hours.getDays() == null || BooleanUtils.isTrue(hours.getIsConfidential())) {
             return new HashSet<>();
         }
         ICarolDay[] days = hours.getDays();
@@ -153,21 +168,14 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
             .collect(Collectors.toSet());
     }
 
-    default Location extractLocation(ICarolContactDetails details, String dbId, String providerName) {
-        Location result = mapToLocation(details);
-        result.setExternalDbId(dbId);
-        result.setProviderName(providerName);
-        return result;
-    }
-
     default Optional<Location> extractLocation(ICarolContactDetails[] contactDetails, String dbId, String providerName) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHYSICAL_LOCATION))
-            .findFirst().map(entry -> extractLocation(entry, dbId, providerName));
+            .findFirst().map(entry -> mapToLocation(entry, dbId, providerName));
     }
 
     default Set<Language> extractLangs(ICarolProgram program) {
-        if (program.getIsConfidential()) {
+        if (BooleanUtils.isTrue(program.getIsConfidential())) {
             return new HashSet<>();
         }
         String[] langs = program.getLanguagesOffered().split(LISTS_DELIMITER);
