@@ -38,8 +38,8 @@ class RelationManager {
         }
     }
 
-    private void saveLocationRelatedData(ICarolDataToPersist dataToPersist, ImportData importData
-        , ICarolSite site, Location savedLocation) {
+    private void saveLocationRelatedData(ICarolDataToPersist dataToPersist, ImportData importData,
+                                         ICarolSite site, Location savedLocation) {
         persistence.importPhysicalAddress(site, savedLocation);
         persistence.importPostalAddress(site, savedLocation);
         persistence.importAccessibility(site, savedLocation);
