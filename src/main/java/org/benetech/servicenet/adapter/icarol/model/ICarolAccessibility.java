@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
-public class ICarolAccessibility {
+public class ICarolAccessibility extends ICarolElement {
 
     private String disabled;
 

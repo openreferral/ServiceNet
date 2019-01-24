@@ -11,11 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static io.github.jhipster.config.JHipsterConstants.SPRING_PROFILE_DEVELOPMENT;
+import static io.github.jhipster.config.JHipsterConstants.SPRING_PROFILE_PRODUCTION;
 
 @Configuration
 public class QuartzConfig {
@@ -33,6 +37,7 @@ public class QuartzConfig {
     private ApplicationContext applicationContext;
 
     @Bean
+    @Profile({ SPRING_PROFILE_PRODUCTION, SPRING_PROFILE_DEVELOPMENT} )
     public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
 

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAccessibility;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
@@ -7,7 +8,6 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolContact;
 import org.benetech.servicenet.adapter.icarol.model.ICarolContactDetails;
 import org.benetech.servicenet.adapter.icarol.model.ICarolDay;
 import org.benetech.servicenet.adapter.icarol.model.ICarolHours;
-import org.benetech.servicenet.adapter.icarol.model.ICarolName;
 import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
 import org.benetech.servicenet.adapter.icarol.model.ICarolWeekday;
@@ -25,6 +25,7 @@ import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.Service;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Arrays;
@@ -36,73 +37,121 @@ import java.util.stream.Collectors;
 
 import static org.mapstruct.ReportingPolicy.IGNORE;
 
+/**
+ * Mapper for ICarolData objects
+ *
+ * IMPORTANT: Some objects might be confidential and we should not lose that information.
+ *            Each mapping method should use auto-generated version, or should set this information manually.
+ *            @see ICarolConfidentialFieldsMapper for mapping fields that might be confidential as well as the whole object.
+ */
 @Mapper(unmappedTargetPolicy = IGNORE)
-public interface ICarolDataMapper {
+public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
 
     String LISTS_DELIMITER = "; ";
 
     ICarolDataMapper INSTANCE = Mappers.getMapper(ICarolDataMapper.class);
     String PRIMARY = "Primary";
     String PHONE_NUMBER = "PhoneNumber";
-    String EMAIL_ADDRESS = "EmailAddress";
-    String WEBSITE = "Website";
     String PHYSICAL_LOCATION = "PhysicalLocation";
     String POSTAL_ADDRESS = "PostalAddress";
     String ACTIVE = "Active";
+    String NAME = "name";
+    String URL = "url";
 
     @Mapping(source = "disabled", target = "accessibility")
+    @Mapping(target = "id", ignore = true)
     AccessibilityForDisabilities mapAccessibility(ICarolAccessibility accessibility);
 
-    @Mapping(source = "line1", target = "address1")
-    @Mapping(source = "zipPostalCode", target = "postalCode")
-    PhysicalAddress mapToPhysicalAddress(ICarolContact contact);
+    @Mapping(source = "contact.line1", target = "address1")
+    @Mapping(source = "contact.zipPostalCode", target = "postalCode")
+    @Mapping(source = "contact.country", target = "country")
+    @Mapping(source = "contact.stateProvince", target = "stateProvince")
+    @Mapping(target = "id", ignore = true)
+    PhysicalAddress mapToPhysicalAddress(ICarolContactDetails details);
 
-    @Mapping(source = "line1", target = "address1")
-    @Mapping(source = "zipPostalCode", target = "postalCode")
-    PostalAddress mapToPostalAddress(ICarolContact contact);
+    @Mapping(source = "contact.line1", target = "address1")
+    @Mapping(source = "contact.zipPostalCode", target = "postalCode")
+    @Mapping(source = "contact.country", target = "country")
+    @Mapping(source = "contact.stateProvince", target = "stateProvince")
+    @Mapping(target = "id", ignore = true)
+    PostalAddress mapToPostalAddress(ICarolContactDetails details);
 
-    Phone mapContactToPhone(ICarolContact contact);
+    @Mapping(target = "name", source = "contact", qualifiedByName = "locationName")
+    @Mapping(target = "description", source = "contact.description")
+    @Mapping(target = "longitude", source = "contact.longitude")
+    @Mapping(target = "latitude", source = "contact.latitude")
+    @Mapping(target = "id", ignore = true)
+    Location mapToLocation(ICarolContactDetails details);
 
-    default Organization extractOrganization(ICarolAgency agency, String dbId, String providerName) {
-        Organization result = new Organization();
+    @Mapping(target = "number", source = "contact.number")
+    @Mapping(target = "type", source = "contact.type")
+    @Mapping(target = "description", source = "contact.description")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "contact", ignore = true)
+    Phone mapContactToPhone(ICarolContactDetails details);
 
-        result.setName(extractName(agency.getNames()));
-        result.setAlternateName(extractAlternateName(agency.getNames()));
-        result.setEmail(extractEmail(agency.getContactDetails()));
-        result.setUrl(extractUrl(agency.getContactDetails()));
-        result.setActive(agency.getStatus().equals(ACTIVE));
+    @Mapping(target = "name", source = "names", qualifiedByName = "name")
+    @Mapping(target = "alternateName", source = "names", qualifiedByName = "alternateName")
+    @Mapping(target = "email", source = "contactDetails", qualifiedByName = "email")
+    @Mapping(target = "url", source = "contactDetails", qualifiedByName = "url")
+    @Mapping(target = "externalDbId", source = "id")
+    @Mapping(target = "id", ignore = true)
+    Organization mapOrganization(ICarolAgency agency);
+
+    @Mapping(target = "name", source = "names", qualifiedByName = "name")
+    @Mapping(target = "alternateName", source = "names", qualifiedByName = "alternateName")
+    @Mapping(target = "email", source = "contactDetails", qualifiedByName = "email")
+    @Mapping(target = "url", source = "contactDetails", qualifiedByName = "url")
+    @Mapping(target = "externalDbId", source = "id")
+    @Mapping(target = "description", source = "descriptionText")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "eligibility", ignore = true)
+    Service mapService(ICarolProgram program);
+
+    @Mapping(target = "id", ignore = true)
+    Eligibility mapEligibility(ICarolProgram program);
+
+    @Mapping(target = "weekday", source = "dayOfWeek", qualifiedByName = "weekday")
+    @Mapping(target = "opensAt", source = "opens")
+    @Mapping(target = "closesAt", source = "closes")
+    @Mapping(target = "id", ignore = true)
+    OpeningHours mapOpeningHours(ICarolDay day);
+
+    default Location mapToLocation(ICarolContactDetails details, String dbId, String providerName) {
+        Location result = mapToLocation(details);
         result.setExternalDbId(dbId);
         result.setProviderName(providerName);
-
         return result;
     }
 
-    default Service extractService(ICarolProgram program, String dbId, String providerName) {
-        Service result = new Service();
+    @Named("locationName")
+    default String extractLocationNameIfNotConfidential(ICarolContact contact) {
+        return LocationUtils.buildLocationName(contact.getCity(), contact.getStateProvince(), contact.getLine1());
+    }
 
-        result.setName(extractName(program.getNames()));
-        result.setAlternateName(extractAlternateName(program.getNames()));
-        result.setDescription(program.getDescriptionText());
-        result.setEmail(extractEmail(program.getContactDetails()));
-        result.setUrl(extractUrl(program.getContactDetails()));
-        result.setFees(program.getFees());
-        result.setApplicationProcess(MapperUtils.joinNotBlank(" ", program.getApplicationProcess(),
-            "Required items: " + program.getRequiredDocumentation()));
-        result.setExternalDbId(dbId);
+    default Organization extractOrganization(ICarolAgency agency, String providerName) {
+        Organization result = mapOrganization(agency);
+        result.setActive(agency.getStatus().equals(ACTIVE));
         result.setProviderName(providerName);
+        return result;
+    }
 
+    default Service extractService(ICarolProgram program, String providerName) {
+        Service result = mapService(program);
+        result.setApplicationProcess(
+            MapperUtils.joinNotBlank(" ", program.getApplicationProcess(),
+            "Required items: " + program.getRequiredDocumentation()));
+        result.setProviderName(providerName);
         return result;
     }
 
     default Set<OpeningHours> extractOpeningHours(ICarolHours hours) {
-        if (hours == null || hours.getDays() == null) {
+        if (hours == null || hours.getDays() == null || BooleanUtils.isTrue(hours.getIsConfidential())) {
             return new HashSet<>();
         }
         ICarolDay[] days = hours.getDays();
-        return Arrays.stream(days).map(day -> new OpeningHours()
-            .weekday(getIdByTheWeekday(day.getDayOfWeek()))
-            .opensAt(day.getOpens())
-            .closesAt(day.getCloses()))
+        return Arrays.stream(days)
+            .map(this::mapOpeningHours)
             .collect(Collectors.toSet());
     }
 
@@ -112,86 +161,48 @@ public interface ICarolDataMapper {
             : Optional.empty();
     }
 
-    default int getIdByTheWeekday(String weekday) {
-        return ICarolWeekday.valueOf(weekday.toUpperCase(Locale.ROOT)).getNumber();
-    }
-
     default Set<Phone> extractPhones(ICarolContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHONE_NUMBER))
-            .map(entry -> mapContactToPhone(entry.getContact()))
+            .map(this::mapContactToPhone)
             .collect(Collectors.toSet());
-    }
-
-    default Location extractLocation(ICarolContact contact, String dbId, String providerName) {
-        Location result = new Location().name(extractLocationName(contact));
-        result.setLatitude(contact.getLatitude());
-        result.setLongitude(contact.getLongitude());
-        result.setExternalDbId(dbId);
-        result.setProviderName(providerName);
-        return result;
     }
 
     default Optional<Location> extractLocation(ICarolContactDetails[] contactDetails, String dbId, String providerName) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHYSICAL_LOCATION))
-            .findFirst().map(entry -> extractLocation(entry.getContact(), dbId, providerName));
-    }
-
-    private String extractLocationName(ICarolContact contact) {
-        return LocationUtils.buildLocationName(contact.getCity(), contact.getStateProvince(), contact.getLine1());
+            .findFirst().map(entry -> mapToLocation(entry, dbId, providerName));
     }
 
     default Set<Language> extractLangs(ICarolProgram program) {
+        if (BooleanUtils.isTrue(program.getIsConfidential())) {
+            return new HashSet<>();
+        }
         String[] langs = program.getLanguagesOffered().split(LISTS_DELIMITER);
-        return Arrays.stream(langs).map(lang -> new Language().language(lang)).collect(Collectors.toSet());
+        return Arrays.stream(langs).map(lang -> new Language().language(lang))
+            .collect(Collectors.toSet());
     }
 
     default Optional<Eligibility> extractEligibility(ICarolProgram program) {
         return StringUtils.isNotBlank(program.getEligibility())
-            ? Optional.of(new Eligibility().eligibility(program.getEligibility()))
+            ? Optional.of(mapEligibility(program))
             : Optional.empty();
     }
 
     default Optional<PhysicalAddress> extractPhysicalAddress(ICarolContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHYSICAL_LOCATION))
-            .findFirst().map(entry -> mapToPhysicalAddress(entry.getContact()));
+            .findFirst().map(this::mapToPhysicalAddress);
     }
 
     default Optional<PostalAddress> extractPostalAddress(ICarolContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(POSTAL_ADDRESS))
-            .findFirst().map(entry -> mapToPostalAddress(entry.getContact()));
+            .findFirst().map(this::mapToPostalAddress);
     }
 
-    default String extractEmail(ICarolContactDetails[] contactDetails) {
-        return Arrays.stream(contactDetails)
-            .filter(entry -> entry.getContact().getType().equals(EMAIL_ADDRESS))
-            .findFirst().map(entry -> entry.getContact().getAddress().replace(" ", ""))
-            .orElse(null);
-    }
-
-    default String extractUrl(ICarolContactDetails[] contactDetails) {
-        return Arrays.stream(contactDetails)
-            .filter(entry -> entry.getContact().getType().equals(WEBSITE))
-            .findFirst().map(entry -> entry.getContact().getUrl().replace(" ", ""))
-            .orElse(null);
-    }
-
-    private String extractName(ICarolName[] names) {
-        for (ICarolName name : names) {
-            if (name.getPurpose().equals(PRIMARY)) {
-                return name.getValue();
-            }
-        }
-        throw new IllegalArgumentException("No primary name found");
-    }
-
-    private String extractAlternateName(ICarolName[] names) {
-        return Arrays.stream(names)
-            .filter(name -> !name.getPurpose().equals(PRIMARY))
-            .findFirst().map(ICarolName::getValue)
-            .orElse(null);
+    @Named("weekday")
+    default int getIdByTheWeekday(String weekday) {
+        return ICarolWeekday.valueOf(weekday.toUpperCase(Locale.ROOT)).getNumber();
     }
 }

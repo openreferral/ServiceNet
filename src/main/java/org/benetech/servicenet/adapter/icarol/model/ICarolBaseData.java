@@ -3,7 +3,7 @@ package org.benetech.servicenet.adapter.icarol.model;
 import lombok.Data;
 
 @Data
-public class ICarolBaseData {
+public class ICarolBaseData extends ICarolElement {
 
     private String id;
 
@@ -26,8 +26,6 @@ public class ICarolBaseData {
     private String lastVerifiedOn;
 
     private Boolean isFeatured;
-
-    private Boolean isConfidential;
 
     private String languagesOffered;
 

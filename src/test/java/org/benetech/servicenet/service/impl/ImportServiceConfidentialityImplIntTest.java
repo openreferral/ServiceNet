@@ -37,11 +37,11 @@ import javax.persistence.EntityManager;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
-public class ImportServiceImplIntTest {
+public class ImportServiceConfidentialityImplIntTest {
 
     private static final String PROVIDER = "provider";
     private static final String NEW_EXTERNAL_ID = "1000";
@@ -96,46 +96,49 @@ public class ImportServiceImplIntTest {
 
     @Test
     @Transactional
-    public void shouldCreateLocation() {
+    public void shouldNotCreateLocationIfConfidential() {
         Location location = generateNewLocation();
+        location.setIsConfidential(true);
 
         int dbSize = locationService.findAll().size();
         importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        assertEquals(dbSize + 1, locationService.findAll().size());
+        assertEquals(dbSize, locationService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldUpdateLocation() {
+    public void shouldNotUpdateLocationIfConfidential() {
         Location newLocation = generateNewLocation();
+        newLocation.setIsConfidential(true);
         generateExistingLocation();
 
         int dbSize = locationService.findAll().size();
         Location updated = importService.createOrUpdateLocation(newLocation, EXISTING_EXTERNAL_ID, PROVIDER);
 
         assertEquals(dbSize, locationService.findAll().size());
-        assertEquals(NEW_STRING, updated.getName());
+        assertNull(updated);
     }
 
     @Test
     @Transactional
-    public void shouldCreatePhysicalAddress() {
+    public void shouldNotCreatePhysicalAddressIfConfidential() {
         Location location = generateExistingLocation();
         PhysicalAddress address = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
             .location(location);
+        address.setIsConfidential(true);
         em.flush();
         em.refresh(location);
 
         int dbSize = physicalAddressService.findAll().size();
         importService.createOrUpdatePhysicalAddress(address, location);
 
-        assertEquals(dbSize + 1, physicalAddressService.findAll().size());
+        assertEquals(dbSize, physicalAddressService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldUpdatePhysicalAddress() {
+    public void shouldNotUpdatePhysicalAddressIfConfidential() {
         Location location = generateExistingLocation();
         PhysicalAddress existingAddress = new PhysicalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING)
             .location(location);
@@ -145,33 +148,32 @@ public class ImportServiceImplIntTest {
 
         PhysicalAddress newAddress = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
             .location(location);
+        newAddress.setIsConfidential(true);
 
         int dbSize = locationService.findAll().size();
         PhysicalAddress updated = importService.createOrUpdatePhysicalAddress(newAddress, location);
 
         assertEquals(dbSize, locationService.findAll().size());
-        assertEquals(NEW_STRING, updated.getAddress1());
-        assertEquals(NEW_STRING, updated.getCity());
-        assertEquals(NEW_STRING, updated.getStateProvince()
-        );
+        assertNull(updated);
     }
 
     @Test
     @Transactional
-    public void shouldCreatePostalAddress() {
+    public void shouldNotCreatePostalAddressIfConfidential() {
         Location location = generateExistingLocation();
         PostalAddress address = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
             .location(location);
+        address.setIsConfidential(true);
 
         int dbSize = postalAddressService.findAll().size();
         importService.createOrUpdatePostalAddress(address, location);
 
-        assertEquals(dbSize + 1, postalAddressService.findAll().size());
+        assertEquals(dbSize, postalAddressService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldUpdatePostalAddress() {
+    public void shouldNotUpdatePostalAddressIfConfidential() {
         Location location = generateExistingLocation();
         PostalAddress existingAddress = new PostalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING)
             .location(location);
@@ -181,32 +183,18 @@ public class ImportServiceImplIntTest {
 
         PostalAddress newAddress = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
             .location(location);
+        newAddress.setIsConfidential(true);
 
         int dbSize = locationService.findAll().size();
         PostalAddress updated = importService.createOrUpdatePostalAddress(newAddress, location);
 
         assertEquals(dbSize, locationService.findAll().size());
-        assertEquals(NEW_STRING, updated.getAddress1());
-        assertEquals(NEW_STRING, updated.getCity());
-        assertEquals(NEW_STRING, updated.getStateProvince());
+        assertNull(updated);
     }
 
     @Test
     @Transactional
-    public void shouldCreateAccessibilityIfLocationHasNoneOfThem() {
-        Location location = generateExistingLocation();
-        AccessibilityForDisabilities accessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING)
-            .location(location);
-
-        int dbSize = accessibilityService.findAll().size();
-        importService.createOrUpdateAccessibility(accessibility, location);
-
-        assertEquals(dbSize + 1, accessibilityService.findAll().size());
-    }
-
-    @Test
-    @Transactional
-    public void shouldCreateAccessibilityIfLocationHasFewOfThemButNotThisOne() {
+    public void shouldNotCreateAccessibilityIfConfidentialEvenIfLocationHasFewOfThemButNotThisOne() {
         Location location = generateExistingLocation();
 
         AccessibilityForDisabilities otherAccessibility = new AccessibilityForDisabilities().accessibility(OTHER_STRING)
@@ -217,16 +205,17 @@ public class ImportServiceImplIntTest {
 
         AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING).details(NEW_STRING)
             .location(location);
+        newAccessibility.setIsConfidential(true);
 
         int dbSize = accessibilityService.findAll().size();
         importService.createOrUpdateAccessibility(newAccessibility, location);
 
-        assertEquals(dbSize + 1, accessibilityService.findAll().size());
+        assertEquals(dbSize, accessibilityService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldUpdateAccessibility() {
+    public void shouldNotUpdateAccessibilityIfConfidential() {
         Location location = generateExistingLocation();
         AccessibilityForDisabilities accessibilityToBeUpdated = new AccessibilityForDisabilities().accessibility(EXISTING_STRING).details(EXISTING_STRING)
             .location(location);
@@ -240,30 +229,32 @@ public class ImportServiceImplIntTest {
 
         AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(EXISTING_STRING).details(NEW_STRING)
             .location(location);
+        newAccessibility.setIsConfidential(true);
 
         int dbSize = locationService.findAll().size();
         AccessibilityForDisabilities updated = importService.createOrUpdateAccessibility(newAccessibility, location);
 
         assertEquals(dbSize, locationService.findAll().size());
-        assertEquals(EXISTING_STRING, updated.getAccessibility());
-        assertEquals(NEW_STRING, updated.getDetails());
+        assertNull(updated);
     }
 
     @Test
     @Transactional
-    public void shouldCreateOrganization() {
+    public void shouldNotCreateOrganizationIfConfidential() {
         Organization organization = generateNewOrganization();
+        organization.setIsConfidential(true);
 
         int dbSize = organizationService.findAllDTOs().size();
         importService.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        assertEquals(dbSize + 1, organizationService.findAllDTOs().size());
+        assertEquals(dbSize, organizationService.findAllDTOs().size());
     }
 
     @Test
     @Transactional
-    public void shouldUpdateOrganization() {
+    public void shouldNotUpdateOrganizationIfConfidential() {
         Organization newOrganization = generateNewOrganization();
+        newOrganization.setIsConfidential(true);
         generateExistingOrganization();
 
         int dbSize = organizationService.findAllDTOs().size();
@@ -271,25 +262,26 @@ public class ImportServiceImplIntTest {
             new DataImportReport());
 
         assertEquals(dbSize, organizationService.findAllDTOs().size());
-        assertEquals(NEW_STRING, updated.getName());
-        assertEquals(NEW_BOOLEAN, updated.getActive());
+        assertNull(updated);
     }
 
     @Test
     @Transactional
-    public void shouldCreateService() {
+    public void shouldNotCreateServiceIfConfidential() {
         Service service = generateNewService();
+        service.setIsConfidential(true);
 
         int dbSize = serviceService.findAll().size();
         importService.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        assertEquals(dbSize + 1, serviceService.findAll().size());
+        assertEquals(dbSize, serviceService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldUpdateService() {
+    public void shouldNotUpdateServiceIfConfidential() {
         Service newService = generateNewService();
+        newService.setIsConfidential(true);
         generateExistingService();
 
         int dbSize = serviceService.findAll().size();
@@ -297,24 +289,25 @@ public class ImportServiceImplIntTest {
             new DataImportReport());
 
         assertEquals(dbSize, serviceService.findAll().size());
-        assertEquals(NEW_STRING, updated.getName());
+        assertNull(updated);
     }
     
     @Test
     @Transactional
-    public void shouldCreatePhonesIfServiceHasNoneOfThem() {
+    public void shouldNotCreatePhonesIfConfidentialEvenIfServiceHasNoneOfThem() {
         Service service = generateExistingService();
         Phone phone = new Phone().number(NEW_STRING).srvc(service);
+        phone.setIsConfidential(true);
 
         int dbSize = phoneService.findAll().size();
         importService.createOrUpdatePhonesForService(Set.of(phone), service, null);
 
-        assertEquals(dbSize + 1, phoneService.findAll().size());
+        assertEquals(dbSize, phoneService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldReplacePhonesIfServiceHasFewOfThemButNotThisOne() {
+    public void shouldNotReplacePhonesIfConfidentialEvenIfServiceHasFewOfThemButNotThisOne() {
         Service service = generateExistingService();
         Phone otherPhone = new Phone().number(OTHER_STRING).srvc(service);
         em.persist(otherPhone);
@@ -322,16 +315,16 @@ public class ImportServiceImplIntTest {
         em.refresh(service);
 
         Phone newPhone = new Phone().number(NEW_STRING).srvc(service);
+        newPhone.setIsConfidential(true);
 
-        int dbSize = phoneService.findAll().size();
         importService.createOrUpdatePhonesForService(Set.of(newPhone), service, null);
 
-        assertEquals(dbSize, phoneService.findAll().size());
+        assertEquals(0, phoneService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldReplacePhones() {
+    public void shouldNotReplacePhonesIfConfidential() {
         Service service = generateExistingService();
 
         Phone phoneToBeUpdated = new Phone().number(EXISTING_STRING).srvc(service);
@@ -343,30 +336,29 @@ public class ImportServiceImplIntTest {
         em.refresh(service);
 
         Phone newPhone = new Phone().number(NEW_STRING).srvc(service);
+        newPhone.setIsConfidential(true);
 
-        int dbSize = phoneService.findAll().size();
-        Set<Phone> updated = importService.createOrUpdatePhonesForService(Set.of(newPhone), service, null);
+        importService.createOrUpdatePhonesForService(Set.of(newPhone), service, null);
 
-        assertEquals(dbSize - 1, phoneService.findAll().size());
-        assertEquals(1, updated.size());
-        assertTrue(updated.stream().anyMatch(phone -> phone.equals(newPhone)));
+        assertEquals(0, phoneService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldCreateEligibility() {
+    public void shouldNotCreateEligibilityIfConfidential() {
         Service service = generateExistingService();
         Eligibility eligibility = new Eligibility().eligibility(NEW_STRING).srvc(service);
+        eligibility.setIsConfidential(true);
 
         int dbSize = eligibilityService.findAll().size();
         importService.createOrUpdateEligibility(eligibility, service);
 
-        assertEquals(dbSize + 1, eligibilityService.findAll().size());
+        assertEquals(dbSize, eligibilityService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldUpdateEligibility() {
+    public void shouldNotUpdateEligibilityIfConfidential() {
         Service service = generateExistingService();
         Eligibility existingEligibility = new Eligibility().eligibility(EXISTING_STRING).srvc(service);
         em.persist(existingEligibility);
@@ -374,30 +366,32 @@ public class ImportServiceImplIntTest {
         em.refresh(service);
 
         Eligibility newEligibility = new Eligibility().eligibility(NEW_STRING).srvc(service);
+        newEligibility.setIsConfidential(true);
 
         int dbSize = eligibilityService.findAll().size();
-        Service serviceFromDb = serviceService.findForExternalDb(EXISTING_EXTERNAL_ID, PROVIDER).get(); //TODO: anywhere else
+        Service serviceFromDb = serviceService.findForExternalDb(EXISTING_EXTERNAL_ID, PROVIDER).get();
         Eligibility updated = importService.createOrUpdateEligibility(newEligibility, serviceFromDb);
 
         assertEquals(dbSize, eligibilityService.findAll().size());
-        assertEquals(NEW_STRING, updated.getEligibility());
+        assertNull(updated);
     }
 
     @Test
     @Transactional
-    public void shouldCreateLangsIfServiceHasNoneOfThem() {
+    public void shouldNotCreateLangsIfConfidentialEvenIfServiceHasNoneOfThem() {
         Service service = generateExistingService();
         Language language = new Language().language(NEW_STRING).srvc(service);
+        language.setIsConfidential(true);
 
-        int dbSize = languageService.findAll().size();
+        languageService.findAll().size();
         importService.createOrUpdateLangsForService(Set.of(language), service, null);
 
-        assertEquals(dbSize + 1, languageService.findAll().size());
+        assertEquals(0, languageService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldReplaceLangsIfServiceHasFewOfThemButNotThisOne() {
+    public void shouldNotReplaceLangsIfConfidentialEvenIfServiceHasFewOfThemButNotThisOne() {
         Service service = generateExistingService();
         Language otherLanguage = new Language().language(OTHER_STRING).srvc(service);
         em.persist(otherLanguage);
@@ -405,16 +399,17 @@ public class ImportServiceImplIntTest {
         em.refresh(service);
 
         Language newLanguage = new Language().language(NEW_STRING).srvc(service);
+        newLanguage.setIsConfidential(true);
 
-        int dbSize = languageService.findAll().size();
+        languageService.findAll().size();
         importService.createOrUpdateLangsForService(Set.of(newLanguage), service, null);
 
-        assertEquals(dbSize, languageService.findAll().size());
+        assertEquals(0, languageService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldReplaceLangs() {
+    public void shouldNotReplaceLangsIfConfidential() {
         Service service = generateExistingService();
 
         Language languageToBeUpdated = new Language().language(EXISTING_STRING).srvc(service);
@@ -426,51 +421,55 @@ public class ImportServiceImplIntTest {
         em.refresh(service);
 
         Language newLanguage = new Language().language(NEW_STRING).srvc(service);
+        newLanguage.setIsConfidential(true);
 
-        int dbSize = languageService.findAll().size();
-        Set<Language> updated = importService.createOrUpdateLangsForService(Set.of(newLanguage), service, null);
+        languageService.findAll().size();
+        importService.createOrUpdateLangsForService(Set.of(newLanguage), service, null);
 
-        assertEquals(dbSize - 1, languageService.findAll().size());
-        assertEquals(1, updated.size());
-        assertTrue(updated.stream().anyMatch(lang -> lang.equals(newLanguage)));
+        assertEquals(0, languageService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldCreateOpeningHoursIfServiceHasNoneOfThem() {
+    public void shouldNotCreateOpeningHoursIfConfidentialEvenIfServiceHasNoneOfThem() {
         Service service = generateExistingService();
         OpeningHours openingHours = new OpeningHours().weekday(NEW_INT).opensAt(NEW_STRING).closesAt(NEW_STRING);
+        openingHours.setIsConfidential(true);
 
         int scheduleDbSize = regularScheduleService.findAll().size();
-        int hoursDbSize = openingHoursService.findAll().size();
+        openingHoursService.findAll().size();
         importService.createOrUpdateOpeningHoursForService(Set.of(openingHours), service);
 
         assertEquals(scheduleDbSize + 1, regularScheduleService.findAll().size());
-        assertEquals(hoursDbSize + 1, openingHoursService.findAll().size());
+        assertEquals(0, openingHoursService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldReplaceOpeningHoursIfServiceHasFewOfThemButNotThisOne() {
+    public void shouldNotReplaceOpeningHoursIfConfidentialEvenIfServiceHasFewOfThemButNotThisOne() {
         Service service = generateExistingService();
         OpeningHours otherOpeningHours = new OpeningHours().weekday(OTHER_INT).opensAt(OTHER_STRING).closesAt(OTHER_STRING);
+        RegularSchedule schedule = new RegularSchedule();
         em.persist(otherOpeningHours);
+        schedule.setOpeningHours(Set.of(otherOpeningHours));
+        em.persist(schedule);
+        service.setRegularSchedule(schedule);
         em.flush();
-        em.refresh(service);
 
         OpeningHours newOpeningHours = new OpeningHours().weekday(NEW_INT).opensAt(NEW_STRING).closesAt(NEW_STRING);
+        newOpeningHours.setIsConfidential(true);
 
         int scheduleDbSize = regularScheduleService.findAll().size();
-        int hoursDbSize = openingHoursService.findAll().size();
+        openingHoursService.findAll().size();
         importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
 
-        assertEquals(scheduleDbSize + 1, regularScheduleService.findAll().size());
-        assertEquals(hoursDbSize + 1, openingHoursService.findAll().size());
+        assertEquals(scheduleDbSize, regularScheduleService.findAll().size());
+        assertEquals(0, openingHoursService.findAll().size());
     }
 
     @Test
     @Transactional
-    public void shouldReplaceOpeningHours() {
+    public void shouldNotReplaceOpeningHoursIfConfidential() {
         Service service = generateExistingService();
 
         OpeningHours openingHoursToBeUpdated = new OpeningHours().weekday(EXISTING_INT).opensAt(EXISTING_STRING).closesAt(EXISTING_STRING);
@@ -486,19 +485,21 @@ public class ImportServiceImplIntTest {
         em.refresh(service);
 
         OpeningHours newOpeningHours = new OpeningHours().weekday(EXISTING_INT).opensAt(NEW_STRING).closesAt(NEW_STRING);
+        newOpeningHours.setIsConfidential(true);
 
         int scheduleDbSize = regularScheduleService.findAll().size();
-        int hoursDbSize = openingHoursService.findAll().size();
-        Set<OpeningHours> updated = importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
+        openingHoursService.findAll().size();
+        importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
 
         assertEquals(scheduleDbSize, regularScheduleService.findAll().size());
-        assertEquals(hoursDbSize - 1, openingHoursService.findAll().size());
-        assertTrue(updated.stream().anyMatch(hours -> hours.equals(newOpeningHours)));
+        assertEquals(0, openingHoursService.findAll().size());
     }
 
     private Location generateNewLocation() {
-        return new Location().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
+        Location result = new Location().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
             .name(NEW_STRING);
+        result.setIsConfidential(true);
+        return result;
     }
 
     private Location generateExistingLocation() {
@@ -509,8 +510,10 @@ public class ImportServiceImplIntTest {
     }
     
     private Service generateNewService() {
-        return new Service().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
+        Service result = new Service().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
             .name(NEW_STRING);
+        result.setIsConfidential(true);
+        return result;
     }
 
     private Service generateExistingService() {
@@ -521,8 +524,10 @@ public class ImportServiceImplIntTest {
     }
 
     private Organization generateNewOrganization() {
-        return new Organization().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
+        Organization result = new Organization().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
             .name(NEW_STRING).active(NEW_BOOLEAN);
+        result.setIsConfidential(true);
+        return result;
     }
 
     private Organization generateExistingOrganization() {

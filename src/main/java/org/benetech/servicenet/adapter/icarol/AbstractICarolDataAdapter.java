@@ -14,12 +14,8 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
 import org.benetech.servicenet.adapter.icarol.model.ICarolServiceSite;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSimpleResponseElement;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
-import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.List;
 
 public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
 
@@ -46,7 +41,8 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
     @Override
     public DataImportReport importData(SingleImportData importData) {
         ICarolDataToPersist dataToPersist = gatherMoreDetails(importData);
-        return persist(dataToPersist, importData);
+        RelationManager manager = new RelationManager(importService);
+        return manager.persist(dataToPersist, importData);
     }
 
     protected abstract String getApiKey();
@@ -54,75 +50,6 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
     private ICarolDataToPersist gatherMoreDetails(SingleImportData importData) {
         Header[] headers = HttpUtils.getStandardAuthHeaders(getApiKey());
         return getDataToPersist(importData.getSingleObjectData(), headers, importData.isFileUpload());
-    }
-
-    private DataImportReport persist(ICarolDataToPersist data, ImportData importData) {
-        ICarolDataMapper mapper = ICarolDataMapper.INSTANCE;
-        persistSites(data, mapper, importData);
-        persistEntitiesWithoutLocation(data, mapper, importData);
-        return importData.getReport();
-    }
-
-    private void persistSites(ICarolDataToPersist dataToPersist, ICarolDataMapper mapper, ImportData importData) {
-        for (ICarolSite site : dataToPersist.getSites()) {
-            mapper.extractLocation(site.getContactDetails(), site.getId(), importData.getProviderName())
-                .ifPresent(extractedLocation -> {
-                Location savedLocation = importService.createOrUpdateLocation(extractedLocation, site.getId(),
-                    importData.getProviderName());
-
-                mapper.extractPhysicalAddress(site.getContactDetails()).ifPresent(
-                    x -> importService.createOrUpdatePhysicalAddress(x, savedLocation));
-                mapper.extractPostalAddress(site.getContactDetails()).ifPresent(
-                    x -> importService.createOrUpdatePostalAddress(x, savedLocation));
-                mapper.extractAccessibilityForDisabilities(site).ifPresent(
-                    x -> importService.createOrUpdateAccessibility(x, savedLocation));
-
-                List<ICarolAgency> relatedAgencies = ICarolDataCollector.findRelatedEntities(dataToPersist.getAgencies(),
-                    site, AGENCY);
-                persistAgencies(dataToPersist.getPrograms(), mapper, savedLocation, relatedAgencies, importData);
-            });
-        }
-    }
-
-    private void persistEntitiesWithoutLocation(ICarolDataToPersist data, ICarolDataMapper mapper, ImportData importData) {
-        persistAgencies(data.getPrograms(), mapper, null, data.getAgencies(), importData);
-        persistPrograms(mapper, null, null, data.getPrograms(), importData);
-    }
-
-    private void persistAgencies(List<ICarolProgram> programs, ICarolDataMapper mapper,
-                                 Location location, List<ICarolAgency> relatedAgencies, ImportData importData) {
-        for (ICarolAgency agency : relatedAgencies) {
-            Organization extractedOrganization = mapper
-                .extractOrganization(agency, agency.getId(), importData.getProviderName())
-                .sourceDocument(importData.getReport().getDocumentUpload());
-
-            Organization savedOrganization = importService
-                .createOrUpdateOrganization(extractedOrganization, agency.getId(), importData.getProviderName(),
-                    importData.getReport());
-
-            List<ICarolProgram> relatedPrograms = ICarolDataCollector.findRelatedEntities(programs, agency, PROGRAM);
-            persistPrograms(mapper, location, savedOrganization, relatedPrograms, importData);
-        }
-    }
-
-    private void persistPrograms(ICarolDataMapper mapper, Location location, Organization organization,
-                                 List<ICarolProgram> relatedPrograms, ImportData importData) {
-        for (ICarolProgram program : relatedPrograms) {
-            Service extractedService = mapper.extractService(program, program.getId(), importData.getProviderName())
-                .organization(organization);
-
-            Service savedService = importService
-                .createOrUpdateService(extractedService, program.getId(), importData.getProviderName(),
-                    importData.getReport());
-
-            mapper.extractEligibility(program).ifPresent(
-                x -> importService.createOrUpdateEligibility(x, savedService));
-
-            importService.createOrUpdatePhonesForService(mapper.extractPhones(program.getContactDetails()), savedService,
-                location);
-            importService.createOrUpdateLangsForService(mapper.extractLangs(program), savedService, location);
-            importService.createOrUpdateOpeningHoursForService(mapper.extractOpeningHours(program.getHours()), savedService);
-        }
     }
 
     private ICarolDataToPersist getDataToPersist(String dataString, Header[] headers, boolean isFileUpload) {
