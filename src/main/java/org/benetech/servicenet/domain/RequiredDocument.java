@@ -1,7 +1,10 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,6 +22,9 @@ import java.util.Objects;
  */
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "required_document")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class RequiredDocument extends AbstractEntity implements Serializable {
@@ -42,32 +48,15 @@ public class RequiredDocument extends AbstractEntity implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
-    public String getDocument() {
-        return document;
-    }
-
-    public void setDocument(String document) {
-        this.document = document;
-    }
-
     public RequiredDocument document(String document) {
         this.document = document;
         return this;
-    }
-
-    public Service getSrvc() {
-        return srvc;
-    }
-
-    public void setSrvc(Service service) {
-        this.srvc = service;
     }
 
     public RequiredDocument srvc(Service service) {
         this.srvc = service;
         return this;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {
@@ -89,11 +78,4 @@ public class RequiredDocument extends AbstractEntity implements Serializable {
         return Objects.hashCode(getId());
     }
 
-    @Override
-    public String toString() {
-        return "RequiredDocument{" +
-            "id=" + getId() +
-            ", document='" + getDocument() + "'" +
-            "}";
-    }
 }

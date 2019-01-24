@@ -21,6 +21,8 @@ import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.repository.PhoneRepository;
+import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationService;
@@ -34,6 +36,7 @@ import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -42,8 +45,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
+@Transactional
 public class ImportServiceImpl implements ImportService {
 
     @Autowired
@@ -75,6 +80,12 @@ public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private SystemAccountService systemAccountService;
+
+    @Autowired
+    private PhoneRepository phoneRepository;
+
+    @Autowired
+    private RegularScheduleRepository regularScheduleRepository;
 
     @Autowired
     private ContactService contactService;
@@ -196,13 +207,13 @@ public class ImportServiceImpl implements ImportService {
             phone.setLocation(location);
         });
 
-        Set<Phone> common = new HashSet<>(phones);
-        common.retainAll(service.getPhones());
+        return persistPhones(phones, service.getPhones());
+    }
 
-        service.getPhones().stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
-        phones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.persist(phone));
-
-        return phones;
+    @Override
+    public Set<Phone> createOrUpdatePhonesForOrganization(Set<Phone> phones, UUID orgId) {
+        Set<Phone> orgPhones = phoneRepository.findAllByOrganization(orgId);
+        return persistPhones(phones, orgPhones);
     }
 
     @Override
@@ -323,6 +334,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
+    @Transactional
     public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName) {
         Optional<Taxonomy> taxonomyFromDb = taxonomyService.findForExternalDb(externalDbId, providerName);
 
@@ -419,6 +431,20 @@ public class ImportServiceImpl implements ImportService {
         contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
     }
 
+    @Override
+    public RegularSchedule createOrUpdateRegularSchedule(RegularSchedule schedule, Service service) {
+        schedule.setSrvc(service);
+        Optional<RegularSchedule> scheduleFromDb = regularScheduleRepository.findOneByServiceId(service.getId());
+
+        if (scheduleFromDb.isPresent()) {
+            schedule.setId(scheduleFromDb.get().getId());
+            return em.merge(schedule);
+        } else {
+            em.persist(schedule);
+            return schedule;
+        }
+    }
+
     private Optional<AccessibilityForDisabilities> getExistingAccessibility(AccessibilityForDisabilities accessibility,
                                                                             Location location) {
         return location.getAccessibilities().stream()
@@ -434,4 +460,15 @@ public class ImportServiceImpl implements ImportService {
             }
         });
     }
+
+    private Set<Phone> persistPhones(Set<Phone> phones, Set<Phone> savedPhones) {
+        Set<Phone> common = new HashSet<>(phones);
+        common.retainAll(savedPhones);
+
+        savedPhones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
+        phones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.persist(phone));
+
+        return phones;
+    }
+
 }

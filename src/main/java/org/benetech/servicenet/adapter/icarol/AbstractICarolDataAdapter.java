@@ -52,7 +52,7 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
     protected abstract String getApiKey();
 
     private ICarolDataToPersist gatherMoreDetails(SingleImportData importData) {
-        Header[] headers = HttpUtils.getStandardHeaders(getApiKey());
+        Header[] headers = HttpUtils.getStandardAuthHeaders(getApiKey());
         return getDataToPersist(importData.getSingleObjectData(), headers, importData.isFileUpload());
     }
 
