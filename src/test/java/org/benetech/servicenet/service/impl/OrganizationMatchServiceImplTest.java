@@ -107,8 +107,12 @@ public class OrganizationMatchServiceImplTest {
     @Test
     @Transactional
     public void shouldNotCreateMatchesForSimiliarOrgsIfAlreadyExists() {
-        Organization org1 = new Organization().name(ORG_1).active(true);
-        Organization org2 = new Organization().name(ORG_2).active(true);
+        Organization org1 = OrganizationMother.createDefaultAndPersist(em);
+        org1.setName(ORG_1);
+        org1.setActive(true);
+        Organization org2 = OrganizationMother.createDifferentAndPersist(em);
+        org2.setName(ORG_2);
+        org2.setActive(true);
         em.persist(org1);
         em.persist(org2);
         em.persist(new OrganizationMatch().organizationRecord(org1).partnerVersion(org2));
@@ -126,8 +130,12 @@ public class OrganizationMatchServiceImplTest {
     @Test
     @Transactional
     public void shouldNotCreateMatchesForDifferentOrgs() {
-        Organization org1 = new Organization().name(ORG_1).active(true);
-        Organization org2 = new Organization().name(ORG_2).active(true);
+        Organization org1 = OrganizationMother.createDefaultAndPersist(em);
+        org1.setName(ORG_1);
+        org1.setActive(true);
+        Organization org2 = OrganizationMother.createDifferentAndPersist(em);
+        org2.setName(ORG_2);
+        org2.setActive(true);
         em.persist(org1);
         em.persist(org2);
         em.flush();

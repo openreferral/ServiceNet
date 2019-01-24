@@ -3,8 +3,10 @@ package org.benetech.servicenet.conflict;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsService;
 import org.benetech.servicenet.mother.OrganizationMother;
+import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.ConflictRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ConflictService;
@@ -78,7 +80,7 @@ public class ConflictDetectionServiceImplTest {
     @Transactional
     public void shouldFindAllOrganizationConflicts() {
         Organization org1 = OrganizationMother.createDefaultAndPersist(em);
-        Organization org2 = OrganizationMother.createDifferentAndPersist(em);
+        Organization org2 = getConflictingOrganization();
         em.flush();
         OrganizationMatch match = createMatch(org1, org2);
         OrganizationMatch match2 = createMatch(org2, org1);
@@ -96,7 +98,7 @@ public class ConflictDetectionServiceImplTest {
     @Transactional
     public void shouldNotDuplicateConflicts() {
         Organization org1 = OrganizationMother.createDefaultAndPersist(em);
-        Organization org2 = OrganizationMother.createDifferentAndPersist(em);
+        Organization org2 = getConflictingOrganization();
         em.flush();
         OrganizationMatch match = createMatch(org1, org2);
         OrganizationMatch match2 = createMatch(org2, org1);
@@ -157,6 +159,16 @@ public class ConflictDetectionServiceImplTest {
             .partnerVersion(org2)
             .timestamp(ZonedDateTime.now())
             .deleted(false);
+    }
+
+
+    private Organization getConflictingOrganization() {
+        SystemAccount account = SystemAccountMother.createDefaultAndPersist(em);
+        Organization org = OrganizationMother.createDifferent();
+        org.setAccount(account);
+        org.setProviderName(account.getName());
+        em.persist(org);
+        return org;
     }
 
 }

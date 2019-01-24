@@ -15,6 +15,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -40,12 +41,14 @@ public class Conflict extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 5951338913885782058L;
 
+    @Lob
     @Column(name = "current_value")
     private String currentValue;
 
     @Column(name = "current_value_date")
     private ZonedDateTime currentValueDate;
 
+    @Lob
     @Column(name = "offered_value")
     private String offeredValue;
 
