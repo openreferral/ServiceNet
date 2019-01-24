@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +35,7 @@ public interface ShelterTechOrganizationMapper {
     @Mapping(source = "orgRaw.status", target = "active", qualifiedByName = "activeFromStatus")
     @Mapping(source = "orgRaw.id", target = "externalDbId")
     @Mapping(constant = PROVIDER_NAME, target = "providerName")
-    @Mapping(source = "orgRaw.address", target = "location", qualifiedByName = "locationFromAddressRaw")
+    @Mapping(source = "orgRaw.address", target = "locations", qualifiedByName = "locationFromAddressRaw")
     @Mapping(ignore = true, target = "replacedBy")
     @Mapping(source = "documentUpload", target = "sourceDocument")
     @Mapping(ignore = true, target = "account")
@@ -54,7 +55,7 @@ public interface ShelterTechOrganizationMapper {
     }
 
     @Named("locationFromAddressRaw")
-    default Location locationFromAddressRaw(AddressRaw raw) {
+    default Set<Location> locationFromAddressRaw(AddressRaw raw) {
         return ShelterTechLocationMapper.INSTANCE.mapToLocation(raw);
     }
 

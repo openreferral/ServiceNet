@@ -5,33 +5,39 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.PROVIDER_NAME;
+import java.util.Collections;
+import java.util.Set;
 
 @Mapper
 public interface ShelterTechLocationMapper {
 
     ShelterTechLocationMapper INSTANCE = Mappers.getMapper(ShelterTechLocationMapper.class);
 
-    @Mapping(ignore = true, target = "id")
-    @Mapping(source = "address1", target = "name", defaultValue = "undefined")
-    @Mapping(ignore = true, target = "alternateName")
-    @Mapping(ignore = true, target = "description")
-    @Mapping(ignore = true, target = "transportation")
-    @Mapping(source = "raw.latitude", target = "latitude")
-    @Mapping(source = "raw.longitude", target = "longitude")
-    @Mapping(source = "raw.id", target = "externalDbId")
-    @Mapping(constant = PROVIDER_NAME, target = "providerName")
-    @Mapping(ignore = true, target = "physicalAddress")
-    @Mapping(ignore = true, target = "postalAddress")
-    @Mapping(ignore = true, target = "regularSchedule")
-    @Mapping(ignore = true, target = "holidaySchedule")
-    @Mapping(ignore = true, target = "langs")
-    @Mapping(ignore = true, target = "accessibilities")
-    Location mapToLocation(AddressRaw raw);
+    default Set<Location> mapToLocation(AddressRaw raw) {
+        if (raw == null) {
+            return null;
+        }
+
+        Location location = new Location();
+
+        location.setLatitude(raw.getLatitude());
+        if (raw.getAddress1() != null) {
+            location.setName(raw.getAddress1());
+        } else {
+            location.setName("undefined");
+        }
+        if (raw.getId() != null) {
+            location.setExternalDbId(String.valueOf(raw.getId()));
+        }
+        location.setLongitude(raw.getLongitude());
+
+        location.setProviderName("ShelterTech");
+
+        return Collections.singleton(location);
+    }
 
     @Named("physicalAddressFromAddressRaw")
     default PhysicalAddress physicalAddressFromAddressRaw(AddressRaw raw) {
