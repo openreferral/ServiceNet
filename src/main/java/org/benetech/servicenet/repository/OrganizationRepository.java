@@ -21,4 +21,6 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     List<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId);
 
     Optional<Organization> findOneByExternalDbIdAndProviderName(String externalDbId, String providerName);
+
+    List<Organization> findAllByProviderNameNot(String providerName);
 }

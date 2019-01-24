@@ -29,6 +29,8 @@ public interface OrganizationService {
 
     List<Organization> findAll();
 
+    List<Organization> findAllOthers(String providerName);
+
     /**
      * Get all the OrganizationDTO where Funding is null.
      *

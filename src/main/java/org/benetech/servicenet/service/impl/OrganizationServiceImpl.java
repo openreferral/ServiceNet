@@ -71,6 +71,13 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.findAll();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Organization> findAllOthers(String providerName) {
+        log.debug("Request to get all Organizations which are not associated with provider: {}", providerName);
+        return organizationRepository.findAllByProviderNameNot(providerName);
+    }
+
     /**
      * get all the organizations where Funding is null.
      *

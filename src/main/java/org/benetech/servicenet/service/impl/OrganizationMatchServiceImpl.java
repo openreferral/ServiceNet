@@ -131,7 +131,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
             .map(m -> m.getPartnerVersion().getId())
             .collect(Collectors.toList());
-        List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getId());
+        List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getId(),
+            organization.getProviderName());
         List<OrganizationMatch> matches = findAndPersistMatches(organization, notMatchedOrgs);
         conflictDetectionService.detect(matches);
     }
@@ -141,8 +142,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .findAllByOrganizationRecordId(organization.getId());
     }
 
-    private List<Organization> findNotMatchedOrgs(List<UUID> currentMatchesIds, UUID currentId) {
-        return organizationService.findAll().stream()
+    private List<Organization> findNotMatchedOrgs(List<UUID> currentMatchesIds, UUID currentId, String providerName) {
+        return organizationService.findAllOthers(providerName).stream()
             .filter(o -> !currentMatchesIds.contains(o.getId()) && !currentId.equals(o.getId()))
             .collect(Collectors.toList());
     }

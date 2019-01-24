@@ -11,6 +11,9 @@
     <property name="floatType" value="float4" dbms="postgresql, h2"/>
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
+    <property name="clobType" value="clob" dbms="oracle, h2, postgresql"/>
+    <property name="clobType" value="longtext" dbms="mysql"/>
+
     <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
     <property name="uuidFunction" value="uid.uuid_generate_v4()" dbms="postgresql"/>
     <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
@@ -31,7 +34,7 @@
                 <constraints nullable="true"/>
             </column>
 
-            <column name="description" type="clob">
+            <column name="description" type="${clobType}">
                 <constraints nullable="true"/>
             </column>
 
