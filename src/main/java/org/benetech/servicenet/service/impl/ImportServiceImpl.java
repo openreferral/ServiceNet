@@ -43,12 +43,11 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.EntityManager;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Import service for data from all providers
@@ -185,15 +184,6 @@ public class ImportServiceImpl implements ImportService {
         registerSynchronizationOfMatchingOrganizations(organization);
 
         return organization;
-    }
-
-    @Override
-    @ConfidentialFilter
-    public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
-                                                   Service service, Set<Location> locations, DataImportReport report) {
-        organization.setServices(Collections.singleton(service));
-        organization.setLocations(locations);
-        return createOrUpdateOrganization(organization, externalDbId, providerName, report);
     }
 
     @Override
