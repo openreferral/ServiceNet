@@ -1,0 +1,22 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "fields",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "entity",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20190124144536",
+    "dto": "mapstruct",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "field_exclusion",
+    "jpaMetamodelFiltering": false,
+    "pagination": "no"
+}

@@ -138,6 +138,14 @@ import dataImportReport, {
 import activity, {
   ActivityState
 } from 'app/shared/reducers/activity.reducer';
+// prettier-ignore
+import fieldExclusion, {
+  FieldExclusionState
+} from 'app/entities/field-exclusion/field-exclusion.reducer';
+// prettier-ignore
+import exclusionsConfig, {
+  ExclusionsConfigState
+} from 'app/entities/exclusions-config/exclusions-config.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -184,6 +192,8 @@ export interface IRootState {
   readonly conflict: ConflictState;
   readonly dataImportReport: DataImportReportState;
   readonly activity: ActivityState;
+  readonly fieldExclusion: FieldExclusionState;
+  readonly exclusionsConfig: ExclusionsConfigState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -232,6 +242,8 @@ const rootReducer = combineReducers<IRootState>({
   conflict,
   dataImportReport,
   activity,
+  fieldExclusion,
+  exclusionsConfig,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

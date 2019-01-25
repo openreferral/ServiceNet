@@ -1,0 +1,22 @@
+{
+  "serviceNetApp": {
+    "fieldExclusion": {
+      "home": {
+        "title": "Field Exclusions",
+        "createLabel": "Create a new Field Exclusion",
+        "createOrEditLabel": "Create or edit a Field Exclusion"
+      },
+      "created": "A new Field Exclusion is created with identifier {{ param }}",
+      "updated": "A Field Exclusion is updated with identifier {{ param }}",
+      "deleted": "A Field Exclusion is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Field Exclusion {{ id }}?"
+      },
+      "detail": {
+        "title": "Field Exclusion"
+      },
+      "fields": "Fields",
+      "entity": "Entity"
+    }
+  }
+}
