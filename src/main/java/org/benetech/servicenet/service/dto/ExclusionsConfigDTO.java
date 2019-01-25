@@ -6,17 +6,12 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * A DTO for the ConfidentialRecord entity.
- */
 @Data
-public class ConfidentialRecordDTO implements Serializable {
+public class ExclusionsConfigDTO implements Serializable {
 
     private UUID id;
 
-    private UUID resourceId;
-
-    private String fields;
+    private UUID accountId;
 
     @Override
     public boolean equals(Object o) {
@@ -27,11 +22,11 @@ public class ConfidentialRecordDTO implements Serializable {
             return false;
         }
 
-        ConfidentialRecordDTO confidentialRecordDTO = (ConfidentialRecordDTO) o;
-        if (confidentialRecordDTO.getId() == null || getId() == null) {
+        ExclusionsConfigDTO exclusionsConfigDTO = (ExclusionsConfigDTO) o;
+        if (exclusionsConfigDTO.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), confidentialRecordDTO.getId());
+        return Objects.equals(getId(), exclusionsConfigDTO.getId());
     }
 
     @Override
@@ -41,10 +36,9 @@ public class ConfidentialRecordDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "ConfidentialRecordDTO{" +
+        return "ExclusionsConfigDTO{" +
             "id=" + getId() +
-            ", resourceId='" + getResourceId() + "'" +
-            ", fields='" + getFields() + "'" +
+            ", account=" + getAccountId() +
             "}";
     }
 }

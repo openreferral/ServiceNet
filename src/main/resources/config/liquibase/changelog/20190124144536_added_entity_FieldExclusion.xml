@@ -10,6 +10,9 @@
 
     <property name="now" value="current_timestamp" dbms="postgresql"/>
 
+    <property name="clobType" value="clob" dbms="oracle, h2, postgresql"/>
+    <property name="clobType" value="longtext" dbms="mysql"/>
+
     <property name="floatType" value="float4" dbms="postgresql, h2"/>
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
@@ -18,19 +21,23 @@
     <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
 
     <!--
-        Added the entity ConfidentialRecord.
+        Added the entity FieldExclusion.
     -->
-    <changeSet id="20190122110136-1" author="jhipster">
-        <createTable tableName="confidential_record">
+    <changeSet id="20190124144536-1" author="jhipster">
+        <createTable tableName="field_exclusion">
             <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="resource_id" type="${uuidType}">
+            <column name="fields" type="${clobType}">
                 <constraints nullable="true" />
             </column>
 
-            <column name="fields" type="varchar(255)">
+            <column name="entity" type="varchar(255)">
                 <constraints nullable="true" />
+            </column>
+
+            <column name="config_id" type="${uuidType}">
+                <constraints unique="true" uniqueConstraintName="ux_field_exclusion_config_id" />
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->

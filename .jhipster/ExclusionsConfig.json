@@ -1,0 +1,32 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+        {
+            "relationshipName": "account",
+            "otherEntityName": "systemAccount",
+            "relationshipType": "one-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "ownerSide": true,
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "exclusions",
+            "otherEntityName": "fieldExclusion",
+            "relationshipType": "one-to-many",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "config"
+        }
+    ],
+    "fields": [],
+    "changelogDate": "20190124145536",
+    "dto": "mapstruct",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "exclusions_config",
+    "jpaMetamodelFiltering": false,
+    "pagination": "no"
+}

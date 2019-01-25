@@ -148,10 +148,15 @@ export const EntitiesMenu = props => (
       &nbsp;
       <Translate contentKey="global.menu.entities.dataImportReport" />
     </DropdownItem>
-    <DropdownItem tag={Link} to="/entity/confidential-record">
+    <DropdownItem tag={Link} to="/entity/field-exclusion">
       <FontAwesomeIcon icon="asterisk" />
       &nbsp;
-      <Translate contentKey="global.menu.entities.confidentialRecord" />
+      <Translate contentKey="global.menu.entities.fieldExclusion" />
+    </DropdownItem>
+    <DropdownItem tag={Link} to="/entity/exclusions-config">
+      <FontAwesomeIcon icon="asterisk" />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.exclusionsConfig" />
     </DropdownItem>
     {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
   </NavDropdown>

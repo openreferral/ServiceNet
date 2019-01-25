@@ -5,19 +5,19 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { Translate, ICrudGetAction, ICrudDeleteAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IConfidentialRecord } from 'app/shared/model/confidential-record.model';
+import { IFieldExclusion } from 'app/shared/model/field-exclusion.model';
 import { IRootState } from 'app/shared/reducers';
-import { getEntity, deleteEntity } from './confidential-record.reducer';
+import { getEntity, deleteEntity } from './field-exclusion.reducer';
 
-export interface IConfidentialRecordDeleteDialogProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export interface IFieldExclusionDeleteDialogProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
-export class ConfidentialRecordDeleteDialog extends React.Component<IConfidentialRecordDeleteDialogProps> {
+export class FieldExclusionDeleteDialog extends React.Component<IFieldExclusionDeleteDialogProps> {
   componentDidMount() {
     this.props.getEntity(this.props.match.params.id);
   }
 
   confirmDelete = event => {
-    this.props.deleteEntity(this.props.confidentialRecordEntity.id);
+    this.props.deleteEntity(this.props.fieldExclusionEntity.id);
     this.handleClose(event);
   };
 
@@ -27,15 +27,15 @@ export class ConfidentialRecordDeleteDialog extends React.Component<IConfidentia
   };
 
   render() {
-    const { confidentialRecordEntity } = this.props;
+    const { fieldExclusionEntity } = this.props;
     return (
       <Modal isOpen toggle={this.handleClose}>
         <ModalHeader toggle={this.handleClose}>
           <Translate contentKey="entity.delete.title">Confirm delete operation</Translate>
         </ModalHeader>
-        <ModalBody id="serviceNetApp.confidentialRecord.delete.question">
-          <Translate contentKey="serviceNetApp.confidentialRecord.delete.question" interpolate={{ id: confidentialRecordEntity.id }}>
-            Are you sure you want to delete this ConfidentialRecord?
+        <ModalBody id="serviceNetApp.fieldExclusion.delete.question">
+          <Translate contentKey="serviceNetApp.fieldExclusion.delete.question" interpolate={{ id: fieldExclusionEntity.id }}>
+            Are you sure you want to delete this FieldExclusion?
           </Translate>
         </ModalBody>
         <ModalFooter>
@@ -44,7 +44,7 @@ export class ConfidentialRecordDeleteDialog extends React.Component<IConfidentia
             &nbsp;
             <Translate contentKey="entity.action.cancel">Cancel</Translate>
           </Button>
-          <Button id="jhi-confirm-delete-confidentialRecord" color="danger" onClick={this.confirmDelete}>
+          <Button id="jhi-confirm-delete-fieldExclusion" color="danger" onClick={this.confirmDelete}>
             <FontAwesomeIcon icon="trash" />
             &nbsp;
             <Translate contentKey="entity.action.delete">Delete</Translate>
@@ -55,8 +55,8 @@ export class ConfidentialRecordDeleteDialog extends React.Component<IConfidentia
   }
 }
 
-const mapStateToProps = ({ confidentialRecord }: IRootState) => ({
-  confidentialRecordEntity: confidentialRecord.entity
+const mapStateToProps = ({ fieldExclusion }: IRootState) => ({
+  fieldExclusionEntity: fieldExclusion.entity
 });
 
 const mapDispatchToProps = { getEntity, deleteEntity };
@@ -67,4 +67,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ConfidentialRecordDeleteDialog);
+)(FieldExclusionDeleteDialog);

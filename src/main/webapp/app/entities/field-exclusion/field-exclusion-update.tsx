@@ -8,19 +8,19 @@ import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
-import { getEntity, updateEntity, createEntity, reset } from './confidential-record.reducer';
-import { IConfidentialRecord } from 'app/shared/model/confidential-record.model';
+import { getEntity, updateEntity, createEntity, reset } from './field-exclusion.reducer';
+import { IFieldExclusion } from 'app/shared/model/field-exclusion.model';
 // tslint:disable-next-line:no-unused-variable
 import { convertDateTimeFromServer } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 
-export interface IConfidentialRecordUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export interface IFieldExclusionUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
-export interface IConfidentialRecordUpdateState {
+export interface IFieldExclusionUpdateState {
   isNew: boolean;
 }
 
-export class ConfidentialRecordUpdate extends React.Component<IConfidentialRecordUpdateProps, IConfidentialRecordUpdateState> {
+export class FieldExclusionUpdate extends React.Component<IFieldExclusionUpdateProps, IFieldExclusionUpdateState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,9 +44,9 @@ export class ConfidentialRecordUpdate extends React.Component<IConfidentialRecor
 
   saveEntity = (event, errors, values) => {
     if (errors.length === 0) {
-      const { confidentialRecordEntity } = this.props;
+      const { fieldExclusionEntity } = this.props;
       const entity = {
-        ...confidentialRecordEntity,
+        ...fieldExclusionEntity,
         ...values
       };
 
@@ -59,21 +59,19 @@ export class ConfidentialRecordUpdate extends React.Component<IConfidentialRecor
   };
 
   handleClose = () => {
-    this.props.history.push('/entity/confidential-record');
+    this.props.history.push('/entity/field-exclusion');
   };
 
   render() {
-    const { confidentialRecordEntity, loading, updating } = this.props;
+    const { fieldExclusionEntity, loading, updating } = this.props;
     const { isNew } = this.state;
 
     return (
       <div>
         <Row className="justify-content-center">
           <Col md="8">
-            <h2 id="serviceNetApp.confidentialRecord.home.createOrEditLabel">
-              <Translate contentKey="serviceNetApp.confidentialRecord.home.createOrEditLabel">
-                Create or edit a ConfidentialRecord
-              </Translate>
+            <h2 id="serviceNetApp.fieldExclusion.home.createOrEditLabel">
+              <Translate contentKey="serviceNetApp.fieldExclusion.home.createOrEditLabel">Create or edit a FieldExclusion</Translate>
             </h2>
           </Col>
         </Row>
@@ -82,28 +80,28 @@ export class ConfidentialRecordUpdate extends React.Component<IConfidentialRecor
             {loading ? (
               <p>Loading...</p>
             ) : (
-              <AvForm model={isNew ? {} : confidentialRecordEntity} onSubmit={this.saveEntity}>
+              <AvForm model={isNew ? {} : fieldExclusionEntity} onSubmit={this.saveEntity}>
                 {!isNew ? (
                   <AvGroup>
                     <Label for="id">
                       <Translate contentKey="global.field.id">ID</Translate>
                     </Label>
-                    <AvInput id="confidential-record-id" type="text" className="form-control" name="id" required readOnly />
+                    <AvInput id="field-exclusion-id" type="text" className="form-control" name="id" required readOnly />
                   </AvGroup>
                 ) : null}
                 <AvGroup>
-                  <Label id="resourceIdLabel" for="resourceId">
-                    <Translate contentKey="serviceNetApp.confidentialRecord.resourceId">Resource Id</Translate>
+                  <Label id="fieldsLabel" for="fields">
+                    <Translate contentKey="serviceNetApp.fieldExclusion.fields">Fields</Translate>
                   </Label>
-                  <AvField id="confidential-record-resourceId" type="text" name="resourceId" />
+                  <AvField id="field-exclusion-fields" type="text" name="fields" />
                 </AvGroup>
                 <AvGroup>
-                  <Label id="fieldsLabel" for="fields">
-                    <Translate contentKey="serviceNetApp.confidentialRecord.fields">Fields</Translate>
+                  <Label id="entityLabel" for="entity">
+                    <Translate contentKey="serviceNetApp.fieldExclusion.entity">Entity</Translate>
                   </Label>
-                  <AvField id="confidential-record-fields" type="text" name="fields" />
+                  <AvField id="field-exclusion-entity" type="text" name="entity" />
                 </AvGroup>
-                <Button tag={Link} id="cancel-save" to="/entity/confidential-record" replace color="info">
+                <Button tag={Link} id="cancel-save" to="/entity/field-exclusion" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
                   <span className="d-none d-md-inline">
@@ -126,10 +124,10 @@ export class ConfidentialRecordUpdate extends React.Component<IConfidentialRecor
 }
 
 const mapStateToProps = (storeState: IRootState) => ({
-  confidentialRecordEntity: storeState.confidentialRecord.entity,
-  loading: storeState.confidentialRecord.loading,
-  updating: storeState.confidentialRecord.updating,
-  updateSuccess: storeState.confidentialRecord.updateSuccess
+  fieldExclusionEntity: storeState.fieldExclusion.entity,
+  loading: storeState.fieldExclusion.loading,
+  updating: storeState.fieldExclusion.updating,
+  updateSuccess: storeState.fieldExclusion.updateSuccess
 });
 
 const mapDispatchToProps = {
@@ -145,4 +143,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ConfidentialRecordUpdate);
+)(FieldExclusionUpdate);

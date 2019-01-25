@@ -1,6 +1,6 @@
 package org.benetech.servicenet.repository;
 
-import org.benetech.servicenet.domain.ConfidentialRecord;
+import org.benetech.servicenet.domain.FieldExclusion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,10 +8,10 @@ import java.util.UUID;
 
 
 /**
- * Spring Data  repository for the ConfidentialRecord entity.
+ * Spring Data  repository for the FieldExclusion entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ConfidentialRecordRepository extends JpaRepository<ConfidentialRecord, UUID> {
+public interface FieldExclusionRepository extends JpaRepository<FieldExclusion, UUID> {
 
 }
