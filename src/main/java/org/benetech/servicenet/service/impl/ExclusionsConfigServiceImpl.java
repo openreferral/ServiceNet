@@ -35,12 +35,6 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
         this.exclusionsConfigMapper = exclusionsConfigMapper;
     }
 
-    /**
-     * Save a exclusionsConfig.
-     *
-     * @param exclusionsConfigDTO the entity to save
-     * @return the persisted entity
-     */
     @Override
     public ExclusionsConfigDTO save(ExclusionsConfigDTO exclusionsConfigDTO) {
         log.debug("Request to save ExclusionsConfig : {}", exclusionsConfigDTO);
@@ -50,11 +44,6 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
         return exclusionsConfigMapper.toDto(exclusionsConfig);
     }
 
-    /**
-     * Get all the exclusionsConfigs.
-     *
-     * @return the list of entities
-     */
     @Override
     @Transactional(readOnly = true)
     public List<ExclusionsConfigDTO> findAll() {
@@ -64,13 +53,6 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-
-    /**
-     * Get one exclusionsConfig by id.
-     *
-     * @param id the id of the entity
-     * @return the entity
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<ExclusionsConfigDTO> findOne(UUID id) {
@@ -79,11 +61,6 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
             .map(exclusionsConfigMapper::toDto);
     }
 
-    /**
-     * Delete the exclusionsConfig by id.
-     *
-     * @param id the id of the entity
-     */
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete ExclusionsConfig : {}", id);

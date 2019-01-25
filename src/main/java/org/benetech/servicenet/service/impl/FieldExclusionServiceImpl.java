@@ -35,12 +35,6 @@ public class FieldExclusionServiceImpl implements FieldExclusionService {
         this.fieldExclusionMapper = fieldExclusionMapper;
     }
 
-    /**
-     * Save a fieldExclusion.
-     *
-     * @param fieldExclusionDTO the entity to save
-     * @return the persisted entity
-     */
     @Override
     public FieldExclusionDTO save(FieldExclusionDTO fieldExclusionDTO) {
         log.debug("Request to save FieldExclusion : {}", fieldExclusionDTO);
@@ -50,11 +44,6 @@ public class FieldExclusionServiceImpl implements FieldExclusionService {
         return fieldExclusionMapper.toDto(fieldExclusion);
     }
 
-    /**
-     * Get all the fieldExclusions.
-     *
-     * @return the list of entities
-     */
     @Override
     @Transactional(readOnly = true)
     public List<FieldExclusionDTO> findAll() {
@@ -64,12 +53,6 @@ public class FieldExclusionServiceImpl implements FieldExclusionService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-    /**
-     * Get one fieldExclusion by id.
-     *
-     * @param id the id of the entity
-     * @return the entity
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<FieldExclusionDTO> findOne(UUID id) {
@@ -78,11 +61,6 @@ public class FieldExclusionServiceImpl implements FieldExclusionService {
             .map(fieldExclusionMapper::toDto);
     }
 
-    /**
-     * Delete the fieldExclusion by id.
-     *
-     * @param id the id of the entity
-     */
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete FieldExclusion : {}", id);

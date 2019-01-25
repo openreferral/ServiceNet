@@ -1,33 +1,17 @@
 package org.benetech.servicenet.service.dto;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * A DTO for the ExclusionsConfig entity.
- */
+@Data
 public class ExclusionsConfigDTO implements Serializable {
 
     private UUID id;
 
     private UUID accountId;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(UUID systemAccountId) {
-        this.accountId = systemAccountId;
-    }
 
     @Override
     public boolean equals(Object o) {

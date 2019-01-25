@@ -46,9 +46,6 @@ public class ExclusionsConfig extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public void setExclusions(Set<FieldExclusion> fieldExclusions) {
-        this.exclusions = fieldExclusions;
-    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

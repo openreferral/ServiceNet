@@ -1,12 +1,12 @@
 package org.benetech.servicenet.service.dto;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * A DTO for the FieldExclusion entity.
- */
+@Data
 public class FieldExclusionDTO implements Serializable {
 
     private UUID id;
@@ -14,30 +14,6 @@ public class FieldExclusionDTO implements Serializable {
     private String fields;
 
     private String entity;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getFields() {
-        return fields;
-    }
-
-    public void setFields(String fields) {
-        this.fields = fields;
-    }
-
-    public String getEntity() {
-        return entity;
-    }
-
-    public void setEntity(String entity) {
-        this.entity = entity;
-    }
 
     @Override
     public boolean equals(Object o) {
