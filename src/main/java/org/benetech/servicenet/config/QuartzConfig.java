@@ -62,6 +62,6 @@ public class QuartzConfig {
 
     private Trigger[] mapToTriggers(List<BaseJob> jobs) {
         Trigger[] array = new Trigger[jobs.size()];
-        return jobs.stream().map(BaseJob::getTrigger).collect(Collectors.toList()).toArray(array);
+        return jobs.stream().map(BaseJob::getInitTrigger).collect(Collectors.toList()).toArray(array);
     }
 }
