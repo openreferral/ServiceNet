@@ -2,7 +2,7 @@ package org.benetech.servicenet.adapter.healthleads;
 
 import org.benetech.servicenet.adapter.MultipleDataAdapter;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsBaseData;
-import org.benetech.servicenet.adapter.healthleads.persistence.HealthleadsDataPersistence;
+import org.benetech.servicenet.adapter.healthleads.persistence.RelationManager;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.ImportService;
@@ -25,9 +25,8 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
     public DataImportReport importData(MultipleImportData data) {
         verifyData(data);
         DataResolver dataResolver = new DataResolver();
-        HealthLeadsDataMapper mapper = HealthLeadsDataMapper.INSTANCE;
-        HealthleadsDataPersistence collector =
-            new HealthleadsDataPersistence(importService, mapper, data.getProviderName(), data.getReport());
+        RelationManager relationManager =
+            new RelationManager(importService, data);
         for (int i = 0; i < data.getDocumentUploads().size(); i++) {
             String objectJson = data.getMultipleObjectsData().get(i);
             String filename = data.getDocumentUploads().get(i).getFilename();
@@ -35,11 +34,11 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
             List<HealthleadsBaseData> baseDataList = dataResolver.getDataFromJson(objectJson, filename);
 
             for (HealthleadsBaseData baseData : baseDataList) {
-                collector.addData(baseData);
+                relationManager.addData(baseData);
             }
         }
 
-        return collector.persistData();
+        return relationManager.persistData();
     }
 
     @Override

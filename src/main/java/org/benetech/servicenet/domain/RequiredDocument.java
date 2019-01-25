@@ -58,6 +58,16 @@ public class RequiredDocument extends AbstractEntity implements Serializable {
         return this;
     }
 
+    public RequiredDocument externalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+        return this;
+    }
+
+    public RequiredDocument providerName(String providerName) {
+        this.providerName = providerName;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
