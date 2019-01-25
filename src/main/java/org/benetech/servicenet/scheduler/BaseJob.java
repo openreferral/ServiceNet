@@ -7,6 +7,9 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public abstract class BaseJob extends QuartzJobBean {
 
     private static final String TRIGGER = "Trigger";
@@ -25,17 +28,39 @@ public abstract class BaseJob extends QuartzJobBean {
     }
 
     public Trigger getTrigger() {
-        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder
-            .simpleSchedule()
-            .withIntervalInSeconds(getIntervalInSeconds())
-            .repeatForever();
-
         return TriggerBuilder
             .newTrigger()
             .withDescription(getDescription())
             .forJob(getJobDetail())
             .withIdentity(getFullName() + TRIGGER)
-            .withSchedule(scheduleBuilder)
+            .withSchedule(getSchedule())
+            .startNow()
             .build();
     }
+
+    public Trigger getInitTrigger() {
+        return TriggerBuilder
+            .newTrigger()
+            .withDescription(getDescription())
+            .forJob(getJobDetail())
+            .withIdentity(getFullName() + TRIGGER)
+            .withSchedule(getSchedule())
+            .startAt(startAnHourFromNow())
+            .build();
+    }
+
+    protected SimpleScheduleBuilder getSchedule() {
+        return SimpleScheduleBuilder
+            .simpleSchedule()
+            .withIntervalInSeconds(getIntervalInSeconds())
+            .repeatForever();
+    }
+
+    private Date startAnHourFromNow() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.HOUR_OF_DAY, 1);
+        return calendar.getTime();
+    }
+
 }
