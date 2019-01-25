@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,7 +57,10 @@ public interface ShelterTechOrganizationMapper {
 
     @Named("locationFromAddressRaw")
     default Set<Location> locationFromAddressRaw(AddressRaw raw) {
-        return ShelterTechLocationMapper.INSTANCE.mapToLocation(raw);
+        if (raw == null) {
+            return Collections.emptySet();
+        }
+        return ShelterTechLocationMapper.INSTANCE.mapToLocations(Collections.singletonList(raw));
     }
 
     @Named("emailFromString")
