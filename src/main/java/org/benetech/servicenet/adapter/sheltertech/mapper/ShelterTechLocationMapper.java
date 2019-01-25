@@ -9,6 +9,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+import java.util.Set;
+
 import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.PROVIDER_NAME;
 
 @Mapper
@@ -32,6 +35,8 @@ public interface ShelterTechLocationMapper {
     @Mapping(ignore = true, target = "langs")
     @Mapping(ignore = true, target = "accessibilities")
     Location mapToLocation(AddressRaw raw);
+
+    Set<Location> mapToLocations(List<AddressRaw> raws);
 
     @Named("physicalAddressFromAddressRaw")
     default PhysicalAddress physicalAddressFromAddressRaw(AddressRaw raw) {

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -44,7 +45,8 @@ public class AnonymousDataAdapter extends SingleDataAdapter {
             em.persist(location);
 
             Organization organization = mapper.extractOrganization(rawData)
-                .location(location).active(true).sourceDocument(data.getReport().getDocumentUpload());
+                .locations(Collections.singleton(location))
+                .active(true).sourceDocument(data.getReport().getDocumentUpload());
             em.persist(organization);
             data.getReport().incrementNumberOfCreatedOrgs();
 

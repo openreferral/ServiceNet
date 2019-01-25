@@ -41,34 +41,38 @@ public class LAACDataAdapter extends SingleDataAdapter {
         LAACDataMapper mapper = LAACDataMapper.INSTANCE;
 
         for (LAACData entity : data) {
-            Service service = importService(mapper.extractService(entity), entity.getId(), providerName, report);
-            Location location = importLocation(mapper.extractLocation(entity), entity.getId(), providerName);
-            Organization organization = importOrganization(mapper.extractOrganization(entity), entity.getId(),
-                providerName, service, location, report);
-
-            mapper.extractEligibility(entity).ifPresent(e -> importEligibility(e, service));
-            mapper.extractContact(entity).ifPresent(c ->importContact(c, organization));
-            mapper.extractPhysicalAddress(entity).ifPresent(pa -> importPhysicalAddress(pa, location));
-            importLanguages(mapper.extractLanguages(entity), service, location);
-            importPhones(Collections.singleton(mapper.extractPhone(entity)), service, location);
-            importServiceAtLocation(entity.getId(), providerName, service, location);
+            Organization savedOrg = importOrganization(mapper.extractOrganization(entity), entity.getId(),
+                providerName, report);
+            Service savedService = importService(mapper.extractService(entity),
+                savedOrg, entity.getId(), providerName, report);
+            Location savedLocation = importLocation(mapper.extractLocation(entity),
+                savedOrg, entity.getId(), providerName);
+            mapper.extractEligibility(entity).ifPresent(e -> importEligibility(e, savedService));
+            mapper.extractContact(entity).ifPresent(c ->importContact(c, savedOrg));
+            mapper.extractPhysicalAddress(entity).ifPresent(pa -> importPhysicalAddress(pa, savedLocation));
+            importLanguages(mapper.extractLanguages(entity), savedService, savedLocation);
+            importPhones(Collections.singleton(mapper.extractPhone(entity)), savedService, savedLocation);
+            importServiceAtLocation(entity.getId(), providerName, savedService, savedLocation);
         }
 
         return report;
     }
 
-    private Service importService(Service service, String externalDbId, String providerName, DataImportReport report) {
+    private Service importService(Service service, Organization savedOrg, String externalDbId,
+                                  String providerName, DataImportReport report) {
+        service.setOrganization(savedOrg);
         return importService.createOrUpdateService(service, externalDbId, providerName, report);
     }
 
-    private Location importLocation(Location location, String externalDbId, String providerName) {
+    private Location importLocation(Location location, Organization savedOrg, String externalDbId, String providerName) {
+        location.setOrganization(savedOrg);
         return importService.createOrUpdateLocation(location, externalDbId, providerName);
     }
 
-    private Organization importOrganization(Organization organization, String externalDbId, String providerName,
-                                            Service service, Location location, DataImportReport report) {
+    private Organization importOrganization(Organization organization, String externalDbId,
+                                            String providerName, DataImportReport report) {
         return importService.createOrUpdateOrganization(organization,
-            externalDbId, providerName, service, location, report);
+            externalDbId, providerName, report);
     }
 
     private void importEligibility(Eligibility eligibility, Service service) {

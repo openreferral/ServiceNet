@@ -17,7 +17,7 @@ import static org.benetech.servicenet.adapter.icarol.ICarolDataCollector.findRel
 
 class RelationManager {
 
-    private static final String AGENCY = "Agency";
+    private static final String SITE = "Site";
     private static final String PROGRAM = "Program";
     private final PersistenceManager persistence;
 
@@ -26,38 +26,41 @@ class RelationManager {
     }
 
     DataImportReport persist(ICarolDataToPersist data, ImportData importData) {
-        saveLocationsAndRelatedData(data, importData);
-        saveEntitiesWithoutLocation(data, importData);
+        saveOrganizationsAndRelatedData(data, importData);
+        saveEntitiesWithoutOrganization(data, importData);
         return importData.getReport();
     }
 
-    private void saveLocationsAndRelatedData(ICarolDataToPersist dataToPersist, ImportData importData) {
-        for (ICarolSite site : dataToPersist.getSites()) {
-            persistence.importLocation(importData, site).ifPresent(location ->
-                saveLocationRelatedData(dataToPersist, importData, site, location));
+    private void saveLocationsAndRelatedData(List<ICarolSite> relatedSites, ICarolDataToPersist dataToPersist,
+                                             ImportData importData, Organization savedOrg, ICarolAgency relatedAgency) {
+        for (ICarolSite site : relatedSites) {
+            persistence.importLocation(importData, site, savedOrg).ifPresent(location -> {
+                saveOrganizationRelatedData(
+                    findRelatedEntities(dataToPersist.getPrograms(), relatedAgency, PROGRAM),
+                    location, importData, savedOrg);
+                saveLocationRelatedData(site, location);
+            });
         }
     }
 
-    private void saveLocationRelatedData(ICarolDataToPersist dataToPersist, ImportData importData,
-                                         ICarolSite site, Location savedLocation) {
+    private void saveLocationRelatedData(ICarolSite site, Location savedLocation) {
         persistence.importPhysicalAddress(site, savedLocation);
         persistence.importPostalAddress(site, savedLocation);
         persistence.importAccessibility(site, savedLocation);
-        saveOrganizationsAndRelatedData(findRelatedEntities(dataToPersist.getAgencies(), site, AGENCY),
-            dataToPersist, importData, savedLocation);
     }
 
-    private void saveOrganizationsAndRelatedData(List<ICarolAgency> relatedAgencies, ICarolDataToPersist dataToPersist,
-                                                 ImportData importData, Location location) {
-        for (ICarolAgency agency : relatedAgencies) {
-            persistence.importOrganization(importData, agency).ifPresent(org ->
-                saveOrganizationRelatedData(findRelatedEntities(dataToPersist.getPrograms(), agency, PROGRAM),
-                location, importData, org));
+    private void saveOrganizationsAndRelatedData(ICarolDataToPersist dataToPersist, ImportData importData) {
+        for (ICarolAgency agency : dataToPersist.getAgencies()) {
+            persistence.importOrganization(importData, agency).ifPresent(org -> {
+                saveLocationsAndRelatedData(
+                    findRelatedEntities(dataToPersist.getSites(), agency, SITE),
+                    dataToPersist, importData, org, agency);
+            });
         }
     }
 
     private void saveOrganizationRelatedData(List<ICarolProgram> relatedPrograms, Location location, ImportData importData,
-                                               Organization savedOrganization) {
+                                             Organization savedOrganization) {
         saveServicesAndRelatedData(location, savedOrganization, relatedPrograms, importData);
     }
 
@@ -78,8 +81,8 @@ class RelationManager {
         persistence.importOpeningHours(program, savedService);
     }
 
-    private void saveEntitiesWithoutLocation(ICarolDataToPersist data, ImportData importData) {
-        saveOrganizationsAndRelatedData(data.getAgencies(), data, importData, null);
+    private void saveEntitiesWithoutOrganization(ICarolDataToPersist data, ImportData importData) {
+        saveLocationsAndRelatedData(data.getSites(), data, importData, null, null);
         saveServicesAndRelatedData(null, null, data.getPrograms(), importData);
     }
 }

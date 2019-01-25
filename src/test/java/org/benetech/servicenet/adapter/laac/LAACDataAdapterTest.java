@@ -83,8 +83,8 @@ public class LAACDataAdapterTest {
         when(importService.createOrUpdateLocation(any(Location.class), anyString(), anyString()))
             .thenReturn(new Location());
 
-        when(importService.createOrUpdateOrganization(any(Organization.class), anyString(), anyString(),
-            any(Service.class), any(Location.class), any(DataImportReport.class)))
+        when(importService.createOrUpdateOrganization(any(Organization.class), anyString(),
+            anyString(), any(DataImportReport.class)))
             .thenReturn(new Organization());
 
         adapter.importData(importData);
@@ -195,8 +195,8 @@ public class LAACDataAdapterTest {
     private void assertExtractedOrganization() {
         ArgumentCaptor<Organization> captor = ArgumentCaptor.forClass(Organization.class);
         verify(importService, times(THREE))
-            .createOrUpdateOrganization(captor.capture(), anyString(), anyString(),
-                any(Service.class), any(Location.class), any(DataImportReport.class));
+            .createOrUpdateOrganization(captor.capture(), anyString(),
+                anyString(), any(DataImportReport.class));
 
         int i = 1;
         for (Organization organization : captor.getAllValues()) {

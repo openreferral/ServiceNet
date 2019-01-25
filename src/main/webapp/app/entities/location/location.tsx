@@ -48,6 +48,9 @@ export class Location extends React.Component<ILocationProps> {
                   <Translate contentKey="serviceNetApp.location.description">Description</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="serviceNetApp.location.organization">Organization</Translate>
+                </th>
+                <th>
                   <Translate contentKey="serviceNetApp.location.transportation">Transportation</Translate>
                 </th>
                 <th>
@@ -76,6 +79,13 @@ export class Location extends React.Component<ILocationProps> {
                   <td>{location.name}</td>
                   <td>{location.alternateName}</td>
                   <td>{location.description}</td>
+                  <td>
+                    {location.organizationName ? (
+                      <Link to={`organization/${location.organizationId}`}>{location.organizationName}</Link>
+                    ) : (
+                      ''
+                    )}
+                  </td>
                   <td>{location.transportation}</td>
                   <td>{location.latitude}</td>
                   <td>{location.longitude}</td>

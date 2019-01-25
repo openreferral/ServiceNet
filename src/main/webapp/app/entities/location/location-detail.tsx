@@ -47,6 +47,10 @@ export class LocationDetail extends React.Component<ILocationDetailProps> {
             </dt>
             <dd>{locationEntity.description}</dd>
             <dt>
+              <Translate contentKey="serviceNetApp.location.organization">Organization</Translate>
+            </dt>
+            <dd>{locationEntity.organizationName ? locationEntity.organizationName : ''}</dd>
+            <dt>
               <span id="transportation">
                 <Translate contentKey="serviceNetApp.location.transportation">Transportation</Translate>
               </span>

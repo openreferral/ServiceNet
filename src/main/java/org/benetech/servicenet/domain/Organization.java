@@ -78,9 +78,9 @@ public class Organization extends AbstractEntity implements Serializable {
     @Column(name = "provider_name")
     private String providerName;
 
-    @OneToOne
-    @JoinColumn(unique = true)
-    private Location location;
+    @OneToMany(mappedBy = "organization")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Location> locations;
 
     @OneToOne
     @JoinColumn(unique = true)
@@ -175,8 +175,20 @@ public class Organization extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public Organization location(Location location) {
-        this.location = location;
+    public Organization locations(Set<Location> locations) {
+        this.locations = locations;
+        return this;
+    }
+
+    public Organization addLocations(Location location) {
+        this.locations.add(location);
+        location.setOrganization(this);
+        return this;
+    }
+
+    public Organization removeLocations(Location location) {
+        this.locations.remove(location);
+        location.setOrganization(null);
         return this;
     }
 

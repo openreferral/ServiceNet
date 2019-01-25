@@ -125,7 +125,6 @@ public class AnonymousDataAdapterIntTest {
         assertEquals(firstPostalAddress.getLocationId(), firstLocation.getId());
         assertEquals(firstPhysicalAddress.getLocationId(), firstLocation.getId());
         assertEquals(firstPhone.getLocationId(), firstLocation.getId());
-        assertEquals(firstOrganization.getLocationId(), firstLocation.getId());
         assertEquals(firstAccessibility.getLocationId(), firstLocation.getId());
         assertEquals(firstRegularSchedule.getLocationId(), firstLocation.getId());
     }

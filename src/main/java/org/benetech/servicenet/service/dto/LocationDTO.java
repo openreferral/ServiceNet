@@ -34,6 +34,10 @@ public class LocationDTO implements Serializable {
 
     private String providerName;
 
+    private UUID organizationId;
+
+    private String organizationName;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -65,6 +69,7 @@ public class LocationDTO implements Serializable {
             ", transportation='" + getTransportation() + "'" +
             ", latitude=" + getLatitude() +
             ", Longitude=" + getLongitude() +
+            ", organization=" + getOrganizationId() +
             "}";
     }
 }

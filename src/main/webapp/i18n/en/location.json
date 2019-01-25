@@ -19,6 +19,7 @@
       "alternateName": "Alternate Name",
       "description": "Description",
       "transportation": "Transportation",
+      "organization": "Organization",
       "latitude": "Latitude",
       "longitude": "Longitude",
       "externalDbId": "External Database Id",

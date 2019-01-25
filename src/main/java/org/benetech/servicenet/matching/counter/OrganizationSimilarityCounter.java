@@ -35,8 +35,13 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
             * weightProvider.getNameWeight();
         result += nameSimilarityCounter.countSimilarityRatio(org1.getAlternateName(), org2.getAlternateName())
             * weightProvider.getAlternateNameWeight();
-        result += locationSimilarityCounter.countSimilarityRatio(org1.getLocation(), org2.getLocation())
-            * weightProvider.getLocationWeight();
+        //TODO Organization now has multiple locations
+        if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
+            result += locationSimilarityCounter.countSimilarityRatio(
+                org1.getLocations().iterator().next(),
+                org2.getLocations().iterator().next())
+                * weightProvider.getLocationWeight();
+        }
         result += descriptionSimilarityCounter.countSimilarityRatio(org1.getDescription(), org2.getDescription())
             * weightProvider.getDescriptionWeight();
         result += emailSimilarityCounter.countSimilarityRatio(org1.getEmail(), org2.getEmail())

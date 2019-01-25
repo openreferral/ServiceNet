@@ -16,6 +16,8 @@ import { IRegularSchedule } from 'app/shared/model/regular-schedule.model';
 import { getEntities as getRegularSchedules } from 'app/entities/regular-schedule/regular-schedule.reducer';
 import { IHolidaySchedule } from 'app/shared/model/holiday-schedule.model';
 import { getEntities as getHolidaySchedules } from 'app/entities/holiday-schedule/holiday-schedule.reducer';
+import { IOrganization } from 'app/shared/model/organization.model';
+import { getEntities as getOrganizations } from 'app/entities/organization/organization.reducer';
 import { getEntity, updateEntity, createEntity, setBlob, reset } from './location.reducer';
 import { ILocation } from 'app/shared/model/location.model';
 // tslint:disable-next-line:no-unused-variable
@@ -61,6 +63,7 @@ export class LocationUpdate extends React.Component<ILocationUpdateProps, ILocat
     this.props.getPostalAddresses();
     this.props.getRegularSchedules();
     this.props.getHolidaySchedules();
+    this.props.getOrganizations();
   }
 
   onBlobChange = (isAnImage, name) => event => {
@@ -92,7 +95,16 @@ export class LocationUpdate extends React.Component<ILocationUpdateProps, ILocat
   };
 
   render() {
-    const { locationEntity, physicalAddresses, postalAddresses, regularSchedules, holidaySchedules, loading, updating } = this.props;
+    const {
+      locationEntity,
+      physicalAddresses,
+      postalAddresses,
+      regularSchedules,
+      holidaySchedules,
+      loading,
+      updating,
+      organizations
+    } = this.props;
     const { isNew } = this.state;
 
     const { description } = locationEntity;
@@ -144,6 +156,21 @@ export class LocationUpdate extends React.Component<ILocationUpdateProps, ILocat
                     <Translate contentKey="serviceNetApp.location.description">Description</Translate>
                   </Label>
                   <AvInput id="location-description" type="textarea" name="description" />
+                </AvGroup>
+                <AvGroup>
+                  <Label for="organization.name">
+                    <Translate contentKey="serviceNetApp.location.organization">Organization</Translate>
+                  </Label>
+                  <AvInput id="location-organization" type="select" className="form-control" name="organizationId">
+                    <option value="" key="0" />
+                    {organizations
+                      ? organizations.map(otherEntity => (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {otherEntity.name}
+                          </option>
+                        ))
+                      : null}
+                  </AvInput>
                 </AvGroup>
                 <AvGroup>
                   <Label id="transportationLabel" for="transportation">
@@ -202,6 +229,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   postalAddresses: storeState.postalAddress.entities,
   regularSchedules: storeState.regularSchedule.entities,
   holidaySchedules: storeState.holidaySchedule.entities,
+  organizations: storeState.organization.entities,
   locationEntity: storeState.location.entity,
   loading: storeState.location.loading,
   updating: storeState.location.updating,
@@ -213,6 +241,7 @@ const mapDispatchToProps = {
   getPostalAddresses,
   getRegularSchedules,
   getHolidaySchedules,
+  getOrganizations,
   getEntity,
   updateEntity,
   setBlob,

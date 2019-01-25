@@ -54,13 +54,13 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         for (OrganizationRaw orgRaw : parsedData.getOrganizations()) {
             Organization org = ShelterTechOrganizationMapper.INSTANCE.mapToOrganization(
                 orgRaw, rawData.getReport().getDocumentUpload());
-            persistOrgsLocation(orgRaw, org);
-
-            org.setServices(persistServices(orgRaw, rawData.getReport()));
 
             Organization savedOrg = importService
                 .createOrUpdateOrganization(org, org.getExternalDbId(), org.getProviderName(), rawData.getReport());
-            persistPhones(orgRaw, savedOrg);
+
+            persistOrgsLocation(orgRaw, org.getLocations(), savedOrg);
+
+            org.setServices(persistServices(orgRaw, rawData.getReport()));
         }
     }
 
@@ -78,18 +78,18 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         return services;
     }
 
-    private void persistOrgsLocation(OrganizationRaw orgRaw, Organization org) {
-        if (org.getLocation() == null) {
-            return;
+    private void persistOrgsLocation(OrganizationRaw orgRaw, Set<Location> locations, Organization savedOrg) {
+        for (Location location : locations) {
+            Location savedLocation = importService.createOrUpdateLocation(
+                location, location.getExternalDbId(), location.getProviderName());
+            savedOrg.addLocations(savedLocation);
+
+            persistPostalAddress(orgRaw.getAddress(), savedLocation);
+
+            persistPhysicalAddress(orgRaw.getAddress(), savedLocation);
+
+            persistPhones(orgRaw, savedOrg, savedLocation);
         }
-
-        Location location = importService.createOrUpdateLocation(
-            org.getLocation(), org.getLocation().getExternalDbId(), org.getLocation().getProviderName());
-        org.setLocation(location);
-
-        persistPostalAddress(orgRaw.getAddress(), location);
-
-        persistPhysicalAddress(orgRaw.getAddress(), location);
     }
 
     private void persistPostalAddress(AddressRaw addressRaw, Location location) {
@@ -108,12 +108,12 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
         }
     }
 
-    private void persistPhones(OrganizationRaw orgRaw, Organization orgSaved) {
+    private void persistPhones(OrganizationRaw orgRaw, Organization orgSaved, Location savedLocation) {
         List<Phone> phones = ShelterTechPhoneMapper.INSTANCE.mapToPhones(
             orgRaw.getPhones().stream().filter(phone -> phone.getNumber() != null).collect(Collectors.toList()));
         for (Phone phone : phones) {
             phone.setOrganization(orgSaved);
-            phone.setLocation(orgSaved.getLocation());
+            phone.setLocation(savedLocation);
         }
 
         importService.createOrUpdatePhonesForOrganization(Sets.newHashSet(phones), orgSaved.getId());

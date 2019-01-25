@@ -6,6 +6,8 @@ export interface ILocation {
   name?: string;
   alternateName?: string;
   description?: any;
+  organizationName?: string;
+  organizationId?: number;
   transportation?: string;
   latitude?: number;
   longitude?: number;

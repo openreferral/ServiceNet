@@ -99,10 +99,6 @@ export class OrganizationDetail extends React.Component<IOrganizationDetailProps
               <TextFormat value={organizationEntity.updatedAt} type="date" format={APP_DATE_FORMAT} />
             </dd>
             <dt>
-              <Translate contentKey="serviceNetApp.organization.location">Location</Translate>
-            </dt>
-            <dd>{organizationEntity.locationName ? organizationEntity.locationName : ''}</dd>
-            <dt>
               <Translate contentKey="serviceNetApp.organization.replacedBy">Replaced By</Translate>
             </dt>
             <dd>{organizationEntity.replacedById ? organizationEntity.replacedById : ''}</dd>

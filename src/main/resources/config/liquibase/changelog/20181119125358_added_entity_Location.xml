@@ -47,6 +47,10 @@
                 <constraints nullable="true"/>
             </column>
 
+            <column name="organization_id" type="${uuidType}">
+                <constraints nullable="true"/>
+            </column>
+
             <column name="external_db_id" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
