@@ -66,6 +66,7 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(source = "contact.zipPostalCode", target = "postalCode")
     @Mapping(source = "contact.country", target = "country")
     @Mapping(source = "contact.stateProvince", target = "stateProvince")
+    @Mapping(source = "contact.city", target = "city")
     @Mapping(target = "id", ignore = true)
     PhysicalAddress mapToPhysicalAddress(ICarolContactDetails details);
 
@@ -73,6 +74,7 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(source = "contact.zipPostalCode", target = "postalCode")
     @Mapping(source = "contact.country", target = "country")
     @Mapping(source = "contact.stateProvince", target = "stateProvince")
+    @Mapping(source = "contact.city", target = "city")
     @Mapping(target = "id", ignore = true)
     PostalAddress mapToPostalAddress(ICarolContactDetails details);
 

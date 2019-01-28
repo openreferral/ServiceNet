@@ -23,6 +23,7 @@ public interface ICarolConfidentialFieldsMapper {
     String PRIMARY = "Primary";
     String EMAIL_ADDRESS = "EmailAddress";
     String WEBSITE = "Website";
+    String UNDEFINED = "undefined";
 
     @Named("email")
     default String extractEmailIfNotConfidential(ICarolContactDetails[] contactDetails) {
@@ -45,10 +46,10 @@ public interface ICarolConfidentialFieldsMapper {
     @Named("name")
     default String extractNameIfNotConfidential(ICarolName[] names) {
         return Arrays.stream(names)
-            .filter(name -> !name.getPurpose().equals(PRIMARY)).findFirst()
+            .filter(name -> name.getPurpose().equals(PRIMARY)).findFirst()
             .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .map(ICarolName::getValue)
-            .orElse(null);
+            .orElse(UNDEFINED);
     }
 
     @Named("alternateName")
