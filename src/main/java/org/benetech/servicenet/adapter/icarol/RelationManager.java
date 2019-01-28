@@ -12,6 +12,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.benetech.servicenet.adapter.icarol.ICarolDataCollector.findRelatedEntities;
 
@@ -34,12 +35,16 @@ class RelationManager {
     private void saveLocationsAndRelatedData(List<ICarolSite> relatedSites, ICarolDataToPersist dataToPersist,
                                              ImportData importData, Organization savedOrg, ICarolAgency relatedAgency) {
         for (ICarolSite site : relatedSites) {
-            persistence.importLocation(importData, site, savedOrg).ifPresent(location -> {
-                saveOrganizationRelatedData(
-                    findRelatedEntities(dataToPersist.getPrograms(), relatedAgency, PROGRAM),
-                    location, importData, savedOrg);
-                saveLocationRelatedData(site, location);
-            });
+            Optional<Location> optLocation = persistence.importLocation(importData, site, savedOrg);
+            if (optLocation.isPresent()) {
+                saveLocationRelatedData(site, optLocation.get());
+
+                if (savedOrg != null) {
+                    saveOrganizationRelatedData(
+                        findRelatedEntities(dataToPersist.getPrograms(), relatedAgency, PROGRAM),
+                        optLocation.get(), importData, savedOrg);
+                }
+            }
         }
     }
 
