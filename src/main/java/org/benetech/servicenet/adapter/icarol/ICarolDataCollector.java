@@ -16,16 +16,15 @@ import java.util.List;
 
 final class ICarolDataCollector {
 
-    private static final String URL = "https://api.icarol.com/v1/Resource";
     private static final String ID = "id=";
     private static final String PARAMS_BEGINNING = "?";
     private static final String PARAMS_DELIMITER = "&";
 
-    static JsonArray getData(Header[] headers, List<ICarolSimpleResponseElement> batch) {
+    static JsonArray getData(Header[] headers, List<ICarolSimpleResponseElement> batch, String uri) {
         String params = getIdsAsQueryParameters(batch);
         String response;
         try {
-            response = HttpUtils.executeGET(URL + params, headers);
+            response = HttpUtils.executeGET(uri + params, headers);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot connect with iCarol API");
         }
@@ -33,11 +32,11 @@ final class ICarolDataCollector {
     }
 
     static <T extends ICarolBaseData> List<T> collectData(List<List<ICarolSimpleResponseElement>> batches,
-                                                          Header[] headers, Class<T> clazz) {
+                                                          Header[] headers, Class<T> clazz, String uri) {
         List<T> result = new ArrayList<>();
         JsonArray jsonArray = new JsonArray();
         for (List<ICarolSimpleResponseElement> batch : batches) {
-            jsonArray.addAll(getData(headers, batch));
+            jsonArray.addAll(getData(headers, batch, uri));
         }
 
         Gson gson = new Gson();

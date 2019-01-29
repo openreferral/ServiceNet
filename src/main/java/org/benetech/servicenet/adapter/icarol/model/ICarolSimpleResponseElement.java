@@ -1,11 +1,10 @@
 package org.benetech.servicenet.adapter.icarol.model;
 
 import lombok.Data;
+import org.benetech.servicenet.adapter.AbstractElement;
 
 @Data
-public class ICarolSimpleResponseElement {
-
-    private Integer id;
+public class ICarolSimpleResponseElement extends AbstractElement {
 
     private String uniquePriorID;
 
