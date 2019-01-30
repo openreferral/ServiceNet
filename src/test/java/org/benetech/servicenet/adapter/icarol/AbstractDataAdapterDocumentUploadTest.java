@@ -12,12 +12,11 @@ import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.MongoDbService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.impl.DocumentUploadServiceImpl;
 import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,7 +24,7 @@ import org.mockito.Mock;
 
 import org.mockito.MockitoAnnotations;
 import org.mockserver.client.MockServerClient;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
@@ -34,14 +33,19 @@ import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
-import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
+
 import static org.benetech.servicenet.adapter.AdapterTestsUtils.mockEndpointWithBatch;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AbstractDataAdapterDocumentUploadTest {
 
     private static final String EDEN_PROVIDER = "Eden";
@@ -73,28 +77,15 @@ public class AbstractDataAdapterDocumentUploadTest {
     private DocumentUploadServiceImpl documentUploadService;
 
     @Autowired
-    private HttpMessageConverter<?>[] httpMessageConverters;
-
-    @Autowired
-    private ExceptionTranslator exceptionTranslator;
+    private EntityManager em;
 
     private static MockServerClient mockServer = startClientAndServer(1080);
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-    }
 
-    @AfterClass
-    public static void stopServer() {
-        mockServer.stop();
-    }
-
-    @Test
-    @Ignore
-    public void shouldSaveAllToDbTest() throws IOException {
         String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + "ids.json");
-        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
         ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
 
         mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + "programs.json", mockServer);
@@ -103,7 +94,44 @@ public class AbstractDataAdapterDocumentUploadTest {
             data.getServiceSiteBatches().get(0), ICAROL_CATALOG + "serviceSites.json", mockServer);
         mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + "agencies.json", mockServer);
 
+        em.clear();
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        mockServer.stop();
+    }
+
+    @Test
+    public void shouldSaveAllIdsDocTest() throws IOException {
+        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + "ids.json");
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
+
+        DocumentUploadDTO document = documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
+
+        assertNotNull(document.getOriginalDocumentId());
+    }
+
+    @Test
+    public void shouldCreateOrganizationsTest() throws IOException {
+        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + "ids.json");
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
+
         documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
+
+        assertEquals(Integer.valueOf(2), report.getNumberOfCreatedOrgs());
+        assertEquals(Integer.valueOf(0), report.getNumberOfUpdatedOrgs());
+    }
+
+    @Test
+    public void shouldCreateServicesTest() throws IOException {
+        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + "ids.json");
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
+
+        documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
+
+        assertEquals(Integer.valueOf(4), report.getNumberOfCreatedServices());
+        assertEquals(Integer.valueOf(0), report.getNumberOfUpdatedServices());
     }
 
     private static ICarolComplexResponseElement getAllIdsInBatches(String allIds) {
