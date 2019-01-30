@@ -166,3 +166,7 @@ scheduler:
 # ===================================================================
 
 # application:
+
+adapter:
+    icarol:
+        uri: https://api.icarol.com/v1/Resource

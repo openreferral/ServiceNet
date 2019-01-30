@@ -39,28 +39,31 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
     private ImportService importService;
 
     @Override
-    public DataImportReport importData(SingleImportData importData) {
-        ICarolDataToPersist dataToPersist = gatherMoreDetails(importData);
+    public abstract DataImportReport importData(SingleImportData importData);
+
+    protected DataImportReport importData(SingleImportData importData, String uri) {
+        ICarolDataToPersist dataToPersist = gatherMoreDetails(importData, uri);
         RelationManager manager = new RelationManager(importService);
         return manager.persist(dataToPersist, importData);
     }
 
     protected abstract String getApiKey();
 
-    private ICarolDataToPersist gatherMoreDetails(SingleImportData importData) {
+    private ICarolDataToPersist gatherMoreDetails(SingleImportData importData, String uri) {
         Header[] headers = HttpUtils.getStandardAuthHeaders(getApiKey());
-        return getDataToPersist(importData.getSingleObjectData(), headers, importData.isFileUpload());
+        return getDataToPersist(importData, headers, uri);
     }
 
-    private ICarolDataToPersist getDataToPersist(String dataString, Header[] headers, boolean isFileUpload) {
-        if (isFileUpload) {
-            return collectDataDetailsFromTheFile(dataString);
+    private ICarolDataToPersist getDataToPersist(SingleImportData importData, Header[] headers, String uri) {
+        if (importData.isFileUpload()) {
+            return collectDataDetailsFromTheFile(importData.getSingleObjectData());
         }
         Type collectionType = new TypeToken<Collection<ICarolSimpleResponseElement>>() {
         }.getType();
-        Collection<ICarolSimpleResponseElement> responseElements = new Gson().fromJson(dataString, collectionType);
+        Collection<ICarolSimpleResponseElement> responseElements = new Gson()
+            .fromJson(importData.getSingleObjectData(), collectionType);
         ICarolComplexResponseElement data = new ICarolComplexResponseElement(responseElements);
-        return collectDataDetailsFromTheApi(data, headers);
+        return collectDataDetailsFromTheApi(data, headers, uri);
     }
 
     private ICarolDataToPersist collectDataDetailsFromTheFile(String file) {
@@ -91,15 +94,19 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
         }
     }
 
-    private ICarolDataToPersist collectDataDetailsFromTheApi(ICarolComplexResponseElement data, Header[] headers) {
+    private ICarolDataToPersist collectDataDetailsFromTheApi(ICarolComplexResponseElement data,
+                                                             Header[] headers,
+                                                             String uri) {
         ICarolDataToPersist dataToPersist = new ICarolDataToPersist();
 
-        dataToPersist.setPrograms(ICarolDataCollector.collectData(data.getProgramBatches(), headers,
-            ICarolProgram.class));
-        dataToPersist.setSites(ICarolDataCollector.collectData(data.getSiteBatches(), headers, ICarolSite.class));
-        dataToPersist.setAgencies(ICarolDataCollector.collectData(data.getAgencyBatches(), headers, ICarolAgency.class));
-        dataToPersist.setServiceSites(ICarolDataCollector.collectData(data.getServiceSiteBatches(), headers,
-            ICarolServiceSite.class));
+        dataToPersist.setPrograms(
+            ICarolDataCollector.collectData(data.getProgramBatches(), headers, ICarolProgram.class, uri));
+        dataToPersist.setSites(
+            ICarolDataCollector.collectData(data.getSiteBatches(), headers, ICarolSite.class, uri));
+        dataToPersist.setAgencies(
+            ICarolDataCollector.collectData(data.getAgencyBatches(), headers, ICarolAgency.class, uri));
+        dataToPersist.setServiceSites(
+            ICarolDataCollector.collectData(data.getServiceSiteBatches(), headers, ICarolServiceSite.class, uri));
 
         return dataToPersist;
     }
