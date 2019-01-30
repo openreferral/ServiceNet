@@ -50,6 +50,11 @@ public class AbstractDataAdapterDocumentUploadTest {
 
     private static final String EDEN_PROVIDER = "Eden";
     private static final String ICAROL_CATALOG = "icarol/";
+    private static final String IDS_FILE = "ids.json";
+    private static final String PROGRAMS_FILE = "programs.json";
+    private static final String SITES_FILE = "sites.json";
+    private static final String SERVICE_SITES_FILE = "serviceSites.json";
+    private static final String AGENCIES_FILE = "agencies.json";
 
     @Mock
     private HttpClient client;
@@ -85,14 +90,14 @@ public class AbstractDataAdapterDocumentUploadTest {
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
 
-        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + "ids.json");
+        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
 
-        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + "programs.json", mockServer);
-        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + "sites.json", mockServer);
+        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
+        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
         mockEndpointWithBatch(
-            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + "serviceSites.json", mockServer);
-        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + "agencies.json", mockServer);
+            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
+        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
 
         em.clear();
     }
@@ -103,8 +108,8 @@ public class AbstractDataAdapterDocumentUploadTest {
     }
 
     @Test
-    public void shouldSaveAllIdsDocTest() throws IOException {
-        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + "ids.json");
+    public void shouldSaveOriginalDocTest() throws IOException {
+        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
         DocumentUploadDTO document = documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
@@ -114,7 +119,7 @@ public class AbstractDataAdapterDocumentUploadTest {
 
     @Test
     public void shouldCreateOrganizationsTest() throws IOException {
-        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + "ids.json");
+        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
         documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
@@ -125,7 +130,7 @@ public class AbstractDataAdapterDocumentUploadTest {
 
     @Test
     public void shouldCreateServicesTest() throws IOException {
-        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + "ids.json");
+        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
         documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
