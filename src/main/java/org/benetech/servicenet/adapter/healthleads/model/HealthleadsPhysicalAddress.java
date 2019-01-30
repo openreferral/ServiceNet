@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class HealthleadsPhysicalAddress extends LocationRelatedHealthleadsData {
+public class HealthleadsPhysicalAddress extends HealthleadsBaseData {
 
     private String attention;
 

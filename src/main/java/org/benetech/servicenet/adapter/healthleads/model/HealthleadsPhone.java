@@ -8,15 +8,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class HealthleadsPhone extends HealthleadsBaseData {
 
-    @SerializedName("location_id")
-    private String locationId;
-
-    @SerializedName("service_id")
-    private String serviceId;
-
-    @SerializedName("organization_id")
-    private String organizationId;
-
     @SerializedName("contact_id")
     private String contactId;
 

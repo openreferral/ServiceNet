@@ -87,6 +87,11 @@ public class Location extends AbstractEntity implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
+    public Location organization(Organization organization) {
+        this.organization = organization;
+        return this;
+    }
+
     public Location name(String name) {
         this.name = name;
         return this;

@@ -79,6 +79,16 @@ public class Taxonomy extends AbstractEntity implements Serializable {
         this.parent = taxonomy;
         return this;
     }
+
+    public Taxonomy externalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+        return this;
+    }
+
+    public Taxonomy providerName(String providerName) {
+        this.providerName = providerName;
+        return this;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

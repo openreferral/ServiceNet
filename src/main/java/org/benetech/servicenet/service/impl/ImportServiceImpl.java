@@ -43,6 +43,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -220,8 +221,7 @@ public class ImportServiceImpl implements ImportService {
             phone.setSrvc(service);
             phone.setLocation(location);
         });
-
-        return persistPhones(phones, service.getPhones());
+        return persistPhones(phones, service != null ? service.getPhones() : Collections.emptySet());
     }
 
     @Override
@@ -286,9 +286,11 @@ public class ImportServiceImpl implements ImportService {
         });
 
         Set<Language> common = new HashSet<>(langs);
-        common.retainAll(service.getLangs());
+        if (service != null) {
+            common.retainAll(service.getLangs());
+            service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
+        }
 
-        service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
         langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.persist(lang));
 
         return langs;
