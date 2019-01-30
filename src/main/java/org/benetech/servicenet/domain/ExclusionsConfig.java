@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -31,6 +32,7 @@ public class ExclusionsConfig extends AbstractEntity implements Serializable {
     @JoinColumn(unique = true)
     private SystemAccount account;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "config")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<FieldExclusion> exclusions = new HashSet<>();

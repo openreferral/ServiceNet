@@ -4,6 +4,7 @@ import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -26,6 +27,7 @@ public interface ExclusionsConfigService {
      */
     List<ExclusionsConfigDTO> findAll();
 
+    List<ExclusionsConfigDTO> findAllBySystemAccountNameIn(Set<String> accountNames);
 
     /**
      * Get the "id" exclusionsConfig.
@@ -34,6 +36,8 @@ public interface ExclusionsConfigService {
      * @return the entity
      */
     Optional<ExclusionsConfigDTO> findOne(UUID id);
+
+    Optional<ExclusionsConfigDTO> findOneBySystemAccountName(String accountName);
 
     /**
      * Delete the "id" exclusionsConfig.

@@ -5,9 +5,11 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IFieldExclusion, defaultValue } from 'app/shared/model/field-exclusion.model';
+import { IExclusionsConfig } from 'app/shared/model/exclusions-config.model';
 
 export const ACTION_TYPES = {
   FETCH_FIELDEXCLUSION_LIST: 'fieldExclusion/FETCH_FIELDEXCLUSION_LIST',
+  FETCH_CONFIG_LIST: 'fieldExclusion/FETCH_CONFIG_LIST',
   FETCH_FIELDEXCLUSION: 'fieldExclusion/FETCH_FIELDEXCLUSION',
   CREATE_FIELDEXCLUSION: 'fieldExclusion/CREATE_FIELDEXCLUSION',
   UPDATE_FIELDEXCLUSION: 'fieldExclusion/UPDATE_FIELDEXCLUSION',
@@ -20,6 +22,7 @@ const initialState = {
   errorMessage: null,
   entities: [] as ReadonlyArray<IFieldExclusion>,
   entity: defaultValue,
+  configs: [] as ReadonlyArray<IExclusionsConfig>,
   updating: false,
   updateSuccess: false
 };
@@ -32,6 +35,7 @@ export default (state: FieldExclusionState = initialState, action): FieldExclusi
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_FIELDEXCLUSION_LIST):
     case REQUEST(ACTION_TYPES.FETCH_FIELDEXCLUSION):
+    case REQUEST(ACTION_TYPES.FETCH_CONFIG_LIST):
       return {
         ...state,
         errorMessage: null,
@@ -48,6 +52,7 @@ export default (state: FieldExclusionState = initialState, action): FieldExclusi
         updating: true
       };
     case FAILURE(ACTION_TYPES.FETCH_FIELDEXCLUSION_LIST):
+    case FAILURE(ACTION_TYPES.FETCH_CONFIG_LIST):
     case FAILURE(ACTION_TYPES.FETCH_FIELDEXCLUSION):
     case FAILURE(ACTION_TYPES.CREATE_FIELDEXCLUSION):
     case FAILURE(ACTION_TYPES.UPDATE_FIELDEXCLUSION):
@@ -86,6 +91,12 @@ export default (state: FieldExclusionState = initialState, action): FieldExclusi
         updateSuccess: true,
         entity: {}
       };
+    case SUCCESS(ACTION_TYPES.FETCH_CONFIG_LIST):
+      return {
+        ...state,
+        loading: false,
+        configs: action.payload.data
+      };
     case ACTION_TYPES.RESET:
       return {
         ...initialState
@@ -96,12 +107,18 @@ export default (state: FieldExclusionState = initialState, action): FieldExclusi
 };
 
 const apiUrl = 'api/field-exclusions';
+const configUrl = 'api/exclusions-configs';
 
 // Actions
 
 export const getEntities: ICrudGetAllAction<IFieldExclusion> = (page, size, sort) => ({
   type: ACTION_TYPES.FETCH_FIELDEXCLUSION_LIST,
   payload: axios.get<IFieldExclusion>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
+});
+
+export const getConfigs: ICrudGetAllAction<IExclusionsConfig> = (page, size, sort) => ({
+  type: ACTION_TYPES.FETCH_CONFIG_LIST,
+  payload: axios.get<IExclusionsConfig>(`${configUrl}?cacheBuster=${new Date().getTime()}`)
 });
 
 export const getEntity: ICrudGetAction<IFieldExclusion> = id => {

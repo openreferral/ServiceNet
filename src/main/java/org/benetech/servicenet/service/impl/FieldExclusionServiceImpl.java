@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,11 @@ public class FieldExclusionServiceImpl implements FieldExclusionService {
         log.debug("Request to get FieldExclusion : {}", id);
         return fieldExclusionRepository.findById(id)
             .map(fieldExclusionMapper::toDto);
+    }
+
+    @Override
+    public Set<FieldExclusion> findAllByConfigId(UUID configId) {
+        return fieldExclusionRepository.findAllByConfigId(configId);
     }
 
     @Override

@@ -4,11 +4,11 @@ import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
-import org.benetech.servicenet.service.comparator.ConflictsComparator;
+import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
-import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
+import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +42,14 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ConflictService conflictService;
 
+    private final RecordsService recordsService;
+
     public ActivityServiceImpl(OrganizationService organizationService, ConflictService conflictService,
-                               OrganizationMatchService organizationMatchService) {
+                               OrganizationMatchService organizationMatchService, RecordsService recordsService) {
         this.organizationService = organizationService;
         this.conflictService = conflictService;
         this.organizationMatchService = organizationMatchService;
+        this.recordsService = recordsService;
     }
 
     @Override
@@ -92,25 +95,25 @@ public class ActivityServiceImpl implements ActivityService {
 
     private Optional<ActivityDTO> getEntityActivity(UUID orgId, UUID resourceId) throws ActivityCreationException {
         log.debug("Creating Activity for organization: {} with resourceId: {}", orgId, resourceId);
-        Optional<OrganizationDTO> opt = organizationService.findOne(orgId);
-        OrganizationDTO org = opt.orElseThrow(() -> new ActivityCreationException(
-            String.format("There is no organization for orgId: %s", orgId)));
+        try {
+            Optional<RecordDTO> opt = recordsService.getRecordFromOrganization(orgId, resourceId);
+            RecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
+                String.format("There is no organization for orgId: %s", orgId)));
 
-        List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceId(resourceId);
-        conflictDTOS.sort(new ConflictsComparator());
+            if (CollectionUtils.isEmpty(record.getConflicts())) {
+                return Optional.empty();
+            } else {
+                Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(resourceId);
+                List<OrganizationMatchDTO> matches = organizationMatchService.findAllForOrganization(orgId);
 
-        if (CollectionUtils.isEmpty(conflictDTOS)) {
+                return Optional.of(ActivityDTO.builder()
+                    .record(record)
+                    .organizationMatches(matches)
+                    .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
+                    .build());
+            }
+        } catch (IllegalAccessException e) {
             return Optional.empty();
-        } else {
-            Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(resourceId);
-            List<OrganizationMatchDTO> matches = organizationMatchService.findAllForOrganization(orgId);
-
-            return Optional.of(ActivityDTO.builder()
-                .conflicts(conflictDTOS)
-                .organization(org)
-                .organizationMatches(matches)
-                .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
-                .build());
         }
     }
 }

@@ -22,7 +22,7 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
   state: ISingleRecordViewState = {
     activeTab: '1',
     tooltipOpen: false,
-    organization: this.props.activity.organization
+    organization: this.props.activity.record.organization
   };
 
   toggle = tab => {

@@ -4,6 +4,7 @@ import org.benetech.servicenet.domain.FieldExclusion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -14,4 +15,5 @@ import java.util.UUID;
 @Repository
 public interface FieldExclusionRepository extends JpaRepository<FieldExclusion, UUID> {
 
+    Set<FieldExclusion> findAllByConfigId(UUID configId);
 }

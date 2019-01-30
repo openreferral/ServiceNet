@@ -15,6 +15,8 @@ public class FieldExclusionDTO implements Serializable {
 
     private String entity;
 
+    private UUID configId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -34,14 +36,5 @@ public class FieldExclusionDTO implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "FieldExclusionDTO{" +
-            "id=" + getId() +
-            ", fields='" + getFields() + "'" +
-            ", entity='" + getEntity() + "'" +
-            "}";
     }
 }

@@ -13,6 +13,8 @@ public class ExclusionsConfigDTO implements Serializable {
 
     private UUID accountId;
 
+    private String accountName;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

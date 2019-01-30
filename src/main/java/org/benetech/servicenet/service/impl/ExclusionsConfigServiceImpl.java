@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -54,10 +55,24 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
     }
 
     @Override
+    public List<ExclusionsConfigDTO> findAllBySystemAccountNameIn(Set<String> accountNames) {
+        return exclusionsConfigRepository.findAllBySystemAccountNameIn(accountNames)
+            .stream()
+            .map(exclusionsConfigMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<ExclusionsConfigDTO> findOne(UUID id) {
         log.debug("Request to get ExclusionsConfig : {}", id);
         return exclusionsConfigRepository.findById(id)
+            .map(exclusionsConfigMapper::toDto);
+    }
+
+    @Override
+    public Optional<ExclusionsConfigDTO> findOneBySystemAccountName(String accountName) {
+        return exclusionsConfigRepository.findOneBySystemAccountName(accountName)
             .map(exclusionsConfigMapper::toDto);
     }
 

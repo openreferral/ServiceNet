@@ -11,6 +11,7 @@ import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
@@ -67,10 +68,14 @@ public class ActivityServiceImplTest {
 
     private SystemAccount systemAccount;
 
+    @Autowired
+    private RecordsService recordsService;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        activityService = new ActivityServiceImpl(organizationService, conflictService, organizationMatchService);
+        activityService = new ActivityServiceImpl(organizationService, conflictService, organizationMatchService,
+            recordsService);
     }
 
     @Before
@@ -97,7 +102,7 @@ public class ActivityServiceImplTest {
         List<ActivityDTO> activities = activityService.getAllOrganizationActivities(user.getSystemAccount().getId());
 
         assertEquals(1, activities.size());
-        OrganizationDTO actualOrg = activities.get(0).getOrganization();
+        OrganizationDTO actualOrg = activities.get(0).getRecord().getOrganization();
         assertNotNull(actualOrg);
         assertEquals(organization.getAccount().getName(), actualOrg.getAccountName());
         assertEquals(organization.getId(), actualOrg.getId());
@@ -115,8 +120,8 @@ public class ActivityServiceImplTest {
 
         ActivityDTO actualAct = activities.get(0);
         assertNotNull(actualAct);
-        assertEquals(1, actualAct.getConflicts().size());
-        ConflictDTO actualConflict = actualAct.getConflicts().get(0);
+        assertEquals(1, actualAct.getRecord().getConflicts().size());
+        ConflictDTO actualConflict = actualAct.getRecord().getConflicts().get(0);
         assertEquals(conflict.getId(), actualConflict.getId());
         assertEquals(conflict.getCurrentValue(), actualConflict.getCurrentValue());
         assertEquals(conflict.getCurrentValueDate(), actualConflict.getCurrentValueDate());

@@ -16,7 +16,8 @@
         "title": "Field Exclusion"
       },
       "fields": "Fields",
-      "entity": "Entity"
+      "entity": "Entity",
+      "config": "Config"
     }
   }
 }

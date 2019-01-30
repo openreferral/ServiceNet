@@ -8,8 +8,8 @@ import { APP_DATE_FORMAT } from 'app/config/constants';
 
 const ActivityElement = props => {
   const maxConflicts = 3;
-  const conflictsToDisplay = props.activity.conflicts.slice(0, maxConflicts);
-  const areAllDisplayed = props.activity.conflicts.length <= maxConflicts;
+  const conflictsToDisplay = props.activity.record.conflicts.slice(0, maxConflicts);
+  const areAllDisplayed = props.activity.record.conflicts.length <= maxConflicts;
 
   return (
     <Row className="activity-row">
@@ -18,10 +18,10 @@ const ActivityElement = props => {
           <Card className="activity-card">
             <CardBody>
               <CardTitle className="activity-left-card-title">
-                {props.activity.organization.name} <FontAwesomeIcon icon="angle-right" />
+                {props.activity.record.organization.name} <FontAwesomeIcon icon="angle-right" />
               </CardTitle>
               <CardTitle>
-                <FontAwesomeIcon icon="map-marker-alt" /> {props.activity.organization.locationName}
+                <FontAwesomeIcon icon="map-marker-alt" /> {props.activity.record.organization.locationName}
               </CardTitle>
             </CardBody>
           </Card>
@@ -56,7 +56,7 @@ const ActivityElement = props => {
                   )}
                 </CardTitle>
               ))}
-              {areAllDisplayed ? null : `and ${props.activity.conflicts.length - maxConflicts} more...`}
+              {areAllDisplayed ? null : `and ${props.activity.record.conflicts.length - maxConflicts} more...`}
               <CardText className="activity-left-card-text-date">
                 Last updated <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
               </CardText>

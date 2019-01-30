@@ -104,7 +104,7 @@ export class ExclusionsConfigUpdate extends React.Component<IExclusionsConfigUpd
                     {systemAccounts
                       ? systemAccounts.map(otherEntity => (
                           <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.id}
+                            {otherEntity.name}
                           </option>
                         ))
                       : null}
