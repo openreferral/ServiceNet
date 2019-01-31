@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Jumbotron, Button } from 'reactstrap';
 import Details from './components/details';
-import { getBaseOrganization, getPartnerOrganization, getMatches } from './multiple-record-view.reducer';
+import { getBaseRecord, getPartnerRecord, getMatches } from './multiple-record-view.reducer';
 import { RouteComponentProps } from 'react-router-dom';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,10 +24,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
   };
 
   componentDidMount() {
-    this.props.getBaseOrganization(this.props.orgId);
+    this.props.getBaseRecord(this.props.orgId);
     Promise.all([this.props.getMatches(this.props.orgId)]).then(() => {
       if (this.props.matches.length >= this.state.matchNumber + 1) {
-        this.props.getPartnerOrganization(this.props.matches[this.state.matchNumber].partnerVersionId);
+        this.props.getPartnerRecord(this.props.matches[this.state.matchNumber].partnerVersionId);
       }
     });
   }
@@ -38,11 +38,11 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
       matchNumber = this.state.matchNumber + 1;
     }
     this.setState({ matchNumber });
-    this.props.getPartnerOrganization(this.props.matches[matchNumber].partnerVersionId);
+    this.props.getPartnerRecord(this.props.matches[matchNumber].partnerVersionId);
   };
 
   render() {
-    const { baseOrganization, partnerOrganization } = this.props;
+    const { baseRecord, partnerRecord } = this.props;
     const loading = (
       <Col>
         <h2>Loading...</h2>
@@ -52,25 +52,25 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     return (
       <div>
         <Row>
-          {baseOrganization ? (
+          {baseRecord ? (
             <Col sm="6">
-              <h2>{baseOrganization.name}</h2>
+              <h2>{baseRecord.record.organization.name}</h2>
               <h4 className="from">
                 <Translate contentKey="multiRecordView.yourData" />
               </h4>
-              <Details organization={baseOrganization} {...this.props} />
+              <Details organization={baseRecord.record.organization} {...this.props} />
             </Col>
           ) : (
             loading
           )}
-          {partnerOrganization ? (
+          {partnerRecord ? (
             <Col sm="6">
               <Row>
                 <Col>
-                  <h2>{partnerOrganization.name}</h2>
+                  <h2>{partnerRecord.record.organization.name}</h2>
                   <h4 className="from">
                     <Translate contentKey="multiRecordView.from" />
-                    {partnerOrganization.accountName}
+                    {partnerRecord.record.organization.accountName}
                   </h4>
                 </Col>
                 <Col className="another-match-container" onClick={this.changeRecord}>
@@ -80,7 +80,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                   <FontAwesomeIcon className="another-match-icon" icon="angle-right" size="2x" />
                 </Col>
               </Row>
-              <Details organization={partnerOrganization} {...this.props} />
+              <Details organization={partnerRecord.record.organization} {...this.props} />
               <Jumbotron className="same-record-question-container">
                 <div className="same-record-question">
                   <h4>
@@ -108,12 +108,12 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
 const mapStateToProps = (storeState, { match }: IMultipleRecordViewState) => ({
   orgId: match.params.orgId,
-  baseOrganization: storeState.multipleRecordView.baseOrganization,
-  partnerOrganization: storeState.multipleRecordView.partnerOrganization,
+  baseRecord: storeState.multipleRecordView.baseRecord,
+  partnerRecord: storeState.multipleRecordView.partnerRecord,
   matches: storeState.multipleRecordView.matches
 });
 
-const mapDispatchToProps = { getBaseOrganization, getPartnerOrganization, getMatches };
+const mapDispatchToProps = { getBaseRecord, getPartnerRecord, getMatches };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

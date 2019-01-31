@@ -104,14 +104,14 @@ export class FieldExclusionUpdate extends React.Component<IFieldExclusionUpdateP
                 </AvGroup>
                 <AvGroup>
                   <Label for="configId">
-                    <Translate contentKey="serviceNetApp.fieldExclusion.config" />
+                    <Translate contentKey="serviceNetApp.fieldExclusion.configAccount" />
                   </Label>
                   <AvInput id="field-exclusion-config" type="select" className="form-control" name="configId">
                     <option value="" key="0" />
                     {configs
                       ? configs.map(config => (
                           <option value={config.id} key={config.id}>
-                            {config.id}
+                            {config.accountName}
                           </option>
                         ))
                       : null}

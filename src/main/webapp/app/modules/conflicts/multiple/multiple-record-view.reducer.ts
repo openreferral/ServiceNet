@@ -10,8 +10,8 @@ export const ACTION_TYPES = {
 
 const initialState = {
   errorMessage: null,
-  baseOrganization: null,
-  partnerOrganization: null,
+  baseRecord: null,
+  partnerRecord: null,
   matches: []
 };
 
@@ -36,12 +36,12 @@ export default (state: MultipleRecordViewState = initialState, action): Multiple
     case SUCCESS(ACTION_TYPES.FETCH_BASE_ORGANIZATION):
       return {
         ...state,
-        baseOrganization: action.payload.data
+        baseRecord: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_PARTNER_ORGANIZATION):
       return {
         ...state,
-        partnerOrganization: action.payload.data
+        partnerRecord: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_MATCHES):
       return {
@@ -55,17 +55,17 @@ export default (state: MultipleRecordViewState = initialState, action): Multiple
 
 // Actions
 const url = 'api/';
-const orgUrl = url + 'organizations/';
+const activityUrl = url + 'activities/';
 const matchesUrl = url + 'organization-matches/organization/';
 
-export const getBaseOrganization = orgId => ({
+export const getBaseRecord = orgId => ({
   type: ACTION_TYPES.FETCH_BASE_ORGANIZATION,
-  payload: axios.get(`${orgUrl + orgId}`)
+  payload: axios.get(`${activityUrl + orgId}`)
 });
 
-export const getPartnerOrganization = orgId => ({
+export const getPartnerRecord = orgId => ({
   type: ACTION_TYPES.FETCH_PARTNER_ORGANIZATION,
-  payload: axios.get(`${orgUrl + orgId}`)
+  payload: axios.get(`${activityUrl + orgId}`)
 });
 
 export const getMatches = orgId => ({

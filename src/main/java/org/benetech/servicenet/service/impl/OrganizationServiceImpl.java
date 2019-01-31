@@ -106,10 +106,15 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrganizationDTO> findOne(UUID id) {
+    public Optional<OrganizationDTO> findOneDTO(UUID id) {
         log.debug("Request to get Organization : {}", id);
-        return organizationRepository.findById(id)
+        return findOne(id)
             .map(organizationMapper::toDto);
+    }
+
+    @Override
+    public Optional<Organization> findOne(UUID id) {
+        return organizationRepository.findById(id);
     }
 
     /**

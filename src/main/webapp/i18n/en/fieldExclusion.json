@@ -15,9 +15,10 @@
       "detail": {
         "title": "Field Exclusion"
       },
-      "fields": "Fields",
+      "fields": "Fields (comma separated)",
       "entity": "Entity",
-      "config": "Config"
+      "configAccount": "Config account",
+      "configId": "Config id"
     }
   }
 }

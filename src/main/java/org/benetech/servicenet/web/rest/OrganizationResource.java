@@ -113,7 +113,7 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<OrganizationDTO> getOrganization(@PathVariable UUID id) {
         log.debug("REST request to get Organization : {}", id);
-        Optional<OrganizationDTO> organizationDTO = organizationService.findOne(id);
+        Optional<OrganizationDTO> organizationDTO = organizationService.findOneDTO(id);
         return ResponseUtil.wrapOrNotFound(organizationDTO);
     }
 
