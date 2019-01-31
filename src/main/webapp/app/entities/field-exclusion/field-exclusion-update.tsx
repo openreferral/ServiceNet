@@ -111,7 +111,7 @@ export class FieldExclusionUpdate extends React.Component<IFieldExclusionUpdateP
                     {configs
                       ? configs.map(config => (
                           <option value={config.id} key={config.id}>
-                            {config.id}
+                            {config.accountName}
                           </option>
                         ))
                       : null}

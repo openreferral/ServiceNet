@@ -3,7 +3,6 @@ package org.benetech.servicenet.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.FieldExclusionService;
@@ -12,8 +11,8 @@ import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
-import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
+import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,19 +43,23 @@ public class RecordsServiceImpl implements RecordsService {
     @Autowired
     private ConflictService conflictService;
 
+    @Autowired
+    private OrganizationMapper organizationMapper;
+
     @Override
     public Optional<RecordDTO> getRecordFromOrganization(UUID organizationId, UUID resourceId) {
         return organizationService.findOne(organizationId)
-            .flatMap(organizationDTO -> userService.getCurrentSystemAccount()
-                .flatMap(account -> getFilteredResult(resourceId, organizationDTO, account)));
+            .flatMap(organization -> userService.getCurrentSystemAccount()
+                .flatMap(account -> getFilteredResult(resourceId, organization)));
     }
 
-    private Optional<RecordDTO> getFilteredResult(UUID resourceId, OrganizationDTO organizationDTO, SystemAccount account) {
-        Optional<ExclusionsConfigDTO> config = exclusionsConfigService.findOneBySystemAccountName(account.getName());
+    private Optional<RecordDTO> getFilteredResult(UUID resourceId, Organization organization) {
+        Optional<ExclusionsConfigDTO> config = exclusionsConfigService.findOneBySystemAccountName(
+            organization.getAccount().getName());
         List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceId(resourceId);
         List<ConflictDTO> filteredByPartners = filterWithPartnersConfigs(conflictDTOS);
-        return config.map(conf -> filterExclusions(organizationDTO, conf, filteredByPartners))
-            .orElse(Optional.of(new RecordDTO(organizationDTO, filteredByPartners)));
+        return config.map(conf -> filterExclusions(organization, conf, filteredByPartners))
+            .orElse(Optional.of(new RecordDTO(organizationMapper.toDto(organization), filteredByPartners)));
     }
 
     private List<ConflictDTO> filterWithPartnersConfigs(List<ConflictDTO> conflictDTOS) {
@@ -110,12 +113,12 @@ public class RecordsServiceImpl implements RecordsService {
             && exclusion.getExcludedFields().contains(conflictDTO.getFieldName());
     }
 
-    private Optional<RecordDTO> filterExclusions(OrganizationDTO organizationDTO, ExclusionsConfigDTO config,
+    private Optional<RecordDTO> filterExclusions(Organization organization, ExclusionsConfigDTO config,
                                                  List<ConflictDTO> conflictDTOS) {
         try {
-            OrganizationDTO filteredOrg = excludeOrganizationFields(organizationDTO, config);
+            Organization filteredOrg = excludeOrganizationFields(organization, config);
             List<ConflictDTO> filteredConflicts = excludeConflicts(conflictDTOS, config);
-            return Optional.of(new RecordDTO(filteredOrg, filteredConflicts));
+            return Optional.of(new RecordDTO(organizationMapper.toDto(filteredOrg), filteredConflicts));
         } catch (IllegalAccessException e) {
             log.error("Unable to filter record.");
             return Optional.empty();
@@ -130,11 +133,11 @@ public class RecordsServiceImpl implements RecordsService {
             .collect(Collectors.toList());
     }
 
-    private OrganizationDTO excludeOrganizationFields(OrganizationDTO organizationDTO, ExclusionsConfigDTO config)
+    private Organization excludeOrganizationFields(Organization organization, ExclusionsConfigDTO config)
         throws IllegalAccessException {
         Set<String> excludedNames = getExcludedFields(config.getId(), Organization.class);
-        resetExcludedFields(organizationDTO, excludedNames, OrganizationDTO.class);
-        return organizationDTO;
+        resetExcludedFields(organization, excludedNames, Organization.class);
+        return organization;
     }
 
     private void resetExcludedFields(Object object, Set<String> excludedNames, Class clazz) throws IllegalAccessException {
