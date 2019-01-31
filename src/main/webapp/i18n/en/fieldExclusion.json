@@ -17,7 +17,8 @@
       },
       "fields": "Fields (comma separated)",
       "entity": "Entity",
-      "config": "Config account"
+      "configAccount": "Config account",
+      "configId": "Config id"
     }
   }
 }
