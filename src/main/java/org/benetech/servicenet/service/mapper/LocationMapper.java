@@ -23,6 +23,10 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
     @Mapping(target = "accessibilities", ignore = true)
     Location toEntity(LocationDTO locationDTO);
 
+    @Mapping(source = "organization.id", target = "organizationId")
+    @Mapping(source = "organization.name", target = "organizationName")
+    LocationDTO toDto(Location service);
+
     default Location fromId(UUID id) {
         if (id == null) {
             return null;
