@@ -20,9 +20,7 @@ public class ActivityDTO implements Serializable {
 
     private ZonedDateTime lastUpdated;
 
-    private OrganizationDTO organization;
+    private RecordDTO record;
 
     private List<OrganizationMatchDTO> organizationMatches;
-
-    private List<ConflictDTO> conflicts;
 }

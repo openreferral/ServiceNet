@@ -8,7 +8,7 @@ import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
-import { getEntity, updateEntity, createEntity, reset } from './field-exclusion.reducer';
+import { getEntity, getConfigs, updateEntity, createEntity, reset } from './field-exclusion.reducer';
 import { IFieldExclusion } from 'app/shared/model/field-exclusion.model';
 // tslint:disable-next-line:no-unused-variable
 import { convertDateTimeFromServer } from 'app/shared/util/date-utils';
@@ -35,6 +35,7 @@ export class FieldExclusionUpdate extends React.Component<IFieldExclusionUpdateP
   }
 
   componentDidMount() {
+    this.props.getConfigs();
     if (this.state.isNew) {
       this.props.reset();
     } else {
@@ -63,7 +64,7 @@ export class FieldExclusionUpdate extends React.Component<IFieldExclusionUpdateP
   };
 
   render() {
-    const { fieldExclusionEntity, loading, updating } = this.props;
+    const { fieldExclusionEntity, loading, updating, configs } = this.props;
     const { isNew } = this.state;
 
     return (
@@ -101,6 +102,21 @@ export class FieldExclusionUpdate extends React.Component<IFieldExclusionUpdateP
                   </Label>
                   <AvField id="field-exclusion-entity" type="text" name="entity" />
                 </AvGroup>
+                <AvGroup>
+                  <Label for="configId">
+                    <Translate contentKey="serviceNetApp.fieldExclusion.config" />
+                  </Label>
+                  <AvInput id="field-exclusion-config" type="select" className="form-control" name="configId">
+                    <option value="" key="0" />
+                    {configs
+                      ? configs.map(config => (
+                          <option value={config.id} key={config.id}>
+                            {config.id}
+                          </option>
+                        ))
+                      : null}
+                  </AvInput>
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/field-exclusion" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
@@ -125,6 +141,7 @@ export class FieldExclusionUpdate extends React.Component<IFieldExclusionUpdateP
 
 const mapStateToProps = (storeState: IRootState) => ({
   fieldExclusionEntity: storeState.fieldExclusion.entity,
+  configs: storeState.fieldExclusion.configs,
   loading: storeState.fieldExclusion.loading,
   updating: storeState.fieldExclusion.updating,
   updateSuccess: storeState.fieldExclusion.updateSuccess
@@ -132,6 +149,7 @@ const mapStateToProps = (storeState: IRootState) => ({
 
 const mapDispatchToProps = {
   getEntity,
+  getConfigs,
   updateEntity,
   createEntity,
   reset

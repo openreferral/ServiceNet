@@ -1,9 +1,11 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -34,6 +36,8 @@ public interface FieldExclusionService {
      * @return the entity
      */
     Optional<FieldExclusionDTO> findOne(UUID id);
+
+    Set<FieldExclusion> findAllByConfigId(UUID configId);
 
     /**
      * Delete the "id" fieldExclusion.

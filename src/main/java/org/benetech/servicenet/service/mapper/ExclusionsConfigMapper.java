@@ -14,6 +14,7 @@ import java.util.UUID;
 public interface ExclusionsConfigMapper extends EntityMapper<ExclusionsConfigDTO, ExclusionsConfig> {
 
     @Mapping(source = "account.id", target = "accountId")
+    @Mapping(source = "account.name", target = "accountName")
     ExclusionsConfigDTO toDto(ExclusionsConfig exclusionsConfig);
 
     @Mapping(source = "accountId", target = "account")

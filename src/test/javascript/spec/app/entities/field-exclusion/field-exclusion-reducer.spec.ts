@@ -16,6 +16,7 @@ import reducer, {
 } from 'app/entities/field-exclusion/field-exclusion.reducer';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IFieldExclusion, defaultValue } from 'app/shared/model/field-exclusion.model';
+import { IExclusionsConfig } from 'app/shared/model/exclusions-config.model';
 
 // tslint:disable no-invalid-template-strings
 describe('Entities reducer tests', () => {
@@ -32,6 +33,7 @@ describe('Entities reducer tests', () => {
     errorMessage: null,
     entities: [] as ReadonlyArray<IFieldExclusion>,
     entity: defaultValue,
+    configs: [] as ReadonlyArray<IExclusionsConfig>,
     updating: false,
     updateSuccess: false
   };

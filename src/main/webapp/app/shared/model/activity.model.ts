@@ -5,9 +5,8 @@ import { Moment } from 'moment';
 
 export interface IActivity {
   lastUpdated?: Moment;
-  organization?: IOrganization;
+  record?: any;
   organizationMatches?: IOrganizationMatch[];
-  conflicts?: IConflict[];
 }
 
 export const defaultValue: Readonly<IActivity> = {};

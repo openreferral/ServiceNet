@@ -28,7 +28,7 @@ export class SingleRecordView extends React.Component<ISingleRecordViewProp, ISi
     const content = activityDetails ? (
       <Row>
         <Col>
-          <h2>{activityDetails.organization.name}</h2>
+          <h2>{activityDetails.record.organization.name}</h2>
           <Tabs activity={activityDetails} {...this.props} />
         </Col>
       </Row>

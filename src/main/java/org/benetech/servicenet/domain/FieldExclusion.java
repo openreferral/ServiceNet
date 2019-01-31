@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A FieldExclusion.
@@ -23,6 +24,7 @@ import java.util.Objects;
 public class FieldExclusion extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final String DELIMITER = ", ";
 
     @Lob
     @Column(name = "fields")
@@ -34,6 +36,10 @@ public class FieldExclusion extends AbstractEntity implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties("exclusions")
     private ExclusionsConfig config;
+
+    public Set<String> getExcludedFields() {
+        return Set.of(fields.split(DELIMITER));
+    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

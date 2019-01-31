@@ -31,7 +31,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
 
   getSuggestedValues(fieldName) {
     if (this.state.isConflicting) {
-      return this.props.activity.conflicts.filter(e => e.fieldName === fieldName);
+      return this.props.activity.record.conflicts.filter(e => e.fieldName === fieldName);
     }
     return null;
   }
@@ -42,7 +42,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
   }
 
   isConflicting(fieldName, entityPath) {
-    return this.props.activity.conflicts.some(e => e.fieldName === fieldName);
+    return this.props.activity.record.conflicts.some(e => e.fieldName === fieldName);
   }
 
   toggleTooltip = () => {

@@ -1,5 +1,6 @@
 package org.benetech.servicenet;
 
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.service.UserService;
@@ -25,5 +26,10 @@ public class TestUserService extends UserService {
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthorities() {
         return userRepository.findOneByLogin(ADMIN_LOGIN);
+    }
+
+    @Override
+    public Optional<SystemAccount> getCurrentSystemAccount() {
+        return userRepository.findOneByLogin(ADMIN_LOGIN).map(User::getSystemAccount);
     }
 }
