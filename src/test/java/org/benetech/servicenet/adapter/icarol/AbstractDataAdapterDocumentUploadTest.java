@@ -36,7 +36,7 @@ import java.util.Collection;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolationException;
 
 import static org.benetech.servicenet.adapter.AdapterTestsUtils.mockEndpointWithBatch;
 import static org.junit.Assert.assertEquals;
@@ -55,6 +55,11 @@ public class AbstractDataAdapterDocumentUploadTest {
     private static final String SITES_FILE = "sites.json";
     private static final String SERVICE_SITES_FILE = "serviceSites.json";
     private static final String AGENCIES_FILE = "agencies.json";
+    private static final String IDS_MISSING_FILE = "ids-missing.json";
+    private static final String PROGRAMS_MISSING_FILE = "programs-missing.json";
+    private static final String SITES_MISSING_FILE = "sites-missing.json";
+    private static final String SERVICE_SITES_MISSING_FILE = "serviceSites-missing.json";
+    private static final String AGENCIES_MISSING_FILE = "agencies-missing.json";
 
     @Mock
     private HttpClient client;
@@ -81,25 +86,11 @@ public class AbstractDataAdapterDocumentUploadTest {
     @InjectMocks
     private DocumentUploadServiceImpl documentUploadService;
 
-    @Autowired
-    private EntityManager em;
-
     private static MockServerClient mockServer = startClientAndServer(1080);
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
-        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
-
-        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
-        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
-        mockEndpointWithBatch(
-            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
-        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
-
-        em.clear();
     }
 
     @AfterClass
@@ -112,6 +103,13 @@ public class AbstractDataAdapterDocumentUploadTest {
         String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
+        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
+        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
+        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
+        mockEndpointWithBatch(
+            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
+        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
+
         DocumentUploadDTO document = documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
 
         assertNotNull(document.getOriginalDocumentId());
@@ -121,6 +119,13 @@ public class AbstractDataAdapterDocumentUploadTest {
     public void shouldCreateOrganizationsTest() throws IOException {
         String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
+
+        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
+        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
+        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
+        mockEndpointWithBatch(
+            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
+        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
 
         documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
 
@@ -133,10 +138,35 @@ public class AbstractDataAdapterDocumentUploadTest {
         String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
+        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
+        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
+        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
+        mockEndpointWithBatch(
+            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
+        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
+
         documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
 
         assertEquals(Integer.valueOf(4), report.getNumberOfCreatedServices());
         assertEquals(Integer.valueOf(0), report.getNumberOfUpdatedServices());
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldFailDueToMissingValuesTest() throws IOException {
+        String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_MISSING_FILE);
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
+
+        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
+        mockEndpointWithBatch(
+            data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_MISSING_FILE, mockServer);
+        mockEndpointWithBatch(
+            data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_MISSING_FILE, mockServer);
+        mockEndpointWithBatch(
+            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_MISSING_FILE, mockServer);
+        mockEndpointWithBatch(
+            data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_MISSING_FILE, mockServer);
+
+        documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
     }
 
     private static ICarolComplexResponseElement getAllIdsInBatches(String allIds) {
