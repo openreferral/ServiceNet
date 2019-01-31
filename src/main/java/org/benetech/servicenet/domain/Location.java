@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -25,6 +26,7 @@ import java.util.Set;
  */
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "location")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Location extends AbstractEntity implements Serializable {
@@ -86,6 +88,17 @@ public class Location extends AbstractEntity implements Serializable {
     private Organization organization;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    public Location(Location loc) {
+        this.name = loc.name;
+        this.alternateName = loc.alternateName;
+        this.description = loc.description;
+        this.transportation = loc.transportation;
+        this.latitude = loc.latitude;
+        this.longitude = loc.longitude;
+        this.externalDbId = loc.externalDbId;
+        this.providerName = loc.providerName;
+    }
 
     public Location organization(Organization organization) {
         this.organization = organization;

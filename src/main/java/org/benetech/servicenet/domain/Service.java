@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -28,6 +29,7 @@ import java.util.Set;
 @Entity
 @Table(name = "service")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@NoArgsConstructor
 public class Service extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -145,6 +147,25 @@ public class Service extends AbstractEntity implements Serializable {
     private Set<Contact> contacts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    public Service(Service srvc) {
+        this.name = srvc.name;
+        this.alternateName = srvc.alternateName;
+        this.description = srvc.description;
+        this.url = srvc.url;
+        this.email = srvc.email;
+        this.status = srvc.status;
+        this.interpretationServices = srvc.interpretationServices;
+        this.applicationProcess = srvc.applicationProcess;
+        this.waitTime = srvc.waitTime;
+        this.fees = srvc.fees;
+        this.accreditations = srvc.accreditations;
+        this.licenses = srvc.licenses;
+        this.type = srvc.type;
+        this.updatedAt = srvc.updatedAt;
+        this.externalDbId = srvc.externalDbId;
+        this.providerName = srvc.providerName;
+    }
 
     public Service name(String name) {
         this.name = name;

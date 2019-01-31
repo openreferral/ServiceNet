@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -31,6 +32,7 @@ import java.util.Set;
 @Entity
 @Table(name = "organization")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@NoArgsConstructor
 public class Organization extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -109,6 +111,21 @@ public class Organization extends AbstractEntity implements Serializable {
     private Set<Contact> contacts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    public Organization(Organization org) {
+        this.name = org.name;
+        this.alternateName = org.alternateName;
+        this.description = org.description;
+        this.email = org.email;
+        this.url = org.url;
+        this.taxStatus = org.taxStatus;
+        this.taxId = org.taxId;
+        this.yearIncorporated = org.yearIncorporated;
+        this.legalStatus = org.legalStatus;
+        this.active = org.active;
+        this.updatedAt = org.updatedAt;
+        this.externalDbId = org.externalDbId;
+    }
 
     public Organization name(String name) {
         this.name = name;
