@@ -49,6 +49,18 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
       </Col>
     );
 
+    console.log(this.props.matches.length);
+    const seeAnotherMatch =
+      this.props.matches.length > 1 ? (
+        <Col className="another-match-container" onClick={this.changeRecord}>
+          <h4 className="another-match-text">
+            {`(${this.state.matchNumber + 1}/${this.props.matches.length}) `}
+            <Translate contentKey="multiRecordView.seeAnotherMatch" />
+          </h4>
+          <FontAwesomeIcon className="another-match-icon" icon="angle-right" size="2x" />
+        </Col>
+      ) : null;
+
     return (
       <div>
         <Row>
@@ -73,12 +85,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                     {partnerRecord.record.organization.accountName}
                   </h4>
                 </Col>
-                <Col className="another-match-container" onClick={this.changeRecord}>
-                  <h4 className="another-match-text">
-                    <Translate contentKey="multiRecordView.seeAnotherMatch" />
-                  </h4>
-                  <FontAwesomeIcon className="another-match-icon" icon="angle-right" size="2x" />
-                </Col>
+                {seeAnotherMatch}
               </Row>
               <Details organization={partnerRecord.record.organization} {...this.props} />
               <Jumbotron className="same-record-question-container">
