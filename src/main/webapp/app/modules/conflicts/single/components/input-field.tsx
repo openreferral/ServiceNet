@@ -21,12 +21,14 @@ export interface IInputFieldProp extends StateProps, DispatchProps {
 export interface IInputFieldState {
   tooltipOpen: boolean;
   isConflicting: boolean;
+  isExcluded: boolean;
 }
 
 export class InputField extends React.Component<IInputFieldProp, IInputFieldState> {
   state: IInputFieldState = {
     tooltipOpen: false,
-    isConflicting: this.isConflictingField(this.props.fieldName)
+    isConflicting: this.isConflictingField(this.props.fieldName),
+    isExcluded: this.isExcludedField(this.props.fieldName)
   };
 
   getSuggestedValues(fieldName) {
@@ -41,8 +43,23 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     return this.isConflicting(fieldName, entityPath);
   }
 
+  isExcludedField(fieldName) {
+    const entityPath = DOMAIN_CLASS + '.' + this.props.entityClass;
+    return this.isExcluded(fieldName, entityPath);
+  }
+
   isConflicting(fieldName, entityPath) {
-    return this.props.activity.record.conflicts.some(e => e.fieldName === fieldName);
+    return this.props.activity.record.conflicts.some(e => e.fieldName === fieldName && e.entityPath === entityPath);
+  }
+
+  isExcluded(fieldName, entityPath) {
+    return this.props.activity.record.exclusions.some(
+      e =>
+        e.fields
+          .replace(' ', '')
+          .split(',')
+          .includes(fieldName) && e.entity === entityPath
+    );
   }
 
   toggleTooltip = () => {
@@ -62,7 +79,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     const input = (
       <Input
         disabled
-        className={classnames({ blueBorder: this.state.isConflicting })}
+        className={classnames({ blueBorder: this.state.isConflicting, grayBorder: this.state.isExcluded })}
         type={type}
         name={identifier}
         id={identifier}
@@ -74,11 +91,20 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
         <Translate contentKey={`singleRecordView.inputField.${identifier}`} />
       </Label>
     );
-    const icon = this.state.isConflicting ? (
-      <div id={`${identifier}-icon`}>
-        <FontAwesomeIcon className={`icon icon-${type}`} size="lg" icon="question-circle" />
-      </div>
-    ) : null;
+    let icon = null;
+    if (this.state.isConflicting) {
+      icon = (
+        <div id={`${identifier}-icon`}>
+          <FontAwesomeIcon className={`icon-conflicting icon-${type}`} size="lg" icon="question-circle" />
+        </div>
+      );
+    } else if (this.state.isExcluded) {
+      icon = (
+        <div id={`${identifier}-icon`}>
+          <FontAwesomeIcon className={`icon-excluded icon-${type}`} size="lg" icon="times-circle" />
+        </div>
+      );
+    }
 
     const suggestedValues = this.getSuggestedValues(fieldName);
     let partnersNumber = 0;
@@ -87,40 +113,58 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
         partnersNumber += v.acceptedThisChange.length;
       });
     }
-    const tooltip = this.state.isConflicting ? (
-      <Tooltip
-        placement="right"
-        innerClassName="tooltip-inner"
-        className="tooltip"
-        autohide={false}
-        isOpen={this.state.tooltipOpen}
-        target={`${identifier}-icon`}
-        toggle={this.toggleTooltip}
-      >
-        {partnersNumber}
-        <Translate
-          contentKey={`singleRecordView.inputField.${
-            suggestedValues.length === 1 ? 'conflictingDataOnePartner' : 'conflictingDataMultiPartners'
-          }`}
-        />
-        {suggestedValues.map((value, i) => (
-          <div className="suggested" key={`suggested-${identifier}-${i}`}>
-            <hr className="half-rule" />
-            {value.offeredValue}
-            <br />
-            {value.acceptedThisChange.map(accepted => (
-              <div key={`accepted-${fieldName + accepted.name}`}>
-                <p className="secondary">
-                  {accepted.name}
-                  <Translate contentKey="singleRecordView.inputField.imported" />
-                  <TextFormat value={value.offeredValueDate} type="date" format={APP_LOCAL_DATE_FORMAT} />
-                </p>
-              </div>
-            ))}
-          </div>
-        ))}
-      </Tooltip>
-    ) : null;
+
+    let tooltip = null;
+    if (this.state.isConflicting) {
+      tooltip = (
+        <Tooltip
+          placement="right"
+          innerClassName="tooltip-inner"
+          className="tooltip"
+          autohide={false}
+          isOpen={this.state.tooltipOpen}
+          target={`${identifier}-icon`}
+          toggle={this.toggleTooltip}
+        >
+          {partnersNumber}
+          <Translate
+            contentKey={`singleRecordView.inputField.${
+              suggestedValues.length === 1 ? 'conflictingDataOnePartner' : 'conflictingDataMultiPartners'
+            }`}
+          />
+          {suggestedValues.map((value, i) => (
+            <div className="suggested" key={`suggested-${identifier}-${i}`}>
+              <hr className="half-rule" />
+              {value.offeredValue}
+              <br />
+              {value.acceptedThisChange.map(accepted => (
+                <div key={`accepted-${fieldName + accepted.name}`}>
+                  <p className="secondary">
+                    {accepted.name}
+                    <Translate contentKey="singleRecordView.inputField.imported" />
+                    <TextFormat value={value.offeredValueDate} type="date" format={APP_LOCAL_DATE_FORMAT} />
+                  </p>
+                </div>
+              ))}
+            </div>
+          ))}
+        </Tooltip>
+      );
+    } else if (this.state.isExcluded) {
+      tooltip = (
+        <Tooltip
+          placement="right"
+          innerClassName="tooltip-inner"
+          className="tooltip"
+          autohide={false}
+          isOpen={this.state.tooltipOpen}
+          target={`${identifier}-icon`}
+          toggle={this.toggleTooltip}
+        >
+          <Translate contentKey="singleRecordView.details.excludedCopy" />
+        </Tooltip>
+      );
+    }
 
     const content =
       type === 'checkbox' ? (

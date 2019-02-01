@@ -78,10 +78,6 @@ public class Organization extends AbstractEntity implements Serializable {
     @Column(name = "provider_name")
     private String providerName;
 
-    @OneToMany(mappedBy = "organization")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Location> locations;
-
     @OneToOne
     @JoinColumn(unique = true)
     private Organization replacedBy;
@@ -97,6 +93,10 @@ public class Organization extends AbstractEntity implements Serializable {
     @OneToOne(mappedBy = "organization", fetch = FetchType.LAZY)
     @JsonIgnore
     private Funding funding;
+
+    @OneToMany(mappedBy = "organization")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Location> locations = new HashSet<>();
 
     @OneToMany(mappedBy = "organization")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

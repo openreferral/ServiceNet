@@ -12,6 +12,7 @@ import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
+import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,11 +140,15 @@ public class RecordsServiceImpl implements RecordsService {
                                                  Set<String> excludedOrgFields) {
         try {
             if (excludedOrgFields.isEmpty()) {
-                return Optional.of(new RecordDTO(organizationMapper.toDto(organization), conflictDTOS));
+                return Optional.of(new RecordDTO(organizationMapper.toDto(organization), new HashSet<>(), conflictDTOS));
             }
             Organization filteredOrg = excludeOrganizationFields(organization, excludedOrgFields);
             List<ConflictDTO> filteredConflicts = excludeConflicts(conflictDTOS, excludedOrgFields);
-            return Optional.of(new RecordDTO(organizationMapper.toDto(filteredOrg), filteredConflicts));
+            Set<FieldExclusionDTO> baseOrgFieldExclusions = new HashSet<>();
+            getOrganizationConfig(organization.getAccount())
+                .ifPresent(x -> baseOrgFieldExclusions.addAll(fieldExclusionService.findAllDTOByConfigId(x.getId())));
+            return Optional.of(
+                new RecordDTO(organizationMapper.toDto(filteredOrg), baseOrgFieldExclusions, filteredConflicts));
         } catch (IllegalAccessException e) {
             log.error("Unable to filter record.");
             return Optional.empty();
