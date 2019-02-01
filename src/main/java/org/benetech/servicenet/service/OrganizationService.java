@@ -46,7 +46,9 @@ public interface OrganizationService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<OrganizationDTO> findOne(UUID id);
+    Optional<OrganizationDTO> findOneDTO(UUID id);
+
+    Optional<Organization> findOne(UUID id);
 
     /**
      * Delete the "id" organization.

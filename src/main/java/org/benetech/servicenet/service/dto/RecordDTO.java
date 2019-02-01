@@ -8,6 +8,7 @@ import org.benetech.servicenet.service.comparator.ConflictsComparator;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -16,6 +17,8 @@ import java.util.List;
 public class RecordDTO implements Serializable {
 
     private OrganizationDTO organization;
+
+    private Set<FieldExclusionDTO> exclusions;
 
     private List<ConflictDTO> conflicts;
 

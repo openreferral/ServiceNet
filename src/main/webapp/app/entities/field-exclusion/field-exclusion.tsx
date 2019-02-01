@@ -44,6 +44,9 @@ export class FieldExclusion extends React.Component<IFieldExclusionProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.fieldExclusion.entity">Entity</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.fieldExclusion.configId" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -57,6 +60,9 @@ export class FieldExclusion extends React.Component<IFieldExclusionProps> {
                   </td>
                   <td>{fieldExclusion.fields}</td>
                   <td>{fieldExclusion.entity}</td>
+                  <td>
+                    <Link to={`/entity/exclusions-config/${fieldExclusion.configId}`}>{fieldExclusion.configId}</Link>
+                  </td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${fieldExclusion.id}`} color="info" size="sm">
