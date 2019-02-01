@@ -6,6 +6,7 @@
     },
     "details": {
       "title": "Organization details",
+      "excludedCopy": "This field has been excluded from ServiceNet per your data sharing agreement",
       "compare": {
         "title": "Compare",
         "singleHeader": " partner have similar records",

@@ -58,7 +58,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
               <h4 className="from">
                 <Translate contentKey="multiRecordView.yourData" />
               </h4>
-              <Details organization={baseRecord.record.organization} {...this.props} />
+              <Details organization={baseRecord.record.organization} {...this.props} exclusions={baseRecord.record.exclusions} />
             </Col>
           ) : (
             loading
@@ -80,7 +80,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                   <FontAwesomeIcon className="another-match-icon" icon="angle-right" size="2x" />
                 </Col>
               </Row>
-              <Details organization={partnerRecord.record.organization} {...this.props} />
+              <Details organization={partnerRecord.record.organization} {...this.props} exclusions={[]} />
               <Jumbotron className="same-record-question-container">
                 <div className="same-record-question">
                   <h4>
