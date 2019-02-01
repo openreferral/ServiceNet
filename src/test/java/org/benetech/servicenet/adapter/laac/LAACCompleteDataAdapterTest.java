@@ -46,6 +46,8 @@ public class LAACCompleteDataAdapterTest {
     @Mock
     private ImportService importService;
 
+    SingleImportData importData;
+
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
@@ -62,12 +64,12 @@ public class LAACCompleteDataAdapterTest {
             .thenReturn(new Organization());
 
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
-        SingleImportData importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true);
-        adapter.importData(importData);
+        importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true);
     }
 
     @Test
     public void shouldImportCompleteOrganization() {
+        adapter.importData(importData);
         ArgumentCaptor<Organization> captor = ArgumentCaptor.forClass(Organization.class);
         verify(importService, times(1))
             .createOrUpdateOrganization(captor.capture(), anyString(), anyString(), any(DataImportReport.class));
@@ -83,6 +85,7 @@ public class LAACCompleteDataAdapterTest {
     @Test
     @Ignore("ID is not mapped to externalDbId") //TODO: Remove
     public void shouldImportCompleteService() {
+        adapter.importData(importData);
         ArgumentCaptor<Service> captor = ArgumentCaptor.forClass(Service.class);
         verify(importService, times(1))
             .createOrUpdateService(captor.capture(), anyString(), anyString(), any(DataImportReport.class));
@@ -97,6 +100,7 @@ public class LAACCompleteDataAdapterTest {
     @Test
     @Ignore("ID is not mapped to externalDbId") //TODO: Remove
     public void shouldImportCompleteLocation() {
+        adapter.importData(importData);
         ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
         verify(importService, times(1))
             .createOrUpdateLocation(captor.capture(), anyString(), anyString());
@@ -110,6 +114,7 @@ public class LAACCompleteDataAdapterTest {
     @Test
     @Ignore("ID is not mapped to externalDbId") //TODO: Remove
     public void shouldImportCompleteContact() {
+        adapter.importData(importData);
         ArgumentCaptor<Set<Contact>> captor = ArgumentCaptor.forClass(Set.class);
         verify(importService, times(1))
             .createOrUpdateContactsForOrganization(captor.capture(), any(Organization.class));
@@ -122,6 +127,7 @@ public class LAACCompleteDataAdapterTest {
 
     @Test
     public void shouldImportCompleteEligibility() {
+        adapter.importData(importData);
         ArgumentCaptor<Eligibility> captor = ArgumentCaptor.forClass(Eligibility.class);
         verify(importService, times(1))
             .createOrUpdateEligibility(captor.capture(), any(Service.class));
@@ -133,6 +139,7 @@ public class LAACCompleteDataAdapterTest {
 
     @Test
     public void shouldImportCompletePhone() {
+        adapter.importData(importData);
         ArgumentCaptor<Set<Phone>> captor = ArgumentCaptor.forClass(Set.class);
         verify(importService, times(1))
             .createOrUpdatePhonesForService(captor.capture(), any(Service.class), any(Location.class));
@@ -144,6 +151,7 @@ public class LAACCompleteDataAdapterTest {
 
     @Test
     public void shouldImportCompleteLangs() {
+        adapter.importData(importData);
         ArgumentCaptor<Set<Language>> captor = ArgumentCaptor.forClass(Set.class);
         verify(importService, times(1))
             .createOrUpdateLangsForService(captor.capture(), any(Service.class), any(Location.class));
@@ -157,6 +165,7 @@ public class LAACCompleteDataAdapterTest {
 
     @Test
     public void shouldImportCompletePhysicalAddress() {
+        adapter.importData(importData);
         ArgumentCaptor<PhysicalAddress> captor = ArgumentCaptor.forClass(PhysicalAddress.class);
         verify(importService, times(1))
             .createOrUpdatePhysicalAddress(captor.capture(), any(Location.class));

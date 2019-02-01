@@ -80,7 +80,7 @@ public class Organization extends AbstractEntity implements Serializable {
 
     @OneToMany(mappedBy = "organization")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Location> locations;
+    private Set<Location> locations = new HashSet<>();
 
     @OneToOne
     @JoinColumn(unique = true)
