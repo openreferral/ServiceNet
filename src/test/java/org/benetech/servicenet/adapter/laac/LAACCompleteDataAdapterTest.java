@@ -9,6 +9,7 @@ import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
+import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ImportService;
 import org.junit.Before;
@@ -152,5 +153,21 @@ public class LAACCompleteDataAdapterTest {
         assertEquals(2, captor.getValue().size());
         assertTrue(langs.contains("Russian / Росси́я"));
         assertTrue(langs.contains("ARABIC / لعَرَبِيَّة"));
+    }
+
+    @Test
+    public void shouldImportCompletePhysicalAddress() {
+        ArgumentCaptor<PhysicalAddress> captor = ArgumentCaptor.forClass(PhysicalAddress.class);
+        verify(importService, times(1))
+            .createOrUpdatePhysicalAddress(captor.capture(), any(Location.class));
+
+        PhysicalAddress result = captor.getValue();
+
+        assertEquals("123 Street", result.getAddress1());
+        assertEquals("Suite 500", result.getAttention());
+        assertEquals("The City", result.getCity());
+        assertEquals("STATE", result.getStateProvince());
+        assertEquals("12341", result.getPostalCode());
+        assertEquals("Country Name", result.getCountry());
     }
 }

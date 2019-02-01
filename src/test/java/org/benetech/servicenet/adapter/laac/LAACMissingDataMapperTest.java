@@ -10,6 +10,7 @@ import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
+import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.type.ListType;
 import org.junit.Before;
@@ -157,5 +158,26 @@ public class LAACMissingDataMapperTest {
         Set<Language> result = mapper.extractLanguages(data);
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void shouldNotThrowExceptionForMinimalDataForPhysicalAddress() {
+        Optional<PhysicalAddress> result = mapper.extractPhysicalAddress(data);
+
+        assertTrue(result.isPresent());
+        assertEquals("123 Street", result.get().getAddress1());
+        assertEquals("Suite 500", result.get().getAttention());
+        assertEquals("The City", result.get().getCity());
+        assertEquals("STATE", result.get().getStateProvince());
+        assertEquals("12341", result.get().getPostalCode());
+        assertEquals("Country Name", result.get().getCountry());
+    }
+
+    @Test
+    public void shouldReturnEmptyOptionalForLackOfDataForPhysicalAddress() {
+        data.setAddress(null);
+        Optional<PhysicalAddress> result = mapper.extractPhysicalAddress(data);
+
+        assertFalse(result.isPresent());
     }
 }
