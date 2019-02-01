@@ -11,12 +11,14 @@ import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
+import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +61,7 @@ public class RecordsServiceImpl implements RecordsService {
         List<ConflictDTO> conflictDTOS = conflictService.findAllWithResourceId(resourceId);
         List<ConflictDTO> filteredByPartners = filterWithPartnersConfigs(conflictDTOS);
         return config.map(conf -> filterExclusions(organization, conf, filteredByPartners))
-            .orElse(Optional.of(new RecordDTO(organizationMapper.toDto(organization), filteredByPartners)));
+            .orElse(Optional.of(new RecordDTO(organizationMapper.toDto(organization), new HashSet<>(), filteredByPartners)));
     }
 
     private List<ConflictDTO> filterWithPartnersConfigs(List<ConflictDTO> conflictDTOS) {
@@ -118,7 +120,8 @@ public class RecordsServiceImpl implements RecordsService {
         try {
             Organization filteredOrg = excludeOrganizationFields(organization, config);
             List<ConflictDTO> filteredConflicts = excludeConflicts(conflictDTOS, config);
-            return Optional.of(new RecordDTO(organizationMapper.toDto(filteredOrg), filteredConflicts));
+            Set<FieldExclusionDTO> excludedFields = fieldExclusionService.findAllDTOByConfigId(config.getId());
+            return Optional.of(new RecordDTO(organizationMapper.toDto(filteredOrg), excludedFields, filteredConflicts));
         } catch (IllegalAccessException e) {
             log.error("Unable to filter record.");
             return Optional.empty();

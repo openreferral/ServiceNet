@@ -63,6 +63,13 @@ public class FieldExclusionServiceImpl implements FieldExclusionService {
     }
 
     @Override
+    public Set<FieldExclusionDTO> findAllDTOByConfigId(UUID configId) {
+        return findAllByConfigId(configId).stream()
+            .map(fieldExclusionMapper::toDto)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
     public Set<FieldExclusion> findAllByConfigId(UUID configId) {
         return fieldExclusionRepository.findAllByConfigId(configId);
     }

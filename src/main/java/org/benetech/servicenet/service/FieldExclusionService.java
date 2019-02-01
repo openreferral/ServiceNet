@@ -28,7 +28,6 @@ public interface FieldExclusionService {
      */
     List<FieldExclusionDTO> findAll();
 
-
     /**
      * Get the "id" fieldExclusion.
      *
@@ -38,6 +37,8 @@ public interface FieldExclusionService {
     Optional<FieldExclusionDTO> findOne(UUID id);
 
     Set<FieldExclusion> findAllByConfigId(UUID configId);
+
+    Set<FieldExclusionDTO> findAllDTOByConfigId(UUID configId);
 
     /**
      * Delete the "id" fieldExclusion.

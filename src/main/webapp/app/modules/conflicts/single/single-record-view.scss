@@ -10,8 +10,17 @@
   border-width: 3px;
 }
 
-.icon {
+.grayBorder {
+  border-color: $gray-card-accent;
+  border-width: 3px;
+}
+
+.icon-conflicting {
   color: $blue-card-text;
+}
+
+.icon-excluded {
+  color: $gray-card-accent;
 }
 
 .icon-text {
