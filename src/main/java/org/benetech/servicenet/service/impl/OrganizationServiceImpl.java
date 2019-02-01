@@ -113,6 +113,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Organization> findOne(UUID id) {
         return organizationRepository.findById(id);
     }
@@ -129,6 +130,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrganizationDTO> findAllWithOwnerId(UUID ownerId) {
         return organizationRepository.findAllWithOwnerId(ownerId).stream().map(organizationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
