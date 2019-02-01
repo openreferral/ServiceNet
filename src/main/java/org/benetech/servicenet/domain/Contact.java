@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -16,6 +17,7 @@ import java.util.Objects;
  * A Contact.
  */
 @Entity
+@Data
 @Table(name = "contact")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Contact extends AbstractEntity implements Serializable {
@@ -55,25 +57,9 @@ public class Contact extends AbstractEntity implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Contact name(String name) {
         this.name = name;
         return this;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public Contact title(String title) {
@@ -81,25 +67,9 @@ public class Contact extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
     public Contact department(String department) {
         this.department = department;
         return this;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Contact email(String email) {
@@ -107,38 +77,14 @@ public class Contact extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
-
     public Contact organization(Organization organization) {
         this.organization = organization;
         return this;
     }
 
-    public Service getSrvc() {
-        return srvc;
-    }
-
-    public void setSrvc(Service service) {
-        this.srvc = service;
-    }
-
     public Contact srvc(Service service) {
         this.srvc = service;
         return this;
-    }
-
-    public ServiceAtLocation getServiceAtLocation() {
-        return serviceAtLocation;
-    }
-
-    public void setServiceAtLocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtLocation = serviceAtLocation;
     }
 
     public Contact serviceAtLocation(ServiceAtLocation serviceAtLocation) {
