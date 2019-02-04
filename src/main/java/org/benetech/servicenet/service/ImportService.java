@@ -76,11 +76,5 @@ public interface ImportService {
 
     Set<Program> createOrUpdateProgramsForOrganization(Set<Program> programs, Organization organization);
 
-    /**
-     * @param schedule which is respected by the service.
-     * @param service with set database uuid.
-     * @return a saved regular schedule.
-     */
     RegularSchedule createOrUpdateRegularSchedule(RegularSchedule schedule, Service service);
-
 }
