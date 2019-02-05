@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching.counter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -9,7 +10,7 @@ public class DescriptionSimilarityCounter extends AbstractSimilarityCounter<Stri
 
     @Override
     public float countSimilarityRatio(String description1, String description2) {
-        if (description1 == null || description2 == null) {
+        if (StringUtils.isBlank(description1) || StringUtils.isBlank(description2)) {
             return NO_MATCH_RATIO;
         }
         String normalized1 = normalize(description1);

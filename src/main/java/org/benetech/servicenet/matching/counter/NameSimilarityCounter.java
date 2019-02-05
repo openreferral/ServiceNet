@@ -1,6 +1,7 @@
 package org.benetech.servicenet.matching.counter;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class NameSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Override
     public float countSimilarityRatio(String name1, String name2) {
-        if (name1 == null || name2 == null) {
+        if (StringUtils.isBlank(name1) || StringUtils.isBlank(name2)) {
             return NO_MATCH_RATIO;
         }
         String normalizedName1 = normalize(name1);

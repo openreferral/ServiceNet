@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching.counter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ public class UrlSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Override
     public float countSimilarityRatio(String url1, String url2) {
-        if (url1 == null || url2 == null) {
+        if (StringUtils.isBlank(url1) || StringUtils.isBlank(url2)) {
             return NO_MATCH_RATIO;
         }
         if (areNormalizedAndUpperCasedDifferent(url1, url2)) {
