@@ -83,9 +83,6 @@ export class Organization extends React.Component<IOrganizationProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.organization.externalDbId" />
                 </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.organization.providerName" />
-                </th>
                 <th />
               </tr>
             </thead>
@@ -134,7 +131,6 @@ export class Organization extends React.Component<IOrganizationProps> {
                     )}
                   </td>
                   <td>{organization.externalDbId}</td>
-                  <td>{organization.providerName}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${organization.id}`} color="info" size="sm">

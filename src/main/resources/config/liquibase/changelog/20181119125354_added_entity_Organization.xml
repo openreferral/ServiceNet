@@ -77,14 +77,10 @@
             </column>
 
             <column name="account_id" type="${uuidType}">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
 
             <column name="external_db_id" type="varchar(255)">
-                <constraints nullable="true"/>
-            </column>
-
-            <column name="provider_name" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
 

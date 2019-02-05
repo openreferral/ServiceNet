@@ -75,9 +75,6 @@ public class Organization extends AbstractEntity implements Serializable {
     @Column(name = "external_db_id")
     private String externalDbId;
 
-    @Column(name = "provider_name")
-    private String providerName;
-
     @OneToOne
     @JoinColumn(unique = true)
     private Organization replacedBy;
@@ -87,6 +84,7 @@ public class Organization extends AbstractEntity implements Serializable {
     private DocumentUpload sourceDocument;
 
     @ManyToOne
+    @NotNull
     @JsonIgnoreProperties("")
     private SystemAccount account;
 
@@ -251,10 +249,6 @@ public class Organization extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public Organization providerName(String providerName) {
-        this.providerName = providerName;
-        return this;
-    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

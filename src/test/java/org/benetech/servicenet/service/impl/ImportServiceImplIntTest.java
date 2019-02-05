@@ -14,6 +14,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.ImportService;
@@ -252,7 +253,7 @@ public class ImportServiceImplIntTest {
     @Test
     @Transactional
     public void shouldCreateOrganization() {
-        Organization organization = generateNewOrganization();
+        Organization organization = generateNewOrganization(generateExistingAccount());
 
         int dbSize = organizationService.findAllDTOs().size();
         importService.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
@@ -263,8 +264,9 @@ public class ImportServiceImplIntTest {
     @Test
     @Transactional
     public void shouldUpdateOrganization() {
-        Organization newOrganization = generateNewOrganization();
-        generateExistingOrganization();
+        SystemAccount account = generateExistingAccount();
+        Organization newOrganization = generateNewOrganization(account);
+        generateExistingOrganization(account);
 
         int dbSize = organizationService.findAllDTOs().size();
         Organization updated = importService.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, PROVIDER,
@@ -520,13 +522,19 @@ public class ImportServiceImplIntTest {
         return result;
     }
 
-    private Organization generateNewOrganization() {
-        return new Organization().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
+    private SystemAccount generateExistingAccount() {
+        SystemAccount account = new SystemAccount().name(PROVIDER);
+        em.persist(account);
+        return account;
+    }
+
+    private Organization generateNewOrganization(SystemAccount account) {
+        return new Organization().externalDbId(NEW_EXTERNAL_ID).account(account)
             .name(NEW_STRING).active(NEW_BOOLEAN);
     }
 
-    private Organization generateExistingOrganization() {
-        Organization result = new Organization().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+    private Organization generateExistingOrganization(SystemAccount account) {
+        Organization result = new Organization().externalDbId(EXISTING_EXTERNAL_ID).account(account)
             .name(EXISTING_STRING).active(EXISTING_BOOLEAN);
         em.persist(result);
         return result;

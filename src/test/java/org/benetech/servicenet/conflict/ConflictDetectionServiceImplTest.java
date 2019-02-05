@@ -161,12 +161,10 @@ public class ConflictDetectionServiceImplTest {
             .deleted(false);
     }
 
-
     private Organization getConflictingOrganization() {
         SystemAccount account = SystemAccountMother.createDefaultAndPersist(em);
         Organization org = OrganizationMother.createDifferent();
         org.setAccount(account);
-        org.setProviderName(account.getName());
         em.persist(org);
         return org;
     }

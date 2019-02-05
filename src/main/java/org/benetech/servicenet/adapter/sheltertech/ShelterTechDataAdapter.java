@@ -56,7 +56,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
                 orgRaw, rawData.getReport().getDocumentUpload());
 
             Organization savedOrg = importService
-                .createOrUpdateOrganization(org, org.getExternalDbId(), org.getProviderName(), rawData.getReport());
+                .createOrUpdateOrganization(org, org.getExternalDbId(), PROVIDER_NAME, rawData.getReport());
 
             persistOrgsLocation(orgRaw, org.getLocations(), savedOrg);
 

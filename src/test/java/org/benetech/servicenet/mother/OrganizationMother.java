@@ -82,7 +82,6 @@ public class OrganizationMother {
     public static Organization createDefaultAndPersist(EntityManager em) {
         Organization org = createDefault();
         org.setAccount(SystemAccountMother.createDefaultAndPersist(em));
-        org.setProviderName(org.getAccount().getName());
         em.persist(org);
         em.flush();
         return org;
@@ -91,7 +90,6 @@ public class OrganizationMother {
     public static Organization createDifferentAndPersist(EntityManager em) {
         Organization org = createDifferent();
         org.setAccount(SystemAccountMother.createDifferentAndPersist(em));
-        org.setProviderName(org.getAccount().getName());
         em.persist(org);
         em.flush();
         return org;

@@ -16,8 +16,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.PROVIDER_NAME;
-
 @Mapper
 public interface ShelterTechOrganizationMapper {
 
@@ -35,7 +33,6 @@ public interface ShelterTechOrganizationMapper {
     @Mapping(source = "orgRaw.legalStatus", target = "legalStatus")
     @Mapping(source = "orgRaw.status", target = "active", qualifiedByName = "activeFromStatus")
     @Mapping(source = "orgRaw.id", target = "externalDbId")
-    @Mapping(constant = PROVIDER_NAME, target = "providerName")
     @Mapping(source = "orgRaw.address", target = "locations", qualifiedByName = "locationFromAddressRaw")
     @Mapping(ignore = true, target = "replacedBy")
     @Mapping(source = "documentUpload", target = "sourceDocument")

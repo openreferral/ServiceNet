@@ -134,7 +134,6 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     default Organization extractOrganization(ICarolAgency agency, String providerName) {
         Organization result = mapOrganization(agency);
         result.setActive(agency.getStatus().equals(ACTIVE));
-        result.setProviderName(providerName);
         return result;
     }
 

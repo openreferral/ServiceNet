@@ -57,8 +57,6 @@ public class OrganizationDTO implements Serializable {
 
     private String externalDbId;
 
-    private String providerName;
-
     public Boolean isActive() {
         return active;
     }
