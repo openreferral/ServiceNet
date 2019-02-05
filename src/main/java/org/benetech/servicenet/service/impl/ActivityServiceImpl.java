@@ -69,13 +69,14 @@ public class ActivityServiceImpl implements ActivityService {
         return activities;
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public Optional<ActivityDTO> getOneByOrganizationId(UUID organizationId) {
         return getEntityActivity(organizationId, organizationId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
         List<ActivityDTO> activities = getAllOrganizationActivities(systemAccountId);
 
