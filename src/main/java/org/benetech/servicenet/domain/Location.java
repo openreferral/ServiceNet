@@ -79,6 +79,10 @@ public class Location extends AbstractEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
 
+    @OneToMany(mappedBy = "location")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Phone> phones = new HashSet<>();
+
     @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
@@ -196,6 +200,23 @@ public class Location extends AbstractEntity implements Serializable {
     public Location removeAccessibilities(AccessibilityForDisabilities accessibilityForDisabilities) {
         this.accessibilities.remove(accessibilityForDisabilities);
         accessibilityForDisabilities.setLocation(null);
+        return this;
+    }
+
+    public Location phones(Set<Phone> phones) {
+        this.phones = phones;
+        return this;
+    }
+
+    public Location addPhones(Phone phone) {
+        this.phones.add(phone);
+        phone.setLocation(this);
+        return this;
+    }
+
+    public Location removePhones(Phone phone) {
+        this.phones.remove(phone);
+        phone.setLocation(null);
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
