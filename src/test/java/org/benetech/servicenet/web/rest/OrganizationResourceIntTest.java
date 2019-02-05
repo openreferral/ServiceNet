@@ -5,6 +5,7 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.mother.OrganizationMother;
+import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.OrganizationService;
@@ -84,7 +85,9 @@ public class OrganizationResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static Organization createEntity(EntityManager em) {
-        return OrganizationMother.createDefault();
+        Organization result = OrganizationMother.createDefault();
+        result.setAccount(SystemAccountMother.createDefaultAndPersist(em));
+        return result;
     }
 
     @Before

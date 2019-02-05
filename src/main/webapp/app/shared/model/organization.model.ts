@@ -17,7 +17,6 @@ export interface IOrganization {
   active?: boolean;
   updatedAt?: Moment;
   externalDbId?: string;
-  providerName?: string;
   replacedById?: number;
   sourceDocumentDateUploaded?: string;
   sourceDocumentId?: number;

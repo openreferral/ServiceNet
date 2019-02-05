@@ -27,7 +27,6 @@
       "active": "Active",
       "updatedAt": "Updated At",
       "externalDbId": "External Database Id",
-      "providerName": "Provider Name",
       "locations": "Locations",
       "replacedBy": "Replaced By",
       "sourceDocument": "Source Document",

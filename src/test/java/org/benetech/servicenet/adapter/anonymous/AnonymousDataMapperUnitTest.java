@@ -15,6 +15,7 @@ import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.Service;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+@Ignore("Will be removed in #80")
 public class AnonymousDataMapperUnitTest {
 
     private RawData rawData;

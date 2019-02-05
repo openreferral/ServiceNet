@@ -52,7 +52,6 @@ class PersistenceManager {
     Organization importOrganization(SmcOrganization smcOrganization, DocumentUpload sourceDocument) {
         Organization organizationToSave = mapper.extractOrganization(smcOrganization);
         organizationToSave.setExternalDbId(smcOrganization.getId());
-        organizationToSave.setProviderName(providerName);
         organizationToSave.setActive(true);
         organizationToSave.setSourceDocument(sourceDocument);
         return importService.createOrUpdateOrganization(organizationToSave, smcOrganization.getId(), providerName, report);

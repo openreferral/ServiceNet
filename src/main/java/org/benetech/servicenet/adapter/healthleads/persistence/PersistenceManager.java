@@ -105,8 +105,7 @@ public class PersistenceManager {
     private Organization getOrganization(HealthleadsOrganization organization) {
         return mapper.extractOrganization(organization)
             .active(true)
-            .externalDbId(organization.getId())
-            .providerName(providerName);
+            .externalDbId(organization.getId());
     }
 
     private Taxonomy getTaxonomy(HealthleadsTaxonomy taxonomy) {

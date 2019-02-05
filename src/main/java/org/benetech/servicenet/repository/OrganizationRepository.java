@@ -20,7 +20,10 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     List<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId);
 
-    Optional<Organization> findOneByExternalDbIdAndProviderName(String externalDbId, String providerName);
+    @Query("SELECT org FROM Organization org WHERE org.externalDbId = :externalDbId AND org.account.name = :providerName")
+    Optional<Organization> findOneByExternalDbIdAndProviderName(@Param("externalDbId") String externalDbId,
+                                                                @Param("providerName") String providerName);
 
-    List<Organization> findAllByProviderNameNot(String providerName);
+    @Query("SELECT org FROM Organization org WHERE org.account.name != :providerName")
+    List<Organization> findAllByProviderNameNot(@Param("providerName") String providerName);
 }

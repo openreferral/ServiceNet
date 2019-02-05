@@ -28,8 +28,6 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
         conflicts.addAll(detectConflicts(current, current.getLegalStatus(), offered.getLegalStatus(),
             "legalStatus"));
         conflicts.addAll(detectConflicts(current, current.getActive(), offered.getActive(), "active"));
-        conflicts.addAll(detectConflicts(current, current.getProviderName(), offered.getProviderName(),
-            "providerName"));
 
         return conflicts;
     }

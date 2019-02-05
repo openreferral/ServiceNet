@@ -14,6 +14,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.ImportService;
@@ -241,7 +242,7 @@ public class ImportServiceConfidentialityImplIntTest {
     @Test
     @Transactional
     public void shouldNotCreateOrganizationIfConfidential() {
-        Organization organization = generateNewOrganization();
+        Organization organization = generateNewOrganization(generateExistingAccount());
         organization.setIsConfidential(true);
 
         int dbSize = organizationService.findAllDTOs().size();
@@ -253,9 +254,10 @@ public class ImportServiceConfidentialityImplIntTest {
     @Test
     @Transactional
     public void shouldNotUpdateOrganizationIfConfidential() {
-        Organization newOrganization = generateNewOrganization();
+        SystemAccount account = generateExistingAccount();
+        Organization newOrganization = generateNewOrganization(account);
         newOrganization.setIsConfidential(true);
-        generateExistingOrganization();
+        generateExistingOrganization(account);
 
         int dbSize = organizationService.findAllDTOs().size();
         Organization updated = importService.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, PROVIDER,
@@ -523,15 +525,21 @@ public class ImportServiceConfidentialityImplIntTest {
         return result;
     }
 
-    private Organization generateNewOrganization() {
-        Organization result = new Organization().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
+    private SystemAccount generateExistingAccount() {
+        SystemAccount account = new SystemAccount().name(PROVIDER);
+        em.persist(account);
+        return account;
+    }
+
+    private Organization generateNewOrganization(SystemAccount account) {
+        Organization result = new Organization().externalDbId(NEW_EXTERNAL_ID).account(account)
             .name(NEW_STRING).active(NEW_BOOLEAN);
         result.setIsConfidential(true);
         return result;
     }
 
-    private Organization generateExistingOrganization() {
-        Organization result = new Organization().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+    private Organization generateExistingOrganization(SystemAccount account) {
+        Organization result = new Organization().externalDbId(EXISTING_EXTERNAL_ID).account(account)
             .name(EXISTING_STRING).active(EXISTING_BOOLEAN);
         em.persist(result);
         return result;

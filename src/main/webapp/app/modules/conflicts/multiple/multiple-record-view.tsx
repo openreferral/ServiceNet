@@ -49,7 +49,6 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
       </Col>
     );
 
-    console.log(this.props.matches.length);
     const seeAnotherMatch =
       this.props.matches.length > 1 ? (
         <Col className="another-match-container" onClick={this.changeRecord}>
