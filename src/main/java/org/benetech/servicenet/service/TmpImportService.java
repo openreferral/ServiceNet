@@ -15,6 +15,6 @@ public interface TmpImportService {
 
     Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName);
 
-    Service createOrUpdateService(Service filledService, Organization org, String externalDbId,
+    Service createOrUpdateService(Service filledService, String externalDbId,
                                   String providerName, DataImportReport report);
 }

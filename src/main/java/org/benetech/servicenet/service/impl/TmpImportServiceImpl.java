@@ -21,9 +21,11 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.service.ContactService;
+import org.benetech.servicenet.service.FundingService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -55,7 +57,7 @@ public class TmpImportServiceImpl implements TmpImportService {
     @Autowired
     private EntityManager em;
 
-    //region services
+    //region services and repositories
     @Autowired
     private LocationService locationService;
 
@@ -84,13 +86,19 @@ public class TmpImportServiceImpl implements TmpImportService {
     private SystemAccountService systemAccountService;
 
     @Autowired
+    private ContactService contactService;
+
+    @Autowired
+    private FundingService fundingService;
+
+    @Autowired
     private PhoneRepository phoneRepository;
 
     @Autowired
     private RegularScheduleRepository regularScheduleRepository;
 
     @Autowired
-    private ContactService contactService;
+    private FundingRepository fundingRepository;
     //endregion
 
     @Override
@@ -99,10 +107,7 @@ public class TmpImportServiceImpl implements TmpImportService {
         Organization organization = new Organization(filledOrganization);
         Optional<Organization> organizationFromDb = organizationService.findForExternalDb(externalDbId, providerName);
         if (organizationFromDb.isPresent()) {
-            organization.setId(organizationFromDb.get().getId());
-            organization.setAccount(organizationFromDb.get().getAccount());
-            organization.setFunding(organizationFromDb.get().getFunding());
-            organization.setContacts(organizationFromDb.get().getContacts());
+            fillDataFromDb(organization, organizationFromDb.get());
             em.merge(organization);
             report.incrementNumberOfUpdatedOrgs();
         } else {
@@ -112,8 +117,8 @@ public class TmpImportServiceImpl implements TmpImportService {
             report.incrementNumberOfCreatedOrgs();
         }
 
-        importServices(filledOrganization.getServices(), organization, providerName, report);
         importLocations(filledOrganization.getLocations(), organization, providerName);
+        importServices(filledOrganization.getServices(), organization, providerName, report);
         createOrUpdateFundingForOrganization(filledOrganization.getFunding(), organization);
         createOrUpdateProgramsForOrganization(filledOrganization.getPrograms(), organization);
 
@@ -124,7 +129,7 @@ public class TmpImportServiceImpl implements TmpImportService {
 
     @Override
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName) {
         Optional<Taxonomy> taxonomyFromDb = taxonomyService.findForExternalDb(externalDbId, providerName);
 
@@ -139,17 +144,12 @@ public class TmpImportServiceImpl implements TmpImportService {
 
     @Override
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName) {
         Location location = new Location(filledLocation);
         Optional<Location> locationFromDb = locationService.findForExternalDb(externalDbId, providerName);
         if (locationFromDb.isPresent()) {
-            location.setPhysicalAddress(locationFromDb.get().getPhysicalAddress());
-            location.setPostalAddress(locationFromDb.get().getPostalAddress());
-            location.setAccessibilities(locationFromDb.get().getAccessibilities());
-            location.setId(locationFromDb.get().getId());
-            location.setRegularSchedule(locationFromDb.get().getRegularSchedule());
-            location.setHolidaySchedule(locationFromDb.get().getHolidaySchedule());
+            fillDataFromDb(location, locationFromDb.get());
             em.merge(location);
         } else {
             em.persist(location);
@@ -157,6 +157,8 @@ public class TmpImportServiceImpl implements TmpImportService {
 
         createOrUpdatePhysicalAddress(filledLocation.getPhysicalAddress(), location);
         createOrUpdatePostalAddress(filledLocation.getPostalAddress(), location);
+        createOrUpdateLangsForLocation(filledLocation.getLangs(), location);
+        createOrUpdatePhonesForLocation(filledLocation.getPhones(), location);
         importAccessibilities(filledLocation.getAccessibilities(), location);
         createOrUpdateOpeningHoursForLocation(filledLocation.getRegularSchedule(), location);
         createOrUpdateHolidayScheduleForLocation(filledLocation.getHolidaySchedule(), location);
@@ -166,20 +168,13 @@ public class TmpImportServiceImpl implements TmpImportService {
 
     @Override
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
-    public Service createOrUpdateService(Service filledService, Organization org, String externalDbId, String providerName,
-                                          DataImportReport report) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Service createOrUpdateService(Service filledService, String externalDbId, String providerName,
+                                         DataImportReport report) {
         Service service = new Service(filledService);
-        service.setOrganization(org);
         Optional<Service> serviceFromDb = serviceService.findForExternalDb(externalDbId, providerName);
         if (serviceFromDb.isPresent()) {
-            service.setPhones(serviceFromDb.get().getPhones());
-            service.setEligibility(serviceFromDb.get().getEligibility());
-            service.setId(serviceFromDb.get().getId());
-            service.setRegularSchedule(serviceFromDb.get().getRegularSchedule());
-            service.setFunding(serviceFromDb.get().getFunding());
-            service.setHolidaySchedule(serviceFromDb.get().getHolidaySchedule());
-            service.setContacts(serviceFromDb.get().getContacts());
+            fillDataFromDb(service, serviceFromDb.get());
             em.merge(service);
             report.incrementNumberOfUpdatedServices();
         } else {
@@ -203,7 +198,8 @@ public class TmpImportServiceImpl implements TmpImportService {
     private void importServices(Set<Service> services, Organization org, String providerName, DataImportReport report) {
         Set<Service> savedServices = new HashSet<>();
         for (Service service : services) {
-            savedServices.add(createOrUpdateService(service, org, service.getExternalDbId(), providerName, report));
+            service.setOrganization(org);
+            savedServices.add(createOrUpdateService(service, service.getExternalDbId(), providerName, report));
         }
         org.setServices(savedServices);
     }
@@ -211,6 +207,7 @@ public class TmpImportServiceImpl implements TmpImportService {
     private void importLocations(Set<Location> locations, Organization org, String providerName) {
         Set<Location> savedLocations = new HashSet<>();
         for (Location location : locations) {
+            location.setOrganization(org);
             savedLocations.add(createOrUpdateLocation(location, location.getExternalDbId(), providerName));
         }
         org.setLocations(savedLocations);
@@ -219,7 +216,7 @@ public class TmpImportServiceImpl implements TmpImportService {
     // region Location related data
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdatePostalAddress(PostalAddress postalAddress, Location location) {
         if (postalAddress != null) {
             postalAddress.setLocation(location);
@@ -235,7 +232,7 @@ public class TmpImportServiceImpl implements TmpImportService {
     }
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdatePhysicalAddress(PhysicalAddress physicalAddress, Location location) {
         if (physicalAddress != null) {
             physicalAddress.setLocation(location);
@@ -259,9 +256,9 @@ public class TmpImportServiceImpl implements TmpImportService {
     }
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private AccessibilityForDisabilities createOrUpdateAccessibility(AccessibilityForDisabilities accessibility,
-                                                                    Location location) {
+                                                                     Location location) {
         accessibility.setLocation(location);
         Optional<AccessibilityForDisabilities> existingAccessibility = getExistingAccessibility(accessibility, location);
         if (existingAccessibility.isPresent()) {
@@ -276,18 +273,23 @@ public class TmpImportServiceImpl implements TmpImportService {
 
     private Optional<AccessibilityForDisabilities> getExistingAccessibility(AccessibilityForDisabilities accessibility,
                                                                             Location location) {
+        if (accessibility == null) {
+            return Optional.empty();
+        }
         return location.getAccessibilities().stream()
             .filter(a -> a.getAccessibility().equals(accessibility.getAccessibility()))
             .findFirst();
     }
 
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateOpeningHoursForLocation(RegularSchedule schedule, Location location) {
-        createOrUpdateOpeningHours(schedule.getOpeningHours(), null, location, schedule);
+        if (schedule != null) {
+            createOrUpdateOpeningHours(schedule.getOpeningHours(), null, location, schedule);
+        }
     }
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location) {
         if (schedule != null) {
             schedule.setLocation(location);
@@ -306,7 +308,7 @@ public class TmpImportServiceImpl implements TmpImportService {
     // region Service related data
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateEligibility(Eligibility eligibility, Service service) {
         if (eligibility != null) {
             eligibility.setSrvc(service);
@@ -320,46 +322,80 @@ public class TmpImportServiceImpl implements TmpImportService {
         }
     }
 
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateLangsForService(Set<Language> langs, Service service) {
         Set<Language> filtered = langs.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .collect(Collectors.toSet());
         createOrUpdateFilteredLangsForService(filtered, service);
     }
 
-    private void createOrUpdateFilteredLangsForService(Set<Language> langs, @Nonnull Service service) {
-        Set<Language> common = new HashSet<>(langs);
-        common.retainAll(service.getLangs());
-        service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
-
-        langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.persist(lang));
-
-        service.setLangs(langs);
+    private void createOrUpdateFilteredLangsForService(Set<Language> langs, Service service) {
+        if (service != null) {
+            Set<Language> common = new HashSet<>(langs);
+            common.retainAll(service.getLangs());
+            service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
+            langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> {
+                lang.setSrvc(service);
+                persistWithoutUnsavedRelatedEntity(lang);
+            });
+        }
     }
 
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void createOrUpdateLangsForLocation(Set<Language> langs, Location location) {
+        Set<Language> filtered = langs.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .collect(Collectors.toSet());
+        createOrUpdateFilteredLangsForLocation(filtered, location);
+    }
+
+    private void createOrUpdateFilteredLangsForLocation(Set<Language> langs, Location location) {
+        if (location != null) {
+            Set<Language> common = new HashSet<>(langs);
+            common.retainAll(location.getLangs());
+            location.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
+            langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> {
+                lang.setLocation(location);
+                persistWithoutUnsavedRelatedEntity(lang);
+            });
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdatePhonesForService(Set<Phone> phones, Service service) {
         Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .collect(Collectors.toSet());
+        filtered.forEach(p -> p.setSrvc(service));
         createOrUpdateFilteredPhonesForService(filtered, service);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void createOrUpdatePhonesForLocation(Set<Phone> phones, Location location) {
+        Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .collect(Collectors.toSet());
+        filtered.forEach(p -> p.setLocation(location));
+        createOrUpdateFilteredPhonesForLocation(filtered, location);
     }
 
     private void createOrUpdateFilteredPhonesForService(Set<Phone> phones, @Nonnull Service service) {
         service.setPhones(persistPhones(phones, service.getPhones()));
     }
 
-    private Set<Phone> persistPhones(Set<Phone> phones, Set<Phone> savedPhones) {
-        Set<Phone> common = new HashSet<>(phones);
-        common.retainAll(savedPhones);
+    private void createOrUpdateFilteredPhonesForLocation(Set<Phone> phones, @Nonnull Location location) {
+        location.setPhones(persistPhones(phones, location.getPhones()));
+    }
 
-        savedPhones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
-        phones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.persist(phone));
+    private Set<Phone> persistPhones(Set<Phone> phonesToSave, Set<Phone> phonesInDatabase) {
+        Set<Phone> common = new HashSet<>(phonesToSave);
+        common.retainAll(phonesInDatabase);
 
-        return phones;
+        phonesInDatabase.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
+        phonesToSave.stream().filter(phone -> !common.contains(phone)).forEach(this::persistWithoutUnsavedRelatedEntity);
+
+        return phonesToSave;
     }
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateFundingForService(Funding funding, Service service) {
         if (funding != null) {
             funding.setSrvc(service);
@@ -374,13 +410,15 @@ public class TmpImportServiceImpl implements TmpImportService {
         }
     }
 
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateRegularScheduleForService(RegularSchedule schedule, Service service) {
-        createOrUpdateOpeningHours(schedule.getOpeningHours(), service, null, schedule);
+        if (schedule != null) {
+            createOrUpdateOpeningHours(schedule.getOpeningHours(), service, null, schedule);
+        }
     }
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateServiceTaxonomy(Set<ServiceTaxonomy> serviceTaxonomies, String providerName,
                                                Service service) {
         Set<ServiceTaxonomy> savedServiceTaxonomies = new HashSet<>();
@@ -391,7 +429,9 @@ public class TmpImportServiceImpl implements TmpImportService {
     }
 
     private ServiceTaxonomy persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String providerName, Service service) {
-
+        if (serviceTaxonomy == null) {
+            return null;
+        }
         serviceTaxonomy.setSrvc(service);
         Optional<ServiceTaxonomy> serviceTaxonomyFromDb
             = serviceTaxonomyService.findForExternalDb(service.getExternalDbId(), providerName);
@@ -406,9 +446,9 @@ public class TmpImportServiceImpl implements TmpImportService {
     }
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateRequiredDocuments(Set<RequiredDocument> requiredDocuments,
-                                                           String providerName, Service service) {
+                                                 String providerName, Service service) {
         Set<RequiredDocument> savedDocs = new HashSet<>();
         for (RequiredDocument doc : requiredDocuments) {
             savedDocs.add(persistRequiredDocument(doc, doc.getExternalDbId(), providerName, service));
@@ -431,7 +471,7 @@ public class TmpImportServiceImpl implements TmpImportService {
         }
     }
 
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateContactsForService(Set<Contact> contacts, Service service) {
         contacts.forEach(c -> c.setSrvc(service));
         Set<Contact> common = new HashSet<>(contacts);
@@ -441,7 +481,7 @@ public class TmpImportServiceImpl implements TmpImportService {
     }
 
     @ConfidentialFilter
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service) {
         if (schedule != null) {
             schedule.setSrvc(service);
@@ -459,22 +499,22 @@ public class TmpImportServiceImpl implements TmpImportService {
 
     // region Organization related data
 
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateFundingForOrganization(Funding funding, Organization organization) {
         if (funding != null) {
-            organization.setFunding(funding);
-            if (organization.getFunding() != null) {
-                funding.setId(organization.getFunding().getId());
+            Optional<Funding> fundingFormDb = fundingRepository.findOneByOrganizationId(organization.getId());
+            funding.setOrganization(organization);
+            if (fundingFormDb.isPresent()) {
+                funding.setId(fundingFormDb.get().getId());
                 em.merge(funding);
             } else {
                 em.persist(funding);
             }
-
             organization.setFunding(funding);
         }
     }
 
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     private void createOrUpdateProgramsForOrganization(Set<Program> programs, Organization organization) {
         Set<Program> filtered = programs.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .collect(Collectors.toSet());
@@ -514,16 +554,23 @@ public class TmpImportServiceImpl implements TmpImportService {
     }
 
     private void createOrUpdateFilteredOpeningHours(Set<OpeningHours> openingHours, Service service, Location location,
-                                                    RegularSchedule schedule) {
-        if (schedule != null) {
+                                                    RegularSchedule scheduleToSave) {
+        Optional<RegularSchedule> scheduleFormDb = Optional.empty();
+        if (service != null) {
+         scheduleFormDb = regularScheduleRepository.findOneByServiceId(service.getId());
+        } else if (location != null) {
+            scheduleFormDb = regularScheduleRepository.findOneByLocationId(location.getId());
+        }
+        if (scheduleFormDb.isPresent()) {
+            scheduleToSave.setId(scheduleFormDb.get().getId());
             Set<OpeningHours> common = new HashSet<>(openingHours);
-            common.retainAll(schedule.getOpeningHours());
+            common.retainAll(scheduleFormDb.get().getOpeningHours());
 
-            schedule.getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> em.remove(o));
+            scheduleFormDb.get().getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> em.remove(o));
             openingHours.stream().filter(o -> !common.contains(o)).forEach(o -> em.persist(o));
 
-            em.merge(schedule.openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
-            setSchedule(schedule, location, service);
+            em.merge(scheduleToSave.openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
+            setSchedule(scheduleToSave, location, service);
         } else {
             openingHours.forEach(o -> em.persist(o));
             RegularSchedule regularSchedule = new RegularSchedule()
@@ -550,5 +597,55 @@ public class TmpImportServiceImpl implements TmpImportService {
                 organizationMatchService.createOrUpdateOrganizationMatches(organization);
             }
         });
+    }
+
+    private void persistWithoutUnsavedRelatedEntity(Phone phone) {
+        if (phone.getLocation() != null && phone.getLocation().getId() == null) {
+            phone.setLocation(null);
+        }
+        if (phone.getSrvc() != null && phone.getSrvc().getId() == null) {
+            phone.setSrvc(null);
+        }
+        em.persist(phone);
+    }
+
+    private void persistWithoutUnsavedRelatedEntity(Language language) {
+        if (language.getLocation() != null && language.getLocation().getId() == null) {
+            language.setLocation(null);
+        }
+        if (language.getSrvc() != null && language.getSrvc().getId() == null) {
+            language.setSrvc(null);
+        }
+        em.persist(language);
+    }
+    
+    private void fillDataFromDb(Organization newOrg, Organization orgFromDb) {
+        newOrg.setId(orgFromDb.getId());
+        newOrg.setAccount(orgFromDb.getAccount());
+        newOrg.setFunding(orgFromDb.getFunding());
+        newOrg.setContacts(orgFromDb.getContacts());
+        newOrg.setPrograms(orgFromDb.getPrograms());
+    }
+    
+    private void fillDataFromDb(Location newLocation, Location locationFromDb) {
+        newLocation.setPhysicalAddress(locationFromDb.getPhysicalAddress());
+        newLocation.setPostalAddress(locationFromDb.getPostalAddress());
+        newLocation.setAccessibilities(locationFromDb.getAccessibilities());
+        newLocation.setId(locationFromDb.getId());
+        newLocation.setPhones(locationFromDb.getPhones());
+        newLocation.setLangs(locationFromDb.getLangs());
+        newLocation.setRegularSchedule(locationFromDb.getRegularSchedule());
+        newLocation.setHolidaySchedule(locationFromDb.getHolidaySchedule());
+    }
+    
+    private void fillDataFromDb(Service newService, Service serviceFromDb) {
+        newService.setPhones(serviceFromDb.getPhones());
+        newService.setEligibility(serviceFromDb.getEligibility());
+        newService.setId(serviceFromDb.getId());
+        newService.setRegularSchedule(serviceFromDb.getRegularSchedule());
+        newService.setFunding(serviceFromDb.getFunding());
+        newService.setHolidaySchedule(serviceFromDb.getHolidaySchedule());
+        newService.setContacts(serviceFromDb.getContacts());
+        newService.setLangs(serviceFromDb.getLangs());
     }
 }
