@@ -24,6 +24,7 @@ import org.benetech.servicenet.domain.Taxonomy;
 import java.util.Set;
 import java.util.UUID;
 
+@Deprecated
 public interface ImportService {
 
     @Deprecated
