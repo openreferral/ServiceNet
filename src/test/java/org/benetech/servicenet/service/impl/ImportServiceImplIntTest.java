@@ -442,7 +442,7 @@ public class ImportServiceImplIntTest {
     @Transactional
     public void shouldCreatePhonesIfServiceHasNoneOfThem() {
         Service service = generateNewService();
-        Phone phone = new Phone().number(NEW_STRING).srvc(service);
+        Phone phone = new Phone().number(NEW_STRING);
         service.setPhones(mutableSet(phone));
 
         assertEquals(0, phoneService.findAll().size());
@@ -507,7 +507,7 @@ public class ImportServiceImplIntTest {
     @Transactional
     public void shouldCreatePhonesIfLocationHasNoneOfThem() {
         Location location = generateNewLocation();
-        Phone phone = new Phone().number(NEW_STRING).location(location);
+        Phone phone = new Phone().number(NEW_STRING);
         location.setPhones(mutableSet(phone));
 
         assertEquals(0, phoneService.findAll().size());

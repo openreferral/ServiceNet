@@ -336,7 +336,7 @@ public class TmpImportServiceImpl implements TmpImportService {
             service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
             langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> {
                 lang.setSrvc(service);
-                persistWithoutUnsavedRelatedEntity(lang);
+                em.persist(lang);
             });
         }
     }
@@ -352,10 +352,10 @@ public class TmpImportServiceImpl implements TmpImportService {
         if (location != null) {
             Set<Language> common = new HashSet<>(langs);
             common.retainAll(location.getLangs());
-            location.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
+            location.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(em::remove);
             langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> {
                 lang.setLocation(location);
-                persistWithoutUnsavedRelatedEntity(lang);
+                em.persist(lang);
             });
         }
     }
@@ -388,8 +388,8 @@ public class TmpImportServiceImpl implements TmpImportService {
         Set<Phone> common = new HashSet<>(phonesToSave);
         common.retainAll(phonesInDatabase);
 
-        phonesInDatabase.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
-        phonesToSave.stream().filter(phone -> !common.contains(phone)).forEach(this::persistWithoutUnsavedRelatedEntity);
+        phonesInDatabase.stream().filter(phone -> !common.contains(phone)).forEach(em::remove);
+        phonesToSave.stream().filter(phone -> !common.contains(phone)).forEach(em::persist);
 
         return phonesToSave;
     }
@@ -597,26 +597,6 @@ public class TmpImportServiceImpl implements TmpImportService {
                 organizationMatchService.createOrUpdateOrganizationMatches(organization);
             }
         });
-    }
-
-    private void persistWithoutUnsavedRelatedEntity(Phone phone) {
-        if (phone.getLocation() != null && phone.getLocation().getId() == null) {
-            phone.setLocation(null);
-        }
-        if (phone.getSrvc() != null && phone.getSrvc().getId() == null) {
-            phone.setSrvc(null);
-        }
-        em.persist(phone);
-    }
-
-    private void persistWithoutUnsavedRelatedEntity(Language language) {
-        if (language.getLocation() != null && language.getLocation().getId() == null) {
-            language.setLocation(null);
-        }
-        if (language.getSrvc() != null && language.getSrvc().getId() == null) {
-            language.setSrvc(null);
-        }
-        em.persist(language);
     }
     
     private void fillDataFromDb(Organization newOrg, Organization orgFromDb) {
