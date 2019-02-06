@@ -1,0 +1,8 @@
+[
+  {
+    "taxonomy_detail": "Taxonomy Detail",
+    "taxonomy_id": "taxonomyId",
+    "id": "servicesTaxonomyId",
+    "service_id": "serviceId"
+  }
+]
