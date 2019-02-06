@@ -2,24 +2,34 @@ import './home.scss';
 
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Translate, getSortState, IPaginationBaseState, TextFormat } from 'react-jhipster';
+import { Translate, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert } from 'reactstrap';
+import { Row, Col, Alert, Dropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
 import { getEntities, reset } from 'app/shared/reducers/activity.reducer';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import ActivityElement from './activity-element';
+import SortActivity from './sort-activity';
 
 export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
-export type IHomeState = IPaginationBaseState;
+export interface IHomeState extends IPaginationBaseState {
+  dropdownOpen: boolean;
+}
 
 export class Home extends React.Component<IHomeProp, IHomeState> {
-  state: IHomeState = {
-    ...getSortState(this.props.location, ITEMS_PER_PAGE)
-  };
+  constructor(props) {
+    super(props);
+
+    this.toggleSort = this.toggleSort.bind(this);
+    this.state = {
+      ...getSortState(this.props.location, ITEMS_PER_PAGE),
+      sort: SORT_SIZE_NAME,
+      dropdownOpen: false
+    };
+  }
 
   componentDidMount() {
     this.reset();
@@ -29,6 +39,18 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     if (this.props.updateSuccess || (this.props.loginSuccess === true && prevProps.loginSuccess === false)) {
       this.reset();
     }
+  }
+
+  sort = prop => () => {
+    this.setState({ sort: prop }, () => {
+      this.reset();
+    });
+  };
+
+  toggleSort() {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
   }
 
   reset = () => {
@@ -44,18 +66,6 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     if (window.pageYOffset > 0) {
       this.setState({ activePage: this.state.activePage + 1 }, () => this.getEntities());
     }
-  };
-
-  sort = prop => () => {
-    this.setState(
-      {
-        order: this.state.order === 'asc' ? 'desc' : 'asc',
-        sort: prop
-      },
-      () => {
-        this.reset();
-      }
-    );
   };
 
   getEntities = () => {
@@ -105,6 +115,17 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                 </h2>
               </Col>
             </Row>
+            <Row>
+              <Col md="8">
+                <SortActivity
+                  dropdownOpen={this.state.dropdownOpen}
+                  toggleSort={this.toggleSort}
+                  sort={this.state.sort}
+                  sortFunc={this.sort}
+                  values={SORT_ARRAY}
+                />
+              </Col>
+            </Row>
             {activityList.map((activity, i) => (
               <Link key={`linkToActivity${i}`} to={`/single-record-view/${activity.record.organization.id}`} className="alert-link">
                 <ActivityElement activity={activity} />
@@ -123,6 +144,10 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     );
   }
 }
+
+const SORT_AGE_NAME = 'age';
+const SORT_SIZE_NAME = 'size';
+const SORT_ARRAY = [SORT_SIZE_NAME, SORT_AGE_NAME];
 
 const mapStateToProps = (storeState: IRootState) => ({
   account: storeState.authentication.account,

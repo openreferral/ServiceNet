@@ -5,6 +5,7 @@ import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
+import org.benetech.servicenet.service.comparator.ActivityComparatorFactory;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
@@ -23,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -80,6 +82,13 @@ public class ActivityServiceImpl implements ActivityService {
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
         List<ActivityDTO> activities = getAllOrganizationActivities(systemAccountId);
 
+        Comparator<ActivityDTO> comparator = ActivityComparatorFactory.createComparator(pageable);
+        activities.sort(comparator);
+
+        return getPage(activities, pageable);
+    }
+
+    private Page<ActivityDTO> getPage(List<ActivityDTO> activities, Pageable pageable) {
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
@@ -92,7 +101,7 @@ public class ActivityServiceImpl implements ActivityService {
             list = activities.subList(startItem, toIndex);
         }
 
-        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), activities.size());
+        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), list.size());
     }
 
     private Optional<ActivityDTO> getEntityActivity(UUID orgId, UUID resourceId) throws ActivityCreationException {
