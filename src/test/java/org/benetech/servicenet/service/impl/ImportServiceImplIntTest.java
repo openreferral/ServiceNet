@@ -49,6 +49,7 @@ import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
 import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
+import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.benetech.servicenet.service.dto.PostalAddressDTO;
@@ -73,6 +74,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -87,9 +90,9 @@ public class ImportServiceImplIntTest {
     private static final String OTHER_STRING = "other string";
     private static final boolean NEW_BOOLEAN = true;
     private static final boolean EXISTING_BOOLEAN = false;
-    private static final int NEW_INT = 1;
-    private static final int OTHER_INT = 2;
-    private static final int EXISTING_INT = 3;
+    private static final Integer NEW_INT = 1;
+    private static final Integer OTHER_INT = 2;
+    private static final Integer EXISTING_INT = 3;
 
     @Autowired
     private TmpImportService importService;
@@ -163,7 +166,7 @@ public class ImportServiceImplIntTest {
 
         List<LocationDTO> all = locationService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getName().equals(NEW_STRING)));
+        assertEquals(NEW_STRING, all.get(0).getName());
     }
 
     @Test
@@ -177,7 +180,7 @@ public class ImportServiceImplIntTest {
 
         List<LocationDTO> all = locationService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getName().equals(NEW_STRING)));
+        assertEquals(NEW_STRING, all.get(0).getName());
     }
 
     @Test
@@ -193,14 +196,15 @@ public class ImportServiceImplIntTest {
 
         List<PhysicalAddressDTO> all = physicalAddressService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(pa -> pa.getLocationId() != null 
-            && pa.getAddress1().equals(NEW_STRING)
-            && pa.getCity().equals(NEW_STRING)
-            && pa.getStateProvince().equals(NEW_STRING)
-            && pa.getAttention().equals(NEW_STRING)
-            && pa.getCountry().equals(NEW_STRING)
-            && pa.getPostalCode().equals(NEW_STRING)
-            && pa.getRegion().equals(NEW_STRING)));
+        PhysicalAddressDTO physicalAddressDTO = all.get(0);
+        assertNotNull(physicalAddressDTO.getLocationId());
+        assertEquals(NEW_STRING, physicalAddressDTO.getAddress1());
+        assertEquals(NEW_STRING, physicalAddressDTO.getCity());
+        assertEquals(NEW_STRING, physicalAddressDTO.getStateProvince());
+        assertEquals(NEW_STRING, physicalAddressDTO.getAttention());
+        assertEquals(NEW_STRING, physicalAddressDTO.getCountry());
+        assertEquals(NEW_STRING, physicalAddressDTO.getPostalCode());
+        assertEquals(NEW_STRING, physicalAddressDTO.getRegion());
     }
 
     @Test
@@ -225,14 +229,15 @@ public class ImportServiceImplIntTest {
 
         List<PhysicalAddressDTO> all = physicalAddressService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(pa -> pa.getLocationId() != null
-            && pa.getAddress1().equals(NEW_STRING)
-            && pa.getCity().equals(NEW_STRING)
-            && pa.getStateProvince().equals(NEW_STRING)
-            && pa.getAttention().equals(NEW_STRING)
-            && pa.getCountry().equals(NEW_STRING)
-            && pa.getPostalCode().equals(NEW_STRING)
-            && pa.getRegion().equals(NEW_STRING)));
+        PhysicalAddressDTO physicalAddressDTO = all.get(0);
+        assertEquals(location.getId(), physicalAddressDTO.getLocationId());
+        assertEquals(NEW_STRING, physicalAddressDTO.getAddress1());
+        assertEquals(NEW_STRING, physicalAddressDTO.getCity());
+        assertEquals(NEW_STRING, physicalAddressDTO.getStateProvince());
+        assertEquals(NEW_STRING, physicalAddressDTO.getAttention());
+        assertEquals(NEW_STRING, physicalAddressDTO.getCountry());
+        assertEquals(NEW_STRING, physicalAddressDTO.getPostalCode());
+        assertEquals(NEW_STRING, physicalAddressDTO.getRegion());
     }
 
     @Test
@@ -250,14 +255,15 @@ public class ImportServiceImplIntTest {
         assertEquals(1, locationService.findAll().size());
         List<PostalAddressDTO> all = postalAddressService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(pa -> pa.getLocationId() != null
-            && pa.getAddress1().equals(NEW_STRING)
-            && pa.getCity().equals(NEW_STRING)
-            && pa.getStateProvince().equals(NEW_STRING)
-            && pa.getAttention().equals(NEW_STRING)
-            && pa.getCountry().equals(NEW_STRING)
-            && pa.getPostalCode().equals(NEW_STRING)
-            && pa.getRegion().equals(NEW_STRING)));
+        PostalAddressDTO postalAddressDTO = all.get(0);
+        assertNotNull(postalAddressDTO.getLocationId());
+        assertEquals(NEW_STRING, postalAddressDTO.getAddress1());
+        assertEquals(NEW_STRING, postalAddressDTO.getCity());
+        assertEquals(NEW_STRING, postalAddressDTO.getStateProvince());
+        assertEquals(NEW_STRING, postalAddressDTO.getAttention());
+        assertEquals(NEW_STRING, postalAddressDTO.getCountry());
+        assertEquals(NEW_STRING, postalAddressDTO.getPostalCode());
+        assertEquals(NEW_STRING, postalAddressDTO.getRegion());
     }
 
     @Test
@@ -284,14 +290,15 @@ public class ImportServiceImplIntTest {
         assertEquals(1, locationService.findAll().size());
         List<PostalAddressDTO> all = postalAddressService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(pa -> pa.getLocationId() != null
-            && pa.getAddress1().equals(NEW_STRING)
-            && pa.getCity().equals(NEW_STRING)
-            && pa.getStateProvince().equals(NEW_STRING)
-            && pa.getAttention().equals(NEW_STRING)
-            && pa.getCountry().equals(NEW_STRING)
-            && pa.getPostalCode().equals(NEW_STRING)
-            && pa.getRegion().equals(NEW_STRING)));
+        PostalAddressDTO postalAddressDTO = all.get(0);
+        assertEquals(location.getId(), postalAddressDTO.getLocationId());
+        assertEquals(NEW_STRING, postalAddressDTO.getAddress1());
+        assertEquals(NEW_STRING, postalAddressDTO.getCity());
+        assertEquals(NEW_STRING, postalAddressDTO.getStateProvince());
+        assertEquals(NEW_STRING, postalAddressDTO.getAttention());
+        assertEquals(NEW_STRING, postalAddressDTO.getCountry());
+        assertEquals(NEW_STRING, postalAddressDTO.getPostalCode());
+        assertEquals(NEW_STRING, postalAddressDTO.getRegion());
     }
 
     @Test
@@ -308,8 +315,9 @@ public class ImportServiceImplIntTest {
 
         List<AccessibilityForDisabilitiesDTO> created = accessibilityService.findAll();
         assertEquals(1, created.size());
-        assertTrue(created.stream().allMatch(a -> a.getAccessibility().equals(NEW_STRING)
-            && a.getLocationId() != null));
+        AccessibilityForDisabilitiesDTO accessibilityDTO = created.get(0);
+        assertNotNull(accessibilityDTO.getLocationId());
+        assertEquals(NEW_STRING, accessibilityDTO.getAccessibility());
     }
 
     @Test
@@ -369,7 +377,7 @@ public class ImportServiceImplIntTest {
         assertTrue(all.stream().anyMatch(a -> a.getAccessibility().equals(OTHER_STRING)));
         assertTrue(all.stream().anyMatch(a -> NEW_STRING.equals(a.getDetails())));
         assertTrue(all.stream().anyMatch(a -> a.getDetails() == null));
-        assertTrue(all.stream().allMatch(a -> a.getLocationId() != null));
+        assertTrue(all.stream().allMatch(a -> a.getLocationId().equals(location.getId())));
     }
 
     @Test
@@ -380,11 +388,12 @@ public class ImportServiceImplIntTest {
 
         assertEquals(0, organizationService.findAllDTOs().size());
 
-        Organization org = importService.createOrUpdateOrganization(organization,
+        importService.createOrUpdateOrganization(organization,
             EXISTING_EXTERNAL_ID, PROVIDER, report);
 
-        assertEquals(1, organizationService.findAllDTOs().size());
-        assertEquals(NEW_STRING, org.getName());
+        List<OrganizationDTO> all = organizationService.findAllDTOs();
+        assertEquals(1, all.size());
+        assertEquals(NEW_STRING, all.get(0).getName());
         assertEquals(Integer.valueOf(1), report.getNumberOfCreatedOrgs());
     }
 
@@ -398,12 +407,13 @@ public class ImportServiceImplIntTest {
 
         assertEquals(1, organizationService.findAllDTOs().size());
 
-        Organization updated = importService.createOrUpdateOrganization(newOrganization,
+        importService.createOrUpdateOrganization(newOrganization,
             EXISTING_EXTERNAL_ID, PROVIDER, report);
 
-        assertEquals(1, organizationService.findAllDTOs().size());
-        assertEquals(NEW_STRING, updated.getName());
-        assertEquals(NEW_BOOLEAN, updated.getActive());
+        List<OrganizationDTO> all = organizationService.findAllDTOs();
+        assertEquals(1, all.size());
+        assertEquals(NEW_STRING, all.get(0).getName());
+        assertEquals(NEW_BOOLEAN, all.get(0).getActive());
         assertEquals(Integer.valueOf(1), report.getNumberOfUpdatedOrgs());
     }
 
@@ -451,8 +461,8 @@ public class ImportServiceImplIntTest {
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(p -> p.getNumber().equals(NEW_STRING)
-            && p.getSrvcId() != null));
+        assertNotNull(all.get(0).getSrvcId());
+        assertEquals(NEW_STRING, all.get(0).getNumber());
     }
 
     @Test
@@ -474,8 +484,8 @@ public class ImportServiceImplIntTest {
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(p -> p.getNumber().equals(NEW_STRING)
-            && p.getSrvcId() != null));
+        assertEquals(service.getId(), all.get(0).getSrvcId());
+        assertEquals(NEW_STRING, all.get(0).getNumber());
     }
 
     @Test
@@ -499,8 +509,8 @@ public class ImportServiceImplIntTest {
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(phone -> phone.getNumber().equals(NEW_STRING)
-            && phone.getSrvcId() != null));
+        assertEquals(service.getId(), all.get(0).getSrvcId());
+        assertEquals(NEW_STRING, all.get(0).getNumber());
     }
 
     @Test
@@ -516,8 +526,8 @@ public class ImportServiceImplIntTest {
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(p -> p.getNumber().equals(NEW_STRING)
-            && p.getLocationId() != null));
+        assertNotNull(all.get(0).getLocationId());
+        assertEquals(NEW_STRING, all.get(0).getNumber());
     }
 
     @Test
@@ -539,8 +549,8 @@ public class ImportServiceImplIntTest {
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(p -> p.getNumber().equals(NEW_STRING)
-            && p.getLocationId() != null));
+        assertEquals(location.getId(), all.get(0).getLocationId());
+        assertEquals(NEW_STRING, all.get(0).getNumber());
     }
 
     @Test
@@ -564,8 +574,8 @@ public class ImportServiceImplIntTest {
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(phone -> phone.getNumber().equals(NEW_STRING)
-            && phone.getLocationId() != null));
+        assertEquals(location.getId(), all.get(0).getLocationId());
+        assertEquals(NEW_STRING, all.get(0).getNumber());
     }
 
     @Test
@@ -581,8 +591,8 @@ public class ImportServiceImplIntTest {
 
         List<EligibilityDTO> all = eligibilityService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(e -> e.getEligibility().equals(NEW_STRING)
-            && e.getSrvcId() != null));
+        assertNotNull(all.get(0).getSrvcId());
+        assertEquals(NEW_STRING, all.get(0).getEligibility());
     }
 
     @Test
@@ -604,8 +614,8 @@ public class ImportServiceImplIntTest {
 
         List<EligibilityDTO> all = eligibilityService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(e -> e.getEligibility().equals(NEW_STRING)
-            && e.getSrvcId() != null));
+        assertEquals(service.getId(), all.get(0).getSrvcId());
+        assertEquals(NEW_STRING, all.get(0).getEligibility());
     }
 
     @Test
@@ -624,8 +634,8 @@ public class ImportServiceImplIntTest {
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getLanguage().equals(NEW_STRING)
-            && l.getSrvcId() != null));
+        assertNotNull(all.get(0).getSrvcId());
+        assertEquals(NEW_STRING, all.get(0).getLanguage());
     }
 
     @Test
@@ -647,8 +657,8 @@ public class ImportServiceImplIntTest {
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getLanguage().equals(NEW_STRING)
-            && l.getSrvcId() != null));
+        assertEquals(service.getId(), all.get(0).getSrvcId());
+        assertEquals(NEW_STRING, all.get(0).getLanguage());
     }
 
     @Test
@@ -674,8 +684,8 @@ public class ImportServiceImplIntTest {
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getLanguage().equals(NEW_STRING)
-            && l.getSrvcId() != null));
+        assertEquals(service.getId(), all.get(0).getSrvcId());
+        assertEquals(NEW_STRING, all.get(0).getLanguage());
     }
 
     @Test
@@ -694,8 +704,8 @@ public class ImportServiceImplIntTest {
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getLanguage().equals(NEW_STRING)
-            && l.getLocationId() != null));
+        assertNotNull(all.get(0).getLocationId());
+        assertEquals(NEW_STRING, all.get(0).getLanguage());
     }
 
     @Test
@@ -717,8 +727,8 @@ public class ImportServiceImplIntTest {
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getLanguage().equals(NEW_STRING)
-            && l.getLocationId() != null));
+        assertEquals(location.getId(), all.get(0).getLocationId());
+        assertEquals(NEW_STRING, all.get(0).getLanguage());
     }
 
     @Test
@@ -744,8 +754,8 @@ public class ImportServiceImplIntTest {
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getLanguage().equals(NEW_STRING)
-            && l.getLocationId() != null));
+        assertEquals(location.getId(), all.get(0).getLocationId());
+        assertEquals(NEW_STRING, all.get(0).getLanguage());
     }
 
     @Test
@@ -762,11 +772,12 @@ public class ImportServiceImplIntTest {
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
         assertEquals(1, allSchedules.size());
-        assertTrue(allSchedules.stream().allMatch(s -> s.getSrvcId() != null));
+        assertNotNull(allSchedules.get(0).getSrvcId());
         assertEquals(1, allHours.size());
-        assertTrue(allHours.stream().allMatch(o -> o.getWeekday().equals(NEW_INT)
-                && o.getOpensAt().equals(NEW_STRING)
-                && o.getClosesAt().equals(NEW_STRING)));
+        OpeningHoursDTO hoursDTO = allHours.get(0);
+        assertEquals(NEW_INT, hoursDTO.getWeekday());
+        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
+        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
     }
 
     @Test
@@ -791,11 +802,12 @@ public class ImportServiceImplIntTest {
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
         assertEquals(1, allSchedules.size());
-        assertTrue(allSchedules.stream().allMatch(s -> s.getSrvcId() != null));
+        assertEquals(service.getId(), allSchedules.get(0).getSrvcId());
         assertEquals(1, allHours.size());
-        assertTrue(allHours.stream().allMatch(o -> o.getWeekday().equals(NEW_INT)
-            && o.getOpensAt().equals(NEW_STRING)
-            && o.getClosesAt().equals(NEW_STRING)));
+        OpeningHoursDTO hoursDTO = allHours.get(0);
+        assertEquals(NEW_INT, hoursDTO.getWeekday());
+        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
+        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
     }
 
     @Test
@@ -828,11 +840,12 @@ public class ImportServiceImplIntTest {
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
         assertEquals(1, allSchedules.size());
-        assertTrue(allSchedules.stream().allMatch(s -> s.getSrvcId() != null));
+        assertEquals(service.getId(), allSchedules.get(0).getSrvcId());
         assertEquals(1, allHours.size());
-        assertTrue(allHours.stream().allMatch(o -> o.getWeekday().equals(NEW_INT)
-            && o.getOpensAt().equals(NEW_STRING)
-            && o.getClosesAt().equals(NEW_STRING)));
+        OpeningHoursDTO hoursDTO = allHours.get(0);
+        assertEquals(NEW_INT, hoursDTO.getWeekday());
+        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
+        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
     }
 
     @Test
@@ -849,11 +862,12 @@ public class ImportServiceImplIntTest {
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
         assertEquals(1, allSchedules.size());
-        assertTrue(allSchedules.stream().allMatch(s -> s.getLocationId() != null));
+        assertNotNull(allSchedules.get(0).getLocationId());
         assertEquals(1, allHours.size());
-        assertTrue(allHours.stream().allMatch(o -> o.getWeekday().equals(NEW_INT)
-            && o.getOpensAt().equals(NEW_STRING)
-            && o.getClosesAt().equals(NEW_STRING)));
+        OpeningHoursDTO hoursDTO = allHours.get(0);
+        assertEquals(NEW_INT, hoursDTO.getWeekday());
+        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
+        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
     }
 
     @Test
@@ -879,11 +893,12 @@ public class ImportServiceImplIntTest {
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
         assertEquals(1, allSchedules.size());
-        assertTrue(allSchedules.stream().allMatch(s -> s.getLocationId() != null));
+        assertEquals(location.getId(), allSchedules.get(0).getLocationId());
         assertEquals(1, allHours.size());
-        assertTrue(allHours.stream().allMatch(o -> o.getWeekday().equals(NEW_INT)
-            && o.getOpensAt().equals(NEW_STRING)
-            && o.getClosesAt().equals(NEW_STRING)));
+        OpeningHoursDTO hoursDTO = allHours.get(0);
+        assertEquals(NEW_INT, hoursDTO.getWeekday());
+        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
+        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
     }
 
     @Test
@@ -916,11 +931,12 @@ public class ImportServiceImplIntTest {
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
         assertEquals(1, allSchedules.size());
-        assertTrue(allSchedules.stream().allMatch(s -> s.getLocationId() != null));
+        assertEquals(location.getId(), allSchedules.get(0).getLocationId());
         assertEquals(1, allHours.size());
-        assertTrue(allHours.stream().allMatch(o -> o.getWeekday().equals(NEW_INT)
-            && o.getOpensAt().equals(NEW_STRING)
-            && o.getClosesAt().equals(NEW_STRING)));
+        OpeningHoursDTO hoursDTO = allHours.get(0);
+        assertEquals(NEW_INT, hoursDTO.getWeekday());
+        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
+        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
     }
 
     @Test
@@ -933,7 +949,7 @@ public class ImportServiceImplIntTest {
 
         List<TaxonomyDTO> all = taxonomyService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(t -> t.getName().equals(NEW_STRING)));
+        assertEquals(NEW_STRING, all.get(0).getName());
     }
     
     @Test
@@ -947,7 +963,7 @@ public class ImportServiceImplIntTest {
 
         List<TaxonomyDTO> all = taxonomyService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(t -> t.getName().equals(NEW_STRING)));
+        assertEquals(NEW_STRING, all.get(0).getName());
     }
 
     @Test
@@ -962,8 +978,8 @@ public class ImportServiceImplIntTest {
 
         List<FundingDTO> all = fundingService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(f -> f.getSource().equals(NEW_STRING)
-            && f.getOrganizationId() != null));
+        assertEquals(NEW_STRING, all.get(0).getSource());
+        assertNotNull(all.get(0).getOrganizationId());
     }
 
     @Test
@@ -985,8 +1001,8 @@ public class ImportServiceImplIntTest {
 
         List<FundingDTO> all = fundingService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(f -> f.getSource().equals(NEW_STRING)
-            && f.getOrganizationId() != null));
+        assertEquals(NEW_STRING, all.get(0).getSource());
+        assertEquals(organization.getId(), all.get(0).getOrganizationId());
     }
 
     @Test
@@ -1001,8 +1017,8 @@ public class ImportServiceImplIntTest {
 
         List<FundingDTO> all = fundingService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(f -> f.getSource().equals(NEW_STRING)
-            && f.getSrvcId() != null));
+        assertEquals(NEW_STRING, all.get(0).getSource());
+        assertNotNull(all.get(0).getSrvcId());
     }
 
     @Test
@@ -1023,8 +1039,8 @@ public class ImportServiceImplIntTest {
 
         List<FundingDTO> all = fundingService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(f -> f.getSource().equals(NEW_STRING)
-            && f.getSrvcId() != null));
+        assertEquals(NEW_STRING, all.get(0).getSource());
+        assertEquals(service.getId(), all.get(0).getSrvcId());
     }
 
     @Test
@@ -1039,8 +1055,8 @@ public class ImportServiceImplIntTest {
 
         List<ProgramDTO> all = programService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(p -> p.getName().equals(NEW_STRING)
-            && p.getOrganizationId() != null));
+        assertEquals(NEW_STRING, all.get(0).getName());
+        assertNotNull(all.get(0).getOrganizationId());
     }
 
     @Test
@@ -1061,8 +1077,8 @@ public class ImportServiceImplIntTest {
 
         List<ProgramDTO> all = programService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(l -> l.getName().equals(NEW_STRING)
-            && l.getOrganizationId() != null));
+        assertEquals(NEW_STRING, all.get(0).getName());
+        assertEquals(organization.getId(), all.get(0).getOrganizationId());
     }
 
     @Test
@@ -1079,8 +1095,8 @@ public class ImportServiceImplIntTest {
 
         List<ServiceTaxonomyDTO> all = serviceTaxonomyService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(st -> st.getSrvcId() != null
-            && st.getTaxonomyId().equals(taxonomy.getId())));
+        assertEquals(taxonomy.getId(), all.get(0).getTaxonomyId());
+        assertNotNull(all.get(0).getSrvcId());
     }
 
     @Test
@@ -1109,8 +1125,8 @@ public class ImportServiceImplIntTest {
 
         List<ServiceTaxonomyDTO> all = serviceTaxonomyService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(st -> st.getSrvcId() != null
-            && st.getTaxonomyId().equals(newTaxonomy.getId())));
+        assertNotNull(all.get(0).getTaxonomyId());
+        assertEquals(service.getId(), all.get(0).getSrvcId());
     }
 
     @Test
@@ -1126,8 +1142,8 @@ public class ImportServiceImplIntTest {
 
         List<RequiredDocumentDTO> all = requiredDocumentService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(rd -> rd.getDocument().equals(NEW_STRING)
-            && rd.getSrvcId() != null));
+        assertEquals(NEW_STRING, all.get(0).getDocument());
+        assertNotNull(all.get(0).getSrvcId());
     }
 
     @Test
@@ -1150,8 +1166,8 @@ public class ImportServiceImplIntTest {
 
         List<RequiredDocumentDTO> all = requiredDocumentService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(rd -> rd.getDocument().equals(NEW_STRING)
-            && rd.getSrvcId().equals(service.getId())));
+        assertEquals(NEW_STRING, all.get(0).getDocument());
+        assertEquals(service.getId(), all.get(0).getSrvcId());
     }
 
     @Test
@@ -1166,8 +1182,8 @@ public class ImportServiceImplIntTest {
 
         List<ContactDTO> all = contactService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(c -> c.getName().equals(NEW_STRING)
-            && c.getSrvcId() != null));
+        assertEquals(NEW_STRING, all.get(0).getName());
+        assertNotNull(all.get(0).getSrvcId());
     }
 
     @Test
@@ -1188,8 +1204,8 @@ public class ImportServiceImplIntTest {
 
         List<ContactDTO> all = contactService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(c -> c.getName().equals(NEW_STRING)
-            && c.getSrvcId().equals(service.getId())));
+        assertEquals(NEW_STRING, all.get(0).getName());
+        assertEquals(service.getId(), all.get(0).getSrvcId());
     }
 
     @Test
@@ -1207,11 +1223,12 @@ public class ImportServiceImplIntTest {
 
         List<HolidayScheduleDTO> all = holidayScheduleService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(hs -> hs.getClosesAt().equals(NEW_STRING)
-            && !hs.isClosed()
-            && hs.getSrvcId() != null
-            && hs.getStartDate().equals(start)
-            && hs.getEndDate().equals(end)));
+        HolidayScheduleDTO scheduleDTO = all.get(0);
+        assertEquals(NEW_STRING, scheduleDTO.getClosesAt());
+        assertFalse(scheduleDTO.isClosed());
+        assertNotNull(scheduleDTO.getSrvcId());
+        assertEquals(start, scheduleDTO.getStartDate());
+        assertEquals(end, scheduleDTO.getEndDate());
     }
 
     @Test
@@ -1238,11 +1255,12 @@ public class ImportServiceImplIntTest {
 
         List<HolidayScheduleDTO> all = holidayScheduleService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(hs -> hs.getClosesAt().equals(NEW_STRING)
-            && !hs.isClosed()
-            && hs.getSrvcId() != null
-            && hs.getStartDate().equals(newStart)
-            && hs.getEndDate().equals(newEnd)));
+        HolidayScheduleDTO scheduleDTO = all.get(0);
+        assertEquals(NEW_STRING, scheduleDTO.getClosesAt());
+        assertFalse(scheduleDTO.isClosed());
+        assertNotNull(scheduleDTO.getSrvcId());
+        assertEquals(newStart, scheduleDTO.getStartDate());
+        assertEquals(newEnd, scheduleDTO.getEndDate());
     }
 
     @Test
@@ -1260,11 +1278,12 @@ public class ImportServiceImplIntTest {
 
         List<HolidayScheduleDTO> all = holidayScheduleService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(hs -> hs.getClosesAt().equals(NEW_STRING)
-            && !hs.isClosed()
-            && hs.getLocationId() != null
-            && hs.getStartDate().equals(start)
-            && hs.getEndDate().equals(end)));
+        HolidayScheduleDTO scheduleDTO = all.get(0);
+        assertEquals(NEW_STRING, scheduleDTO.getClosesAt());
+        assertFalse(scheduleDTO.isClosed());
+        assertNotNull(scheduleDTO.getLocationId());
+        assertEquals(start, scheduleDTO.getStartDate());
+        assertEquals(end, scheduleDTO.getEndDate());
     }
 
     @Test
@@ -1291,11 +1310,12 @@ public class ImportServiceImplIntTest {
 
         List<HolidayScheduleDTO> all = holidayScheduleService.findAll();
         assertEquals(1, all.size());
-        assertTrue(all.stream().allMatch(hs -> hs.getClosesAt().equals(NEW_STRING)
-            && !hs.isClosed()
-            && hs.getLocationId() != null
-            && hs.getStartDate().equals(newStart)
-            && hs.getEndDate().equals(newEnd)));
+        HolidayScheduleDTO scheduleDTO = all.get(0);
+        assertEquals(NEW_STRING, scheduleDTO.getClosesAt());
+        assertFalse(scheduleDTO.isClosed());
+        assertNotNull(scheduleDTO.getLocationId());
+        assertEquals(newStart, scheduleDTO.getStartDate());
+        assertEquals(newEnd, scheduleDTO.getEndDate());
     }
 
     private Location generateNewLocation() {
