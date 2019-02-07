@@ -84,13 +84,13 @@ public class RelationManager {
             saveTaxonomyRelatedData(externalServiceId, savedService);
             savePhonesForService(savedService, externalServiceId);
             saveLanguagesForService(savedService, externalServiceId);
-            saveEligbilities(savedService, externalServiceId);
+            saveEligibilities(savedService, externalServiceId);
             saveRequiredDocuments(savedService, externalServiceId);
         }
         return processedServices;
     }
 
-    private void saveEligbilities(Service savedService, String externalServiceId) {
+    private void saveEligibilities(Service savedService, String externalServiceId) {
         persistence.importEligibilities(dictionary.getRelatedEntities(
             HealthleadsEligibility.class, externalServiceId, HealthleadsService.class),
             savedService);
