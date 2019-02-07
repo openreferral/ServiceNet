@@ -7,16 +7,16 @@ import java.util.Comparator;
 
 public final class ActivityComparatorFactory {
 
-    private static final String SIZE = "size";
-
     private static final String AGE = "age";
 
     public static Comparator<ActivityDTO> createComparator(Pageable pageable) {
+        Comparator<ActivityDTO> result = new ActivitySizeComparator();
+
         if (pageable.getSort().getOrderFor(AGE) != null) {
-            return new ActivityUpdateAgeComparator();
-        } else {
-            return new ActivitySizeComparator();
+            result = new ActivityUpdateAgeComparator();
         }
+
+        return result;
     }
 
     private ActivityComparatorFactory() {

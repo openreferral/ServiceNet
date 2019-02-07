@@ -23,7 +23,6 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   constructor(props) {
     super(props);
 
-    this.toggleSort = this.toggleSort.bind(this);
     this.state = {
       ...getSortState(this.props.location, ITEMS_PER_PAGE),
       sort: SORT_SIZE_NAME,
@@ -47,11 +46,11 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     });
   };
 
-  toggleSort() {
+  toggleSort = () => {
     this.setState(prevState => ({
       dropdownOpen: !prevState.dropdownOpen
     }));
-  }
+  };
 
   reset = () => {
     Promise.all([this.props.getSession()]).then(() => {
