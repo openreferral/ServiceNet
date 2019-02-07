@@ -95,7 +95,7 @@ describe('Header', () => {
   it('Renders a Header component in prod profile with logged in User', () => {
     const nav = wrapper(userProps).find(Nav);
     expect(nav.find(AdminMenu).length).toEqual(0);
-    expect(nav.find(EntitiesMenu).length).toEqual(1);
+    expect(nav.find(EntitiesMenu).length).toEqual(0);
     const account = nav.find(AccountMenu);
     expect(account.first().props().isAuthenticated).toEqual(true);
   });
