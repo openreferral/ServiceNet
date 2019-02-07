@@ -62,7 +62,7 @@ public class HealthleadsCompleteDataAdapterTest {
     @InjectMocks
     private HealthleadsDataAdapter adapter;
 
-     @Mock
+    @Mock
     private ImportService importService;
 
     @Before
@@ -195,9 +195,7 @@ public class HealthleadsCompleteDataAdapterTest {
         adapter.importData(importData);
         ArgumentCaptor<Set<Phone>> captor = ArgumentCaptor.forClass(Set.class);
         verify(importService, times(1))
-            .createOrUpdatePhonesForService(captor.capture(), any(Service.class), any(
-
-            ));
+            .createOrUpdatePhonesForService(captor.capture(), any(Service.class), any());
 
         List<Phone> result = new ArrayList<>(captor.getValue());
 
