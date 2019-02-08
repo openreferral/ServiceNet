@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -16,6 +17,7 @@ import java.util.Objects;
  * A AccessibilityForDisabilities.
  */
 @Entity
+@Data
 @Table(name = "accessibility_for_disabilities")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AccessibilityForDisabilities extends AbstractEntity implements Serializable {
@@ -35,38 +37,14 @@ public class AccessibilityForDisabilities extends AbstractEntity implements Seri
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
-    public String getAccessibility() {
-        return accessibility;
-    }
-
-    public void setAccessibility(String accessibility) {
-        this.accessibility = accessibility;
-    }
-
     public AccessibilityForDisabilities accessibility(String accessibility) {
         this.accessibility = accessibility;
         return this;
     }
 
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
     public AccessibilityForDisabilities details(String details) {
         this.details = details;
         return this;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 
     public AccessibilityForDisabilities location(Location location) {

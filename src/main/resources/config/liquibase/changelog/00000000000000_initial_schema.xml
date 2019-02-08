@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
-    <property name="uuidFunction" value="uid.uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuidFunction" value="uuid_generate_v4()" dbms="postgresql"/>
     <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
 
     <changeSet id="00000000000000" author="jhipster">
@@ -17,6 +17,9 @@
         The initial schema has the '00000000000001' id, so that it is over-written if we re-generate it.
     -->
     <changeSet id="00000000000001" author="jhipster">
+        <sql dbms="postgresql">
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        </sql>
         <createTable tableName="jhi_user">
             <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">
                 <constraints primaryKey="true" nullable="false"/>

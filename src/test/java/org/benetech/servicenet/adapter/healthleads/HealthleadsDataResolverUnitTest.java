@@ -20,25 +20,25 @@ import
     java.util.Arrays;
 import java.util.List;
 
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.ELIGIBILITY;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.HEALTHLEADS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.JSON;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LANGUAGES;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LOCATIONS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.ORGANIZATIONS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHONES;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHYSICAL_ADDRESSES;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.REQUIRED_DOCUMENTS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES_AT_LOCATION;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES_TAXONOMY;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.TAXONOMY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class HealthleadsDataResolverUnitTest {
 
     private static final int THREE_ELEMENTS = 3;
-    private static final String HEALTHLEADS = "healthleads/";
-    private static final String JSON = ".json";
-    private static final String ELIGIBILITY = "eligibility";
-    private static final String LANGUAGES = "languages";
-    private static final String LOCATIONS = "locations";
-    private static final String ORGANIZATIONS = "organizations";
-    private static final String PHONES = "phones";
-    private static final String PHYSICAL_ADDRESSES = "physical_addresses";
-    private static final String REQUIRED_DOCUMENTS = "required_documents";
-    private static final String SERVICES = "services";
-    private static final String SERVICES_AT_LOCATION = "services_at_location";
-    private static final String SERVICES_TAXONOMY = "services_taxonomy";
-    private static final String TAXONOMY = "taxonomy";
 
     private static final String SERV = "serv";
     private static final String ELIG = "elig";

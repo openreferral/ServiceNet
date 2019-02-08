@@ -434,11 +434,6 @@
             <version>${google-maps.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j-simple.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
@@ -687,7 +682,7 @@
                     <version>${jib-maven-plugin.version}</version>
                     <configuration>
                       <from>
-                          <image>openjdk:8-jre-alpine</image>
+                          <image>openjdk:11</image>
                       </from>
                       <to>
                           <image>servicenet:latest</image>

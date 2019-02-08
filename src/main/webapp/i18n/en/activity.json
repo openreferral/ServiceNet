@@ -4,7 +4,12 @@
       "home": {
         "title": "Activities",
         "createLabel": "Create a new Activity",
-        "createOrEditLabel": "Create or edit a Activity"
+        "createOrEditLabel": "Create or edit a Activity",
+        "sort": {
+          "toggle": "Sort",
+          "size": "Number of conflicts",
+          "age": "Age"
+        }
       },
       "created": "A new Activity is created with identifier {{ param }}",
       "updated": "A Activity is updated with identifier {{ param }}",

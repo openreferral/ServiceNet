@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
  * Service Implementation for managing DocumentUpload.
  */
 @Service
-@Transactional
 public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     private final Logger log = LoggerFactory.getLogger(DocumentUploadServiceImpl.class);

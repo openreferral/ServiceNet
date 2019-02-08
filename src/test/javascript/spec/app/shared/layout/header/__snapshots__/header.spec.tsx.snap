@@ -70,6 +70,7 @@ exports[`Header Renders a Header component in dev profile with LoadingBar, Navba
         />
         <Component
           isAuthenticated={true}
+          userLogin="user"
         />
       </Nav>
     </Collapse>
@@ -135,6 +136,7 @@ exports[`Header Renders a Header component in prod profile with LoadingBar, Navb
         />
         <Component
           isAuthenticated={true}
+          userLogin="user"
         />
       </Nav>
     </Collapse>

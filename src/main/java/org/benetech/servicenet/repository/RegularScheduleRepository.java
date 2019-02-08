@@ -19,4 +19,7 @@ public interface RegularScheduleRepository extends JpaRepository<RegularSchedule
     @Query("SELECT schedule FROM RegularSchedule schedule WHERE schedule.srvc.id = :serviceId")
     Optional<RegularSchedule> findOneByServiceId(@Param("serviceId") UUID serviceId);
 
+    @Query("SELECT schedule FROM RegularSchedule schedule WHERE schedule.location.id = :locationId")
+    Optional<RegularSchedule> findOneByLocationId(@Param("locationId") UUID locationId);
+
 }

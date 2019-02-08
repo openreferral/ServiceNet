@@ -77,6 +77,8 @@ public class CacheConfiguration {
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".accessibilities",
                 jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".phones",
+                jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.PhysicalAddress.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.PostalAddress.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Phone.class.getName(), jcacheConfiguration);

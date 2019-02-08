@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -25,6 +26,7 @@ import java.util.Set;
  */
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "location")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Location extends AbstractEntity implements Serializable {
@@ -77,6 +79,10 @@ public class Location extends AbstractEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
 
+    @OneToMany(mappedBy = "location")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Phone> phones = new HashSet<>();
+
     @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
@@ -86,6 +92,17 @@ public class Location extends AbstractEntity implements Serializable {
     private Organization organization;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    public Location(Location loc) {
+        this.name = loc.name;
+        this.alternateName = loc.alternateName;
+        this.description = loc.description;
+        this.transportation = loc.transportation;
+        this.latitude = loc.latitude;
+        this.longitude = loc.longitude;
+        this.externalDbId = loc.externalDbId;
+        this.providerName = loc.providerName;
+    }
 
     public Location organization(Organization organization) {
         this.organization = organization;
@@ -183,6 +200,23 @@ public class Location extends AbstractEntity implements Serializable {
     public Location removeAccessibilities(AccessibilityForDisabilities accessibilityForDisabilities) {
         this.accessibilities.remove(accessibilityForDisabilities);
         accessibilityForDisabilities.setLocation(null);
+        return this;
+    }
+
+    public Location phones(Set<Phone> phones) {
+        this.phones = phones;
+        return this;
+    }
+
+    public Location addPhones(Phone phone) {
+        this.phones.add(phone);
+        phone.setLocation(this);
+        return this;
+    }
+
+    public Location removePhones(Phone phone) {
+        this.phones.remove(phone);
+        phone.setLocation(null);
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

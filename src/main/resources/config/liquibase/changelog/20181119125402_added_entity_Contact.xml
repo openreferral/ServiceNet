@@ -12,7 +12,7 @@
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
     <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
-    <property name="uuidFunction" value="uid.uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuidFunction" value="uuid_generate_v4()" dbms="postgresql"/>
     <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
 
     <!--
