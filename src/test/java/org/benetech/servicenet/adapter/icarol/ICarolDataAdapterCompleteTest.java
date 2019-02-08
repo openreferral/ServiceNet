@@ -19,15 +19,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,10 +56,7 @@ public class ICarolDataAdapterCompleteTest {
     @Mock
     private ImportService importService;
 
-    @Captor
-    ArgumentCaptor<HashSet<OpeningHours>> captor;
-
-    SingleImportData importData;
+    private SingleImportData importData;
 
     @Before
     public void setUp() throws IOException {
@@ -117,8 +111,8 @@ public class ICarolDataAdapterCompleteTest {
         assertEquals("CarpetHanger Office", result.getName());
         assertNull(result.getAlternateName());
         assertEquals(DIFF_LOREM_IPSUM, result.getDescription());
-        assertEquals("www.example.org", result.getUrl()); //TODO: wiki
-        assertNull(result.getEmail()); //TODO: wiki
+        assertEquals("www.example.org", result.getUrl());
+        assertNull(result.getEmail());
         assertEquals("Active", result.getStatus());
         assertNull(result.getInterpretationServices());
         assertEquals("Call or check website for notices on applications.", result.getApplicationProcess());
@@ -129,7 +123,6 @@ public class ICarolDataAdapterCompleteTest {
         assertEquals("Program", result.getType());
         assertEquals("3", result.getExternalDbId());
     }
-    @Transactional
 
     @Test
     public void shouldImportCompleteLocation() {
@@ -158,7 +151,7 @@ public class ICarolDataAdapterCompleteTest {
         assertNull(result.getAttention());
         assertEquals("12345 Cool Street", result.getAddress1());
         assertEquals("CarpetHanger", result.getCity());
-        assertEquals("Commoncounty", result.getRegion()); //TODO: wiki
+        assertEquals("Commoncounty", result.getRegion());
         assertEquals("CA", result.getStateProvince());
         assertEquals("12345", result.getPostalCode());
         assertEquals("United States", result.getCountry());
@@ -177,7 +170,7 @@ public class ICarolDataAdapterCompleteTest {
         assertNull(result.getAttention());
         assertEquals("12345 Cool Street", result.getAddress1());
         assertEquals("CarpetHanger", result.getCity());
-        assertEquals("Commoncounty", result.getRegion()); //TODO: wiki
+        assertEquals("Commoncounty", result.getRegion());
         assertEquals("CA", result.getStateProvince());
         assertEquals("12345", result.getPostalCode());
         assertEquals("United States", result.getCountry());
@@ -200,7 +193,7 @@ public class ICarolDataAdapterCompleteTest {
     @Ignore("We should normalize the hours")
     public void shouldImportOpeningHours() {
         adapter.importData(importData);
-
+        ArgumentCaptor<Set<OpeningHours>> captor = ArgumentCaptor.forClass(Set.class);
         verify(importService, times(1))
             .createOrUpdateOpeningHoursForService(captor.capture(), any(Service.class));
 
@@ -212,7 +205,6 @@ public class ICarolDataAdapterCompleteTest {
             assertEquals("08:00", hours.getOpensAt());
             assertEquals("04:45", hours.getClosesAt());
         }
-
     }
 
     @Test
@@ -233,7 +225,7 @@ public class ICarolDataAdapterCompleteTest {
     }
 
     @Test
-    @Ignore("The type should be based on label or purpose.") //TODO: wiki
+    @Ignore("The type should be based on label or purpose.")
     public void shouldImportCompletePhones() {
         adapter.importData(importData);
         ArgumentCaptor<Set<Phone>> captor = ArgumentCaptor.forClass(Set.class);
@@ -242,19 +234,19 @@ public class ICarolDataAdapterCompleteTest {
 
         List<Phone> result = new ArrayList<>(captor.getValue());
 
-        Phone first =  result.get(0);
+        Phone first = result.get(0);
         assertEquals("123-465-7890", first.getNumber());
         assertNull(first.getExtension());
         assertEquals("Main number for program", first.getType());
         assertNull(first.getLanguage());
         assertEquals("CarpetHanger  Office", first.getDescription());
-        Phone second =  result.get(1);
+        Phone second = result.get(1);
         assertEquals("678-901-2345", second.getNumber());
         assertNull(second.getExtension());
         assertEquals("Fax", second.getType());
         assertNull(second.getLanguage());
         assertNull(second.getDescription());
-        Phone third =  result.get(2);
+        Phone third = result.get(2);
         assertEquals("789-012-3456", third.getNumber());
         assertNull(third.getExtension());
         assertEquals("MYY", third.getType());
