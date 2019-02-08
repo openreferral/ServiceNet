@@ -63,6 +63,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -157,7 +158,7 @@ public class ImportServiceImplIntTest {
     //endregion
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateLocation() {
         Location location = generateNewLocation();
 
@@ -170,7 +171,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateLocation() {
         Location newLocation = generateNewLocation();
         generateExistingLocation();
@@ -184,7 +185,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreatePhysicalAddress() {
         Location location = generateNewLocation();
         PhysicalAddress address = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
@@ -208,7 +209,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdatePhysicalAddress() {
         Location location = generateExistingLocation();
         PhysicalAddress existingAddress = new PhysicalAddress().address1(EXISTING_STRING).city(EXISTING_STRING)
@@ -241,7 +242,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreatePostalAddress() {
         Location location = generateNewLocation();
         PostalAddress address = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
@@ -267,7 +268,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdatePostalAddress() {
         Location location = generateExistingLocation();
         PostalAddress existingAddress = new PostalAddress().address1(EXISTING_STRING).city(EXISTING_STRING)
@@ -302,7 +303,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateAccessibilityIfLocationHasNoneOfThem() {
         Location location = generateNewLocation();
         AccessibilityForDisabilities accessibility = new AccessibilityForDisabilities()
@@ -321,7 +322,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateAccessibilityIfLocationHasFewOfThemButNotThisOne() {
         Location location = generateExistingLocation();
         AccessibilityForDisabilities otherAccessibility = new AccessibilityForDisabilities()
@@ -348,7 +349,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateAccessibility() {
         Location location = generateExistingLocation();
         AccessibilityForDisabilities accessibilityToBeUpdated = new AccessibilityForDisabilities()
@@ -381,7 +382,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateOrganization() {
         Organization organization = generateNewOrganization(generateExistingAccount());
         DataImportReport report = new DataImportReport();
@@ -398,7 +399,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateOrganization() {
         SystemAccount account = generateExistingAccount();
         Organization newOrganization = generateNewOrganization(account);
@@ -418,7 +419,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateService() {
         Service service = generateNewService();
         DataImportReport report = new DataImportReport();
@@ -432,7 +433,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateService() {
         generateExistingService();
         Service newService = generateNewService();
@@ -449,7 +450,7 @@ public class ImportServiceImplIntTest {
     }
     
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreatePhonesIfServiceHasNoneOfThem() {
         Service service = generateNewService();
         Phone phone = new Phone().number(NEW_STRING);
@@ -466,7 +467,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplacePhonesIfServiceHasFewOfThemButNotThisOne() {
         Service service = generateExistingService();
         Phone otherPhone = new Phone().number(OTHER_STRING).srvc(service);
@@ -489,7 +490,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplacePhonesForService() {
         Service service = generateExistingService();
         Phone phoneToBeUpdated = new Phone().number(EXISTING_STRING).srvc(service);
@@ -514,7 +515,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreatePhonesIfLocationHasNoneOfThem() {
         Location location = generateNewLocation();
         Phone phone = new Phone().number(NEW_STRING);
@@ -531,7 +532,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplacePhonesIfLocationHasFewOfThemButNotThisOne() {
         Location location = generateExistingLocation();
         Phone otherPhone = new Phone().number(OTHER_STRING).location(location);
@@ -554,7 +555,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplacePhonesForLocation() {
         Location location = generateExistingLocation();
         Phone phoneToBeUpdated = new Phone().number(EXISTING_STRING).location(location);
@@ -579,7 +580,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateEligibility() {
         Service service = generateNewService();
         Eligibility eligibility = new Eligibility().eligibility(NEW_STRING);
@@ -596,7 +597,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateEligibility() {
         Service service = generateExistingService();
         Eligibility existingEligibility = new Eligibility().eligibility(EXISTING_STRING).srvc(service);
@@ -619,7 +620,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateLangsIfServiceHasNoneOfThem() {
         Service service = generateNewService();
         Language language = new Language().language(NEW_STRING);
@@ -639,7 +640,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceLangsIfServiceHasFewOfThemButNotThisOne() {
         Service service = generateExistingService();
         Language otherLanguage = new Language().language(OTHER_STRING).srvc(service);
@@ -662,7 +663,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceLangsForService() {
         Service service = generateExistingService();
 
@@ -689,7 +690,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateLangsIfLocationHasNoneOfThem() {
         Location location = generateNewLocation();
         Language language = new Language().language(NEW_STRING);
@@ -709,7 +710,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceLangsIfLocationHasFewOfThemButNotThisOne() {
         Location location = generateExistingLocation();
         Language otherLanguage = new Language().language(OTHER_STRING).location(location);
@@ -732,7 +733,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceLangsForLocation() {
         Location location = generateExistingLocation();
 
@@ -759,7 +760,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateOpeningHoursIfServiceHasNoneOfThem() {
         Service service = generateNewService();
         OpeningHours openingHours = new OpeningHours().weekday(NEW_INT).opensAt(NEW_STRING).closesAt(NEW_STRING);
@@ -781,7 +782,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceOpeningHoursIfServiceHasFewOfThemButNotThisOne() {
         Service service = generateExistingService();
         OpeningHours otherOpeningHours = new OpeningHours().weekday(OTHER_INT).opensAt(OTHER_STRING).closesAt(OTHER_STRING);
@@ -811,7 +812,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceOpeningHoursForService() {
         Service service = generateExistingService();
         OpeningHours openingHoursToBeUpdated = new OpeningHours().weekday(EXISTING_INT)
@@ -849,7 +850,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateOpeningHoursIfLocationHasNoneOfThem() {
         Location location = generateNewLocation();
         OpeningHours openingHours = new OpeningHours().weekday(NEW_INT).opensAt(NEW_STRING).closesAt(NEW_STRING);
@@ -871,7 +872,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceOpeningHoursIfLocationHasFewOfThemButNotThisOne() {
         Location location = generateExistingLocation();
         OpeningHours otherOpeningHours = new OpeningHours().weekday(OTHER_INT).opensAt(OTHER_STRING).closesAt(OTHER_STRING);
@@ -902,7 +903,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceOpeningHoursForLocation() {
         Location location = generateExistingLocation();
         OpeningHours openingHoursToBeUpdated = new OpeningHours().weekday(EXISTING_INT)
@@ -940,7 +941,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateTaxonomy() {
         Taxonomy taxonomy = generateNewTaxonomy();
 
@@ -953,7 +954,7 @@ public class ImportServiceImplIntTest {
     }
     
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateTaxonomy() {
         Taxonomy newTaxonomy = generateNewTaxonomy();
         generateExistingTaxonomy();
@@ -967,7 +968,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateFundingForOrganization() {
         Organization organization = generateNewOrganization(generateExistingAccount());
         Funding funding = new Funding().source(NEW_STRING);
@@ -983,7 +984,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateFundingForOrganization() {
         Organization organization = generateExistingOrganization(generateExistingAccount());
         Funding funding = new Funding().source(EXISTING_STRING).organization(organization);
@@ -1006,7 +1007,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateFundingForService() {
         Service service = generateNewService();
         Funding funding = new Funding().source(NEW_STRING);
@@ -1022,7 +1023,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateFundingForService() {
         Service service = generateExistingService();
         Funding funding = new Funding().source(EXISTING_STRING).srvc(service);
@@ -1044,7 +1045,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateProgramsIfOrganizationHasNoneOfThem() {
         Organization organization = generateNewOrganization(generateExistingAccount());
         Program program = new Program().name(NEW_STRING);
@@ -1060,7 +1061,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceProgramsIfOrganizationHasFewButNotThisOne() {
         Organization organization = generateExistingOrganization(generateExistingAccount());
         Program program = new Program().name(OTHER_STRING).organization(organization);
@@ -1082,7 +1083,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateServiceTaxonomy() {
         Taxonomy taxonomy = generateExistingTaxonomy();
         Service service = generateNewService();
@@ -1100,7 +1101,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateServiceTaxonomy() {
         Taxonomy taxonomy = generateOtherTaxonomy();
         Service service = generateExistingService();
@@ -1130,7 +1131,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateRequiredDocument() {
         Service service = generateNewService();
         RequiredDocument document = new RequiredDocument().document(NEW_STRING)
@@ -1147,7 +1148,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateRequiredDocument() {
         Service service = generateExistingService();
         RequiredDocument requiredDocument = new RequiredDocument().document(EXISTING_STRING)
@@ -1171,7 +1172,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateContactsForService() {
         Service service = generateNewService();
         Contact contact = new Contact().name(NEW_STRING);
@@ -1187,7 +1188,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateContactsForService() {
         Service service = generateExistingService();
         Contact contact = new Contact().name(EXISTING_STRING).srvc(service);
@@ -1209,7 +1210,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateHolidayScheduleForService() {
         Service service = generateNewService();
         LocalDate start = LocalDate.of(2019, 1, 1);
@@ -1232,7 +1233,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateHolidayScheduleForService() {
         Service service = generateExistingService();
         LocalDate start = LocalDate.of(2018, 1, 1);
@@ -1264,7 +1265,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateHolidayScheduleForLocation() {
         Location location = generateNewLocation();
         LocalDate start = LocalDate.of(2019, 1, 1);
@@ -1287,7 +1288,7 @@ public class ImportServiceImplIntTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateHolidayScheduleForLocation() {
         Location location = generateExistingLocation();
         LocalDate start = LocalDate.of(2018, 1, 1);
