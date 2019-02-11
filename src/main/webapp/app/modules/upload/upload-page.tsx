@@ -115,8 +115,8 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
 
   handleUndefinedFileType = (source, type) => {
     if (type === '') {
-      const re = /(?:\.([^.]+))?$/;
-      const fileExtension = re.exec(source.name)[1];
+      const fileExtensionRegex = /(?:\.([^.]+))?$/;
+      const fileExtension = fileExtensionRegex.exec(source.name)[1];
       if (fileExtension === 'csv') {
         type = 'text/csv';
       }
