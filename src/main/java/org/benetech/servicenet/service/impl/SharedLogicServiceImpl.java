@@ -17,6 +17,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+
 @Component
 public class SharedLogicServiceImpl implements SharedLogicService {
 
@@ -41,7 +43,7 @@ public class SharedLogicServiceImpl implements SharedLogicService {
         Set<Phone> common = new HashSet<>(phonesToSave);
         common.retainAll(phonesInDatabase);
 
-        phonesInDatabase.stream().filter(phone -> !common.contains(phone)).forEach(em::remove);
+        phonesInDatabase.stream().filter(phone -> !common.contains(phone)).forEach(x -> safeRemove(em, x));
         phonesToSave.stream().filter(phone -> !common.contains(phone)).forEach(em::persist);
 
         return phonesToSave;
@@ -67,7 +69,7 @@ public class SharedLogicServiceImpl implements SharedLogicService {
             Set<OpeningHours> common = new HashSet<>(openingHours);
             common.retainAll(scheduleFormDb.get().getOpeningHours());
 
-            scheduleFormDb.get().getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> em.remove(o));
+            scheduleFormDb.get().getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> safeRemove(em, o));
             openingHours.stream().filter(o -> !common.contains(o)).forEach(o -> em.persist(o));
 
             em.merge(scheduleToSave.openingHours(new HashSet<>(openingHours)).location(location).srvc(service));

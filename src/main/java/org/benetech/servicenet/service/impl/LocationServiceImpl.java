@@ -132,8 +132,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Optional<Location> findForExternalDb(String externalDbId, String providerName) {
-        return locationRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    public Optional<Location> findWithEagerAssociations(String externalDbId, String providerName) {
+        return locationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, providerName);
     }
 
     /**

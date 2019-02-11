@@ -50,6 +50,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+
 /**
  * Import service for data from all providers
  *
@@ -104,7 +106,7 @@ public class ImportServiceImpl implements ImportService {
     @Override
     @ConfidentialFilter
     public Location createOrUpdateLocation(Location location, String externalDbId, String providerName) {
-        Optional<Location> locationFromDb = locationService.findForExternalDb(externalDbId, providerName);
+        Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId, providerName);
         if (locationFromDb.isPresent()) {
             location.setPhysicalAddress(locationFromDb.get().getPhysicalAddress());
             location.setPostalAddress(locationFromDb.get().getPostalAddress());
@@ -167,7 +169,8 @@ public class ImportServiceImpl implements ImportService {
     @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization organization, String externalDbId, String providerName,
                                                    DataImportReport report) {
-        Optional<Organization> organizationFromDb = organizationService.findForExternalDb(externalDbId, providerName);
+        Optional<Organization> organizationFromDb =
+            organizationService.findWithEagerAssociations(externalDbId, providerName);
         if (organizationFromDb.isPresent()) {
             organization.setId(organizationFromDb.get().getId());
             organization.setAccount(organizationFromDb.get().getAccount());
@@ -191,7 +194,7 @@ public class ImportServiceImpl implements ImportService {
     @ConfidentialFilter
     public Service createOrUpdateService(Service service, String externalDbId, String providerName,
                                          DataImportReport report) {
-        Optional<Service> serviceFromDb = serviceService.findForExternalDb(externalDbId, providerName);
+        Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
         if (serviceFromDb.isPresent()) {
             service.setPhones(serviceFromDb.get().getPhones());
             service.setEligibility(serviceFromDb.get().getEligibility());
@@ -288,7 +291,7 @@ public class ImportServiceImpl implements ImportService {
         Set<Language> common = new HashSet<>(langs);
         if (service != null) {
             common.retainAll(service.getLangs());
-            service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
+            service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> safeRemove(em, lang));
         }
 
         langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.persist(lang));
@@ -309,7 +312,7 @@ public class ImportServiceImpl implements ImportService {
         Set<Program> common = new HashSet<>(programs);
         common.retainAll(organization.getPrograms());
 
-        organization.getPrograms().stream().filter(p -> !common.contains(p)).forEach(p -> em.remove(p));
+        organization.getPrograms().stream().filter(p -> !common.contains(p)).forEach(p -> safeRemove(em, p));
         programs.stream().filter(p -> !common.contains(p)).forEach(p -> em.persist(p));
 
         return programs;
@@ -343,7 +346,7 @@ public class ImportServiceImpl implements ImportService {
             Set<OpeningHours> common = new HashSet<>(openingHours);
             common.retainAll(schedule.getOpeningHours());
 
-            schedule.getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> em.remove(o));
+            schedule.getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> safeRemove(em, o));
             openingHours.stream().filter(o -> !common.contains(o)).forEach(o -> em.persist(o));
 
             em.merge(schedule.openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
@@ -448,7 +451,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     private void createOrUpdateFilteredContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source) {
-        source.stream().filter(c -> !common.contains(c)).forEach(c -> em.remove(c));
+        source.stream().filter(c -> !common.contains(c)).forEach(c -> safeRemove(em, c));
         contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
     }
 
@@ -515,10 +518,9 @@ public class ImportServiceImpl implements ImportService {
         Set<Phone> common = new HashSet<>(phones);
         common.retainAll(savedPhones);
 
-        savedPhones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.remove(phone));
+        savedPhones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> safeRemove(em, phone));
         phones.stream().filter(phone -> !common.contains(phone)).forEach(phone -> em.persist(phone));
 
         return phones;
     }
-
 }

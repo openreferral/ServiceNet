@@ -2,6 +2,8 @@ package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,5 +17,11 @@ import java.util.UUID;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, UUID> {
 
-    Optional<Location> findOneByExternalDbIdAndProviderName(String externalDbId, String providerName);
+    @Query("SELECT loc FROM Location loc " +
+        "LEFT JOIN FETCH loc.accessibilities " +
+        "LEFT JOIN FETCH loc.regularSchedule schedule " +
+        "LEFT JOIN FETCH schedule.openingHours " +
+        "WHERE loc.externalDbId = :extId AND loc.providerName = :providerName")
+    Optional<Location> findOneWithEagerAssociationsByExternalDbIdAndProviderName(@Param("extId") String externalDbId,
+                                                                                 @Param("providerName") String providerName);
 }

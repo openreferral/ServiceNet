@@ -19,6 +19,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+
 @Component
 public class OrganizationImportServiceImpl implements OrganizationImportService {
 
@@ -38,7 +40,8 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
                                                    String providerName, DataImportReport report) {
         Organization organization = new Organization(filledOrganization);
-        Optional<Organization> organizationFromDb = organizationService.findForExternalDb(externalDbId, providerName);
+        Optional<Organization> organizationFromDb =
+            organizationService.findWithEagerAssociations(externalDbId, providerName);
         if (organizationFromDb.isPresent()) {
             fillDataFromDb(organization, organizationFromDb.get());
             em.merge(organization);
@@ -82,7 +85,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         Set<Program> common = new HashSet<>(programs);
         common.retainAll(organization.getPrograms());
 
-        organization.getPrograms().stream().filter(p -> !common.contains(p)).forEach(p -> em.remove(p));
+        organization.getPrograms().stream().filter(p -> !common.contains(p)).forEach(p -> safeRemove(em, p));
         programs.stream().filter(p -> !common.contains(p)).forEach(p -> em.persist(p));
 
         organization.setPrograms(programs);

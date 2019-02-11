@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+
 @Component
 public class ServiceImportServiceImpl implements ServiceImportService {
 
@@ -50,7 +52,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     public Service createOrUpdateService(Service filledService, String externalDbId, String providerName,
                                          DataImportReport report) {
         Service service = new Service(filledService);
-        Optional<Service> serviceFromDb = serviceService.findForExternalDb(externalDbId, providerName);
+        Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
         if (serviceFromDb.isPresent()) {
             fillDataFromDb(service, serviceFromDb.get());
             em.merge(service);
@@ -97,7 +99,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         if (service != null) {
             Set<Language> common = new HashSet<>(langs);
             common.retainAll(service.getLangs());
-            service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> em.remove(lang));
+            service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> safeRemove(em, lang));
             langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> {
                 lang.setSrvc(service);
                 em.persist(lang);
@@ -204,7 +206,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     }
 
     private void createOrUpdateFilteredContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source) {
-        source.stream().filter(c -> !common.contains(c)).forEach(c -> em.remove(c));
+        source.stream().filter(c -> !common.contains(c)).forEach(c -> safeRemove(em, c));
         contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
     }
 

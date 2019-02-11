@@ -28,14 +28,12 @@ import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.TaxonomyService;
-import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -144,7 +142,7 @@ public class TestPersistanceHelper {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Location generateExistingLocation(String id, String provider, String string) {
-        Optional<Location> locationFormDb = locationRepository.findOneByExternalDbIdAndProviderName(id, provider);
+        Optional<Location> locationFormDb = locationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(id, provider);
         if (locationFormDb.isPresent()) {
             return locationFormDb.get();
         }
@@ -156,7 +154,7 @@ public class TestPersistanceHelper {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Service generateExistingService(String id, String provider, String string) {
-        Optional<Service> serviceFromDb = serviceRepository.findOneByExternalDbIdAndProviderName(id, provider);
+        Optional<Service> serviceFromDb = serviceRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(id, provider);
         if (serviceFromDb.isPresent()) {
             return serviceFromDb.get();
         }
@@ -169,7 +167,7 @@ public class TestPersistanceHelper {
     @Transactional(propagation = Propagation.REQUIRED)
     public Organization generateExistingOrganization(String id, String string,
                                                       SystemAccount account, boolean bool) {
-        Optional<Organization> organizationFromDb = organizationRepository.findOneByExternalDbIdAndProviderName(id, account.getName());
+        Optional<Organization> organizationFromDb = organizationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(id, account.getName());
         if (organizationFromDb.isPresent()) {
             return organizationFromDb.get();
         }

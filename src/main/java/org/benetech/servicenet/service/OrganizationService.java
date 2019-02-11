@@ -38,7 +38,7 @@ public interface OrganizationService {
      */
     List<OrganizationDTO> findAllWhereFundingIsNull();
 
-    Optional<Organization> findForExternalDb(String externalDbId, String providerName);
+    Optional<Organization> findWithEagerAssociations(String externalDbId, String providerName);
 
     /**
      * Get the "id" organization.

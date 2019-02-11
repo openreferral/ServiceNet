@@ -94,8 +94,8 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public Optional<Organization> findForExternalDb(String externalDbId, String providerName) {
-        return organizationRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    public Optional<Organization> findWithEagerAssociations(String externalDbId, String providerName) {
+        return organizationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, providerName);
     }
 
     /**
