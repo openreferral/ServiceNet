@@ -75,23 +75,11 @@ public class TmpImportServiceImpl implements TmpImportService {
         return serviceImportService.createOrUpdateService(filledService, externalDbId, providerName, report);
     }
 
-    @ConfidentialFilter
-    private Service createOrUpdateServiceExistingTransaction(Service filledService, String externalDbId,
-                                                            String providerName, DataImportReport report) {
-        return serviceImportService.createOrUpdateService(filledService, externalDbId, providerName, report);
-    }
-
-    @ConfidentialFilter
-    private Location createOrUpdateLocationExistingTransaction(Location filledLocation, String externalDbId,
-                                                               String providerName) {
-        return locationImportService.createOrUpdateLocation(filledLocation, externalDbId, providerName);
-    }
-
     private void importServices(Set<Service> services, Organization org, String providerName, DataImportReport report) {
         Set<Service> savedServices = new HashSet<>();
         for (Service service : services) {
             service.setOrganization(org);
-            savedServices.add(createOrUpdateServiceExistingTransaction(
+            savedServices.add(createOrUpdateService(
                 service, service.getExternalDbId(), providerName, report));
         }
         org.setServices(savedServices);
@@ -101,7 +89,7 @@ public class TmpImportServiceImpl implements TmpImportService {
         Set<Location> savedLocations = new HashSet<>();
         for (Location location : locations) {
             location.setOrganization(org);
-            savedLocations.add(createOrUpdateLocationExistingTransaction(
+            savedLocations.add(createOrUpdateLocation(
                 location, location.getExternalDbId(), providerName));
         }
         org.setLocations(savedLocations);
