@@ -111,7 +111,7 @@
       },
       {
         "contact": {
-          "url": "www.example.org",
+          "url": "www.example.example",
           "label": "Website",
           "type": "Website"
         },
@@ -249,7 +249,7 @@
       },
       {
         "contact": {
-          "address": "stuff@voluntarywork.com",
+          "address": "stuff@voluntarywork.example",
           "label": "Main",
           "type": "EmailAddress"
         },
@@ -264,7 +264,7 @@
       },
       {
         "contact": {
-          "url": "www.alphabetfoundation.org",
+          "url": "www.alphabetfoundation.example",
           "label": "Website",
           "type": "Website"
         },
