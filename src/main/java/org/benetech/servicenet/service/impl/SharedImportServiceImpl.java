@@ -7,7 +7,7 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
-import org.benetech.servicenet.service.SharedLogicService;
+import org.benetech.servicenet.service.SharedImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
 
 @Component
-public class SharedLogicServiceImpl implements SharedLogicService {
+public class SharedImportServiceImpl implements SharedImportService {
 
     @Autowired
     private EntityManager em;

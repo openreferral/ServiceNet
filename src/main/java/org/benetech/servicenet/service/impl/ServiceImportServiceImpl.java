@@ -16,7 +16,7 @@ import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
-import org.benetech.servicenet.service.SharedLogicService;
+import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +37,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     private EntityManager em;
 
     @Autowired
-    private SharedLogicService sharedLogicService;
+    private SharedImportService sharedImportService;
 
     @Autowired
     private ServiceService serviceService;
@@ -115,7 +115,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     }
 
     private void createOrUpdateFilteredPhonesForService(Set<Phone> phones, @Nonnull Service service) {
-        service.setPhones(sharedLogicService.persistPhones(phones, service.getPhones()));
+        service.setPhones(sharedImportService.persistPhones(phones, service.getPhones()));
     }
 
     @ConfidentialFilter
@@ -135,7 +135,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
 
     private void createOrUpdateRegularScheduleForService(RegularSchedule schedule, Service service) {
         if (schedule != null) {
-            sharedLogicService.createOrUpdateOpeningHours(schedule.getOpeningHours(), service, schedule);
+            sharedImportService.createOrUpdateOpeningHours(schedule.getOpeningHours(), service, schedule);
         }
     }
 
