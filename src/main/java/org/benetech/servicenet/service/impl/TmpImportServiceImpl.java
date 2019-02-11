@@ -7,17 +7,15 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
-import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
 import org.benetech.servicenet.service.TmpImportService;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +24,7 @@ import java.util.Set;
 public class TmpImportServiceImpl implements TmpImportService {
 
     @Autowired
-    private OrganizationMatchService organizationMatchService;
+    private TransactionSynchronizationService transactionSynchronizationService;
 
     @Autowired
     private OrganizationImportService organizationImportService;
@@ -110,11 +108,6 @@ public class TmpImportServiceImpl implements TmpImportService {
     }
 
     private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-            @Override
-            public void afterCommit() {
-                organizationMatchService.createOrUpdateOrganizationMatches(organization);
-            }
-        });
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
     }
 }
