@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.mapper;
 
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.service.dto.LocationDTO;
+import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -26,6 +27,10 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
     @Mapping(source = "organization.id", target = "organizationId")
     @Mapping(source = "organization.name", target = "organizationName")
     LocationDTO toDto(Location location);
+
+    @Mapping(target = "location", source = "location")
+    @Mapping(target = "regularScheduleOpeningHours", source = "regularSchedule.openingHours")
+    LocationRecordDTO toRecord(Location location);
 
     default Location fromId(UUID id) {
         if (id == null) {
