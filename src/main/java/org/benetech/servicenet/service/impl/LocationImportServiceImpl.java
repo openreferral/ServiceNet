@@ -23,6 +23,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+
 @Component
 public class LocationImportServiceImpl implements LocationImportService {
 
@@ -38,7 +40,7 @@ public class LocationImportServiceImpl implements LocationImportService {
     @Override
     public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName) {
         Location location = new Location(filledLocation);
-        Optional<Location> locationFromDb = locationService.findForExternalDb(externalDbId, providerName);
+        Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId, providerName);
         if (locationFromDb.isPresent()) {
             fillDataFromDb(location, locationFromDb.get());
             em.merge(location);
@@ -150,7 +152,7 @@ public class LocationImportServiceImpl implements LocationImportService {
         if (location != null) {
             Set<Language> common = new HashSet<>(langs);
             common.retainAll(location.getLangs());
-            location.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(em::remove);
+            location.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(x -> safeRemove(em, x));
             langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> {
                 lang.setLocation(location);
                 em.persist(lang);

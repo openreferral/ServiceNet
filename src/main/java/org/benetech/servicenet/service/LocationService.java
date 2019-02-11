@@ -57,7 +57,7 @@ public interface LocationService {
      */
     List<LocationDTO> findAllWhereHolidayScheduleIsNull();
 
-    Optional<Location> findForExternalDb(String externalDbId, String providerName);
+    Optional<Location> findWithEagerAssociations(String externalDbId, String providerName);
 
     /**
      * Get the "id" location.

@@ -371,7 +371,7 @@ public class ImportServiceConfidentialityImplIntTest {
         newEligibility.setIsConfidential(true);
 
         int dbSize = eligibilityService.findAll().size();
-        Service serviceFromDb = serviceService.findForExternalDb(EXISTING_EXTERNAL_ID, PROVIDER).get();
+        Service serviceFromDb = serviceService.findWithEagerAssociations(EXISTING_EXTERNAL_ID, PROVIDER).get();
         Eligibility updated = importService.createOrUpdateEligibility(newEligibility, serviceFromDb);
 
         assertEquals(dbSize, eligibilityService.findAll().size());
