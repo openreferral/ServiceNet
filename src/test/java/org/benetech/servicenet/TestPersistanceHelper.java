@@ -5,126 +5,42 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.Taxonomy;
-import org.benetech.servicenet.repository.LocationRepository;
-import org.benetech.servicenet.repository.OrganizationRepository;
-import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
-import org.benetech.servicenet.repository.TaxonomyRepository;
-import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
-import org.benetech.servicenet.service.ContactService;
-import org.benetech.servicenet.service.EligibilityService;
-import org.benetech.servicenet.service.FundingService;
-import org.benetech.servicenet.service.HolidayScheduleService;
-import org.benetech.servicenet.service.LanguageService;
-import org.benetech.servicenet.service.LocationService;
-import org.benetech.servicenet.service.OpeningHoursService;
-import org.benetech.servicenet.service.OrganizationService;
-import org.benetech.servicenet.service.PhoneService;
-import org.benetech.servicenet.service.PhysicalAddressService;
-import org.benetech.servicenet.service.PostalAddressService;
-import org.benetech.servicenet.service.ProgramService;
-import org.benetech.servicenet.service.RegularScheduleService;
-import org.benetech.servicenet.service.RequiredDocumentService;
-import org.benetech.servicenet.service.ServiceService;
-import org.benetech.servicenet.service.ServiceTaxonomyService;
-import org.benetech.servicenet.service.TaxonomyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+
+import static org.benetech.servicenet.TestConstants.EXISTING_BOOLEAN;
+import static org.benetech.servicenet.TestConstants.EXISTING_EXTERNAL_ID;
+import static org.benetech.servicenet.TestConstants.EXISTING_STRING;
+import static org.benetech.servicenet.TestConstants.NEW_BOOLEAN;
+import static org.benetech.servicenet.TestConstants.NEW_EXTERNAL_ID;
+import static org.benetech.servicenet.TestConstants.NEW_STRING;
+import static org.benetech.servicenet.TestConstants.OTHER_STRING;
+import static org.benetech.servicenet.TestConstants.PROVIDER;
 
 @Component
 public class TestPersistanceHelper {
 
     @Autowired
-    private EntityManager em;
-
-    // region services
-    @Autowired
-    private LocationService locationService;
-
-    @Autowired
-    private OrganizationService organizationService;
-
-    @Autowired
-    private ServiceService serviceService;
-
-    @Autowired
-    private PhysicalAddressService physicalAddressService;
-
-    @Autowired
-    private PostalAddressService postalAddressService;
-
-    @Autowired
-    private EligibilityService eligibilityService;
-
-    @Autowired
-    private AccessibilityForDisabilitiesService accessibilityService;
-
-    @Autowired
-    private LanguageService languageService;
-
-    @Autowired
-    private PhoneService phoneService;
-
-    @Autowired
-    private RegularScheduleService regularScheduleService;
-
-    @Autowired
-    private OpeningHoursService openingHoursService;
-
-    @Autowired
-    private TaxonomyService taxonomyService;
-
-    @Autowired
-    private FundingService fundingService;
-
-    @Autowired
-    private ProgramService programService;
-
-    @Autowired
-    private ServiceTaxonomyService serviceTaxonomyService;
-
-    @Autowired
-    private RequiredDocumentService requiredDocumentService;
-
-    @Autowired
-    private ContactService contactService;
-
-    @Autowired
-    private HolidayScheduleService holidayScheduleService;
-
-    @Autowired
-    private TestPersistanceHelper helper;
+    public EntityManager em;
 
     @Autowired
     private SystemAccountRepository systemAccountRepository;
 
-    @Autowired
-    private LocationRepository locationRepository;
-
-    @Autowired
-    private OrganizationRepository organizationRepository;
-
-    @Autowired
-    private ServiceRepository serviceRepository;
-
-    @Autowired
-    private TaxonomyRepository taxonomyRepository;
-
-    //endregion
-
-    @Transactional
     public <T> void persist(T obj) {
         em.persist(obj);
     }
 
-    @Transactional
-    public void flush() {
+    public <T> void flushAndRefresh(T obj) {
         em.flush();
+        em.refresh(obj);
     }
 
     @Transactional
@@ -140,52 +56,84 @@ public class TestPersistanceHelper {
         return account;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Location generateExistingLocation(String id, String provider, String string) {
-        Optional<Location> locationFormDb = locationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(id, provider);
-        if (locationFormDb.isPresent()) {
-            return locationFormDb.get();
-        }
-        Location result = new Location().externalDbId(id).providerName(provider)
-            .name(string);
+    public Location generateNewLocation() {
+        return new Location().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
+            .name(NEW_STRING);
+    }
+
+    public Location generateExistingLocation() {
+        Location result = new Location().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+            .name(EXISTING_STRING);
         em.persist(result);
         return result;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Service generateExistingService(String id, String provider, String string) {
-        Optional<Service> serviceFromDb = serviceRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(id, provider);
-        if (serviceFromDb.isPresent()) {
-            return serviceFromDb.get();
-        }
-        Service result = new Service().externalDbId(id).providerName(provider)
-            .name(string);
+    public Location generateExistingLocationDoNotPersist() {
+        return new Location().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+            .name(EXISTING_STRING);
+    }
+
+    public Service generateNewService() {
+        return new Service().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
+            .name(NEW_STRING);
+    }
+
+    public Service generateExistingService() {
+        Service result = new Service().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+            .name(EXISTING_STRING);
         em.persist(result);
         return result;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Organization generateExistingOrganization(String id, String string,
-                                                      SystemAccount account, boolean bool) {
-        Optional<Organization> organizationFromDb = organizationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(id, account.getName());
-        if (organizationFromDb.isPresent()) {
-            return organizationFromDb.get();
-        }
-        Organization result = new Organization().externalDbId(id).account(account)
-            .name(string).active(bool);
+    public SystemAccount generateExistingAccount() {
+        SystemAccount account = new SystemAccount().name(PROVIDER);
+        em.persist(account);
+        return account;
+    }
+
+    public Organization generateNewOrganization(SystemAccount account) {
+        return new Organization().externalDbId(NEW_EXTERNAL_ID).account(account)
+            .name(NEW_STRING).active(NEW_BOOLEAN);
+    }
+
+    public Service generateExistingServiceDoNotPersist() {
+        return new Service().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+            .name(EXISTING_STRING);
+    }
+
+    public Organization generateExistingOrganization(SystemAccount account) {
+        Organization result = new Organization().externalDbId(EXISTING_EXTERNAL_ID).account(account)
+            .name(EXISTING_STRING).active(EXISTING_BOOLEAN);
         em.persist(result);
         return result;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Taxonomy generateExistingTaxonomy(String id, String provider, String string) {
-        Optional<Taxonomy> taxonomyFromDb = taxonomyRepository.findOneByExternalDbIdAndProviderName(id, provider);
-        if (taxonomyFromDb.isPresent()) {
-            return taxonomyFromDb.get();
-        }
-        Taxonomy result = new Taxonomy().externalDbId(id).providerName(provider)
-            .name(string);
+    public Organization generateExistingOrganizationDoNotPersist() {
+        return new Organization().externalDbId(EXISTING_EXTERNAL_ID).account(generateExistingAccount())
+            .name(EXISTING_STRING).active(EXISTING_BOOLEAN);
+    }
+
+    public Taxonomy generateNewTaxonomy() {
+        return new Taxonomy().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
+            .name(NEW_STRING);
+    }
+
+    public Taxonomy generateExistingTaxonomy() {
+        Taxonomy result = new Taxonomy().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+            .name(EXISTING_STRING);
         em.persist(result);
         return result;
+    }
+
+    public Taxonomy generateOtherTaxonomy() {
+        Taxonomy result = new Taxonomy().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+            .name(OTHER_STRING);
+        em.persist(result);
+        return result;
+    }
+
+    @SafeVarargs
+    public final <T> Set<T> mutableSet(T ... objects) {
+        return new HashSet<T>(Arrays.asList(objects));
     }
 }
