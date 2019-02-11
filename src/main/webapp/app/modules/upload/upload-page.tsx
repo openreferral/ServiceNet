@@ -109,8 +109,20 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
 
   fileValidateTypeDetectType = (source, type) =>
     new Promise((resolve, reject) => {
+      type = this.handleUndefinedFileType(source, type);
       resolve(type);
     });
+
+  handleUndefinedFileType = (source, type) => {
+    if (type === '') {
+      const re = /(?:\.([^.]+))?$/;
+      const fileExtension = re.exec(source.name)[1];
+      if (fileExtension === 'csv') {
+        type = 'text/csv';
+      }
+    }
+    return type;
+  };
 
   delimiterChange = event => {
     this.setState({ delimiter: event.target.value });
