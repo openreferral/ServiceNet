@@ -255,7 +255,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldFetchUserByIdWithAllSimpleValuesTest() {
+    public void shouldFetchUserByIdWithAllSimpleValues() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -276,7 +276,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldFetchUserByIdWithAuthoritiesTest() {
+    public void shouldFetchUserByIdWithAuthorities() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -292,7 +292,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldFetchUserByIdWithSystemAccountTest() {
+    public void shouldFetchUserByIdWithSystemAccount() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -306,7 +306,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldConvertFetchedUserByIdWithSystemAccountTest() {
+    public void shouldConvertFetchedUserByIdWithSystemAccount() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -321,7 +321,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldUpdateFetchedUserByIdWithSystemAccountTest() {
+    public void shouldUpdateFetchedUserByIdWithSystemAccount() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -342,7 +342,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldFetchUserByLoginWithAllSimpleValuesTest() {
+    public void shouldFetchUserByLoginWithAllSimpleValues() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -363,7 +363,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldFetchUserByLoginWithAuthoritiesTest() {
+    public void shouldFetchUserByLoginWithAuthorities() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -379,7 +379,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldFetchUserByLoginWithSystemAccountTest() {
+    public void shouldFetchUserByLoginWithSystemAccount() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -393,7 +393,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldConvertFetchedUserByLoginWithSystemAccountTest() {
+    public void shouldConvertFetchedUserByLoginWithSystemAccount() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -408,7 +408,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldUpdateUserFetchedByLoginWithSystemAccountTest() {
+    public void shouldUpdateUserFetchedByLoginWithSystemAccount() {
         User user = UserMother.createDefaultAndPersist(em);
         em.persist(user);
         em.flush();
@@ -427,7 +427,7 @@ public class UserServiceIntTest {
 
     @Test
     @Transactional
-    public void shouldUpdateUserFetchedByCurrentWithSystemAccountTest() {
+    public void shouldUpdateUserFetchedByCurrentWithSystemAccount() {
         Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccount();
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
