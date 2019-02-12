@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.icarol;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.benetech.servicenet.adapter.icarol.model.ICarolBaseData;
 import org.benetech.servicenet.adapter.icarol.model.ICarolRelated;
@@ -14,11 +15,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+@Slf4j
 final class ICarolDataCollector {
 
     private static final String ID = "id=";
     private static final String PARAMS_BEGINNING = "?";
     private static final String PARAMS_DELIMITER = "&";
+    private static final int PART_1 = 1;
+    private static final int PART_2 = 2;
+    private static final int PART_3 = 3;
+    private static final int PART_4 = 4;
 
     static JsonArray getData(Header[] headers, List<ICarolSimpleResponseElement> batch, String uri) {
         String params = getIdsAsQueryParameters(batch);
@@ -35,7 +41,9 @@ final class ICarolDataCollector {
                                                           Header[] headers, Class<T> clazz, String uri) {
         List<T> result = new ArrayList<>();
         JsonArray jsonArray = new JsonArray();
+        int i = 0;
         for (List<ICarolSimpleResponseElement> batch : batches) {
+            logProgress(clazz, i++, batches.size());
             jsonArray.addAll(getData(headers, batch, uri));
         }
 
@@ -45,6 +53,27 @@ final class ICarolDataCollector {
         }
 
         return result;
+    }
+
+    private static void logProgress(Class clazz, int batchNr, int size) {
+        int part = getProcessPart(clazz);
+        int maxPercentage = 100;
+        log.info("Collecting data for ICarol (part " + part + " of 4): " + maxPercentage * batchNr / size + "% completed");
+    }
+
+    private static int getProcessPart(Class clazz) {
+        switch (clazz.getSimpleName()) {
+            case "ICarolProgram":
+                return PART_1;
+            case "ICarolSite":
+                return PART_2;
+            case "ICarolAgency":
+                return PART_3;
+            case "ICarolServiceSite":
+                return PART_4;
+            default:
+                return 0;
+        }
     }
 
     static <T extends ICarolBaseData, V extends ICarolBaseData> List<T> findRelatedEntities(
