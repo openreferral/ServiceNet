@@ -151,7 +151,7 @@ public class AbstractDataAdapterDocumentUploadTest {
         assertEquals(Integer.valueOf(0), report.getNumberOfUpdatedServices());
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void shouldFailDueToMissingValuesTest() throws IOException {
         String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_MISSING_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());

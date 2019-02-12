@@ -255,7 +255,7 @@ public class ICarolDataAdapterCompleteTest {
     }
 
     @Test
-    @Ignore("We should add details based on site.accessibility.public.") //TODO: wiki
+    @Ignore("We should add details based on site.accessibility.public.")
     public void shouldImportCompleteAccessibility() {
         adapter.importData(importData);
         ArgumentCaptor<AccessibilityForDisabilities> captor = ArgumentCaptor.forClass(AccessibilityForDisabilities.class);

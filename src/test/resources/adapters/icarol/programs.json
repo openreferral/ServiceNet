@@ -77,7 +77,7 @@
       },
       {
         "contact": {
-          "url": "www.example.org",
+          "url": "www.example.example",
           "label": "Website",
           "type": "Website"
         },
@@ -358,7 +358,7 @@
       },
       {
         "contact": {
-          "url": "www.example.org",
+          "url": "www.example.example",
           "label": "Website",
           "type": "Website"
         },
@@ -527,7 +527,7 @@
     },
     "fees": "None",
     "applicationProcess": "Pre-applications will be accepted on-line ONLY and may be submitted anytime day or night during the opening time period from any computer with Internet access. ",
-    "eligibility": "Any family, single, elderly and/or disabled person may apply who meets the qualifications. Please see website for more details at www.ABCD.org or see program description.",
+    "eligibility": "Any family, single, elderly and/or disabled person may apply who meets the qualifications. Please see website for more details at www.ABCD.example or see program description.",
     "translations": ["en"],
     "cultureCode": "",
     "customFields": [
@@ -621,7 +621,7 @@
       },
       {
         "contact": {
-          "address": "stuff@voluntarywork.com",
+          "address": "stuff@voluntarywork.example",
           "label": "Main",
           "type": "EmailAddress"
         },
@@ -635,7 +635,7 @@
           "titles": ["President/CEO"],
           "contactMethods": [
             {
-              "address": "stuff@voluntarywork.com",
+              "address": "stuff@voluntarywork.example",
               "type": "EmailAddress"
             }
           ],
@@ -658,7 +658,7 @@
       },
       {
         "contact": {
-          "url": "www.alphabetfoundation.org",
+          "url": "www.alphabetfoundation.example",
           "label": "Website",
           "type": "Website"
         },
@@ -938,7 +938,7 @@
       },
       {
         "contact": {
-          "address": "stuff@voluntarywork.com",
+          "address": "stuff@voluntarywork.example",
           "label": "Main",
           "type": "EmailAddress"
         },
