@@ -62,19 +62,19 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(target = "id", ignore = true)
     AccessibilityForDisabilities mapAccessibility(ICarolAccessibility accessibility);
 
-    @Mapping(source = "contact.line1", target = "address1")
-    @Mapping(source = "contact.zipPostalCode", target = "postalCode")
-    @Mapping(source = "contact.country", target = "country")
-    @Mapping(source = "contact.stateProvince", target = "stateProvince")
-    @Mapping(source = "contact.city", target = "city")
+    @Mapping(source = "contact.line1", target = "address1", defaultValue = "N/A")
+    @Mapping(source = "contact.zipPostalCode", target = "postalCode", defaultValue = "N/A")
+    @Mapping(source = "contact.country", target = "country", defaultValue = "N/A")
+    @Mapping(source = "contact.stateProvince", target = "stateProvince", defaultValue = "N/A")
+    @Mapping(source = "contact.city", target = "city", defaultValue = "N/A")
     @Mapping(target = "id", ignore = true)
     PhysicalAddress mapToPhysicalAddress(ICarolContactDetails details);
 
-    @Mapping(source = "contact.line1", target = "address1")
-    @Mapping(source = "contact.zipPostalCode", target = "postalCode")
-    @Mapping(source = "contact.country", target = "country")
-    @Mapping(source = "contact.stateProvince", target = "stateProvince")
-    @Mapping(source = "contact.city", target = "city")
+    @Mapping(source = "contact.line1", target = "address1", defaultValue = "N/A")
+    @Mapping(source = "contact.zipPostalCode", target = "postalCode", defaultValue = "N/A")
+    @Mapping(source = "contact.country", target = "country", defaultValue = "N/A")
+    @Mapping(source = "contact.stateProvince", target = "stateProvince", defaultValue = "N/A")
+    @Mapping(source = "contact.city", target = "city", defaultValue = "N/A")
     @Mapping(target = "id", ignore = true)
     PostalAddress mapToPostalAddress(ICarolContactDetails details);
 
