@@ -89,7 +89,7 @@ public class ActivityServiceImplTest {
         em.persist(conflict);
         em.flush();
 
-        user = userService.getUserWithAuthorities()
+        user = userService.getUserWithAuthoritiesAndAccount()
             .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
         user.setSystemAccount(systemAccount);
         em.persist(user);

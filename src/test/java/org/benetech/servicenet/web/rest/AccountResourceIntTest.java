@@ -142,7 +142,7 @@ public class AccountResourceIntTest {
 
     @Test
     public void testGetExistingAccount() throws Exception {
-        when(mockUserService.getUserWithAuthorities()).thenReturn(Optional.of(UserMother.admin()));
+        when(mockUserService.getUserWithAuthoritiesAndAccount()).thenReturn(Optional.of(UserMother.admin()));
 
         restUserMockMvc.perform(get("/api/account")
             .accept(MediaType.APPLICATION_JSON))
@@ -159,7 +159,7 @@ public class AccountResourceIntTest {
 
     @Test
     public void testGetUnknownAccount() throws Exception {
-        when(mockUserService.getUserWithAuthorities()).thenReturn(Optional.empty());
+        when(mockUserService.getUserWithAuthoritiesAndAccount()).thenReturn(Optional.empty());
 
         restUserMockMvc.perform(get("/api/account")
             .accept(MediaType.APPLICATION_PROBLEM_JSON))
@@ -876,7 +876,7 @@ public class AccountResourceIntTest {
     @Test
     @Transactional
     public void shouldUpdateSystemAccountForCurrentUser() throws Exception {
-        Optional<User> fetchedOpt = userService.getUserWithAuthorities();
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccount();
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
         SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
@@ -884,7 +884,7 @@ public class AccountResourceIntTest {
         userDTO.setSystemAccountId(account.getId());
         userService.updateUser(userDTO);
 
-        Optional<User> resultOpt = userService.getUserWithAuthorities();
+        Optional<User> resultOpt = userService.getUserWithAuthoritiesAndAccount();
 
         assertTrue(resultOpt.isPresent());
         assertEquals(resultOpt.get().getSystemAccount().getName(), account.getName());

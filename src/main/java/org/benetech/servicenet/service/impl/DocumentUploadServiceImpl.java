@@ -123,7 +123,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     @Override
     public DocumentUpload saveForCurrentUser(DocumentUpload documentUpload) {
-        Optional<User> currentUser = userService.getUserWithAuthorities();
+        Optional<User> currentUser = userService.getUserWithAuthoritiesAndAccount();
         if (currentUser.isPresent()) {
             documentUpload.setDateUploaded(ZonedDateTime.now(ZoneId.systemDefault()));
             documentUpload.setUploader(currentUser.get());
@@ -189,7 +189,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             return currentProviderName;
         }
 
-        Optional<User> user = userService.getUserWithAuthorities();
+        Optional<User> user = userService.getUserWithAuthoritiesAndAccount();
         if (user.isPresent()) {
             if (user.get().getSystemAccount() != null) {
                 return user.get().getSystemAccount().getName();

@@ -260,7 +260,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccount(user.getId());
 
         assertTrue(fetchedOpt.isPresent());
         User fetched = fetchedOpt.get();
@@ -281,7 +281,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccount(user.getId());
 
         assertTrue(fetchedOpt.isPresent());
         assertFalse(fetchedOpt.get().getAuthorities().isEmpty());
@@ -297,7 +297,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccount(user.getId());
 
         assertTrue(fetchedOpt.isPresent());
         assertNotNull(fetchedOpt.get().getSystemAccount());
@@ -311,7 +311,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccount(user.getId());
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
 
@@ -326,7 +326,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccount(user.getId());
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
         SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
@@ -347,7 +347,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccountByLogin(user.getLogin());
 
         assertTrue(fetchedOpt.isPresent());
         User fetched = fetchedOpt.get();
@@ -368,7 +368,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccountByLogin(user.getLogin());
 
         assertTrue(fetchedOpt.isPresent());
         assertFalse(fetchedOpt.get().getAuthorities().isEmpty());
@@ -384,7 +384,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccountByLogin(user.getLogin());
 
         assertTrue(fetchedOpt.isPresent());
         assertNotNull(fetchedOpt.get().getSystemAccount());
@@ -398,7 +398,7 @@ public class UserServiceIntTest {
         em.persist(user);
         em.flush();
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccountByLogin(user.getLogin());
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
 
@@ -418,7 +418,7 @@ public class UserServiceIntTest {
         userDTO.setSystemAccountId(account.getId());
         userService.updateUser(userDTO);
 
-        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccountByLogin(user.getLogin());
 
         assertTrue(fetchedOpt.isPresent());
         assertNotNull(fetchedOpt.get().getSystemAccount());
@@ -428,7 +428,7 @@ public class UserServiceIntTest {
     @Test
     @Transactional
     public void shouldUpdateUserFetchedByCurrentWithSystemAccountTest() {
-        Optional<User> fetchedOpt = userService.getUserWithAuthorities();
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesAndAccount();
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
         SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
@@ -436,7 +436,7 @@ public class UserServiceIntTest {
         userDTO.setSystemAccountId(account.getId());
         userService.updateUser(userDTO);
 
-        Optional<User> resultOpt = userService.getUserWithAuthorities();
+        Optional<User> resultOpt = userService.getUserWithAuthoritiesAndAccount();
 
         assertTrue(resultOpt.isPresent());
         assertEquals(resultOpt.get().getSystemAccount().getName(), account.getName());
