@@ -40,6 +40,7 @@ public class TmpImportServiceImpl implements TmpImportService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
                                                    String providerName, DataImportReport report) {
         Organization organization = organizationImportService.createOrUpdateOrganization(

@@ -139,7 +139,6 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         }
     }
 
-    @ConfidentialFilter
     private void createOrUpdateServiceTaxonomy(Set<ServiceTaxonomy> serviceTaxonomies, String providerName,
                                                Service service) {
         Set<ServiceTaxonomy> savedServiceTaxonomies = new HashSet<>();
@@ -149,6 +148,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         service.setTaxonomies(savedServiceTaxonomies);
     }
 
+    @ConfidentialFilter
     private ServiceTaxonomy persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String providerName, Service service) {
         if (serviceTaxonomy == null) {
             return null;
@@ -176,6 +176,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         service.setDocs(savedDocs);
     }
 
+    @ConfidentialFilter
     private RequiredDocument persistRequiredDocument(RequiredDocument document, String externalDbId,
                                                      String providerName, Service service) {
         document.setSrvc(service);

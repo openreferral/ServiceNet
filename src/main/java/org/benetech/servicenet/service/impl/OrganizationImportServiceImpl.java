@@ -10,6 +10,7 @@ import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.SystemAccountService;
+import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -59,6 +60,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         return organization;
     }
 
+    @ConfidentialFilter
     private void createOrUpdateFundingForOrganization(Funding funding, Organization organization) {
         if (funding != null) {
             Optional<Funding> fundingFormDb = fundingRepository.findOneByOrganizationId(organization.getId());
