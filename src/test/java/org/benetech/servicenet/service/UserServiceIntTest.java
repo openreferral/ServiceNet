@@ -1,15 +1,20 @@
 package org.benetech.servicenet.service;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.PersistentToken;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.listener.HibernatePostCreateListener;
 import org.benetech.servicenet.listener.HibernatePostDeleteListener;
 import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.mother.SystemAccountMother;
+import org.benetech.servicenet.mother.UserMother;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.UserRepository;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.util.RandomUtil;
 import org.junit.Before;
@@ -27,6 +32,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,6 +42,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 /**
@@ -43,7 +54,7 @@ import static org.mockito.Mockito.when;
  * @see UserService
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = { ServiceNetApp.class, MockedUserTestConfiguration.class })
 @Transactional
 public class UserServiceIntTest {
 
@@ -76,6 +87,9 @@ public class UserServiceIntTest {
 
     @Autowired
     private AuditingHandler auditingHandler;
+
+    @PersistenceContext
+    private EntityManager em;
 
     private User user;
 
@@ -239,4 +253,193 @@ public class UserServiceIntTest {
         assertThat(userRepository.findOneByLogin("johndoe")).isNotPresent();
     }
 
+    @Test
+    @Transactional
+    public void shouldFetchUserByIdWithAllSimpleValuesTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+
+        assertTrue(fetchedOpt.isPresent());
+        User fetched = fetchedOpt.get();
+        assertEquals(user.getLogin(), fetched.getLogin());
+        assertEquals(user.getPassword(), fetched.getPassword());
+        assertEquals(user.getEmail(), fetched.getEmail());
+        assertEquals(user.getFirstName(), fetched.getFirstName());
+        assertEquals(user.getFirstName(), fetched.getFirstName());
+        assertEquals(user.getLastName(), fetched.getLastName());
+        assertEquals(user.getImageUrl(), fetched.getImageUrl());
+        assertEquals(user.getLangKey(), fetched.getLangKey());
+    }
+
+    @Test
+    @Transactional
+    public void shouldFetchUserByIdWithAuthoritiesTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+
+        assertTrue(fetchedOpt.isPresent());
+        assertFalse(fetchedOpt.get().getAuthorities().isEmpty());
+        assertEquals(1, fetchedOpt.get().getAuthorities().size());
+        assertTrue(fetchedOpt.get().getAuthorities().stream().anyMatch(
+            x -> x.getName().equalsIgnoreCase(AuthoritiesConstants.USER)));
+    }
+
+    @Test
+    @Transactional
+    public void shouldFetchUserByIdWithSystemAccountTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+
+        assertTrue(fetchedOpt.isPresent());
+        assertNotNull(fetchedOpt.get().getSystemAccount());
+        assertEquals(SystemAccountMother.DEFAULT_NAME, fetchedOpt.get().getSystemAccount().getName());
+    }
+
+    @Test
+    @Transactional
+    public void shouldConvertFetchedUserByIdWithSystemAccountTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+        assertTrue(fetchedOpt.isPresent());
+        UserDTO userDTO = new UserDTO(fetchedOpt.get());
+
+        assertNotNull(userDTO.getSystemAccountName());
+        assertEquals(SystemAccountMother.DEFAULT_NAME, userDTO.getSystemAccountName());
+    }
+
+    @Test
+    @Transactional
+    public void shouldUpdateFetchedUserByIdWithSystemAccountTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthorities(user.getId());
+        assertTrue(fetchedOpt.isPresent());
+        UserDTO userDTO = new UserDTO(fetchedOpt.get());
+        SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
+        userDTO.setSystemAccountName(account.getName());
+        userDTO.setSystemAccountId(account.getId());
+
+        Optional<UserDTO> updated = userService.updateUser(userDTO);
+
+        assertTrue(updated.isPresent());
+        assertNotNull(updated.get().getSystemAccountName());
+        assertEquals(SystemAccountMother.UPDATED_NAME, updated.get().getSystemAccountName());
+    }
+
+    @Test
+    @Transactional
+    public void shouldFetchUserByLoginWithAllSimpleValuesTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+
+        assertTrue(fetchedOpt.isPresent());
+        User fetched = fetchedOpt.get();
+        assertEquals(user.getLogin(), fetched.getLogin());
+        assertEquals(user.getPassword(), fetched.getPassword());
+        assertEquals(user.getEmail(), fetched.getEmail());
+        assertEquals(user.getFirstName(), fetched.getFirstName());
+        assertEquals(user.getFirstName(), fetched.getFirstName());
+        assertEquals(user.getLastName(), fetched.getLastName());
+        assertEquals(user.getImageUrl(), fetched.getImageUrl());
+        assertEquals(user.getLangKey(), fetched.getLangKey());
+    }
+
+    @Test
+    @Transactional
+    public void shouldFetchUserByLoginWithAuthoritiesTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+
+        assertTrue(fetchedOpt.isPresent());
+        assertFalse(fetchedOpt.get().getAuthorities().isEmpty());
+        assertEquals(1, fetchedOpt.get().getAuthorities().size());
+        assertTrue(fetchedOpt.get().getAuthorities().stream().anyMatch(
+            x -> x.getName().equalsIgnoreCase(AuthoritiesConstants.USER)));
+    }
+
+    @Test
+    @Transactional
+    public void shouldFetchUserByLoginWithSystemAccountTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+
+        assertTrue(fetchedOpt.isPresent());
+        assertNotNull(fetchedOpt.get().getSystemAccount());
+        assertEquals(SystemAccountMother.DEFAULT_NAME, fetchedOpt.get().getSystemAccount().getName());
+    }
+
+    @Test
+    @Transactional
+    public void shouldConvertFetchedUserByLoginWithSystemAccountTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+        assertTrue(fetchedOpt.isPresent());
+        UserDTO userDTO = new UserDTO(fetchedOpt.get());
+
+        assertNotNull(userDTO.getSystemAccountName());
+        assertEquals(SystemAccountMother.DEFAULT_NAME, userDTO.getSystemAccountName());
+    }
+
+    @Test
+    @Transactional
+    public void shouldUpdateUserFetchedByLoginWithSystemAccountTest() {
+        User user = UserMother.createDefaultAndPersist(em);
+        em.persist(user);
+        em.flush();
+        UserDTO userDTO = new UserDTO(user);
+        SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
+        userDTO.setSystemAccountName(account.getName());
+        userDTO.setSystemAccountId(account.getId());
+        userService.updateUser(userDTO);
+
+        Optional<User> fetchedOpt = userService.getUserWithAuthoritiesByLogin(user.getLogin());
+
+        assertTrue(fetchedOpt.isPresent());
+        assertNotNull(fetchedOpt.get().getSystemAccount());
+        assertEquals(SystemAccountMother.UPDATED_NAME, fetchedOpt.get().getSystemAccount().getName());
+    }
+
+    @Test
+    @Transactional
+    public void shouldUpdateUserFetchedByCurrentWithSystemAccountTest() {
+        Optional<User> fetchedOpt = userService.getUserWithAuthorities();
+        assertTrue(fetchedOpt.isPresent());
+        UserDTO userDTO = new UserDTO(fetchedOpt.get());
+        SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
+        userDTO.setSystemAccountName(account.getName());
+        userDTO.setSystemAccountId(account.getId());
+        userService.updateUser(userDTO);
+
+        Optional<User> resultOpt = userService.getUserWithAuthorities();
+
+        assertTrue(resultOpt.isPresent());
+        assertEquals(resultOpt.get().getSystemAccount().getName(), account.getName());
+        assertEquals(resultOpt.get().getSystemAccount().getId(), account.getId());
+    }
 }

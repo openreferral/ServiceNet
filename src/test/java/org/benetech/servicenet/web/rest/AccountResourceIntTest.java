@@ -5,7 +5,9 @@ import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.PersistentToken;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.mother.UserMother;
 import org.benetech.servicenet.repository.AuthorityRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
@@ -34,6 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -42,6 +46,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -60,6 +67,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class AccountResourceIntTest {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     private UserRepository userRepository;
@@ -861,5 +871,31 @@ public class AccountResourceIntTest {
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(keyAndPassword)))
             .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @Transactional
+    public void shouldUpdateSystemAccountForCurrentUser() throws Exception {
+        Optional<User> fetchedOpt = userService.getUserWithAuthorities();
+        assertTrue(fetchedOpt.isPresent());
+        UserDTO userDTO = new UserDTO(fetchedOpt.get());
+        SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
+        userDTO.setSystemAccountName(account.getName());
+        userDTO.setSystemAccountId(account.getId());
+        userService.updateUser(userDTO);
+
+        Optional<User> resultOpt = userService.getUserWithAuthorities();
+
+        assertTrue(resultOpt.isPresent());
+        assertEquals(resultOpt.get().getSystemAccount().getName(), account.getName());
+        assertEquals(resultOpt.get().getSystemAccount().getId(), account.getId());
+
+        restMvc.perform(get("/api/account")
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.systemAccountName").value(SystemAccountMother.UPDATED_NAME))
+            .andExpect(jsonPath("$.authorities")
+                .value(hasItems(AuthoritiesConstants.USER, AuthoritiesConstants.ADMIN)));
     }
 }
