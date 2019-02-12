@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
 import org.benetech.servicenet.adapter.icarol.model.ICarolDataToPersist;
 import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import static org.benetech.servicenet.adapter.icarol.ICarolDataCollector.findRelatedEntities;
 
+@Slf4j
 class RelationManager {
 
     private static final String SITE = "Site";
@@ -55,13 +57,20 @@ class RelationManager {
     }
 
     private void saveOrganizationsAndRelatedData(ICarolDataToPersist dataToPersist, ImportData importData) {
+        int i = 0;
         for (ICarolAgency agency : dataToPersist.getAgencies()) {
+            logProgress(i++, dataToPersist.getAgencies().size());
             persistence.importOrganization(importData, agency).ifPresent(org -> {
                 saveLocationsAndRelatedData(
                     findRelatedEntities(dataToPersist.getSites(), agency, SITE),
                     dataToPersist, importData, org, agency);
             });
         }
+    }
+
+    private static void logProgress(int itemNr, int size) {
+        int maxPercentage = 100;
+        log.info("Saving data for ICarol: " + maxPercentage * itemNr / size + "% completed");
     }
 
     private void saveOrganizationRelatedData(List<ICarolProgram> relatedPrograms, Location location, ImportData importData,
