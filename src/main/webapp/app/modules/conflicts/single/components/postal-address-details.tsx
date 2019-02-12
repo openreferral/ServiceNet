@@ -19,10 +19,10 @@ export interface IPostalAddressDetailsState {
 
 export class PostalAddressDetails extends React.Component<IPostalAddressDetailsProp, IPostalAddressDetailsState> {
   state: IPostalAddressDetailsState = {
-    isAreaOpen: true
+    isAreaOpen: false
   };
 
-  toggleLocationAreaOpen = () => {
+  toggleAreaOpen = () => {
     this.setState({
       isAreaOpen: !this.state.isAreaOpen
     });
@@ -34,11 +34,11 @@ export class PostalAddressDetails extends React.Component<IPostalAddressDetailsP
     return (
       <div>
         <h4 className="title">
-          <div className="collapseBtn" onClick={this.toggleLocationAreaOpen}>
+          <div className="collapseBtn" onClick={this.toggleAreaOpen}>
             <div className="collapseIcon">
               <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
             </div>
-            <Translate contentKey="singleRecordView.details.physicalAddressTitle" />
+            <Translate contentKey="singleRecordView.details.postalAddressTitle" />
           </div>
         </h4>
         <Collapse isOpen={this.state.isAreaOpen}>

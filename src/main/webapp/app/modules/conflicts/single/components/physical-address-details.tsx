@@ -19,10 +19,10 @@ export interface IPhysicalAddressDetailsState {
 
 export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDetailsProp, IPhysicalAddressDetailsState> {
   state: IPhysicalAddressDetailsState = {
-    isAreaOpen: true
+    isAreaOpen: false
   };
 
-  toggleLocationAreaOpen = () => {
+  toggleAreaOpen = () => {
     this.setState({
       isAreaOpen: !this.state.isAreaOpen
     });
@@ -34,7 +34,7 @@ export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDeta
     return (
       <div>
         <h4 className="title">
-          <div className="collapseBtn" onClick={this.toggleLocationAreaOpen}>
+          <div className="collapseBtn" onClick={this.toggleAreaOpen}>
             <div className="collapseIcon">
               <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
             </div>

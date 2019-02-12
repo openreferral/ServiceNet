@@ -29,15 +29,17 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
 
   render() {
     const { locations, locationsNumber } = this.state;
+    const location = locations[locationsNumber];
     const locationDetails =
       locations.length > locationsNumber ? (
         <SingleLocationDetails
           {...this.props}
           changeRecord={this.changeRecord}
           isOnlyOne={locations.length <= 1}
-          location={locations[locationsNumber].location}
-          physicalAddress={locations[locationsNumber].physicalAddress ? locations[locationsNumber].physicalAddress : {}}
-          postalAddress={locations[locationsNumber].postalAddress ? locations[locationsNumber].postalAddress : {}}
+          location={location.location}
+          physicalAddress={location.physicalAddress ? location.physicalAddress : {}}
+          postalAddress={location.postalAddress ? location.postalAddress : {}}
+          hours={location.regularScheduleOpeningHours}
           locationsCount={`(${locationsNumber + 1}/${locations.length}) `}
         />
       ) : null;

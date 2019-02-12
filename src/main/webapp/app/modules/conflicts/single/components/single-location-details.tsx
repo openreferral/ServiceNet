@@ -8,9 +8,11 @@ import { IActivity } from 'app/shared/model/activity.model';
 import { ILocation } from 'app/shared/model/location.model';
 import { PhysicalAddressDetails } from './physical-address-details';
 import { PostalAddressDetails } from './postal-address-details';
+import { OpeningHoursDetails } from './opening-hours-details';
 import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
 import { IPostalAddress } from 'app/shared/model/postal-address.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IOpeningHours } from 'app/shared/model/opening-hours.model';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -20,6 +22,7 @@ export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   locationsCount: string;
   changeRecord: any;
   isOnlyOne: boolean;
+  hours: IOpeningHours[];
 }
 
 export interface ISingleLocationDetailsState {
@@ -31,21 +34,21 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     isAreaOpen: false
   };
 
-  toggleLocationAreaOpen = () => {
+  toggleAreaOpen = () => {
     this.setState({
       isAreaOpen: !this.state.isAreaOpen
     });
   };
 
   render() {
-    const { location, physicalAddress, postalAddress, isOnlyOne } = this.props;
+    const { location, physicalAddress, postalAddress, isOnlyOne, hours } = this.props;
 
     return (
       <Row>
         <Col sm="6">
           <hr />
           <h4 className="title">
-            <div className="collapseBtn" onClick={this.toggleLocationAreaOpen}>
+            <div className="collapseBtn" onClick={this.toggleAreaOpen}>
               <div className="collapseIcon">
                 <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
               </div>
@@ -86,6 +89,7 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
 
               <PhysicalAddressDetails {...this.props} address={physicalAddress} />
               <PostalAddressDetails {...this.props} address={postalAddress} />
+              <OpeningHoursDetails {...this.props} hours={hours} />
             </Form>
           </Collapse>
         </Col>
