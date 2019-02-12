@@ -11,7 +11,7 @@ import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.LocationService;
-import org.benetech.servicenet.service.SharedLogicService;
+import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class LocationImportServiceImpl implements LocationImportService {
     private EntityManager em;
 
     @Autowired
-    private SharedLogicService sharedLogicService;
+    private SharedImportService sharedImportService;
 
     @Autowired
     private LocationService locationService;
@@ -124,7 +124,7 @@ public class LocationImportServiceImpl implements LocationImportService {
 
     private void createOrUpdateOpeningHoursForLocation(RegularSchedule schedule, Location location) {
         if (schedule != null) {
-            sharedLogicService.createOrUpdateOpeningHours(schedule.getOpeningHours(), location, schedule);
+            sharedImportService.createOrUpdateOpeningHours(schedule.getOpeningHours(), location, schedule);
         }
     }
 
@@ -168,7 +168,7 @@ public class LocationImportServiceImpl implements LocationImportService {
     }
 
     private void createOrUpdateFilteredPhonesForLocation(Set<Phone> phones, @Nonnull Location location) {
-        location.setPhones(sharedLogicService.persistPhones(phones, location.getPhones()));
+        location.setPhones(sharedImportService.persistPhones(phones, location.getPhones()));
     }
 
     private void fillDataFromDb(Location newLocation, Location locationFromDb) {

@@ -7,17 +7,15 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
-import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
 import org.benetech.servicenet.service.TmpImportService;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +24,7 @@ import java.util.Set;
 public class TmpImportServiceImpl implements TmpImportService {
 
     @Autowired
-    private OrganizationMatchService organizationMatchService;
+    private TransactionSynchronizationService transactionSynchronizationService;
 
     @Autowired
     private OrganizationImportService organizationImportService;
@@ -42,6 +40,7 @@ public class TmpImportServiceImpl implements TmpImportService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
                                                    String providerName, DataImportReport report) {
         Organization organization = organizationImportService.createOrUpdateOrganization(
@@ -77,23 +76,11 @@ public class TmpImportServiceImpl implements TmpImportService {
         return serviceImportService.createOrUpdateService(filledService, externalDbId, providerName, report);
     }
 
-    @ConfidentialFilter
-    private Service createOrUpdateServiceExistingTransaction(Service filledService, String externalDbId,
-                                                            String providerName, DataImportReport report) {
-        return serviceImportService.createOrUpdateService(filledService, externalDbId, providerName, report);
-    }
-
-    @ConfidentialFilter
-    private Location createOrUpdateLocationExistingTransaction(Location filledLocation, String externalDbId,
-                                                               String providerName) {
-        return locationImportService.createOrUpdateLocation(filledLocation, externalDbId, providerName);
-    }
-
     private void importServices(Set<Service> services, Organization org, String providerName, DataImportReport report) {
         Set<Service> savedServices = new HashSet<>();
         for (Service service : services) {
             service.setOrganization(org);
-            savedServices.add(createOrUpdateServiceExistingTransaction(
+            savedServices.add(createOrUpdateService(
                 service, service.getExternalDbId(), providerName, report));
         }
         org.setServices(savedServices);
@@ -103,18 +90,13 @@ public class TmpImportServiceImpl implements TmpImportService {
         Set<Location> savedLocations = new HashSet<>();
         for (Location location : locations) {
             location.setOrganization(org);
-            savedLocations.add(createOrUpdateLocationExistingTransaction(
+            savedLocations.add(createOrUpdateLocation(
                 location, location.getExternalDbId(), providerName));
         }
         org.setLocations(savedLocations);
     }
 
     private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-            @Override
-            public void afterCommit() {
-                organizationMatchService.createOrUpdateOrganizationMatches(organization);
-            }
-        });
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
     }
 }

@@ -8,7 +8,7 @@ import org.benetech.servicenet.domain.Service;
 
 import java.util.Set;
 
-public interface SharedLogicService {
+public interface SharedImportService {
 
     void createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service,
                                     RegularSchedule schedule);
