@@ -1,68 +1,47 @@
 import React from 'react';
 import '../single-record-view.scss';
 import { connect } from 'react-redux';
-import InputField from './input-field';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IPostalAddress } from 'app/shared/model/postal-address.model';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Translate } from 'react-jhipster';
-import { Collapse } from 'reactstrap';
+import { AdditionalDetails } from './additional-details';
 
 export interface IPostalAddressDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   address: IPostalAddress;
 }
 
-export interface IPostalAddressDetailsState {
-  isAreaOpen: boolean;
-}
-
-export class PostalAddressDetails extends React.Component<IPostalAddressDetailsProp, IPostalAddressDetailsState> {
-  state: IPostalAddressDetailsState = {
-    isAreaOpen: false
-  };
-
-  toggleAreaOpen = () => {
-    this.setState({
-      isAreaOpen: !this.state.isAreaOpen
-    });
+export class PostalAddressDetails extends React.Component<IPostalAddressDetailsProp> {
+  getTextField = (address, fieldName) => {
+    return {
+      type: 'text',
+      fieldName: fieldName,
+      defaultValue: address[fieldName]
+    };
   };
 
   render() {
     const { address } = this.props;
+    const fields = [
+      this.getTextField(address, 'attention'),
+      this.getTextField(address, 'address1'),
+      this.getTextField(address, 'city'),
+      this.getTextField(address, 'region'),
+      this.getTextField(address, 'stateProvince'),
+      this.getTextField(address, 'postalCode'),
+      this.getTextField(address, 'country')
+    ];
 
     return (
-      <div>
-        <h4 className="title">
-          <div className="collapseBtn" onClick={this.toggleAreaOpen}>
-            <div className="collapseIcon">
-              <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
-            </div>
-            <Translate contentKey="singleRecordView.details.postalAddressTitle" />
-          </div>
-        </h4>
-        <Collapse isOpen={this.state.isAreaOpen}>
-          <InputField {...this.props} entityClass="PostalAddress" type="text" fieldName="attention" defaultValue={address.attention} />
-          <InputField {...this.props} entityClass="PostalAddress" type="text" fieldName="address1" defaultValue={address.address1} />
-          <InputField {...this.props} entityClass="PostalAddress" type="text" fieldName="city" defaultValue={address.city} />
-          <InputField {...this.props} entityClass="PostalAddress" type="text" fieldName="region" defaultValue={address.region} />
-          <InputField
-            {...this.props}
-            entityClass="PostalAddress"
-            type="text"
-            fieldName="stateProvince"
-            defaultValue={address.stateProvince}
-          />
-          <InputField
-            {...this.props}
-            entityClass="PostalAddress"
-            type="textarea"
-            fieldName="postalCode"
-            defaultValue={address.postalCode}
-          />
-          <InputField {...this.props} entityClass="PostalAddress" type="text" fieldName="country" defaultValue={address.country} />
-        </Collapse>
-      </div>
+      <AdditionalDetails
+        {...this.props}
+        fields={fields}
+        entityClass={'PostalAddress'}
+        customHeader={false}
+        additionalFields={false}
+        toggleAvailable={true}
+        isCustomToggle={false}
+        customToggleValue={false}
+      />
     );
   }
 }

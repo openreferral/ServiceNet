@@ -1,12 +1,12 @@
 import React from 'react';
-import { Col, Row, Form, Jumbotron } from 'reactstrap';
+import { Col, Row, Jumbotron } from 'reactstrap';
 import '../single-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
-import InputField from './input-field';
 import { Link } from 'react-router-dom';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IOrganization } from 'app/shared/model/organization.model';
+import { AdditionalDetails } from './additional-details';
 
 export interface IOrganizationDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -14,13 +14,19 @@ export interface IOrganizationDetailsProp extends StateProps, DispatchProps {
 
 export interface IOrganizationDetailsState {
   organization: IOrganization;
-  entityClass: string;
 }
 
 export class OrganizationDetails extends React.Component<IOrganizationDetailsProp, IOrganizationDetailsState> {
   state: IOrganizationDetailsState = {
-    organization: this.props.activity.record.organization,
-    entityClass: 'Organization'
+    organization: this.props.activity.record.organization
+  };
+
+  getTextField = (organization, fieldName) => {
+    return {
+      type: 'text',
+      fieldName: fieldName,
+      defaultValue: organization[fieldName]
+    };
   };
 
   render() {
@@ -28,21 +34,37 @@ export class OrganizationDetails extends React.Component<IOrganizationDetailsPro
     const { organization } = this.state;
     const firstMatch = activity.organizationMatches.length !== 0 ? activity.organizationMatches[0] : null;
 
+    const fields = [
+      this.getTextField(organization, 'name'),
+      this.getTextField(organization, 'alternateName'),
+      {
+        type: 'textarea',
+        fieldName: 'description',
+        defaultValue: organization.description
+      },
+      this.getTextField(organization, 'email'),
+      this.getTextField(organization, 'url'),
+      this.getTextField(organization, 'taxStatus'),
+      {
+        type: 'checkbox',
+        fieldName: 'active',
+        defaultValue: organization.active
+      }
+    ];
+
     return (
       <Row>
         <Col sm="6">
-          <h4 className="title">
-            <Translate contentKey="singleRecordView.details.organizationTitle" />
-          </h4>
-          <Form>
-            <InputField {...this.props} {...this.state} type="text" fieldName="name" defaultValue={organization.name} />
-            <InputField {...this.props} {...this.state} type="text" fieldName="alternateName" defaultValue={organization.alternateName} />
-            <InputField {...this.props} {...this.state} type="textarea" fieldName="description" defaultValue={organization.description} />
-            <InputField {...this.props} {...this.state} type="text" fieldName="email" defaultValue={organization.email} />
-            <InputField {...this.props} {...this.state} type="text" fieldName="url" defaultValue={organization.url} />
-            <InputField {...this.props} {...this.state} type="text" fieldName="taxStatus" defaultValue={organization.taxStatus} />
-            <InputField {...this.props} {...this.state} type="checkbox" fieldName="active" defaultValue={organization.active} />
-          </Form>
+          <AdditionalDetails
+            {...this.props}
+            fields={fields}
+            entityClass={'Organization'}
+            customHeader={false}
+            additionalFields={false}
+            toggleAvailable={false}
+            isCustomToggle={false}
+            customToggleValue={false}
+          />
         </Col>
         {firstMatch ? (
           <Col sm="3">

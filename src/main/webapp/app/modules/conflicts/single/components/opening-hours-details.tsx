@@ -19,7 +19,7 @@ export interface IOpeningHoursDetailsState {
 
 export class OpeningHoursDetails extends React.Component<IOpeningHoursDetailsProp, IOpeningHoursDetailsState> {
   state: IOpeningHoursDetailsState = {
-    isAreaOpen: false
+    isAreaOpen: true
   };
 
   toggleAreaOpen = () => {

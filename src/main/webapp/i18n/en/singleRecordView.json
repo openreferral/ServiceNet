@@ -5,10 +5,10 @@
       "otherTabs": "Other tabs..."
     },
     "details": {
-      "organizationTitle": "Organization details",
-      "locationsTitle": "Locations",
-      "physicalAddressTitle": "Physical address",
-      "postalAddressTitle": "Postal address",
+      "titleOrganization": "Organization details",
+      "titleLocations": "Locations",
+      "titlePhysicalAddress": "Physical address",
+      "titlePostalAddress": "Postal address",
       "openingHoursTitle": "Opening hours",
       "openingHoursWeekday": "Weekday",
       "openingHoursOpensAt": "Opens at",
