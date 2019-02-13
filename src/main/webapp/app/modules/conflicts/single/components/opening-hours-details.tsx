@@ -1,12 +1,12 @@
 import React from 'react';
 import '../single-record-view.scss';
 import { connect } from 'react-redux';
-import InputField from './input-field';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IOpeningHours } from 'app/shared/model/opening-hours.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Translate } from 'react-jhipster';
 import { Collapse, Table } from 'reactstrap';
+import { mapWeekdayToString } from 'app/shared/util/schedule-utils';
 
 export interface IOpeningHoursDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -26,27 +26,6 @@ export class OpeningHoursDetails extends React.Component<IOpeningHoursDetailsPro
     this.setState({
       isAreaOpen: !this.state.isAreaOpen
     });
-  };
-
-  mapWeekdayToString = day => {
-    switch (day) {
-      case 0:
-        return 'Monday';
-      case 1:
-        return 'Tuesday';
-      case 2:
-        return 'Wednesday';
-      case 3:
-        return 'Thursday';
-      case 4:
-        return 'Friday';
-      case 5:
-        return 'Saturday';
-      case 6:
-        return 'Sunday';
-      default:
-        return day;
-    }
   };
 
   render() {
@@ -80,7 +59,7 @@ export class OpeningHoursDetails extends React.Component<IOpeningHoursDetailsPro
               {hours
                 ? hours.map((day, i) => (
                     <tr key={i}>
-                      <th scope="row">{this.mapWeekdayToString(day.weekday)}</th>
+                      <th scope="row">{mapWeekdayToString(day.weekday)}</th>
                       <td>{day.opensAt}</td>
                       <td>{day.closesAt}</td>
                     </tr>
