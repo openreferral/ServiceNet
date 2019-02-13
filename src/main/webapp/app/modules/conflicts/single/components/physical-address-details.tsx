@@ -11,13 +11,11 @@ export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
 }
 
 export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDetailsProp> {
-  getTextField = (address, fieldName) => {
-    return {
-      type: 'text',
-      fieldName: fieldName,
-      defaultValue: address[fieldName]
-    };
-  };
+  getTextField = (address, fieldName) => ({
+    type: 'text',
+    fieldName,
+    defaultValue: address[fieldName]
+  });
 
   render() {
     const { address } = this.props;
@@ -38,7 +36,7 @@ export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDeta
         entityClass={'PhysicalAddress'}
         customHeader={false}
         additionalFields={false}
-        toggleAvailable={true}
+        toggleAvailable
         isCustomToggle={false}
         customToggleValue={false}
       />
