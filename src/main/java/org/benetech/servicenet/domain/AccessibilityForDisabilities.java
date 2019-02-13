@@ -7,6 +7,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ public class AccessibilityForDisabilities extends AbstractEntity implements Seri
 
     private static final long serialVersionUID = 1L;
 
+    @Lob
     @NotNull
     @Column(name = "accessibility", nullable = false)
     private String accessibility;
