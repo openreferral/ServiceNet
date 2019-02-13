@@ -4,7 +4,7 @@ import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Dropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
+import { Row, Col, Alert } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -17,6 +17,7 @@ export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProp
 
 export interface IHomeState extends IPaginationBaseState {
   dropdownOpen: boolean;
+  loggingOut: boolean;
 }
 
 export class Home extends React.Component<IHomeProp, IHomeState> {
@@ -26,7 +27,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     this.state = {
       ...getSortState(this.props.location, ITEMS_PER_PAGE),
       sort: SORT_SIZE_NAME,
-      dropdownOpen: false
+      dropdownOpen: false,
+      loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false
     };
   }
 
@@ -53,12 +55,16 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   };
 
   reset = () => {
-    Promise.all([this.props.getSession()]).then(() => {
-      this.props.reset();
-      this.setState({ activePage: 1 }, () => {
-        this.getEntities();
+    this.props.reset();
+    if (this.props.loginSuccess && !this.state.loggingOut) {
+      Promise.all([this.props.getSession()]).then(() => {
+        this.setState({ activePage: 1 }, () => {
+          this.getEntities();
+        });
       });
-    });
+    } else {
+      this.setState({ activePage: 1, loggingOut: false });
+    }
   };
 
   handleLoadMore = () => {
