@@ -22,7 +22,7 @@ export interface IUploadState {
 }
 
 registerPlugin(FilePondPluginFileValidateType);
-const supportedFileTypes = ['.csv', 'text/csv', '.json', 'application/json'];
+const supportedFileTypes = ['CSV', 'JSON'];
 const maxNumberOfFiles = 100;
 const valid = 'valid';
 
@@ -109,19 +109,13 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
 
   fileValidateTypeDetectType = (source, type) =>
     new Promise((resolve, reject) => {
-      type = this.handleUndefinedFileType(source, type);
+      type = this.getFileExtension(source);
       resolve(type);
     });
 
-  handleUndefinedFileType = (source, type) => {
-    if (type === '') {
-      const fileExtensionRegex = /(?:\.([^.]+))?$/;
-      const fileExtension = fileExtensionRegex.exec(source.name)[1];
-      if (fileExtension === 'csv') {
-        type = 'text/csv';
-      }
-    }
-    return type;
+  getFileExtension = source => {
+    const fileExtensionRegex = /(?:\.([^.]+))?$/;
+    return fileExtensionRegex.exec(source.name)[1].toUpperCase();
   };
 
   delimiterChange = event => {
