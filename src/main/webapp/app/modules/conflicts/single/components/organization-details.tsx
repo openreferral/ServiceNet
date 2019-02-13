@@ -21,13 +21,11 @@ export class OrganizationDetails extends React.Component<IOrganizationDetailsPro
     organization: this.props.activity.record.organization
   };
 
-  getTextField = (organization, fieldName) => {
-    return {
-      type: 'text',
-      fieldName: fieldName,
-      defaultValue: organization[fieldName]
-    };
-  };
+  getTextField = (organization, fieldName) => ({
+    type: 'text',
+    fieldName,
+    defaultValue: organization[fieldName]
+  });
 
   render() {
     const { activity } = this.props;
