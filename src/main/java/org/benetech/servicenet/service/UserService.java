@@ -274,18 +274,18 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthoritiesByLogin(String login) {
-        return userRepository.findOneWithAuthoritiesByLogin(login);
+    public Optional<User> getUserWithAuthoritiesAndAccountByLogin(String login) {
+        return userRepository.findOneWithAuthoritiesAndAccountByLogin(login);
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthorities(UUID id) {
-        return userRepository.findOneWithAuthoritiesById(id);
+    public Optional<User> getUserWithAuthoritiesAndAccount(UUID id) {
+        return userRepository.findOneWithAuthoritiesAndAccountById(id);
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthorities() {
-        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin);
+    public Optional<User> getUserWithAuthoritiesAndAccount() {
+        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesAndAccountByLogin);
     }
 
     /**
@@ -333,7 +333,7 @@ public class UserService {
     }
 
     public User getCurrentOrSystemUser() {
-        Optional<User> current = getUserWithAuthorities();
+        Optional<User> current = getUserWithAuthoritiesAndAccount();
         if (current.isPresent()) {
             return current.get();
         }
@@ -348,7 +348,7 @@ public class UserService {
      * @return true if any user is logged, and he has admin role
      */
     public boolean isCurrentUserAdmin() {
-        return getUserWithAuthorities().map(User::isAdmin)
+        return getUserWithAuthoritiesAndAccount().map(User::isAdmin)
             .orElse(false);
     }
 
