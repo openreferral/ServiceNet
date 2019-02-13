@@ -13,7 +13,7 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 /**
  * Mapper for the entity Location and its DTO LocationDTO.
  */
-@Mapper(componentModel = "spring", uses = {}, unmappedTargetPolicy = IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = IGNORE)
 public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
 
     @Mapping(target = "physicalAddress", ignore = true)

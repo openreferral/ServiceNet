@@ -18,6 +18,12 @@ public class RecordDTO implements Serializable {
 
     private OrganizationDTO organization;
 
+    private Set<LocationRecordDTO> locations;
+
+    private Set<ServiceDTO> services;
+
+    private Set<ContactDTO> contacts;
+
     private Set<FieldExclusionDTO> exclusions;
 
     private List<ConflictDTO> conflicts;
