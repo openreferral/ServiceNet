@@ -7,12 +7,12 @@ import { IActivity } from 'app/shared/model/activity.model';
 import { ILocation } from 'app/shared/model/location.model';
 import { PhysicalAddressDetails } from './physical-address-details';
 import { PostalAddressDetails } from './postal-address-details';
-import { OpeningHoursDetails } from './opening-hours-details';
+import { OpeningHoursDetails } from '../opening-hours-details';
 import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
 import { IPostalAddress } from 'app/shared/model/postal-address.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IOpeningHours } from 'app/shared/model/opening-hours.model';
-import { AdditionalDetails } from './additional-details';
+import { AdditionalDetails } from '../additional-details';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;

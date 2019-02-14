@@ -3,7 +3,7 @@ import '../single-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
-import { AdditionalDetails } from './additional-details';
+import { AdditionalDetails } from '../additional-details';
 
 export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;

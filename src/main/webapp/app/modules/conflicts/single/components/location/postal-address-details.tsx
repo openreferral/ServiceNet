@@ -3,7 +3,7 @@ import '../single-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IPostalAddress } from 'app/shared/model/postal-address.model';
-import { AdditionalDetails } from './additional-details';
+import { AdditionalDetails } from '../additional-details';
 
 export interface IPostalAddressDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
