@@ -2,33 +2,25 @@ import React from 'react';
 import '../../single-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
 import { AdditionalDetails } from '../additional-details';
+import { IFunding } from 'app/shared/model/funding.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
+export interface IFundingDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  address: IPhysicalAddress;
+  funding: IFunding;
 }
 
-export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDetailsProp> {
+export class FundingDetails extends React.Component<IFundingDetailsProp> {
   render() {
-    const address = this.props.address ? this.props.address : {};
-    const fields = [
-      getTextField(address, 'attention'),
-      getTextField(address, 'address1'),
-      getTextField(address, 'city'),
-      getTextField(address, 'region'),
-      getTextField(address, 'stateProvince'),
-      getTextField(address, 'postalCode'),
-      getTextField(address, 'country')
-    ];
+    const funding = this.props.funding ? this.props.funding : {};
+    const fields = [getTextField(funding, 'source')];
 
     return (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'PhysicalAddress'}
+        entityClass={'Funding'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
@@ -49,4 +41,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PhysicalAddressDetails);
+)(FundingDetails);

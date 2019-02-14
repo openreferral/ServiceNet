@@ -30,7 +30,7 @@ export class OpeningHoursDetails extends React.Component<IOpeningHoursDetailsPro
 
   render() {
     const { hours } = this.props;
-    return (
+    return hours ? (
       <div>
         <h4 className="title">
           <div className="collapseBtn" onClick={this.toggleAreaOpen}>
@@ -41,35 +41,35 @@ export class OpeningHoursDetails extends React.Component<IOpeningHoursDetailsPro
           </div>
         </h4>
         <Collapse isOpen={this.state.isAreaOpen}>
-          <Table bordered>
-            <thead>
-              <tr>
-                <th>
-                  <Translate contentKey="singleRecordView.details.openingHoursWeekday" />
-                </th>
-                <th>
-                  <Translate contentKey="singleRecordView.details.openingHoursOpensAt" />
-                </th>
-                <th>
-                  <Translate contentKey="singleRecordView.details.openingHoursClosesAt" />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {hours
-                ? hours.map((day, i) => (
-                    <tr key={i}>
-                      <th scope="row">{mapWeekdayToString(day.weekday)}</th>
-                      <td>{day.opensAt}</td>
-                      <td>{day.closesAt}</td>
-                    </tr>
-                  ))
-                : null}
-            </tbody>
-          </Table>
+          {
+            <Table bordered>
+              <thead>
+                <tr>
+                  <th>
+                    <Translate contentKey="singleRecordView.details.openingHoursWeekday" />
+                  </th>
+                  <th>
+                    <Translate contentKey="singleRecordView.details.openingHoursOpensAt" />
+                  </th>
+                  <th>
+                    <Translate contentKey="singleRecordView.details.openingHoursClosesAt" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {hours.map((day, i) => (
+                  <tr key={i}>
+                    <th scope="row">{mapWeekdayToString(day.weekday)}</th>
+                    <td>{day.opensAt}</td>
+                    <td>{day.closesAt}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          }
         </Collapse>
       </div>
-    );
+    ) : null;
   }
 }
 

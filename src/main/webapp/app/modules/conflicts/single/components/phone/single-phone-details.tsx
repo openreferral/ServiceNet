@@ -4,30 +4,25 @@ import '../../single-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { PhysicalAddressDetails } from './physical-address-details';
-import { PostalAddressDetails } from './postal-address-details';
-import { OpeningHoursDetails } from '../opening-hours-details';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdditionalDetails } from '../additional-details';
-import { ILocationRecord } from 'app/shared/model/location-record.model';
-import { LanguagesDetails } from '../languages-details';
-import { HolidayScheduleDetails } from '../holiday-schedule-details';
+import { IPhone } from 'app/shared/model/phone.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
+export interface ISinglePhoneDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  record: ILocationRecord;
-  locationsCount: string;
+  phone: IPhone;
+  phonesCount: string;
   changeRecord: any;
   isOnlyOne: boolean;
 }
 
-export interface ISingleLocationDetailsState {
+export interface ISinglePhoneDetailsState {
   isAreaOpen: boolean;
 }
 
-export class SingleLocationDetails extends React.Component<ISingleLocationDetailsProp, ISingleLocationDetailsState> {
-  state: ISingleLocationDetailsState = {
+export class SinglePhoneDetails extends React.Component<ISinglePhoneDetailsProp, ISinglePhoneDetailsState> {
+  state: ISinglePhoneDetailsState = {
     isAreaOpen: false
   };
 
@@ -38,14 +33,14 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
   };
 
   render() {
-    const { record, isOnlyOne } = this.props;
+    const { phone, isOnlyOne } = this.props;
     const customHeader = (
       <h4 className="title">
         <div className="collapseBtn" onClick={this.toggleAreaOpen}>
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleLocations" /> {this.props.locationsCount}
+          <Translate contentKey="singleRecordView.details.titlePhones" /> {this.props.phonesCount}
         </div>
         {isOnlyOne ? null : (
           <Button className="primary" onClick={this.props.changeRecord}>
@@ -54,25 +49,17 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
         )}
       </h4>
     );
-    const additionalFields = [
-      <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />,
-      <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />,
-      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
-      <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
-      <HolidayScheduleDetails key="holiday-schedule-details" {...this.props} schedule={record.holidaySchedule} />
-    ];
 
     const fields = [
-      getTextField(record.location, 'name'),
-      getTextField(record.location, 'alternateName'),
+      getTextField(phone, 'number'),
+      getTextField(phone, 'extension'),
+      getTextField(phone, 'type'),
+      getTextField(phone, 'language'),
       {
         type: 'textarea',
         fieldName: 'description',
-        defaultValue: record.location.description
-      },
-      getTextField(record.location, 'transportation'),
-      getTextField(record.location, 'latitude'),
-      getTextField(record.location, 'longitude')
+        defaultValue: phone.description
+      }
     ];
     return (
       <Row>
@@ -81,9 +68,9 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
           <AdditionalDetails
             {...this.props}
             fields={fields}
-            entityClass={'Location'}
+            entityClass={'Phone'}
             customHeader={customHeader}
-            additionalFields={additionalFields}
+            additionalFields={false}
             toggleAvailable
             isCustomToggle
             customToggleValue={this.state.isAreaOpen}
@@ -104,4 +91,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SingleLocationDetails);
+)(SinglePhoneDetails);

@@ -2,39 +2,39 @@ import React from 'react';
 import '../../single-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
 import { AdditionalDetails } from '../additional-details';
+import { IRequiredDocument } from 'app/shared/model/required-document.model';
+import { Translate } from 'react-jhipster';
+import { Badge } from 'reactstrap';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
+export interface IRequiredDocumentsDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  address: IPhysicalAddress;
+  docs: IRequiredDocument[];
 }
 
-export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDetailsProp> {
+export class RequiredDocumentsDetails extends React.Component<IRequiredDocumentsDetailsProp> {
   render() {
-    const address = this.props.address ? this.props.address : {};
-    const fields = [
-      getTextField(address, 'attention'),
-      getTextField(address, 'address1'),
-      getTextField(address, 'city'),
-      getTextField(address, 'region'),
-      getTextField(address, 'stateProvince'),
-      getTextField(address, 'postalCode'),
-      getTextField(address, 'country')
-    ];
+    const { docs } = this.props;
+    const fields = docs.map(document => getTextField(document, 'document'));
 
-    return (
+    return fields.length > 0 ? (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'PhysicalAddress'}
+        entityClass={'RequiredDocument'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
         isCustomToggle={false}
         customToggleValue={false}
       />
+    ) : (
+      <h4>
+        <Badge color="secondary">
+          <Translate contentKey="singleRecordView.details.noRecords" />
+        </Badge>
+      </h4>
     );
   }
 }
@@ -49,4 +49,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PhysicalAddressDetails);
+)(RequiredDocumentsDetails);

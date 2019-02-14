@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IPostalAddress } from 'app/shared/model/postal-address.model';
 import { AdditionalDetails } from '../additional-details';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IPostalAddressDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -11,22 +12,16 @@ export interface IPostalAddressDetailsProp extends StateProps, DispatchProps {
 }
 
 export class PostalAddressDetails extends React.Component<IPostalAddressDetailsProp> {
-  getTextField = (address, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: address[fieldName]
-  });
-
   render() {
     const address = this.props.address ? this.props.address : {};
     const fields = [
-      this.getTextField(address, 'attention'),
-      this.getTextField(address, 'address1'),
-      this.getTextField(address, 'city'),
-      this.getTextField(address, 'region'),
-      this.getTextField(address, 'stateProvince'),
-      this.getTextField(address, 'postalCode'),
-      this.getTextField(address, 'country')
+      getTextField(address, 'attention'),
+      getTextField(address, 'address1'),
+      getTextField(address, 'city'),
+      getTextField(address, 'region'),
+      getTextField(address, 'stateProvince'),
+      getTextField(address, 'postalCode'),
+      getTextField(address, 'country')
     ];
 
     return (

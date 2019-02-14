@@ -2,39 +2,39 @@ import React from 'react';
 import '../../single-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
 import { AdditionalDetails } from '../additional-details';
+import { Translate } from 'react-jhipster';
+import { Badge } from 'reactstrap';
+import { IServiceTaxonomy } from 'app/shared/model/service-taxonomy.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
+export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  address: IPhysicalAddress;
+  taxonomies: IServiceTaxonomy[];
 }
 
-export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDetailsProp> {
+export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomiesDetailsProp> {
   render() {
-    const address = this.props.address ? this.props.address : {};
-    const fields = [
-      getTextField(address, 'attention'),
-      getTextField(address, 'address1'),
-      getTextField(address, 'city'),
-      getTextField(address, 'region'),
-      getTextField(address, 'stateProvince'),
-      getTextField(address, 'postalCode'),
-      getTextField(address, 'country')
-    ];
+    const { taxonomies } = this.props;
+    const fields = taxonomies.map(taxonomy => getTextField(taxonomy, 'taxonomyDetails'));
 
-    return (
+    return fields.length > 0 ? (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'PhysicalAddress'}
+        entityClass={'ServiceTaxonomy'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
         isCustomToggle={false}
         customToggleValue={false}
       />
+    ) : (
+      <h4>
+        <Badge color="secondary">
+          <Translate contentKey="singleRecordView.details.noRecords" />
+        </Badge>
+      </h4>
     );
   }
 }
@@ -49,4 +49,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PhysicalAddressDetails);
+)(ServiceTaxonomiesDetails);
