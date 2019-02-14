@@ -7,6 +7,7 @@ import { IActivity } from 'app/shared/model/activity.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdditionalDetails } from '../additional-details';
 import { IPhone } from 'app/shared/model/phone.model';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ISinglePhoneDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -31,12 +32,6 @@ export class SinglePhoneDetails extends React.Component<ISinglePhoneDetailsProp,
     });
   };
 
-  getTextField = (phone, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: phone[fieldName]
-  });
-
   render() {
     const { phone, isOnlyOne } = this.props;
     const customHeader = (
@@ -56,10 +51,10 @@ export class SinglePhoneDetails extends React.Component<ISinglePhoneDetailsProp,
     );
 
     const fields = [
-      this.getTextField(phone, 'number'),
-      this.getTextField(phone, 'extension'),
-      this.getTextField(phone, 'type'),
-      this.getTextField(phone, 'language'),
+      getTextField(phone, 'number'),
+      getTextField(phone, 'extension'),
+      getTextField(phone, 'type'),
+      getTextField(phone, 'language'),
       {
         type: 'textarea',
         fieldName: 'description',

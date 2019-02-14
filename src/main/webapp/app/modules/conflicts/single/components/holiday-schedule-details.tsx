@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { AdditionalDetails } from './additional-details';
 import { IHolidaySchedule } from 'app/shared/model/holiday-schedule.model';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IHolidayScheduleDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -11,12 +12,6 @@ export interface IHolidayScheduleDetailsProp extends StateProps, DispatchProps {
 }
 
 export class HolidayScheduleDetails extends React.Component<IHolidayScheduleDetailsProp> {
-  getTextField = (schedule, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: schedule[fieldName]
-  });
-
   render() {
     const schedule = this.props.schedule ? this.props.schedule : {};
     const fields = [
@@ -25,10 +20,10 @@ export class HolidayScheduleDetails extends React.Component<IHolidayScheduleDeta
         fieldName: 'closed',
         defaultValue: schedule.closed
       },
-      this.getTextField(schedule, 'opensAt'),
-      this.getTextField(schedule, 'closesAt'),
-      this.getTextField(schedule, 'startDate'),
-      this.getTextField(schedule, 'endDate')
+      getTextField(schedule, 'opensAt'),
+      getTextField(schedule, 'closesAt'),
+      getTextField(schedule, 'startDate'),
+      getTextField(schedule, 'endDate')
     ];
 
     return (

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { AdditionalDetails } from './additional-details';
 import { ILanguage } from 'app/shared/model/language.model';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ILanguagesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -11,15 +12,9 @@ export interface ILanguagesDetailsProp extends StateProps, DispatchProps {
 }
 
 export class LanguagesDetails extends React.Component<ILanguagesDetailsProp> {
-  getTextField = (language, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: language[fieldName]
-  });
-
   render() {
     const { langs } = this.props;
-    const fields = langs.map(language => this.getTextField(language, 'language'));
+    const fields = langs.map(language => getTextField(language, 'language'));
 
     return fields.length > 0 ? (
       <AdditionalDetails

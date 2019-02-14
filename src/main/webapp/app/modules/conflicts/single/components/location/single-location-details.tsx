@@ -12,6 +12,7 @@ import { AdditionalDetails } from '../additional-details';
 import { ILocationRecord } from 'app/shared/model/location-record.model';
 import { LanguagesDetails } from '../languages-details';
 import { HolidayScheduleDetails } from '../holiday-schedule-details';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -35,12 +36,6 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       isAreaOpen: !this.state.isAreaOpen
     });
   };
-
-  getTextField = (record, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: record.location[fieldName]
-  });
 
   render() {
     const { record, isOnlyOne } = this.props;
@@ -68,16 +63,16 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     ];
 
     const fields = [
-      this.getTextField(record, 'name'),
-      this.getTextField(record, 'alternateName'),
+      getTextField(record.location, 'name'),
+      getTextField(record.location, 'alternateName'),
       {
         type: 'textarea',
         fieldName: 'description',
         defaultValue: record.location.description
       },
-      this.getTextField(record, 'transportation'),
-      this.getTextField(record, 'latitude'),
-      this.getTextField(record, 'longitude')
+      getTextField(record.location, 'transportation'),
+      getTextField(record.location, 'latitude'),
+      getTextField(record.location, 'longitude')
     ];
     return (
       <Row>

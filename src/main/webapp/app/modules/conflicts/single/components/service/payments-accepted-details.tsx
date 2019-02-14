@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { AdditionalDetails } from '../additional-details';
 import { IPaymentAccepted } from 'app/shared/model/payment-accepted.model';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IPaymentsAcceptedDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -11,15 +12,9 @@ export interface IPaymentsAcceptedDetailsProp extends StateProps, DispatchProps 
 }
 
 export class PaymentsAcceptedDetails extends React.Component<IPaymentsAcceptedDetailsProp> {
-  getTextField = (payment, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: payment[fieldName]
-  });
-
   render() {
     const { payments } = this.props;
-    const fields = payments.map(payment => this.getTextField(payment, 'payment'));
+    const fields = payments.map(payment => getTextField(payment, 'payment'));
 
     return fields.length > 0 ? (
       <AdditionalDetails

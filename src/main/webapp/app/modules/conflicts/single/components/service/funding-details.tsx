@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { AdditionalDetails } from '../additional-details';
 import { IFunding } from 'app/shared/model/funding.model';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IFundingDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -11,15 +12,9 @@ export interface IFundingDetailsProp extends StateProps, DispatchProps {
 }
 
 export class FundingDetails extends React.Component<IFundingDetailsProp> {
-  getTextField = (funding, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: funding[fieldName]
-  });
-
   render() {
     const funding = this.props.funding ? this.props.funding : {};
-    const fields = [this.getTextField(funding, 'source')];
+    const fields = [getTextField(funding, 'source')];
 
     return (
       <AdditionalDetails

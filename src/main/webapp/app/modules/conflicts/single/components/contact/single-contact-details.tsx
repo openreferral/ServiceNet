@@ -7,6 +7,7 @@ import { IActivity } from 'app/shared/model/activity.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdditionalDetails } from '../additional-details';
 import { IContact } from 'app/shared/model/contact.model';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ISingleContactDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -31,12 +32,6 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
     });
   };
 
-  getTextField = (contact, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: contact[fieldName]
-  });
-
   render() {
     const { contact, isOnlyOne } = this.props;
     const customHeader = (
@@ -56,10 +51,10 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
     );
 
     const fields = [
-      this.getTextField(contact, 'name'),
-      this.getTextField(contact, 'title'),
-      this.getTextField(contact, 'department'),
-      this.getTextField(contact, 'email')
+      getTextField(contact, 'name'),
+      getTextField(contact, 'title'),
+      getTextField(contact, 'department'),
+      getTextField(contact, 'email')
     ];
     return (
       <Row>

@@ -6,6 +6,7 @@ import { AdditionalDetails } from '../additional-details';
 import { Translate } from 'react-jhipster';
 import { Badge } from 'reactstrap';
 import { IServiceTaxonomy } from 'app/shared/model/service-taxonomy.model';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -13,15 +14,9 @@ export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps
 }
 
 export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomiesDetailsProp> {
-  getTextField = (taxonomy, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: taxonomy[fieldName]
-  });
-
   render() {
     const { taxonomies } = this.props;
-    const fields = taxonomies.map(taxonomy => this.getTextField(taxonomy, 'taxonomyDetails'));
+    const fields = taxonomies.map(taxonomy => getTextField(taxonomy, 'taxonomyDetails'));
 
     return fields.length > 0 ? (
       <AdditionalDetails

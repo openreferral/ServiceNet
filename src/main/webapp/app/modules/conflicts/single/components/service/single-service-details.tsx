@@ -17,6 +17,7 @@ import { LanguagesDetails } from '../languages-details';
 import { HolidayScheduleDetails } from '../holiday-schedule-details';
 import { ContactsDetails } from '../contact/contacts-details';
 import { PhonesDetails } from '../phone/phones-details';
+import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -40,12 +41,6 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
       isAreaOpen: !this.state.isAreaOpen
     });
   };
-
-  getTextField = (record, fieldName) => ({
-    type: 'text',
-    fieldName,
-    defaultValue: record.service[fieldName]
-  });
 
   render() {
     const { record, isOnlyOne } = this.props;
@@ -78,16 +73,16 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     ];
 
     const fields = [
-      this.getTextField(record, 'name'),
-      this.getTextField(record, 'alternateName'),
+      getTextField(record.service, 'name'),
+      getTextField(record.service, 'alternateName'),
       {
         type: 'textarea',
         fieldName: 'description',
         defaultValue: record.service.description
       },
-      this.getTextField(record, 'url'),
-      this.getTextField(record, 'email'),
-      this.getTextField(record, 'status'),
+      getTextField(record.service, 'url'),
+      getTextField(record.service, 'email'),
+      getTextField(record.service, 'status'),
       {
         type: 'textarea',
         fieldName: 'interpretationServices',
@@ -118,7 +113,7 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
         fieldName: 'licenses',
         defaultValue: record.service.licenses
       },
-      this.getTextField(record, 'type')
+      getTextField(record, 'type')
     ];
     return (
       <Row>
