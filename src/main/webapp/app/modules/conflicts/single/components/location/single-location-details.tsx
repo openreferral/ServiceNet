@@ -10,6 +10,8 @@ import { OpeningHoursDetails } from '../opening-hours-details';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdditionalDetails } from '../additional-details';
 import { ILocationRecord } from 'app/shared/model/location-record.model';
+import { LanguagesDetails } from '../languages-details';
+import { HolidayScheduleDetails } from '../holiday-schedule-details';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -60,7 +62,9 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     const additionalFields = [
       <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />,
       <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />,
-      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />
+      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
+      <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
+      <HolidayScheduleDetails key="holiday-schedule-details" {...this.props} schedule={record.holidaySchedule} />
     ];
 
     const fields = [

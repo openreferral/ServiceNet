@@ -5,6 +5,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import { IActivity } from 'app/shared/model/activity.model';
 import { OrganizationDetails } from './organization-details';
 import { LocationsDetails } from './location/locations-details';
+import { ServicesDetails } from './service/services-details';
+import { ContactsDetails } from './contact/contacts-details';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   activity: IActivity;
@@ -32,6 +34,8 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
       <div>
         <OrganizationDetails {...this.props} />
         <LocationsDetails {...this.props} />
+        <ServicesDetails {...this.props} />
+        <ContactsDetails {...this.props} contacts={this.props.activity.record.contacts} />
       </div>
     );
   }
