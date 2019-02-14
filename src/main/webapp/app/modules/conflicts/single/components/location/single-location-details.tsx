@@ -40,13 +40,11 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     });
   };
 
-  getTextField = (location, fieldName) => {
-    return {
-      type: 'text',
-      fieldName: fieldName,
-      defaultValue: location[fieldName]
-    };
-  };
+  getTextField = (location, fieldName) => ({
+    type: 'text',
+    fieldName,
+    defaultValue: location[fieldName]
+  });
 
   render() {
     const { location, physicalAddress, postalAddress, isOnlyOne, hours } = this.props;
@@ -66,9 +64,9 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       </h4>
     );
     const additionalFields = [
-      <PhysicalAddressDetails {...this.props} address={physicalAddress} />,
-      <PostalAddressDetails {...this.props} address={postalAddress} />,
-      <OpeningHoursDetails {...this.props} hours={hours} />
+      <PhysicalAddressDetails key="physical-address-details" {...this.props} address={physicalAddress} />,
+      <PostalAddressDetails key="postal-address-details" {...this.props} address={postalAddress} />,
+      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={hours} />
     ];
 
     const fields = [
@@ -93,8 +91,8 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
             entityClass={'Location'}
             customHeader={customHeader}
             additionalFields={additionalFields}
-            toggleAvailable={true}
-            isCustomToggle={true}
+            toggleAvailable
+            isCustomToggle
             customToggleValue={this.state.isAreaOpen}
           />
         </Col>

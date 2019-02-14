@@ -11,13 +11,11 @@ export interface IPostalAddressDetailsProp extends StateProps, DispatchProps {
 }
 
 export class PostalAddressDetails extends React.Component<IPostalAddressDetailsProp> {
-  getTextField = (address, fieldName) => {
-    return {
-      type: 'text',
-      fieldName: fieldName,
-      defaultValue: address[fieldName]
-    };
-  };
+  getTextField = (address, fieldName) => ({
+    type: 'text',
+    fieldName,
+    defaultValue: address[fieldName]
+  });
 
   render() {
     const { address } = this.props;
@@ -38,7 +36,7 @@ export class PostalAddressDetails extends React.Component<IPostalAddressDetailsP
         entityClass={'PostalAddress'}
         customHeader={false}
         additionalFields={false}
-        toggleAvailable={true}
+        toggleAvailable
         isCustomToggle={false}
         customToggleValue={false}
       />
