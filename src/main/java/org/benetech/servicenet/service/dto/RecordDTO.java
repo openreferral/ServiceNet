@@ -20,7 +20,7 @@ public class RecordDTO implements Serializable {
 
     private Set<LocationRecordDTO> locations;
 
-    private Set<ServiceDTO> services;
+    private Set<ServiceRecordDTO> services;
 
     private Set<ContactDTO> contacts;
 

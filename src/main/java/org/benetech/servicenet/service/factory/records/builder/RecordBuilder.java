@@ -13,7 +13,7 @@ import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
-import org.benetech.servicenet.service.dto.ServiceDTO;
+import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.benetech.servicenet.service.mapper.ContactMapper;
 import org.benetech.servicenet.service.mapper.FieldExclusionMapper;
 import org.benetech.servicenet.service.mapper.LocationMapper;
@@ -88,9 +88,9 @@ public class RecordBuilder {
             .collect(Collectors.toSet());
     }
 
-    private Set<ServiceDTO> mapServices(Set<Service> services) {
+    private Set<ServiceRecordDTO> mapServices(Set<Service> services) {
         return services.stream()
-            .map(serviceMapper::toDto)
+            .map(serviceMapper::toRecord)
             .collect(Collectors.toSet());
     }
 

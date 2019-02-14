@@ -1,28 +1,22 @@
 import React from 'react';
 import { Col, Row, Button } from 'reactstrap';
-import '../single-record-view.scss';
+import '../../single-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { ILocation } from 'app/shared/model/location.model';
 import { PhysicalAddressDetails } from './physical-address-details';
 import { PostalAddressDetails } from './postal-address-details';
-import { OpeningHoursDetails } from './opening-hours-details';
-import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
-import { IPostalAddress } from 'app/shared/model/postal-address.model';
+import { OpeningHoursDetails } from '../opening-hours-details';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IOpeningHours } from 'app/shared/model/opening-hours.model';
-import { AdditionalDetails } from './additional-details';
+import { AdditionalDetails } from '../additional-details';
+import { ILocationRecord } from 'app/shared/model/location-record.model';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  location: ILocation;
-  physicalAddress: IPhysicalAddress;
-  postalAddress: IPostalAddress;
+  record: ILocationRecord;
   locationsCount: string;
   changeRecord: any;
   isOnlyOne: boolean;
-  hours: IOpeningHours[];
 }
 
 export interface ISingleLocationDetailsState {
@@ -40,14 +34,14 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     });
   };
 
-  getTextField = (location, fieldName) => ({
+  getTextField = (record, fieldName) => ({
     type: 'text',
     fieldName,
-    defaultValue: location[fieldName]
+    defaultValue: record.location[fieldName]
   });
 
   render() {
-    const { location, physicalAddress, postalAddress, isOnlyOne, hours } = this.props;
+    const { record, isOnlyOne } = this.props;
     const customHeader = (
       <h4 className="title">
         <div className="collapseBtn" onClick={this.toggleAreaOpen}>
@@ -64,22 +58,22 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       </h4>
     );
     const additionalFields = [
-      <PhysicalAddressDetails key="physical-address-details" {...this.props} address={physicalAddress} />,
-      <PostalAddressDetails key="postal-address-details" {...this.props} address={postalAddress} />,
-      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={hours} />
+      <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />,
+      <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />,
+      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />
     ];
 
     const fields = [
-      this.getTextField(location, 'name'),
-      this.getTextField(location, 'alternateName'),
+      this.getTextField(record, 'name'),
+      this.getTextField(record, 'alternateName'),
       {
         type: 'textarea',
         fieldName: 'description',
-        defaultValue: location.description
+        defaultValue: record.location.description
       },
-      this.getTextField(location, 'transportation'),
-      this.getTextField(location, 'latitude'),
-      this.getTextField(location, 'longitude')
+      this.getTextField(record, 'transportation'),
+      this.getTextField(record, 'latitude'),
+      this.getTextField(record, 'longitude')
     ];
     return (
       <Row>

@@ -42,7 +42,7 @@ export class AdditionalDetails extends React.Component<IAdditionalDetailsProp, I
           customHeader
         ) : (
           <h4 className="title">
-            <div className="collapseBtn" onClick={this.toggleAreaOpen}>
+            <div className={toggleAvailable ? 'collapseBtn' : ''} onClick={toggleAvailable ? this.toggleAreaOpen : null}>
               {toggleAvailable ? (
                 <div className="collapseIcon">
                   <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { IActivity } from 'app/shared/model/activity.model';
 import { OrganizationDetails } from './organization-details';
-import { LocationsDetails } from './locations-details';
+import { LocationsDetails } from './location/locations-details';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   activity: IActivity;

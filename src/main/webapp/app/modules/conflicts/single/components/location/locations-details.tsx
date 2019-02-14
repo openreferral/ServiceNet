@@ -1,5 +1,5 @@
 import React from 'react';
-import '../single-record-view.scss';
+import '../../single-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { SingleLocationDetails } from './single-location-details';
@@ -30,17 +30,14 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
 
   render() {
     const { locations, locationsNumber } = this.state;
-    const location = locations[locationsNumber];
+    const record = locations[locationsNumber];
     const locationDetails =
       locations.length > locationsNumber ? (
         <SingleLocationDetails
           {...this.props}
           changeRecord={this.changeRecord}
           isOnlyOne={locations.length <= 1}
-          location={location.location}
-          physicalAddress={location.physicalAddress ? location.physicalAddress : {}}
-          postalAddress={location.postalAddress ? location.postalAddress : {}}
-          hours={location.regularScheduleOpeningHours}
+          record={record}
           locationsCount={`(${locationsNumber + 1}/${locations.length}) `}
         />
       ) : null;

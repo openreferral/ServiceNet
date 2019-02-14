@@ -1,9 +1,9 @@
 import React from 'react';
-import '../single-record-view.scss';
+import '../../single-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
-import { AdditionalDetails } from './additional-details';
+import { AdditionalDetails } from '../additional-details';
 
 export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
@@ -18,7 +18,7 @@ export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDeta
   });
 
   render() {
-    const { address } = this.props;
+    const address = this.props.address ? this.props.address : {};
     const fields = [
       this.getTextField(address, 'attention'),
       this.getTextField(address, 'address1'),
