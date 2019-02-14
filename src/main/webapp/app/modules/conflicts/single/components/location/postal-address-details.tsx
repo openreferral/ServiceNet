@@ -1,5 +1,5 @@
 import React from 'react';
-import '../single-record-view.scss';
+import '../../single-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IPostalAddress } from 'app/shared/model/postal-address.model';
@@ -18,7 +18,7 @@ export class PostalAddressDetails extends React.Component<IPostalAddressDetailsP
   });
 
   render() {
-    const { address } = this.props;
+    const address = this.props.address ? this.props.address : {};
     const fields = [
       this.getTextField(address, 'attention'),
       this.getTextField(address, 'address1'),
