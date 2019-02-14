@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.mapper;
 
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.dto.ServiceDTO;
+import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -20,6 +21,10 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
     @Mapping(source = "program.id", target = "programId")
     @Mapping(source = "program.name", target = "programName")
     ServiceDTO toDto(Service service);
+
+    @Mapping(target = "service", source = "service")
+    @Mapping(target = "regularScheduleOpeningHours", source = "regularSchedule.openingHours")
+    ServiceRecordDTO toRecord(Service service);
 
     @Mapping(source = "organizationId", target = "organization")
     @Mapping(source = "programId", target = "program")

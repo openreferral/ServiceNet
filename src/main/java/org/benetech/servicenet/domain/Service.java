@@ -345,6 +345,16 @@ public class Service extends AbstractEntity implements Serializable {
         return this;
     }
 
+    public Service phones(Set<Phone> phones) {
+        this.phones = phones;
+        return this;
+    }
+
+    public Service contacts(Set<Contact> contacts) {
+        this.contacts = contacts;
+        return this;
+    }
+
     public Service addTaxonomies(ServiceTaxonomy serviceTaxonomy) {
         this.taxonomies.add(serviceTaxonomy);
         serviceTaxonomy.setSrvc(this);
