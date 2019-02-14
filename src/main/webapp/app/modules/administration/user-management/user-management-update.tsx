@@ -198,7 +198,7 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
                   <Label for="systemAccountId">
                     <Translate contentKey="userManagement.systemAccount">System Account</Translate>
                   </Label>
-                  <AvInput type="select" className="form-control" name="systemAccountId">
+                  <AvInput type="select" className="form-control" name="systemAccountId" value={user.systemAccountId}>
                     <option value="" key="0" />
                     {systemAccounts.map(systemAccount => (
                       <option value={systemAccount.id} key={systemAccount.id}>
