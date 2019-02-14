@@ -36,7 +36,6 @@ public class CacheConfiguration {
         return cm -> {
             cm.createCache(org.benetech.servicenet.repository.UserRepository.USERS_BY_LOGIN_CACHE, jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.repository.UserRepository.USERS_BY_EMAIL_CACHE, jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".authorities",
                 jcacheConfiguration);
@@ -44,6 +43,8 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".persistentTokens",
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.SystemAccount.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".systemAccount",
+                jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.DocumentUpload.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Organization.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".programs",

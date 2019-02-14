@@ -5,6 +5,7 @@ import org.benetech.servicenet.repository.UserRepository;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,6 +34,7 @@ public class DomainUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = { UserRepository.USERS_BY_LOGIN_CACHE }, beforeInvocation = true, key = "#login.toLowerCase()")
     public UserDetails loadUserByUsername(final String login) {
         log.debug("Authenticating {}", login);
 
