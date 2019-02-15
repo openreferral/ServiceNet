@@ -27,6 +27,7 @@ import org.benetech.servicenet.service.PhysicalAddressService;
 import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.RegularScheduleService;
 import org.benetech.servicenet.service.ServiceService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +95,13 @@ public class ImportServiceConfidentialityImplIntTest {
 
     @Autowired
     private OpeningHoursService openingHoursService;
+
+    @Before
+    public void clearDatabase() {
+        languageService.findAll().forEach(x -> languageService.delete(x.getId()));
+        phoneService.findAll().forEach(x -> phoneService.delete(x.getId()));
+        openingHoursService.findAll().forEach(x -> openingHoursService.delete(x.getId()));
+    }
 
     @Test
     @Transactional

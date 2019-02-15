@@ -3,23 +3,26 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestPersistanceHelper;
+import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.FundingService;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.ProgramService;
+import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.FundingDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.ProgramDTO;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +41,6 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class OrganizationImportServiceTest {
     
     @Autowired
@@ -55,6 +57,15 @@ public class OrganizationImportServiceTest {
 
     @Autowired
     private ProgramService programService;
+
+    @Autowired
+    private ContactService contactsService;
+
+    @Before
+    public void clearDatabase() {
+        contactsService.findAll().forEach(x -> contactsService.delete(x.getId()));
+        organizationService.findAll().forEach(x -> organizationService.delete(x.getId()));
+    }
 
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -163,6 +174,43 @@ public class OrganizationImportServiceTest {
             EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         List<ProgramDTO> all = programService.findAll();
+        assertEquals(1, all.size());
+        assertEquals(NEW_STRING, all.get(0).getName());
+        assertEquals(organization.getId(), all.get(0).getOrganizationId());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void shouldCreateContactsIfOrganizationHasNoneOfThem() {
+        Organization organization = helper.generateNewOrganization(helper.generateExistingAccount());
+        Contact contact = new Contact().name(NEW_STRING);
+        organization.setContacts(helper.mutableSet(contact));
+
+        assertEquals(0, contactsService.findAll().size());
+        importService.createOrUpdateOrganization(organization, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport());
+
+        List<ContactDTO> all = contactsService.findAll();
+        assertEquals(1, all.size());
+        assertEquals(NEW_STRING, all.get(0).getName());
+        assertNotNull(all.get(0).getOrganizationId());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void shouldReplaceContactsIfOrganizationHasFewButNotThisOne() {
+        Organization organization = helper.generateExistingOrganization(helper.generateExistingAccount());
+        Contact contact = new Contact().name(OTHER_STRING).organization(organization);
+        helper.persist(contact);
+        helper.flushAndRefresh(organization);
+
+        Contact newContact = new Contact().name(NEW_STRING);
+        Organization organizationToUpdate = helper.generateExistingOrganizationDoNotPersist().contacts(helper.mutableSet(newContact));
+
+        assertEquals(1, contactsService.findAll().size());
+        importService.createOrUpdateOrganization(organizationToUpdate,
+            EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+
+        List<ContactDTO> all = contactsService.findAll();
         assertEquals(1, all.size());
         assertEquals(NEW_STRING, all.get(0).getName());
         assertEquals(organization.getId(), all.get(0).getOrganizationId());
