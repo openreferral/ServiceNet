@@ -96,13 +96,10 @@ class RelationManager {
         return mapper.extractLocation(
             site.getContactDetails(), site.getId(), importData.getProviderName())
             .flatMap(extractedLocation -> {
-
                 extractedLocation.setPhysicalAddress(
                     mapper.extractPhysicalAddress(site.getContactDetails()).orElse(null));
-
                 extractedLocation.setPostalAddress(
                     mapper.extractPostalAddress(site.getContactDetails()).orElse(null));
-
                 mapper.extractAccessibilityForDisabilities(site)
                     .ifPresent(a -> extractedLocation.setAccessibilities(Set.of(a)));
 
