@@ -1,44 +1,48 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.icarol.eden.EdenDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
-import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.domain.Language;
-import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.Phone;
-import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.domain.PostalAddress;
-import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.service.ImportService;
+import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
+import org.benetech.servicenet.service.EligibilityService;
+import org.benetech.servicenet.service.LanguageService;
+import org.benetech.servicenet.service.LocationService;
+import org.benetech.servicenet.service.OpeningHoursService;
+import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.PhoneService;
+import org.benetech.servicenet.service.PhysicalAddressService;
+import org.benetech.servicenet.service.PostalAddressService;
+import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.dto.AccessibilityForDisabilitiesDTO;
+import org.benetech.servicenet.service.dto.EligibilityDTO;
+import org.benetech.servicenet.service.dto.LanguageDTO;
+import org.benetech.servicenet.service.dto.LocationDTO;
+import org.benetech.servicenet.service.dto.OpeningHoursDTO;
+import org.benetech.servicenet.service.dto.PhoneDTO;
+import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ServiceNetApp.class)
 public class ICarolDataAdapterCompleteTest {
 
     private static final String COMPLETE_JSON = "icarol/complete.json";
@@ -50,29 +54,43 @@ public class ICarolDataAdapterCompleteTest {
         "officia deserunt mollit anim id est laborum.";
     private static final String DIFF_LOREM_IPSUM = "different " + LOREM_IPSUM;
 
-    @InjectMocks
+    @Autowired
     private EdenDataAdapter adapter;
 
-    @Mock
-    private ImportService importService;
+    @Autowired
+    private LanguageService languageService;
+
+    @Autowired
+    private EligibilityService eligibilityService;
+
+    @Autowired
+    private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
+
+    @Autowired
+    private OrganizationService organizationService;
+
+    @Autowired
+    private PhoneService phoneService;
+
+    @Autowired
+    private ServiceService serviceService;
+
+    @Autowired
+    private OpeningHoursService openingHoursService;
+
+    @Autowired
+    private PhysicalAddressService physicalAddressService;
+
+    @Autowired
+    private PostalAddressService postalAddressService;
+
+    @Autowired
+    private LocationService locationService;
 
     private SingleImportData importData;
 
     @Before
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
-
-        when(importService.createOrUpdateService(any(Service.class),
-            anyString(), anyString(), any(DataImportReport.class)))
-            .thenReturn(new Service());
-
-        when(importService.createOrUpdateLocation(any(Location.class), anyString(), anyString()))
-            .thenReturn(new Location());
-
-        when(importService.createOrUpdateOrganization(any(Organization.class), anyString(), anyString(),
-            any(DataImportReport.class)))
-            .thenReturn(new Organization());
-
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
         importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true);
     }
@@ -81,11 +99,8 @@ public class ICarolDataAdapterCompleteTest {
     @Ignore("We should use descriptionText instead of description")
     public void shouldImportCompleteOrganizations() {
         adapter.importData(importData);
-        ArgumentCaptor<Organization> captor = ArgumentCaptor.forClass(Organization.class);
-        verify(importService, times(1))
-            .createOrUpdateOrganization(captor.capture(), anyString(), anyString(), any(DataImportReport.class));
 
-        Organization result = captor.getValue();
+        Organization result = organizationService.findAll().get(0);
         assertEquals("HOUSING AUTHORITY OF THE COUNTY OF Commoncounty (ABCD)", result.getName());
         assertNull(result.getAlternateName());
         assertNull(result.getEmail());
@@ -102,12 +117,8 @@ public class ICarolDataAdapterCompleteTest {
             "Program.requiredDocumentation, column: 'Mapped to'")
     public void shouldImportCompleteService() {
         adapter.importData(importData);
-        ArgumentCaptor<Service> captor = ArgumentCaptor.forClass(Service.class);
-        verify(importService, times(1))
-            .createOrUpdateService(captor.capture(), anyString(), anyString(), any(DataImportReport.class));
 
-        Service result = captor.getValue();
-        assertFalse(result.getIsConfidential());
+        ServiceDTO result = serviceService.findAll().get(0);
         assertEquals("CarpetHanger Office", result.getName());
         assertNull(result.getAlternateName());
         assertEquals(DIFF_LOREM_IPSUM, result.getDescription());
@@ -127,10 +138,8 @@ public class ICarolDataAdapterCompleteTest {
     @Test
     public void shouldImportCompleteLocation() {
         adapter.importData(importData);
-        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        verify(importService, times(1))
-            .createOrUpdateLocation(captor.capture(), anyString(), anyString());
-        Location result = captor.getValue();
+
+        LocationDTO result = locationService.findAll().get(0);
 
         assertEquals("12345 Cool Street - CarpetHanger (CA)", result.getName());
         assertEquals(40.123456, result.getLatitude());
@@ -142,11 +151,8 @@ public class ICarolDataAdapterCompleteTest {
     @Ignore("Map county to region")
     public void shouldImportCompletePhysicalAddress() {
         adapter.importData(importData);
-        ArgumentCaptor<PhysicalAddress> captor = ArgumentCaptor.forClass(PhysicalAddress.class);
-        verify(importService, times(1))
-            .createOrUpdatePhysicalAddress(captor.capture(), any(Location.class));
 
-        PhysicalAddress result = captor.getValue();
+        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
 
         assertNull(result.getAttention());
         assertEquals("12345 Cool Street", result.getAddress1());
@@ -161,11 +167,8 @@ public class ICarolDataAdapterCompleteTest {
     @Ignore("Map county to region")
     public void shouldImportCompletePostalAddress() {
         adapter.importData(importData);
-        ArgumentCaptor<PostalAddress> captor = ArgumentCaptor.forClass(PostalAddress.class);
-        verify(importService, times(1))
-            .createOrUpdatePostalAddress(captor.capture(), any(Location.class));
 
-        PostalAddress result = captor.getValue();
+        PostalAddressDTO result = postalAddressService.findAll().get(0);
 
         assertNull(result.getAttention());
         assertEquals("12345 Cool Street", result.getAddress1());
@@ -179,11 +182,8 @@ public class ICarolDataAdapterCompleteTest {
     @Test
     public void shouldImportCompleteEligibility() {
         adapter.importData(importData);
-        ArgumentCaptor<Eligibility> captor = ArgumentCaptor.forClass(Eligibility.class);
-        verify(importService, times(1))
-            .createOrUpdateEligibility(captor.capture(), any(Service.class));
 
-        Eligibility result = captor.getValue();
+        EligibilityDTO result = eligibilityService.findAll().get(0);
 
         assertEquals("Low-income family, elderly (age 62 or over), persons with disabilities, or other persons.",
             result.getEligibility());
@@ -193,15 +193,13 @@ public class ICarolDataAdapterCompleteTest {
     @Ignore("We should normalize the hours")
     public void shouldImportOpeningHours() {
         adapter.importData(importData);
-        ArgumentCaptor<Set<OpeningHours>> captor = ArgumentCaptor.forClass(Set.class);
-        verify(importService, times(1))
-            .createOrUpdateOpeningHoursForService(captor.capture(), any(Service.class));
 
-        List<OpeningHours> result = new ArrayList<>(captor.getValue());
+        List<OpeningHoursDTO> result = openingHoursService.findAll();
+
         for (int i = 0; i < 5; i++) {
             assertEquals((Integer) i, result.get(i).getWeekday());
         }
-        for (OpeningHours hours : result) {
+        for (OpeningHoursDTO hours : result) {
             assertEquals("08:00", hours.getOpensAt());
             assertEquals("04:45", hours.getClosesAt());
         }
@@ -211,12 +209,7 @@ public class ICarolDataAdapterCompleteTest {
     @Ignore("Unhandled languages")
     public void shouldImportLanguages() {
         adapter.importData(importData);
-        ArgumentCaptor<Set<Language>> captor = ArgumentCaptor.forClass(Set.class);
-        verify(importService, times(1))
-            .createOrUpdateLangsForService(captor.capture(), any(Service.class), any(Location.class));
-
-        List<Language> result = new ArrayList<>(captor.getValue()).stream()
-            .sorted().collect(Collectors.toList());
+        List<LanguageDTO> result = languageService.findAll();
 
         assertEquals("Farsi", result.get(0).getLanguage());
         assertEquals("Spanish", result.get(1).getLanguage());
@@ -228,25 +221,22 @@ public class ICarolDataAdapterCompleteTest {
     @Ignore("The type should be based on label or purpose.")
     public void shouldImportCompletePhones() {
         adapter.importData(importData);
-        ArgumentCaptor<Set<Phone>> captor = ArgumentCaptor.forClass(Set.class);
-        verify(importService, times(1))
-            .createOrUpdatePhonesForService(captor.capture(),  any(Service.class), any(Location.class));
 
-        List<Phone> result = new ArrayList<>(captor.getValue());
+        List<PhoneDTO> result = phoneService.findAll();
 
-        Phone first = result.get(0);
+        PhoneDTO first = result.get(0);
         assertEquals("123-465-7890", first.getNumber());
         assertNull(first.getExtension());
         assertEquals("Main number for program", first.getType());
         assertNull(first.getLanguage());
         assertEquals("CarpetHanger  Office", first.getDescription());
-        Phone second = result.get(1);
+        PhoneDTO second = result.get(1);
         assertEquals("678-901-2345", second.getNumber());
         assertNull(second.getExtension());
         assertEquals("Fax", second.getType());
         assertNull(second.getLanguage());
         assertNull(second.getDescription());
-        Phone third = result.get(2);
+        PhoneDTO third = result.get(2);
         assertEquals("789-012-3456", third.getNumber());
         assertNull(third.getExtension());
         assertEquals("MYY", third.getType());
@@ -258,11 +248,8 @@ public class ICarolDataAdapterCompleteTest {
     @Ignore("We should add details based on site.accessibility.public.")
     public void shouldImportCompleteAccessibility() {
         adapter.importData(importData);
-        ArgumentCaptor<AccessibilityForDisabilities> captor = ArgumentCaptor.forClass(AccessibilityForDisabilities.class);
-        verify(importService, times(1))
-            .createOrUpdateAccessibility(captor.capture(), any(Location.class));
 
-        AccessibilityForDisabilities result = captor.getValue();
+        AccessibilityForDisabilitiesDTO result = accessibilityForDisabilitiesService.findAll().get(0);
 
         assertEquals("Wheelchair accessible/Ramp/Special parking/Restroom", result.getAccessibility());
         assertEquals("AB RoadCompany lines 1, 2, 3 and 4 stop within 2 blocks. BART-CarpetHanger  " +
