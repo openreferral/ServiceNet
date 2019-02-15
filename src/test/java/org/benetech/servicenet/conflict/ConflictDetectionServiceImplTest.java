@@ -10,6 +10,7 @@ import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.ConflictRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ConflictService;
+import org.benetech.servicenet.service.MetadataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,10 +46,10 @@ public class ConflictDetectionServiceImplTest {
     private ApplicationContext context;
 
     @Autowired
-    private EntityManager em;
+    private MetadataService metadataService;
 
     @Autowired
-    private OrganizationRepository organizationRepository;
+    private EntityManager em;
 
     @Autowired
     private OrganizationEquivalentsService organizationEquivalentsService;
@@ -73,7 +74,7 @@ public class ConflictDetectionServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         conflictDetectionService = new ConflictDetectionServiceImpl(context, em,
-            organizationRepository, organizationEquivalentsService, conflictService);
+            organizationEquivalentsService, conflictService, metadataService);
     }
 
     @Test

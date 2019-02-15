@@ -2,13 +2,14 @@ package org.benetech.servicenet.conflict;
 
 import org.benetech.servicenet.conflict.detector.ConflictDetector;
 import org.benetech.servicenet.domain.Conflict;
+import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.matching.model.EntityEquivalent;
 import org.benetech.servicenet.matching.model.OrganizationEquivalent;
 import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsService;
-import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ConflictService;
+import org.benetech.servicenet.service.MetadataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -33,22 +34,22 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
     private final EntityManager em;
 
-    private final OrganizationRepository organizationRepository;
-
     private final OrganizationEquivalentsService organizationEquivalentsService;
 
     private final ConflictService conflictService;
 
+    private final MetadataService metadataService;
+
     public ConflictDetectionServiceImpl(ApplicationContext context,
                                         EntityManager em,
-                                        OrganizationRepository organizationRepository,
                                         OrganizationEquivalentsService organizationEquivalentsService,
-                                        ConflictService conflictService) {
+                                        ConflictService conflictService,
+                                        MetadataService metadataService) {
         this.context = context;
         this.em = em;
-        this.organizationRepository = organizationRepository;
         this.organizationEquivalentsService = organizationEquivalentsService;
         this.conflictService = conflictService;
+        this.metadataService = metadataService;
     }
 
     @Async
@@ -95,15 +96,30 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
             try {
                 ConflictDetector detector = context.getBean(
                     eq.getClazz().getSimpleName() + CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
-                List<Conflict> noAccountConflicts = detector.detect(current, mirror);
-                conflicts.addAll(
-                    addAccounts(noAccountConflicts, owner, accepted));
+                List<Conflict> innerConflicts = detector.detect(current, mirror);
+                innerConflicts = setMetadata(eq, innerConflicts);
+                innerConflicts = addAccounts(innerConflicts, owner, accepted);
+
+                conflicts.addAll(innerConflicts);
             } catch (NoSuchBeanDefinitionException ex) {
                 log.warn("There is no conflict detector for {}", eq.getClazz().getSimpleName());
             }
         }
-
         return conflicts;
+    }
+
+    private List<Conflict> setMetadata(EntityEquivalent eq, List<Conflict> conflicts) {
+        List<Conflict> result = new LinkedList<>(conflicts);
+        for (Conflict conflict : result) {
+            Optional<Metadata> metadata = metadataService.findMetadataForConflict(
+                eq.getBaseResourceId().toString(), conflict.getFieldName(), conflict.getCurrentValue());
+            metadata.ifPresent(m -> conflict.setCurrentValueDate(m.getLastActionDate()));
+            Optional<Metadata> metadata2 = metadataService.findMetadataForConflict(
+                eq.getPartnerResourceId().toString(), conflict.getFieldName(), conflict.getOfferedValue());
+            metadata2.ifPresent(m -> conflict.setOfferedValueDate(m.getLastActionDate()));
+        }
+
+        return result;
     }
 
     private List<Conflict> addAccounts(List<Conflict> noAccountConflicts, SystemAccount owner, SystemAccount accepted) {
