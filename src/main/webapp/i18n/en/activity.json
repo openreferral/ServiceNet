@@ -7,8 +7,8 @@
         "createOrEditLabel": "Create or edit a Activity",
         "sort": {
           "toggle": "Sort",
-          "size": "Recommended",
-          "age": "Recently Updated"
+          "recommended": "Recommended",
+          "recent": "Recently Updated"
         }
       },
       "created": "A new Activity is created with identifier {{ param }}",

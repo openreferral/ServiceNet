@@ -7,13 +7,15 @@ import java.util.Comparator;
 
 public final class ActivityComparatorFactory {
 
-    private static final String AGE = "age";
+    private static final String AGE = "recent";
+
+    private static final String RECOMMENDED = "recommended";
 
     public static Comparator<ActivityDTO> createComparator(Pageable pageable) {
-        Comparator<ActivityDTO> result = new ActivitySizeComparator();
+        Comparator<ActivityDTO> result = new ActivityRecentlyUpdatedComparator();
 
-        if (pageable.getSort().getOrderFor(AGE) != null) {
-            result = new ActivityUpdateAgeComparator();
+        if (pageable.getSort().getOrderFor(RECOMMENDED) != null) {
+            result = new ActivitySizeComparator();
         }
 
         return result;
