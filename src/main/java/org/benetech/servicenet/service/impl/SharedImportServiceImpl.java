@@ -81,7 +81,6 @@ public class SharedImportServiceImpl implements SharedImportService {
             em.persist(regularSchedule);
             setSchedule(regularSchedule, location, service);
         }
-
     }
 
     private void setSchedule(RegularSchedule schedule, Location location, Service service) {
