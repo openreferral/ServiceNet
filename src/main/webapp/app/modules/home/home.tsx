@@ -4,7 +4,7 @@ import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert } from 'reactstrap';
+import { Row, Col, Alert, Container } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -26,7 +26,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
 
     this.state = {
       ...getSortState(this.props.location, ITEMS_PER_PAGE),
-      sort: SORT_SIZE_NAME,
+      sort: SORT_RECOMMENDED,
       dropdownOpen: false,
       loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false
     };
@@ -56,7 +56,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
 
   reset = () => {
     this.props.reset();
-    if (this.props.loginSuccess && !this.state.loggingOut) {
+    if (!this.state.loggingOut) {
       Promise.all([this.props.getSession()]).then(() => {
         this.setState({ activePage: 1 }, () => {
           this.getEntities();
@@ -83,7 +83,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   render() {
     const { account, activityList } = this.props;
     return (
-      <div>
+      <Container>
         <Row>
           <Col>
             {account && account.login ? null : (
@@ -114,14 +114,12 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
         {account && account.login ? (
           <div>
             <Row>
-              <Col md="8">
+              <Col className="col-auto mr-auto">
                 <h2 id="main-page-title">
                   <Translate contentKey="serviceNetApp.activity.unresolved.title" />
                 </h2>
               </Col>
-            </Row>
-            <Row>
-              <Col md="8">
+              <Col className="col-auto">
                 <SortActivity
                   dropdownOpen={this.state.dropdownOpen}
                   toggleSort={this.toggleSort}
@@ -145,14 +143,14 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
             ) : null}
           </div>
         ) : null}
-      </div>
+      </Container>
     );
   }
 }
 
-const SORT_AGE_NAME = 'age';
-const SORT_SIZE_NAME = 'size';
-const SORT_ARRAY = [SORT_SIZE_NAME, SORT_AGE_NAME];
+const SORT_RECENTLY_UPDATED = 'age';
+const SORT_RECOMMENDED = 'size';
+const SORT_ARRAY = [SORT_RECOMMENDED, SORT_RECENTLY_UPDATED];
 
 const mapStateToProps = (storeState: IRootState) => ({
   account: storeState.authentication.account,
