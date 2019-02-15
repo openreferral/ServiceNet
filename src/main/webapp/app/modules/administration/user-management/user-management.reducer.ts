@@ -3,6 +3,7 @@ import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } 
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IUser, defaultValue } from 'app/shared/model/user.model';
+import { ISystemAccount } from 'app/shared/model/system-account.model';
 
 export const ACTION_TYPES = {
   FETCH_ROLES: 'userManagement/FETCH_ROLES',
@@ -20,7 +21,7 @@ const initialState = {
   errorMessage: null,
   users: [] as ReadonlyArray<IUser>,
   authorities: [] as any[],
-  systemAccounts: [] as any[],
+  systemAccounts: [] as ISystemAccount[],
   user: defaultValue,
   updating: false,
   updateSuccess: false,
