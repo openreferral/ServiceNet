@@ -1,10 +1,11 @@
 import './home.scss';
 
 import React from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Container } from 'reactstrap';
+import { Row, Col, Alert, Container, Progress } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -112,36 +113,51 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
           </Col>
         </Row>
         {account && account.login ? (
-          <div>
-            <Row>
-              <Col className="col-auto mr-auto">
-                <h2 id="main-page-title">
-                  <Translate contentKey="serviceNetApp.activity.unresolved.title" />
-                </h2>
-              </Col>
-              <Col className="col-auto">
-                <SortActivity
-                  dropdownOpen={this.state.dropdownOpen}
-                  toggleSort={this.toggleSort}
-                  sort={this.state.sort}
-                  sortFunc={this.sort}
-                  values={SORT_ARRAY}
-                />
-              </Col>
-            </Row>
-            {activityList.map((activity, i) => (
-              <Link key={`linkToActivity${i}`} to={`/single-record-view/${activity.record.organization.id}`} className="alert-link">
-                <ActivityElement activity={activity} />
-              </Link>
-            ))}
-            {activityList.length === 0 ? (
+          <InfiniteScroll
+            pageStart={this.state.activePage}
+            loadMore={this.handleLoadMore}
+            hasMore={this.state.activePage - 1 < this.props.links.next}
+            loader={<div className="loader">Loading ...</div>}
+            threshold={0}
+            initialLoad={false}
+          >
+            <Container>
               <Row>
-                <Col md="8">
-                  <Translate contentKey="serviceNetApp.activity.empty" />
+                <Col className="col-auto mr-auto">
+                  <h2 id="main-page-title">
+                    <Translate contentKey="serviceNetApp.activity.unresolved.title" />
+                  </h2>
+                </Col>
+                <Col className="col-1">
+                  <div className="text-center">
+                    {this.props.activityList.length} / {this.props.totalItems}
+                  </div>
+                  <Progress color="info" value={(this.props.activityList.length / this.props.totalItems) * 100} />
+                </Col>
+                <Col className="col-auto">
+                  <SortActivity
+                    dropdownOpen={this.state.dropdownOpen}
+                    toggleSort={this.toggleSort}
+                    sort={this.state.sort}
+                    sortFunc={this.sort}
+                    values={SORT_ARRAY}
+                  />
                 </Col>
               </Row>
-            ) : null}
-          </div>
+              {activityList.map((activity, i) => (
+                <Link key={`linkToActivity${i}`} to={`/single-record-view/${activity.record.organization.id}`} className="alert-link">
+                  <ActivityElement activity={activity} />
+                </Link>
+              ))}
+              {activityList.length === 0 ? (
+                <Row>
+                  <Col md="8">
+                    <Translate contentKey="serviceNetApp.activity.empty" />
+                  </Col>
+                </Row>
+              ) : null}
+            </Container>
+          </InfiniteScroll>
         ) : null}
       </Container>
     );
