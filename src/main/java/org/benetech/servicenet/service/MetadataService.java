@@ -2,7 +2,6 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.service.dto.MetadataDTO;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,4 +49,15 @@ public interface MetadataService {
      * @param id the id of the entity
      */
     void delete(UUID id);
+
+    /**
+     * Get most recent metadata for specific change of entity with resourceId.
+     *
+     * @param resourceId the resourceId of the entity
+     * @param fieldName the field name of the entity
+     * @param replacementValue the value of changed field of the entity
+     *
+     * @return a metadata related to field change or to creation of the whole entity.
+     */
+    Optional<Metadata> findMetadataForConflict(String resourceId, String fieldName, String replacementValue);
 }

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.conflict;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
@@ -8,8 +9,8 @@ import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsServ
 import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.ConflictRepository;
-import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ConflictService;
+import org.benetech.servicenet.service.MetadataService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
 
@@ -32,6 +34,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
@@ -45,10 +48,10 @@ public class ConflictDetectionServiceImplTest {
     private ApplicationContext context;
 
     @Autowired
-    private EntityManager em;
+    private MetadataService metadataService;
 
     @Autowired
-    private OrganizationRepository organizationRepository;
+    private EntityManager em;
 
     @Autowired
     private OrganizationEquivalentsService organizationEquivalentsService;
@@ -73,7 +76,7 @@ public class ConflictDetectionServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         conflictDetectionService = new ConflictDetectionServiceImpl(context, em,
-            organizationRepository, organizationEquivalentsService, conflictService);
+            organizationEquivalentsService, conflictService, metadataService);
     }
 
     @Test
@@ -117,7 +120,7 @@ public class ConflictDetectionServiceImplTest {
     public void shouldAddToAcceptedThisChangeInsteadOfDuplicatingConflict() {
         Organization org = OrganizationMother.createDefaultAndPersist(em);
         Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
-        theSameOrg.setEmail("user@example.com");
+        theSameOrg.setEmail("user@example.example");
         em.flush();
         OrganizationMatch match = createMatch(org, theSameOrg);
         OrganizationMatch match2 = createMatch(theSameOrg, org);
@@ -134,10 +137,10 @@ public class ConflictDetectionServiceImplTest {
 
     @Test
     @Transactional
-    public void shouldCreateMirrorConflictConflict() {
+    public void shouldCreateMirrorConflict() {
         Organization org = OrganizationMother.createDefaultAndPersist(em);
         Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
-        theSameOrg.setEmail("user@example.com");
+        theSameOrg.setEmail("user@example.example");
         em.flush();
         OrganizationMatch match = createMatch(org, theSameOrg);
         OrganizationMatch match2 = createMatch(theSameOrg, org);
@@ -151,6 +154,33 @@ public class ConflictDetectionServiceImplTest {
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
         assertEquals(conflictRepository.findAll().get(0).getOfferedValue(),
             conflictRepository.findAll().get(1).getCurrentValue());
+    }
+
+    @Test
+    @Transactional
+    public void shouldCreateConflictWithDates() {
+        // Arrange
+        // Organization with one metadata of type ALL_FIELDS
+        Organization org = OrganizationMother.createDefaultAndPersist(em);
+        // Organization with metadata of type ALL_FIELDS and with email changed one
+        Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
+        theSameOrg.setEmail("user@example.example");
+        em.persist(theSameOrg);
+
+        OrganizationMatch match = createMatch(org, theSameOrg);
+        OrganizationMatch match2 = createMatch(theSameOrg, org);
+
+        // Act
+        conflictDetectionService.detect(Arrays.asList(match, match2));
+
+        // Assert
+        assertFalse(CollectionUtils.isEmpty(conflictRepository.findAllWithResourceId(org.getId())));
+        assertFalse(CollectionUtils.isEmpty(conflictRepository.findAllWithResourceId(theSameOrg.getId())));
+
+        Conflict conflictOrg = conflictRepository.findAllWithResourceId(org.getId()).get(0);
+        Conflict conflictTheSameOrg = conflictRepository.findAllWithResourceId(theSameOrg.getId()).get(0);
+        assertEquals(conflictTheSameOrg.getOfferedValueDate(), conflictOrg.getCurrentValueDate());
+        assertEquals(conflictOrg.getOfferedValueDate(), conflictTheSameOrg.getCurrentValueDate());
     }
 
     private static OrganizationMatch createMatch(Organization org, Organization org2) {

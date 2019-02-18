@@ -14,6 +14,8 @@ public final class Constants {
 
     public static final String DEFAULT_LANGUAGE = "en";
 
+    public static final String ALL_FIELDS = "ALL FIELDS";
+
     private Constants() {
     }
 }

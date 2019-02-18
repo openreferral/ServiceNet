@@ -1,7 +1,9 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.enumeration.ActionType;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.UserService;
@@ -84,5 +86,21 @@ public class MetadataServiceImpl implements MetadataService {
     public void delete(UUID id) {
         log.debug("Request to delete Metadata : {}", id);
         metadataRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Metadata> findMetadataForConflict(String resourceId, String fieldName, String replacementValue) {
+        log.debug("Request to get most recent metadata for specific change of entity with resourceId: {}.", resourceId);
+        Optional<Metadata> metadataOpt =
+            metadataRepository.findFirstByResourceIdAndFieldNameAndReplacementValueOrderByLastActionDateAsc(
+                resourceId, fieldName, replacementValue);
+
+        if (metadataOpt.isPresent()) {
+            return metadataOpt;
+        } else {
+            return metadataRepository.findFirstByResourceIdAndFieldNameAndLastActionTypeOrderByLastActionDateAsc(
+                resourceId, Constants.ALL_FIELDS, ActionType.CREATE);
+        }
     }
 }
