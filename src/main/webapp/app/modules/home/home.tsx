@@ -5,7 +5,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Container, Progress } from 'reactstrap';
+import { Row, Col, Alert, Container, Progress, Spinner } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -117,7 +117,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
             pageStart={this.state.activePage}
             loadMore={this.handleLoadMore}
             hasMore={this.state.activePage - 1 < this.props.links.next}
-            loader={<div className="loader">Loading ...</div>}
+            loader={<Spinner color="primary" />}
             threshold={0}
             initialLoad={false}
           >
