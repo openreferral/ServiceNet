@@ -1,38 +1,45 @@
 package org.benetech.servicenet.adapter.laac;
 
+import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
-import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.domain.Language;
-import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.Phone;
-import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.domain.ServiceAtLocation;
-import org.benetech.servicenet.service.ImportService;
-import org.junit.Before;
+import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
+import org.benetech.servicenet.service.ContactService;
+import org.benetech.servicenet.service.EligibilityService;
+import org.benetech.servicenet.service.LanguageService;
+import org.benetech.servicenet.service.LocationService;
+import org.benetech.servicenet.service.OpeningHoursService;
+import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.PhoneService;
+import org.benetech.servicenet.service.PhysicalAddressService;
+import org.benetech.servicenet.service.PostalAddressService;
+import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.dto.ContactDTO;
+import org.benetech.servicenet.service.dto.LanguageDTO;
+import org.benetech.servicenet.service.dto.LocationDTO;
+import org.benetech.servicenet.service.dto.PhoneDTO;
+import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Set;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {ServiceNetApp.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class LAACDataAdapterTest {
 
     private static final String PROVIDER_NAME = "LAAC";
@@ -60,32 +67,49 @@ public class LAACDataAdapterTest {
     private static final String ADDRESS_FORMAT = "Address%d";
     private static final String PHONE_FORMAT = "(123) 123-456%d";
 
-    @InjectMocks
+    @Autowired
     private LAACDataAdapter adapter;
 
-    @Mock
-    private ImportService importService;
+    @Autowired
+    private ImportManager importManager;
 
-    @Before
-    public void initMocks() {
-        MockitoAnnotations.initMocks(this);
-    }
+    @Autowired
+    private LanguageService languageService;
+
+    @Autowired
+    private EligibilityService eligibilityService;
+
+    @Autowired
+    private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
+
+    @Autowired
+    private OrganizationService organizationService;
+
+    @Autowired
+    private PhoneService phoneService;
+
+    @Autowired
+    private ServiceService serviceService;
+
+    @Autowired
+    private OpeningHoursService openingHoursService;
+
+    @Autowired
+    private PhysicalAddressService physicalAddressService;
+
+    @Autowired
+    private ContactService contactService;
+
+    @Autowired
+    private PostalAddressService postalAddressService;
+
+    @Autowired
+    private LocationService locationService;
 
     @Test
     public void testSavingLAACData() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString("laac/orgs.json");
         SingleImportData importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true);
-
-        when(importService.createOrUpdateService(any(Service.class),
-            anyString(), anyString(), any(DataImportReport.class)))
-            .thenReturn(new Service());
-
-        when(importService.createOrUpdateLocation(any(Location.class), anyString(), anyString()))
-            .thenReturn(new Location());
-
-        when(importService.createOrUpdateOrganization(any(Organization.class), anyString(),
-            anyString(), any(DataImportReport.class)))
-            .thenReturn(new Organization());
 
         adapter.importData(importData);
 
@@ -97,109 +121,81 @@ public class LAACDataAdapterTest {
         assertExtractedLanguages();
         assertExtractedPhysicalAddress();
         assertExtractedPhones();
-
-        verify(importService, times(THREE))
-            .createOrUpdateServiceAtLocation(any(ServiceAtLocation.class), anyString(), anyString(),
-                any(Service.class), any(Location.class));
     }
 
     private void assertExtractedPhones() {
-        ArgumentCaptor<Set<Phone>> captor = ArgumentCaptor.forClass(Set.class);
-        verify(importService, times(THREE))
-            .createOrUpdatePhonesForService(captor.capture(), any(Service.class), any(Location.class));
+        assertEquals(THREE, phoneService.findAll().size());
 
-        Set<Phone> set1 = captor.getAllValues().get(0);
-        assertEquals(1, set1.size());
-        assertEquals(String.format(PHONE_FORMAT, 1), set1.iterator().next().getNumber());
+        PhoneDTO phone1 = phoneService.findAll().get(0);
+        assertEquals(String.format(PHONE_FORMAT, 1), phone1.getNumber());
 
-        Set<Phone> set2 = captor.getAllValues().get(1);
-        assertEquals(1, set2.size());
-        assertEquals(String.format(PHONE_FORMAT, 2), set2.iterator().next().getNumber());
+        PhoneDTO phone2 = phoneService.findAll().get(1);
+        assertEquals(String.format(PHONE_FORMAT, TWO), phone2.getNumber());
 
-        Set<Phone> set3 = captor.getAllValues().get(2);
-        assertEquals(1, set3.size());
-        assertEquals(String.format(PHONE_FORMAT, 3), set3.iterator().next().getNumber());
+        PhoneDTO phone3 = phoneService.findAll().get(2);
+        assertEquals(String.format(PHONE_FORMAT, THREE), phone3.getNumber());
     }
 
     private void assertExtractedPhysicalAddress() {
-        ArgumentCaptor<PhysicalAddress> captor = ArgumentCaptor.forClass(PhysicalAddress.class);
-        verify(importService, times(THREE))
-            .createOrUpdatePhysicalAddress(captor.capture(), any(Location.class));
+        assertEquals(THREE, physicalAddressService.findAll().size());
 
-        PhysicalAddress physicalAddress1 = captor.getAllValues().get(0);
+        PhysicalAddressDTO physicalAddress1 = physicalAddressService.findAll().get(0);
         assertEquals(String.format(CITY_FORMAT, 1), physicalAddress1.getCity());
         assertEquals(String.format(COUNTRY_FORMAT, 1), physicalAddress1.getCountry());
         assertEquals(String.format(POSTAL_CODE_FORMAT, 1), physicalAddress1.getPostalCode());
         assertEquals(String.format(STATE_FORMAT, 1), physicalAddress1.getStateProvince());
         assertEquals(NOT_AVAILABLE, physicalAddress1.getAddress1());
         assertNull(physicalAddress1.getAttention());
-        
-        PhysicalAddress physicalAddress2 = captor.getAllValues().get(1);
-        assertEquals(String.format(CITY_FORMAT, 2), physicalAddress2.getCity());
-        assertEquals(String.format(COUNTRY_FORMAT, 2), physicalAddress2.getCountry());
-        assertEquals(String.format(POSTAL_CODE_FORMAT, 2), physicalAddress2.getPostalCode());
-        assertEquals(String.format(STATE_FORMAT, 2), physicalAddress2.getStateProvince());
-        assertEquals(String.format(ADDRESS_FORMAT, 2), physicalAddress2.getAddress1());
+
+        PhysicalAddressDTO physicalAddress2 = physicalAddressService.findAll().get(1);
+        assertEquals(String.format(CITY_FORMAT, TWO), physicalAddress2.getCity());
+        assertEquals(String.format(COUNTRY_FORMAT, TWO), physicalAddress2.getCountry());
+        assertEquals(String.format(POSTAL_CODE_FORMAT, TWO), physicalAddress2.getPostalCode());
+        assertEquals(String.format(STATE_FORMAT, TWO), physicalAddress2.getStateProvince());
+        assertEquals(String.format(ADDRESS_FORMAT, TWO), physicalAddress2.getAddress1());
         assertNull(physicalAddress2.getAttention());
 
-        PhysicalAddress physicalAddress3 = captor.getAllValues().get(2);
-        assertEquals(String.format(CITY_FORMAT, 3), physicalAddress3.getCity());
-        assertEquals(String.format(COUNTRY_FORMAT, 3), physicalAddress3.getCountry());
-        assertEquals(String.format(POSTAL_CODE_FORMAT, 3), physicalAddress3.getPostalCode());
-        assertEquals(String.format(STATE_FORMAT, 3), physicalAddress3.getStateProvince());
-        assertEquals(String.format(ADDRESS_FORMAT, 3), physicalAddress3.getAddress1());
-        assertEquals(String.format(ATTENTION_FORMAT, 3), physicalAddress3.getAttention());
+        PhysicalAddressDTO physicalAddress3 = physicalAddressService.findAll().get(TWO);
+        assertEquals(String.format(CITY_FORMAT, THREE), physicalAddress3.getCity());
+        assertEquals(String.format(COUNTRY_FORMAT, THREE), physicalAddress3.getCountry());
+        assertEquals(String.format(POSTAL_CODE_FORMAT, THREE), physicalAddress3.getPostalCode());
+        assertEquals(String.format(STATE_FORMAT, THREE), physicalAddress3.getStateProvince());
+        assertEquals(String.format(ADDRESS_FORMAT, THREE), physicalAddress3.getAddress1());
+        assertEquals(String.format(ATTENTION_FORMAT, THREE), physicalAddress3.getAttention());
     }
 
     private void assertExtractedLanguages() {
-        ArgumentCaptor<Set<Language>> captor = ArgumentCaptor.forClass(Set.class);
-        verify(importService, times(THREE))
-            .createOrUpdateLangsForService(captor.capture(), any(Service.class), any(Location.class));
+        assertEquals(4, languageService.findAll().size());
 
-        Set<Language> set1 = captor.getAllValues().get(0);
-        for (Language language : set1) {
+        for (LanguageDTO language : languageService.findAll()) {
             assertTrue(RUSSIAN.equals(language.getLanguage())
                 || SPANISH.equals(language.getLanguage()));
         }
     }
 
     private void assertExtractedContact() {
-        ArgumentCaptor<Set<Contact>> captor = ArgumentCaptor.forClass(Set.class);
-        verify(importService, times(TWO))
-            .createOrUpdateContactsForOrganization(captor.capture(), any(Organization.class));
+        assertEquals(TWO, contactService.findAll().size());
 
+        ContactDTO contact1 = contactService.findAll().get(0);
+        assertEquals("John Smith", contact1.getName());
 
-        Set<Contact> set = captor.getAllValues().get(0);
-        assertEquals(1, set.size());
-        for (Contact contact : set) {
-            assertEquals("John Smith", contact.getName());
-        }
-        set = captor.getAllValues().get(1);
-        assertEquals(1, set.size());
-        for (Contact contact : set) {
-            assertEquals("Jane Black", contact.getName());
-        }
+        ContactDTO contact2 = contactService.findAll().get(1);
+        assertEquals("Jane Black", contact2.getName());
     }
 
     private void assertExtractedEligibility() {
-        ArgumentCaptor<Eligibility> captor = ArgumentCaptor.forClass(Eligibility.class);
-        verify(importService, times(TWO))
-            .createOrUpdateEligibility(captor.capture(), any(Service.class));
-
+        assertEquals(TWO, eligibilityService.findAll().size());
         assertEquals(String.format(ELIGIBILITY_FORMAT, 1),
-            captor.getAllValues().get(0).getEligibility());
-        assertEquals(String.format(ELIGIBILITY_FORMAT, 2),
-            captor.getAllValues().get(1).getEligibility());
+            eligibilityService.findAll().get(0).getEligibility());
+        assertEquals(String.format(ELIGIBILITY_FORMAT, TWO),
+            eligibilityService.findAll().get(1).getEligibility());
     }
 
     private void assertExtractedOrganization() {
-        ArgumentCaptor<Organization> captor = ArgumentCaptor.forClass(Organization.class);
-        verify(importService, times(THREE))
-            .createOrUpdateOrganization(captor.capture(), anyString(),
-                anyString(), any(DataImportReport.class));
+        assertEquals(THREE, organizationService.findAll().size());
 
         int i = 1;
-        for (Organization organization : captor.getAllValues()) {
+        for (Organization organization : organizationService.findAll()) {
             assertEquals(String.format(ID_FORMAT, i), organization.getExternalDbId());
             assertEquals(String.format(ORG_NAME_FORMAT, i), organization.getName());
             assertEquals(String.format(ORG_DESCRIPTION_FORMAT, i), organization.getDescription());
@@ -210,12 +206,10 @@ public class LAACDataAdapterTest {
     }
 
     private void assertExtractedService() {
-        ArgumentCaptor<Service> captor = ArgumentCaptor.forClass(Service.class);
-        verify(importService, times(THREE))
-            .createOrUpdateService(captor.capture(), anyString(), anyString(), any(DataImportReport.class));
+        assertEquals(THREE, serviceService.findAll().size());
 
         int i = 1;
-        for (Service service : captor.getAllValues()) {
+        for (ServiceDTO service : serviceService.findAll()) {
             assertEquals(String.format(SERVICE_NAME_FORMAT, i), service.getName());
             assertEquals(String.format(SERVICE_TYPE_FORMAT, i, i), service.getType());
             assertEquals(String.format(SERVICE_DESCRIPTION_FORMAT, i), service.getDescription());
@@ -224,14 +218,12 @@ public class LAACDataAdapterTest {
     }
 
     private void assertExtractedLocation() {
-        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        verify(importService, times(THREE))
-            .createOrUpdateLocation(captor.capture(), anyString(), anyString());
+        assertEquals(THREE, locationService.findAll().size());
 
         int i = 1;
-        for (Location location : captor.getAllValues()) {
+        for (LocationDTO location : locationService.findAll()) {
             assertEquals(String.format(LOCATION_NAME_FORMAT, i), location.getName());
-            assertEquals(String.format(LOCATION_DESCRIPTION_FORMAT, i, i ,i ,i), location.getDescription());
+            assertEquals(String.format(LOCATION_DESCRIPTION_FORMAT, i, i, i, i), location.getDescription());
             i++;
         }
     }

@@ -21,22 +21,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
 import org.mockito.MockitoAnnotations;
 import org.mockserver.client.MockServerClient;
-import org.springframework.beans.factory.annotation.Autowired;;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
 import java.util.Collection;
-
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.validation.ConstraintViolationException;
 
 import static org.benetech.servicenet.adapter.AdapterTestsUtils.mockEndpointWithBatch;
 import static org.junit.Assert.assertEquals;
@@ -45,7 +40,6 @@ import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AbstractDataAdapterDocumentUploadTest {
 
     private static final String EDEN_PROVIDER = "Eden";

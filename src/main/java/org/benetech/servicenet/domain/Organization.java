@@ -249,6 +249,11 @@ public class Organization extends AbstractEntity implements Serializable {
         return this;
     }
 
+    public Organization contacts(Set<Contact> contacts) {
+        this.contacts = contacts;
+        return this;
+    }
+
     public Organization addServices(Service service) {
         this.services.add(service);
         service.setOrganization(this);

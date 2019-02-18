@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.domain.Organization;
@@ -56,6 +57,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
         createOrUpdateFundingForOrganization(filledOrganization.getFunding(), organization);
         createOrUpdateProgramsForOrganization(filledOrganization.getPrograms(), organization);
+        createOrUpdateContactsForOrganization(filledOrganization.getContacts(), organization);
 
         return organization;
     }
@@ -79,6 +81,24 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         Set<Program> filtered = programs.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .collect(Collectors.toSet());
         createOrUpdateFilteredProgramsForOrganization(filtered, organization);
+    }
+
+    private void createOrUpdateContactsForOrganization(Set<Contact> contacts, Organization organization) {
+        Set<Contact> filtered = contacts.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .collect(Collectors.toSet());
+        createOrUpdateFilteredContactsForOrganization(filtered, organization);
+    }
+
+    private void createOrUpdateFilteredContactsForOrganization(Set<Contact> contacts, Organization organization) {
+        contacts.forEach(p -> p.setOrganization(organization));
+
+        Set<Contact> common = new HashSet<>(contacts);
+        common.retainAll(organization.getContacts());
+
+        organization.getContacts().stream().filter(c -> !common.contains(c)).forEach(c -> safeRemove(em, c));
+        contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
+
+        organization.setContacts(contacts);
     }
 
     private void createOrUpdateFilteredProgramsForOrganization(Set<Program> programs, Organization organization) {

@@ -1,21 +1,14 @@
 package org.benetech.servicenet.adapter.laac;
 
 import com.google.gson.Gson;
-import org.apache.commons.collections4.CollectionUtils;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.laac.model.LAACData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
-import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.Phone;
-import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.domain.ServiceAtLocation;
-import org.benetech.servicenet.service.ImportService;
+import org.benetech.servicenet.manager.ImportManager;
 import org.benetech.servicenet.type.ListType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +21,7 @@ import java.util.Set;
 public class LAACDataAdapter extends SingleDataAdapter {
 
     @Autowired
-    private ImportService importService;
+    private ImportManager importManager;
 
     @Override
     public DataImportReport importData(SingleImportData data) {
@@ -41,64 +34,40 @@ public class LAACDataAdapter extends SingleDataAdapter {
         LAACDataMapper mapper = LAACDataMapper.INSTANCE;
 
         for (LAACData entity : data) {
-            Organization savedOrg = importOrganization(mapper.extractOrganization(entity), entity.getId(),
-                providerName, report);
-            Service savedService = importService(mapper.extractService(entity),
-                savedOrg, entity.getId(), providerName, report);
-            Location savedLocation = importLocation(mapper.extractLocation(entity),
-                savedOrg, entity.getId(), providerName);
-            mapper.extractEligibility(entity).ifPresent(e -> importEligibility(e, savedService));
-            mapper.extractContact(entity).ifPresent(c ->importContact(c, savedOrg));
-            mapper.extractPhysicalAddress(entity).ifPresent(pa -> importPhysicalAddress(pa, savedLocation));
-            importLanguages(mapper.extractLanguages(entity), savedService, savedLocation);
-            importPhones(Collections.singleton(mapper.extractPhone(entity)), savedService, savedLocation);
-            importServiceAtLocation(entity.getId(), providerName, savedService, savedLocation);
+            Location location = getLocationToPersist(mapper, entity);
+            Service service = getServiceToPersist(mapper, entity);
+            Organization organization = getOrganizationToPersist(mapper, entity, location, service);
+            importOrganization(organization, entity.getId(), providerName, report);
         }
 
         return report;
     }
 
-    private Service importService(Service service, Organization savedOrg, String externalDbId,
-                                  String providerName, DataImportReport report) {
-        service.setOrganization(savedOrg);
-        return importService.createOrUpdateService(service, externalDbId, providerName, report);
+    private Organization getOrganizationToPersist(LAACDataMapper mapper, LAACData entity,
+                                                  Location location, Service service) {
+        Organization organization = mapper.extractOrganization(entity);
+        organization.setLocations(Set.of(location));
+        organization.setServices(Set.of(service));
+        mapper.extractContact(entity).ifPresent(c -> organization.setContacts(Set.of(c)));
+        return organization;
     }
 
-    private Location importLocation(Location location, Organization savedOrg, String externalDbId, String providerName) {
-        location.setOrganization(savedOrg);
-        return importService.createOrUpdateLocation(location, externalDbId, providerName);
+    private Location getLocationToPersist(LAACDataMapper mapper, LAACData entity) {
+        Location location = mapper.extractLocation(entity);
+        mapper.extractPhysicalAddress(entity).ifPresent(location::setPhysicalAddress);
+        return location;
+    }
+
+    private Service getServiceToPersist(LAACDataMapper mapper, LAACData entity) {
+        Service service = mapper.extractService(entity);
+        mapper.extractEligibility(entity).ifPresent(service::setEligibility);
+        service.setPhones(Collections.singleton(mapper.extractPhone(entity)));
+        service.setLangs(mapper.extractLanguages(entity));
+        return service;
     }
 
     private Organization importOrganization(Organization organization, String externalDbId,
                                             String providerName, DataImportReport report) {
-        return importService.createOrUpdateOrganization(organization,
-            externalDbId, providerName, report);
-    }
-
-    private void importEligibility(Eligibility eligibility, Service service) {
-        importService.createOrUpdateEligibility(eligibility, service);
-    }
-
-    private void importContact(Contact contact, Organization organization) {
-        importService.createOrUpdateContactsForOrganization(Collections.singleton(contact), organization);
-    }
-
-    private void importLanguages(Set<Language> languages, Service service, Location location) {
-        if (CollectionUtils.isNotEmpty(languages)) {
-            importService.createOrUpdateLangsForService(languages, service, location);
-        }
-    }
-
-    private void importPhysicalAddress(PhysicalAddress physicalAddress, Location location) {
-        importService.createOrUpdatePhysicalAddress(physicalAddress, location);
-    }
-
-    private void importPhones(Set<Phone> phones, Service service, Location location) {
-        importService.createOrUpdatePhonesForService(phones, service, location);
-    }
-
-    private void importServiceAtLocation(String externalDbId, String providerName, Service service, Location location) {
-        importService.createOrUpdateServiceAtLocation(new ServiceAtLocation(),
-            externalDbId, providerName, service, location);
+        return importManager.createOrUpdateOrganization(organization, externalDbId, providerName, report);
     }
 }
