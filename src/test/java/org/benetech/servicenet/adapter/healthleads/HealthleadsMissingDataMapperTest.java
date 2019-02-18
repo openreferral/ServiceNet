@@ -231,7 +231,7 @@ public class HealthleadsMissingDataMapperTest {
     public void shouldNotThrowExceptionForMinimalDataForLanguages() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + LANGUAGES + JSON);
         List<HealthleadsLanguage> entities = new Gson().fromJson(json, new ListType<>(HealthleadsLanguage.class));
-        Set<String> langs = mapper.extractLanguages(entities.get(0)).stream().map(Language::getLanguage).collect(Collectors.toSet());
+        Set<String> langs = mapper.extractLanguages(Set.of(entities.get(0))).stream().map(Language::getLanguage).collect(Collectors.toSet());
 
         assertTrue(langs.contains("English"));
     }
@@ -243,7 +243,7 @@ public class HealthleadsMissingDataMapperTest {
         List<HealthleadsLanguage> entities = new Gson().fromJson(json, new ListType<>(HealthleadsLanguage.class));
         entities.forEach(e -> e.setLanguage(null));
 
-        Set<Language> result = mapper.extractLanguages(entities.get(0));
+        Set<Language> result = mapper.extractLanguages(Set.of(entities.get(0)));
 
         assertTrue(result.isEmpty());
     }

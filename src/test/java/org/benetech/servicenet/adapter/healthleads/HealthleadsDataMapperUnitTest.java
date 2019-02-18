@@ -178,7 +178,7 @@ public class HealthleadsDataMapperUnitTest {
         language.setLanguage("English ; German ;Polish");
 
         Set<org.benetech.servicenet.domain.Language> extracted
-            = HealthLeadsDataMapper.INSTANCE.extractLanguages(language);
+            = HealthLeadsDataMapper.INSTANCE.extractLanguages(Set.of(language));
 
         assertEquals(3, extracted.size());
         for (org.benetech.servicenet.domain.Language extractedLanguage : extracted) {
