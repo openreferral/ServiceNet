@@ -181,7 +181,7 @@ public class OrganizationImportServiceTest {
 
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void shouldCreateContactsIfOrganizationHasNoneOfThem() {
+    public void shouldCreateContactsIfOrganizationHasOneOfThem() {
         Organization organization = helper.generateNewOrganization(helper.generateExistingAccount());
         Contact contact = new Contact().name(NEW_STRING);
         organization.setContacts(helper.mutableSet(contact));

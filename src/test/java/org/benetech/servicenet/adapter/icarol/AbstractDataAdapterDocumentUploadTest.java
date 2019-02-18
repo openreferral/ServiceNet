@@ -38,8 +38,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 
-;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class AbstractDataAdapterDocumentUploadTest {

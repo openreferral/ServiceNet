@@ -93,7 +93,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         contacts.forEach(p -> p.setOrganization(organization));
 
         Set<Contact> common = new HashSet<>(contacts);
-        common.retainAll(organization.getPrograms());
+        common.retainAll(organization.getContacts());
 
         organization.getContacts().stream().filter(c -> !common.contains(c)).forEach(c -> safeRemove(em, c));
         contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
