@@ -1,81 +1,176 @@
 package org.benetech.servicenet.adapter.sheltertech;
 
+import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.Phone;
-import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.domain.PostalAddress;
-import org.benetech.servicenet.domain.RegularSchedule;
-import org.benetech.servicenet.domain.RequiredDocument;
-import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.service.ImportService;
+import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.repository.ContactRepository;
+import org.benetech.servicenet.repository.EligibilityRepository;
+import org.benetech.servicenet.repository.HolidayScheduleRepository;
+import org.benetech.servicenet.repository.LanguageRepository;
+import org.benetech.servicenet.repository.OpeningHoursRepository;
+import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.repository.PhoneRepository;
+import org.benetech.servicenet.repository.PhysicalAddressRepository;
+import org.benetech.servicenet.repository.RegularScheduleRepository;
+import org.benetech.servicenet.repository.RequiredDocumentRepository;
+import org.benetech.servicenet.repository.ServiceRepository;
+import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
+import org.benetech.servicenet.service.ContactService;
+import org.benetech.servicenet.service.EligibilityService;
+import org.benetech.servicenet.service.LanguageService;
+import org.benetech.servicenet.service.LocationService;
+import org.benetech.servicenet.service.OpeningHoursService;
+import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.PhoneService;
+import org.benetech.servicenet.service.PhysicalAddressService;
+import org.benetech.servicenet.service.PostalAddressService;
+import org.benetech.servicenet.service.RegularScheduleService;
+import org.benetech.servicenet.service.RequiredDocumentService;
+import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.dto.EligibilityDTO;
+import org.benetech.servicenet.service.dto.LocationDTO;
+import org.benetech.servicenet.service.dto.OpeningHoursDTO;
+import org.benetech.servicenet.service.dto.PhoneDTO;
+import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
+import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ServiceNetApp.class)
 public class ShelterTechCompleteDataAdapterTest {
 
     private static final String COMPLETE_JSON = "sheltertech/complete.json";
     private static final String PROVIDER_NAME = "ShelterTech";
 
-    @InjectMocks
+    @Autowired
     private ShelterTechDataAdapter adapter;
 
-    @Mock
-    private ImportService importService;
+    @Autowired
+    private ImportManager importManager;
 
-    SingleImportData importData;
+    @Autowired
+    private LanguageService languageService;
 
-    @Before
-    public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
+    @Autowired
+    private EligibilityService eligibilityService;
 
-        when(importService.createOrUpdateService(any(Service.class),
-            anyString(), anyString(), any(DataImportReport.class)))
-            .thenReturn(new Service());
+    @Autowired
+    private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
 
-        when(importService.createOrUpdateLocation(any(Location.class), anyString(), anyString()))
-            .thenReturn(new Location());
+    @Autowired
+    private OrganizationService organizationService;
 
-        when(importService.createOrUpdateOrganization(any(Organization.class), anyString(), anyString(),
-            any(DataImportReport.class)))
-            .thenReturn(new Organization());
+    @Autowired
+    private PhoneService phoneService;
 
+    @Autowired
+    private ServiceService serviceService;
+
+    @Autowired
+    private OpeningHoursService openingHoursService;
+
+    @Autowired
+    private PhysicalAddressService physicalAddressService;
+
+    @Autowired
+    private ContactService contactService;
+
+    @Autowired
+    private PostalAddressService postalAddressService;
+
+    @Autowired
+    private LocationService locationService;
+
+    @Autowired
+    private RequiredDocumentService requiredDocumentService;
+
+    @Autowired
+    private RegularScheduleService regularScheduleService;
+
+    @Autowired
+    private EligibilityRepository eligibilityRepository;
+
+    @Autowired
+    private PhoneRepository phoneRepository;
+
+    @Autowired
+    private PhysicalAddressRepository physicalAddressRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private LanguageRepository languageRepository;
+
+    @Autowired
+    private ContactRepository contactRepository;
+
+    @Autowired
+    private RegularScheduleRepository regularScheduleRepository;
+
+    @Autowired
+    private OpeningHoursRepository openingHoursRepository;
+
+    @Autowired
+    private HolidayScheduleRepository holidayScheduleRepository;
+
+    @Autowired
+    private RequiredDocumentRepository requiredDocumentRepository;
+
+    @Autowired
+    private EntityManager em;
+
+    private static SingleImportData importData;
+
+    @BeforeClass
+    public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
         importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true);
+    }
+
+    @Before
+    public void clearDb() {
+        contactRepository.deleteAll();
+        requiredDocumentRepository.deleteAll();
+        openingHoursRepository.deleteAll();
+        regularScheduleRepository.deleteAll();
+        holidayScheduleRepository.deleteAll();
+        languageRepository.deleteAll();
+        eligibilityRepository.deleteAll();
+        phoneRepository.deleteAll();
+        physicalAddressRepository.deleteAll();
+        serviceRepository.deleteAll();
+        organizationRepository.deleteAll();
     }
 
     @Test
     public void shouldImportCompleteOrganization() {
         adapter.importData(importData);
-        ArgumentCaptor<Organization> captor = ArgumentCaptor.forClass(Organization.class);
-        verify(importService, times(1))
-            .createOrUpdateOrganization(captor.capture(), anyString(), anyString(), any(DataImportReport.class));
+        assertEquals(1, organizationService.findAll().size());
 
-        Organization result = captor.getValue();
+        Organization result = organizationService.findAll().get(0);
         assertEquals("The Organization", result.getName());
         assertEquals("Alternate Organization", result.getAlternateName());
         assertEquals("org@email.com", result.getEmail());
@@ -89,11 +184,9 @@ public class ShelterTechCompleteDataAdapterTest {
     @Test
     public void shouldImportCompleteService() {
         adapter.importData(importData);
-        ArgumentCaptor<Service> captor = ArgumentCaptor.forClass(Service.class);
-        verify(importService, times(1))
-            .createOrUpdateService(captor.capture(), anyString(), anyString(), any(DataImportReport.class));
+        assertEquals(1, serviceService.findAll().size());
 
-        Service result = captor.getValue();
+        ServiceDTO result = serviceService.findAll().get(0);
         assertEquals("Service Name", result.getName());
         assertEquals("Alternate Service", result.getAlternateName());
         assertEquals("Certified", result.getStatus());
@@ -109,10 +202,9 @@ public class ShelterTechCompleteDataAdapterTest {
     @Ignore("address_1 is used as name, instead of using LocationUtils") //TODO Remove
     public void shouldImportCompleteLocation() {
         adapter.importData(importData);
-        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        verify(importService, times(1))
-            .createOrUpdateLocation(captor.capture(), anyString(), anyString());
-        Location result = captor.getValue();
+        assertEquals(1, locationService.findAll().size());
+
+        LocationDTO result = locationService.findAll().get(0);
 
         assertEquals("1233 90th St. - San Francisco (CA)", result.getName());
         assertEquals(11.1222222, result.getLatitude());
@@ -123,11 +215,9 @@ public class ShelterTechCompleteDataAdapterTest {
     @Test
     public void shouldImportCompletePhysicalAddress() {
         adapter.importData(importData);
-        ArgumentCaptor<PhysicalAddress> captor = ArgumentCaptor.forClass(PhysicalAddress.class);
-        verify(importService, times(1))
-            .createOrUpdatePhysicalAddress(captor.capture(), any(Location.class));
+        assertEquals(1, physicalAddressService.findAll().size());
 
-        PhysicalAddress result = captor.getValue();
+        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
 
         assertEquals("Room 540", result.getAttention());
         assertEquals("1233 90th St.", result.getAddress1());
@@ -140,11 +230,9 @@ public class ShelterTechCompleteDataAdapterTest {
     @Test
     public void shouldImportCompletePostalAddress() {
         adapter.importData(importData);
-        ArgumentCaptor<PostalAddress> captor = ArgumentCaptor.forClass(PostalAddress.class);
-        verify(importService, times(1))
-            .createOrUpdatePostalAddress(captor.capture(), any(Location.class));
+        assertEquals(1, postalAddressService.findAll().size());
 
-        PostalAddress result = captor.getValue();
+        PostalAddressDTO result = postalAddressService.findAll().get(0);
 
         assertEquals("Room 540", result.getAttention());
         assertEquals("1233 90th St.", result.getAddress1());
@@ -157,11 +245,9 @@ public class ShelterTechCompleteDataAdapterTest {
     @Test
     public void shouldImportCompleteEligibility() {
         adapter.importData(importData);
-        ArgumentCaptor<Eligibility> captor = ArgumentCaptor.forClass(Eligibility.class);
-        verify(importService, times(1))
-            .createOrUpdateEligibility(captor.capture(), any(Service.class));
+        assertEquals(1, eligibilityService.findAll().size());
 
-        Eligibility result = captor.getValue();
+        EligibilityDTO result = eligibilityService.findAll().get(0);
 
         assertEquals("Adults", result.getEligibility());
     }
@@ -169,11 +255,9 @@ public class ShelterTechCompleteDataAdapterTest {
     @Test
     public void shouldImportCompletePhone() {
         adapter.importData(importData);
-        ArgumentCaptor<Set<Phone>> captor = ArgumentCaptor.forClass(Set.class);
-        verify(importService, times(1))
-            .createOrUpdatePhonesForOrganization(captor.capture(), any());
+        assertEquals(1, phoneService.findAll().size());
 
-        List<Phone> result = new ArrayList<>(captor.getValue());
+        List<PhoneDTO> result = phoneService.findAll();
 
         assertEquals("(111) 222-3333", result.get(0).getNumber());
         assertEquals((Integer) 32, result.get(0).getExtension());
@@ -184,19 +268,15 @@ public class ShelterTechCompleteDataAdapterTest {
     @Test
     public void shouldImportCompleteRegularSchedule() {
         adapter.importData(importData);
-        ArgumentCaptor<RegularSchedule> captor = ArgumentCaptor.forClass(RegularSchedule.class);
-        verify(importService, times(1))
-            .createOrUpdateRegularSchedule(captor.capture(), any(Service.class));
+        assertEquals(1, regularScheduleService.findAll().size());
     }
 
     @Test
     public void shouldImportCompleteRequiredDocument() {
         adapter.importData(importData);
-        ArgumentCaptor<RequiredDocument> captor = ArgumentCaptor.forClass(RequiredDocument.class);
-        verify(importService, times(1))
-            .createOrUpdateRequiredDocument(captor.capture(), any(), any(), any());
+        assertEquals(1, requiredDocumentService.findAll().size());
 
-        RequiredDocument result = captor.getValue();
+        RequiredDocumentDTO result = requiredDocumentService.findAll().get(0);
 
         assertEquals("ID, or any other document with photo", result.getDocument());
     }
@@ -204,13 +284,10 @@ public class ShelterTechCompleteDataAdapterTest {
     @Test
     @Ignore("Opening Hours are not persisted with ImportService") //TODO: Remove
     public void shouldImportOpeningHours() {
-        adapter.importData(importData);
-        ArgumentCaptor<Set<OpeningHours>> captor = ArgumentCaptor.forClass(Set.class);
-        verify(importService, times(1))
-            .createOrUpdateOpeningHoursForService(captor.capture(), any(Service.class));
+        assertEquals(2, openingHoursService.findAll().size());
 
-        List<OpeningHours> result = new ArrayList<>(captor.getValue()).stream()
-            .sorted().collect(Collectors.toList());
+        List<OpeningHoursDTO> result = openingHoursService.findAll();
+
         assertEquals((Integer) 4, result.get(0).getWeekday());
         assertEquals("22:00", result.get(0).getOpensAt());
         assertEquals("17:00", result.get(0).getClosesAt());
