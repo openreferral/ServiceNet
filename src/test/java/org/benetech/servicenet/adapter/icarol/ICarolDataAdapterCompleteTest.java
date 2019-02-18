@@ -114,7 +114,7 @@ public class ICarolDataAdapterCompleteTest {
 
     @Test
     @Ignore("https://github.com/benetech/ServiceNet/wiki/iCarol-Data-Mapping-(Eden-and-UWBA) " +
-            "Program.requiredDocumentation, column: 'Mapped to'")
+        "Program.requiredDocumentation, column: 'Mapped to'")
     public void shouldImportCompleteService() {
         adapter.importData(importData);
 
@@ -139,12 +139,14 @@ public class ICarolDataAdapterCompleteTest {
     public void shouldImportCompleteLocation() {
         adapter.importData(importData);
 
-        LocationDTO result = locationService.findAll().get(0);
+        List<LocationDTO> result = locationService.findAll();
 
-        assertEquals("12345 Cool Street - CarpetHanger (CA)", result.getName());
-        assertEquals(40.123456, result.getLatitude());
-        assertEquals(-120.123456, result.getLongitude());
-        assertEquals("11", result.getExternalDbId());
+        assertTrue(result.stream().anyMatch(x ->
+            x.getName().equals("12345 Cool Street - CarpetHanger (CA)")
+                && x.getLatitude().equals(40.123456)
+                && x.getLongitude().equals(-120.123456)
+                && x.getExternalDbId().equals("11")
+        ));
     }
 
     @Test
@@ -183,10 +185,11 @@ public class ICarolDataAdapterCompleteTest {
     public void shouldImportCompleteEligibility() {
         adapter.importData(importData);
 
-        EligibilityDTO result = eligibilityService.findAll().get(0);
+        List<EligibilityDTO> result = eligibilityService.findAll();
 
-        assertEquals("Low-income family, elderly (age 62 or over), persons with disabilities, or other persons.",
-            result.getEligibility());
+        assertTrue(result.stream().anyMatch(x ->
+            x.getEligibility().equals(
+                "Low-income family, elderly (age 62 or over), persons with disabilities, or other persons.")));
     }
 
     @Test
@@ -253,7 +256,7 @@ public class ICarolDataAdapterCompleteTest {
 
         assertEquals("Wheelchair accessible/Ramp/Special parking/Restroom", result.getAccessibility());
         assertEquals("AB RoadCompany lines 1, 2, 3 and 4 stop within 2 blocks. BART-CarpetHanger  " +
-                     "Station connects with AB RoadCompany lines 1, 2, 3 and 4",
-                     result.getDetails());
+                "Station connects with AB RoadCompany lines 1, 2, 3 and 4",
+            result.getDetails());
     }
 }

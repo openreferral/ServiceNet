@@ -17,6 +17,7 @@ import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.SharedImportService;
+import org.benetech.servicenet.service.TaxonomyImportService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +48,9 @@ public class ServiceImportServiceImpl implements ServiceImportService {
 
     @Autowired
     private RequiredDocumentService requiredDocumentService;
+
+    @Autowired
+    private TaxonomyImportService taxonomyImportService;
 
     @Override
     public Service createOrUpdateService(Service filledService, String externalDbId, String providerName,
@@ -154,6 +158,12 @@ public class ServiceImportServiceImpl implements ServiceImportService {
             return null;
         }
         serviceTaxonomy.setSrvc(service);
+
+        if (serviceTaxonomy.getTaxonomy() != null) {
+            taxonomyImportService.createOrUpdateTaxonomy(
+                serviceTaxonomy.getTaxonomy(), serviceTaxonomy.getTaxonomy().getExternalDbId(), providerName);
+        }
+
         Optional<ServiceTaxonomy> serviceTaxonomyFromDb
             = serviceTaxonomyService.findForExternalDb(service.getExternalDbId(), providerName);
 
