@@ -70,20 +70,13 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         }
 
         conflicts = updateExistingConflictsOrCreate(conflicts);
-        persistConflicts(conflicts);
-
+        conflicts.forEach(em::persist);
     }
 
     private List<EntityEquivalent> gatherAllEquivalents(OrganizationEquivalent orgEquivalent) {
         List<EntityEquivalent> equivalents = new LinkedList<>(orgEquivalent.getUnwrappedEntities());
         equivalents.add(orgEquivalent);
         return equivalents;
-    }
-
-    private void persistConflicts(List<Conflict> conflicts) {
-        for (Conflict c : conflicts) {
-            em.persist(c);
-        }
     }
 
     private List<Conflict> detect(List<EntityEquivalent> equivalents, SystemAccount owner, SystemAccount accepted) {
@@ -97,8 +90,8 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
                 ConflictDetector detector = context.getBean(
                     eq.getClazz().getSimpleName() + CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
                 List<Conflict> innerConflicts = detector.detect(current, mirror);
-                innerConflicts = setMetadata(eq, innerConflicts);
-                innerConflicts = addAccounts(innerConflicts, owner, accepted);
+                innerConflicts.forEach(c -> addConflictingDates(eq, c));
+                innerConflicts.forEach(c -> addAccounts(c, owner, accepted));
 
                 conflicts.addAll(innerConflicts);
             } catch (NoSuchBeanDefinitionException ex) {
@@ -108,30 +101,19 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         return conflicts;
     }
 
-    private List<Conflict> setMetadata(EntityEquivalent eq, List<Conflict> conflicts) {
-        List<Conflict> result = new LinkedList<>(conflicts);
-        for (Conflict conflict : result) {
-            Optional<Metadata> metadata = metadataService.findMetadataForConflict(
-                eq.getBaseResourceId().toString(), conflict.getFieldName(), conflict.getCurrentValue());
-            metadata.ifPresent(m -> conflict.setCurrentValueDate(m.getLastActionDate()));
-            Optional<Metadata> metadata2 = metadataService.findMetadataForConflict(
-                eq.getPartnerResourceId().toString(), conflict.getFieldName(), conflict.getOfferedValue());
-            metadata2.ifPresent(m -> conflict.setOfferedValueDate(m.getLastActionDate()));
-        }
+    private void addConflictingDates(EntityEquivalent eq, Conflict conflict) {
+        Optional<Metadata> currentMetadata = metadataService.findMetadataForConflict(
+            eq.getBaseResourceId().toString(), conflict.getFieldName(), conflict.getCurrentValue());
+        currentMetadata.ifPresent(m -> conflict.setCurrentValueDate(m.getLastActionDate()));
 
-        return result;
+        Optional<Metadata> offeredMetadata = metadataService.findMetadataForConflict(
+            eq.getPartnerResourceId().toString(), conflict.getFieldName(), conflict.getOfferedValue());
+        offeredMetadata.ifPresent(m -> conflict.setOfferedValueDate(m.getLastActionDate()));
     }
 
-    private List<Conflict> addAccounts(List<Conflict> noAccountConflicts, SystemAccount owner, SystemAccount accepted) {
-        List<Conflict> conflicts = new LinkedList<>();
-
-        for (Conflict conflict : noAccountConflicts) {
-            conflict.setOwner(owner);
-            conflict.addAcceptedThisChange(accepted);
-            conflicts.add(conflict);
-        }
-
-        return conflicts;
+    private void addAccounts(Conflict conflict, SystemAccount owner, SystemAccount accepted) {
+        conflict.setOwner(owner);
+        conflict.addAcceptedThisChange(accepted);
     }
 
     private List<Conflict> updateExistingConflictsOrCreate(List<Conflict> unchecked) {
