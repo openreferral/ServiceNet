@@ -19,6 +19,8 @@ public interface LocationRepository extends JpaRepository<Location, UUID> {
 
     @Query("SELECT loc FROM Location loc " +
         "LEFT JOIN FETCH loc.accessibilities " +
+        "LEFT JOIN FETCH loc.langs " +
+        "LEFT JOIN FETCH loc.phones " +
         "LEFT JOIN FETCH loc.regularSchedule schedule " +
         "LEFT JOIN FETCH schedule.openingHours " +
         "WHERE loc.externalDbId = :extId AND loc.providerName = :providerName")

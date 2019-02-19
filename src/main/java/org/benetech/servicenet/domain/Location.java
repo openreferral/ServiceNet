@@ -102,6 +102,7 @@ public class Location extends AbstractEntity implements Serializable {
         this.longitude = loc.longitude;
         this.externalDbId = loc.externalDbId;
         this.providerName = loc.providerName;
+        this.organization = loc.organization;
     }
 
     public Location organization(Organization organization) {
