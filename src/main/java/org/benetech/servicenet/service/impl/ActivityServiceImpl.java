@@ -101,7 +101,7 @@ public class ActivityServiceImpl implements ActivityService {
             list = activities.subList(startItem, toIndex);
         }
 
-        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), list.size());
+        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), activities.size());
     }
 
     private Optional<ActivityDTO> getEntityActivity(UUID orgId, UUID resourceId) throws ActivityCreationException {
