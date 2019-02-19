@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Organization;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +32,11 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
 
     @Query("SELECT org FROM Organization org WHERE org.account.name != :providerName")
     List<Organization> findAllByProviderNameNot(@Param("providerName") String providerName);
+
+    @Query(value = "SELECT O.* FROM ORGANIZATION O, (SELECT RESOURCE_ID FROM CONFLICT GROUP BY RESOURCE_ID) C " +
+                   "WHERE O.ID = C.RESOURCE_ID AND O.ACCOUNT_ID = ?1",
+        countQuery = "SELECT COUNT(*) FROM ORGANIZATION O, (SELECT RESOURCE_ID FROM CONFLICT GROUP BY RESOURCE_ID) C " +
+                     "WHERE O.ID = C.RESOURCE_ID AND O.ACCOUNT_ID = ?1",
+        nativeQuery = true)
+    Page<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
 }

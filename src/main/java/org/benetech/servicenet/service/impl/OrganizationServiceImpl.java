@@ -7,6 +7,8 @@ import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,6 +129,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void delete(UUID id) {
         log.debug("Request to delete Organization : {}", id);
         organizationRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Organization> findAllWithOwnerId(Pageable pageable, UUID ownerId) {
+        return organizationRepository.findAllWithOwnerId(ownerId, pageable);
     }
 
     @Override
