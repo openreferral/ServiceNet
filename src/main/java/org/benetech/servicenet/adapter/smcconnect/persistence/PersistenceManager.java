@@ -53,10 +53,7 @@ class PersistenceManager {
         for (SmcOrganization smcOrganization : storage.getEntitiesOfClass(SmcOrganization.class)) {
 
             Organization organizationToSave = mapper.extractOrganization(smcOrganization);
-            organizationToSave.setExternalDbId(smcOrganization.getId());
-            organizationToSave.setActive(true);
             organizationToSave.setSourceDocument(sourceDocument);
-            organizationToSave.setFunding(getFundingToPersist(smcOrganization));
             organizationToSave.setContacts(getOrgBasedContactsToPersist(smcOrganization.getId()));
             organizationToSave.setPrograms(getProgramsToPersist(smcOrganization.getId()));
             organizationToSave.setServices(getServicesToPersist(smcOrganization.getId()));
@@ -72,8 +69,6 @@ class PersistenceManager {
         for (SmcLocation smcLocation : storage.getRelatedEntities(SmcLocation.class, relatedTo, SmcOrganization.class)) {
             Location location = mapper.extractLocation(smcLocation);
 
-            location.setExternalDbId(smcLocation.getId());
-            location.setProviderName(PROVIDER_NAME);
             location.setRegularSchedule(getLocationBasedRegularScheduleToPersist(smcLocation.getId()));
             location.setHolidaySchedule(getLocationBasedHolidayScheduleToPersist(smcLocation.getId()));
             location.setPhysicalAddress(getPhysicalAddressToPersist(smcLocation.getId()));
@@ -88,15 +83,14 @@ class PersistenceManager {
         Set<Service> result = new HashSet<>();
         for (SmcService smcService : storage.getRelatedEntities(SmcService.class, relatedTo, SmcLocation.class)) {
             Service service = mapper.extractService(smcService);
-            service.setExternalDbId(smcService.getId());
-            service.setProviderName(PROVIDER_NAME);
-            service.setFunding(getFundingToPersist(smcService));
+
             service.setEligibility(getEligibilityToPersist(smcService));
             service.setLangs(getLanguagesToPersist(smcService));
             service.setContacts(getServiceBasedContactsToPersist(smcService.getId()));
             service.setRegularSchedule(getServiceBasedRegularScheduleToPersist(smcService.getId()));
             service.setHolidaySchedule(getServiceBasedHolidayScheduleToPersist(smcService.getId()));
             service.setPhones(getPhonesToPersist(smcService.getId()));
+
             result.add(service);
         }
         return result;
