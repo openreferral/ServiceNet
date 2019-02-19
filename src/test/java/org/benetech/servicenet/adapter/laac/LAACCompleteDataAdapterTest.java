@@ -1,6 +1,7 @@
 package org.benetech.servicenet.adapter.laac;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -29,7 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -43,7 +43,6 @@ import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class LAACCompleteDataAdapterTest {
 
     private static final String COMPLETE_JSON = "laac/complete.json";
@@ -85,8 +84,12 @@ public class LAACCompleteDataAdapterTest {
     @Autowired
     private LocationService locationService;
 
+    @Autowired
+    private TestDatabaseManagement testDatabaseManagement;
+
     @Before
     public void setUp() throws IOException {
+        testDatabaseManagement.clearDb();
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
         SingleImportData importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true);
         adapter.importData(importData);

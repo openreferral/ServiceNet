@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
@@ -16,17 +17,6 @@ import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.manager.ImportManager;
-import org.benetech.servicenet.repository.ContactRepository;
-import org.benetech.servicenet.repository.EligibilityRepository;
-import org.benetech.servicenet.repository.HolidayScheduleRepository;
-import org.benetech.servicenet.repository.LanguageRepository;
-import org.benetech.servicenet.repository.OpeningHoursRepository;
-import org.benetech.servicenet.repository.OrganizationRepository;
-import org.benetech.servicenet.repository.PhoneRepository;
-import org.benetech.servicenet.repository.PhysicalAddressRepository;
-import org.benetech.servicenet.repository.RegularScheduleRepository;
-import org.benetech.servicenet.repository.RequiredDocumentRepository;
-import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LanguageService;
@@ -119,51 +109,11 @@ public class ImportServiceConfidentialityImplIntTest {
     private OpeningHoursService openingHoursService;
 
     @Autowired
-    private EligibilityRepository eligibilityRepository;
-
-    @Autowired
-    private PhoneRepository phoneRepository;
-
-    @Autowired
-    private PhysicalAddressRepository physicalAddressRepository;
-
-    @Autowired
-    private ServiceRepository serviceRepository;
-
-    @Autowired
-    private OrganizationRepository organizationRepository;
-
-    @Autowired
-    private LanguageRepository languageRepository;
-
-    @Autowired
-    private ContactRepository contactRepository;
-
-    @Autowired
-    private RegularScheduleRepository regularScheduleRepository;
-
-    @Autowired
-    private OpeningHoursRepository openingHoursRepository;
-
-    @Autowired
-    private HolidayScheduleRepository holidayScheduleRepository;
-
-    @Autowired
-    private RequiredDocumentRepository requiredDocumentRepository;
+    private TestDatabaseManagement testDatabaseManagement;
 
     @Before
     public void clearDb() {
-        contactRepository.deleteAll();
-        requiredDocumentRepository.deleteAll();
-        openingHoursRepository.deleteAll();
-        regularScheduleRepository.deleteAll();
-        holidayScheduleRepository.deleteAll();
-        languageRepository.deleteAll();
-        eligibilityRepository.deleteAll();
-        phoneRepository.deleteAll();
-        physicalAddressRepository.deleteAll();
-        serviceRepository.deleteAll();
-        organizationRepository.deleteAll();
+        testDatabaseManagement.clearDb();
     }
 
     @Test
