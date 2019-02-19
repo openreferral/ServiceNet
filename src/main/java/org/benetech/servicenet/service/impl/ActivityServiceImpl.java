@@ -6,6 +6,7 @@ import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
+import org.benetech.servicenet.service.comparator.ActivityComparatorFactory;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
@@ -22,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,6 +68,8 @@ public class ActivityServiceImpl implements ActivityService {
                 log.error(ex.getMessage());
             }
         }
+        Comparator<ActivityDTO> comparator = ActivityComparatorFactory.createComparator(pageable);
+        activities.sort(comparator);
 
         return new PageImpl<>(
             activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), orgs.getTotalElements());
