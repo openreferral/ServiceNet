@@ -83,7 +83,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
         type={type}
         name={identifier}
         id={identifier}
-        defaultValue={defaultValue}
+        value={defaultValue}
       />
     );
     const label = (
