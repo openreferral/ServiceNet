@@ -9,7 +9,7 @@ import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
-import org.benetech.servicenet.service.TmpImportService;
+import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class TmpImportServiceImpl implements TmpImportService {
+public class ImportServiceImpl implements ImportService {
 
     @Autowired
     private TransactionSynchronizationService transactionSynchronizationService;

@@ -6,7 +6,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
 
-public interface TmpImportService {
+public interface ImportService {
 
     Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId, String providerName,
                                             DataImportReport report);
