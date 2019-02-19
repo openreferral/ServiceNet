@@ -10,10 +10,12 @@ import org.benetech.servicenet.repository.ContactRepository;
 import org.benetech.servicenet.repository.EligibilityRepository;
 import org.benetech.servicenet.repository.HolidayScheduleRepository;
 import org.benetech.servicenet.repository.LanguageRepository;
+import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.repository.OpeningHoursRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
+import org.benetech.servicenet.repository.PostalAddressRepository;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.repository.RequiredDocumentRepository;
 import org.benetech.servicenet.repository.ServiceRepository;
@@ -140,6 +142,12 @@ public class ShelterTechCompleteDataAdapterTest {
     private RequiredDocumentRepository requiredDocumentRepository;
 
     @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
+    private PostalAddressRepository postalAddressRepository;
+
+    @Autowired
     private EntityManager em;
 
     private static SingleImportData importData;
@@ -160,8 +168,10 @@ public class ShelterTechCompleteDataAdapterTest {
         languageRepository.deleteAll();
         eligibilityRepository.deleteAll();
         phoneRepository.deleteAll();
+        postalAddressRepository.deleteAll();
         physicalAddressRepository.deleteAll();
         serviceRepository.deleteAll();
+        locationRepository.deleteAll();
         organizationRepository.deleteAll();
     }
 

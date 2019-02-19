@@ -15,10 +15,22 @@ import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.repository.ContactRepository;
+import org.benetech.servicenet.repository.EligibilityRepository;
+import org.benetech.servicenet.repository.HolidayScheduleRepository;
+import org.benetech.servicenet.repository.LanguageRepository;
+import org.benetech.servicenet.repository.OpeningHoursRepository;
+import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.repository.PhoneRepository;
+import org.benetech.servicenet.repository.PhysicalAddressRepository;
+import org.benetech.servicenet.repository.RegularScheduleRepository;
+import org.benetech.servicenet.repository.RequiredDocumentRepository;
+import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.EligibilityService;
-import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LanguageService;
+import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -26,7 +38,9 @@ import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.PhysicalAddressService;
 import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.RegularScheduleService;
+import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.SharedImportService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +69,6 @@ public class ImportServiceConfidentialityImplIntTest {
     private static final boolean EXISTING_BOOLEAN = false;
     private static final int NEW_INT = 1;
     private static final int OTHER_INT = 2;
-    private static final int EXISTING_INT = 3;
 
     @Autowired
     private EntityManager em;
@@ -70,7 +83,16 @@ public class ImportServiceConfidentialityImplIntTest {
     private ServiceService serviceService;
 
     @Autowired
-    private ImportService importService;
+    private ImportManager importManager;
+
+    @Autowired
+    private LocationImportService locationImportService;
+
+    @Autowired
+    private ServiceImportService serviceImportService;
+
+    @Autowired
+    private SharedImportService sharedImportService;
 
     @Autowired
     private PhysicalAddressService physicalAddressService;
@@ -96,11 +118,52 @@ public class ImportServiceConfidentialityImplIntTest {
     @Autowired
     private OpeningHoursService openingHoursService;
 
+    @Autowired
+    private EligibilityRepository eligibilityRepository;
+
+    @Autowired
+    private PhoneRepository phoneRepository;
+
+    @Autowired
+    private PhysicalAddressRepository physicalAddressRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private LanguageRepository languageRepository;
+
+    @Autowired
+    private ContactRepository contactRepository;
+
+    @Autowired
+    private RegularScheduleRepository regularScheduleRepository;
+
+    @Autowired
+    private OpeningHoursRepository openingHoursRepository;
+
+    @Autowired
+    private HolidayScheduleRepository holidayScheduleRepository;
+
+    @Autowired
+    private RequiredDocumentRepository requiredDocumentRepository;
+
     @Before
-    public void clearDatabase() {
-        languageService.findAll().forEach(x -> languageService.delete(x.getId()));
-        phoneService.findAll().forEach(x -> phoneService.delete(x.getId()));
-        openingHoursService.findAll().forEach(x -> openingHoursService.delete(x.getId()));
+    public void clearDb() {
+        contactRepository.deleteAll();
+        requiredDocumentRepository.deleteAll();
+        openingHoursRepository.deleteAll();
+        regularScheduleRepository.deleteAll();
+        holidayScheduleRepository.deleteAll();
+        languageRepository.deleteAll();
+        eligibilityRepository.deleteAll();
+        phoneRepository.deleteAll();
+        physicalAddressRepository.deleteAll();
+        serviceRepository.deleteAll();
+        organizationRepository.deleteAll();
     }
 
     @Test
@@ -109,142 +172,113 @@ public class ImportServiceConfidentialityImplIntTest {
         Location location = generateNewLocation();
         location.setIsConfidential(true);
 
-        int dbSize = locationService.findAll().size();
-        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        assertEquals(dbSize, locationService.findAll().size());
+        assertEquals(0, locationService.findAll().size());
     }
 
     @Test
     @Transactional
     public void shouldNotUpdateLocationIfConfidential() {
-        Location newLocation = generateNewLocation();
-        newLocation.setIsConfidential(true);
-        generateExistingLocation();
+        Location location = generateExistingLocation();
+        importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        assertEquals(1, locationService.findAll().size());
 
-        int dbSize = locationService.findAll().size();
-        Location updated = importService.createOrUpdateLocation(newLocation, EXISTING_EXTERNAL_ID, PROVIDER);
+        location.setIsConfidential(true);
+        location.setName(NEW_STRING);
+        var updated = importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        assertEquals(dbSize, locationService.findAll().size());
+        assertEquals(1, locationService.findAll().size());
+        assertEquals(EXISTING_STRING, locationService.findAll().get(0).getName());
         assertNull(updated);
     }
 
     @Test
     @Transactional
     public void shouldNotCreatePhysicalAddressIfConfidential() {
-        Location location = generateExistingLocation();
-        PhysicalAddress address = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
-            .location(location);
+        PhysicalAddress address = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING);
         address.setIsConfidential(true);
-        em.flush();
-        em.refresh(location);
+        Location location = generateExistingLocation().physicalAddress(address);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        int dbSize = physicalAddressService.findAll().size();
-        importService.createOrUpdatePhysicalAddress(address, location);
-
-        assertEquals(dbSize, physicalAddressService.findAll().size());
+        assertEquals(0, physicalAddressService.findAll().size());
     }
 
     @Test
     @Transactional
     public void shouldNotUpdatePhysicalAddressIfConfidential() {
-        Location location = generateExistingLocation();
-        PhysicalAddress existingAddress = new PhysicalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING)
-            .location(location);
-        em.persist(existingAddress);
-        em.flush();
-        em.refresh(location);
+        PhysicalAddress existingAddress = new PhysicalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING);
+        Location location = generateExistingLocation().physicalAddress(existingAddress);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        assertEquals(1, physicalAddressService.findAll().size());
 
-        PhysicalAddress newAddress = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
-            .location(location);
+        PhysicalAddress newAddress = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING);
         newAddress.setIsConfidential(true);
+        location.setPhysicalAddress(newAddress);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        int dbSize = locationService.findAll().size();
-        PhysicalAddress updated = importService.createOrUpdatePhysicalAddress(newAddress, location);
-
-        assertEquals(dbSize, locationService.findAll().size());
-        assertNull(updated);
+        assertEquals(1, physicalAddressService.findAll().size());
+        assertEquals(EXISTING_STRING, physicalAddressService.findAll().get(0).getAddress1());
     }
 
     @Test
     @Transactional
     public void shouldNotCreatePostalAddressIfConfidential() {
-        Location location = generateExistingLocation();
-        PostalAddress address = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
-            .location(location);
+        PostalAddress address = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING);
         address.setIsConfidential(true);
+        Location location = generateExistingLocation().postalAddress(address);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        int dbSize = postalAddressService.findAll().size();
-        importService.createOrUpdatePostalAddress(address, location);
-
-        assertEquals(dbSize, postalAddressService.findAll().size());
+        assertEquals(0, postalAddressService.findAll().size());
     }
 
     @Test
     @Transactional
     public void shouldNotUpdatePostalAddressIfConfidential() {
-        Location location = generateExistingLocation();
-        PostalAddress existingAddress = new PostalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING)
-            .location(location);
-        em.persist(existingAddress);
-        em.flush();
-        em.refresh(location);
+        PostalAddress existingAddress = new PostalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING);
+        Location location = generateExistingLocation().postalAddress(existingAddress);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        assertEquals(1, postalAddressService.findAll().size());
 
-        PostalAddress newAddress = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING)
-            .location(location);
+        PostalAddress newAddress = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING);
         newAddress.setIsConfidential(true);
+        location.setPostalAddress(newAddress);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        int dbSize = locationService.findAll().size();
-        PostalAddress updated = importService.createOrUpdatePostalAddress(newAddress, location);
-
-        assertEquals(dbSize, locationService.findAll().size());
-        assertNull(updated);
+        assertEquals(1, postalAddressService.findAll().size());
+        assertEquals(EXISTING_STRING, postalAddressService.findAll().get(0).getAddress1());
     }
 
     @Test
     @Transactional
     public void shouldNotCreateAccessibilityIfConfidentialEvenIfLocationHasFewOfThemButNotThisOne() {
-        Location location = generateExistingLocation();
-
-        AccessibilityForDisabilities otherAccessibility = new AccessibilityForDisabilities().accessibility(OTHER_STRING)
-            .location(location);
-        em.persist(otherAccessibility);
-        em.flush();
-        em.refresh(location);
-
-        AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING).details(NEW_STRING)
-            .location(location);
+        AccessibilityForDisabilities otherAccessibility = new AccessibilityForDisabilities().accessibility(OTHER_STRING);
+        AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING).details(NEW_STRING);
         newAccessibility.setIsConfidential(true);
+        Location location = generateExistingLocation();
+        location.setAccessibilities(Set.of(newAccessibility, otherAccessibility));
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        int dbSize = accessibilityService.findAll().size();
-        importService.createOrUpdateAccessibility(newAccessibility, location);
-
-        assertEquals(dbSize, accessibilityService.findAll().size());
+        assertEquals(1, accessibilityService.findAll().size());
+        assertEquals(OTHER_STRING, accessibilityService.findAll().get(0).getAccessibility());
     }
 
     @Test
     @Transactional
     public void shouldNotUpdateAccessibilityIfConfidential() {
+        AccessibilityForDisabilities otherAccessibility = new AccessibilityForDisabilities().accessibility(OTHER_STRING);
         Location location = generateExistingLocation();
-        AccessibilityForDisabilities accessibilityToBeUpdated = new AccessibilityForDisabilities().accessibility(EXISTING_STRING).details(EXISTING_STRING)
-            .location(location);
-        em.persist(accessibilityToBeUpdated);
+        location.setAccessibilities(Set.of(otherAccessibility));
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        assertEquals(1, accessibilityService.findAll().size());
 
-        AccessibilityForDisabilities otherAccessibility = new AccessibilityForDisabilities().accessibility(OTHER_STRING)
-            .location(location);
-        em.persist(otherAccessibility);
-        em.flush();
-        em.refresh(location);
-
-        AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(EXISTING_STRING).details(NEW_STRING)
-            .location(location);
+        AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING).details(NEW_STRING);
         newAccessibility.setIsConfidential(true);
+        location.setAccessibilities(Set.of(newAccessibility));
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
 
-        int dbSize = locationService.findAll().size();
-        AccessibilityForDisabilities updated = importService.createOrUpdateAccessibility(newAccessibility, location);
-
-        assertEquals(dbSize, locationService.findAll().size());
-        assertNull(updated);
+        assertEquals(1, accessibilityService.findAll().size());
+        assertEquals(OTHER_STRING, accessibilityService.findAll().get(0).getAccessibility());
     }
 
     @Test
@@ -253,25 +287,29 @@ public class ImportServiceConfidentialityImplIntTest {
         Organization organization = generateNewOrganization(generateExistingAccount());
         organization.setIsConfidential(true);
 
-        int dbSize = organizationService.findAllDTOs().size();
-        importService.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        var created = importManager.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        assertEquals(dbSize, organizationService.findAllDTOs().size());
+        assertEquals(0, organizationService.findAllDTOs().size());
+        assertNull(created);
     }
 
     @Test
     @Transactional
     public void shouldNotUpdateOrganizationIfConfidential() {
         SystemAccount account = generateExistingAccount();
-        Organization newOrganization = generateNewOrganization(account);
-        newOrganization.setIsConfidential(true);
-        generateExistingOrganization(account);
+        em.persist(account);
+        Organization newOrganization = generateExistingOrganization(account);
+        importManager.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, PROVIDER,
+            new DataImportReport());
+        assertEquals(1, organizationService.findAllDTOs().size());
 
-        int dbSize = organizationService.findAllDTOs().size();
-        Organization updated = importService.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, PROVIDER,
+        newOrganization.setIsConfidential(true);
+        newOrganization.setName(NEW_STRING);
+        var updated = importManager.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, PROVIDER,
             new DataImportReport());
 
-        assertEquals(dbSize, organizationService.findAllDTOs().size());
+        assertEquals(1, organizationService.findAllDTOs().size());
+        assertEquals(EXISTING_STRING, organizationService.findAllDTOs().get(0).getName());
         assertNull(updated);
     }
 
@@ -281,10 +319,10 @@ public class ImportServiceConfidentialityImplIntTest {
         Service service = generateNewService();
         service.setIsConfidential(true);
 
-        int dbSize = serviceService.findAll().size();
-        importService.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        var created = importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        assertEquals(dbSize, serviceService.findAll().size());
+        assertEquals(0, serviceService.findAll().size());
+        assertNull(created);
     }
 
     @Test
@@ -295,39 +333,38 @@ public class ImportServiceConfidentialityImplIntTest {
         generateExistingService();
 
         int dbSize = serviceService.findAll().size();
-        Service updated = importService.createOrUpdateService(newService, EXISTING_EXTERNAL_ID, PROVIDER,
+        Service updated = importManager.createOrUpdateService(newService, EXISTING_EXTERNAL_ID, PROVIDER,
             new DataImportReport());
 
         assertEquals(dbSize, serviceService.findAll().size());
         assertNull(updated);
     }
-    
+
     @Test
     @Transactional
     public void shouldNotCreatePhonesIfConfidentialEvenIfServiceHasNoneOfThem() {
-        Service service = generateExistingService();
-        Phone phone = new Phone().number(NEW_STRING).srvc(service);
+        Phone phone = new Phone().number(NEW_STRING);
         phone.setIsConfidential(true);
+        Service service = generateExistingService().phones(Set.of(phone));
 
-        int dbSize = phoneService.findAll().size();
-        importService.createOrUpdatePhonesForService(Set.of(phone), service, null);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER,
+            new DataImportReport());
 
-        assertEquals(dbSize, phoneService.findAll().size());
+        assertEquals(0, phoneService.findAll().size());
     }
 
     @Test
     @Transactional
     public void shouldNotReplacePhonesIfConfidentialEvenIfServiceHasFewOfThemButNotThisOne() {
-        Service service = generateExistingService();
-        Phone otherPhone = new Phone().number(OTHER_STRING).srvc(service);
-        em.persist(otherPhone);
-        em.flush();
-        em.refresh(service);
+        Phone otherPhone = new Phone().number(OTHER_STRING);
+        Service service = generateExistingService().phones(Set.of(otherPhone));
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        Phone newPhone = new Phone().number(NEW_STRING).srvc(service);
+        Phone newPhone = new Phone().number(NEW_STRING);
         newPhone.setIsConfidential(true);
+        service.setPhones(Set.of(newPhone));
 
-        importService.createOrUpdatePhonesForService(Set.of(newPhone), service, null);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(0, phoneService.findAll().size());
     }
@@ -335,66 +372,55 @@ public class ImportServiceConfidentialityImplIntTest {
     @Test
     @Transactional
     public void shouldNotReplacePhonesIfConfidential() {
-        Service service = generateExistingService();
+        Phone phoneToBeUpdated = new Phone().number(EXISTING_STRING);
+        Phone otherPhone = new Phone().number(OTHER_STRING);
+        otherPhone.setIsConfidential(true);
+        Service service = generateExistingService().phones(Set.of(phoneToBeUpdated, otherPhone));
 
-        Phone phoneToBeUpdated = new Phone().number(EXISTING_STRING).srvc(service);
-        em.persist(phoneToBeUpdated);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        Phone otherPhone = new Phone().number(OTHER_STRING).srvc(service);
-        em.persist(otherPhone);
-        em.flush();
-        em.refresh(service);
-
-        Phone newPhone = new Phone().number(NEW_STRING).srvc(service);
-        newPhone.setIsConfidential(true);
-
-        importService.createOrUpdatePhonesForService(Set.of(newPhone), service, null);
-
-        assertEquals(0, phoneService.findAll().size());
+        assertEquals(1, phoneService.findAll().size());
+        assertEquals(EXISTING_STRING, phoneService.findAll().get(0).getNumber());
     }
 
     @Test
     @Transactional
     public void shouldNotCreateEligibilityIfConfidential() {
-        Service service = generateExistingService();
-        Eligibility eligibility = new Eligibility().eligibility(NEW_STRING).srvc(service);
+        Eligibility eligibility = new Eligibility().eligibility(NEW_STRING);
         eligibility.setIsConfidential(true);
+        Service service = generateExistingService().eligibility(eligibility);
 
-        int dbSize = eligibilityService.findAll().size();
-        importService.createOrUpdateEligibility(eligibility, service);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        assertEquals(dbSize, eligibilityService.findAll().size());
+        assertEquals(0, eligibilityService.findAll().size());
     }
 
     @Test
     @Transactional
     public void shouldNotUpdateEligibilityIfConfidential() {
-        Service service = generateExistingService();
-        Eligibility existingEligibility = new Eligibility().eligibility(EXISTING_STRING).srvc(service);
-        em.persist(existingEligibility);
-        em.flush();
-        em.refresh(service);
+        Eligibility existingEligibility = new Eligibility().eligibility(EXISTING_STRING);
+        Service service = generateExistingService().eligibility(existingEligibility);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        assertEquals(1, eligibilityService.findAll().size());
 
-        Eligibility newEligibility = new Eligibility().eligibility(NEW_STRING).srvc(service);
+        Eligibility newEligibility = new Eligibility().eligibility(NEW_STRING);
         newEligibility.setIsConfidential(true);
+        service.setEligibility(newEligibility);
 
-        int dbSize = eligibilityService.findAll().size();
-        Service serviceFromDb = serviceService.findWithEagerAssociations(EXISTING_EXTERNAL_ID, PROVIDER).get();
-        Eligibility updated = importService.createOrUpdateEligibility(newEligibility, serviceFromDb);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        assertEquals(dbSize, eligibilityService.findAll().size());
-        assertNull(updated);
+        assertEquals(1, eligibilityService.findAll().size());
+        assertEquals(EXISTING_STRING, eligibilityService.findAll().get(0).getEligibility());
     }
 
     @Test
     @Transactional
     public void shouldNotCreateLangsIfConfidentialEvenIfServiceHasNoneOfThem() {
-        Service service = generateExistingService();
-        Language language = new Language().language(NEW_STRING).srvc(service);
+        Language language = new Language().language(NEW_STRING);
         language.setIsConfidential(true);
+        Service service = generateExistingService().langs(Set.of(language));
 
-        languageService.findAll().size();
-        importService.createOrUpdateLangsForService(Set.of(language), service, null);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(0, languageService.findAll().size());
     }
@@ -402,106 +428,64 @@ public class ImportServiceConfidentialityImplIntTest {
     @Test
     @Transactional
     public void shouldNotReplaceLangsIfConfidentialEvenIfServiceHasFewOfThemButNotThisOne() {
-        Service service = generateExistingService();
-        Language otherLanguage = new Language().language(OTHER_STRING).srvc(service);
-        em.persist(otherLanguage);
-        em.flush();
-        em.refresh(service);
-
-        Language newLanguage = new Language().language(NEW_STRING).srvc(service);
+        Language otherLanguage = new Language().language(OTHER_STRING);
+        Language newLanguage = new Language().language(NEW_STRING);
         newLanguage.setIsConfidential(true);
+        Service service = generateExistingService().langs(Set.of(otherLanguage, newLanguage));
 
-        languageService.findAll().size();
-        importService.createOrUpdateLangsForService(Set.of(newLanguage), service, null);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        assertEquals(0, languageService.findAll().size());
+        assertEquals(1, languageService.findAll().size());
+        assertEquals(OTHER_STRING, languageService.findAll().get(0).getLanguage());
     }
 
     @Test
     @Transactional
     public void shouldNotReplaceLangsIfConfidential() {
-        Service service = generateExistingService();
+        Language languageToBeUpdated = new Language().language(EXISTING_STRING);
+        Service service = generateExistingService().langs(Set.of(languageToBeUpdated));
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        Language languageToBeUpdated = new Language().language(EXISTING_STRING).srvc(service);
-        em.persist(languageToBeUpdated);
+        Language otherLanguage = new Language().language(OTHER_STRING);
+        otherLanguage.setIsConfidential(true);
+        service.setLangs(Set.of(otherLanguage));
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        Language otherLanguage = new Language().language(OTHER_STRING).srvc(service);
-        em.persist(otherLanguage);
-        em.flush();
-        em.refresh(service);
-
-        Language newLanguage = new Language().language(NEW_STRING).srvc(service);
-        newLanguage.setIsConfidential(true);
-
-        languageService.findAll().size();
-        importService.createOrUpdateLangsForService(Set.of(newLanguage), service, null);
-
-        assertEquals(0, languageService.findAll().size());
+        assertEquals(1, languageService.findAll().size());
+        assertEquals(EXISTING_STRING, languageService.findAll().get(0).getLanguage());
     }
 
     @Test
     @Transactional
     public void shouldNotCreateOpeningHoursIfConfidentialEvenIfServiceHasNoneOfThem() {
-        Service service = generateExistingService();
         OpeningHours openingHours = new OpeningHours().weekday(NEW_INT).opensAt(NEW_STRING).closesAt(NEW_STRING);
         openingHours.setIsConfidential(true);
+        Service service = generateExistingService();
 
-        int scheduleDbSize = regularScheduleService.findAll().size();
-        openingHoursService.findAll().size();
-        importService.createOrUpdateOpeningHoursForService(Set.of(openingHours), service);
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        assertEquals(scheduleDbSize + 1, regularScheduleService.findAll().size());
+        assertEquals(0, regularScheduleService.findAll().size());
         assertEquals(0, openingHoursService.findAll().size());
     }
 
     @Test
     @Transactional
     public void shouldNotReplaceOpeningHoursIfConfidentialEvenIfServiceHasFewOfThemButNotThisOne() {
-        Service service = generateExistingService();
         OpeningHours otherOpeningHours = new OpeningHours().weekday(OTHER_INT).opensAt(OTHER_STRING).closesAt(OTHER_STRING);
         RegularSchedule schedule = new RegularSchedule();
-        em.persist(otherOpeningHours);
         schedule.setOpeningHours(Set.of(otherOpeningHours));
-        em.persist(schedule);
+        Service service = generateExistingService();
         service.setRegularSchedule(schedule);
-        em.flush();
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        assertEquals(1, regularScheduleService.findAll().size());
+        assertEquals(1, openingHoursService.findAll().size());
 
         OpeningHours newOpeningHours = new OpeningHours().weekday(NEW_INT).opensAt(NEW_STRING).closesAt(NEW_STRING);
         newOpeningHours.setIsConfidential(true);
+        schedule.setOpeningHours(Set.of(newOpeningHours));
+        importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
-        int scheduleDbSize = regularScheduleService.findAll().size();
-        openingHoursService.findAll().size();
-        importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
-
-        assertEquals(scheduleDbSize, regularScheduleService.findAll().size());
-        assertEquals(0, openingHoursService.findAll().size());
-    }
-
-    @Test
-    @Transactional
-    public void shouldNotReplaceOpeningHoursIfConfidential() {
-        Service service = generateExistingService();
-
-        OpeningHours openingHoursToBeUpdated = new OpeningHours().weekday(EXISTING_INT).opensAt(EXISTING_STRING).closesAt(EXISTING_STRING);
-        em.persist(openingHoursToBeUpdated);
-
-        OpeningHours otherOpeningHours = new OpeningHours().weekday(OTHER_INT).opensAt(OTHER_STRING).closesAt(OTHER_STRING);
-        em.persist(otherOpeningHours);
-
-        RegularSchedule scheduler = new RegularSchedule().openingHours(Set.of(openingHoursToBeUpdated, otherOpeningHours))
-                .srvc(service);
-        em.persist(scheduler);
-        em.flush();
-        em.refresh(service);
-
-        OpeningHours newOpeningHours = new OpeningHours().weekday(EXISTING_INT).opensAt(NEW_STRING).closesAt(NEW_STRING);
-        newOpeningHours.setIsConfidential(true);
-
-        int scheduleDbSize = regularScheduleService.findAll().size();
-        openingHoursService.findAll().size();
-        importService.createOrUpdateOpeningHoursForService(Set.of(newOpeningHours), service);
-
-        assertEquals(scheduleDbSize, regularScheduleService.findAll().size());
+        assertEquals(1, regularScheduleService.findAll().size());
         assertEquals(0, openingHoursService.findAll().size());
     }
 
@@ -513,10 +497,8 @@ public class ImportServiceConfidentialityImplIntTest {
     }
 
     private Location generateExistingLocation() {
-        Location result = new Location().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+        return new Location().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
             .name(EXISTING_STRING);
-        em.persist(result);
-        return result;
     }
     
     private Service generateNewService() {
@@ -527,16 +509,12 @@ public class ImportServiceConfidentialityImplIntTest {
     }
 
     private Service generateExistingService() {
-        Service result = new Service().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
+        return new Service().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
             .name(EXISTING_STRING);
-        em.persist(result);
-        return result;
     }
 
     private SystemAccount generateExistingAccount() {
-        SystemAccount account = new SystemAccount().name(PROVIDER);
-        em.persist(account);
-        return account;
+        return new SystemAccount().name(PROVIDER);
     }
 
     private Organization generateNewOrganization(SystemAccount account) {
@@ -547,9 +525,7 @@ public class ImportServiceConfidentialityImplIntTest {
     }
 
     private Organization generateExistingOrganization(SystemAccount account) {
-        Organization result = new Organization().externalDbId(EXISTING_EXTERNAL_ID).account(account)
+        return new Organization().externalDbId(EXISTING_EXTERNAL_ID).account(account)
             .name(EXISTING_STRING).active(EXISTING_BOOLEAN);
-        em.persist(result);
-        return result;
     }
 }
