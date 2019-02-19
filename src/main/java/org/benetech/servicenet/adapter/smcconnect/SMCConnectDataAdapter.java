@@ -4,7 +4,7 @@ import org.benetech.servicenet.adapter.MultipleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.persistence.SmcDataManager;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.service.ImportService;
+import org.benetech.servicenet.manager.ImportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,12 +14,12 @@ public class SMCConnectDataAdapter extends MultipleDataAdapter {
     private static final int NUMBER_OF_FILES = 10;
 
     @Autowired
-    private ImportService importService;
+    private ImportManager importManager;
 
     @Override
     public DataImportReport importData(MultipleImportData data) {
         verifyData(data);
-        return new SmcDataManager(importService, data)
+        return new SmcDataManager(importManager, data)
             .importData(data);
     }
 
