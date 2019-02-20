@@ -11,6 +11,7 @@ import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface ServiceBasedImportService {
@@ -28,7 +29,7 @@ public interface ServiceBasedImportService {
     void createOrUpdateServiceTaxonomy(Set<ServiceTaxonomy> serviceTaxonomies, String providerName,
                                                Service service);
 
-    ServiceTaxonomy persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String providerName, Service service);
+    Optional<ServiceTaxonomy> persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String providerName, Service service);
 
     void createOrUpdateRequiredDocuments(Set<RequiredDocument> requiredDocuments, String providerName, Service service);
 

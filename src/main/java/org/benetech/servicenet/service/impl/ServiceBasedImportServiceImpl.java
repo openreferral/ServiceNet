@@ -105,16 +105,18 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
                                                Service service) {
         Set<ServiceTaxonomy> savedServiceTaxonomies = new HashSet<>();
         for (ServiceTaxonomy serviceTaxonomy : serviceTaxonomies) {
-            savedServiceTaxonomies.add(persistServiceTaxonomy(serviceTaxonomy, providerName, service));
+            persistServiceTaxonomy(serviceTaxonomy, providerName, service)
+                .ifPresent(savedServiceTaxonomies::add);
         }
         service.setTaxonomies(savedServiceTaxonomies);
     }
 
     @Override
     @ConfidentialFilter
-    public ServiceTaxonomy persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String providerName, Service service) {
+    public Optional<ServiceTaxonomy> persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy,
+                                                            String providerName, Service service) {
         if (serviceTaxonomy == null) {
-            return null;
+            return Optional.empty();
         }
         serviceTaxonomy.setSrvc(service);
 
@@ -132,7 +134,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         } else {
             em.persist(serviceTaxonomy);
         }
-        return serviceTaxonomy;
+        return Optional.of(serviceTaxonomy);
     }
 
     @Override
