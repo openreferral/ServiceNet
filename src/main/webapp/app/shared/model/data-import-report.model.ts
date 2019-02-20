@@ -9,6 +9,7 @@ export interface IDataImportReport {
   startDate?: Moment;
   endDate?: Moment;
   jobName?: string;
+  errorMessage?: string;
   documentUploadId?: number;
 }
 

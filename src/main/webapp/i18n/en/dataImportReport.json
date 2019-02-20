@@ -22,6 +22,7 @@
       "startDate": "Start Date",
       "endDate": "End Date",
       "jobName": "Job Name",
+      "errorMessage": "Error Message",
       "documentUpload": "Document Upload"
     }
   }

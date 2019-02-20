@@ -46,6 +46,11 @@
     {
       "fieldName": "jobName",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "errorMessage",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
     }
   ],
   "relationships": [

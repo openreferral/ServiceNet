@@ -13,6 +13,9 @@
     <property name="floatType" value="float4" dbms="postgresql, h2"/>
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
+    <property name="clobType" value="clob" dbms="oracle, h2, postgresql"/>
+    <property name="clobType" value="longtext" dbms="mysql"/>
+
     <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
     <property name="uuidFunction" value="uuid_generate_v4()" dbms="postgresql"/>
     <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
@@ -48,12 +51,19 @@
             <column name="end_date" type="datetime">
                 <constraints nullable="false" />
             </column>
+
             <column name="job_name" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+
             <column name="document_upload_id" type="${uuidType}">
                 <constraints unique="true" nullable="true" uniqueConstraintName="ux_data_import_report_document_upload_id" />
             </column>
+
+            <column name="error_message" type="${clobType}">
+                <constraints nullable="true"/>
+            </column>
+
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         <dropDefaultValue tableName="data_import_report" columnName="start_date" columnDataType="datetime"/>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Row, Col, Input } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
 import { Translate, ICrudGetAction, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -75,6 +75,14 @@ export class DataImportReportDetail extends React.Component<IDataImportReportDet
               </span>
             </dt>
             <dd>{dataImportReportEntity.jobName}</dd>
+            <dt>
+              <span id="errorMessageLabel">
+                <Translate contentKey="serviceNetApp.dataImportReport.errorMessage" />
+              </span>
+            </dt>
+            <dd>
+              <Input disabled type="textarea" name="errorMessage" value={dataImportReportEntity.errorMessage} id="errorMessage" />
+            </dd>
             <dt>
               <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
             </dt>
