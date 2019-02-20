@@ -5,6 +5,6 @@ import org.benetech.servicenet.domain.Location;
 
 public interface LocationImportService {
 
-    Location createOrUpdateLocation(Location filledLocation, String externalDbId,
-                                    String providerName, DataImportReport report);
+    Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName,
+                                    DataImportReport report);
 }

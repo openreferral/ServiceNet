@@ -39,7 +39,7 @@ public class ImportServiceImpl implements ImportService {
     private TaxonomyImportService taxonomyImportService;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
                                                    String providerName, DataImportReport report) {
@@ -82,8 +82,7 @@ public class ImportServiceImpl implements ImportService {
         Set<Service> savedServices = new HashSet<>();
         for (Service service : services) {
             service.setOrganization(org);
-            savedServices.add(createOrUpdateService(
-                service, service.getExternalDbId(), providerName, report));
+            savedServices.add(createOrUpdateService(service, service.getExternalDbId(), providerName, report));
         }
         org.setServices(savedServices);
     }
@@ -92,8 +91,7 @@ public class ImportServiceImpl implements ImportService {
         Set<Location> savedLocations = new HashSet<>();
         for (Location location : locations) {
             location.setOrganization(org);
-            savedLocations.add(createOrUpdateLocation(
-                location, location.getExternalDbId(), providerName, report));
+            savedLocations.add(createOrUpdateLocation(location, location.getExternalDbId(), providerName, report));
         }
         org.setLocations(savedLocations);
     }

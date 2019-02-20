@@ -34,6 +34,7 @@ public class ImportServiceImplIntTest {
     private static final String SRVC_2_ID = "srvc2Id";
     private static final String TAX_ID = "taxId";
     private static final String PROVIDER = "provider";
+    private static final DataImportReport REPORT = new DataImportReport();
 
     @InjectMocks
     private ImportServiceImpl importService;
@@ -102,27 +103,26 @@ public class ImportServiceImplIntTest {
     public void testCreatingTaxonomy() {
         Taxonomy taxonomy = new Taxonomy();
 
-        importService.createOrUpdateTaxonomy(taxonomy, TAX_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateTaxonomy(taxonomy, TAX_ID, PROVIDER, REPORT);
 
-        verify(taxonomyImportService).createOrUpdateTaxonomy(taxonomy, TAX_ID, PROVIDER, new DataImportReport());
+        verify(taxonomyImportService).createOrUpdateTaxonomy(taxonomy, TAX_ID, PROVIDER, REPORT);
     }
 
     @Test
     public void testCreatingLocation() {
         Location location = new Location();
 
-        importService.createOrUpdateLocation(location, LOC_1_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, LOC_1_ID, PROVIDER, REPORT);
 
-        verify(locationImportService).createOrUpdateLocation(location, LOC_1_ID, PROVIDER, new DataImportReport());
+        verify(locationImportService).createOrUpdateLocation(location, LOC_1_ID, PROVIDER, REPORT);
     }
 
     @Test
     public void testCreatingService() {
         Service service = new Service();
-        DataImportReport report = new DataImportReport();
 
-        importService.createOrUpdateService(service, SRVC_1_ID, PROVIDER, report);
+        importService.createOrUpdateService(service, SRVC_1_ID, PROVIDER, REPORT);
 
-        verify(serviceImportService).createOrUpdateService(service, SRVC_1_ID, PROVIDER, report);
+        verify(serviceImportService).createOrUpdateService(service, SRVC_1_ID, PROVIDER, REPORT);
     }
 }

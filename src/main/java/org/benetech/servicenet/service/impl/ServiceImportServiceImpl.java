@@ -5,6 +5,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ServiceBasedImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,9 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     @Override
     public Service createOrUpdateService(Service filledService, String externalDbId, String providerName,
                                          DataImportReport report) {
+        if (EntityValidator.isNotValid(filledService, report, externalDbId)) {
+            return null;
+        }
         Service service = new Service(filledService);
         Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
         if (serviceFromDb.isPresent()) {

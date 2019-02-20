@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.Set;
 
+import static org.benetech.servicenet.TestConstants.PROVIDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -49,7 +50,6 @@ import static org.junit.Assert.assertNull;
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class ImportServiceConfidentialityImplIntTest {
 
-    private static final String PROVIDER = "provider";
     private static final String NEW_EXTERNAL_ID = "1000";
     private static final String EXISTING_EXTERNAL_ID = "2000";
     private static final String NEW_STRING = "new string";

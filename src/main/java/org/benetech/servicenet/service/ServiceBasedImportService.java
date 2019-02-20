@@ -32,7 +32,8 @@ public interface ServiceBasedImportService {
     ServiceTaxonomy persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String providerName, Service service,
                                                      DataImportReport report);
 
-    void createOrUpdateRequiredDocuments(Set<RequiredDocument> requiredDocuments, String providerName, Service service, DataImportReport report);
+    void createOrUpdateRequiredDocuments(Set<RequiredDocument> requiredDocuments, String providerName,
+                                         Service service, DataImportReport report);
 
     RequiredDocument persistRequiredDocument(RequiredDocument document, String externalDbId, String providerName,
                                              Service service, DataImportReport report);

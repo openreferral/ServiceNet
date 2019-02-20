@@ -1,7 +1,7 @@
 [
   {
     "country": "country1",
-    "city": null,
+    "city": "city1",
     "address_1": "address 1",
     "attention": "attention1",
     "state_province": "state1",

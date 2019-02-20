@@ -86,9 +86,7 @@ public class TestPersistanceHelper {
     }
 
     public SystemAccount generateExistingAccount() {
-        SystemAccount account = new SystemAccount().name(PROVIDER);
-        em.persist(account);
-        return account;
+        return generateSystemAccount(PROVIDER);
     }
 
     public Organization generateNewOrganization(SystemAccount account) {

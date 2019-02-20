@@ -12,14 +12,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import static org.benetech.servicenet.TestConstants.PROVIDER;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class ImportManagerTest {
 
     private static final String STRING_1 = "STRING_1";
@@ -27,7 +27,6 @@ public class ImportManagerTest {
     private static final String EXTERNAL_ID_1 = "ext1";
     private static final String EXTERNAL_ID_2 = "ext2";
     private static final String EXTERNAL_ID_3 = "ext3";
-    private static final String PROVIDER = "PROVIDER";
 
     @Autowired
     private ImportManager importManager;
@@ -48,6 +47,7 @@ public class ImportManagerTest {
     }
 
     @Test
+    @Transactional
     public void testRollingBackOrganization() {
         Organization org1 = generateOrganization(STRING_1, EXTERNAL_ID_1);
         Organization org2 = generateInvalidOrganization(EXTERNAL_ID_2);

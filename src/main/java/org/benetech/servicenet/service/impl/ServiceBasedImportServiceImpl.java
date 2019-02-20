@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+import static org.benetech.servicenet.util.CollectionUtils.filterNulls;
 import static org.benetech.servicenet.validator.EntityValidator.isValid;
 
 @Component
@@ -116,7 +117,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         for (ServiceTaxonomy serviceTaxonomy : serviceTaxonomies) {
             savedServiceTaxonomies.add(persistServiceTaxonomy(serviceTaxonomy, providerName, service, report));
         }
-        service.setTaxonomies(savedServiceTaxonomies);
+        service.setTaxonomies(filterNulls(savedServiceTaxonomies));
     }
 
     @Override
@@ -153,7 +154,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         for (RequiredDocument doc : requiredDocuments) {
             savedDocs.add(persistRequiredDocument(doc, doc.getExternalDbId(), providerName, service, report));
         }
-        service.setDocs(savedDocs);
+        service.setDocs(filterNulls(savedDocs));
     }
 
     @Override
@@ -203,8 +204,8 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
 
     private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source,
                                         DataImportReport report, String serviceExternalId) {
-        Set<Contact> filtered = contacts.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()
-            && isValid(x, report, serviceExternalId)))
+        Set<Contact> filtered = contacts.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential())
+            && isValid(x, report, serviceExternalId))
             .collect(Collectors.toSet());
         createOrUpdateFilteredContacts(filtered, common, source);
     }
