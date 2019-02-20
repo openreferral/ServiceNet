@@ -36,7 +36,7 @@ public class ImportServiceImplIntTest {
     private static final String PROVIDER = "provider";
 
     @InjectMocks
-    private TmpImportServiceImpl importService;
+    private ImportServiceImpl importService;
 
     @Mock
     private OrganizationImportService organizationImportService;

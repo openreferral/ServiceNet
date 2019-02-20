@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.TestPersistanceHelper;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -32,11 +33,11 @@ import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.benetech.servicenet.service.dto.PostalAddressDTO;
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +61,6 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class LocationImportServiceTest {
 
     @Autowired
@@ -95,6 +95,14 @@ public class LocationImportServiceTest {
     
     @Autowired
     private PhoneService phoneService;
+
+    @Autowired
+    private TestDatabaseManagement testDatabaseManagement;
+
+    @Before
+    public void clearDb() {
+        testDatabaseManagement.clearDb();
+    }
 
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)

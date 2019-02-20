@@ -6,7 +6,7 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
-import org.benetech.servicenet.service.TmpImportService;
+import org.benetech.servicenet.service.ImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class ImportManagerImpl implements ImportManager {
 
     @Autowired
-    private TmpImportService importService;
+    private ImportService importService;
 
     @Override
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
