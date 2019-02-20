@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.dto;
 
 import lombok.Data;
 
+import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -35,6 +36,9 @@ public class DataImportReportDTO implements Serializable {
     private ZonedDateTime endDate;
 
     private String jobName;
+
+    @Lob
+    private String errorMessage;
 
     private UUID documentUploadId;
 
