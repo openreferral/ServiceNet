@@ -19,6 +19,7 @@ import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
+import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+import static org.benetech.servicenet.validator.EntityValidator.isValid;
 
 @Component
 public class ServiceImportServiceImpl implements ServiceImportService {
@@ -55,6 +57,9 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     @Override
     public Service createOrUpdateService(Service filledService, String externalDbId, String providerName,
                                          DataImportReport report) {
+        if (EntityValidator.isNotValid(filledService, report, externalDbId)) {
+            return null;
+        }
         Service service = new Service(filledService);
         Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
         if (serviceFromDb.isPresent()) {
@@ -66,35 +71,37 @@ public class ServiceImportServiceImpl implements ServiceImportService {
             report.incrementNumberOfCreatedServices();
         }
 
-        createOrUpdateEligibility(filledService.getEligibility(), service);
-        createOrUpdateLangsForService(filledService.getLangs(), service);
-        createOrUpdatePhonesForService(filledService.getPhones(), service);
-        createOrUpdateFundingForService(filledService.getFunding(), service);
-        createOrUpdateRegularScheduleForService(filledService.getRegularSchedule(), service);
-        createOrUpdateServiceTaxonomy(filledService.getTaxonomies(), providerName, service);
-        createOrUpdateRequiredDocuments(filledService.getDocs(), providerName, service);
-        createOrUpdateContactsForService(filledService.getContacts(), service);
-        createOrUpdateHolidayScheduleForService(filledService.getHolidaySchedule(), service);
+        createOrUpdateEligibility(filledService.getEligibility(), service, report);
+        createOrUpdateLangsForService(filledService.getLangs(), service, report);
+        createOrUpdatePhonesForService(filledService.getPhones(), service, report);
+        createOrUpdateFundingForService(filledService.getFunding(), service, report);
+        createOrUpdateRegularScheduleForService(filledService.getRegularSchedule(), service, report);
+        createOrUpdateServiceTaxonomy(filledService.getTaxonomies(), providerName, service, report);
+        createOrUpdateRequiredDocuments(filledService.getDocs(), providerName, service, report);
+        createOrUpdateContactsForService(filledService.getContacts(), service, report);
+        createOrUpdateHolidayScheduleForService(filledService.getHolidaySchedule(), service, report);
 
         return service;
     }
 
     @ConfidentialFilter
-    private void createOrUpdateEligibility(Eligibility eligibility, Service service) {
-        if (eligibility != null) {
-            eligibility.setSrvc(service);
-            if (service.getEligibility() != null) {
-                eligibility.setId(service.getEligibility().getId());
-                em.merge(eligibility);
-            } else {
-                em.persist(eligibility);
-            }
-            service.setEligibility(eligibility);
+    private void createOrUpdateEligibility(Eligibility eligibility, Service service, DataImportReport report) {
+        if (EntityValidator.isNotValid(eligibility, report, service.getExternalDbId())) {
+            return;
         }
+        eligibility.setSrvc(service);
+        if (service.getEligibility() != null) {
+            eligibility.setId(service.getEligibility().getId());
+            em.merge(eligibility);
+        } else {
+            em.persist(eligibility);
+        }
+        service.setEligibility(eligibility);
     }
 
-    private void createOrUpdateLangsForService(Set<Language> langs, Service service) {
-        Set<Language> filtered = langs.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+    private void createOrUpdateLangsForService(Set<Language> langs, Service service, DataImportReport report) {
+        Set<Language> filtered = langs.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential())
+            && isValid(x, report, service.getExternalDbId()))
             .collect(Collectors.toSet());
         createOrUpdateFilteredLangsForService(filtered, service);
     }
@@ -111,8 +118,9 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         }
     }
 
-    private void createOrUpdatePhonesForService(Set<Phone> phones, Service service) {
-        Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+    private void createOrUpdatePhonesForService(Set<Phone> phones, Service service, DataImportReport report) {
+        Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential())
+            && isValid(x, report, service.getExternalDbId()))
             .collect(Collectors.toSet());
         filtered.forEach(p -> p.setSrvc(service));
         createOrUpdateFilteredPhonesForService(filtered, service);
@@ -123,45 +131,50 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     }
 
     @ConfidentialFilter
-    private void createOrUpdateFundingForService(Funding funding, Service service) {
-        if (funding != null) {
-            funding.setSrvc(service);
-            if (service.getFunding() != null) {
-                funding.setId(service.getFunding().getId());
-                em.merge(funding);
-            } else {
-                em.persist(funding);
-            }
-
-            service.setFunding(funding);
+    private void createOrUpdateFundingForService(Funding funding, Service service, DataImportReport report) {
+        if (EntityValidator.isNotValid(funding, report, service.getExternalDbId())) {
+            return;
         }
+        funding.setSrvc(service);
+        if (service.getFunding() != null) {
+            funding.setId(service.getFunding().getId());
+            em.merge(funding);
+        } else {
+            em.persist(funding);
+        }
+
+        service.setFunding(funding);
     }
 
-    private void createOrUpdateRegularScheduleForService(RegularSchedule schedule, Service service) {
+    private void createOrUpdateRegularScheduleForService(RegularSchedule schedule, Service service,
+                                                         DataImportReport report) {
         if (schedule != null) {
-            sharedImportService.createOrUpdateOpeningHours(schedule.getOpeningHours(), service, schedule);
+            sharedImportService.createOrUpdateOpeningHours(schedule.getOpeningHours().stream()
+                .filter(x -> isValid(x, report, service.getExternalDbId())).collect(Collectors.toSet()), service, schedule);
         }
     }
 
     private void createOrUpdateServiceTaxonomy(Set<ServiceTaxonomy> serviceTaxonomies, String providerName,
-                                               Service service) {
+                                               Service service, DataImportReport report) {
         Set<ServiceTaxonomy> savedServiceTaxonomies = new HashSet<>();
         for (ServiceTaxonomy serviceTaxonomy : serviceTaxonomies) {
-            savedServiceTaxonomies.add(persistServiceTaxonomy(serviceTaxonomy, providerName, service));
+            persistServiceTaxonomy(serviceTaxonomy, providerName, service, report)
+                .ifPresent(savedServiceTaxonomies::add);
         }
         service.setTaxonomies(savedServiceTaxonomies);
     }
 
     @ConfidentialFilter
-    private ServiceTaxonomy persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String providerName, Service service) {
-        if (serviceTaxonomy == null) {
-            return null;
+    private Optional<ServiceTaxonomy> persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy, String providerName,
+                                                             Service service, DataImportReport report) {
+        if (EntityValidator.isNotValid(serviceTaxonomy, report, service.getExternalDbId())) {
+            return Optional.empty();
         }
         serviceTaxonomy.setSrvc(service);
 
         if (serviceTaxonomy.getTaxonomy() != null) {
             taxonomyImportService.createOrUpdateTaxonomy(
-                serviceTaxonomy.getTaxonomy(), serviceTaxonomy.getTaxonomy().getExternalDbId(), providerName);
+                serviceTaxonomy.getTaxonomy(), serviceTaxonomy.getTaxonomy().getExternalDbId(), providerName, report);
         }
 
         Optional<ServiceTaxonomy> serviceTaxonomyFromDb
@@ -173,45 +186,51 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         } else {
             em.persist(serviceTaxonomy);
         }
-        return serviceTaxonomy;
+        return Optional.of(serviceTaxonomy);
     }
 
     @ConfidentialFilter
     private void createOrUpdateRequiredDocuments(Set<RequiredDocument> requiredDocuments,
-                                                 String providerName, Service service) {
+                                                 String providerName, Service service, DataImportReport report) {
         Set<RequiredDocument> savedDocs = new HashSet<>();
         for (RequiredDocument doc : requiredDocuments) {
-            savedDocs.add(persistRequiredDocument(doc, doc.getExternalDbId(), providerName, service));
+            persistRequiredDocument(doc, doc.getExternalDbId(), providerName, service, report)
+                .ifPresent(savedDocs::add);
         }
         service.setDocs(savedDocs);
     }
 
     @ConfidentialFilter
-    private RequiredDocument persistRequiredDocument(RequiredDocument document, String externalDbId,
-                                                     String providerName, Service service) {
+    private Optional<RequiredDocument> persistRequiredDocument(RequiredDocument document, String externalDbId,
+                                                     String providerName, Service service, DataImportReport report) {
+        if (EntityValidator.isNotValid(document, report, externalDbId)) {
+            return Optional.empty();
+        }
         document.setSrvc(service);
         Optional<RequiredDocument> requiredDocumentFromDb
             = requiredDocumentService.findForExternalDb(externalDbId, providerName);
 
         if (requiredDocumentFromDb.isPresent()) {
             document.setId(requiredDocumentFromDb.get().getId());
-            return em.merge(document);
+            return Optional.of(em.merge(document));
         } else {
             em.persist(document);
-            return document;
+            return Optional.of(document);
         }
     }
 
-    private void createOrUpdateContactsForService(Set<Contact> contacts, Service service) {
+    private void createOrUpdateContactsForService(Set<Contact> contacts, Service service, DataImportReport report) {
         contacts.forEach(c -> c.setSrvc(service));
         Set<Contact> common = new HashSet<>(contacts);
         common.retainAll(service.getContacts());
-        createOrUpdateContacts(contacts, common, service.getContacts());
+        createOrUpdateContacts(contacts, common, service.getContacts(), report, service.getExternalDbId());
         service.setContacts(contacts);
     }
 
-    private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source) {
-        Set<Contact> filtered = contacts.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+    private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> common,
+                                        Set<Contact> source, DataImportReport report, String serviceExternalId) {
+        Set<Contact> filtered = contacts.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential())
+            && isValid(x, report, serviceExternalId))
             .collect(Collectors.toSet());
         createOrUpdateFilteredContacts(filtered, common, source);
     }
@@ -222,17 +241,19 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     }
 
     @ConfidentialFilter
-    private void createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service) {
-        if (schedule != null) {
-            schedule.setSrvc(service);
-            if (service.getHolidaySchedule() != null) {
-                schedule.setId(service.getHolidaySchedule().getId());
-                em.merge(schedule);
-            } else {
-                em.persist(schedule);
-            }
-            service.setHolidaySchedule(schedule);
+    private void createOrUpdateHolidayScheduleForService(HolidaySchedule schedule,
+                                                         Service service, DataImportReport report) {
+        if (EntityValidator.isNotValid(schedule, report, service.getExternalDbId())) {
+            return;
         }
+        schedule.setSrvc(service);
+        if (service.getHolidaySchedule() != null) {
+            schedule.setId(service.getHolidaySchedule().getId());
+            em.merge(schedule);
+        } else {
+            em.persist(schedule);
+        }
+        service.setHolidaySchedule(schedule);
     }
 
     private void fillDataFromDb(Service newService, Service serviceFromDb) {

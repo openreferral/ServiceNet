@@ -46,7 +46,7 @@ public class TmpImportServiceImpl implements TmpImportService {
         Organization organization = organizationImportService.createOrUpdateOrganization(
             filledOrganization, externalDbId, providerName, report);
 
-        importLocations(filledOrganization.getLocations(), organization, providerName);
+        importLocations(filledOrganization.getLocations(), organization, providerName, report);
         importServices(filledOrganization.getServices(), organization, providerName, report);
 
         registerSynchronizationOfMatchingOrganizations(organization);
@@ -57,15 +57,17 @@ public class TmpImportServiceImpl implements TmpImportService {
     @Override
     @ConfidentialFilter
     @Transactional(propagation = Propagation.REQUIRED)
-    public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName) {
-        return taxonomyImportService.createOrUpdateTaxonomy(taxonomy, externalDbId, providerName);
+    public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName,
+                                           DataImportReport report) {
+        return taxonomyImportService.createOrUpdateTaxonomy(taxonomy, externalDbId, providerName, report);
     }
 
     @Override
     @ConfidentialFilter
     @Transactional(propagation = Propagation.REQUIRED)
-    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName) {
-        return locationImportService.createOrUpdateLocation(filledLocation, externalDbId, providerName);
+    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName,
+                                           DataImportReport report) {
+        return locationImportService.createOrUpdateLocation(filledLocation, externalDbId, providerName, report);
     }
 
     @Override
@@ -86,12 +88,12 @@ public class TmpImportServiceImpl implements TmpImportService {
         org.setServices(savedServices);
     }
 
-    private void importLocations(Set<Location> locations, Organization org, String providerName) {
+    private void importLocations(Set<Location> locations, Organization org, String providerName, DataImportReport report) {
         Set<Location> savedLocations = new HashSet<>();
         for (Location location : locations) {
             location.setOrganization(org);
             savedLocations.add(createOrUpdateLocation(
-                location, location.getExternalDbId(), providerName));
+                location, location.getExternalDbId(), providerName, report));
         }
         org.setLocations(savedLocations);
     }

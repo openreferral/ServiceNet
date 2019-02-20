@@ -11,9 +11,10 @@ public interface TmpImportService {
     Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId, String providerName,
                                             DataImportReport report);
 
-    Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName);
+    Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName, DataImportReport report);
 
-    Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName);
+    Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName,
+                                    DataImportReport report);
 
     Service createOrUpdateService(Service filledService, String externalDbId,
                                   String providerName, DataImportReport report);
