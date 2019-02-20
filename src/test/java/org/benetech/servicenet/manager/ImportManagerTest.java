@@ -2,6 +2,7 @@ package org.benetech.servicenet.manager;
 
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.TestPersistanceHelper;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Organization;
@@ -37,8 +38,12 @@ public class ImportManagerTest {
     @Autowired
     private TestPersistanceHelper helper;
 
+    @Autowired
+    private TestDatabaseManagement testDatabaseManagement;
+
     @Before
     public void setUp() {
+        testDatabaseManagement.clearDb();
         helper.generateSystemAccount(PROVIDER);
     }
 

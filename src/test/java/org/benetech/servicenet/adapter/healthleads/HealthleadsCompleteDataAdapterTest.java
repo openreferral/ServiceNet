@@ -1,6 +1,7 @@
 package org.benetech.servicenet.adapter.healthleads;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
@@ -37,7 +38,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +68,6 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class HealthleadsCompleteDataAdapterTest {
 
     private static final String COMPLETE = "healthleads/complete/";
@@ -125,9 +124,13 @@ public class HealthleadsCompleteDataAdapterTest {
     @Autowired
     private TaxonomyService taxonomyService;
 
+    @Autowired
+    private TestDatabaseManagement testDatabaseManagement;
+
     @Before
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setUp() throws IOException {
+        testDatabaseManagement.clearDb();
         List<String> fileNames = Arrays.asList(
             ELIGIBILITY, LANGUAGES, LOCATIONS,
             ORGANIZATIONS, PHONES, PHYSICAL_ADDRESSES,
