@@ -1,12 +1,10 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
-import org.benetech.servicenet.service.comparator.ActivityComparatorFactory;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
@@ -23,7 +21,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,22 +54,19 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
         List<ActivityDTO> activities = new ArrayList<>();
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        Page<Organization> orgs = organizationService.findAllWithOwnerId(pageRequest, systemAccountId);
+        Page<UUID> orgsIds = organizationService.findAllOrgIdsWithOwnerId(systemAccountId, pageable);
 
-        for (Organization org : orgs) {
+        for (UUID orgId : orgsIds) {
             try {
-                Optional<ActivityDTO> activityOpt = getEntityActivity(org.getId());
+                Optional<ActivityDTO> activityOpt = getEntityActivity(orgId);
                 activityOpt.ifPresent(activities::add);
             } catch (ActivityCreationException ex) {
                 log.error(ex.getMessage());
             }
         }
-        Comparator<ActivityDTO> comparator = ActivityComparatorFactory.createComparator(pageable);
-        activities.sort(comparator);
 
         return new PageImpl<>(
-            activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), orgs.getTotalElements());
+            activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), orgsIds.getTotalElements());
     }
 
     @Override

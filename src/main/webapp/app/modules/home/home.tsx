@@ -28,6 +28,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     this.state = {
       ...getSortState(this.props.location, ITEMS_PER_PAGE),
       sort: SORT_RECENTLY_UPDATED,
+      order: DEFAULT_SORT_ORDER,
       dropdownOpen: false,
       loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false
     };
@@ -164,6 +165,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   }
 }
 
+const DEFAULT_SORT_ORDER = 'desc';
 const SORT_RECENTLY_UPDATED = 'recent';
 const SORT_RECOMMENDED = 'recommended';
 const SORT_ARRAY = [SORT_RECENTLY_UPDATED, SORT_RECOMMENDED];

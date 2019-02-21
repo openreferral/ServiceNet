@@ -8,10 +8,13 @@ import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -133,8 +136,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Organization> findAllWithOwnerId(Pageable pageable, UUID ownerId) {
-        return organizationRepository.findAllWithOwnerId(ownerId, pageable);
+    public Page<UUID> findAllOrgIdsWithOwnerId(UUID ownerId, Pageable pageable) {
+        Page<Object[]> list = organizationRepository.findAllOrgIdsWithOwnerId(ownerId, pageable);
+        return new PageImpl<>(getIds(list),
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), list.getTotalElements());
     }
 
     @Override
@@ -142,5 +147,16 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<OrganizationDTO> findAllWithOwnerId(UUID ownerId) {
         return organizationRepository.findAllWithOwnerId(ownerId).stream().map(organizationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    private List<UUID> getIds(Page<Object[]> fetchedResult) {
+        List<UUID> ids = new LinkedList<>();
+        for (Object[] org : fetchedResult) {
+            ByteBuffer bb = ByteBuffer.wrap((byte[]) org[0]);
+            long high = bb.getLong();
+            long low = bb.getLong();
+            ids.add(new UUID(high, low));
+        }
+        return ids;
     }
 }
