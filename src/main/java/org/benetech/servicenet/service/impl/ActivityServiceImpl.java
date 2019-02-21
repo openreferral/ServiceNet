@@ -5,9 +5,7 @@ import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
-import org.benetech.servicenet.service.comparator.ActivityComparatorFactory;
 import org.benetech.servicenet.service.dto.ActivityDTO;
-import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
@@ -23,8 +21,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,66 +51,41 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public List<ActivityDTO> getAllOrganizationActivities(UUID systemAccountId) {
+    @Transactional(readOnly = true)
+    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
         List<ActivityDTO> activities = new ArrayList<>();
-        List<OrganizationDTO> orgs = organizationService.findAllWithOwnerId(systemAccountId);
+        Page<UUID> orgsIds = organizationService.findAllOrgIdsWithOwnerId(systemAccountId, pageable);
 
-        for (OrganizationDTO org : orgs) {
+        for (UUID orgId : orgsIds) {
             try {
-                Optional<ActivityDTO> activityOpt = getEntityActivity(org.getId(), org.getId());
+                Optional<ActivityDTO> activityOpt = getEntityActivity(orgId);
                 activityOpt.ifPresent(activities::add);
             } catch (ActivityCreationException ex) {
                 log.error(ex.getMessage());
             }
         }
 
-        return activities;
+        return new PageImpl<>(
+            activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), orgsIds.getTotalElements());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<ActivityDTO> getOneByOrganizationId(UUID organizationId) {
-        return getEntityActivity(organizationId, organizationId);
+        return getEntityActivity(organizationId);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
-        List<ActivityDTO> activities = getAllOrganizationActivities(systemAccountId);
-
-        Comparator<ActivityDTO> comparator = ActivityComparatorFactory.createComparator(pageable);
-        activities.sort(comparator);
-
-        return getPage(activities, pageable);
-    }
-
-    private Page<ActivityDTO> getPage(List<ActivityDTO> activities, Pageable pageable) {
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-        List<ActivityDTO> list;
-
-        if (activities.size() < startItem) {
-            list = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, activities.size());
-            list = activities.subList(startItem, toIndex);
-        }
-
-        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), activities.size());
-    }
-
-    private Optional<ActivityDTO> getEntityActivity(UUID orgId, UUID resourceId) throws ActivityCreationException {
-        log.debug("Creating Activity for organization: {} with resourceId: {}", orgId, resourceId);
+    private Optional<ActivityDTO> getEntityActivity(UUID orgId) throws ActivityCreationException {
+        log.debug("Creating Activity for organization: {}", orgId);
         try {
-            Optional<RecordDTO> opt = recordsService.getRecordFromOrganization(orgId, resourceId);
+            Optional<RecordDTO> opt = recordsService.getRecordFromOrganization(orgId, orgId);
             RecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
-                String.format("There is no organization for orgId: %s", orgId)));
+                String.format("Activity record couldn't be created for organization: %s", orgId)));
 
             if (CollectionUtils.isEmpty(record.getConflicts())) {
                 return Optional.empty();
             } else {
-                Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(resourceId);
+                Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(orgId);
                 List<OrganizationMatchDTO> matches = organizationMatchService.findAllForOrganization(orgId);
 
                 return Optional.of(ActivityDTO.builder()

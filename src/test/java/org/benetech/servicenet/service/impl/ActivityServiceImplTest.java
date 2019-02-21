@@ -24,11 +24,13 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -99,10 +101,13 @@ public class ActivityServiceImplTest {
     @Test
     @Transactional
     public void getAllActivities() {
-        List<ActivityDTO> activities = activityService.getAllOrganizationActivities(user.getSystemAccount().getId());
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
+            pageRequest, user.getSystemAccount().getId());
 
-        assertEquals(1, activities.size());
-        OrganizationDTO actualOrg = activities.get(0).getRecord().getOrganization();
+        assertEquals(1, activities.getTotalElements());
+        ActivityDTO actualAct = activities.stream().collect(Collectors.toList()).get(0);
+        OrganizationDTO actualOrg = actualAct.getRecord().getOrganization();
         assertNotNull(actualOrg);
         assertEquals(organization.getAccount().getName(), actualOrg.getAccountName());
         assertEquals(organization.getId(), actualOrg.getId());
@@ -118,7 +123,6 @@ public class ActivityServiceImplTest {
         assertEquals(organization.getActive(), actualOrg.isActive());
         assertEquals(organization.getUpdatedAt(), actualOrg.getUpdatedAt());
 
-        ActivityDTO actualAct = activities.get(0);
         assertNotNull(actualAct);
         assertEquals(1, actualAct.getRecord().getConflicts().size());
         ConflictDTO actualConflict = actualAct.getRecord().getConflicts().get(0);
