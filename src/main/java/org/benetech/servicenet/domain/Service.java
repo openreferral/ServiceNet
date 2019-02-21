@@ -165,6 +165,7 @@ public class Service extends AbstractEntity implements Serializable {
         this.updatedAt = srvc.updatedAt;
         this.externalDbId = srvc.externalDbId;
         this.providerName = srvc.providerName;
+        this.organization = srvc.organization;
     }
 
     public Service name(String name) {

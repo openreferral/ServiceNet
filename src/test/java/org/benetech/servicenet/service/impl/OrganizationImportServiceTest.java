@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.TestPersistanceHelper;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -61,10 +62,12 @@ public class OrganizationImportServiceTest {
     @Autowired
     private ContactService contactsService;
 
+    @Autowired
+    private TestDatabaseManagement testDatabaseManagement;
+
     @Before
     public void clearDatabase() {
-        contactsService.findAll().forEach(x -> contactsService.delete(x.getId()));
-        organizationService.findAll().forEach(x -> organizationService.delete(x.getId()));
+        testDatabaseManagement.clearDb();
     }
 
     @Test

@@ -4,7 +4,7 @@ import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcBaseData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
-import org.benetech.servicenet.service.ImportService;
+import org.benetech.servicenet.manager.ImportManager;
 
 import java.util.List;
 
@@ -12,11 +12,11 @@ public class SmcDataManager {
 
     private final SmcStorage storage = new SmcStorage();
     private final DataImportReport report;
-    private final RelationManager relationManager;
+    private final PersistenceManager persistenceManager;
 
-    public SmcDataManager(ImportService importService, MultipleImportData data) {
+    public SmcDataManager(ImportManager importManager, MultipleImportData data) {
         this.report = data.getReport();
-        this.relationManager = new RelationManager(importService, data, storage);
+        this.persistenceManager = new PersistenceManager(importManager, data, storage);
     }
 
     public DataImportReport importData(MultipleImportData data) {
@@ -52,7 +52,7 @@ public class SmcDataManager {
     }
 
     private DataImportReport persistData(DocumentUpload sourceDocument) {
-        relationManager.saveOrganizationsAndRelatedData(sourceDocument);
+        persistenceManager.saveOrganizationsAndRelatedData(sourceDocument);
         return report;
     }
 }

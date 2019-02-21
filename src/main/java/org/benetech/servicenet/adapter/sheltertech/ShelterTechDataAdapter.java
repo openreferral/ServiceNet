@@ -1,6 +1,5 @@
 package org.benetech.servicenet.adapter.sheltertech;
 
-import com.google.common.collect.Sets;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.adapter.sheltertech.mapper.ShelterTechOrganizationMapper;
@@ -23,13 +22,12 @@ import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.service.ImportService;
+import org.benetech.servicenet.manager.ImportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,7 +37,7 @@ import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.P
 public class ShelterTechDataAdapter extends SingleDataAdapter {
 
     @Autowired
-    private ImportService importService;
+    private ImportManager importManager;
 
     @Override
     @Transactional
@@ -55,90 +53,61 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
             Organization org = ShelterTechOrganizationMapper.INSTANCE.mapToOrganization(
                 orgRaw, rawData.getReport().getDocumentUpload());
 
-            Organization savedOrg = importService
-                .createOrUpdateOrganization(org, org.getExternalDbId(), PROVIDER_NAME, rawData.getReport());
+            org.setServices(getServicesToPersist(orgRaw));
+            org.setLocations(getLocationsToPersist(orgRaw, org.getLocations()));
 
-            persistOrgsLocation(orgRaw, org.getLocations(), savedOrg);
-
-            org.setServices(persistServices(orgRaw, rawData.getReport()));
+            importManager.createOrUpdateOrganization(org, org.getExternalDbId(), PROVIDER_NAME, rawData.getReport());
         }
     }
 
-    private Set<Service> persistServices(OrganizationRaw organizationRaw, DataImportReport report) {
+    private Set<Service> getServicesToPersist(OrganizationRaw organizationRaw) {
         Set<Service> services = new HashSet<>();
         for (ServiceRaw serviceRaw: organizationRaw.getServices()) {
             Service service = ShelterTechServiceMapper.INSTANCE.mapToService(serviceRaw);
-            importService.createOrUpdateService(service, service.getExternalDbId(), service.getProviderName(), report);
             services.add(service);
 
-            persistRegularSchedule(serviceRaw, service);
-            persistEligibility(serviceRaw, service);
-            persistRequiredDocuments(serviceRaw, service);
+            service.setRegularSchedule(getRegularScheduleToPersist(serviceRaw));
+            service.setEligibility(getEligibilityToPersist(serviceRaw));
+            service.setDocs(getRequiredDocumentsToPersist(serviceRaw));
         }
         return services;
     }
 
-    private void persistOrgsLocation(OrganizationRaw orgRaw, Set<Location> locations, Organization savedOrg) {
+    private Set<Location> getLocationsToPersist(OrganizationRaw orgRaw, Set<Location> locations) {
         for (Location location : locations) {
-            Location savedLocation = importService.createOrUpdateLocation(
-                location, location.getExternalDbId(), location.getProviderName());
-            savedOrg.addLocations(savedLocation);
 
-            persistPostalAddress(orgRaw.getAddress(), savedLocation);
-
-            persistPhysicalAddress(orgRaw.getAddress(), savedLocation);
-
-            persistPhones(orgRaw, savedOrg, savedLocation);
+            location.setPostalAddress(getPostalAddressToPersist(orgRaw.getAddress()));
+            location.setPhysicalAddress(getPhysicalAddressToPersist(orgRaw.getAddress()));
+            location.setPhones(getPhonesToPersist(orgRaw));
         }
+        return locations;
     }
 
-    private void persistPostalAddress(AddressRaw addressRaw, Location location) {
-        PostalAddress postalAddress = ShelterTechPostalAddressMapper.INSTANCE
+    private PostalAddress getPostalAddressToPersist(AddressRaw addressRaw) {
+        return ShelterTechPostalAddressMapper.INSTANCE
             .mapAddressRawToPostalAddress(addressRaw);
-        if (postalAddress != null) {
-            importService.createOrUpdatePostalAddress(postalAddress, location);
-        }
     }
 
-    private void persistPhysicalAddress(AddressRaw addressRaw, Location location) {
-        PhysicalAddress physicalAddress = ShelterTechPhysicalAddressMapper.INSTANCE
+    private PhysicalAddress getPhysicalAddressToPersist(AddressRaw addressRaw) {
+        return ShelterTechPhysicalAddressMapper.INSTANCE
             .mapAddressRawToPhysicalAddress(addressRaw);
-        if (physicalAddress != null) {
-            importService.createOrUpdatePhysicalAddress(physicalAddress, location);
-        }
     }
 
-    private void persistPhones(OrganizationRaw orgRaw, Organization orgSaved, Location savedLocation) {
-        List<Phone> phones = ShelterTechPhoneMapper.INSTANCE.mapToPhones(
-            orgRaw.getPhones().stream().filter(phone -> phone.getNumber() != null).collect(Collectors.toList()));
-        for (Phone phone : phones) {
-            phone.setOrganization(orgSaved);
-            phone.setLocation(savedLocation);
-        }
-
-        importService.createOrUpdatePhonesForOrganization(Sets.newHashSet(phones), orgSaved.getId());
+    private Set<Phone> getPhonesToPersist(OrganizationRaw orgRaw) {
+        return new HashSet<>(ShelterTechPhoneMapper.INSTANCE.mapToPhones(
+            orgRaw.getPhones().stream().filter(phone -> phone.getNumber() != null).collect(Collectors.toList())));
     }
 
-    private void persistRegularSchedule(ServiceRaw serviceRaw, Service savedService) {
-        RegularSchedule schedule = ShelterTechRegularScheduleMapper.INSTANCE.mapToRegularSchedule(serviceRaw.getSchedule());
-        if (schedule != null) {
-            importService.createOrUpdateRegularSchedule(schedule, savedService);
-        }
+    private RegularSchedule getRegularScheduleToPersist(ServiceRaw serviceRaw) {
+        return ShelterTechRegularScheduleMapper.INSTANCE.mapToRegularSchedule(serviceRaw.getSchedule());
     }
 
-    private void persistEligibility(ServiceRaw serviceRaw, Service savedService) {
-        Eligibility eligibility = ShelterTechServiceMapper.INSTANCE.eligibilityFromString(serviceRaw.getEligibility());
-        if (eligibility != null) {
-            importService.createOrUpdateEligibility(eligibility, savedService);
-        }
+    private Eligibility getEligibilityToPersist(ServiceRaw serviceRaw) {
+        return ShelterTechServiceMapper.INSTANCE.eligibilityFromString(serviceRaw.getEligibility());
     }
 
-    private void persistRequiredDocuments(ServiceRaw serviceRaw, Service savedService) {
-        Set<RequiredDocument> requiredDocuments = ShelterTechServiceMapper.INSTANCE
+    private Set<RequiredDocument> getRequiredDocumentsToPersist(ServiceRaw serviceRaw) {
+        return ShelterTechServiceMapper.INSTANCE
             .docsFromString(serviceRaw.getRequiredDocuments());
-        for (RequiredDocument doc : requiredDocuments) {
-            importService.createOrUpdateRequiredDocument(doc, doc.getExternalDbId(), doc.getProviderName(), savedService);
-        }
     }
-
 }

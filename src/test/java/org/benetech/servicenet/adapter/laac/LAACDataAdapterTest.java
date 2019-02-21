@@ -1,6 +1,7 @@
 package org.benetech.servicenet.adapter.laac;
 
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -23,11 +24,11 @@ import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -39,7 +40,6 @@ import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class LAACDataAdapterTest {
 
     private static final String PROVIDER_NAME = "LAAC";
@@ -105,6 +105,14 @@ public class LAACDataAdapterTest {
 
     @Autowired
     private LocationService locationService;
+
+    @Autowired
+    private TestDatabaseManagement testDatabaseManagement;
+
+    @Before
+    public void clearDb() {
+        testDatabaseManagement.clearDb();
+    }
 
     @Test
     public void testSavingLAACData() throws IOException {

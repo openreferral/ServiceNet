@@ -7,6 +7,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -51,6 +52,10 @@ public class DataImportReport extends AbstractEntity implements Serializable {
 
     @Column(name = "job_name")
     private String jobName;
+
+    @Lob
+    @Column(name = "error_message")
+    private String errorMessage;
 
     @OneToOne
     @JoinColumn(unique = true)

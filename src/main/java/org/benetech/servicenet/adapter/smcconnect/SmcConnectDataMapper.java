@@ -44,22 +44,28 @@ import java.util.stream.Collectors;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SmcConnectDataMapper {
 
+    String PROVIDER_NAME = "SMCConnect";
     SmcConnectDataMapper INSTANCE = Mappers.getMapper(SmcConnectDataMapper.class);
     String DELIMITER = ",";
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "url", source = "website")
+    @Mapping(target = "externalDbId", source = "id")
     Organization mapOrganization(SmcOrganization organization);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "applicationProcess", ignore = true)
     @Mapping(target = "eligibility", ignore = true)
     @Mapping(target = "url", source = "website")
+    @Mapping(target = "externalDbId", source = "id")
+    @Mapping(target = "providerName", defaultValue = PROVIDER_NAME)
     Service mapService(SmcService service);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "longitude", qualifiedByName = "double")
     @Mapping(target = "latitude", qualifiedByName = "double")
+    @Mapping(target = "externalDbId", source = "id")
+    @Mapping(target = "providerName", defaultValue = PROVIDER_NAME)
     Location extractLocation(SmcLocation location);
 
     @Mapping(target = "id", ignore = true)
@@ -112,6 +118,8 @@ public interface SmcConnectDataMapper {
 
     default Organization extractOrganization(SmcOrganization source) {
         Organization result = mapOrganization(source);
+        result.setFunding(extractFunding(source).orElse(null));
+        result.setActive(true);
         if (StringUtils.isNotBlank(source.getDateIncorporated())) {
             result.setYearIncorporated(LocalDate.parse(source.getDateIncorporated(),
                 DateTimeFormatter.ofPattern("MMMM dd, yyyy")));
@@ -121,6 +129,7 @@ public interface SmcConnectDataMapper {
 
     default Service extractService(SmcService source) {
         Service result = mapService(source);
+        result.setFunding(extractFunding(source).orElse(null));
         result.setApplicationProcess(MapperUtils.joinNotBlank(" ", source.getApplicationProcess(),
             "Required documents: " + source.getRequiredDocuments()));
         return result;

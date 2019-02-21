@@ -45,9 +45,11 @@ public interface HealthLeadsDataMapper {
     Eligibility extractEligibility(HealthleadsEligibility eligibility);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "externalDbId", source = "id")
     Location extractLocation(HealthleadsLocation location);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "externalDbId", source = "id")
     Organization extractOrganization(HealthleadsOrganization organization);
 
     @Mapping(target = "id", ignore = true)
@@ -55,9 +57,11 @@ public interface HealthLeadsDataMapper {
     PhysicalAddress extractPhysicalAddress(HealthleadsPhysicalAddress physicalAddress);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "externalDbId", source = "id")
     RequiredDocument extractRequiredDocument(HealthleadsRequiredDocument requiredDocument);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "externalDbId", source = "id")
     Service extractService(HealthleadsService service);
 
     @Mapping(target = "id", ignore = true)
@@ -68,11 +72,12 @@ public interface HealthLeadsDataMapper {
     ServiceTaxonomy extractServiceTaxonomy(HealthleadsServiceTaxonomy serviceTaxonomy);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "externalDbId", source = "id")
     Taxonomy extractTaxonomy(HealthleadsTaxonomy taxonomy);
 
-    default Set<Language> extractLanguages(HealthleadsLanguage healthleadsLanguage) {
-        String[] languages = healthleadsLanguage.getLanguage().split(LISTS_DELIMITER);
-        return Arrays.stream(languages)
+    default Set<Language> extractLanguages(Set<HealthleadsLanguage> healthleadsLanguages) {
+        return healthleadsLanguages.stream()
+            .flatMap(x -> Arrays.stream(x.getLanguage().split(LISTS_DELIMITER)))
             .map(language -> new Language()
             .language(language.trim()))
             .collect(Collectors.toSet());
