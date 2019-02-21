@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +28,8 @@ public class FieldExclusion extends AbstractEntity implements Serializable {
     private static final String DELIMITER = ",";
 
     @Lob
-    @Column(name = "fields")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "fields", columnDefinition = "clob")
     private String fields;
 
     @Column(name = "entity")

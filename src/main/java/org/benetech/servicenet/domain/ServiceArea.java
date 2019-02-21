@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +24,8 @@ public class ServiceArea extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Lob
-    @Column(name = "description", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "description", nullable = false, columnDefinition = "clob")
     private String description;
 
     @ManyToOne

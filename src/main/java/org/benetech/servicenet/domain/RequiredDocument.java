@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +34,8 @@ public class RequiredDocument extends AbstractEntity implements Serializable {
 
     @NotNull
     @Lob
-    @Column(name = "document", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "document", nullable = false, columnDefinition = "clob")
     private String document;
 
     @ManyToOne

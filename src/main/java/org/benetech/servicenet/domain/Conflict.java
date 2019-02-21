@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,14 +43,16 @@ public class Conflict extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 5951338913885782058L;
 
     @Lob
-    @Column(name = "current_value")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "current_value", columnDefinition = "clob")
     private String currentValue;
 
     @Column(name = "current_value_date")
     private ZonedDateTime currentValueDate;
 
     @Lob
-    @Column(name = "offered_value")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "offered_value", columnDefinition = "clob")
     private String offeredValue;
 
     @Column(name = "offered_value_date")
