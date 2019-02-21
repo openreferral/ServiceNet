@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +34,8 @@ public class Eligibility extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @NotNull
     @Lob
-    @Column(name = "eligibility", nullable = false)
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "eligibility", nullable = false, columnDefinition = "clob")
     private String eligibility;
 
     @OneToOne

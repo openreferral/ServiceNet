@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +32,8 @@ public class ServiceAtLocation extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Lob
-    @Column(name = "description")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "description", columnDefinition = "clob")
     private String description;
 
     @OneToOne

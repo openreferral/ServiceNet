@@ -88,7 +88,9 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
         long min = Long.MAX_VALUE;
         for (DistanceMatrixRow row : matrix.rows) {
             for (DistanceMatrixElement element : row.elements) {
-                min = Math.min(min, element.distance.inMeters);
+                if (element != null && element.distance != null) {
+                    min = Math.min(min, element.distance.inMeters);
+                }
             }
         }
         return min;

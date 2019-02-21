@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,8 +27,9 @@ public class AccessibilityForDisabilities extends AbstractEntity implements Seri
     private static final long serialVersionUID = 1L;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @NotNull
-    @Column(name = "accessibility", nullable = false)
+    @Column(name = "accessibility", nullable = false, columnDefinition = "clob")
     private String accessibility;
 
     @Column(name = "details")

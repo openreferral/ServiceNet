@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.benetech.servicenet.domain.enumeration.ActionType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,11 +46,13 @@ public class Metadata extends AbstractEntity implements Serializable {
     private String fieldName;
 
     @Lob
-    @Column(name = "previous_value")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "previous_value", columnDefinition = "clob")
     private String previousValue;
 
     @Lob
-    @Column(name = "replacement_value")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "replacement_value", columnDefinition = "clob")
     private String replacementValue;
 
     @NotNull

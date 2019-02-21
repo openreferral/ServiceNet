@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,7 +55,8 @@ public class DataImportReport extends AbstractEntity implements Serializable {
     private String jobName;
 
     @Lob
-    @Column(name = "error_message")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "error_message", columnDefinition = "clob")
     private String errorMessage;
 
     @OneToOne
