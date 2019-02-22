@@ -39,7 +39,7 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query(value = "SELECT O.* FROM\n" +
                    "(SELECT O.*, C.RECENT, C.RECOMMENDED\n" +
                    "FROM ORGANIZATION O,\n" +
-                   "(SELECT RESOURCE_ID, COUNT(RESOURCE_ID) RECOMMENDED, MAX(CURRENT_VALUE_DATE) RECENT\n" +
+                   "(SELECT RESOURCE_ID, COUNT(RESOURCE_ID) RECOMMENDED, MAX(OFFERED_VALUE_DATE) RECENT\n" +
                    "FROM CONFLICT\n" +
                    "WHERE STATE = 'PENDING'\n" +
                    "GROUP BY RESOURCE_ID\n" +
@@ -48,7 +48,7 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
                    "AND ACCOUNT_ID = :ownerId) O",
         countQuery = "SELECT COUNT(ID)\n" +
                      "FROM ORGANIZATION O,\n" +
-                     "(SELECT RESOURCE_ID, COUNT(RESOURCE_ID) RECOMMENDED, MAX(CURRENT_VALUE_DATE) RECENT\n" +
+                     "(SELECT RESOURCE_ID, COUNT(RESOURCE_ID) RECOMMENDED, MAX(OFFERED_VALUE_DATE) RECENT\n" +
                      "FROM CONFLICT\n" +
                      "WHERE STATE = 'PENDING'\n" +
                      "GROUP BY RESOURCE_ID\n" +
