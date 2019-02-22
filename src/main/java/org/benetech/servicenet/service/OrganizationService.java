@@ -59,9 +59,7 @@ public interface OrganizationService {
      */
     void delete(UUID id);
 
-    Page<UUID> findAllOrgIdsWithOwnerId(UUID ownerId, Pageable pageable);
+    Page<Organization> findAllOrgIdsWithOwnerId(UUID ownerId, Pageable pageable);
 
     List<OrganizationDTO> findAllWithOwnerId(UUID ownerId);
-
-    Page<Organization> findAllWithOwnerId(UUID ownerId, Pageable pageable);
 }

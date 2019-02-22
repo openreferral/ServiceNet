@@ -55,8 +55,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
         List<ActivityDTO> activities = new ArrayList<>();
-        Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        Page<Organization> orgs = organizationService.findAllWithOwnerId(systemAccountId, pageOnly);
+        Page<Organization> orgs = organizationService.findAllOrgIdsWithOwnerId(systemAccountId, pageable);
 
         for (Organization org : orgs) {
             try {
@@ -68,7 +67,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
 
         return new PageImpl<>(
-            activities, PageRequest.of(pageOnly.getPageNumber(), pageOnly.getPageSize()), orgs.getTotalElements());
+            activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), orgs.getTotalElements());
     }
 
     @Override
