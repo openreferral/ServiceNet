@@ -19,7 +19,7 @@ public final class ReportErrorMessageBuilder {
     public static <V extends AbstractEntity> String build(Set<ConstraintViolation<V>> violations, String className,
                                                           String previousPart, String externalDbId) {
         StringBuilder builder = initializeBuilder(previousPart, className, externalDbId);
-        for (ConstraintViolation<V> violation : sorted(violations)) {
+        for (ConstraintViolation<V> violation : sort(violations)) {
             builder.append(violation.getPropertyPath())
                 .append(SPACE)
                 .append(violation.getMessage())
@@ -29,7 +29,7 @@ public final class ReportErrorMessageBuilder {
         return builder.toString();
     }
 
-    private static <V extends AbstractEntity> List<ConstraintViolation<V>> sorted(Set<ConstraintViolation<V>> entry) {
+    private static <V extends AbstractEntity> List<ConstraintViolation<V>> sort(Set<ConstraintViolation<V>> entry) {
         return entry.stream()
             .sorted(Comparator.comparing(x-> x.getPropertyPath() + x.getMessage()))
             .collect(Collectors.toList());
