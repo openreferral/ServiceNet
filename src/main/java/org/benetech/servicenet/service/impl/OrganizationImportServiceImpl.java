@@ -12,6 +12,7 @@ import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
+import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +43,16 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
                                                    String providerName, DataImportReport report) {
         Organization organization = new Organization(filledOrganization);
+        Optional<SystemAccount> systemAccount = systemAccountService.findByName(providerName);
+
+        if (!systemAccount.isPresent()) {
+            return null;
+        }
+        organization.setAccount(systemAccount.get());
+        if (EntityValidator.isNotValid(organization, report, externalDbId)) {
+            return null;
+        }
+
         Optional<Organization> organizationFromDb =
             organizationService.findWithEagerAssociations(externalDbId, providerName);
         if (organizationFromDb.isPresent()) {
@@ -49,8 +60,6 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
             em.merge(organization);
             report.incrementNumberOfUpdatedOrgs();
         } else {
-            Optional<SystemAccount> systemAccount = systemAccountService.findByName(providerName);
-            organization.setAccount(systemAccount.orElse(null));
             em.persist(organization);
             report.incrementNumberOfCreatedOrgs();
         }

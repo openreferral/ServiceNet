@@ -58,8 +58,9 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
     public void detect(List<OrganizationMatch> matches) {
         List<Conflict> conflicts = new LinkedList<>();
 
+        long detectionStartTime = System.currentTimeMillis();
         for (OrganizationMatch match : matches) {
-            log.debug("Request to detect conflicts for {} organization", match.getOrganizationRecord().getName());
+            long startTime = System.currentTimeMillis();
             OrganizationEquivalent orgEquivalent = organizationEquivalentsService.generateEquivalent(
                 match.getOrganizationRecord(), match.getPartnerVersion());
 
@@ -67,8 +68,20 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
             conflicts.addAll(detect(equivalents, match.getOrganizationRecord().getAccount(),
                 match.getPartnerVersion().getAccount()));
+            long stopTime = System.currentTimeMillis();
+            long elapsedTime = stopTime - startTime;
+            //TODO: Remove time counting logic (#264)
+            log.debug("Searching for conflicts between " +
+                match.getOrganizationRecord().getAccount().getName() + "'s organization '" +
+                match.getOrganizationRecord().getName() + "' and " +
+                match.getOrganizationRecord().getAccount().getName() + "'s organization '" +
+                match.getOrganizationRecord().getName() + "' took: " + elapsedTime + "ms");
         }
 
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = detectionStartTime - stopTime;
+        //TODO: Remove time counting logic (#264)
+        log.info("Searching for conflicts took " + elapsedTime + "ms");
         conflicts = updateExistingConflictsOrCreate(conflicts);
         conflicts.forEach(em::persist);
     }

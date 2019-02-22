@@ -1,8 +1,10 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.TaxonomyImportService;
 import org.benetech.servicenet.service.TaxonomyService;
+import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +21,12 @@ public class TaxonomyImportServiceImpl implements TaxonomyImportService {
     private TaxonomyService taxonomyService;
 
     @Override
-    public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName) {
+    public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName,
+                                           DataImportReport report) {
+        if (EntityValidator.isNotValid(taxonomy, report, externalDbId)) {
+            return null;
+        }
+
         Optional<Taxonomy> taxonomyFromDb = taxonomyService.findForExternalDb(externalDbId, providerName);
 
         if (taxonomyFromDb.isPresent()) {

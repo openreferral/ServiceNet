@@ -123,7 +123,7 @@ public class ImportServiceConfidentialityImplIntTest {
         Location location = generateNewLocation();
         location.setIsConfidential(true);
 
-        importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(0, locationService.findAll().size());
     }
@@ -132,12 +132,12 @@ public class ImportServiceConfidentialityImplIntTest {
     @Transactional
     public void shouldNotUpdateLocationIfConfidential() {
         Location location = generateExistingLocation();
-        importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
         assertEquals(1, locationService.findAll().size());
 
         location.setIsConfidential(true);
         location.setName(NEW_STRING);
-        var updated = importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        var updated = importManager.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(1, locationService.findAll().size());
         assertEquals(EXISTING_STRING, locationService.findAll().get(0).getName());
@@ -150,7 +150,7 @@ public class ImportServiceConfidentialityImplIntTest {
         PhysicalAddress address = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING);
         address.setIsConfidential(true);
         Location location = generateExistingLocation().physicalAddress(address);
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(0, physicalAddressService.findAll().size());
     }
@@ -160,13 +160,13 @@ public class ImportServiceConfidentialityImplIntTest {
     public void shouldNotUpdatePhysicalAddressIfConfidential() {
         PhysicalAddress existingAddress = new PhysicalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING);
         Location location = generateExistingLocation().physicalAddress(existingAddress);
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
         assertEquals(1, physicalAddressService.findAll().size());
 
         PhysicalAddress newAddress = new PhysicalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING);
         newAddress.setIsConfidential(true);
         location.setPhysicalAddress(newAddress);
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(1, physicalAddressService.findAll().size());
         assertEquals(EXISTING_STRING, physicalAddressService.findAll().get(0).getAddress1());
@@ -178,7 +178,7 @@ public class ImportServiceConfidentialityImplIntTest {
         PostalAddress address = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING);
         address.setIsConfidential(true);
         Location location = generateExistingLocation().postalAddress(address);
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(0, postalAddressService.findAll().size());
     }
@@ -188,13 +188,13 @@ public class ImportServiceConfidentialityImplIntTest {
     public void shouldNotUpdatePostalAddressIfConfidential() {
         PostalAddress existingAddress = new PostalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING);
         Location location = generateExistingLocation().postalAddress(existingAddress);
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
         assertEquals(1, postalAddressService.findAll().size());
 
         PostalAddress newAddress = new PostalAddress().address1(NEW_STRING).city(NEW_STRING).stateProvince(NEW_STRING);
         newAddress.setIsConfidential(true);
         location.setPostalAddress(newAddress);
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(1, postalAddressService.findAll().size());
         assertEquals(EXISTING_STRING, postalAddressService.findAll().get(0).getAddress1());
@@ -208,7 +208,7 @@ public class ImportServiceConfidentialityImplIntTest {
         newAccessibility.setIsConfidential(true);
         Location location = generateExistingLocation();
         location.setAccessibilities(Set.of(newAccessibility, otherAccessibility));
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(1, accessibilityService.findAll().size());
         assertEquals(OTHER_STRING, accessibilityService.findAll().get(0).getAccessibility());
@@ -220,13 +220,13 @@ public class ImportServiceConfidentialityImplIntTest {
         AccessibilityForDisabilities otherAccessibility = new AccessibilityForDisabilities().accessibility(OTHER_STRING);
         Location location = generateExistingLocation();
         location.setAccessibilities(Set.of(otherAccessibility));
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
         assertEquals(1, accessibilityService.findAll().size());
 
         AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING).details(NEW_STRING);
         newAccessibility.setIsConfidential(true);
         location.setAccessibilities(Set.of(newAccessibility));
-        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER);
+        locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(1, accessibilityService.findAll().size());
         assertEquals(OTHER_STRING, accessibilityService.findAll().get(0).getAccessibility());

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
@@ -13,18 +14,18 @@ import java.util.Set;
 
 public interface LocationBasedImportService {
 
-    void createOrUpdatePhysicalAddress(PhysicalAddress physicalAddress, Location location);
+    void createOrUpdatePhysicalAddress(PhysicalAddress physicalAddress, Location location, DataImportReport report);
 
-    void createOrUpdatePostalAddress(PostalAddress postalAddress, Location location);
+    void createOrUpdatePostalAddress(PostalAddress postalAddress, Location location, DataImportReport report);
 
     AccessibilityForDisabilities createOrUpdateAccessibility(AccessibilityForDisabilities accessibility,
-                                                                     Location location);
+                                                                       Location location, DataImportReport report);
 
-    void createOrUpdateOpeningHoursForLocation(RegularSchedule schedule, Location location);
+    void createOrUpdateOpeningHoursForLocation(RegularSchedule schedule, Location location, DataImportReport report);
 
-    void createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location);
+    void createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location, DataImportReport report);
 
-    void createOrUpdateLangsForLocation(Set<Language> langs, Location location);
+    void createOrUpdateLangsForLocation(Set<Language> langs, Location location, DataImportReport report);
 
-    void createOrUpdatePhonesForLocation(Set<Phone> phones, Location location);
+    void createOrUpdatePhonesForLocation(Set<Phone> phones, Location location, DataImportReport report);
 }
