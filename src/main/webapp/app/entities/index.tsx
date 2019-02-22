@@ -33,6 +33,7 @@ import Conflict from './conflict';
 import DataImportReport from './data-import-report';
 import FieldExclusion from './field-exclusion';
 import ExclusionsConfig from './exclusions-config';
+import GeocodingResult from './geocoding-result';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ match }) => (
@@ -68,6 +69,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute path={`${match.url}/data-import-report`} component={DataImportReport} />
       <ErrorBoundaryRoute path={`${match.url}/field-exclusion`} component={FieldExclusion} />
       <ErrorBoundaryRoute path={`${match.url}/exclusions-config`} component={ExclusionsConfig} />
+      <ErrorBoundaryRoute path={`${match.url}/geocoding-result`} component={GeocodingResult} />
       {/* jhipster-needle-add-route-path - JHipster will routes here */}
     </Switch>
   </div>

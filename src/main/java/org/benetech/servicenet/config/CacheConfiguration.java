@@ -108,6 +108,7 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.ExclusionsConfig.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.ExclusionsConfig.class.getName() + ".exclusions",
                 jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.GeocodingResult.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

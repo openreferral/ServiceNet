@@ -38,6 +38,7 @@
         "activity": "Activity",
         "fieldExclusion": "Field Exclusion",
         "exclusionsConfig": "Exclusions Config",
+        "geocodingResult": "Geocoding Result",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

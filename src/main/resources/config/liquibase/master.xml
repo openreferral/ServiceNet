@@ -50,6 +50,7 @@
     <include file="config/liquibase/changelog/20181231125401_added_entity_DataImportReport.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190124144536_added_entity_FieldExclusion.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190124145536_added_entity_ExclusionsConfig.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190222165806_added_entity_GeocodingResult.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
              relativeToChangelogFile="false"/>
