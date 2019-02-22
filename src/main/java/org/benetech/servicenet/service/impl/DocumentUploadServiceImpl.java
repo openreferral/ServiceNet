@@ -110,6 +110,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .orElse(report);
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
+        //TODO: Remove time counting logic (#264)
         log.info("Data upload for " + providerName + " took: " + elapsedTime + "ms");
         saveReport(reportToSave);
 
@@ -185,6 +186,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
                     new SingleImportData(parsedDocument, report, providerName, isFileUpload));
                 long stopTime = System.currentTimeMillis();
                 long elapsedTime = stopTime - startTime;
+                //TODO: Remove time counting logic (#264)
                 log.info("Data upload for " + providerName + " took: " + elapsedTime + "ms");
                 return saveReport(importReport);
             })

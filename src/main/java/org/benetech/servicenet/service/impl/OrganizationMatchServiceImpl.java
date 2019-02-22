@@ -149,6 +149,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     private List<OrganizationMatch> findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs) {
         List<OrganizationMatch> matches = new LinkedList<>();
         long startTime = System.currentTimeMillis();
+        //TODO: Remove time counting logic (#264)
         log.debug("Searching for matches for " + organization.getAccount().getName() + "'s organization '" +
             organization.getName() + "' has started. There are " + notMatchedOrgs.size() + " organizations to compare with");
         for (Organization partner : notMatchedOrgs) {
@@ -158,6 +159,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         }
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
+        //TODO: Remove time counting logic (#264)
         log.debug("Searching for matches for " +
             organization.getAccount().getName() + "'s organization '" +
             organization.getName() + "' took: " + elapsedTime + "ms, " + matches.size() + " matches found.");

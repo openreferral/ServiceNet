@@ -70,6 +70,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
                 match.getPartnerVersion().getAccount()));
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
+            //TODO: Remove time counting logic (#264)
             log.debug("Searching for conflicts between " +
                 match.getOrganizationRecord().getAccount().getName() + "'s organization '" +
                 match.getOrganizationRecord().getName() + "' and " +
@@ -79,6 +80,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
         long stopTime = System.currentTimeMillis();
         long elapsedTime = detectionStartTime - stopTime;
+        //TODO: Remove time counting logic (#264)
         log.info("Searching for conflicts took " + elapsedTime + "ms");
         conflicts = updateExistingConflictsOrCreate(conflicts);
         conflicts.forEach(em::persist);
