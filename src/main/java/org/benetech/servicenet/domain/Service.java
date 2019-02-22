@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,7 +43,8 @@ public class Service extends AbstractEntity implements Serializable {
     private String alternateName;
 
     @Lob
-    @Column(name = "description")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "description", columnDefinition = "clob")
     private String description;
 
     @Column(name = "url")
@@ -55,27 +57,33 @@ public class Service extends AbstractEntity implements Serializable {
     private String status;
 
     @Lob
-    @Column(name = "interpretation_services")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "interpretation_services", columnDefinition = "clob")
     private String interpretationServices;
 
     @Lob
-    @Column(name = "application_process")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "application_process", columnDefinition = "clob")
     private String applicationProcess;
 
     @Lob
-    @Column(name = "wait_time")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "wait_time", columnDefinition = "clob")
     private String waitTime;
 
     @Lob
-    @Column(name = "fees")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "fees", columnDefinition = "clob")
     private String fees;
 
     @Lob
-    @Column(name = "accreditations")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "accreditations", columnDefinition = "clob")
     private String accreditations;
 
     @Lob
-    @Column(name = "licenses")
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "licenses", columnDefinition = "clob")
     private String licenses;
 
     @Column(name = "jhi_type")

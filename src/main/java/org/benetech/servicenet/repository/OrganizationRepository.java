@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Organization;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +32,25 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
 
     @Query("SELECT org FROM Organization org WHERE org.account.name != :providerName")
     List<Organization> findAllByProviderNameNot(@Param("providerName") String providerName);
+
+    @Query(value = "SELECT ID, RECENT, RECOMMENDED\n" +
+                   "FROM ORGANIZATION O,\n" +
+                   "(SELECT RESOURCE_ID, COUNT(RESOURCE_ID) RECOMMENDED, MAX(CURRENT_VALUE_DATE) RECENT\n" +
+                   "FROM CONFLICT\n" +
+                   "WHERE STATE = 'PENDING'\n" +
+                   "GROUP BY RESOURCE_ID\n" +
+                   "ORDER BY RESOURCE_ID) C\n" +
+                   "WHERE ID = RESOURCE_ID\n" +
+                   "AND ACCOUNT_ID = :ownerId",
+        countQuery = "SELECT COUNT(ID)\n" +
+                     "FROM ORGANIZATION O,\n" +
+                     "(SELECT RESOURCE_ID, COUNT(RESOURCE_ID) RECOMMENDED, MAX(CURRENT_VALUE_DATE) RECENT\n" +
+                     "FROM CONFLICT\n" +
+                     "WHERE STATE = 'PENDING'\n" +
+                     "GROUP BY RESOURCE_ID\n" +
+                     "ORDER BY RESOURCE_ID) C\n" +
+                     "WHERE ID = RESOURCE_ID\n" +
+                     "AND ACCOUNT_ID = :ownerId\n",
+        nativeQuery = true)
+    Page<Object[]> findAllOrgIdsWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
 }
