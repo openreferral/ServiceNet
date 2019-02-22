@@ -5,6 +5,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ServiceBasedImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,9 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     @Override
     public Service createOrUpdateService(Service filledService, String externalDbId, String providerName,
                                          DataImportReport report) {
+        if (EntityValidator.isNotValid(filledService, report, externalDbId)) {
+            return null;
+        }
         Service service = new Service(filledService);
         Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
         if (serviceFromDb.isPresent()) {
@@ -37,15 +41,18 @@ public class ServiceImportServiceImpl implements ServiceImportService {
             report.incrementNumberOfCreatedServices();
         }
 
-        serviceBasedImportService.createOrUpdateEligibility(filledService.getEligibility(), service);
-        serviceBasedImportService.createOrUpdateLangsForService(filledService.getLangs(), service);
-        serviceBasedImportService.createOrUpdatePhonesForService(filledService.getPhones(), service);
-        serviceBasedImportService.createOrUpdateFundingForService(filledService.getFunding(), service);
-        serviceBasedImportService.createOrUpdateRegularScheduleForService(filledService.getRegularSchedule(), service);
-        serviceBasedImportService.createOrUpdateServiceTaxonomy(filledService.getTaxonomies(), providerName, service);
-        serviceBasedImportService.createOrUpdateRequiredDocuments(filledService.getDocs(), providerName, service);
-        serviceBasedImportService.createOrUpdateContactsForService(filledService.getContacts(), service);
-        serviceBasedImportService.createOrUpdateHolidayScheduleForService(filledService.getHolidaySchedule(), service);
+        serviceBasedImportService.createOrUpdateEligibility(filledService.getEligibility(), service, report);
+        serviceBasedImportService.createOrUpdateLangsForService(filledService.getLangs(), service, report);
+        serviceBasedImportService.createOrUpdatePhonesForService(filledService.getPhones(), service, report);
+        serviceBasedImportService.createOrUpdateFundingForService(filledService.getFunding(), service, report);
+        serviceBasedImportService.createOrUpdateRegularScheduleForService(
+            filledService.getRegularSchedule(), service, report);
+        serviceBasedImportService.createOrUpdateServiceTaxonomy(
+            filledService.getTaxonomies(), providerName, service, report);
+        serviceBasedImportService.createOrUpdateRequiredDocuments(filledService.getDocs(), providerName, service, report);
+        serviceBasedImportService.createOrUpdateContactsForService(filledService.getContacts(), service, report);
+        serviceBasedImportService.createOrUpdateHolidayScheduleForService(
+            filledService.getHolidaySchedule(), service, report);
 
         return service;
     }

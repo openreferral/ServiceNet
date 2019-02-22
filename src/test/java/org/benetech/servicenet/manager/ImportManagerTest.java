@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.benetech.servicenet.TestConstants.PROVIDER;
 import static org.junit.Assert.assertEquals;
@@ -46,6 +47,7 @@ public class ImportManagerTest {
     }
 
     @Test
+    @Transactional
     public void testRollingBackOrganization() {
         Organization org1 = generateOrganization(STRING_1, EXTERNAL_ID_1);
         Organization org2 = generateInvalidOrganization(EXTERNAL_ID_2);

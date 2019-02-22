@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestPersistanceHelper;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.TaxonomyImportService;
 import org.benetech.servicenet.service.TaxonomyService;
@@ -41,7 +42,7 @@ public class TaxonomyImportServiceTest {
         Taxonomy taxonomy = helper.generateNewTaxonomy();
 
         assertEquals(0, taxonomyService.findAll().size());
-        importService.createOrUpdateTaxonomy(taxonomy, EXISTING_EXTERNAL_ID, PROVIDER);
+        importService.createOrUpdateTaxonomy(taxonomy, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         List<TaxonomyDTO> all = taxonomyService.findAll();
         assertEquals(1, all.size());
@@ -55,7 +56,7 @@ public class TaxonomyImportServiceTest {
         helper.generateExistingTaxonomy();
 
         assertEquals(1, taxonomyService.findAll().size());
-        importService.createOrUpdateTaxonomy(newTaxonomy, EXISTING_EXTERNAL_ID, PROVIDER);
+        importService.createOrUpdateTaxonomy(newTaxonomy, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         List<TaxonomyDTO> all = taxonomyService.findAll();
         assertEquals(1, all.size());

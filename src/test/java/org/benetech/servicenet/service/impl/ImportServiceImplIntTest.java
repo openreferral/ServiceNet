@@ -34,6 +34,7 @@ public class ImportServiceImplIntTest {
     private static final String SRVC_2_ID = "srvc2Id";
     private static final String TAX_ID = "taxId";
     private static final String PROVIDER = "provider";
+    private static final DataImportReport REPORT = new DataImportReport();
 
     @InjectMocks
     private ImportServiceImpl importService;
@@ -77,9 +78,9 @@ public class ImportServiceImplIntTest {
 
         when(organizationImportService.createOrUpdateOrganization(any(Organization.class), anyString(),
             anyString(), any(DataImportReport.class))).thenReturn(org);
-        when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), anyString()))
+        when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), anyString(), any()))
             .thenReturn(location1);
-        when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), anyString()))
+        when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), anyString(), any()))
             .thenReturn(location2);
         when(serviceImportService.createOrUpdateService(any(Service.class), anyString(), anyString(),
             any(DataImportReport.class))).thenReturn(service1);
@@ -91,7 +92,7 @@ public class ImportServiceImplIntTest {
         verify(organizationImportService)
             .createOrUpdateOrganization(any(Organization.class), anyString(), anyString(), any(DataImportReport.class));
         verify(locationImportService, times(2))
-            .createOrUpdateLocation(any(Location.class), anyString(), anyString());
+            .createOrUpdateLocation(any(Location.class), anyString(), anyString(), any());
         verify(serviceImportService, times(2))
             .createOrUpdateService(any(Service.class), anyString(), anyString(), any(DataImportReport.class));
         verify(transactionSynchronizationService)
@@ -102,27 +103,26 @@ public class ImportServiceImplIntTest {
     public void testCreatingTaxonomy() {
         Taxonomy taxonomy = new Taxonomy();
 
-        importService.createOrUpdateTaxonomy(taxonomy, TAX_ID, PROVIDER);
+        importService.createOrUpdateTaxonomy(taxonomy, TAX_ID, PROVIDER, REPORT);
 
-        verify(taxonomyImportService).createOrUpdateTaxonomy(taxonomy, TAX_ID, PROVIDER);
+        verify(taxonomyImportService).createOrUpdateTaxonomy(taxonomy, TAX_ID, PROVIDER, REPORT);
     }
 
     @Test
     public void testCreatingLocation() {
         Location location = new Location();
 
-        importService.createOrUpdateLocation(location, LOC_1_ID, PROVIDER);
+        importService.createOrUpdateLocation(location, LOC_1_ID, PROVIDER, REPORT);
 
-        verify(locationImportService).createOrUpdateLocation(location, LOC_1_ID, PROVIDER);
+        verify(locationImportService).createOrUpdateLocation(location, LOC_1_ID, PROVIDER, REPORT);
     }
 
     @Test
     public void testCreatingService() {
         Service service = new Service();
-        DataImportReport report = new DataImportReport();
 
-        importService.createOrUpdateService(service, SRVC_1_ID, PROVIDER, report);
+        importService.createOrUpdateService(service, SRVC_1_ID, PROVIDER, REPORT);
 
-        verify(serviceImportService).createOrUpdateService(service, SRVC_1_ID, PROVIDER, report);
+        verify(serviceImportService).createOrUpdateService(service, SRVC_1_ID, PROVIDER, REPORT);
     }
 }

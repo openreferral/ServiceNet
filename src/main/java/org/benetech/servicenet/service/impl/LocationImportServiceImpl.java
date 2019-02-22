@@ -1,12 +1,14 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.LocationBasedImportService;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
+import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,8 @@ import javax.persistence.EntityManager;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import static org.benetech.servicenet.util.CollectionUtils.filterNulls;
 
 @Component
 public class LocationImportServiceImpl implements LocationImportService {
@@ -32,7 +36,11 @@ public class LocationImportServiceImpl implements LocationImportService {
 
     @Override
     @ConfidentialFilter
-    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName) {
+    public Location createOrUpdateLocation(Location filledLocation, String externalDbId,
+                                           String providerName, DataImportReport report) {
+        if (EntityValidator.isNotValid(filledLocation, report, externalDbId)) {
+            return null;
+        }
         Location location = new Location(filledLocation);
         Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId, providerName);
         if (locationFromDb.isPresent()) {
@@ -42,23 +50,27 @@ public class LocationImportServiceImpl implements LocationImportService {
             em.persist(location);
         }
 
-        locationBasedImportService.createOrUpdatePhysicalAddress(filledLocation.getPhysicalAddress(), location);
-        locationBasedImportService.createOrUpdatePostalAddress(filledLocation.getPostalAddress(), location);
-        locationBasedImportService.createOrUpdateLangsForLocation(filledLocation.getLangs(), location);
-        locationBasedImportService.createOrUpdatePhonesForLocation(filledLocation.getPhones(), location);
-        locationBasedImportService.createOrUpdateOpeningHoursForLocation(filledLocation.getRegularSchedule(), location);
-        locationBasedImportService.createOrUpdateHolidayScheduleForLocation(filledLocation.getHolidaySchedule(), location);
-        importAccessibilities(filledLocation.getAccessibilities(), location);
+        locationBasedImportService.createOrUpdatePhysicalAddress(filledLocation.getPhysicalAddress(), location, report);
+        locationBasedImportService.createOrUpdatePostalAddress(filledLocation.getPostalAddress(), location, report);
+        locationBasedImportService.createOrUpdateLangsForLocation(filledLocation.getLangs(), location, report);
+        locationBasedImportService.createOrUpdatePhonesForLocation(filledLocation.getPhones(), location, report);
+        locationBasedImportService.createOrUpdateOpeningHoursForLocation(
+            filledLocation.getRegularSchedule(), location, report);
+        locationBasedImportService.createOrUpdateHolidayScheduleForLocation(
+            filledLocation.getHolidaySchedule(), location, report);
+        importAccessibilities(filledLocation.getAccessibilities(), location, report);
 
         return location;
     }
 
-    private void importAccessibilities(Set<AccessibilityForDisabilities> accessibilities, Location location) {
+    private void importAccessibilities(Set<AccessibilityForDisabilities> accessibilities,
+                                       Location location, DataImportReport report) {
         Set<AccessibilityForDisabilities> savedAccessibilities = new HashSet<>();
         for (AccessibilityForDisabilities accessibility : accessibilities) {
-            savedAccessibilities.add(locationBasedImportService.createOrUpdateAccessibility(accessibility, location));
+            savedAccessibilities.add(
+                locationBasedImportService.createOrUpdateAccessibility(accessibility, location, report));
         }
-        location.setAccessibilities(savedAccessibilities);
+        location.setAccessibilities(filterNulls(savedAccessibilities));
     }
 
     private void fillDataFromDb(Location newLocation, Location locationFromDb) {

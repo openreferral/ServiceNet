@@ -1,8 +1,9 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Taxonomy;
 
 public interface TaxonomyImportService {
 
-    Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName);
+    Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName, DataImportReport report);
 }

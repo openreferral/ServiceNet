@@ -5,11 +5,11 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
-import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +39,14 @@ public class ImportServiceImpl implements ImportService {
     private TaxonomyImportService taxonomyImportService;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
                                                    String providerName, DataImportReport report) {
         Organization organization = organizationImportService.createOrUpdateOrganization(
             filledOrganization, externalDbId, providerName, report);
 
-        importLocations(filledOrganization.getLocations(), organization, providerName);
+        importLocations(filledOrganization.getLocations(), organization, providerName, report);
         importServices(filledOrganization.getServices(), organization, providerName, report);
 
         registerSynchronizationOfMatchingOrganizations(organization);
@@ -57,15 +57,17 @@ public class ImportServiceImpl implements ImportService {
     @Override
     @ConfidentialFilter
     @Transactional(propagation = Propagation.REQUIRED)
-    public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName) {
-        return taxonomyImportService.createOrUpdateTaxonomy(taxonomy, externalDbId, providerName);
+    public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName,
+                                           DataImportReport report) {
+        return taxonomyImportService.createOrUpdateTaxonomy(taxonomy, externalDbId, providerName, report);
     }
 
     @Override
     @ConfidentialFilter
     @Transactional(propagation = Propagation.REQUIRED)
-    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName) {
-        return locationImportService.createOrUpdateLocation(filledLocation, externalDbId, providerName);
+    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName,
+                                           DataImportReport report) {
+        return locationImportService.createOrUpdateLocation(filledLocation, externalDbId, providerName, report);
     }
 
     @Override
@@ -80,18 +82,16 @@ public class ImportServiceImpl implements ImportService {
         Set<Service> savedServices = new HashSet<>();
         for (Service service : services) {
             service.setOrganization(org);
-            savedServices.add(createOrUpdateService(
-                service, service.getExternalDbId(), providerName, report));
+            savedServices.add(createOrUpdateService(service, service.getExternalDbId(), providerName, report));
         }
         org.setServices(savedServices);
     }
 
-    private void importLocations(Set<Location> locations, Organization org, String providerName) {
+    private void importLocations(Set<Location> locations, Organization org, String providerName, DataImportReport report) {
         Set<Location> savedLocations = new HashSet<>();
         for (Location location : locations) {
             location.setOrganization(org);
-            savedLocations.add(createOrUpdateLocation(
-                location, location.getExternalDbId(), providerName));
+            savedLocations.add(createOrUpdateLocation(location, location.getExternalDbId(), providerName, report));
         }
         org.setLocations(savedLocations);
     }
