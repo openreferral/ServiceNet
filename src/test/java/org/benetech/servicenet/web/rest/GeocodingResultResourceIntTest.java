@@ -4,6 +4,7 @@ import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.GeocodingResult;
+import org.benetech.servicenet.mother.GeocodingResultMother;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
@@ -28,7 +29,12 @@ import org.springframework.validation.Validator;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-
+import static org.benetech.servicenet.mother.GeocodingResultMother.DEFAULT_ADDRESS;
+import static org.benetech.servicenet.mother.GeocodingResultMother.DEFAULT_LATITUDE;
+import static org.benetech.servicenet.mother.GeocodingResultMother.DEFAULT_LONGITUDE;
+import static org.benetech.servicenet.mother.GeocodingResultMother.UPDATED_ADDRESS;
+import static org.benetech.servicenet.mother.GeocodingResultMother.UPDATED_LATITUDE;
+import static org.benetech.servicenet.mother.GeocodingResultMother.UPDATED_LONGITUDE;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -43,15 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class GeocodingResultResourceIntTest {
-
-    private static final String DEFAULT_ADDRESS = "AAAAAAAAAA";
-    private static final String UPDATED_ADDRESS = "BBBBBBBBBB";
-
-    private static final Double DEFAULT_LATITUDE = 1D;
-    private static final Double UPDATED_LATITUDE = 2D;
-
-    private static final Double DEFAULT_LONGITUDE = 1D;
-    private static final Double UPDATED_LONGITUDE = 2D;
 
     @Autowired
     private GeocodingResultRepository geocodingResultRepository;
@@ -99,17 +96,13 @@ public class GeocodingResultResourceIntTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static GeocodingResult createEntity(EntityManager em) {
-        GeocodingResult geocodingResult = new GeocodingResult()
-            .address(DEFAULT_ADDRESS)
-            .latitude(DEFAULT_LATITUDE)
-            .longitude(DEFAULT_LONGITUDE);
-        return geocodingResult;
+    public static GeocodingResult createEntity() {
+        return GeocodingResultMother.generateDefault();
     }
 
     @Before
     public void initTest() {
-        geocodingResult = createEntity(em);
+        geocodingResult = createEntity();
     }
 
     @Test

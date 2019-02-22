@@ -25,25 +25,24 @@ export class GeocodingResultDetail extends React.Component<IGeocodingResultDetai
       <Row>
         <Col md="8">
           <h2>
-            <Translate contentKey="serviceNetApp.geocodingResult.detail.title">GeocodingResult</Translate> [
-            <b>{geocodingResultEntity.id}</b>]
+            <Translate contentKey="serviceNetApp.geocodingResult.detail.title" /> [<b>{geocodingResultEntity.id}</b>]
           </h2>
           <dl className="jh-entity-details">
             <dt>
               <span id="address">
-                <Translate contentKey="serviceNetApp.geocodingResult.address">Address</Translate>
+                <Translate contentKey="serviceNetApp.geocodingResult.address" />
               </span>
             </dt>
             <dd>{geocodingResultEntity.address}</dd>
             <dt>
               <span id="latitude">
-                <Translate contentKey="serviceNetApp.geocodingResult.latitude">Latitude</Translate>
+                <Translate contentKey="serviceNetApp.geocodingResult.latitude" />
               </span>
             </dt>
             <dd>{geocodingResultEntity.latitude}</dd>
             <dt>
               <span id="longitude">
-                <Translate contentKey="serviceNetApp.geocodingResult.longitude">Longitude</Translate>
+                <Translate contentKey="serviceNetApp.geocodingResult.longitude" />
               </span>
             </dt>
             <dd>{geocodingResultEntity.longitude}</dd>
@@ -51,14 +50,14 @@ export class GeocodingResultDetail extends React.Component<IGeocodingResultDetai
           <Button tag={Link} to="/entity/geocoding-result" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}
             <span className="d-none d-md-inline">
-              <Translate contentKey="entity.action.back">Back</Translate>
+              <Translate contentKey="entity.action.back" />
             </span>
           </Button>
           &nbsp;
           <Button tag={Link} to={`/entity/geocoding-result/${geocodingResultEntity.id}/edit`} replace color="primary">
             <FontAwesomeIcon icon="pencil-alt" />{' '}
             <span className="d-none d-md-inline">
-              <Translate contentKey="entity.action.edit">Edit</Translate>
+              <Translate contentKey="entity.action.edit" />
             </span>
           </Button>
         </Col>

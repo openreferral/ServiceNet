@@ -31,23 +31,21 @@ export class GeocodingResultDeleteDialog extends React.Component<IGeocodingResul
     return (
       <Modal isOpen toggle={this.handleClose}>
         <ModalHeader toggle={this.handleClose}>
-          <Translate contentKey="entity.delete.title">Confirm delete operation</Translate>
+          <Translate contentKey="entity.delete.title" />
         </ModalHeader>
         <ModalBody id="serviceNetApp.geocodingResult.delete.question">
-          <Translate contentKey="serviceNetApp.geocodingResult.delete.question" interpolate={{ id: geocodingResultEntity.id }}>
-            Are you sure you want to delete this GeocodingResult?
-          </Translate>
+          <Translate contentKey="serviceNetApp.geocodingResult.delete.question" interpolate={{ id: geocodingResultEntity.id }} />
         </ModalBody>
         <ModalFooter>
           <Button color="secondary" onClick={this.handleClose}>
             <FontAwesomeIcon icon="ban" />
             &nbsp;
-            <Translate contentKey="entity.action.cancel">Cancel</Translate>
+            <Translate contentKey="entity.action.cancel" />
           </Button>
           <Button id="jhi-confirm-delete-geocodingResult" color="danger" onClick={this.confirmDelete}>
             <FontAwesomeIcon icon="trash" />
             &nbsp;
-            <Translate contentKey="entity.action.delete">Delete</Translate>
+            <Translate contentKey="entity.action.delete" />
           </Button>
         </ModalFooter>
       </Modal>

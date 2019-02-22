@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IGeocodingResult>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,6 +64,7 @@ export default (state: GeocodingResultState = initialState, action): GeocodingRe
       return {
         ...state,
         loading: false,
+        totalItems: action.payload.headers['x-total-count'],
         entities: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_GEOCODINGRESULT):
@@ -99,10 +101,13 @@ const apiUrl = 'api/geocoding-results';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IGeocodingResult> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_GEOCODINGRESULT_LIST,
-  payload: axios.get<IGeocodingResult>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IGeocodingResult> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_GEOCODINGRESULT_LIST,
+    payload: axios.get<IGeocodingResult>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IGeocodingResult> = id => {
   const requestUrl = `${apiUrl}/${id}`;

@@ -6,14 +6,13 @@ import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 import org.benetech.servicenet.service.mapper.GeocodingResultMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,11 +39,10 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GeocodingResultDTO> findAll() {
+    public Page<GeocodingResultDTO> findAll(Pageable pageable) {
         log.debug("Request to get all GeocodingResults");
-        return geocodingResultRepository.findAll().stream()
-            .map(geocodingResultMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
+        return geocodingResultRepository.findAll(pageable)
+            .map(geocodingResultMapper::toDto);
     }
 
     @Override

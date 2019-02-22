@@ -19,9 +19,6 @@
     <property name="uuidFunction" value="uuid_generate_v4()" dbms="postgresql"/>
     <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
 
-    <!--
-        Added the entity GeocodingResult.
-    -->
     <changeSet id="20190222165806-1" author="jhipster">
         <createTable tableName="geocoding_result">
             <column name="id" type="${uuidType}" defaultValueComputed="${uuidFunction}">

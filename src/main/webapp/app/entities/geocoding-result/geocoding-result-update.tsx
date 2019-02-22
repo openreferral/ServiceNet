@@ -71,7 +71,7 @@ export class GeocodingResultUpdate extends React.Component<IGeocodingResultUpdat
         <Row className="justify-content-center">
           <Col md="8">
             <h2 id="serviceNetApp.geocodingResult.home.createOrEditLabel">
-              <Translate contentKey="serviceNetApp.geocodingResult.home.createOrEditLabel">Create or edit a GeocodingResult</Translate>
+              <Translate contentKey="serviceNetApp.geocodingResult.home.createOrEditLabel" />
             </h2>
           </Col>
         </Row>
@@ -84,14 +84,14 @@ export class GeocodingResultUpdate extends React.Component<IGeocodingResultUpdat
                 {!isNew ? (
                   <AvGroup>
                     <Label for="id">
-                      <Translate contentKey="global.field.id">ID</Translate>
+                      <Translate contentKey="global.field.id" />
                     </Label>
                     <AvInput id="geocoding-result-id" type="text" className="form-control" name="id" required readOnly />
                   </AvGroup>
                 ) : null}
                 <AvGroup>
                   <Label id="addressLabel" for="address">
-                    <Translate contentKey="serviceNetApp.geocodingResult.address">Address</Translate>
+                    <Translate contentKey="serviceNetApp.geocodingResult.address" />
                   </Label>
                   <AvField
                     id="geocoding-result-address"
@@ -104,7 +104,7 @@ export class GeocodingResultUpdate extends React.Component<IGeocodingResultUpdat
                 </AvGroup>
                 <AvGroup>
                   <Label id="latitudeLabel" for="latitude">
-                    <Translate contentKey="serviceNetApp.geocodingResult.latitude">Latitude</Translate>
+                    <Translate contentKey="serviceNetApp.geocodingResult.latitude" />
                   </Label>
                   <AvField
                     id="geocoding-result-latitude"
@@ -119,7 +119,7 @@ export class GeocodingResultUpdate extends React.Component<IGeocodingResultUpdat
                 </AvGroup>
                 <AvGroup>
                   <Label id="longitudeLabel" for="longitude">
-                    <Translate contentKey="serviceNetApp.geocodingResult.longitude">Longitude</Translate>
+                    <Translate contentKey="serviceNetApp.geocodingResult.longitude" />
                   </Label>
                   <AvField
                     id="geocoding-result-longitude"
@@ -136,14 +136,14 @@ export class GeocodingResultUpdate extends React.Component<IGeocodingResultUpdat
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
                   <span className="d-none d-md-inline">
-                    <Translate contentKey="entity.action.back">Back</Translate>
+                    <Translate contentKey="entity.action.back" />
                   </span>
                 </Button>
                 &nbsp;
                 <Button color="primary" id="save-entity" type="submit" disabled={updating}>
                   <FontAwesomeIcon icon="save" />
                   &nbsp;
-                  <Translate contentKey="entity.action.save">Save</Translate>
+                  <Translate contentKey="entity.action.save" />
                 </Button>
               </AvForm>
             )}

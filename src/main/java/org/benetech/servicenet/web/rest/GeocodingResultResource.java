@@ -6,6 +6,10 @@ import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,12 +89,15 @@ public class GeocodingResultResource {
     /**
      * GET  /geocoding-results : get all the geocodingResults.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of geocodingResults in body
      */
     @GetMapping("/geocoding-results")
-    public List<GeocodingResultDTO> getAllGeocodingResults() {
-        log.debug("REST request to get all GeocodingResults");
-        return geocodingResultService.findAll();
+    public ResponseEntity<List<GeocodingResultDTO>> getAllGeocodingResults(Pageable pageable) {
+        log.debug("REST request to get a page of GeocodingResults");
+        Page<GeocodingResultDTO> page = geocodingResultService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/geocoding-results");
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
