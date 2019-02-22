@@ -158,6 +158,11 @@ export const EntitiesMenu = props => (
       &nbsp;
       <Translate contentKey="global.menu.entities.exclusionsConfig" />
     </DropdownItem>
+    <DropdownItem tag={Link} to="/entity/geocoding-result">
+      <FontAwesomeIcon icon="asterisk" fixedWidth />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.geocodingResult" />
+    </DropdownItem>
     {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
   </NavDropdown>
 );

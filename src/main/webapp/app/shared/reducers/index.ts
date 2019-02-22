@@ -146,6 +146,10 @@ import fieldExclusion, {
 import exclusionsConfig, {
   ExclusionsConfigState
 } from 'app/entities/exclusions-config/exclusions-config.reducer';
+// prettier-ignore
+import geocodingResult, {
+  GeocodingResultState
+} from 'app/entities/geocoding-result/geocoding-result.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -194,6 +198,7 @@ export interface IRootState {
   readonly activity: ActivityState;
   readonly fieldExclusion: FieldExclusionState;
   readonly exclusionsConfig: ExclusionsConfigState;
+  readonly geocodingResult: GeocodingResultState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -244,6 +249,7 @@ const rootReducer = combineReducers<IRootState>({
   activity,
   fieldExclusion,
   exclusionsConfig,
+  geocodingResult,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

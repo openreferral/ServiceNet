@@ -1,0 +1,36 @@
+{
+  "name": "GeocodingResult",
+  "fields": [
+    {
+      "fieldName": "address",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "latitude",
+      "fieldType": "Double",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "longitude",
+      "fieldType": "Double",
+      "fieldValidateRules": [
+        "required"
+      ]
+    }
+  ],
+  "relationships": [],
+  "changelogDate": "20190222165806",
+  "entityTableName": "geocoding_result",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "applications": "*"
+}
