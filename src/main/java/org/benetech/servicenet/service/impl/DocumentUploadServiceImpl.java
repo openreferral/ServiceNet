@@ -103,10 +103,14 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
         fillLists(fileInfoList, parsedDocuments, documentUploads);
 
+        long startTime = System.currentTimeMillis();
+        log.info("Data upload for " + providerName + " has started");
         DataImportReport reportToSave = adapter
             .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName, true)))
             .orElse(report);
-
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        log.info("Data upload for " + providerName + " took: " + elapsedTime + "ms");
         saveReport(reportToSave);
 
         return true;
@@ -175,8 +179,13 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
         DataImportReport reportToSave = adapter
             .map((a) -> {
+                long startTime = System.currentTimeMillis();
+                log.info("Data upload for " + providerName + " has started");
                 DataImportReport importReport = a.importData(
                     new SingleImportData(parsedDocument, report, providerName, isFileUpload));
+                long stopTime = System.currentTimeMillis();
+                long elapsedTime = stopTime - startTime;
+                log.info("Data upload for " + providerName + " took: " + elapsedTime + "ms");
                 return saveReport(importReport);
             })
             .orElse(report);
