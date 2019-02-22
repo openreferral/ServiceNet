@@ -62,4 +62,6 @@ public interface OrganizationService {
     Page<UUID> findAllOrgIdsWithOwnerId(UUID ownerId, Pageable pageable);
 
     List<OrganizationDTO> findAllWithOwnerId(UUID ownerId);
+
+    Page<Organization> findAllWithOwnerId(UUID ownerId, Pageable pageable);
 }

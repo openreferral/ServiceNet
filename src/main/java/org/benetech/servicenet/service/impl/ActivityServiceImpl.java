@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -54,11 +55,12 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
         List<ActivityDTO> activities = new ArrayList<>();
-        Page<UUID> orgsIds = organizationService.findAllOrgIdsWithOwnerId(systemAccountId, pageable);
+        Pageable pageOnly = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        Page<Organization> orgs = organizationService.findAllWithOwnerId(systemAccountId, pageOnly);
 
-        for (UUID orgId : orgsIds) {
+        for (Organization org : orgs) {
             try {
-                Optional<ActivityDTO> activityOpt = getEntityActivity(orgId);
+                Optional<ActivityDTO> activityOpt = getEntityActivity(org.getId());
                 activityOpt.ifPresent(activities::add);
             } catch (ActivityCreationException ex) {
                 log.error(ex.getMessage());
@@ -66,7 +68,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
 
         return new PageImpl<>(
-            activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), orgsIds.getTotalElements());
+            activities, PageRequest.of(pageOnly.getPageNumber(), pageOnly.getPageSize()), orgs.getTotalElements());
     }
 
     @Override

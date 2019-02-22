@@ -22,6 +22,9 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     List<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId);
 
+    @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
+    Page<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
+
     @Query("SELECT org FROM Organization org " +
         "LEFT JOIN FETCH org.contacts " +
         "WHERE org.externalDbId = :externalDbId AND org.account.name = :providerName")
@@ -33,7 +36,8 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE org.account.name != :providerName")
     List<Organization> findAllByProviderNameNot(@Param("providerName") String providerName);
 
-    @Query(value = "SELECT ID, RECENT, RECOMMENDED\n" +
+    @Query(value = "SELECT O.ID, O.RECENT, O.RECOMMENDED FROM\n" +
+                   "(SELECT O.ID, C.RECENT, C.RECOMMENDED\n" +
                    "FROM ORGANIZATION O,\n" +
                    "(SELECT RESOURCE_ID, COUNT(RESOURCE_ID) RECOMMENDED, MAX(CURRENT_VALUE_DATE) RECENT\n" +
                    "FROM CONFLICT\n" +
@@ -41,7 +45,7 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
                    "GROUP BY RESOURCE_ID\n" +
                    "ORDER BY RESOURCE_ID) C\n" +
                    "WHERE ID = RESOURCE_ID\n" +
-                   "AND ACCOUNT_ID = :ownerId",
+                   "AND ACCOUNT_ID = :ownerId) O",
         countQuery = "SELECT COUNT(ID)\n" +
                      "FROM ORGANIZATION O,\n" +
                      "(SELECT RESOURCE_ID, COUNT(RESOURCE_ID) RECOMMENDED, MAX(CURRENT_VALUE_DATE) RECENT\n" +

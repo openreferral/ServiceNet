@@ -149,6 +149,12 @@ public class OrganizationServiceImpl implements OrganizationService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Organization> findAllWithOwnerId(UUID ownerId, Pageable pageable) {
+        return organizationRepository.findAllWithOwnerId(ownerId, pageable);
+    }
+
     private List<UUID> getIds(Page<Object[]> fetchedResult) {
         List<UUID> ids = new LinkedList<>();
         for (Object[] org : fetchedResult) {
