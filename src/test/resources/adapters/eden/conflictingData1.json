@@ -4,6 +4,10 @@
     "databaseID": 1234,
     "names": [
       {
+        "value": "Organization HEALTH",
+        "purpose": "Primary"
+      },
+      {
         "value": "The Organization of HEALTH",
         "purpose": "Alternate"
       }
