@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -47,7 +48,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class, MockedGeocodingConfiguration.class})
 public class ImportServiceConfidentialityImplIntTest {
 
     private static final String NEW_EXTERNAL_ID = "1000";

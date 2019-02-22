@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.sheltertech;
 
+import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
@@ -45,7 +46,7 @@ import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class ShelterTechCompleteDataAdapterTest {
 
     private static final String COMPLETE_JSON = "sheltertech/complete.json";

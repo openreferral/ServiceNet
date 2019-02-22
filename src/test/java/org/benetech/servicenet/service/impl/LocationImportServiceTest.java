@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -59,7 +60,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class, MockedGeocodingConfiguration.class})
 public class LocationImportServiceTest {
 
     @Autowired

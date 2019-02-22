@@ -7,11 +7,13 @@ import com.google.maps.model.DistanceMatrixRow;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.Geometry;
 import com.google.maps.model.LatLng;
+import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
+import org.benetech.servicenet.service.GeocodingResultService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,18 +24,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class LocationSimilarityCounterIntTest {
 
     private static final float PRECISION = 0.001f;
-    private static final String DELIMITER = ", ";
 
     @Mock
     private GeoApi geoApiMock;
+
+    @Mock
+    private GeocodingResultService geocodingResultService;
 
     @Autowired
     @InjectMocks
@@ -46,118 +52,129 @@ public class LocationSimilarityCounterIntTest {
 
     @Test
     public void shouldReturnMinRatioForDistantAddresses() {
-        String address1 = "North Pole";
-        String address2 = "South Pole";
-        mockDistance(address1, address2, Long.MAX_VALUE);
+        Location location1 = locationOf("North Pole");
+        Location location2 = locationOf("South Pole");
+        mockDistance(location1, location2, Long.MAX_VALUE);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result, PRECISION);
     }
 
     @Test
     public void shouldReturnMinRatioForAddressesWith1001MetresDistance() {
-        String address1 = "Super Street 356";
-        String address2 = "Example Street 344";
-        mockDistance(address1, address2, 1001);
+        Location location1 = locationOf("Super Street 356");
+        Location location2 = locationOf("Example Street 344");
+        mockDistance(location1, location2, 1001);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result, PRECISION);
     }
 
     @Test
     public void shouldReturnLevel3RatioForAddressesWith1000MetresDistance() {
-        String address1 = "Super Street 356";
-        String address2 = "Example Street 344";
-        mockDistance(address1, address2, 1000);
+        Location location1 = locationOf("Super Street 356");
+        Location location2 = locationOf("Example Street 344");
+        mockDistance(location1, location2, 1000);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0.4, result, PRECISION);
     }
 
     @Test
     public void shouldReturnLevel3RatioForAddressesWith501MetresDistance() {
-        String address1 = "Super Street 356";
-        String address2 = "Example Street 344";
-        mockDistance(address1, address2, 501);
+        Location location1 = locationOf("Super Street 356");
+        Location location2 = locationOf("Example Street 344");
+        mockDistance(location1, location2, 501);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0.4, result, PRECISION);
     }
 
     @Test
     public void shouldReturnLevel2RatioForAddressesWith500MetresDistance() {
-        String address1 = "Super Street 356";
-        String address2 = "Example Street 344";
-        mockDistance(address1, address2, 500);
+        Location location1 = locationOf("Super Street 356");
+        Location location2 = locationOf("Example Street 344");
+        mockDistance(location1, location2, 500);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0.8, result, PRECISION);
     }
 
     @Test
     public void shouldReturnLevel2RatioForAddressesWith499MetresDistance() {
-        String address1 = "Super Street 356";
-        String address2 = "Example Street 344";
-        mockDistance(address1, address2, 499);
+        Location location1 = locationOf("Super Street 356");
+        Location location2 = locationOf("Example Street 344");
+        mockDistance(location1, location2, 499);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0.8, result, PRECISION);
     }
 
     @Test
     public void shouldReturnLevel2RatioForAddressesWith101MetresDistance() {
-        String address1 = "Super Street 356";
-        String address2 = "Example Street 344";
-        mockDistance(address1, address2, 101);
+        Location location1 = locationOf("Super Street 356");
+        Location location2 = locationOf("Example Street 344");
+        mockDistance(location1, location2, 101);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0.8, result, PRECISION);
     }
 
     @Test
     public void shouldReturnMaxRatioForAddressesWith100MetresDistance() {
-        String address1 = "Super Street 356";
-        String address2 = "Example Street 344";
-        mockDistance(address1, address2, 100);
+        Location location1 = locationOf("Super Street 356");
+        Location location2 = locationOf("Example Street 344");
+        mockDistance(location1, location2, 100);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(1, result, PRECISION);
     }
 
     @Test
     public void shouldReturnMaxRatioForAddressesWith99MetresDistance() {
-        String address1 = "Super Street 356";
-        String address2 = "Example Street 344";
-        mockDistance(address1, address2, 99);
+        Location location1 = locationOf("Super Street 356");
+        Location location2 = locationOf("Example Street 344");
+        mockDistance(location1, location2, 99);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(1, result, PRECISION);
     }
 
     @Test
     public void shouldReturnMaxRatioForTheSameAddress() {
-        String address1 = "494 Super Street";
-        String address2 = "Super Street 494";
-        mockDistance(address1, address2, 0);
+        Location location1 = locationOf("494 Super Street");
+        Location location2 = locationOf("Super Street 494");
+        mockDistance(location1, location2, 0);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(locationOf(address1), locationOf(address2));
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(1, result, PRECISION);
     }
 
-    private void mockDistance(String address1, String address2, long distance) {
+    private void mockDistance(Location location1, Location location2, long distance) {
         double lat1 = 10.723364;
         double lat2 = 20.839202;
         double lng1 = -30.853043;
         double lng2 = -40.123454;
 
-        when(geoApiMock.geocode(address1)).thenReturn(geocodingOf(lat1, lng1));
-        when(geoApiMock.geocode(address2)).thenReturn(geocodingOf(lat2, lng2));
+        PhysicalAddress physicalAddress1 = location1.getPhysicalAddress();
+        PhysicalAddress physicalAddress2 = locationOf(location2.getName()).getPhysicalAddress();
+        when(geoApiMock.extractAddressString(physicalAddress1)).thenReturn(location1.getName());
+        when(geoApiMock.extractAddressString(physicalAddress2)).thenReturn(location2
+            .getName());
 
-        String[] array1 = new String[]{ lat1 + DELIMITER + lng1 };
-        String[] array2 = new String[]{ lat2 + DELIMITER + lng2 };
+        when(geoApiMock.geocode(location1)).thenReturn(geocodingOf(lat1, lng1));
+        when(geoApiMock.geocode(locationOf(location2.getName()))).thenReturn(geocodingOf(lat2, lng2));
 
-        when(geoApiMock.getDistanceMatrix(array1, array2)).thenReturn(distanceOf(array1, array2, distance));
-        when(geoApiMock.getDistanceMatrix(array2, array1)).thenReturn(distanceOf(array2, array1, distance));
+        LatLng latLng1 = new LatLng(lat1, lng1);
+        LatLng latLng2 = new LatLng(lat2, lng2);
+
+        when(geoApiMock.getDistanceMatrix(latLng1, latLng2)).thenReturn(distanceOf(new String[] {location1.getName()}, new String[] {location2.getName()}, distance));
+        when(geoApiMock.getDistanceMatrix(latLng2, latLng1)).thenReturn(distanceOf(new String[] {location2.getName()}, new String[] {location1.getName()}, distance));
+
+        when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location1))
+            .thenReturn(Collections.singletonList(new org.benetech.servicenet.domain.GeocodingResult(location1.getName(), lat1, lng1)));
+        when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location2))
+            .thenReturn(Collections.singletonList(new org.benetech.servicenet.domain.GeocodingResult(location1.getName(), lat2, lng2)));
     }
 
     private GeocodingResult[] geocodingOf(double lat, double lng) {
@@ -178,8 +195,8 @@ public class LocationSimilarityCounterIntTest {
         return new DistanceMatrix(address1, address2, new DistanceMatrixRow[]{ row });
     }
 
-    private Location locationOf(String address1) {
-        PhysicalAddress physicalAddress1 = new PhysicalAddress().address1(address1);
-        return new Location().physicalAddress(physicalAddress1);
+    private Location locationOf(String address) {
+        PhysicalAddress physicalAddress = new PhysicalAddress().address1(address);
+        return new Location().name(address).physicalAddress(physicalAddress);
     }
 }

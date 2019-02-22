@@ -1,6 +1,8 @@
 package org.benetech.servicenet.domain;
 
+import com.google.maps.model.LatLng;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -18,6 +20,7 @@ import java.util.Objects;
  */
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "geocoding_result")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class GeocodingResult extends AbstractEntity implements Serializable {
@@ -55,7 +58,23 @@ public class GeocodingResult extends AbstractEntity implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    public LatLng getGoogleCoords() {
+        return new LatLng(this.latitude, this.longitude);
+    }
+
+    public GeocodingResult(@NotNull String address, @NotNull com.google.maps.model.GeocodingResult googleResult) {
+        this.address = address;
+        this.latitude = googleResult.geometry.location.lat;
+        this.longitude = googleResult.geometry.location.lng;
+    }
+
+    public GeocodingResult(@NotNull String address, @NotNull double lat, @NotNull double lng) {
+        this.address = address;
+        this.latitude = lat;
+        this.longitude = lng;
+    }
+
+// jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
     public boolean equals(Object o) {

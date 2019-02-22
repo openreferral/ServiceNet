@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.healthleads;
 
+import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
@@ -67,7 +68,7 @@ import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResourc
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class HealthleadsCompleteDataAdapterTest {
 
     private static final String COMPLETE = "healthleads/complete/";

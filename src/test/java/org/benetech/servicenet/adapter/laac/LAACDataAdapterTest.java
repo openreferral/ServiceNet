@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.laac;
 
+import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
@@ -39,7 +40,7 @@ import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ServiceNetApp.class})
+@SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class LAACDataAdapterTest {
 
     private static final String PROVIDER_NAME = "LAAC";
