@@ -15,6 +15,7 @@ import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.repository.RequiredDocumentRepository;
 import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.repository.ServiceTaxonomyRepository;
+import org.benetech.servicenet.repository.TaxonomyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -66,6 +67,9 @@ public class TestDatabaseManagement {
     @Autowired
     private AccessibilityForDisabilitiesRepository accessibilityForDisabilitiesRepository;
 
+    @Autowired
+    private TaxonomyRepository taxonomyRepository;
+
     public void clearDb() {
         contactRepository.deleteAll();
         requiredDocumentRepository.deleteAll();
@@ -78,6 +82,7 @@ public class TestDatabaseManagement {
         postalAddressRepository.deleteAll();
         physicalAddressRepository.deleteAll();
         serviceTaxonomyRepository.deleteAll();
+        taxonomyRepository.deleteAll();
         serviceRepository.deleteAll();
         accessibilityForDisabilitiesRepository.deleteAll();
         locationRepository.deleteAll();
