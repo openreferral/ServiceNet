@@ -57,6 +57,9 @@
     <logger name="liquibase" level="WARN"/>
     <logger name="LiquibaseSchemaResolver" level="INFO"/>
     <logger name="sun.rmi.transport" level="WARN"/>
+    <logger name="okhttp3.internal.http2" level="WARN"/>
+    <logger name="org.mongodb.driver.cluster" level="WARN"/>
+    <logger name="org.quartz.core.QuartzSchedulerThread" level="WARN"/>
 
     <!-- https://logback.qos.ch/manual/configuration.html#shutdownHook and https://jira.qos.ch/browse/LOGBACK-1090 -->
     <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>

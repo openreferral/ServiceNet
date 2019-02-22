@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
@@ -9,8 +10,6 @@ import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMatchMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -26,11 +25,10 @@ import java.util.stream.Collectors;
 /**
  * Service Implementation for managing OrganizationMatch.
  */
+@Slf4j
 @Service
 @Transactional
 public class OrganizationMatchServiceImpl implements OrganizationMatchService {
-
-    private final Logger log = LoggerFactory.getLogger(OrganizationMatchServiceImpl.class);
 
     private final OrganizationMatchRepository organizationMatchRepository;
 
@@ -150,11 +148,21 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private List<OrganizationMatch> findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs) {
         List<OrganizationMatch> matches = new LinkedList<>();
+        long startTime = System.currentTimeMillis();
+        //TODO: Remove time counting logic (#264)
+        log.debug("Searching for matches for " + organization.getAccount().getName() + "'s organization '" +
+            organization.getName() + "' has started. There are " + notMatchedOrgs.size() + " organizations to compare with");
         for (Organization partner : notMatchedOrgs) {
             if (isSimilar(organization, partner)) {
                 matches.addAll(createOrganizationMatches(organization, partner));
             }
         }
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        //TODO: Remove time counting logic (#264)
+        log.debug("Searching for matches for " +
+            organization.getAccount().getName() + "'s organization '" +
+            organization.getName() + "' took: " + elapsedTime + "ms, " + matches.size() + " matches found.");
         return matches;
     }
 
