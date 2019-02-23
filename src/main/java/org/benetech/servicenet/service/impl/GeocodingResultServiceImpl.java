@@ -3,7 +3,7 @@ package org.benetech.servicenet.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.matching.counter.GeoApi;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
@@ -29,13 +29,10 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
 
     private final GeocodingResultMapper geocodingResultMapper;
 
-    private final GeoApi geoApi;
-
     public GeocodingResultServiceImpl(GeocodingResultRepository geocodingResultRepository,
-                                      GeocodingResultMapper geocodingResultMapper, GeoApi geoApi) {
+                                      GeocodingResultMapper geocodingResultMapper) {
         this.geocodingResultRepository = geocodingResultRepository;
         this.geocodingResultMapper = geocodingResultMapper;
-        this.geoApi = geoApi;
     }
 
     @Override
@@ -74,27 +71,27 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
     }
 
     @Override
-    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location) {
+    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
         if (location.getPhysicalAddress() == null) {
             return new ArrayList<>();
         }
 
-        String addressString = geoApi.extractAddressString(location.getPhysicalAddress());
+        String addressString = context.getGeoApi().extractAddressString(location.getPhysicalAddress());
         List<GeocodingResult> currentResults = geocodingResultRepository.findAllByAddress(addressString);
         if (!currentResults.isEmpty()) {
             return currentResults;
         }
-        return Arrays.stream(geoApi.geocode(location))
+        return Arrays.stream(context.getGeoApi().geocode(location))
             .map(x -> save(new GeocodingResult(addressString, x)))
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location) {
-        String addressString = geoApi.extractAddressString(location.getPhysicalAddress());
+    public List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location, MatchingContext context) {
+        String addressString = context.getGeoApi().extractAddressString(location.getPhysicalAddress());
         List<GeocodingResult> result = geocodingResultRepository.findAllByAddress(addressString);
         if (result.isEmpty()) {
-            return createOrUpdateGeocodingResult(location);
+            return createOrUpdateGeocodingResult(location, context);
         }
         return result;
     }

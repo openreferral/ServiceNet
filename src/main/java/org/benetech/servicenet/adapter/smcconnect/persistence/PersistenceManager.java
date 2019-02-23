@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.smcconnect.persistence;
 
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.SmcConnectDataMapper;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcAddress;
@@ -13,7 +14,6 @@ import org.benetech.servicenet.adapter.smcconnect.model.SmcProgram;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcRegularSchedule;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcService;
 import org.benetech.servicenet.domain.Contact;
-import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Funding;
@@ -40,13 +40,13 @@ class PersistenceManager {
     private final SmcStorage storage;
     private SmcConnectDataMapper mapper;
     private ImportManager importManager;
-    private DataImportReport report;
+    private ImportData importData;
 
     PersistenceManager(ImportManager importManager, MultipleImportData data, SmcStorage storage) {
         this.storage = storage;
         this.importManager = importManager;
         this.mapper = SmcConnectDataMapper.INSTANCE;
-        this.report = data.getReport();
+        this.importData = data;
     }
 
     void saveOrganizationsAndRelatedData(DocumentUpload sourceDocument) {
@@ -60,7 +60,7 @@ class PersistenceManager {
             organizationToSave.setLocations(getLocationsToPersist(smcOrganization.getId()));
 
             importManager.createOrUpdateOrganization(
-                organizationToSave, smcOrganization.getId(), PROVIDER_NAME, report);
+                organizationToSave, smcOrganization.getId(), importData);
         }
     }
 

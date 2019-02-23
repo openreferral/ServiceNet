@@ -148,7 +148,7 @@ public class HealthleadsCompleteDataAdapterTest {
             data.add(readResourceAsString(COMPLETE + fileName + JSON));
         }
 
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), PROVIDER_NAME, true);
+        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), PROVIDER_NAME, true, null);
         adapter.importData(importData);
     }
 

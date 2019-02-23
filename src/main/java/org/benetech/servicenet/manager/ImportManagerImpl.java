@@ -1,6 +1,7 @@
 package org.benetech.servicenet.manager;
 
 import lombok.extern.slf4j.Slf4j;
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
@@ -19,11 +20,11 @@ public class ImportManagerImpl implements ImportManager {
 
     @Override
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
-                                                   String providerName, DataImportReport report) {
+                                                   ImportData importData) {
         try {
-            return importService.createOrUpdateOrganization(filledOrganization, externalDbId, providerName, report);
+            return importService.createOrUpdateOrganization(filledOrganization, externalDbId, importData);
         } catch (Exception e) {
-            handleError(e.getMessage(), report);
+            handleError(e.getMessage(), importData.getReport());
             return null;
         }
     }
@@ -40,12 +41,11 @@ public class ImportManagerImpl implements ImportManager {
     }
 
     @Override
-    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName,
-                                           DataImportReport report) {
+    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, ImportData importData) {
         try {
-            return importService.createOrUpdateLocation(filledLocation, externalDbId, providerName, report);
+            return importService.createOrUpdateLocation(filledLocation, externalDbId, importData);
         } catch (Exception e) {
-            handleError(e.getMessage(), report);
+            handleError(e.getMessage(), importData.getReport());
             return null;
         }
     }

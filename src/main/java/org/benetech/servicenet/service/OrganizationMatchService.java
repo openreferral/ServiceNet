@@ -2,6 +2,7 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 
 import java.util.List;
@@ -47,5 +48,5 @@ public interface OrganizationMatchService {
      */
     void delete(UUID id);
 
-    void createOrUpdateOrganizationMatches(Organization organization);
+    void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context);
 }

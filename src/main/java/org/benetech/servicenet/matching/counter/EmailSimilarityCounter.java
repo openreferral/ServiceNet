@@ -1,6 +1,7 @@
 package org.benetech.servicenet.matching.counter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,7 @@ public class EmailSimilarityCounter extends AbstractSimilarityCounter<String> {
     private float normalizedLocalPartWeight;
 
     @Override
-    public float countSimilarityRatio(String email1, String email2) {
+    public float countSimilarityRatio(String email1, String email2, MatchingContext context) {
         if (StringUtils.isBlank(email1) || StringUtils.isBlank(email2)) {
             return NO_MATCH_RATIO;
         }

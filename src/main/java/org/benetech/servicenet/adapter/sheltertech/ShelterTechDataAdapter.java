@@ -56,7 +56,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
             org.setServices(getServicesToPersist(orgRaw));
             org.setLocations(getLocationsToPersist(orgRaw, org.getLocations()));
 
-            importManager.createOrUpdateOrganization(org, org.getExternalDbId(), PROVIDER_NAME, rawData.getReport());
+            importManager.createOrUpdateOrganization(org, org.getExternalDbId(), rawData);
         }
     }
 

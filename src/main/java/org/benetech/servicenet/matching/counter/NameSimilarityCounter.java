@@ -2,6 +2,7 @@ package org.benetech.servicenet.matching.counter;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class NameSimilarityCounter extends AbstractSimilarityCounter<String> {
     private float fuzzyPartialSimilarityThreshold;
 
     @Override
-    public float countSimilarityRatio(String name1, String name2) {
+    public float countSimilarityRatio(String name1, String name2, MatchingContext context) {
         if (StringUtils.isBlank(name1) || StringUtils.isBlank(name2)) {
             return NO_MATCH_RATIO;
         }

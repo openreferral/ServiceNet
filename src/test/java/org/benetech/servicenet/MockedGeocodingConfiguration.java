@@ -1,6 +1,5 @@
 package org.benetech.servicenet;
 
-import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.mapper.GeocodingResultMapper;
@@ -18,12 +17,9 @@ public class MockedGeocodingConfiguration {
     @Autowired
     private GeocodingResultMapper geocodingResultMapper;
 
-    @Autowired
-    private GeoApi geoApi;
-
     @Bean
     @Primary
     public GeocodingResultService geocodingResultService() {
-        return new TestGeocodingResultService(geocodingResultRepository, geocodingResultMapper, geoApi);
+        return new TestGeocodingResultService(geocodingResultRepository, geocodingResultMapper);
     }
 }

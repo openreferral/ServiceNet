@@ -4,6 +4,7 @@ import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.TestPersistanceHelper;
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.OrganizationService;
@@ -55,9 +56,9 @@ public class ImportManagerTest {
 
         assertEquals(0, organizationService.findAll().size());
 
-        importManager.createOrUpdateOrganization(org1, EXTERNAL_ID_1, PROVIDER, new DataImportReport());
-        importManager.createOrUpdateOrganization(org2, EXTERNAL_ID_2, PROVIDER, new DataImportReport());
-        importManager.createOrUpdateOrganization(org3, EXTERNAL_ID_3, PROVIDER, new DataImportReport());
+        importManager.createOrUpdateOrganization(org1, EXTERNAL_ID_1, new ImportData(new DataImportReport(), PROVIDER, true, null));
+        importManager.createOrUpdateOrganization(org2, EXTERNAL_ID_2, new ImportData(new DataImportReport(), PROVIDER, true, null));
+        importManager.createOrUpdateOrganization(org3, EXTERNAL_ID_3, new ImportData(new DataImportReport(), PROVIDER, true, null));
 
         assertEquals(2, organizationService.findAll().size());
     }

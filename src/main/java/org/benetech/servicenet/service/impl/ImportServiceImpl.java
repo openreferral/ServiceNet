@@ -1,10 +1,12 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
@@ -42,14 +44,14 @@ public class ImportServiceImpl implements ImportService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
-                                                   String providerName, DataImportReport report) {
+                                                   ImportData importData) {
         Organization organization = organizationImportService.createOrUpdateOrganization(
-            filledOrganization, externalDbId, providerName, report);
+            filledOrganization, externalDbId, importData.getProviderName(), importData.getReport());
 
-        importLocations(filledOrganization.getLocations(), organization, providerName, report);
-        importServices(filledOrganization.getServices(), organization, providerName, report);
+        importLocations(filledOrganization.getLocations(), organization, importData);
+        importServices(filledOrganization.getServices(), organization, importData.getProviderName(), importData.getReport());
 
-        registerSynchronizationOfMatchingOrganizations(organization);
+        registerSynchronizationOfMatchingOrganizations(organization, importData.getContext());
 
         return organization;
     }
@@ -65,9 +67,8 @@ public class ImportServiceImpl implements ImportService {
     @Override
     @ConfidentialFilter
     @Transactional(propagation = Propagation.REQUIRED)
-    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, String providerName,
-                                           DataImportReport report) {
-        return locationImportService.createOrUpdateLocation(filledLocation, externalDbId, providerName, report);
+    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, ImportData importData) {
+        return locationImportService.createOrUpdateLocation(filledLocation, externalDbId, importData);
     }
 
     @Override
@@ -87,16 +88,16 @@ public class ImportServiceImpl implements ImportService {
         org.setServices(savedServices);
     }
 
-    private void importLocations(Set<Location> locations, Organization org, String providerName, DataImportReport report) {
+    private void importLocations(Set<Location> locations, Organization org, ImportData importData) {
         Set<Location> savedLocations = new HashSet<>();
         for (Location location : locations) {
             location.setOrganization(org);
-            savedLocations.add(createOrUpdateLocation(location, location.getExternalDbId(), providerName, report));
+            savedLocations.add(createOrUpdateLocation(location, location.getExternalDbId(), importData));
         }
         org.setLocations(savedLocations);
     }
 
-    private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
-        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
+    private void registerSynchronizationOfMatchingOrganizations(Organization organization, MatchingContext context) {
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization, context);
     }
 }
