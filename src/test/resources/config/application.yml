@@ -126,6 +126,7 @@ similarity-ratio:
         description: 0.1
     config:
         location:
+            always-compare: true
             level-1-distance: 100
             level-2-distance: 500
             level-3-distance: 1000

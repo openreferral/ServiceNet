@@ -115,6 +115,11 @@ jhipster:
             port: 5000
             queue-size: 512
 
+similarity-ratio:
+    config:
+        location:
+            always-compare: false
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

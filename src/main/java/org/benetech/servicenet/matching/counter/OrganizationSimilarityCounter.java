@@ -1,8 +1,10 @@
 package org.benetech.servicenet.matching.counter;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,6 +31,9 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
     @Autowired
     private WeightProvider weightProvider;
 
+    @Value("${similarity-ratio.config.location.always-compare}")
+    private Boolean alwaysCompareLocations;
+
     @Override
     public float countSimilarityRatio(Organization org1, Organization org2, MatchingContext context) {
         float result = 0;
@@ -36,13 +41,6 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
             * weightProvider.getNameWeight();
         result += nameSimilarityCounter.countSimilarityRatio(org1.getAlternateName(), org2.getAlternateName(), context)
             * weightProvider.getAlternateNameWeight();
-        //TODO Compare multiple locations
-        if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
-            result += locationSimilarityCounter.countSimilarityRatio(
-                org1.getLocations().iterator().next(),
-                org2.getLocations().iterator().next(), context)
-                * weightProvider.getLocationWeight();
-        }
         result += descriptionSimilarityCounter.countSimilarityRatio(org1.getDescription(), org2.getDescription(), context)
             * weightProvider.getDescriptionWeight();
         result += emailSimilarityCounter.countSimilarityRatio(org1.getEmail(), org2.getEmail(), context)
@@ -52,6 +50,16 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
         result += yearIncorporatedSimilarityCounter.countSimilarityRatio(org1.getYearIncorporated(),
             org2.getYearIncorporated(), context)
             * weightProvider.getYearsIncorporatedWeight();
+        if (BooleanUtils.isTrue(alwaysCompareLocations) || result > 0) {
+            //TODO Compare multiple locations
+            if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
+                result += locationSimilarityCounter.countSimilarityRatio(
+                    org1.getLocations().iterator().next(),
+                    org2.getLocations().iterator().next(), context)
+                    * weightProvider.getLocationWeight();
+            }
+        }
+
         return result;
     }
 }
