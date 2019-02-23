@@ -3,15 +3,19 @@ package org.benetech.servicenet.service;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.config.Constants;
+import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.PersistentToken;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.listener.HibernatePostCreateListener;
 import org.benetech.servicenet.listener.HibernatePostDeleteListener;
 import org.benetech.servicenet.listener.HibernatePostUpdateListener;
+import org.benetech.servicenet.mother.DocumentUploadMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.mother.UserMother;
+import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
@@ -44,6 +48,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -87,6 +92,9 @@ public class UserServiceIntTest {
 
     @Autowired
     private AuditingHandler auditingHandler;
+
+    @Autowired
+    private DocumentUploadRepository documentUploadRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -441,5 +449,28 @@ public class UserServiceIntTest {
         assertTrue(resultOpt.isPresent());
         assertEquals(resultOpt.get().getSystemAccount().getName(), account.getName());
         assertEquals(resultOpt.get().getSystemAccount().getId(), account.getId());
+    }
+
+
+    @Test
+    @Transactional
+    public void shouldAssignAllUsersDocsToSystemUserBeforeRemoval() {
+        DocumentUpload documentUpload = DocumentUploadMother.createDefaultAndPersist(em);
+        assertNotEquals(TestConstants.SYSTEM, documentUpload.getUploader().getLogin());
+        int usersNumber = userRepository.findAll().size();
+
+        userService.deleteUser(documentUpload.getUploader().getLogin());
+
+        Optional<DocumentUpload> result = documentUploadRepository.findById(documentUpload.getId());
+        assertThat(result).isPresent();
+        assertEquals(documentUpload.getDateUploaded(), result.get().getDateUploaded());
+        assertEquals(documentUpload.getOriginalDocumentId(), result.get().getOriginalDocumentId());
+        assertEquals(documentUpload.getParsedDocumentId(), result.get().getParsedDocumentId());
+        assertEquals(documentUpload.getFilename(), result.get().getFilename());
+        assertEquals(TestConstants.SYSTEM, result.get().getUploader().getLogin());
+        assertEquals(usersNumber - 1, userRepository.findAll().size());
+
+        // the user cleaned up earlier
+        documentUploadRepository.delete(result.get());
     }
 }
