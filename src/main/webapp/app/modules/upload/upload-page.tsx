@@ -5,7 +5,7 @@ import React from 'react';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { Row, Col, Button, Input } from 'reactstrap';
-import { FilePond, File, registerPlugin } from 'react-filepond';
+import { FilePond, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import { toast } from 'react-toastify';
 
@@ -38,6 +38,8 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
   componentDidMount() {
     if (this.props.isAdmin) {
       this.props.getSystemAccounts();
+    } else {
+      this.setState({ provider: this.props.provider });
     }
   }
 
@@ -203,6 +205,7 @@ export class UploadPage extends React.Component<IUploadPageProp, IUploadState> {
 }
 
 const mapStateToProps = (storeState, { isAdmin }: IUploadState) => ({
+  provider: storeState.authentication.account.systemAccountName,
   isAdmin,
   systemAccounts: storeState.uploadPage.systemAccounts
 });
