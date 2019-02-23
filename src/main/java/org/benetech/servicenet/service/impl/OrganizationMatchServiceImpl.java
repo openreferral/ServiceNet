@@ -5,6 +5,7 @@ import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -125,13 +126,13 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Async
     @Override
-    public void createOrUpdateOrganizationMatches(Organization organization) {
+    public void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context) {
         List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
             .map(m -> m.getPartnerVersion().getId())
             .collect(Collectors.toList());
         List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getId(),
             organization.getAccount().getName());
-        List<OrganizationMatch> matches = findAndPersistMatches(organization, notMatchedOrgs);
+        List<OrganizationMatch> matches = findAndPersistMatches(organization, notMatchedOrgs, context);
         conflictDetectionService.detect(matches);
     }
 
@@ -146,14 +147,15 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .collect(Collectors.toList());
     }
 
-    private List<OrganizationMatch> findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs) {
+    private List<OrganizationMatch> findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs,
+                                                          MatchingContext context) {
         List<OrganizationMatch> matches = new LinkedList<>();
         long startTime = System.currentTimeMillis();
         //TODO: Remove time counting logic (#264)
         log.debug("Searching for matches for " + organization.getAccount().getName() + "'s organization '" +
             organization.getName() + "' has started. There are " + notMatchedOrgs.size() + " organizations to compare with");
         for (Organization partner : notMatchedOrgs) {
-            if (isSimilar(organization, partner)) {
+            if (isSimilar(organization, partner, context)) {
                 matches.addAll(createOrganizationMatches(organization, partner));
             }
         }
@@ -184,7 +186,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         return matches;
     }
 
-    private boolean isSimilar(Organization organization, Organization partner) {
-        return organizationSimilarityCounter.countSimilarityRatio(organization, partner) >= orgMatchThreshold;
+    private boolean isSimilar(Organization organization, Organization partner, MatchingContext context) {
+        return organizationSimilarityCounter.countSimilarityRatio(organization, partner, context) >= orgMatchThreshold;
     }
 }

@@ -2,7 +2,7 @@ package org.benetech.servicenet;
 
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.matching.counter.GeoApi;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.impl.GeocodingResultServiceImpl;
 import org.benetech.servicenet.service.mapper.GeocodingResultMapper;
@@ -20,12 +20,12 @@ import java.util.List;
 public class TestGeocodingResultService extends GeocodingResultServiceImpl {
 
     public TestGeocodingResultService(GeocodingResultRepository geocodingResultRepository,
-                                      GeocodingResultMapper geocodingResultMapper, GeoApi geoApi) {
-        super(geocodingResultRepository, geocodingResultMapper, geoApi);
+                                      GeocodingResultMapper geocodingResultMapper) {
+        super(geocodingResultRepository, geocodingResultMapper);
     }
 
     @Override
-    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location) {
+    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
         return new ArrayList<>();
     }
 }

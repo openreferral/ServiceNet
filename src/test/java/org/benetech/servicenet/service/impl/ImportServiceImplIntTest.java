@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.TestPersistanceHelper;
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
@@ -35,6 +36,7 @@ public class ImportServiceImplIntTest {
     private static final String TAX_ID = "taxId";
     private static final String PROVIDER = "provider";
     private static final DataImportReport REPORT = new DataImportReport();
+    private static final ImportData IMPORT_DATA = new ImportData(REPORT, PROVIDER, true, null);
 
     @InjectMocks
     private ImportServiceImpl importService;
@@ -78,25 +80,25 @@ public class ImportServiceImplIntTest {
 
         when(organizationImportService.createOrUpdateOrganization(any(Organization.class), anyString(),
             anyString(), any(DataImportReport.class))).thenReturn(org);
-        when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), anyString(), any()))
+        when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), any()))
             .thenReturn(location1);
-        when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), anyString(), any()))
+        when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), any()))
             .thenReturn(location2);
         when(serviceImportService.createOrUpdateService(any(Service.class), anyString(), anyString(),
             any(DataImportReport.class))).thenReturn(service1);
         when(serviceImportService.createOrUpdateService(any(Service.class), anyString(), anyString(),
             any(DataImportReport.class))).thenReturn(service2);
 
-        importService.createOrUpdateOrganization(org, ORG_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateOrganization(org, ORG_ID, new ImportData(new DataImportReport(), PROVIDER, true, null));
 
         verify(organizationImportService)
             .createOrUpdateOrganization(any(Organization.class), anyString(), anyString(), any(DataImportReport.class));
         verify(locationImportService, times(2))
-            .createOrUpdateLocation(any(Location.class), anyString(), anyString(), any());
+            .createOrUpdateLocation(any(Location.class), anyString(), any());
         verify(serviceImportService, times(2))
             .createOrUpdateService(any(Service.class), anyString(), anyString(), any(DataImportReport.class));
         verify(transactionSynchronizationService)
-            .registerSynchronizationOfMatchingOrganizations(any(Organization.class));
+            .registerSynchronizationOfMatchingOrganizations(any(Organization.class), any());
     }
 
     @Test
@@ -112,9 +114,9 @@ public class ImportServiceImplIntTest {
     public void testCreatingLocation() {
         Location location = new Location();
 
-        importService.createOrUpdateLocation(location, LOC_1_ID, PROVIDER, REPORT);
+        importService.createOrUpdateLocation(location, LOC_1_ID, IMPORT_DATA);
 
-        verify(locationImportService).createOrUpdateLocation(location, LOC_1_ID, PROVIDER, REPORT);
+        verify(locationImportService).createOrUpdateLocation(location, LOC_1_ID, IMPORT_DATA);
     }
 
     @Test

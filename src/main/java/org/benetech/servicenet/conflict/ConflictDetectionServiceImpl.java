@@ -79,7 +79,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         }
 
         long stopTime = System.currentTimeMillis();
-        long elapsedTime = detectionStartTime - stopTime;
+        long elapsedTime = stopTime - detectionStartTime;
         //TODO: Remove time counting logic (#264)
         log.info("Searching for conflicts took " + elapsedTime + "ms");
         conflicts = updateExistingConflictsOrCreate(conflicts);

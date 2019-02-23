@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
@@ -20,6 +22,7 @@ import java.util.Set;
 
 import static org.benetech.servicenet.util.CollectionUtils.filterNulls;
 
+@Slf4j
 @Component
 public class LocationImportServiceImpl implements LocationImportService {
 
@@ -40,13 +43,14 @@ public class LocationImportServiceImpl implements LocationImportService {
 
     @Override
     @ConfidentialFilter
-    public Location createOrUpdateLocation(Location filledLocation, String externalDbId,
-                                           String providerName, DataImportReport report) {
-        if (EntityValidator.isNotValid(filledLocation, report, externalDbId)) {
+    public Location createOrUpdateLocation(Location filledLocation, String externalDbId, ImportData importData) {
+        if (EntityValidator.isNotValid(filledLocation, importData.getReport(), externalDbId)) {
             return null;
         }
+        long startTime = System.currentTimeMillis();
         Location location = new Location(filledLocation);
-        Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId, providerName);
+        Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId,
+            importData.getProviderName());
         if (locationFromDb.isPresent()) {
             fillDataFromDb(location, locationFromDb.get());
             em.merge(location);
@@ -54,16 +58,26 @@ public class LocationImportServiceImpl implements LocationImportService {
             em.persist(location);
         }
 
-        locationBasedImportService.createOrUpdatePhysicalAddress(filledLocation.getPhysicalAddress(), location, report);
-        locationBasedImportService.createOrUpdatePostalAddress(filledLocation.getPostalAddress(), location, report);
-        locationBasedImportService.createOrUpdateLangsForLocation(filledLocation.getLangs(), location, report);
-        locationBasedImportService.createOrUpdatePhonesForLocation(filledLocation.getPhones(), location, report);
+        locationBasedImportService.createOrUpdatePhysicalAddress(
+            filledLocation.getPhysicalAddress(), location, importData.getReport());
+        locationBasedImportService.createOrUpdatePostalAddress(
+            filledLocation.getPostalAddress(), location, importData.getReport());
+        locationBasedImportService.createOrUpdateLangsForLocation(
+            filledLocation.getLangs(), location, importData.getReport());
+        locationBasedImportService.createOrUpdatePhonesForLocation(
+            filledLocation.getPhones(), location, importData.getReport());
         locationBasedImportService.createOrUpdateOpeningHoursForLocation(
-            filledLocation.getRegularSchedule(), location, report);
+            filledLocation.getRegularSchedule(), location, importData.getReport());
         locationBasedImportService.createOrUpdateHolidayScheduleForLocation(
-            filledLocation.getHolidaySchedule(), location, report);
-        importAccessibilities(filledLocation.getAccessibilities(), location, report);
-        geocodingResultService.createOrUpdateGeocodingResult(location);
+            filledLocation.getHolidaySchedule(), location, importData.getReport());
+        importAccessibilities(filledLocation.getAccessibilities(), location, importData.getReport());
+        geocodingResultService.createOrUpdateGeocodingResult(location, importData.getContext());
+
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        //TODO: Remove time counting logic (#264)
+        log.debug(importData.getProviderName() + "'s location '" + location.getName() + "' was imported in "
+            + elapsedTime + "ms.");
 
         return location;
     }

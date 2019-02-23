@@ -21,26 +21,26 @@ public class EmailSimilarityCounterIntTest {
 
     @Test
     public void shouldReturnMinRatioForDifferentDomains() {
-        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.org"), PRECISION);
+        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.org", null), PRECISION);
     }
 
     @Test
     public void shouldReturnProperRatioForSameDomain() {
-        assertEquals(0.01, emailSimilarityCounter.countSimilarityRatio("one@email.com", "two@email.com"), PRECISION);
+        assertEquals(0.01, emailSimilarityCounter.countSimilarityRatio("one@email.com", "two@email.com", null), PRECISION);
     }
 
     @Test
     public void shouldReturnProperRatioForSameDomainButUpperCase() {
-        assertEquals(0.01, emailSimilarityCounter.countSimilarityRatio("one@email.com", "two@EMAIL.COM"), PRECISION);
+        assertEquals(0.01, emailSimilarityCounter.countSimilarityRatio("one@email.com", "two@EMAIL.COM", null), PRECISION);
     }
 
     @Test
     public void shouldReturnProperRatioForSameNormalizedLocalPart() {
-        assertEquals(0.9, emailSimilarityCounter.countSimilarityRatio("One@email.com", "onE@email.com"), PRECISION);
+        assertEquals(0.9, emailSimilarityCounter.countSimilarityRatio("One@email.com", "onE@email.com", null), PRECISION);
     }
 
     @Test
     public void shouldReturnMaxRatioForSameLocalPart() {
-        assertEquals(1.0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.com"), PRECISION);
+        assertEquals(1.0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.com", null), PRECISION);
     }
 }

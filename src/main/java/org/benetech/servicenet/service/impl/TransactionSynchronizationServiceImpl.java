@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,11 @@ public class TransactionSynchronizationServiceImpl implements TransactionSynchro
     private OrganizationMatchService organizationMatchService;
 
     @Override
-    public void registerSynchronizationOfMatchingOrganizations(Organization organization) {
+    public void registerSynchronizationOfMatchingOrganizations(Organization organization, MatchingContext context) {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
-                organizationMatchService.createOrUpdateOrganizationMatches(organization);
+                organizationMatchService.createOrUpdateOrganizationMatches(organization, context);
             }
         });
     }

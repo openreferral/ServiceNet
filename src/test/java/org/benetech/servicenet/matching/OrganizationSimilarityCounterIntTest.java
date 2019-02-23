@@ -72,19 +72,19 @@ public class OrganizationSimilarityCounterIntTest {
         when(weightProvider.getUrlWeight()).thenReturn(BASE_WEIGHT);
         when(weightProvider.getYearsIncorporatedWeight()).thenReturn(BASE_WEIGHT);
 
-        when(nameSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(NAME_RATIO);
-        when(descriptionSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(DESCRIPTION_RATION);
-        when(emailSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(EMAIL_RATIO);
-        when(locationSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(LOCATION_RATIO);
-        when(urlSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(URL_RATIO);
-        when(yearIncorporatedSimilarityCounter.countSimilarityRatio(null, null)).thenReturn(YEARS_INCORPORATED_RATIO);
+        when(nameSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(NAME_RATIO);
+        when(descriptionSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(DESCRIPTION_RATION);
+        when(emailSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(EMAIL_RATIO);
+        when(locationSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(LOCATION_RATIO);
+        when(urlSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(URL_RATIO);
+        when(yearIncorporatedSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(YEARS_INCORPORATED_RATIO);
     }
 
     @Test
     public void shouldReturnSumOfAllFieldsSimilarityRatio() {
         float result = organizationSimilarityCounter.countSimilarityRatio(
             new Organization().locations(new HashSet<>()),
-            new Organization().locations(new HashSet<>()));
+            new Organization().locations(new HashSet<>()), null);
         assertEquals(2.2f, result, PRECISION);
     }
 }

@@ -3,6 +3,7 @@ package org.benetech.servicenet.matching.counter;
 import com.google.maps.model.LatLng;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,14 +33,14 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
     private GeocodingResultService geocodingResultService;
 
     @Override
-    public float countSimilarityRatio(Location location1, Location location2) {
+    public float countSimilarityRatio(Location location1, Location location2, MatchingContext context) {
         if (location1 == null || location1.getPhysicalAddress() == null
             || location2 == null || location2.getPhysicalAddress() == null) {
             return NO_MATCH_RATIO;
         }
         float max = NO_MATCH_RATIO;
-        for (GeocodingResult result1 : geocodingResultService.findAllForLocationOrFetchIfEmpty(location1)) {
-            for (GeocodingResult result2 : geocodingResultService.findAllForLocationOrFetchIfEmpty(location2)) {
+        for (GeocodingResult result1 : geocodingResultService.findAllForLocationOrFetchIfEmpty(location1, context)) {
+            for (GeocodingResult result2 : geocodingResultService.findAllForLocationOrFetchIfEmpty(location2, context)) {
                 max = Math.max(max, countSimilarityRatio(result1, result2));
             }
         }
@@ -70,7 +71,7 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
         return COMPLETE_MATCH_RATIO;
     }
 
-    public double getStraightLineDistanceInMeters(LatLng coordinates1, LatLng coordinates2) {
+    private double getStraightLineDistanceInMeters(LatLng coordinates1, LatLng coordinates2) {
         return GeocodeUtils.getStraightLineDistanceInMeters(coordinates1, coordinates2);
     }
 }

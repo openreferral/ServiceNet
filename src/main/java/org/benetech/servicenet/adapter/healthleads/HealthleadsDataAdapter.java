@@ -37,7 +37,7 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
             }
         }
 
-        return persistanceManager.persistData(data.getReport());
+        return persistanceManager.persistData(data);
     }
 
     @Override

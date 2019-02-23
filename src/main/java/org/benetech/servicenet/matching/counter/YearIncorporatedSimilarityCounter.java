@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching.counter;
 
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class YearIncorporatedSimilarityCounter extends AbstractSimilarityCounter
     private float sameMontWeight;
 
     @Override
-    public float countSimilarityRatio(LocalDate date1, LocalDate date2) {
+    public float countSimilarityRatio(LocalDate date1, LocalDate date2, MatchingContext context) {
         if (date1 == null || date2 == null) {
             return NO_MATCH_RATIO;
         }

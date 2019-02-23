@@ -13,6 +13,7 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsRequiredDocu
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsService;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.storage.EntryDictionary;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Eligibility;
@@ -55,14 +56,14 @@ public class PersistanceManager {
         }
     }
 
-    public DataImportReport persistData(DataImportReport report) {
+    public DataImportReport persistData(ImportData importData) {
         for (HealthleadsOrganization healthleadsOrganization :
             dictionary.getEntitiesOfClass(HealthleadsOrganization.class)) {
             Organization organization = getOrganizationToPersist(healthleadsOrganization);
             importManager.createOrUpdateOrganization(
-                organization, organization.getExternalDbId(), PROVIDER_NAME, report);
+                organization, organization.getExternalDbId(), importData);
         }
-        return report;
+        return importData.getReport();
     }
 
     private Organization getOrganizationToPersist(HealthleadsOrganization healthleadsOrganization) {

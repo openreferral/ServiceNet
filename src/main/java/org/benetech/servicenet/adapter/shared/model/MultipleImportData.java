@@ -15,8 +15,8 @@ public class MultipleImportData extends ImportData {
     private List<DocumentUpload> documentUploads;
 
     public MultipleImportData(List<String> multipleObjectsData, List<DocumentUpload> documentUploads,
-                              DataImportReport report, String providerName, boolean isFileUpload) {
-        super(report, providerName, isFileUpload);
+                              DataImportReport report, String providerName, boolean isFileUpload, String googleApiKey) {
+        super(report, providerName, isFileUpload, googleApiKey);
         this.multipleObjectsData = multipleObjectsData;
         this.documentUploads = documentUploads;
     }

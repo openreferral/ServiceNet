@@ -5,6 +5,7 @@ import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.TestPersistanceHelper;
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.HolidaySchedule;
@@ -64,6 +65,8 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class, MockedGeocodingConfiguration.class})
 public class LocationImportServiceTest {
 
+    private static final ImportData IMPORT_DATA = new ImportData(new DataImportReport(), PROVIDER, true, null);
+    
     @Autowired
     private LocationImportService importService;
 
@@ -111,7 +114,7 @@ public class LocationImportServiceTest {
         Location location = helper.generateNewLocation();
 
         assertEquals(0, locationService.findAll().size());
-        importService.createOrUpdateLocation(location, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, NEW_EXTERNAL_ID, IMPORT_DATA);
 
         List<LocationDTO> all = locationService.findAll();
         assertEquals(1, all.size());
@@ -125,7 +128,7 @@ public class LocationImportServiceTest {
         helper.generateExistingLocation();
 
         assertEquals(1, locationService.findAll().size());
-        importService.createOrUpdateLocation(newLocation, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(newLocation, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<LocationDTO> all = locationService.findAll();
         assertEquals(1, all.size());
@@ -141,7 +144,7 @@ public class LocationImportServiceTest {
         location.setPhysicalAddress(address);
 
         assertEquals(0, physicalAddressService.findAll().size());
-        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<PhysicalAddressDTO> all = physicalAddressService.findAll();
         assertEquals(1, all.size());
@@ -173,7 +176,7 @@ public class LocationImportServiceTest {
 
         assertEquals(1, locationService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<PhysicalAddressDTO> all = physicalAddressService.findAll();
         assertEquals(1, all.size());
@@ -198,7 +201,7 @@ public class LocationImportServiceTest {
 
         assertEquals(0, postalAddressService.findAll().size());
 
-        importService.createOrUpdateLocation(location, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, NEW_EXTERNAL_ID, IMPORT_DATA);
 
         assertEquals(1, locationService.findAll().size());
         List<PostalAddressDTO> all = postalAddressService.findAll();
@@ -232,7 +235,7 @@ public class LocationImportServiceTest {
 
         assertEquals(1, locationService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         assertEquals(1, locationService.findAll().size());
         List<PostalAddressDTO> all = postalAddressService.findAll();
@@ -258,7 +261,7 @@ public class LocationImportServiceTest {
 
         assertEquals(0, accessibilityService.findAll().size());
 
-        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<AccessibilityForDisabilitiesDTO> created = accessibilityService.findAll();
         assertEquals(1, created.size());
@@ -284,7 +287,7 @@ public class LocationImportServiceTest {
 
         assertEquals(1, accessibilityService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<AccessibilityForDisabilitiesDTO> all = accessibilityService.findAll();
         assertEquals(2, all.size());
@@ -314,7 +317,7 @@ public class LocationImportServiceTest {
 
         assertEquals(2, accessibilityService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<AccessibilityForDisabilitiesDTO> all = accessibilityService.findAll();
         assertEquals(2, all.size());
@@ -336,7 +339,7 @@ public class LocationImportServiceTest {
         location.setHolidaySchedule(schedule);
 
         assertEquals(0, holidayScheduleService.findAll().size());
-        importService.createOrUpdateLocation(location, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, NEW_EXTERNAL_ID, IMPORT_DATA);
 
         List<HolidayScheduleDTO> all = holidayScheduleService.findAll();
         assertEquals(1, all.size());
@@ -367,7 +370,7 @@ public class LocationImportServiceTest {
         locationToUpdate.setHolidaySchedule(newSchedule);
 
         assertEquals(1, holidayScheduleService.findAll().size());
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<HolidayScheduleDTO> all = holidayScheduleService.findAll();
         assertEquals(1, all.size());
@@ -388,7 +391,7 @@ public class LocationImportServiceTest {
 
         assertEquals(0, regularScheduleService.findAll().size());
         assertEquals(0, openingHoursService.findAll().size());
-        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
@@ -418,7 +421,7 @@ public class LocationImportServiceTest {
 
         assertEquals(1, regularScheduleService.findAll().size());
         assertEquals(1, openingHoursService.findAll().size());
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
@@ -455,7 +458,7 @@ public class LocationImportServiceTest {
         assertEquals(1, regularScheduleService.findAll().size());
         assertEquals(2, openingHoursService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
         List<OpeningHoursDTO> allHours = openingHoursService.findAll();
@@ -477,7 +480,7 @@ public class LocationImportServiceTest {
 
         assertEquals(0, languageService.findAll().size());
 
-        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
@@ -499,7 +502,7 @@ public class LocationImportServiceTest {
 
         assertEquals(1, languageService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
@@ -525,7 +528,7 @@ public class LocationImportServiceTest {
 
         assertEquals(2, languageService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<LanguageDTO> all = languageService.findAll();
         assertEquals(1, all.size());
@@ -542,7 +545,7 @@ public class LocationImportServiceTest {
 
         assertEquals(0, phoneService.findAll().size());
 
-        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());
@@ -564,7 +567,7 @@ public class LocationImportServiceTest {
 
         assertEquals(1, phoneService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());
@@ -588,7 +591,7 @@ public class LocationImportServiceTest {
 
         assertEquals(2, phoneService.findAll().size());
 
-        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+        importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         List<PhoneDTO> all = phoneService.findAll();
         assertEquals(1, all.size());

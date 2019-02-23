@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.laac;
 import com.google.gson.Gson;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.laac.model.LAACData;
+import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
@@ -27,20 +28,20 @@ public class LAACDataAdapter extends SingleDataAdapter {
     public DataImportReport importData(SingleImportData data) {
         List<LAACData> entities = new Gson().fromJson(data.getSingleObjectData(), new ListType<>(LAACData.class));
 
-        return persistLAACData(entities, data.getReport(), data.getProviderName());
+        return persistLAACData(entities, data);
     }
 
-    private DataImportReport persistLAACData(List<LAACData> data, DataImportReport report, final String providerName) {
+    private DataImportReport persistLAACData(List<LAACData> data, ImportData importData) {
         LAACDataMapper mapper = LAACDataMapper.INSTANCE;
 
         for (LAACData entity : data) {
             Location location = getLocationToPersist(mapper, entity);
             Service service = getServiceToPersist(mapper, entity);
             Organization organization = getOrganizationToPersist(mapper, entity, location, service);
-            importOrganization(organization, entity.getId(), providerName, report);
+            importOrganization(organization, entity.getId(), importData);
         }
 
-        return report;
+        return importData.getReport();
     }
 
     private Organization getOrganizationToPersist(LAACDataMapper mapper, LAACData entity,
@@ -66,8 +67,7 @@ public class LAACDataAdapter extends SingleDataAdapter {
         return service;
     }
 
-    private Organization importOrganization(Organization organization, String externalDbId,
-                                            String providerName, DataImportReport report) {
-        return importManager.createOrUpdateOrganization(organization, externalDbId, providerName, report);
+    private Organization importOrganization(Organization organization, String externalDbId, ImportData importData) {
+        return importManager.createOrUpdateOrganization(organization, externalDbId, importData);
     }
 }

@@ -25,48 +25,48 @@ public class YearIncorporatedSimilarityCounterIntTest {
     public void shouldReturnMinRatioForDifferentYears() {
         assertEquals(0, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2012, 11, 21),
-            LocalDate.of(2011, 12, 1)), PRECISION);
+            LocalDate.of(2011, 12, 1), null), PRECISION);
     }
 
     @Test
     public void shouldReturnProperRatioForSameYear() {
         assertEquals(0.2, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2012, 12, 21),
-            LocalDate.of(2012, 1, 21)), PRECISION);
+            LocalDate.of(2012, 1, 21), null), PRECISION);
     }
 
     @Test
     public void shouldReturnMinRatioForSameMonthButDifferentYears() {
         assertEquals(0, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2012, 12, 23),
-            LocalDate.of(2011, 12, 1)), PRECISION);
+            LocalDate.of(2011, 12, 1), null), PRECISION);
     }
 
     @Test
     public void shouldReturnProperRatioForSameMonth() {
         assertEquals(0.8, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2011, 12, 1),
-            LocalDate.of(2011, 12, 21)), PRECISION);
+            LocalDate.of(2011, 12, 21), null), PRECISION);
     }
 
     @Test
     public void shouldReturnMaxRatioForSameDay() {
         assertEquals(1.0, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2011, 12, 21),
-            LocalDate.of(2011, 12, 21)), PRECISION);
+            LocalDate.of(2011, 12, 21), null), PRECISION);
     }
 
     @Test
     public void shouldReturnProperRatioForSameDayButDifferentMonths() {
         assertEquals(0.2, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2012, 11, 1),
-            LocalDate.of(2012, 12, 1)), PRECISION);
+            LocalDate.of(2012, 12, 1), null), PRECISION);
     }
 
     @Test
     public void shouldReturnMinRatioForSameDayButDifferentYears() {
         assertEquals(0, yearIncorporatedSimilarityCounter.countSimilarityRatio(
             LocalDate.of(2012, 1, 1),
-            LocalDate.of(2011, 1, 1)), PRECISION);
+            LocalDate.of(2011, 1, 1), null), PRECISION);
     }
 }

@@ -92,7 +92,7 @@ public class LAACCompleteDataAdapterTest {
     public void setUp() throws IOException {
         testDatabaseManagement.clearDb();
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
-        SingleImportData importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true);
+        SingleImportData importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true, null);
         adapter.importData(importData);
     }
 

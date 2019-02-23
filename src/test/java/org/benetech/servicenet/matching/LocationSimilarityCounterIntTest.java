@@ -8,6 +8,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.matching.counter.GeocodeUtils;
 import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,9 +42,12 @@ public class LocationSimilarityCounterIntTest {
     @InjectMocks
     private LocationSimilarityCounter locationSimilarityCounter;
 
+    private MatchingContext matchingContext;
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+        matchingContext = new MatchingContext(geoApiMock);
     }
 
     @Test
@@ -54,7 +58,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(6012092, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(40, 40)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(0, result, PRECISION);
     }
 
@@ -65,7 +69,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(1001, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0.009, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(0, result, PRECISION);
     }
 
@@ -76,7 +80,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(1000, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0.00899, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(0.4, result, PRECISION);
     }
 
@@ -87,7 +91,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(501, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0.00451, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(0.4, result, PRECISION);
     }
 
@@ -98,7 +102,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(500, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0.0044966, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(0.8, result, PRECISION);
     }
 
@@ -109,7 +113,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(499, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0.00449, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(0.8, result, PRECISION);
     }
 
@@ -120,7 +124,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(101, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0.00091, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(0.8, result, PRECISION);
     }
 
@@ -131,7 +135,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(100, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0.0008993, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(1, result, PRECISION);
     }
 
@@ -142,7 +146,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(99, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0.00089, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(1, result, PRECISION);
     }
 
@@ -153,7 +157,7 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(0, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(0, 0)), DISTANCE_PRECISION);
         mockGeoService(location1, location2);
 
-        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
+        float result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
         assertEquals(1, result, PRECISION);
     }
 
@@ -164,9 +168,9 @@ public class LocationSimilarityCounterIntTest {
         when(geoApiMock.extractAddressString(physicalAddress2)).thenReturn(location2
             .getName());
 
-        when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location1))
+        when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location1, matchingContext))
             .thenReturn(Collections.singletonList(new org.benetech.servicenet.domain.GeocodingResult(location1.getName(), location1.getLatitude(), location1.getLongitude())));
-        when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location2))
+        when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location2, matchingContext))
             .thenReturn(Collections.singletonList(new org.benetech.servicenet.domain.GeocodingResult(location2.getName(), location2.getLatitude(), location2.getLongitude())));
     }
 

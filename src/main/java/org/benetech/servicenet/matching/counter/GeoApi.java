@@ -7,21 +7,21 @@ import com.google.maps.model.GeocodingResult;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.PhysicalAddress;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component
 public class GeoApi {
 
     private static final String CONNECTION_ERROR = "Cannot connect with Google Maps API";
     private static final String DELIMITER = ", ";
 
-    @Value("${similarity-ratio.credentials.google-api}")
-    private String googleApiKey;
+    private GeoApiContext context;
+
+    public GeoApi(String googleApiKey) {
+        context = getGeoApiContext(googleApiKey);
+    }
 
     public GeocodingResult[] geocode(Location location) {
         return geocode(extractAddressString(location.getPhysicalAddress()));
@@ -33,18 +33,18 @@ public class GeoApi {
             .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER));
     }
 
+    private GeoApiContext getGeoApiContext(String googleApiKey) {
+        return new GeoApiContext.Builder()
+            .apiKey(googleApiKey)
+            .build();
+    }
+
     private GeocodingResult[] geocode(String address) {
         try {
-            return GeocodingApi.geocode(getGeoApiContext(),
+            return GeocodingApi.geocode(context,
                 address).await();
         } catch (ApiException | InterruptedException | IOException e) {
             throw new IllegalStateException(CONNECTION_ERROR);
         }
-    }
-
-    private GeoApiContext getGeoApiContext() {
-        return new GeoApiContext.Builder()
-            .apiKey(googleApiKey)
-            .build();
     }
 }

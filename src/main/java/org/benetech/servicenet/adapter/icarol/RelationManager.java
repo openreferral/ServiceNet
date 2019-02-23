@@ -88,8 +88,7 @@ class RelationManager {
         extractedOrganization.setServices(services);
 
         return Optional.ofNullable(importManager
-            .createOrUpdateOrganization(extractedOrganization, agency.getId(), importData.getProviderName(),
-                importData.getReport()));
+            .createOrUpdateOrganization(extractedOrganization, agency.getId(), importData));
     }
 
     private Optional<Location> getLocationToPersist(ImportData importData, ICarolSite site) {

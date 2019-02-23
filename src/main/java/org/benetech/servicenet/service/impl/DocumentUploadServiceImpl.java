@@ -20,6 +20,7 @@ import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -60,6 +61,9 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Value("${similarity-ratio.credentials.google-api}")
+    private String googleApiKey;
 
     @Override
     public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter, String providerName)
@@ -106,7 +110,8 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         long startTime = System.currentTimeMillis();
         log.info("Data upload for " + providerName + " has started");
         DataImportReport reportToSave = adapter
-            .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName, true)))
+            .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName,
+                true, googleApiKey)))
             .orElse(report);
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
@@ -182,8 +187,8 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .map((a) -> {
                 long startTime = System.currentTimeMillis();
                 log.info("Data upload for " + providerName + " has started");
-                DataImportReport importReport = a.importData(
-                    new SingleImportData(parsedDocument, report, providerName, isFileUpload));
+                DataImportReport importReport = a.importData(new SingleImportData(parsedDocument, report,
+                    providerName, isFileUpload, googleApiKey));
                 long stopTime = System.currentTimeMillis();
                 long elapsedTime = stopTime - startTime;
                 //TODO: Remove time counting logic (#264)

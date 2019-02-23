@@ -24,7 +24,7 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "   %@$#Aaa! Aa";
         String string2 = "%@$#a.aA aa  ";
 
-        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2);
+        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
         assertEquals(1, result, PRECISION);
     }
 
@@ -33,7 +33,7 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "AAAA";
         String string2 = "BBBB";
 
-        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2);
+        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
         assertEquals(0, result, PRECISION);
     }
 
@@ -42,7 +42,7 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "AAAA";
         String string2 = "AA";
 
-        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2);
+        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
         assertEquals(0.5, result, PRECISION);
     }
 }

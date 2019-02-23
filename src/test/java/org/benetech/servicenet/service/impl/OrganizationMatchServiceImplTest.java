@@ -91,10 +91,10 @@ public class OrganizationMatchServiceImplTest {
         em.persist(org2);
         em.flush();
 
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(1.0f);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(1.0f);
 
         int dbSize = organizationMatchService.findAll().size();
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
         List<OrganizationMatchDTO> matches = organizationMatchService.findAll();
 
         assertEquals(dbSize + 2, matches.size());
@@ -119,10 +119,10 @@ public class OrganizationMatchServiceImplTest {
         em.persist(new OrganizationMatch().organizationRecord(org2).partnerVersion(org1));
         em.flush();
 
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(COMPLETE_MATCH_RATIO);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(COMPLETE_MATCH_RATIO);
 
         int dbSize = organizationMatchService.findAll().size();
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
 
         assertEquals(dbSize, organizationMatchService.findAll().size());
     }
@@ -141,9 +141,9 @@ public class OrganizationMatchServiceImplTest {
         em.flush();
 
         float ratioBelowThreshold = 0.2f;
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(ratioBelowThreshold);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(ratioBelowThreshold);
 
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
 
         assertEquals(0, organizationMatchService.findAll().size());
     }
