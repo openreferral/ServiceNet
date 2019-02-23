@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.icarol.eden.EdenDataAdapter;
@@ -42,7 +43,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ServiceNetApp.class)
+@SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class ICarolDataAdapterCompleteTest {
 
     private static final String COMPLETE_JSON = "icarol/complete.json";

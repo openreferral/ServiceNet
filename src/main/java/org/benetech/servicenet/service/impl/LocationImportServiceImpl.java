@@ -4,6 +4,7 @@ import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.LocationBasedImportService;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.LocationService;
@@ -34,6 +35,9 @@ public class LocationImportServiceImpl implements LocationImportService {
     @Autowired
     private OrganizationRepository organizationRepository;
 
+    @Autowired
+    private GeocodingResultService geocodingResultService;
+
     @Override
     @ConfidentialFilter
     public Location createOrUpdateLocation(Location filledLocation, String externalDbId,
@@ -59,6 +63,7 @@ public class LocationImportServiceImpl implements LocationImportService {
         locationBasedImportService.createOrUpdateHolidayScheduleForLocation(
             filledLocation.getHolidaySchedule(), location, report);
         importAccessibilities(filledLocation.getAccessibilities(), location, report);
+        geocodingResultService.createOrUpdateGeocodingResult(location);
 
         return location;
     }

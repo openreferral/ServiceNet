@@ -2,6 +2,8 @@ package org.benetech.servicenet.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.domain.GeocodingResult;
+import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
@@ -11,8 +13,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,18 +29,26 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
 
     private final GeocodingResultMapper geocodingResultMapper;
 
+    private final GeoApi geoApi;
+
     public GeocodingResultServiceImpl(GeocodingResultRepository geocodingResultRepository,
-                                      GeocodingResultMapper geocodingResultMapper) {
+                                      GeocodingResultMapper geocodingResultMapper, GeoApi geoApi) {
         this.geocodingResultRepository = geocodingResultRepository;
         this.geocodingResultMapper = geocodingResultMapper;
+        this.geoApi = geoApi;
     }
 
     @Override
     public GeocodingResultDTO save(GeocodingResultDTO geocodingResultDTO) {
         log.debug("Request to save GeocodingResult : {}", geocodingResultDTO);
         GeocodingResult geocodingResult = geocodingResultMapper.toEntity(geocodingResultDTO);
-        geocodingResult = geocodingResultRepository.save(geocodingResult);
+        geocodingResult = save(geocodingResult);
         return geocodingResultMapper.toDto(geocodingResult);
+    }
+
+    @Override
+    public GeocodingResult save(GeocodingResult geocodingResult) {
+        return geocodingResultRepository.save(geocodingResult);
     }
 
     @Override
@@ -57,5 +71,31 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
     public void delete(UUID id) {
         log.debug("Request to delete GeocodingResult : {}", id);
         geocodingResultRepository.deleteById(id);
+    }
+
+    @Override
+    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location) {
+        if (location.getPhysicalAddress() == null) {
+            return new ArrayList<>();
+        }
+
+        String addressString = geoApi.extractAddressString(location.getPhysicalAddress());
+        List<GeocodingResult> currentResults = geocodingResultRepository.findAllByAddress(addressString);
+        if (!currentResults.isEmpty()) {
+            return currentResults;
+        }
+        return Arrays.stream(geoApi.geocode(location))
+            .map(x -> save(new GeocodingResult(addressString, x)))
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location) {
+        String addressString = geoApi.extractAddressString(location.getPhysicalAddress());
+        List<GeocodingResult> result = geocodingResultRepository.findAllByAddress(addressString);
+        if (result.isEmpty()) {
+            return createOrUpdateGeocodingResult(location);
+        }
+        return result;
     }
 }
