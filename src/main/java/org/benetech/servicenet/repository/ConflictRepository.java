@@ -38,7 +38,8 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
     @Query("select conflict from Conflict conflict where conflict.resourceId =:resourceId")
     List<Conflict> findAllWithResourceId(@Param("resourceId") UUID resourceId);
 
-    @Query("select max(conflict.offeredValueDate) from Conflict conflict where conflict.resourceId =:resourceId")
+    @Query("select max(conflict.offeredValueDate) from Conflict conflict " +
+        "where conflict.resourceId =:resourceId and conflict.state = 'PENDING'")
     Optional<ZonedDateTime> findMostRecentOfferedValueDate(@Param("resourceId") UUID resourceId);
 
     Optional<Conflict>
