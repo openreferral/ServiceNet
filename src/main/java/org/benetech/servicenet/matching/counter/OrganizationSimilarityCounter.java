@@ -60,7 +60,6 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
             }
         }
 
-
         return result;
     }
 }
