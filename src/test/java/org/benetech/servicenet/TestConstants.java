@@ -23,4 +23,5 @@ public class TestConstants {
     public static final Integer NEW_INT = 1;
     public static final Integer OTHER_INT = 2;
     public static final Integer EXISTING_INT = 3;
+    public static final String SYSTEM = "system";
 }
