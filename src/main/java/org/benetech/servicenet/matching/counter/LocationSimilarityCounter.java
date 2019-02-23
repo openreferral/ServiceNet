@@ -1,8 +1,5 @@
 package org.benetech.servicenet.matching.counter;
 
-import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.DistanceMatrixElement;
-import com.google.maps.model.DistanceMatrixRow;
 import com.google.maps.model.LatLng;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
@@ -34,9 +31,6 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
     @Autowired
     private GeocodingResultService geocodingResultService;
 
-    @Autowired
-    private GeoApi geoApi;
-
     @Override
     public float countSimilarityRatio(Location location1, Location location2) {
         if (location1 == null || location1.getPhysicalAddress() == null
@@ -57,12 +51,10 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
     }
 
     private float countSimilarityRatio(LatLng coordinates1, LatLng coordinates2) {
-        return countSimilarityRatio(geoApi.getDistanceMatrix(coordinates1, coordinates2));
+        return countSimilarityRatio(getStraightLineDistanceInMeters(coordinates1, coordinates2));
     }
 
-    private float countSimilarityRatio(DistanceMatrix matrix) {
-        long distance = getShortestDistanceInMeters(matrix);
-
+    private float countSimilarityRatio(double distance) {
         if (distance > level3meters) {
             return NO_MATCH_RATIO;
         }
@@ -78,15 +70,7 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
         return COMPLETE_MATCH_RATIO;
     }
 
-    private long getShortestDistanceInMeters(DistanceMatrix matrix) {
-        long min = Long.MAX_VALUE;
-        for (DistanceMatrixRow row : matrix.rows) {
-            for (DistanceMatrixElement element : row.elements) {
-                if (element != null && element.distance != null) {
-                    min = Math.min(min, element.distance.inMeters);
-                }
-            }
-        }
-        return min;
+    public double getStraightLineDistanceInMeters(LatLng coordinates1, LatLng coordinates2) {
+        return GeocodeUtils.getStraightLineDistanceInMeters(coordinates1, coordinates2);
     }
 }
