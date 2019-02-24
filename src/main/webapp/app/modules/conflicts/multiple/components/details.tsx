@@ -18,7 +18,7 @@ export class Details extends React.Component<IMultipleRecordViewProp> {
     return (
       <div>
         <h4 className="orgDetailsTitle">
-          <Translate contentKey="singleRecordView.details.title" />
+          <Translate contentKey="singleRecordView.details.titleOrganization" />
         </h4>
         <Form>
           <Field entityClass="Organization" type="text" fieldName="name" defaultValue={organization.name} exclusions={exclusions} />
