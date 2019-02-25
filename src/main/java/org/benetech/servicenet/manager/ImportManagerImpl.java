@@ -2,6 +2,7 @@ package org.benetech.servicenet.manager;
 
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
+import org.benetech.servicenet.builder.ReportErrorMessageBuilder;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
@@ -62,7 +63,7 @@ public class ImportManagerImpl implements ImportManager {
     }
 
     private void handleError(String message, DataImportReport report) {
-        report.setErrorMessage(report.getErrorMessage() + message + "\n");
+        report.setErrorMessage(ReportErrorMessageBuilder.buildForError(message, report));
         log.error(message);
     }
 }

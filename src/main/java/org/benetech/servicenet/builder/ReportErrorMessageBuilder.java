@@ -2,6 +2,7 @@ package org.benetech.servicenet.builder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
+import org.benetech.servicenet.domain.DataImportReport;
 
 import javax.validation.ConstraintViolation;
 import java.util.Comparator;
@@ -27,6 +28,17 @@ public final class ReportErrorMessageBuilder {
         }
 
         return builder.toString();
+    }
+
+    public static String buildForError(String message, DataImportReport report) {
+        String prevPart;
+        if (StringUtils.isBlank(report.getErrorMessage())) {
+            prevPart = FIRST_LINE;
+        } else {
+            prevPart = report.getErrorMessage();
+        }
+
+        return prevPart + message + LINE_END + LINE_END;
     }
 
     private static <V extends AbstractEntity> List<ConstraintViolation<V>> sort(Set<ConstraintViolation<V>> entry) {
