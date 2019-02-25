@@ -51,7 +51,6 @@ public class LocationImportServiceImpl implements LocationImportService {
         Location location = new Location(filledLocation);
         Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId,
             importData.getProviderName());
-        setGeocodeIfUnique(importData, location);
 
         if (locationFromDb.isPresent()) {
             fillDataFromDb(location, locationFromDb.get());
@@ -61,6 +60,7 @@ public class LocationImportServiceImpl implements LocationImportService {
         }
 
         persistRelatedEntities(filledLocation, importData, location);
+        setGeocodeIfUnique(importData, location);
 
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;

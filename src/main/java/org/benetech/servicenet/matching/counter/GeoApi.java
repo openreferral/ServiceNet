@@ -29,9 +29,10 @@ public class GeoApi {
     }
 
     public String extract255AddressChars(PhysicalAddress address) {
-        return Stream.of(address.getAddress1(), address.getCity(), address.getCountry(), address.getPostalCode(),
+        String result = Stream.of(address.getAddress1(), address.getCity(), address.getCountry(), address.getPostalCode(),
             address.getRegion(), address.getStateProvince())
-            .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER)).substring(0, MAX_ADDRESS_LENGTH);
+            .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER));
+        return result.length() <= MAX_ADDRESS_LENGTH ? result : result.substring(0, MAX_ADDRESS_LENGTH);
     }
 
     private GeoApiContext getGeoApiContext(String googleApiKey) {
