@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.maps.model.LatLng;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
@@ -105,6 +106,10 @@ public class Location extends AbstractEntity implements Serializable {
         this.externalDbId = loc.externalDbId;
         this.providerName = loc.providerName;
         this.organization = loc.organization;
+    }
+
+    public LatLng getCoordinates() {
+        return new LatLng(latitude, longitude);
     }
 
     public Location organization(Organization organization) {

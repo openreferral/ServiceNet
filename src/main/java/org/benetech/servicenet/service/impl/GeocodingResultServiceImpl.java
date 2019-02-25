@@ -71,12 +71,31 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
     }
 
     @Override
-    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
+    public Optional<GeocodingResult> getGeocodeForLocationIfUnique(Location location, MatchingContext context) {
+        List<GeocodingResult> result = createOrUpdateGeocodingResult(location, context);
+        if (result.size() == 1) {
+            return Optional.of(result.get(0));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location, MatchingContext context) {
+        String addressString = context.getGeoApi().extract255AddressChars(location.getPhysicalAddress());
+        List<GeocodingResult> result = geocodingResultRepository.findAllByAddress(addressString);
+        if (result.isEmpty()) {
+            return createOrUpdateGeocodingResult(location, context);
+        }
+        return result;
+    }
+
+    private List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
         if (location.getPhysicalAddress() == null) {
             return new ArrayList<>();
         }
 
-        String addressString = context.getGeoApi().extractAddressString(location.getPhysicalAddress());
+        String addressString = context.getGeoApi().extract255AddressChars(location.getPhysicalAddress());
         List<GeocodingResult> currentResults = geocodingResultRepository.findAllByAddress(addressString);
         if (!currentResults.isEmpty()) {
             return currentResults;
@@ -84,15 +103,5 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
         return Arrays.stream(context.getGeoApi().geocode(location))
             .map(x -> save(new GeocodingResult(addressString, x)))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location, MatchingContext context) {
-        String addressString = context.getGeoApi().extractAddressString(location.getPhysicalAddress());
-        List<GeocodingResult> result = geocodingResultRepository.findAllByAddress(addressString);
-        if (result.isEmpty()) {
-            return createOrUpdateGeocodingResult(location, context);
-        }
-        return result;
     }
 }

@@ -51,6 +51,8 @@ public class LocationImportServiceImpl implements LocationImportService {
         Location location = new Location(filledLocation);
         Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId,
             importData.getProviderName());
+        setGeocodeIfUnique(importData, location);
+
         if (locationFromDb.isPresent()) {
             fillDataFromDb(location, locationFromDb.get());
             em.merge(location);
@@ -58,6 +60,18 @@ public class LocationImportServiceImpl implements LocationImportService {
             em.persist(location);
         }
 
+        persistRelatedEntities(filledLocation, importData, location);
+
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        //TODO: Remove time counting logic (#264)
+        log.debug(importData.getProviderName() + "'s location '" + location.getName() + "' was imported in "
+            + elapsedTime + "ms.");
+
+        return location;
+    }
+
+    private void persistRelatedEntities(Location filledLocation, ImportData importData, Location location) {
         locationBasedImportService.createOrUpdatePhysicalAddress(
             filledLocation.getPhysicalAddress(), location, importData.getReport());
         locationBasedImportService.createOrUpdatePostalAddress(
@@ -71,15 +85,21 @@ public class LocationImportServiceImpl implements LocationImportService {
         locationBasedImportService.createOrUpdateHolidayScheduleForLocation(
             filledLocation.getHolidaySchedule(), location, importData.getReport());
         importAccessibilities(filledLocation.getAccessibilities(), location, importData.getReport());
-        geocodingResultService.createOrUpdateGeocodingResult(location, importData.getContext());
+    }
 
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        //TODO: Remove time counting logic (#264)
-        log.debug(importData.getProviderName() + "'s location '" + location.getName() + "' was imported in "
-            + elapsedTime + "ms.");
+    private void setGeocodeIfUnique(ImportData importData, Location location) {
+        if (geocodeShouldBeFetched(location)) {
+            geocodingResultService.getGeocodeForLocationIfUnique(location, importData.getContext())
+                .ifPresent(x -> {
+                    location.setLatitude(x.getLatitude());
+                    location.setLongitude(x.getLongitude());
+                });
+        }
+    }
 
-        return location;
+    private boolean geocodeShouldBeFetched(Location location) {
+        return location.getLongitude() == null || location.getLatitude() == null
+            || location.getLongitude().equals(0.0) || location.getLatitude().equals(0.0);
     }
 
     private void importAccessibilities(Set<AccessibilityForDisabilities> accessibilities,

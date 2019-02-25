@@ -164,8 +164,8 @@ public class LocationSimilarityCounterIntTest {
     private void mockGeoService(Location location1, Location location2) {
         PhysicalAddress physicalAddress1 = location1.getPhysicalAddress();
         PhysicalAddress physicalAddress2 = location2.getPhysicalAddress();
-        when(geoApiMock.extractAddressString(physicalAddress1)).thenReturn(location1.getName());
-        when(geoApiMock.extractAddressString(physicalAddress2)).thenReturn(location2
+        when(geoApiMock.extract255AddressChars(physicalAddress1)).thenReturn(location1.getName());
+        when(geoApiMock.extract255AddressChars(physicalAddress2)).thenReturn(location2
             .getName());
 
         when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location1, matchingContext))
