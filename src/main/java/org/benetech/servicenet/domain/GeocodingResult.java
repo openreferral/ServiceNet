@@ -5,11 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -27,10 +25,8 @@ public class GeocodingResult extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Lob
     @NotNull
-    @Type(type = "org.hibernate.type.TextType")
-    @Column(name = "address", columnDefinition = "clob", nullable = false)
+    @Column(name = "address", nullable = false)
     private String address;
 
     @NotNull
