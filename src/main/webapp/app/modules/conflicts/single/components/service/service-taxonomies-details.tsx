@@ -29,13 +29,7 @@ export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomies
         isCustomToggle={false}
         customToggleValue={false}
       />
-    ) : (
-      <h4>
-        <Badge color="secondary">
-          <Translate contentKey="singleRecordView.details.noRecords" />
-        </Badge>
-      </h4>
-    );
+    ) : null;
   }
 }
 
