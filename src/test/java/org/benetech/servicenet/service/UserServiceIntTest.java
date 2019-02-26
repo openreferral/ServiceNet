@@ -6,6 +6,7 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.DocumentUpload;
+import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.PersistentToken;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
@@ -13,9 +14,11 @@ import org.benetech.servicenet.listener.HibernatePostCreateListener;
 import org.benetech.servicenet.listener.HibernatePostDeleteListener;
 import org.benetech.servicenet.listener.HibernatePostUpdateListener;
 import org.benetech.servicenet.mother.DocumentUploadMother;
+import org.benetech.servicenet.mother.MetadataMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.mother.UserMother;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
+import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
@@ -95,6 +98,9 @@ public class UserServiceIntTest {
 
     @Autowired
     private DocumentUploadRepository documentUploadRepository;
+
+    @Autowired
+    private MetadataRepository metadataRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -472,5 +478,30 @@ public class UserServiceIntTest {
 
         // the user cleaned up earlier
         documentUploadRepository.delete(result.get());
+    }
+
+    @Test
+    @Transactional
+    public void shouldAssignAllUsersMetadataToSystemUserBeforeRemoval() {
+        Metadata metadata= MetadataMother.createDefaultAndPersist(em);
+        assertNotEquals(TestConstants.SYSTEM, metadata.getUser().getLogin());
+        int usersNumber = userRepository.findAll().size();
+
+        userService.deleteUser(metadata.getUser().getLogin());
+
+        Optional<Metadata> result = metadataRepository.findById(metadata.getId());
+        assertThat(result).isPresent();
+        assertEquals(metadata.getResourceId(), result.get().getResourceId());
+        assertEquals(metadata.getLastActionDate(), result.get().getLastActionDate());
+        assertEquals(metadata.getLastActionType(), result.get().getLastActionType());
+        assertEquals(metadata.getFieldName(), result.get().getFieldName());
+        assertEquals(metadata.getPreviousValue(), result.get().getPreviousValue());
+        assertEquals(metadata.getReplacementValue(), result.get().getReplacementValue());
+        assertEquals(metadata.getResourceClass(), result.get().getResourceClass());
+        assertEquals(TestConstants.SYSTEM, result.get().getUser().getLogin());
+        assertEquals(usersNumber - 1, userRepository.findAll().size());
+
+        // the user cleaned up earlier
+        metadataRepository.delete(result.get());
     }
 }
