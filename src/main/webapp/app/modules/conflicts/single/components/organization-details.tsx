@@ -5,22 +5,13 @@ import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { IActivity } from 'app/shared/model/activity.model';
-import { IOrganization } from 'app/shared/model/organization.model';
 import { AdditionalDetails } from './additional-details';
 
 export interface IOrganizationDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
 }
 
-export interface IOrganizationDetailsState {
-  organization: IOrganization;
-}
-
-export class OrganizationDetails extends React.Component<IOrganizationDetailsProp, IOrganizationDetailsState> {
-  state: IOrganizationDetailsState = {
-    organization: this.props.activity.record.organization
-  };
-
+export class OrganizationDetails extends React.Component<IOrganizationDetailsProp> {
   getTextField = (organization, fieldName) => ({
     type: 'text',
     fieldName,
@@ -29,7 +20,7 @@ export class OrganizationDetails extends React.Component<IOrganizationDetailsPro
 
   render() {
     const { activity } = this.props;
-    const { organization } = this.state;
+    const { organization } = this.props.activity.record;
     const firstMatch = activity.organizationMatches.length !== 0 ? activity.organizationMatches[0] : null;
 
     const fields = [

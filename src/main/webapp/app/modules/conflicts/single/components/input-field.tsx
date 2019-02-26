@@ -75,7 +75,6 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
   render() {
     const { entityClass, fieldName, type, defaultValue } = this.props;
     const identifier = this.getIdentifierName(entityClass, fieldName);
-
     const input = (
       <Input
         disabled
@@ -83,7 +82,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
         type={type}
         name={identifier}
         id={identifier}
-        value={defaultValue}
+        value={defaultValue != null ? defaultValue : ''}
       />
     );
     const label = (
