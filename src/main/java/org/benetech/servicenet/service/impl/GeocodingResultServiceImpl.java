@@ -71,16 +71,6 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
     }
 
     @Override
-    public Optional<GeocodingResult> getGeocodeForLocationIfUnique(Location location, MatchingContext context) {
-        List<GeocodingResult> result = createOrUpdateGeocodingResult(location, context);
-        if (result.size() == 1) {
-            return Optional.of(result.get(0));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
     public List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location, MatchingContext context) {
         String addressString = context.getGeoApi().extract255AddressChars(location.getPhysicalAddress());
         List<GeocodingResult> result = geocodingResultRepository.findAllByAddress(addressString);
@@ -90,7 +80,8 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
         return result;
     }
 
-    private List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
+    @Override
+    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
         if (location.getPhysicalAddress() == null) {
             return new ArrayList<>();
         }

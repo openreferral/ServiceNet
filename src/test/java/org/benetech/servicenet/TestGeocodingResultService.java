@@ -9,7 +9,8 @@ import org.benetech.servicenet.service.mapper.GeocodingResultMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Service class used only for tests, with some methods mocked
@@ -24,7 +25,7 @@ public class TestGeocodingResultService extends GeocodingResultServiceImpl {
     }
 
     @Override
-    public Optional<GeocodingResult> getGeocodeForLocationIfUnique(Location location, MatchingContext context) {
-        return Optional.empty();
+    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
+        return new ArrayList<>();
     }
 }

@@ -52,8 +52,10 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
     private float countRatioIfCoordinatesAreMissing(Location location1, Location location2, MatchingContext context) {
         float max = NO_MATCH_RATIO;
 
-        for (GeocodingResult result1 : getGeoCodingResult(location1, context)) {
-            for (GeocodingResult result2 : getGeoCodingResult(location2, context)) {
+        List<GeocodingResult> baseGeocoding = getGeoCodingResult(location1, context);
+        List<GeocodingResult> partnerGeocoding = getGeoCodingResult(location2, context);
+        for (GeocodingResult result1 : baseGeocoding) {
+            for (GeocodingResult result2 : partnerGeocoding) {
                 max = Math.max(max, countSimilarityRatio(result1, result2));
             }
         }

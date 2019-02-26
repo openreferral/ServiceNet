@@ -60,7 +60,7 @@ public class LocationImportServiceImpl implements LocationImportService {
         }
 
         persistRelatedEntities(filledLocation, importData, location);
-        setGeocodeIfUnique(importData, location);
+        fetchGeocodeIfNeeded(importData, location);
 
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
@@ -87,13 +87,9 @@ public class LocationImportServiceImpl implements LocationImportService {
         importAccessibilities(filledLocation.getAccessibilities(), location, importData.getReport());
     }
 
-    private void setGeocodeIfUnique(ImportData importData, Location location) {
+    private void fetchGeocodeIfNeeded(ImportData importData, Location location) {
         if (geocodeShouldBeFetched(location)) {
-            geocodingResultService.getGeocodeForLocationIfUnique(location, importData.getContext())
-                .ifPresent(x -> {
-                    location.setLatitude(x.getLatitude());
-                    location.setLongitude(x.getLongitude());
-                });
+            geocodingResultService.createOrUpdateGeocodingResult(location, importData.getContext());
         }
     }
 

@@ -50,7 +50,7 @@ public interface GeocodingResultService {
      */
     void delete(UUID id);
 
-    Optional<GeocodingResult> getGeocodeForLocationIfUnique(Location location, MatchingContext context);
-
     List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location, MatchingContext context);
+
+    List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context);
 }
