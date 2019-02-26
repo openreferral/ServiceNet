@@ -1,10 +1,25 @@
-/* ==========================================================================
-Main page styles
-========================================================================== */
+@import '../../app-variables';
+@import '../../bootstrap-variables';
+
 .hipster {
   display: inline-block;
   width: 100%;
   height: 497px;
   background: url('../../../static/images/logo.png') no-repeat center top;
   background-size: contain;
+}
+
+.searchBar {
+  margin-bottom: 15px;
+}
+
+.searchIcon {
+  position: absolute;
+  margin-top: 12px;
+  margin-left: 10px;
+  color: $gray-card-accent;
+}
+
+.searchInput {
+  padding-left: 35px;
 }

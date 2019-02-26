@@ -5,7 +5,9 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Container, Progress, Spinner } from 'reactstrap';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Row, Col, Alert, Container, Progress, Spinner, InputGroup, Input } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -123,6 +125,19 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
             initialLoad={false}
           >
             <Container>
+              <Row>
+                <Col className="searchBar">
+                  <FontAwesomeIcon icon="search" size="lg" className="searchIcon" />
+                  <Input
+                    bsSize="lg"
+                    className="searchInput"
+                    type="search"
+                    name="search"
+                    id="searchBar"
+                    placeholder="Search ServiceNet Activity"
+                  />
+                </Col>
+              </Row>
               <Row>
                 <Col className="col-auto mr-auto">
                   <h2 id="main-page-title">
