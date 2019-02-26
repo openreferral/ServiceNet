@@ -16,6 +16,7 @@ public class GeoApi {
 
     private static final String CONNECTION_ERROR = "Cannot connect with Google Maps API";
     private static final String DELIMITER = ", ";
+    private static final int MAX_ADDRESS_LENGTH = 255;
 
     private GeoApiContext context;
 
@@ -24,13 +25,14 @@ public class GeoApi {
     }
 
     public GeocodingResult[] geocode(Location location) {
-        return geocode(extractAddressString(location.getPhysicalAddress()));
+        return geocode(extract255AddressChars(location.getPhysicalAddress()));
     }
 
-    public String extractAddressString(PhysicalAddress address) {
-        return Stream.of(address.getAddress1(), address.getCity(), address.getCountry(), address.getPostalCode(),
+    public String extract255AddressChars(PhysicalAddress address) {
+        String result = Stream.of(address.getAddress1(), address.getCity(), address.getCountry(), address.getPostalCode(),
             address.getRegion(), address.getStateProvince())
             .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER));
+        return result.length() <= MAX_ADDRESS_LENGTH ? result : result.substring(0, MAX_ADDRESS_LENGTH);
     }
 
     private GeoApiContext getGeoApiContext(String googleApiKey) {
