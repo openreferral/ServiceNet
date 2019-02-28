@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Row, Button } from 'reactstrap';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
@@ -25,6 +25,7 @@ export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   servicesCount: string;
   changeRecord: any;
   isOnlyOne: boolean;
+  columnSize: number;
 }
 
 export interface ISingleServiceDetailsState {
@@ -43,7 +44,7 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
   };
 
   render() {
-    const { record, isOnlyOne } = this.props;
+    const { record, isOnlyOne, columnSize } = this.props;
     const customHeader = (
       <h4 className="title">
         <div className="collapseBtn" onClick={this.toggleAreaOpen}>
@@ -117,7 +118,7 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     ];
     return (
       <Row>
-        <Col sm="6">
+        <Col sm={columnSize}>
           <hr />
           <AdditionalDetails
             {...this.props}

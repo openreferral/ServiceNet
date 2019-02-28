@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { IServiceRecord } from 'app/shared/model/service-record.model';
@@ -7,6 +7,7 @@ import { SingleServiceDetails } from './single-service-details';
 
 export interface IServicesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
+  columnSize: number;
 }
 
 export interface IServicesDetailsState {

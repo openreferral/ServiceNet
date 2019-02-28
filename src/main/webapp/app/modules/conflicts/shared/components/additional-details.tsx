@@ -1,5 +1,5 @@
 import React from 'react';
-import '../single-record-view.scss';
+import '../shared-record-view.scss';
 import { connect } from 'react-redux';
 import InputField from './input-field';
 import { IActivity } from 'app/shared/model/activity.model';

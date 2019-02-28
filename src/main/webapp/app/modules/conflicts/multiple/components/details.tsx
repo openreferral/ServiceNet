@@ -1,52 +1,28 @@
 import React from 'react';
-import { Form } from 'reactstrap';
 import '../multiple-record-view.scss';
-import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
-import Field from './field';
 import { RouteComponentProps } from 'react-router-dom';
-import { IOrganization } from 'app/shared/model/organization.model';
+import { OrganizationDetails } from '../../shared/components/organization-details';
+import { LocationsDetails } from '../../shared/components/location/locations-details';
+import { ServicesDetails } from '../../shared/components/service/services-details';
+import { ContactsDetails } from '../../shared/components/contact/contacts-details';
+import { IActivity } from 'app/shared/model/activity.model';
 
 export interface IMultipleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
-  organization: IOrganization;
+  activity: IActivity;
   exclusions: any[];
+  isBaseRecord: boolean;
 }
 
 export class Details extends React.Component<IMultipleRecordViewProp> {
   render() {
-    const { organization, exclusions } = this.props;
+    const columnSize = 12;
     return (
       <div>
-        <h4 className="orgDetailsTitle">
-          <Translate contentKey="singleRecordView.details.titleOrganization" />
-        </h4>
-        <Form>
-          <Field entityClass="Organization" type="text" fieldName="name" defaultValue={organization.name} exclusions={exclusions} />
-          <Field
-            entityClass="Organization"
-            type="text"
-            fieldName="alternateName"
-            defaultValue={organization.alternateName}
-            exclusions={exclusions}
-          />
-          <Field
-            entityClass="Organization"
-            type="textarea"
-            fieldName="description"
-            defaultValue={organization.description}
-            exclusions={exclusions}
-          />
-          <Field entityClass="Organization" type="text" fieldName="email" defaultValue={organization.email} exclusions={exclusions} />
-          <Field entityClass="Organization" type="text" fieldName="url" defaultValue={organization.url} exclusions={exclusions} />
-          <Field
-            entityClass="Organization"
-            type="text"
-            fieldName="taxStatus"
-            defaultValue={organization.taxStatus}
-            exclusions={exclusions}
-          />
-          <Field entityClass="Organization" type="checkbox" fieldName="active" defaultValue={organization.active} exclusions={exclusions} />
-        </Form>
+        <OrganizationDetails {...this.props} sideSection={null} columnSize={columnSize} />
+        <LocationsDetails {...this.props} columnSize={columnSize} />
+        <ServicesDetails {...this.props} columnSize={columnSize} />
+        <ContactsDetails {...this.props} contacts={this.props.activity.record.contacts} columnSize={columnSize} />
       </div>
     );
   }

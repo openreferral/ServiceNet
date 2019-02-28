@@ -1,28 +1,28 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { AdditionalDetails } from '../additional-details';
+import { IRequiredDocument } from 'app/shared/model/required-document.model';
 import { Translate } from 'react-jhipster';
 import { Badge } from 'reactstrap';
-import { IServiceTaxonomy } from 'app/shared/model/service-taxonomy.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps {
+export interface IRequiredDocumentsDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  taxonomies: IServiceTaxonomy[];
+  docs: IRequiredDocument[];
 }
 
-export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomiesDetailsProp> {
+export class RequiredDocumentsDetails extends React.Component<IRequiredDocumentsDetailsProp> {
   render() {
-    const { taxonomies } = this.props;
-    const fields = taxonomies.map(taxonomy => getTextField(taxonomy, 'taxonomyDetails'));
+    const { docs } = this.props;
+    const fields = docs.map(document => getTextField(document, 'document'));
 
     return fields.length > 0 ? (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'ServiceTaxonomy'}
+        entityClass={'RequiredDocument'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
@@ -43,4 +43,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ServiceTaxonomiesDetails);
+)(RequiredDocumentsDetails);

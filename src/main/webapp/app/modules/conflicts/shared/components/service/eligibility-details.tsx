@@ -1,34 +1,26 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
 import { AdditionalDetails } from '../additional-details';
+import { IEligibility } from 'app/shared/model/eligibility.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
+export interface IEligibilityDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  address: IPhysicalAddress;
+  eligibility: IEligibility;
 }
 
-export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDetailsProp> {
+export class EligibilityDetails extends React.Component<IEligibilityDetailsProp> {
   render() {
-    const address = this.props.address ? this.props.address : {};
-    const fields = [
-      getTextField(address, 'attention'),
-      getTextField(address, 'address1'),
-      getTextField(address, 'city'),
-      getTextField(address, 'region'),
-      getTextField(address, 'stateProvince'),
-      getTextField(address, 'postalCode'),
-      getTextField(address, 'country')
-    ];
+    const eligibility = this.props.eligibility ? this.props.eligibility : {};
+    const fields = [getTextField(eligibility, 'eligibility')];
 
     return (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'PhysicalAddress'}
+        entityClass={'Eligibility'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
@@ -49,4 +41,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PhysicalAddressDetails);
+)(EligibilityDetails);

@@ -1,28 +1,29 @@
 import React from 'react';
 import { Col, Row, Button } from 'reactstrap';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdditionalDetails } from '../additional-details';
-import { IContact } from 'app/shared/model/contact.model';
+import { IPhone } from 'app/shared/model/phone.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface ISingleContactDetailsProp extends StateProps, DispatchProps {
+export interface ISinglePhoneDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  contact: IContact;
-  contactsCount: string;
+  phone: IPhone;
+  phonesCount: string;
   changeRecord: any;
   isOnlyOne: boolean;
+  columnSize: number;
 }
 
-export interface ISingleContactDetailsState {
+export interface ISinglePhoneDetailsState {
   isAreaOpen: boolean;
 }
 
-export class SingleContactDetails extends React.Component<ISingleContactDetailsProp, ISingleContactDetailsState> {
-  state: ISingleContactDetailsState = {
+export class SinglePhoneDetails extends React.Component<ISinglePhoneDetailsProp, ISinglePhoneDetailsState> {
+  state: ISinglePhoneDetailsState = {
     isAreaOpen: false
   };
 
@@ -33,14 +34,14 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
   };
 
   render() {
-    const { contact, isOnlyOne } = this.props;
+    const { phone, isOnlyOne, columnSize } = this.props;
     const customHeader = (
       <h4 className="title">
         <div className="collapseBtn" onClick={this.toggleAreaOpen}>
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleContacts" /> {this.props.contactsCount}
+          <Translate contentKey="singleRecordView.details.titlePhones" /> {this.props.phonesCount}
         </div>
         {isOnlyOne ? null : (
           <Button className="primary" onClick={this.props.changeRecord}>
@@ -51,19 +52,24 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
     );
 
     const fields = [
-      getTextField(contact, 'name'),
-      getTextField(contact, 'title'),
-      getTextField(contact, 'department'),
-      getTextField(contact, 'email')
+      getTextField(phone, 'number'),
+      getTextField(phone, 'extension'),
+      getTextField(phone, 'type'),
+      getTextField(phone, 'language'),
+      {
+        type: 'textarea',
+        fieldName: 'description',
+        defaultValue: phone.description
+      }
     ];
     return (
       <Row>
-        <Col sm="6">
+        <Col sm={columnSize}>
           <hr />
           <AdditionalDetails
             {...this.props}
             fields={fields}
-            entityClass={'Contact'}
+            entityClass={'Phone'}
             customHeader={customHeader}
             additionalFields={false}
             toggleAvailable
@@ -86,4 +92,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SingleContactDetails);
+)(SinglePhoneDetails);

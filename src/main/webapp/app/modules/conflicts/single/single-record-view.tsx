@@ -4,7 +4,7 @@ import './single-record-view.scss';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'reactstrap';
-import Tabs from './components/tabs';
+import Tabs from './tabs';
 import { getActivityDetails } from './single-record-view.reducer';
 import { RouteComponentProps } from 'react-router-dom';
 
