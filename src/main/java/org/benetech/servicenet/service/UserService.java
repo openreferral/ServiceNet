@@ -6,6 +6,7 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.AuthorityRepository;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
+import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.UserRepository;
@@ -67,6 +68,9 @@ public class UserService {
 
     @Autowired
     private DocumentUploadRepository documentUploadRepository;
+
+    @Autowired
+    private MetadataRepository metadataRepository;
 
     @Autowired
     private CacheManager cacheManager;
@@ -250,18 +254,26 @@ public class UserService {
     }
 
     public void deleteUser(String login) {
-        userRepository.findOneByLogin(login).ifPresent(user -> {
-            documentUploadRepository.findAllByUploaderId(user.getId()).forEach(doc ->
-                getSystemUser().ifPresent(sys -> {
-                    doc.setUploader(sys);
-                    documentUploadRepository.save(doc);
-                })
-            );
-            userRepository.delete(user);
+        Optional<User> system = getSystemUser();
+        if (system.isPresent()) {
+            userRepository.findOneByLogin(login).ifPresent(user -> {
+                documentUploadRepository.findAllByUploaderId(user.getId()).forEach(doc -> {
+                        doc.setUploader(system.get());
+                        documentUploadRepository.save(doc);
+                    });
 
-            this.clearUserCaches(user);
-            log.debug("Deleted User: {}", user);
-        });
+                metadataRepository.findAllByUserId(user.getId()).forEach(meta -> {
+                        meta.setUser(system.get());
+                        metadataRepository.save(meta);
+                    });
+
+                userRepository.delete(user);
+                this.clearUserCaches(user);
+                log.debug("Deleted User: {}", user);
+            });
+        } else {
+            throw new IllegalStateException("User's metadata couldn't be archived.");
+        }
     }
 
     public void changePassword(String currentClearTextPassword, String newPassword) {
