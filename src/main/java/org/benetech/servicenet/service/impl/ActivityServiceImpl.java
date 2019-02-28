@@ -53,9 +53,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
+    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId, String search) {
         List<ActivityDTO> activities = new ArrayList<>();
-        Page<Organization> orgs = organizationService.findAllOrgIdsWithOwnerId(systemAccountId, pageable);
+        Page<Organization> orgs = organizationService.findAllOrgIdsWithOwnerId(systemAccountId, pageable, search);
 
         for (Organization org : orgs) {
             try {

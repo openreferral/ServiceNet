@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.OrganizationService;
@@ -136,9 +137,14 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Organization> findAllOrgIdsWithOwnerId(UUID ownerId, Pageable pageable) {
+    public Page<Organization> findAllOrgIdsWithOwnerId(UUID ownerId, Pageable pageable, String search) {
         if (ownerId != null) {
-            return organizationRepository.findAllOrgIdsWithOwnerId(ownerId, pageable);
+            if (StringUtils.isBlank(search)) {
+                return organizationRepository.findAllOrgIdsWithOwnerId(ownerId, pageable);
+            } else {
+                String searchQuery = "%" + search + "%";
+                return organizationRepository.findAllOrgIdsWithOwnerIdAndSearchPhrase(ownerId, searchQuery, pageable);
+            }
         } else {
             return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
         }

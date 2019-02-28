@@ -103,7 +103,7 @@ public class ActivityServiceImplTest {
     public void getAllActivities() {
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId());
+            pageRequest, user.getSystemAccount().getId(), null);
 
         assertEquals(1, activities.getTotalElements());
         ActivityDTO actualAct = activities.stream().collect(Collectors.toList()).get(0);

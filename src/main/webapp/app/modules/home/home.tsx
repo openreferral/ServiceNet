@@ -16,11 +16,15 @@ import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import ActivityElement from './activity-element';
 import SortActivity from './sort-activity';
 
+const SEARCH_TIMEOUT = 1000;
+
 export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
 export interface IHomeState extends IPaginationBaseState {
   dropdownOpen: boolean;
   loggingOut: boolean;
+  searchPhrase: string;
+  typingTimeout: number;
 }
 
 export class Home extends React.Component<IHomeProp, IHomeState> {
@@ -32,7 +36,9 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       sort: SORT_RECENTLY_UPDATED,
       order: DEFAULT_SORT_ORDER,
       dropdownOpen: false,
-      loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false
+      loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false,
+      searchPhrase: '',
+      typingTimeout: 0
     };
   }
 
@@ -80,8 +86,26 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
     if (this.props.isAuthenticated) {
-      this.props.getEntities(activePage - 1, itemsPerPage, `${sort},${order}`);
+      this.props.getEntities(this.state.searchPhrase, activePage - 1, itemsPerPage, `${sort},${order}`);
     }
+  };
+
+  searchEntities = () => {
+    this.props.reset();
+    this.getEntities();
+  };
+
+  changeSearchPhrase = event => {
+    if (this.state.typingTimeout) {
+      clearTimeout(this.state.typingTimeout);
+    }
+
+    this.setState({
+      searchPhrase: event.target.value,
+      typingTimeout: setTimeout(() => {
+        this.searchEntities();
+      }, SEARCH_TIMEOUT)
+    });
   };
 
   render() {
@@ -135,6 +159,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                     name="search"
                     id="searchBar"
                     placeholder="Search ServiceNet Activity"
+                    value={this.state.searchPhrase}
+                    onChange={this.changeSearchPhrase}
                   />
                 </Col>
               </Row>
