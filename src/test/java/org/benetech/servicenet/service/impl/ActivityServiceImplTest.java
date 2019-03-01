@@ -7,10 +7,10 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.mother.ConflictMother;
 import org.benetech.servicenet.mother.OrganizationMother;
+import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
-import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
@@ -51,7 +51,7 @@ public class ActivityServiceImplTest {
     private ConflictService conflictService;
 
     @Autowired
-    private OrganizationService organizationService;
+    private ActivityRepository activityRepository;
 
     @Autowired
     private UserService userService;
@@ -76,7 +76,7 @@ public class ActivityServiceImplTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        activityService = new ActivityServiceImpl(organizationService, conflictService, organizationMatchService,
+        activityService = new ActivityServiceImpl(activityRepository, conflictService, organizationMatchService,
             recordsService);
     }
 
