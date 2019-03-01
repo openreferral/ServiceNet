@@ -1,10 +1,10 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.view.ActivityInfo;
+import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
-import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final Logger log = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
-    private final OrganizationService organizationService;
+    private final ActivityRepository activityRepository;
 
     private final OrganizationMatchService organizationMatchService;
 
@@ -43,9 +44,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final RecordsService recordsService;
 
-    public ActivityServiceImpl(OrganizationService organizationService, ConflictService conflictService,
+    public ActivityServiceImpl(ActivityRepository activityRepository, ConflictService conflictService,
                                OrganizationMatchService organizationMatchService, RecordsService recordsService) {
-        this.organizationService = organizationService;
+        this.activityRepository = activityRepository;
         this.conflictService = conflictService;
         this.organizationMatchService = organizationMatchService;
         this.recordsService = recordsService;
@@ -55,11 +56,11 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
         List<ActivityDTO> activities = new ArrayList<>();
-        Page<Organization> orgs = organizationService.findAllOrgIdsWithOwnerId(systemAccountId, pageable);
+        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, pageable);
 
-        for (Organization org : orgs) {
+        for (ActivityInfo info : activitiesInfo) {
             try {
-                Optional<ActivityDTO> activityOpt = getEntityActivity(org.getId());
+                Optional<ActivityDTO> activityOpt = getEntityActivity(info.getId());
                 activityOpt.ifPresent(activities::add);
             } catch (ActivityCreationException ex) {
                 log.error(ex.getMessage());
@@ -67,7 +68,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
 
         return new PageImpl<>(
-            activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), orgs.getTotalElements());
+            activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), activitiesInfo.getTotalElements());
     }
 
     @Override
@@ -83,10 +84,14 @@ public class ActivityServiceImpl implements ActivityService {
             RecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
                 String.format("Activity record couldn't be created for organization: %s", orgId)));
 
+            Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(orgId);
             if (CollectionUtils.isEmpty(record.getConflicts())) {
-                return Optional.empty();
+                return Optional.of(ActivityDTO.builder()
+                    .record(record)
+                    .organizationMatches(new ArrayList<>())
+                    .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
+                    .build());
             } else {
-                Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(orgId);
                 List<OrganizationMatchDTO> matches = organizationMatchService.findAllForOrganization(orgId);
 
                 return Optional.of(ActivityDTO.builder()
@@ -97,6 +102,14 @@ public class ActivityServiceImpl implements ActivityService {
             }
         } catch (IllegalAccessException e) {
             return Optional.empty();
+        }
+    }
+
+    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, Pageable pageable) {
+        if (ownerId != null) {
+            return activityRepository.findAllOrgIdsWithOwnerId(ownerId, pageable);
+        } else {
+            return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
         }
     }
 }

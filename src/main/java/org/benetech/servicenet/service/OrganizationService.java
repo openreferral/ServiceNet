@@ -2,8 +2,6 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,8 +56,4 @@ public interface OrganizationService {
      * @param id the id of the entity
      */
     void delete(UUID id);
-
-    Page<Organization> findAllOrgIdsWithOwnerId(UUID ownerId, Pageable pageable);
-
-    List<OrganizationDTO> findAllWithOwnerId(UUID ownerId);
 }

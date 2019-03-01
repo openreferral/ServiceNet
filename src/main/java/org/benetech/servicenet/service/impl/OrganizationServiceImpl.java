@@ -7,20 +7,14 @@ import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing Organization.
@@ -91,8 +85,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Transactional(readOnly = true)
     public List<OrganizationDTO> findAllWhereFundingIsNull() {
         log.debug("Request to get all organizations where Funding is null");
-        return StreamSupport
-            .stream(organizationRepository.findAll().spliterator(), false)
+        return organizationRepository.findAll().stream()
             .filter(organization -> organization.getFunding() == null)
             .map(organizationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
@@ -132,22 +125,5 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void delete(UUID id) {
         log.debug("Request to delete Organization : {}", id);
         organizationRepository.deleteById(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Organization> findAllOrgIdsWithOwnerId(UUID ownerId, Pageable pageable) {
-        if (ownerId != null) {
-            return organizationRepository.findAllOrgIdsWithOwnerId(ownerId, pageable);
-        } else {
-            return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<OrganizationDTO> findAllWithOwnerId(UUID ownerId) {
-        return organizationRepository.findAllWithOwnerId(ownerId).stream().map(organizationMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
     }
 }
