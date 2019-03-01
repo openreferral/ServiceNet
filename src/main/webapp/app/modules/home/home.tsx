@@ -108,6 +108,17 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     });
   };
 
+  clearSearchBar = () => {
+    if (this.state.searchPhrase !== '') {
+      this.setState({
+        searchPhrase: '',
+        typingTimeout: setTimeout(() => {
+          this.searchEntities();
+        }, SEARCH_TIMEOUT)
+      });
+    }
+  };
+
   render() {
     const { account, activityList } = this.props;
     return (
@@ -150,7 +161,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
           >
             <Container>
               <Row>
-                <Col className="searchBar">
+                <Col sm="12" className="searchBar">
                   <FontAwesomeIcon icon="search" size="lg" className="searchIcon" />
                   <Input
                     bsSize="lg"
@@ -163,6 +174,9 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                     onChange={this.changeSearchPhrase}
                   />
                 </Col>
+                <div className="searchClearIconContainer" onClick={this.clearSearchBar}>
+                  <FontAwesomeIcon icon="times-circle" size="lg" className="searchClearIcon" />
+                </div>
               </Row>
               <Row>
                 <Col className="col-auto mr-auto">
