@@ -84,8 +84,8 @@ const apiUrl = 'api/activities';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IActivity> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+export const getEntities = (search, page, size, sort) => {
+  const requestUrl = `${apiUrl}${sort ? `?search=${search}&page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_ACTIVITY_LIST,
     payload: axios.get<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

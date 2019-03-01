@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public interface ActivityService {
 
-    Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId);
+    Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId, String search);
 
     Optional<ActivityDTO> getOneByOrganizationId(UUID organizationId);
 }
