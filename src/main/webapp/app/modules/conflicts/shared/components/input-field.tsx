@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IActivity } from 'app/shared/model/activity.model';
-import '../single-record-view.scss';
+import '../shared-record-view.scss';
 import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 const DOMAIN_CLASS = 'org.benetech.servicenet.domain';
@@ -16,6 +16,7 @@ export interface IInputFieldProp extends StateProps, DispatchProps {
   fieldName: string;
   type: string;
   defaultValue: any;
+  isBaseRecord: boolean;
 }
 
 export interface IInputFieldState {
@@ -49,7 +50,9 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
   }
 
   isConflicting(fieldName, entityPath) {
-    return this.props.activity.record.conflicts.some(e => e.fieldName === fieldName && e.entityPath === entityPath);
+    return (
+      this.props.activity.record.conflicts.some(e => e.fieldName === fieldName && e.entityPath === entityPath) && this.props.isBaseRecord
+    );
   }
 
   isExcluded(fieldName, entityPath) {

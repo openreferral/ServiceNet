@@ -45,7 +45,7 @@ export class Tabs extends React.Component<ISingleRecordViewProp, ISingleRecordVi
         </Nav>
         <TabContent activeTab={this.state.activeTab}>
           <TabPane tabId="1">
-            <Details {...this.props} />
+            <Details {...this.props} isBaseRecord />
           </TabPane>
         </TabContent>
       </div>

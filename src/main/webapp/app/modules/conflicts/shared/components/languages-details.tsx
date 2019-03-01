@@ -1,26 +1,26 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { AdditionalDetails } from '../additional-details';
-import { IPaymentAccepted } from 'app/shared/model/payment-accepted.model';
+import { AdditionalDetails } from './additional-details';
+import { ILanguage } from 'app/shared/model/language.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IPaymentsAcceptedDetailsProp extends StateProps, DispatchProps {
+export interface ILanguagesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  payments: IPaymentAccepted[];
+  langs: ILanguage[];
 }
 
-export class PaymentsAcceptedDetails extends React.Component<IPaymentsAcceptedDetailsProp> {
+export class LanguagesDetails extends React.Component<ILanguagesDetailsProp> {
   render() {
-    const { payments } = this.props;
-    const fields = payments.map(payment => getTextField(payment, 'payment'));
+    const { langs } = this.props;
+    const fields = langs.map(language => getTextField(language, 'language'));
 
     return fields.length > 0 ? (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'PaymentAccepted'}
+        entityClass={'Language'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
@@ -41,4 +41,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PaymentsAcceptedDetails);
+)(LanguagesDetails);
