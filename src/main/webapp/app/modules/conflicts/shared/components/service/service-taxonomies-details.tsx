@@ -1,26 +1,28 @@
 import React from 'react';
-import '../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { AdditionalDetails } from './additional-details';
-import { ILanguage } from 'app/shared/model/language.model';
+import { AdditionalDetails } from '../additional-details';
+import { Translate } from 'react-jhipster';
+import { Badge } from 'reactstrap';
+import { IServiceTaxonomy } from 'app/shared/model/service-taxonomy.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface ILanguagesDetailsProp extends StateProps, DispatchProps {
+export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  langs: ILanguage[];
+  taxonomies: IServiceTaxonomy[];
 }
 
-export class LanguagesDetails extends React.Component<ILanguagesDetailsProp> {
+export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomiesDetailsProp> {
   render() {
-    const { langs } = this.props;
-    const fields = langs.map(language => getTextField(language, 'language'));
+    const { taxonomies } = this.props;
+    const fields = taxonomies.map(taxonomy => getTextField(taxonomy, 'taxonomyDetails'));
 
     return fields.length > 0 ? (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'Language'}
+        entityClass={'ServiceTaxonomy'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
@@ -41,4 +43,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(LanguagesDetails);
+)(ServiceTaxonomiesDetails);

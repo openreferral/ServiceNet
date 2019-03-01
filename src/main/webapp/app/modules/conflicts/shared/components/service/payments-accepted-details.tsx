@@ -1,33 +1,33 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { AdditionalDetails } from '../additional-details';
-import { IEligibility } from 'app/shared/model/eligibility.model';
+import { IPaymentAccepted } from 'app/shared/model/payment-accepted.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IEligibilityDetailsProp extends StateProps, DispatchProps {
+export interface IPaymentsAcceptedDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  eligibility: IEligibility;
+  payments: IPaymentAccepted[];
 }
 
-export class EligibilityDetails extends React.Component<IEligibilityDetailsProp> {
+export class PaymentsAcceptedDetails extends React.Component<IPaymentsAcceptedDetailsProp> {
   render() {
-    const eligibility = this.props.eligibility ? this.props.eligibility : {};
-    const fields = [getTextField(eligibility, 'eligibility')];
+    const { payments } = this.props;
+    const fields = payments.map(payment => getTextField(payment, 'payment'));
 
-    return (
+    return fields.length > 0 ? (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'Eligibility'}
+        entityClass={'PaymentAccepted'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
         isCustomToggle={false}
         customToggleValue={false}
       />
-    );
+    ) : null;
   }
 }
 
@@ -41,4 +41,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(EligibilityDetails);
+)(PaymentsAcceptedDetails);

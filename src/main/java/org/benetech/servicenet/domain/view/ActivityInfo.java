@@ -22,6 +22,9 @@ public class ActivityInfo {
     )
     private UUID id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "recent")
     private Timestamp recent;
 

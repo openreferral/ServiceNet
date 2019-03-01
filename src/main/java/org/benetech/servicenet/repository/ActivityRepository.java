@@ -21,4 +21,14 @@ public interface ActivityRepository extends JpaRepository<ActivityInfo, UUID> {
                      "WHERE ORG.ACCOUNT_ID = :ownerId",
         nativeQuery = true)
     Page<ActivityInfo> findAllOrgIdsWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
+
+    @Query(value =
+        "SELECT * FROM activity_info\n" +
+            "WHERE ACCOUNT_ID = :ownerId AND UPPER(NAME) LIKE UPPER(:search)",
+        countQuery = "SELECT COUNT(ID)\n" +
+            "FROM ORGANIZATION ORG\n" +
+            "WHERE ORG.ACCOUNT_ID = :ownerId",
+        nativeQuery = true)
+    Page<ActivityInfo> findAllOrgIdsWithOwnerIdAndSearchPhrase(@Param("ownerId") UUID ownerId,
+                                                               @Param("search") String search, Pageable pageable);
 }

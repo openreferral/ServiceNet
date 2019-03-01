@@ -1,35 +1,33 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { AdditionalDetails } from '../additional-details';
-import { IRequiredDocument } from 'app/shared/model/required-document.model';
-import { Translate } from 'react-jhipster';
-import { Badge } from 'reactstrap';
+import { IFunding } from 'app/shared/model/funding.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IRequiredDocumentsDetailsProp extends StateProps, DispatchProps {
+export interface IFundingDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  docs: IRequiredDocument[];
+  funding: IFunding;
 }
 
-export class RequiredDocumentsDetails extends React.Component<IRequiredDocumentsDetailsProp> {
+export class FundingDetails extends React.Component<IFundingDetailsProp> {
   render() {
-    const { docs } = this.props;
-    const fields = docs.map(document => getTextField(document, 'document'));
+    const funding = this.props.funding ? this.props.funding : {};
+    const fields = [getTextField(funding, 'source')];
 
-    return fields.length > 0 ? (
+    return (
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'RequiredDocument'}
+        entityClass={'Funding'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
         isCustomToggle={false}
         customToggleValue={false}
       />
-    ) : null;
+    );
   }
 }
 
@@ -43,4 +41,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(RequiredDocumentsDetails);
+)(FundingDetails);

@@ -1,17 +1,17 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
-import { IPostalAddress } from 'app/shared/model/postal-address.model';
+import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
 import { AdditionalDetails } from '../additional-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface IPostalAddressDetailsProp extends StateProps, DispatchProps {
+export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
-  address: IPostalAddress;
+  address: IPhysicalAddress;
 }
 
-export class PostalAddressDetails extends React.Component<IPostalAddressDetailsProp> {
+export class PhysicalAddressDetails extends React.Component<IPhysicalAddressDetailsProp> {
   render() {
     const address = this.props.address ? this.props.address : {};
     const fields = [
@@ -28,7 +28,7 @@ export class PostalAddressDetails extends React.Component<IPostalAddressDetailsP
       <AdditionalDetails
         {...this.props}
         fields={fields}
-        entityClass={'PostalAddress'}
+        entityClass={'PhysicalAddress'}
         customHeader={false}
         additionalFields={false}
         toggleAvailable
@@ -49,4 +49,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PostalAddressDetails);
+)(PhysicalAddressDetails);

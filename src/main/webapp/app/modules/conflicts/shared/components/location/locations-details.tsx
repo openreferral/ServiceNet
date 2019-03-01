@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { SingleLocationDetails } from './single-location-details';
@@ -7,6 +7,7 @@ import { ILocationRecord } from 'app/shared/model/location-record.model';
 
 export interface ILocationsDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
+  columnSize: number;
 }
 
 export interface ILocationsDetailsState {

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../single-record-view.scss';
+import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivity } from 'app/shared/model/activity.model';
 import { SingleContactDetails } from './single-contact-details';
@@ -8,6 +8,7 @@ import { IContact } from 'app/shared/model/contact.model';
 export interface IContactsDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   contacts: IContact[];
+  columnSize: number;
 }
 
 export interface IContactsDetailsState {

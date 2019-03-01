@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
@@ -54,9 +55,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId) {
+    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId, String search) {
         List<ActivityDTO> activities = new ArrayList<>();
-        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, pageable);
+        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, pageable, search);
 
         for (ActivityInfo info : activitiesInfo) {
             try {
@@ -105,9 +106,14 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
-    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, Pageable pageable) {
+    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, Pageable pageable, String search) {
         if (ownerId != null) {
-            return activityRepository.findAllOrgIdsWithOwnerId(ownerId, pageable);
+            if (StringUtils.isBlank(search)) {
+                return activityRepository.findAllOrgIdsWithOwnerId(ownerId, pageable);
+            } else {
+                String searchQuery = "%" + search + "%";
+                return activityRepository.findAllOrgIdsWithOwnerIdAndSearchPhrase(ownerId, searchQuery, pageable);
+            }
         } else {
             return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
         }
