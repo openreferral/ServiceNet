@@ -57,7 +57,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId, String search) {
         List<ActivityDTO> activities = new ArrayList<>();
-        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, pageable, search);
+        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, pageable);
 
         for (ActivityInfo info : activitiesInfo) {
             try {
@@ -106,13 +106,12 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
-    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, Pageable pageable, String search) {
+    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, String search, Pageable pageable) {
         if (ownerId != null) {
             if (StringUtils.isBlank(search)) {
-                return activityRepository.findAllOrgIdsWithOwnerId(ownerId, pageable);
+                return activityRepository.findAllWithOwnerId(ownerId, pageable);
             } else {
-                String searchQuery = "%" + search + "%";
-                return activityRepository.findAllOrgIdsWithOwnerIdAndSearchPhrase(ownerId, searchQuery, pageable);
+                return activityRepository.findAllWithOwnerIdAndSearchPhrase(ownerId, search, pageable);
             }
         } else {
             return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
