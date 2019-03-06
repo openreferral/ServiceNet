@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.factory.records;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.SystemAccount;
@@ -58,10 +59,12 @@ public class RecordFactory {
             .flatMap(c -> c.getAcceptedThisChangeNames().stream())
             .collect(Collectors.toSet());
 
-        List<ExclusionsConfigDTO> configs = exclusionsConfigService.findAllBySystemAccountNameIn(conflictingProviders);
+        if (CollectionUtils.isNotEmpty(conflictingProviders)) {
+            List<ExclusionsConfigDTO> configs = exclusionsConfigService.findAllBySystemAccountNameIn(conflictingProviders);
 
-        for (ExclusionsConfigDTO config : configs) {
-            filterConflictsByConfig(conflictDTOS, config);
+            for (ExclusionsConfigDTO config : configs) {
+                filterConflictsByConfig(conflictDTOS, config);
+            }
         }
 
         return conflictDTOS;
