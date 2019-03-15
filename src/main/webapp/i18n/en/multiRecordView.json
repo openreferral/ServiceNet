@@ -2,9 +2,9 @@
   "multiRecordView": {
     "seeAnotherMatch": "See another match",
     "sameRecord": {
-      "question": "Does this look like it's the same record for you?",
-      "confirm": "Yes, this is the same",
-      "deny": "No, this doesn't match"
+      "question": "Is this record for the same organization (even if it has a different address, location, etc.) or is it a totally different organization (a mismatch)?",
+      "confirm": "IT’S THE SAME",
+      "deny": "IT’S TOTALLY DIFFERENT"
     },
     "yourData": "Your data",
     "from": "From "
