@@ -132,13 +132,24 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .collect(Collectors.toList());
         List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getId(),
             organization.getAccount().getName());
-        List<OrganizationMatch> matches = findAndPersistMatches(organization, notMatchedOrgs, context);
+        findAndPersistMatches(organization, notMatchedOrgs, context);
+        detectConflictsForCurrentMatches(organization);
+    }
+
+    private void detectConflictsForCurrentMatches(Organization organization) {
+        List<OrganizationMatch> matches = findCurrentMatches(organization);
+        matches.addAll(findCurrentPartnersMatches(organization));
         conflictDetectionService.detect(matches);
     }
 
     private List<OrganizationMatch> findCurrentMatches(Organization organization) {
         return organizationMatchRepository
             .findAllByOrganizationRecordId(organization.getId());
+    }
+
+    private List<OrganizationMatch> findCurrentPartnersMatches(Organization organization) {
+        return organizationMatchRepository
+            .findAllByPartnerVersionId(organization.getId());
     }
 
     private List<Organization> findNotMatchedOrgs(List<UUID> currentMatchesIds, UUID currentId, String providerName) {

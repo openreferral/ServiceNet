@@ -103,6 +103,7 @@
     <include file="config/liquibase/changelog/20190124145536_added_entity_constraints_ExclusionsConfig.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190222145536_added_index_on_Metadata_resource_id.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190301112806_create_activity_info_view.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190315164106_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <include file="config/liquibase/changelog/20181220100327_insert_initial_SystemAccounts.xml"
              relativeToChangelogFile="false"/>

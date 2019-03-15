@@ -1,7 +1,6 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Conflict;
-import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,17 +34,16 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
     List<Conflict> findAllWithResourceIdAndOwnerId(
         @Param("resourceId") UUID resourceId, @Param("ownerId") UUID ownerId);
 
-    @Query("select conflict from Conflict conflict where conflict.resourceId =:resourceId")
-    List<Conflict> findAllWithResourceId(@Param("resourceId") UUID resourceId);
+    @Query("select conflict from Conflict conflict where conflict.resourceId =:resourceId " +
+            "and conflict.state = 'PENDING'")
+    List<Conflict> findAllPendingWithResourceId(@Param("resourceId") UUID resourceId);
 
-    @Query("select max(conflict.offeredValueDate) from Conflict conflict " +
+    @Query("select max(conflict.stateDate) from Conflict conflict " +
         "where conflict.resourceId =:resourceId and conflict.state = 'PENDING'")
-    Optional<ZonedDateTime> findMostRecentOfferedValueDate(@Param("resourceId") UUID resourceId);
+    Optional<ZonedDateTime> findMostRecentStateDate(@Param("resourceId") UUID resourceId);
 
-    Optional<Conflict>
-    findFirstByResourceIdAndCurrentValueAndOfferedValueAndStateAndOwnerOrderByStateDateDesc(UUID resourceId,
-                                                                                            String currentValue,
-                                                                                            String offeredValue,
-                                                                                            ConflictStateEnum state,
-                                                                                            SystemAccount owner);
+    List<Conflict> findAllByResourceIdAndFieldNameAndOfferedValueAndState(UUID resourceId,
+                                                                          String fieldName,
+                                                                          String offeredValue,
+                                                                          ConflictStateEnum state);
 }

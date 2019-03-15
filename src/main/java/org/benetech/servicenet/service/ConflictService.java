@@ -1,7 +1,6 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Conflict;
-import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 
 import org.springframework.data.domain.Page;
@@ -67,26 +66,24 @@ public interface ConflictService {
      *
      * @param resourceId the id of the resource entity
      */
-    List<ConflictDTO> findAllWithResourceId(UUID resourceId);
+    List<ConflictDTO> findAllPendingWithResourceId(UUID resourceId);
 
     /**
      * Get max offeredValueDate of Conflict with resourceId.
      *
      * @param resourceId the id of the resource entity
      */
-    Optional<ZonedDateTime> findMostRecentOfferedValueDate(UUID resourceId);
+    Optional<ZonedDateTime> findMostRecentStateDate(UUID resourceId);
 
     /**
-     * Get most recent, pending conflict wit specified resourceId, currentValue and offeredValue.
+     * Get list of pending conflicts wit specified resourceId, fieldName and offeredValue.
      *
      * @param resourceId the id of the resource entity
-     * @param currentValue the currentValue of the resource entity
+     * @param fieldName the currentValue of the resource entity
      * @param offeredValue the offeredValue of the resource entity
-     * @param owner the owner of the resource entity
      */
-    Optional<Conflict> findExistingConflict(UUID resourceId,
-                                            String currentValue,
-                                            String offeredValue,
-                                            SystemAccount owner);
+    List<Conflict> findAllConflictsWhichOffersTheSameValue(UUID resourceId,
+                                                           String fieldName,
+                                                           String offeredValue);
 
 }
