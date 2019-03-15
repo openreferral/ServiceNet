@@ -85,7 +85,7 @@ public class ActivityServiceImpl implements ActivityService {
             RecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
                 String.format("Activity record couldn't be created for organization: %s", orgId)));
 
-            Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(orgId);
+            Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentStateDate(orgId);
             if (CollectionUtils.isEmpty(record.getConflicts())) {
                 return Optional.of(ActivityDTO.builder()
                     .record(record)

@@ -5,6 +5,7 @@ import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.benetech.servicenet.matching.model.EntityEquivalent;
 import org.benetech.servicenet.matching.model.OrganizationEquivalent;
 import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsService;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -82,8 +84,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         long elapsedTime = stopTime - detectionStartTime;
         //TODO: Remove time counting logic (#264)
         log.info("Searching for conflicts took " + elapsedTime + "ms");
-        conflicts = updateExistingConflictsOrCreate(conflicts);
-        conflicts.forEach(em::persist);
+        persistConflicts(conflicts);
     }
 
     private List<EntityEquivalent> gatherAllEquivalents(OrganizationEquivalent orgEquivalent) {
@@ -129,23 +130,22 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         conflict.addAcceptedThisChange(accepted);
     }
 
-    private List<Conflict> updateExistingConflictsOrCreate(List<Conflict> unchecked) {
-        List<Conflict> conflicts = new LinkedList<>();
+    private void persistConflicts(List<Conflict> conflicts) {
+        conflicts.forEach(conflict -> {
+            rejectAllOutdatedConflicts(conflict);
+            em.persist(conflict);
+        });
+    }
 
-        for (Conflict conflict : unchecked) {
-            Optional<Conflict> databaseOpt = conflictService.findExistingConflict(conflict.getResourceId(),
-                conflict.getCurrentValue(), conflict.getOfferedValue(), conflict.getOwner());
-            if (databaseOpt.isPresent()) {
-                Conflict databaseConflict = databaseOpt.get();
-                conflict.getAcceptedThisChange().forEach(databaseConflict::addAcceptedThisChange);
+    private void rejectAllOutdatedConflicts(Conflict c) {
+        List<Conflict> outdated = conflictService.findAllConflictsWhichOffersTheSameValue(
+            c.getResourceId(), c.getFieldName(), c.getOfferedValue());
 
-                conflicts.add(databaseConflict);
-            } else {
-                conflicts.add(conflict);
-            }
-        }
-
-        return conflicts;
+        outdated.forEach(out -> {
+            out.setState(ConflictStateEnum.REJECTED);
+            out.setStateDate(ZonedDateTime.now());
+            em.persist(out);
+        });
     }
 
 }

@@ -174,11 +174,11 @@ public class ConflictDetectionServiceImplTest {
         conflictDetectionService.detect(Arrays.asList(match, match2));
 
         // Assert
-        assertFalse(CollectionUtils.isEmpty(conflictRepository.findAllWithResourceId(org.getId())));
-        assertFalse(CollectionUtils.isEmpty(conflictRepository.findAllWithResourceId(theSameOrg.getId())));
+        assertFalse(CollectionUtils.isEmpty(conflictRepository.findAllPendingWithResourceId(org.getId())));
+        assertFalse(CollectionUtils.isEmpty(conflictRepository.findAllPendingWithResourceId(theSameOrg.getId())));
 
-        Conflict conflictOrg = conflictRepository.findAllWithResourceId(org.getId()).get(0);
-        Conflict conflictTheSameOrg = conflictRepository.findAllWithResourceId(theSameOrg.getId()).get(0);
+        Conflict conflictOrg = conflictRepository.findAllPendingWithResourceId(org.getId()).get(0);
+        Conflict conflictTheSameOrg = conflictRepository.findAllPendingWithResourceId(theSameOrg.getId()).get(0);
         assertEquals(conflictTheSameOrg.getOfferedValueDate(), conflictOrg.getCurrentValueDate());
         assertEquals(conflictOrg.getOfferedValueDate(), conflictTheSameOrg.getCurrentValueDate());
     }

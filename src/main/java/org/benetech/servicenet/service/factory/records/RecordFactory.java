@@ -51,7 +51,7 @@ public class RecordFactory {
     }
 
     private List<ConflictDTO> getBaseConflicts(UUID resourceId) {
-        return conflictService.findAllWithResourceId(resourceId);
+        return conflictService.findAllPendingWithResourceId(resourceId);
     }
 
     private List<ConflictDTO> filterWithPartnersConfigs(List<ConflictDTO> conflictDTOS) {

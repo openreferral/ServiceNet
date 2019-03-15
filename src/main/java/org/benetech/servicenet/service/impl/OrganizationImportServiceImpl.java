@@ -15,6 +15,7 @@ import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     private FundingRepository fundingRepository;
 
     @Override
+    @Transactional
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
                                                    String providerName, DataImportReport report) {
         Organization organization = new Organization(filledOrganization);
