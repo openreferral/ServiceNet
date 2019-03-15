@@ -50,7 +50,7 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
         </div>
         {isOnlyOne ? null : (
           <Button className="primary" onClick={this.props.changeRecord}>
-            <Translate contentKey="singleRecordView.details.seeAnotherRecord" />
+            <Translate contentKey="singleRecordView.details.seeAnotherLocation" />
           </Button>
         )}
       </h4>

@@ -55,7 +55,7 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
         </div>
         {isOnlyOne ? null : (
           <Button className="primary" onClick={this.props.changeRecord}>
-            <Translate contentKey="singleRecordView.details.seeAnotherRecord" />
+            <Translate contentKey="singleRecordView.details.seeAnotherService" />
           </Button>
         )}
       </h4>

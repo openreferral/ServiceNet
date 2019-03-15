@@ -45,7 +45,7 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
         </div>
         {isOnlyOne ? null : (
           <Button className="primary" onClick={this.props.changeRecord}>
-            <Translate contentKey="singleRecordView.details.seeAnotherRecord" />
+            <Translate contentKey="singleRecordView.details.seeAnotherContact" />
           </Button>
         )}
       </h4>
