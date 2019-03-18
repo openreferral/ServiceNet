@@ -78,8 +78,8 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
     return (
       <div>
         <OrganizationDetails {...this.props} sideSection={sideSection} columnSize={columnSize} />
-        <LocationsDetails {...this.props} columnSize={columnSize} />
-        <ServicesDetails {...this.props} columnSize={columnSize} />
+        <LocationsDetails {...this.props} locations={this.props.activity.record.locations} columnSize={columnSize} />
+        <ServicesDetails {...this.props} services={this.props.activity.record.services} columnSize={columnSize} />
         <ContactsDetails {...this.props} contacts={this.props.activity.record.contacts} columnSize={columnSize} />
       </div>
     );

@@ -8,29 +8,29 @@ import { ILocationRecord } from 'app/shared/model/location-record.model';
 export interface ILocationsDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   columnSize: number;
+  locations: ILocationRecord[];
 }
 
 export interface ILocationsDetailsState {
-  locations: ILocationRecord[];
   locationsNumber: number;
 }
 
 export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILocationsDetailsState> {
   state: ILocationsDetailsState = {
-    locations: this.props.activity.record.locations,
     locationsNumber: 0
   };
 
   changeRecord = () => {
     let locationsNumber = 0;
-    if (this.state.locationsNumber !== this.state.locations.length - 1) {
+    if (this.state.locationsNumber !== this.props.locations.length - 1) {
       locationsNumber = this.state.locationsNumber + 1;
     }
     this.setState({ locationsNumber });
   };
 
   render() {
-    const { locations, locationsNumber } = this.state;
+    const { locations } = this.props;
+    const { locationsNumber } = this.state;
     const record = locations[locationsNumber];
     const locationDetails =
       locations.length > locationsNumber ? (

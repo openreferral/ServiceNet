@@ -8,29 +8,29 @@ import { SingleServiceDetails } from './single-service-details';
 export interface IServicesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   columnSize: number;
+  services: IServiceRecord[];
 }
 
 export interface IServicesDetailsState {
-  services: IServiceRecord[];
   servicesNumber: number;
 }
 
 export class ServicesDetails extends React.Component<IServicesDetailsProp, IServicesDetailsState> {
   state: IServicesDetailsState = {
-    services: this.props.activity.record.services,
     servicesNumber: 0
   };
 
   changeRecord = () => {
     let servicesNumber = 0;
-    if (this.state.servicesNumber !== this.state.services.length - 1) {
+    if (this.state.servicesNumber !== this.props.services.length - 1) {
       servicesNumber = this.state.servicesNumber + 1;
     }
     this.setState({ servicesNumber });
   };
 
   render() {
-    const { services, servicesNumber } = this.state;
+    const { services } = this.props;
+    const { servicesNumber } = this.state;
     const record = services[servicesNumber];
     const serviceDetails =
       services.length > servicesNumber ? (
