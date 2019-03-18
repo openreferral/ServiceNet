@@ -78,7 +78,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   };
 
   handleLoadMore = () => {
-    if (window.pageYOffset > 0) {
+    if (window.pageYOffset > 0 && this.props.totalItems > this.props.activityList.length) {
       this.setState({ activePage: this.state.activePage + 1 }, () => this.getEntities());
     }
   };
