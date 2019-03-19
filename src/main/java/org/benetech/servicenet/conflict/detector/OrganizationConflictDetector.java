@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings("checkstyle:booleanExpressionComplexity")
 @Service("OrganizationConflictDetector")
 public class OrganizationConflictDetector extends AbstractDetector<Organization> implements ConflictDetector<Organization> {
 
     @Override
-    public List<Conflict> detect(Organization current, Organization offered) {
+    public List<Conflict> detectConflicts(Organization current, Organization offered) {
         List<Conflict> conflicts = new LinkedList<>();
 
         conflicts.addAll(detectConflicts(current, current.getName(), offered.getName(), "name"));
@@ -30,6 +31,20 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
         conflicts.addAll(detectConflicts(current, current.getActive(), offered.getActive(), "active"));
 
         return conflicts;
+    }
+
+    @Override
+    public boolean areConflicted(Organization current, Organization offered) {
+        return detect(current.getName(), offered.getName()) ||
+            detect(current.getAlternateName(), offered.getAlternateName()) ||
+            detect(current.getDescription(), offered.getDescription()) ||
+            detect(current.getEmail(), offered.getEmail()) ||
+            detect(current.getUrl(), offered.getUrl()) ||
+            detect(current.getTaxStatus(), offered.getTaxStatus()) ||
+            detect(current.getTaxId(), offered.getTaxId()) ||
+            detect(current.getYearIncorporated(), offered.getYearIncorporated()) ||
+            detect(current.getLegalStatus(), offered.getLegalStatus()) ||
+            detect(current.getActive(), offered.getActive());
     }
 
     @Override

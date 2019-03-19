@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface ConflictDetector<T> {
 
-    List<Conflict> detect(T current, T offered);
+    List<Conflict> detectConflicts(T current, T offered);
+
+    boolean areConflicted(T current, T offered);
 }

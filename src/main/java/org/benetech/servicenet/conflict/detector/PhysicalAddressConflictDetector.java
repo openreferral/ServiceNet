@@ -7,12 +7,13 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings("checkstyle:booleanExpressionComplexity")
 @Component("PhysicalAddressConflictDetector")
 public class PhysicalAddressConflictDetector extends AbstractDetector<PhysicalAddress> implements
     ConflictDetector<PhysicalAddress> {
 
     @Override
-    public List<Conflict> detect(PhysicalAddress current, PhysicalAddress offered) {
+    public List<Conflict> detectConflicts(PhysicalAddress current, PhysicalAddress offered) {
         List<Conflict> conflicts = new LinkedList<>();
 
         conflicts.addAll(detectConflicts(current, current.getAttention(), offered.getAttention(), "attention"));
@@ -25,6 +26,17 @@ public class PhysicalAddressConflictDetector extends AbstractDetector<PhysicalAd
         conflicts.addAll(detectConflicts(current, current.getCountry(), offered.getCountry(), "country"));
 
         return conflicts;
+    }
+
+    @Override
+    public boolean areConflicted(PhysicalAddress current, PhysicalAddress offered) {
+        return detect(current.getAttention(), offered.getAttention()) ||
+            detect(current.getAddress1(), offered.getAddress1()) ||
+            detect(current.getCity(), offered.getCity()) ||
+            detect(current.getRegion(), offered.getRegion()) ||
+            detect(current.getStateProvince(), offered.getStateProvince()) ||
+            detect(current.getPostalCode(), offered.getPostalCode()) ||
+            detect(current.getCountry(), offered.getCountry());
     }
 
     @Override
