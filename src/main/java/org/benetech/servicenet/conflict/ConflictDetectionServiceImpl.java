@@ -21,9 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ConflictDetectionServiceImpl implements ConflictDetectionService {
@@ -138,8 +140,10 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
     }
 
     private void rejectAllOutdatedConflicts(Conflict c) {
-        List<Conflict> outdated = conflictService.findAllConflictsWhichOffersTheSameValue(
-            c.getResourceId(), c.getFieldName(), c.getOfferedValue());
+        Set<Conflict> outdated = new HashSet<>(conflictService.findAllConflictsWhichOffersTheSameValue(
+            c.getResourceId(), c.getFieldName(), c.getOfferedValue()));
+        outdated.addAll(conflictService.findAllConflictsWhichHoldsTheSameValue(
+            c.getResourceId(), c.getFieldName(), c.getCurrentValue()));
 
         outdated.forEach(out -> {
             out.setState(ConflictStateEnum.REJECTED);

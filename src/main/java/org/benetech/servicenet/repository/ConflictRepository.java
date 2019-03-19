@@ -46,4 +46,9 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
                                                                           String fieldName,
                                                                           String offeredValue,
                                                                           ConflictStateEnum state);
+
+    List<Conflict> findAllByResourceIdAndFieldNameAndCurrentValueAndState(UUID resourceId,
+                                                                          String fieldName,
+                                                                          String currentValue,
+                                                                          ConflictStateEnum state);
 }

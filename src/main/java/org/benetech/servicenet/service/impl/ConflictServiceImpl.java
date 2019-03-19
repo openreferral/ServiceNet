@@ -146,4 +146,12 @@ public class ConflictServiceImpl implements ConflictService {
         return conflictRepository.findAllByResourceIdAndFieldNameAndOfferedValueAndState(resourceId, fieldName,
             offeredValue, ConflictStateEnum.PENDING);
     }
+
+    @Override
+    public List<Conflict> findAllConflictsWhichHoldsTheSameValue(UUID resourceId, String fieldName, String currentValue) {
+        log.debug("Request to get conflicts with resourceId: {}, fieldName: {} and offeredValue: {}.",
+            resourceId, fieldName, currentValue);
+        return conflictRepository.findAllByResourceIdAndFieldNameAndCurrentValueAndState(resourceId, fieldName,
+            currentValue, ConflictStateEnum.PENDING);
+    }
 }
