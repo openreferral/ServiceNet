@@ -86,4 +86,15 @@ public interface ConflictService {
                                                            String fieldName,
                                                            String offeredValue);
 
+    /**
+     * Get list of pending conflicts wit specified resourceId, fieldName and currentValue.
+     *
+     * @param resourceId the id of the resource entity
+     * @param fieldName the currentValue of the resource entity
+     * @param currentValue the offeredValue of the resource entity
+     */
+    List<Conflict> findAllConflictsWhichHoldsTheSameValue(UUID resourceId,
+                                                          String fieldName,
+                                                          String currentValue);
+
 }
