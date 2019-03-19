@@ -70,7 +70,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         createOrUpdateProgramsForOrganization(filledOrganization.getPrograms(), organization);
         createOrUpdateContactsForOrganization(filledOrganization.getContacts(), organization);
 
-        return organization;
+        return em.merge(organization);
     }
 
     @ConfidentialFilter
