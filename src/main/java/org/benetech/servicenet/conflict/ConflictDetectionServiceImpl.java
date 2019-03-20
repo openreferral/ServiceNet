@@ -1,5 +1,6 @@
 package org.benetech.servicenet.conflict;
 
+import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.conflict.detector.ConflictDetector;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Metadata;
@@ -29,8 +30,6 @@ import java.util.Set;
 
 @Service
 public class ConflictDetectionServiceImpl implements ConflictDetectionService {
-
-    private static final String CONFLICT_DETECTOR_SUFFIX = "ConflictDetector";
 
     private final Logger log = LoggerFactory.getLogger(ConflictDetectionServiceImpl.class);
 
@@ -104,8 +103,8 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
             try {
                 ConflictDetector detector = context.getBean(
-                    eq.getClazz().getSimpleName() + CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
-                List<Conflict> innerConflicts = detector.detect(current, mirror);
+                    eq.getClazz().getSimpleName() + Constants.CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
+                List<Conflict> innerConflicts = detector.detectConflicts(current, mirror);
                 innerConflicts.forEach(c -> addConflictingDates(eq, c));
                 innerConflicts.forEach(c -> addAccounts(c, owner, accepted));
 

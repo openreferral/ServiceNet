@@ -36,7 +36,7 @@ public class PhysicalAddressConflictDetectorTest {
         PhysicalAddress address = createDefaultPhysicalAddress();
         PhysicalAddress mirrorAddress = createDefaultPhysicalAddress();
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(Collections.emptyList(), conflicts);
     }
@@ -53,7 +53,7 @@ public class PhysicalAddressConflictDetectorTest {
             .postalCode(DEFAULT_POSTAL_CODE.toLowerCase())
             .country(DEFAULT_COUNTRY.toLowerCase());
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(Collections.emptyList(), conflicts);
     }
@@ -64,7 +64,7 @@ public class PhysicalAddressConflictDetectorTest {
         PhysicalAddress mirrorAddress = createDefaultPhysicalAddress();
         mirrorAddress.setAddress1(StringUtils.randomAlphanumeric(7));
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(conflicts.size(), 1);
         assertEquals(address.getAddress1(), conflicts.get(0).getCurrentValue());
@@ -83,7 +83,7 @@ public class PhysicalAddressConflictDetectorTest {
             .postalCode(StringUtils.randomAlphanumeric(50))
             .country(StringUtils.randomAlphanumeric(60));
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(7, conflicts.size());
     }
@@ -94,7 +94,7 @@ public class PhysicalAddressConflictDetectorTest {
         PhysicalAddress address = createDefaultPhysicalAddress();
         PhysicalAddress mirrorAddress = new PhysicalAddress();
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(7, conflicts.size());
     }
@@ -107,7 +107,7 @@ public class PhysicalAddressConflictDetectorTest {
         PhysicalAddress mirrorAddress = createDefaultPhysicalAddress();
         mirrorAddress.setCity(null);
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(Collections.emptyList(), conflicts);
     }
@@ -120,7 +120,7 @@ public class PhysicalAddressConflictDetectorTest {
         PhysicalAddress mirrorAddress = createDefaultPhysicalAddress();
         mirrorAddress.setAttention(null);
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(Collections.emptyList(), conflicts);
     }
@@ -133,7 +133,7 @@ public class PhysicalAddressConflictDetectorTest {
         PhysicalAddress mirrorAddress = createDefaultPhysicalAddress();
         mirrorAddress.setCountry("");
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(Collections.emptyList(), conflicts);
     }
@@ -145,7 +145,7 @@ public class PhysicalAddressConflictDetectorTest {
 
         PhysicalAddress mirrorAddress = createDefaultPhysicalAddress();
 
-        List<Conflict> conflicts = conflictDetector.detect(address, mirrorAddress);
+        List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(1, conflicts.size());
         assertEquals(org.apache.commons.lang3.StringUtils.EMPTY, conflicts.get(0).getCurrentValue());

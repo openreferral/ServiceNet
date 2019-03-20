@@ -16,6 +16,8 @@ public final class Constants {
 
     public static final String ALL_FIELDS = "ALL FIELDS";
 
+    public static final String CONFLICT_DETECTOR_SUFFIX = "ConflictDetector";
+
     private Constants() {
     }
 }

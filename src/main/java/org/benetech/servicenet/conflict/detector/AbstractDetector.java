@@ -17,18 +17,26 @@ public abstract class AbstractDetector<T> {
 
     protected List<Conflict> detectConflicts(T current, String name, String name2, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
-        if (!this.areEquals(name, name2)) {
+        if (detect(name, name2)) {
             conflicts.add(createConflict(current, name, name2, fieldName));
         }
         return conflicts;
     }
 
+    protected boolean detect(String name, String name2) {
+        return !this.areEquals(name, name2);
+    }
+
     protected<Y> List<Conflict> detectConflicts(T current, Y val, Y val2, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
-        if (notEquals(val, val2)) {
+        if (detect(val, val2)) {
             conflicts.add(createConflict(current, val, val2, fieldName));
         }
         return conflicts;
+    }
+
+    protected<Y> boolean detect(Y val, Y val2) {
+        return notEquals(val, val2);
     }
 
     protected<Y> Conflict createConflict(T obj, Y currentValue, Y offeredValue, String fieldName) {
