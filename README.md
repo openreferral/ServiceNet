@@ -1,6 +1,16 @@
 # ServiceNet
 This application was generated using JHipster 5.6.1, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v5.6.1](https://www.jhipster.tech/documentation-archive/v5.6.1).
 
+##Setting up the environment
+
+To run the application locally you will need to install PostgreSQL, MongoDB and Java 11.
+Crete new database named ServiceNet in PostgreSQL and set up the JAVA_HOME environment variable.
+
+## IntelliJ Idea development
+
+1. Install Lombok, MapStruct nad NodeJS plugins under File -> Settings -> Plugins -> Browse repositories... search for the Lombok, MapStruct support and NodeJS plugins and install them all.
+2. Check the Enable annotation processing checkbox under File -> Settings -> Build, Execution, Deployment -> Compiler -> Annotation Processors.
+
 ## Development
 
 To start your application in the dev profile, simply run:
