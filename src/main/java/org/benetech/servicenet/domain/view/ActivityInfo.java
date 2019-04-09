@@ -25,6 +25,9 @@ public class ActivityInfo {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "alternate_name")
+    private String alternateName;
+
     @Column(name = "recent")
     private Timestamp recent;
 

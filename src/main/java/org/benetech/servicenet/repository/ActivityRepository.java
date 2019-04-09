@@ -23,6 +23,9 @@ public class ActivityRepository {
     private static final String NAME = "name";
     private final ParameterExpression<String> nameSearch;
 
+    private static final String ALTERNATE_NAME = "alternateName";
+    private final ParameterExpression<String> alternateNameSearch;
+
     private static final String RECENT = "recent";
 
     private static final String RECOMMENDED = "recommended";
@@ -42,6 +45,7 @@ public class ActivityRepository {
         this.cb = em.getCriteriaBuilder();
         accountIdSearch = cb.parameter(UUID.class);
         nameSearch = cb.parameter(String.class);
+        alternateNameSearch = cb.parameter(String.class);
     }
 
     public Page<ActivityInfo> findAllWithOwnerId(UUID ownerId, Pageable pageable) {
@@ -87,12 +91,14 @@ public class ActivityRepository {
 
         List<ActivityInfo> results = query.setParameter(accountIdSearch, ownerId)
             .setParameter(nameSearch, searchLike)
+            .setParameter(alternateNameSearch, searchLike)
             .setFirstResult((int) pageable.getOffset())
             .setMaxResults(pageable.getPageSize())
             .getResultList();
 
         Long total = queryCount.setParameter(accountIdSearch, ownerId)
             .setParameter(nameSearch, searchLike)
+            .setParameter(alternateNameSearch, searchLike)
             .getSingleResult();
 
         return new PageImpl<>(results, pageable, total.intValue());
@@ -106,7 +112,10 @@ public class ActivityRepository {
         criteriaQuery.where(
             cb.and(
                 cb.equal(root.get(ACCOUNT_ID), accountIdSearch),
-                cb.like(cb.upper(root.get(NAME)), nameSearch)
+                cb.or(
+                    cb.like(cb.upper(root.get(NAME)), nameSearch),
+                    cb.like(cb.upper(root.get(ALTERNATE_NAME)), alternateNameSearch)
+                )
             ));
     }
 
