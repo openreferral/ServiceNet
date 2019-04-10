@@ -3,7 +3,7 @@ import './home.scss';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Translate, getSortState, IPaginationBaseState } from 'react-jhipster';
+import { Translate, translate, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { connect } from 'react-redux';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -169,7 +169,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                     type="search"
                     name="search"
                     id="searchBar"
-                    placeholder="Search ServiceNet Activity"
+                    placeholder={translate('serviceNetApp.activity.home.search.placeholder')}
                     value={this.state.searchPhrase}
                     onChange={this.changeSearchPhrase}
                   />
