@@ -11,8 +11,10 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.service.RequiredDocumentService;
+import org.benetech.servicenet.service.ServiceAtLocationImportService;
 import org.benetech.servicenet.service.ServiceBasedImportService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.SharedImportService;
@@ -50,6 +52,9 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
 
     @Autowired
     private TaxonomyImportService taxonomyImportService;
+
+    @Autowired
+    private ServiceAtLocationImportService serviceAtLocationImportService;
 
     @Override
     @ConfidentialFilter
@@ -200,6 +205,20 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
             em.persist(schedule);
         }
         service.setHolidaySchedule(schedule);
+    }
+
+    @Override
+    @ConfidentialFilter
+    public void createOrUpdateServiceAtLocationForService(ServiceAtLocation serviceAtLocation, String providerName,
+        Service service, DataImportReport report) {
+        if (serviceAtLocation != null) {
+            serviceAtLocation.setSrvc(service);
+
+            serviceAtLocationImportService.createOrUpdateServiceAtLocationForService(
+                serviceAtLocation, providerName, service, report);
+
+            service.setLocation(serviceAtLocation);
+        }
     }
 
     private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source,

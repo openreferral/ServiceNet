@@ -17,7 +17,7 @@ public class HealthleadsDataMapperUnitTest {
         eligibility.setEligibility("Eligibility  string");
 
         org.benetech.servicenet.domain.Eligibility extracted
-            = HealthLeadsDataMapper.INSTANCE.extractEligibility(eligibility);
+            = HealthLeadsDataMapper.INSTANCE.extractEligibility(eligibility).get();
         
         assertEquals("Eligibility  string", extracted.getEligibility());
     }
@@ -82,7 +82,7 @@ public class HealthleadsDataMapperUnitTest {
         physicalAddress.setStateProvince("state");
 
         org.benetech.servicenet.domain.PhysicalAddress extracted
-            = HealthLeadsDataMapper.INSTANCE.extractPhysicalAddress(physicalAddress);
+            = HealthLeadsDataMapper.INSTANCE.extractPhysicalAddress(physicalAddress).get();
 
         assertEquals("address", extracted.getAddress1());
         assertEquals("attention", extracted.getAttention());
@@ -99,7 +99,7 @@ public class HealthleadsDataMapperUnitTest {
         requiredDocument.setDocument("Document");
 
         org.benetech.servicenet.domain.RequiredDocument extracted
-            = HealthLeadsDataMapper.INSTANCE.extractRequiredDocument(requiredDocument);
+            = HealthLeadsDataMapper.INSTANCE.extractRequiredDocument(requiredDocument).get();
         
         assertEquals("Document", extracted.getDocument());
     }
@@ -154,7 +154,7 @@ public class HealthleadsDataMapperUnitTest {
         serviceTaxonomy.setTaxonomyDetail("taxDetail");
 
         org.benetech.servicenet.domain.ServiceTaxonomy extracted
-            = HealthLeadsDataMapper.INSTANCE.extractServiceTaxonomy(serviceTaxonomy);
+            = HealthLeadsDataMapper.INSTANCE.extractServiceTaxonomy(serviceTaxonomy).get();
 
         assertEquals("taxDetail", extracted.getTaxonomyDetails());
     }
@@ -166,7 +166,7 @@ public class HealthleadsDataMapperUnitTest {
         taxonomy.setVocabulary("Vocabulary");
 
         org.benetech.servicenet.domain.Taxonomy extracted
-            = HealthLeadsDataMapper.INSTANCE.extractTaxonomy(taxonomy);
+            = HealthLeadsDataMapper.INSTANCE.extractTaxonomy(taxonomy).get();
 
         assertEquals("Name", extracted.getName());
         assertEquals("Vocabulary", extracted.getVocabulary());

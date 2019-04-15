@@ -11,6 +11,7 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhone;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhysicalAddress;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsRequiredDocument;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsService;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLocation;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
@@ -24,14 +25,20 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.manager.ImportManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PersistanceManager {
+
+    private final Logger log = LoggerFactory.getLogger(PersistanceManager.class);
 
     private EntryDictionary<HealthleadsBaseData> dictionary = new EntryDictionary<>();
     private HealthLeadsDataMapper mapper;
@@ -45,10 +52,10 @@ public class PersistanceManager {
     }
 
     public void addData(HealthleadsBaseData data) {
-        if (isLocationBased(data)) {
-            dictionary.addData(data.getLocationId(), data, HealthleadsLocation.class);
-        } else if (isServiceBased(data)) {
+        if (isServiceBased(data)) {
             dictionary.addData(data.getServiceId(), data, HealthleadsService.class);
+        } else if (isLocationBased(data)) {
+            dictionary.addData(data.getLocationId(), data, HealthleadsLocation.class);
         } else if (isOrganizationBased(data)) {
             dictionary.addData(data.getOrganizationId(), data, HealthleadsOrganization.class);
         } else {
@@ -59,9 +66,13 @@ public class PersistanceManager {
     public DataImportReport persistData(ImportData importData) {
         for (HealthleadsOrganization healthleadsOrganization :
             dictionary.getEntitiesOfClass(HealthleadsOrganization.class)) {
-            Organization organization = getOrganizationToPersist(healthleadsOrganization);
-            importManager.createOrUpdateOrganization(
-                organization, organization.getExternalDbId(), importData);
+            try {
+                Organization organization = getOrganizationToPersist(healthleadsOrganization);
+                importManager.createOrUpdateOrganization(
+                    organization, organization.getExternalDbId(), importData);
+            } catch (Exception e) {
+                log.warn("Skipping organization with name: " + healthleadsOrganization.getName(), e);
+            }
         }
         return importData.getReport();
     }
@@ -70,15 +81,16 @@ public class PersistanceManager {
         String organizationId = healthleadsOrganization.getId();
 
         Organization organization = mapper.extractOrganization(healthleadsOrganization);
+        Set<Location> locations = getLocationsToPersist(organizationId);
 
         organization.setActive(true);
-        organization.setLocations(getLocationsToPersist(organizationId));
-        organization.setServices(getServicesToPersist(organizationId));
+        organization.setLocations(locations);
+        organization.setServices(getServicesToPersist(organizationId, locations));
 
         return organization;
     }
 
-    private Set<Service> getServicesToPersist(String organizationId) {
+    private Set<Service> getServicesToPersist(String organizationId, Set<Location> locations) {
 
         Set<Service> result = new HashSet<>();
         for (HealthleadsService healthleadsService : dictionary.getRelatedEntities(
@@ -91,8 +103,9 @@ public class PersistanceManager {
             service.setTaxonomies(getTaxonomiesToPersist(externalServiceId));
             service.setPhones(getPhonesForServiceToPersist(externalServiceId));
             service.setLangs(getLanguagesForServiceToPersist(externalServiceId));
-            service.setEligibility(getEligibilityToPersist(externalServiceId));
+            getEligibilityToPersist(externalServiceId).ifPresent(service::setEligibility);
             service.setDocs(getRequiredDocumentsToPersist(externalServiceId));
+            service.setLocation(getServiceAtLocationToPersist(externalServiceId, locations));
 
             result.add(service);
         }
@@ -100,11 +113,11 @@ public class PersistanceManager {
     }
 
     //TODO: What if there are multiple eligibilities
-    private Eligibility getEligibilityToPersist(String externalServiceId) {
+    private Optional<Eligibility> getEligibilityToPersist(String externalServiceId) {
         Set<HealthleadsEligibility> eligibilities = dictionary.getRelatedEntities(
             HealthleadsEligibility.class, externalServiceId, HealthleadsService.class);
         if (eligibilities.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         return mapper.extractEligibility(eligibilities.iterator().next());
@@ -112,7 +125,9 @@ public class PersistanceManager {
 
     private Set<RequiredDocument> getRequiredDocumentsToPersist(String externalServiceId) {
         return dictionary.getRelatedEntities(HealthleadsRequiredDocument.class, externalServiceId, HealthleadsService.class)
-            .stream().map(x -> mapper.extractRequiredDocument(x).providerName(PROVIDER_NAME))
+            .stream().map(x -> mapper.extractRequiredDocument(x))
+            .filter(Optional::isPresent)
+            .map(requiredDocument -> requiredDocument.get().providerName(PROVIDER_NAME))
             .collect(Collectors.toSet());
     }
 
@@ -131,7 +146,7 @@ public class PersistanceManager {
             Location location = mapper.extractLocation(healthleadsLocation);
 
             location.setProviderName(PROVIDER_NAME);
-            location.setPhysicalAddress(getPhysicalAddressesToPersist(externalLocationId));
+            getPhysicalAddressesToPersist(externalLocationId).ifPresent(location::setPhysicalAddress);
             location.setPhones(getPhonesForLocationToPersist(externalLocationId));
             location.setLangs(getLanguagesForLocationToPersist(externalLocationId));
             result.add(location);
@@ -155,11 +170,11 @@ public class PersistanceManager {
     }
 
     //TODO: What if there are multiple addresses
-    private PhysicalAddress getPhysicalAddressesToPersist(String locationId) {
+    private Optional<PhysicalAddress> getPhysicalAddressesToPersist(String locationId) {
         Set<HealthleadsPhysicalAddress> addresses = dictionary.getRelatedEntities(
             HealthleadsPhysicalAddress.class, locationId, HealthleadsLocation.class);
         if (addresses.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
         return mapper.extractPhysicalAddress(addresses.iterator().next());
     }
@@ -170,19 +185,43 @@ public class PersistanceManager {
 
         Set<ServiceTaxonomy> result = new HashSet<>();
         for (HealthleadsServiceTaxonomy healthleadsServiceTaxonomy : serviceTaxonomies) {
-            ServiceTaxonomy serviceTaxonomy = mapper.extractServiceTaxonomy(healthleadsServiceTaxonomy)
-                .providerName(PROVIDER_NAME).externalDbId(serviceId);
-            Set<HealthleadsTaxonomy> taxonomies = dictionary.getRelatedEntities(
-                HealthleadsTaxonomy.class, healthleadsServiceTaxonomy.getTaxonomyId(), HealthleadsBaseData.class);
-            if (!taxonomies.isEmpty()) {
-                serviceTaxonomy.setTaxonomy(
-                    mapper.extractTaxonomy(taxonomies.iterator().next()).providerName(PROVIDER_NAME));
-            }
+            mapper.extractServiceTaxonomy(healthleadsServiceTaxonomy).ifPresent(serviceTaxonomy -> {
+                Set<HealthleadsTaxonomy> taxonomies = dictionary.getRelatedEntities(
+                    HealthleadsTaxonomy.class, healthleadsServiceTaxonomy.getTaxonomyId(), HealthleadsBaseData.class);
 
-            result.add(serviceTaxonomy);
+                if (!taxonomies.isEmpty()) {
+                    mapper.extractTaxonomy(taxonomies.iterator().next()).ifPresent(taxonomy ->
+                        serviceTaxonomy.setTaxonomy(taxonomy.providerName(PROVIDER_NAME)));
+                }
+
+                result.add(serviceTaxonomy.providerName(PROVIDER_NAME).externalDbId(serviceId));
+            });
         }
 
         return result;
+    }
+
+    private ServiceAtLocation getServiceAtLocationToPersist(String serviceId, Set<Location> locations) {
+        Set<HealthleadsServiceAtLocation> serviceAtLocationSet = dictionary.getRelatedEntities(
+            HealthleadsServiceAtLocation.class, serviceId, HealthleadsService.class);
+
+        if (serviceAtLocationSet.isEmpty()) {
+            return null;
+        }
+
+        HealthleadsServiceAtLocation healthleadsServiceAtLocation = serviceAtLocationSet.iterator().next();
+
+        Set<Location> serviceLocations = locations.stream().
+            filter(l -> l.getExternalDbId().equals(healthleadsServiceAtLocation.getLocationId()))
+            .collect(Collectors.toSet());
+
+        ServiceAtLocation serviceAtLocation = mapper.extractServiceAtLocation(healthleadsServiceAtLocation);
+
+        if (!serviceLocations.isEmpty()) {
+            serviceAtLocation.setLocation(serviceLocations.iterator().next());
+        }
+
+        return serviceAtLocation;
     }
 
     private boolean isServiceBased(HealthleadsBaseData data) {

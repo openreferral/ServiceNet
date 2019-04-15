@@ -13,6 +13,7 @@ import org.benetech.servicenet.repository.PhysicalAddressRepository;
 import org.benetech.servicenet.repository.PostalAddressRepository;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.repository.RequiredDocumentRepository;
+import org.benetech.servicenet.repository.ServiceAtLocationRepository;
 import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.repository.ServiceTaxonomyRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
@@ -70,6 +71,9 @@ public class TestDatabaseManagement {
     @Autowired
     private TaxonomyRepository taxonomyRepository;
 
+    @Autowired
+    private ServiceAtLocationRepository serviceAtLocationRepository;
+
     public void clearDb() {
         contactRepository.deleteAll();
         requiredDocumentRepository.deleteAll();
@@ -83,6 +87,7 @@ public class TestDatabaseManagement {
         physicalAddressRepository.deleteAll();
         serviceTaxonomyRepository.deleteAll();
         taxonomyRepository.deleteAll();
+        serviceAtLocationRepository.deleteAll();
         serviceRepository.deleteAll();
         accessibilityForDisabilitiesRepository.deleteAll();
         locationRepository.deleteAll();
