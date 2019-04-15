@@ -169,6 +169,11 @@ public interface SmcConnectDataMapper {
         return Arrays.stream(langs).map(lang -> new Language().language(lang)).collect(Collectors.toSet());
     }
 
+    default Set<Language> extractLangs(SmcLocation location) {
+        String[] langs = location.getLanguages().split(DELIMITER);
+        return Arrays.stream(langs).map(lang -> new Language().language(lang)).collect(Collectors.toSet());
+    }
+
     @Named("double")
     default Double stringToDouble(String source) {
         return MapperUtils.stringToDouble(source);

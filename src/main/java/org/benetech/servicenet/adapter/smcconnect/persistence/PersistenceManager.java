@@ -56,8 +56,12 @@ class PersistenceManager {
             organizationToSave.setSourceDocument(sourceDocument);
             organizationToSave.setContacts(getOrgBasedContactsToPersist(smcOrganization.getId()));
             organizationToSave.setPrograms(getProgramsToPersist(smcOrganization.getId()));
-            organizationToSave.setServices(getServicesToPersist(smcOrganization.getId()));
             organizationToSave.setLocations(getLocationsToPersist(smcOrganization.getId()));
+            Set<Service> services = new HashSet<>();
+            for (Location l : organizationToSave.getLocations()) {
+                services.addAll(getServicesToPersist(l.getExternalDbId()));
+            }
+            organizationToSave.setServices(services);
 
             importManager.createOrUpdateOrganization(
                 organizationToSave, smcOrganization.getId(), importData);
@@ -73,6 +77,7 @@ class PersistenceManager {
             location.setHolidaySchedule(getLocationBasedHolidayScheduleToPersist(smcLocation.getId()));
             location.setPhysicalAddress(getPhysicalAddressToPersist(smcLocation.getId()));
             location.setPostalAddress(getPostalAddressToPersist(smcLocation.getId()));
+            location.setLangs(getLocationBasedLanguagesToPersist(smcLocation));
 
             result.add(location);
         }
@@ -85,7 +90,7 @@ class PersistenceManager {
             Service service = mapper.extractService(smcService);
 
             service.setEligibility(getEligibilityToPersist(smcService));
-            service.setLangs(getLanguagesToPersist(smcService));
+            service.setLangs(getServiceBasedLanguagesToPersist(smcService));
             service.setContacts(getServiceBasedContactsToPersist(smcService.getId()));
             service.setRegularSchedule(getServiceBasedRegularScheduleToPersist(smcService.getId()));
             service.setHolidaySchedule(getServiceBasedHolidayScheduleToPersist(smcService.getId()));
@@ -96,8 +101,12 @@ class PersistenceManager {
         return result;
     }
 
-    private Set<Language> getLanguagesToPersist(SmcService smcService) {
+    private Set<Language> getServiceBasedLanguagesToPersist(SmcService smcService) {
         return mapper.extractLangs(smcService);
+    }
+
+    private Set<Language> getLocationBasedLanguagesToPersist(SmcLocation smcLocation) {
+        return mapper.extractLangs(smcLocation);
     }
 
     private Set<Phone> getPhonesToPersist(String relatedTo) {

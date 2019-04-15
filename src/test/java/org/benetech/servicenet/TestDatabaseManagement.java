@@ -3,6 +3,7 @@ package org.benetech.servicenet;
 import org.benetech.servicenet.repository.AccessibilityForDisabilitiesRepository;
 import org.benetech.servicenet.repository.ContactRepository;
 import org.benetech.servicenet.repository.EligibilityRepository;
+import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.repository.HolidayScheduleRepository;
 import org.benetech.servicenet.repository.LanguageRepository;
 import org.benetech.servicenet.repository.LocationRepository;
@@ -11,6 +12,7 @@ import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
 import org.benetech.servicenet.repository.PostalAddressRepository;
+import org.benetech.servicenet.repository.ProgramRepository;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.repository.RequiredDocumentRepository;
 import org.benetech.servicenet.repository.ServiceAtLocationRepository;
@@ -74,6 +76,12 @@ public class TestDatabaseManagement {
     @Autowired
     private ServiceAtLocationRepository serviceAtLocationRepository;
 
+    @Autowired
+    private FundingRepository fundingRepository;
+
+    @Autowired
+    private ProgramRepository programRepository;
+
     public void clearDb() {
         contactRepository.deleteAll();
         requiredDocumentRepository.deleteAll();
@@ -87,6 +95,8 @@ public class TestDatabaseManagement {
         physicalAddressRepository.deleteAll();
         serviceTaxonomyRepository.deleteAll();
         taxonomyRepository.deleteAll();
+        fundingRepository.deleteAll();
+        programRepository.deleteAll();
         serviceAtLocationRepository.deleteAll();
         serviceRepository.deleteAll();
         accessibilityForDisabilitiesRepository.deleteAll();
