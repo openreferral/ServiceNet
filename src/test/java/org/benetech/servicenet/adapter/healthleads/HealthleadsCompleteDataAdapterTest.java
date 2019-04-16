@@ -34,7 +34,6 @@ import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.dto.ServiceTaxonomyDTO;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -280,7 +279,6 @@ public class HealthleadsCompleteDataAdapterTest {
     }
 
     @Test
-    @Ignore("ServiceAtLocation is ignored") //TODO: Remove
     public void shouldImportCompleteServiceAtLocation() {
         assertEquals(1, serviceAtLocationService.findAll().size());
 

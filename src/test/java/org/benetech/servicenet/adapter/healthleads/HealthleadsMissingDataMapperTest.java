@@ -23,7 +23,6 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.type.ListType;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResourc
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES_TAXONOMY;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.TAXONOMY;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 //TODO: Add tests for ServiceAtLocation mapping, when the entity will be commonly used in the system
@@ -65,7 +64,6 @@ public class HealthleadsMissingDataMapperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForLackOfDataForOrganization() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + ORGANIZATIONS + JSON);
         List<HealthleadsOrganization> entities = new Gson().fromJson(json, new ListType<>(HealthleadsOrganization.class));
@@ -85,7 +83,6 @@ public class HealthleadsMissingDataMapperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForLackOfDataForService() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + SERVICES + JSON);
         List<HealthleadsService> entities = new Gson().fromJson(json, new ListType<>(HealthleadsService.class));
@@ -95,7 +92,6 @@ public class HealthleadsMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("Geo coordinates are required") //TODO: Remove
     public void shouldNotThrowExceptionForMinimalDataForLocation() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + LOCATIONS + JSON);
         List<HealthleadsLocation> entities = new Gson().fromJson(json, new ListType<>(HealthleadsLocation.class));
@@ -106,7 +102,6 @@ public class HealthleadsMissingDataMapperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("Wrong exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForLackOfDataForLocation() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + LOCATIONS + JSON);
         List<HealthleadsLocation> entities = new Gson().fromJson(json, new ListType<>(HealthleadsLocation.class));
@@ -120,21 +115,18 @@ public class HealthleadsMissingDataMapperTest {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + ELIGIBILITY + JSON);
         List<HealthleadsEligibility> entities = new Gson().fromJson(json, new ListType<>(HealthleadsEligibility.class));
 
-        Eligibility result = mapper.extractEligibility(entities.get(0));
+        Eligibility result = mapper.extractEligibility(entities.get(0)).get();
 
         assertEquals("Anyone", result.getEligibility());
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnEmptyOptionalForLackOfDataForEligibility() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + ELIGIBILITY + JSON);
         List<HealthleadsEligibility> entities = new Gson().fromJson(json, new ListType<>(HealthleadsEligibility.class));
         entities.get(0).setEligibility(null);
 
-        Eligibility result = mapper.extractEligibility(entities.get(0));
-
-        assertNull(result);
+        assertFalse(mapper.extractEligibility(entities.get(0)).isPresent());
     }
 
     @Test
@@ -142,21 +134,18 @@ public class HealthleadsMissingDataMapperTest {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + REQUIRED_DOCUMENTS + JSON);
         List<HealthleadsRequiredDocument> entities = new Gson().fromJson(json, new ListType<>(HealthleadsRequiredDocument.class));
 
-        RequiredDocument result = mapper.extractRequiredDocument(entities.get(0));
+        RequiredDocument result = mapper.extractRequiredDocument(entities.get(0)).get();
 
         assertEquals("Required Document", result.getDocument());
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnEmptyOptionalForLackOfDataForRequiredDocument() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + REQUIRED_DOCUMENTS + JSON);
         List<HealthleadsRequiredDocument> entities = new Gson().fromJson(json, new ListType<>(HealthleadsRequiredDocument.class));
         entities.get(0).setDocument(null);
 
-        RequiredDocument result = mapper.extractRequiredDocument(entities.get(0));
-
-        assertNull(result);
+        assertFalse(mapper.extractRequiredDocument(entities.get(0)).isPresent());
     }
 
     @Test
@@ -164,21 +153,18 @@ public class HealthleadsMissingDataMapperTest {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + TAXONOMY + JSON);
         List<HealthleadsTaxonomy> entities = new Gson().fromJson(json, new ListType<>(HealthleadsTaxonomy.class));
 
-        Taxonomy result = mapper.extractTaxonomy(entities.get(0));
+        Taxonomy result = mapper.extractTaxonomy(entities.get(0)).get();
 
         assertEquals("Taxonomy Name", result.getName());
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnEmptyOptionalForLackOfDataForTaxonomy() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + TAXONOMY + JSON);
         List<HealthleadsTaxonomy> entities = new Gson().fromJson(json, new ListType<>(HealthleadsTaxonomy.class));
         entities.get(0).setName(null);
 
-        Taxonomy result = mapper.extractTaxonomy(entities.get(0));
-
-        assertNull(result);
+        assertFalse(mapper.extractTaxonomy(entities.get(0)).isPresent());
     }
 
     @Test
@@ -186,21 +172,18 @@ public class HealthleadsMissingDataMapperTest {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + SERVICES_TAXONOMY + JSON);
         List<HealthleadsServiceTaxonomy> entities = new Gson().fromJson(json, new ListType<>(HealthleadsServiceTaxonomy.class));
 
-        ServiceTaxonomy result = mapper.extractServiceTaxonomy(entities.get(0));
+        ServiceTaxonomy result = mapper.extractServiceTaxonomy(entities.get(0)).get();
 
         assertEquals("Taxonomy Detail", result.getTaxonomyDetails());
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnEmptyOptionalForLackOfDataForServiceTaxonomy() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + SERVICES_TAXONOMY + JSON);
         List<HealthleadsServiceTaxonomy> entities = new Gson().fromJson(json, new ListType<>(HealthleadsServiceTaxonomy.class));
         entities.get(0).setTaxonomyDetail(null);
 
-        ServiceTaxonomy result = mapper.extractServiceTaxonomy(entities.get(0));
-
-        assertNull(result);
+        assertFalse(mapper.extractServiceTaxonomy(entities.get(0)).isPresent());
     }
 
     @Test
@@ -215,7 +198,6 @@ public class HealthleadsMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("Phone is mapped, even with empty number") //TODO: Remove
     public void shouldReturnNullForLackOfDataForPhone() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + PHONES + JSON);
         List<HealthleadsPhone> entities = new Gson().fromJson(json, new ListType<>(HealthleadsPhone.class));
@@ -227,7 +209,6 @@ public class HealthleadsMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("It is assumed that language will be always available") //TODO: Remove
     public void shouldNotThrowExceptionForMinimalDataForLanguages() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + LANGUAGES + JSON);
         List<HealthleadsLanguage> entities = new Gson().fromJson(json, new ListType<>(HealthleadsLanguage.class));
@@ -237,7 +218,6 @@ public class HealthleadsMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("It is assumed that language will be always available") //TODO: Remove
     public void shouldReturnEmptyCollectionForLackOfDataForLanguages() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + LANGUAGES + JSON);
         List<HealthleadsLanguage> entities = new Gson().fromJson(json, new ListType<>(HealthleadsLanguage.class));
@@ -252,7 +232,7 @@ public class HealthleadsMissingDataMapperTest {
     public void shouldNotThrowExceptionForMinimalDataForPhysicalAddress() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + PHYSICAL_ADDRESSES + JSON);
         List<HealthleadsPhysicalAddress> entities = new Gson().fromJson(json, new ListType<>(HealthleadsPhysicalAddress.class));
-        PhysicalAddress result = mapper.extractPhysicalAddress(entities.get(0));
+        PhysicalAddress result = mapper.extractPhysicalAddress(entities.get(0)).get();
 
         assertEquals("2332 Secret Street", result.getAddress1());
         assertEquals("City", result.getCity());
@@ -260,14 +240,11 @@ public class HealthleadsMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnEmptyOptionalForLackOfDataForPhysicalAddress() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + PHYSICAL_ADDRESSES + JSON);
         List<HealthleadsPhysicalAddress> entities = new Gson().fromJson(json, new ListType<>(HealthleadsPhysicalAddress.class));
         entities.get(0).setAddress(null);
 
-        PhysicalAddress result = mapper.extractPhysicalAddress(entities.get(0));
-
-        assertNull(result);
+        assertFalse(mapper.extractPhysicalAddress(entities.get(0)).isPresent());
     }
 }

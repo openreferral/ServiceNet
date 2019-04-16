@@ -10,6 +10,7 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 
 import java.util.Set;
@@ -41,4 +42,7 @@ public interface ServiceBasedImportService {
     void createOrUpdateContactsForService(Set<Contact> contacts, Service service, DataImportReport report);
 
     void createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service, DataImportReport report);
+
+    void createOrUpdateServiceAtLocationForService(ServiceAtLocation serviceAtLocation, String providerName,
+        Service service, DataImportReport report);
 }
