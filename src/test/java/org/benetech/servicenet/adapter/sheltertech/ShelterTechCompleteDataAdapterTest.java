@@ -31,7 +31,6 @@ import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,7 +149,6 @@ public class ShelterTechCompleteDataAdapterTest {
     }
 
     @Test
-    @Ignore("address_1 is used as name, instead of using LocationUtils") //TODO Remove
     public void shouldImportCompleteLocation() {
         adapter.importData(importData);
         assertEquals(1, locationService.findAll().size());
@@ -233,8 +231,8 @@ public class ShelterTechCompleteDataAdapterTest {
     }
 
     @Test
-    @Ignore("Opening Hours are not persisted with ImportService") //TODO: Remove
     public void shouldImportOpeningHours() {
+        adapter.importData(importData);
         assertEquals(2, openingHoursService.findAll().size());
 
         List<OpeningHoursDTO> result = openingHoursService.findAll();

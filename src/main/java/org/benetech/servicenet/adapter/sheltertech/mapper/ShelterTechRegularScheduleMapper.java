@@ -7,7 +7,6 @@ import org.benetech.servicenet.adapter.sheltertech.model.ShelterTechWeekday;
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
@@ -23,16 +22,28 @@ public interface ShelterTechRegularScheduleMapper {
 
     ShelterTechRegularScheduleMapper INSTANCE = Mappers.getMapper(ShelterTechRegularScheduleMapper.class);
 
-    @Mapping(ignore = true, target = "id")
-    @Mapping(ignore = true, target = "srvc")
-    @Mapping(ignore = true, target = "location")
-    @Mapping(ignore = true, target = "serviceAtlocation")
-    @Mapping(source = "scheduleDays", target = "openingHours", qualifiedByName = "openingHoursFromScheduleDaysRaw")
-    RegularSchedule mapToRegularSchedule(ScheduleRaw scheduleRaw);
+    default RegularSchedule mapToRegularSchedule(ScheduleRaw scheduleRaw) {
+        if (scheduleRaw == null) {
+            return null;
+        }
+
+        Set<OpeningHours> openingHours = openingHoursFromScheduleDaysRaw(scheduleRaw.getScheduleDays());
+
+        if (openingHours.isEmpty()) {
+            return null;
+        }
+
+        return new RegularSchedule().openingHours(openingHours);
+    }
 
     @Named("openingHoursFromScheduleDaysRaw")
     default Set<OpeningHours> openingHoursFromScheduleDaysRaw(List<ScheduleDayRaw> days) {
         Set<OpeningHours> hours =  new HashSet<>();
+
+        if (days == null) {
+            return hours;
+        }
+
         for (ScheduleDayRaw raw : days) {
             hours.add(INSTANCE.mapToOpeningHours(raw));
         }

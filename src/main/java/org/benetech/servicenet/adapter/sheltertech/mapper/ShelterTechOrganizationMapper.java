@@ -21,26 +21,13 @@ public interface ShelterTechOrganizationMapper {
 
     ShelterTechOrganizationMapper INSTANCE = Mappers.getMapper(ShelterTechOrganizationMapper.class);
 
-    @Mapping(ignore = true, target = "id")
-    @Mapping(source = "orgRaw.name", target = "name")
-    @Mapping(source = "orgRaw.alternateName", target = "alternateName")
-    @Mapping(source = "orgRaw.longDescription", target = "description")
-    @Mapping(source = "orgRaw.email", target = "email", qualifiedByName = "emailFromString")
-    @Mapping(source = "orgRaw.website", target = "url")
-    @Mapping(ignore = true, target = "taxStatus")
-    @Mapping(ignore = true, target = "taxId")
-    @Mapping(ignore = true, target = "yearIncorporated")
-    @Mapping(source = "orgRaw.legalStatus", target = "legalStatus")
-    @Mapping(source = "orgRaw.status", target = "active", qualifiedByName = "activeFromStatus")
-    @Mapping(source = "orgRaw.id", target = "externalDbId")
-    @Mapping(source = "orgRaw.address", target = "locations", qualifiedByName = "locationFromAddressRaw")
-    @Mapping(ignore = true, target = "replacedBy")
-    @Mapping(source = "documentUpload", target = "sourceDocument")
-    @Mapping(ignore = true, target = "account")
-    @Mapping(ignore = true,  target = "funding")
-    @Mapping(ignore = true, target = "programs")
-    @Mapping(ignore = true, target = "services")
-    Organization mapToOrganization(OrganizationRaw orgRaw, DocumentUpload documentUpload);
+    default Organization mapToOrganization(OrganizationRaw orgRaw, DocumentUpload documentUpload) {
+        if (StringUtils.isBlank(orgRaw.getName())) {
+            throw new IllegalArgumentException("Organization name cannot be empty");
+        }
+
+        return toOrganization(orgRaw, documentUpload);
+    }
 
     @Named("activeFromStatus")
     default Boolean activeFromStatus(String status) {
@@ -77,4 +64,24 @@ public interface ShelterTechOrganizationMapper {
         return null;
     }
 
+    @Mapping(ignore = true, target = "id")
+    @Mapping(source = "orgRaw.name", target = "name")
+    @Mapping(source = "orgRaw.alternateName", target = "alternateName")
+    @Mapping(source = "orgRaw.longDescription", target = "description")
+    @Mapping(source = "orgRaw.email", target = "email", qualifiedByName = "emailFromString")
+    @Mapping(source = "orgRaw.website", target = "url")
+    @Mapping(ignore = true, target = "taxStatus")
+    @Mapping(ignore = true, target = "taxId")
+    @Mapping(ignore = true, target = "yearIncorporated")
+    @Mapping(source = "orgRaw.legalStatus", target = "legalStatus")
+    @Mapping(source = "orgRaw.status", target = "active", qualifiedByName = "activeFromStatus")
+    @Mapping(source = "orgRaw.id", target = "externalDbId")
+    @Mapping(source = "orgRaw.address", target = "locations", qualifiedByName = "locationFromAddressRaw")
+    @Mapping(ignore = true, target = "replacedBy")
+    @Mapping(source = "documentUpload", target = "sourceDocument")
+    @Mapping(ignore = true, target = "account")
+    @Mapping(ignore = true,  target = "funding")
+    @Mapping(ignore = true, target = "programs")
+    @Mapping(ignore = true, target = "services")
+    Organization toOrganization(OrganizationRaw orgRaw, DocumentUpload documentUpload);
 }

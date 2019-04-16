@@ -23,6 +23,8 @@ import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.manager.ImportManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,8 @@ import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.P
 
 @Component(PROVIDER_NAME + "DataAdapter")
 public class ShelterTechDataAdapter extends SingleDataAdapter {
+
+    private final Logger log = LoggerFactory.getLogger(ShelterTechDataAdapter.class);
 
     @Autowired
     private ImportManager importManager;
@@ -50,25 +54,30 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
 
     private void persistOrganizations(ShelterTechRawData parsedData, SingleImportData rawData) {
         for (OrganizationRaw orgRaw : parsedData.getOrganizations()) {
-            Organization org = ShelterTechOrganizationMapper.INSTANCE.mapToOrganization(
-                orgRaw, rawData.getReport().getDocumentUpload());
+            try {
+                Organization org = ShelterTechOrganizationMapper.INSTANCE.mapToOrganization(
+                    orgRaw, rawData.getReport().getDocumentUpload());
 
-            org.setServices(getServicesToPersist(orgRaw));
-            org.setLocations(getLocationsToPersist(orgRaw, org.getLocations()));
+                org.setServices(getServicesToPersist(orgRaw));
+                org.setLocations(getLocationsToPersist(orgRaw, org.getLocations()));
 
-            importManager.createOrUpdateOrganization(org, org.getExternalDbId(), rawData);
+                importManager.createOrUpdateOrganization(org, org.getExternalDbId(), rawData);
+            } catch (Exception e) {
+                log.warn("Skipping organization with name: " + orgRaw.getName(), e);
+            }
         }
     }
 
     private Set<Service> getServicesToPersist(OrganizationRaw organizationRaw) {
         Set<Service> services = new HashSet<>();
         for (ServiceRaw serviceRaw: organizationRaw.getServices()) {
-            Service service = ShelterTechServiceMapper.INSTANCE.mapToService(serviceRaw);
-            services.add(service);
+            ShelterTechServiceMapper.INSTANCE.mapToService(serviceRaw).ifPresent(service -> {
+                services.add(service);
 
-            service.setRegularSchedule(getRegularScheduleToPersist(serviceRaw));
-            service.setEligibility(getEligibilityToPersist(serviceRaw));
-            service.setDocs(getRequiredDocumentsToPersist(serviceRaw));
+                service.setRegularSchedule(getRegularScheduleToPersist(serviceRaw));
+                service.setEligibility(getEligibilityToPersist(serviceRaw));
+                service.setDocs(getRequiredDocumentsToPersist(serviceRaw));
+            });
         }
         return services;
     }

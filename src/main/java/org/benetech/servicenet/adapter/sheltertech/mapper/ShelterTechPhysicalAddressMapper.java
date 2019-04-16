@@ -12,6 +12,14 @@ public interface ShelterTechPhysicalAddressMapper {
 
     ShelterTechPhysicalAddressMapper INSTANCE = Mappers.getMapper(ShelterTechPhysicalAddressMapper.class);
 
+    default PhysicalAddress mapAddressRawToPhysicalAddress(AddressRaw raw) {
+        if (raw == null || raw.getStateProvince() == null || raw.getCity() == null || raw.getAddress1() == null) {
+            return null;
+        }
+
+        return toPhysicalAddress(raw);
+    }
+
     @Mapping(ignore = true, target = "id")
     @Mapping(source = "raw.attention", target = "attention")
     @Mapping(source = "raw.address1", target = "address1")
@@ -21,6 +29,5 @@ public interface ShelterTechPhysicalAddressMapper {
     @Mapping(source = "raw.postalCode", target = "postalCode")
     @Mapping(source = "raw.country", target = "country")
     @Mapping(ignore = true, target = "location")
-    PhysicalAddress mapAddressRawToPhysicalAddress(AddressRaw raw);
-
+    PhysicalAddress toPhysicalAddress(AddressRaw raw);
 }
