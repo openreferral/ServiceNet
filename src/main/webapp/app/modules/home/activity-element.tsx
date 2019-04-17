@@ -57,9 +57,15 @@ const ActivityElement = props => {
                 </CardTitle>
               ))}
               {areAllDisplayed ? null : `and ${props.activity.record.conflicts.length - maxConflicts} more...`}
-              <CardText className="activity-left-card-text-date">
-                Last updated <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-              </CardText>
+              {conflictsToDisplay.length ? (
+                <CardText className="activity-left-card-text">
+                  Last updated <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                </CardText>
+              ) : (
+                <CardText className="activity-left-card-text">
+                  <Translate contentKey="serviceNetApp.activity.noConflicts" />
+                </CardText>
+              )}
             </CardBody>
           </Card>
         </CardGroup>
