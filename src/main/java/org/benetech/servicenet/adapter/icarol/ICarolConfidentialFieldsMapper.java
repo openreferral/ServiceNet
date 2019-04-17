@@ -23,7 +23,6 @@ public interface ICarolConfidentialFieldsMapper {
     String PRIMARY = "Primary";
     String EMAIL_ADDRESS = "EmailAddress";
     String WEBSITE = "Website";
-    String UNDEFINED = "undefined";
 
     @Named("email")
     default String extractEmailIfNotConfidential(ICarolContactDetails[] contactDetails) {
@@ -38,7 +37,7 @@ public interface ICarolConfidentialFieldsMapper {
     default String extractUrlIfNotConfidential(ICarolContactDetails[] contactDetails) {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(WEBSITE)).findFirst()
-            .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
+            .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()) && x.getContact().getUrl() != null)
             .map(entry -> entry.getContact().getUrl().replace(" ", ""))
             .orElse(null);
     }
@@ -46,16 +45,16 @@ public interface ICarolConfidentialFieldsMapper {
     @Named("name")
     default String extractNameIfNotConfidential(ICarolName[] names) {
         return Arrays.stream(names)
-            .filter(name -> name.getPurpose().equals(PRIMARY)).findFirst()
+            .filter(name -> PRIMARY.equals(name.getPurpose())).findFirst()
             .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .map(ICarolName::getValue)
-            .orElse(UNDEFINED);
+            .orElseThrow(() -> new IllegalArgumentException("Organization name cannot be empty"));
     }
 
     @Named("alternateName")
     default String extractAlternateNameIfNotConfidential(ICarolName[] names) {
         return Arrays.stream(names)
-            .filter(name -> !name.getPurpose().equals(PRIMARY)).skip(1).findFirst()
+            .filter(name -> !PRIMARY.equals(name.getPurpose())).skip(1).findFirst()
             .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .map(ICarolName::getValue)
             .orElse(null);

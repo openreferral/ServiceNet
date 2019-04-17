@@ -52,14 +52,17 @@ class RelationManager {
         for (ICarolAgency agency : dataToPersist.getAgencies()) {
             logProgress(i++, dataToPersist.getAgencies().size());
 
-            Set<Location> locations = getLocationsToPersist(
-                findRelatedEntities(dataToPersist.getSites(), agency, SITE), importData);
+            try {
+                Set<Location> locations = getLocationsToPersist(
+                    findRelatedEntities(dataToPersist.getSites(), agency, SITE), importData);
 
-            Set<Service> services = getServicesToPersist(
-                findRelatedEntities(dataToPersist.getPrograms(), agency, PROGRAM), importData);
+                Set<Service> services = getServicesToPersist(
+                    findRelatedEntities(dataToPersist.getPrograms(), agency, PROGRAM), importData);
 
-            importOrganization(importData, agency, locations, services);
-
+                importOrganization(importData, agency, locations, services);
+            } catch (Exception e) {
+                log.warn("Skipping organization with name: " + mapper.extractNameIfNotConfidential(agency.getNames()), e);
+            }
         }
     }
 
@@ -110,7 +113,7 @@ class RelationManager {
         Service extractedService = mapper
             .extractService(program, importData.getProviderName());
 
-        extractedService.setEligibility(mapper.extractEligibility(program).orElse(null));
+        extractedService.setEligibility(mapper.extractEligibility(program));
         extractedService.setPhones(mapper.extractPhones(program.getContactDetails()));
         extractedService.setLangs(mapper.extractLangs(program));
         extractedService.setRegularSchedule(new RegularSchedule().openingHours(

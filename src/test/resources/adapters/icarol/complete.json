@@ -30,7 +30,7 @@
         "contact": {
           "purpose": "Mailing",
           "line1": "12345 Cool Street",
-          "county": "-1",
+          "county": "Commoncounty",
           "city": "CarpetHanger",
           "stateProvince": "CA",
           "country": "United States",
@@ -265,7 +265,7 @@
     ],
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\u003cstrong\u003e \u003c/strong\u003e\u003cbr /\u003e\u003cbr /\u003e\u003cbr /\u003e\u003cbr /\u003e\u003cbr /\u003e ",
     "descriptionText": "different Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "languagesOffered": "Other languages upon request, Farsi, Spanish, Vietnamese, English",
+    "languagesOffered": "Farsi; Spanish; Vietnamese; English",
     "isFeatured": false,
     "isConfidential": false,
     "type": "Program",
@@ -551,7 +551,7 @@
         "contact": {
           "purpose": "Mailing",
           "line1": "12345 Cool Street",
-          "county": "-1",
+          "county": "Commoncounty",
           "city": "CarpetHanger",
           "stateProvince": "CA",
           "country": "United States",

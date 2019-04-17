@@ -12,7 +12,6 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolDay;
 import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
 import org.benetech.servicenet.adapter.icarol.model.ICarolServiceSite;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
-
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.OpeningHours;
@@ -20,7 +19,6 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -68,8 +66,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test
-    @Ignore("ICarolConfidentialFieldsMapper.extractUrlIfNotConfidential() […] replace(\" \", \"\") is causing null " +
-        "exception")
     public void shouldNotThrowExceptionForMinimalDataForAgency() {
         ICarolAgency agency = data.getAgencies().get(0);
         Organization result = mapper.extractOrganization(agency, PROVIDER_NAME);
@@ -78,7 +74,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("Null pointer exception") //TODO: Remove
     public void shouldThrowExceptionForNullOrganizationName() {
         ICarolAgency agency = data.getAgencies().get(0);
         agency.getNames()[0].setValue(null);
@@ -87,7 +82,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForBlankOrganizationName() {
         ICarolAgency agency = data.getAgencies().get(0);
         agency.getNames()[0].setValue("");
@@ -108,7 +102,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForAgencyNullPhones() {
         ICarolAgency agency = data.getAgencies().get(0);
         for (ICarolContactDetails details : agency.getContactDetails()) {
@@ -121,7 +114,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForAgencyBlankPhones() {
         ICarolAgency agency = data.getAgencies().get(0);
         for (ICarolContactDetails details : agency.getContactDetails()) {
@@ -134,16 +126,13 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test
-    @Ignore("ICarolConfidentialFieldsMapper.extractUrlIfNotConfidential() […] replace(\" \", \"\") is causing null " +
-        "exception")
     public void shouldNotThrowExceptionForAgencyStatus() {
         ICarolAgency agency = data.getAgencies().get(0);
         Organization organization = mapper.extractOrganization(agency, PROVIDER_NAME);
         assertTrue(organization.getActive());
     }
 
-    @Test
-    @Ignore("Null pointer") //TODO: Remove
+    @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionForNullOrganizationStatus() {
         ICarolAgency agency = data.getAgencies().get(0);
         agency.setStatus(null);
@@ -152,7 +141,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("NullPointer exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForAgencyBlankOrganizationStatus() {
         ICarolAgency agency = data.getAgencies().get(0);
         agency.setStatus("");
@@ -173,7 +161,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("NullPointer exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForAgencyNullOpeningHours() {
         ICarolAgency agency = data.getAgencies().get(0);
 
@@ -207,7 +194,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("IllegalArgumentException should be thrown") //TODO: Remove
     public void shouldThrowExceptionForProgramNullPostalAddress() {
         ICarolProgram program = data.getPrograms().get(0);
         for (ICarolContactDetails details : program.getContactDetails()) {
@@ -222,7 +208,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("IllegalArgumentException should be thrown") //TODO: Remove
     public void shouldThrowExceptionForProgramBlankPostalAddress() {
         ICarolProgram program = data.getPrograms().get(0);
         for (ICarolContactDetails details : program.getContactDetails()) {
@@ -248,7 +233,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForProgramNullPhones() {
         ICarolProgram program = data.getPrograms().get(0);
         for (ICarolContactDetails details : program.getContactDetails()) {
@@ -261,7 +245,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForProgramBlankPhones() {
         ICarolProgram program = data.getPrograms().get(0);
         for (ICarolContactDetails details : program.getContactDetails()) {
@@ -286,7 +269,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("NullPointer exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForProgramNullOpeningHours() {
         ICarolProgram program = data.getPrograms().get(0);
 
@@ -310,16 +292,13 @@ public class ICarolDataAdapterMissingTest {
     public void shouldNotThrowExceptionForProgramEligibility() {
         ICarolProgram program = data.getPrograms().get(0);
 
-        Optional<Eligibility> eligibilityOpt = mapper.extractEligibility(program);
+        Eligibility result = mapper.extractEligibility(program);
 
-        assertTrue(eligibilityOpt.isPresent());
-        Eligibility result = eligibilityOpt.get();
         assertEquals("Low-income family, elderly (age 62 or over), persons with disabilities, or other persons.",
             result.getEligibility());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("NullPointer exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForProgramNullEligibility() {
         ICarolProgram program = data.getPrograms().get(0);
         program.setEligibility(null);
@@ -328,7 +307,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("NullPointer exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForProgramBlankEligibility() {
         ICarolProgram program = data.getPrograms().get(0);
         program.setEligibility("");
@@ -350,7 +328,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("IllegalArgumentException should be thrown") //TODO: Remove
     public void shouldThrowExceptionForSiteNullPostalAddress() {
         ICarolSite site = data.getSites().get(0);
         for (ICarolContactDetails details : site.getContactDetails()) {
@@ -365,7 +342,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("IllegalArgumentException should be thrown") //TODO: Remove
     public void shouldThrowExceptionForSiteBlankPostalAddress() {
         ICarolSite site = data.getSites().get(0);
         for (ICarolContactDetails details : site.getContactDetails()) {
@@ -392,7 +368,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("IllegalArgumentException should be thrown") //TODO: Remove
     public void shouldThrowExceptionForSiteNullAccessibilityForDisabilities() {
         ICarolSite site = data.getSites().get(0);
         site.getAccessibility().setDisabled(null);
@@ -401,7 +376,6 @@ public class ICarolDataAdapterMissingTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("IllegalArgumentException should be thrown") //TODO: Remove
     public void shouldThrowExceptionForSiteBlankAccessibilityForDisabilities() {
         ICarolSite site = data.getSites().get(0);
         site.getAccessibility().setDisabled("");
