@@ -26,14 +26,15 @@ import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -59,7 +60,6 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForNullOrganizationName() {
         data.setName(null);
         ShelterTechOrganizationMapper.INSTANCE
@@ -67,7 +67,6 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForEmptyOrganizationName() {
         data.setName("");
         ShelterTechOrganizationMapper.INSTANCE
@@ -75,52 +74,48 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("Certified is required") //TODO: Remove
     public void shouldNotThrowExceptionForMinimalDataForService() {
         Service result = ShelterTechServiceMapper.INSTANCE
-            .mapToService(data.getServices().get(0));
+            .mapToService(data.getServices().get(0)).get();
 
         assertEquals("Service Name", result.getName());
     }
 
     @Test
     public void shouldReturnNullForNullForService() {
-        Service result = ShelterTechServiceMapper.INSTANCE
+        Optional<Service> result = ShelterTechServiceMapper.INSTANCE
             .mapToService(null);
 
-        assertNull(result);
+        assertFalse(result.isPresent());
     }
 
     @Test
-    @Ignore("Is it assumed that status is always available") //TODO: Remove
     public void shouldReturnNullForEmptyService() {
-        Service result = ShelterTechServiceMapper.INSTANCE
+        Optional<Service> result = ShelterTechServiceMapper.INSTANCE
             .mapToService(new ServiceRaw());
 
-        assertNull(result);
+        assertFalse(result.isPresent());
     }
 
     @Test
-    @Ignore("Location name is taken only from address_1") //TODO: Remove
     public void shouldNotThrowExceptionForMinimalDataForLocation() {
-        Location result = ShelterTechLocationMapper.INSTANCE.mapToLocation(data.getAddress());
+        Location result = ShelterTechLocationMapper.INSTANCE.mapToLocation(data.getAddress()).get();
 
         assertEquals("Line 1 - City (STATE)", result.getName());
     }
 
     @Test
     public void shouldReturnNullForNullAddress() {
-        Location result = ShelterTechLocationMapper.INSTANCE.mapToLocation(null);
+        Optional<Location> result = ShelterTechLocationMapper.INSTANCE.mapToLocation(null);
 
-        assertNull(result);
+        assertFalse(result.isPresent());
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnNullForEmptyLocation() {
-        Location result = ShelterTechLocationMapper.INSTANCE.mapToLocation(new AddressRaw());
+        Optional<Location> result = ShelterTechLocationMapper.INSTANCE.mapToLocation(new AddressRaw());
 
-        assertNull(result);
+        assertFalse(result.isPresent());
     }
 
     @Test
@@ -162,7 +157,6 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnNullIfPhoneNumberIsEmpty() {
         Phone result = ShelterTechPhoneMapper.INSTANCE.mapToPhone(new PhoneRaw());
 
@@ -170,7 +164,6 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnNullIfPhoneNumberIsEmptyString() {
         PhoneRaw emptyNumberPhone = new PhoneRaw();
         emptyNumberPhone.setNumber("");
@@ -198,7 +191,6 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnNullForEmptyPhysicalAddress() {
         PhysicalAddress result = ShelterTechPhysicalAddressMapper.INSTANCE
             .mapAddressRawToPhysicalAddress(new AddressRaw());
@@ -225,7 +217,6 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("Returns empty object") //TODO: Remove
     public void shouldReturnNullForEmptyPostalAddress() {
         PostalAddress result = ShelterTechPostalAddressMapper.INSTANCE
             .mapAddressRawToPostalAddress(new AddressRaw());
@@ -242,7 +233,6 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("It is assumed that opening hours are always available") //TODO: Remove
     public void shouldReturnNullForEmptySchedule() {
         RegularSchedule result = ShelterTechRegularScheduleMapper.INSTANCE
             .mapToRegularSchedule(new ScheduleRaw());
@@ -267,7 +257,6 @@ public class ShelterTechMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("It is assumed that schedule is always available") //TODO: Remove
     public void shouldReturnEmptySetForNullOpeningHours() {
         Set<OpeningHours> result = ShelterTechRegularScheduleMapper.INSTANCE
             .openingHoursFromScheduleDaysRaw(null);

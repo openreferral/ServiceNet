@@ -11,6 +11,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.PROVIDER_NAME;
@@ -19,6 +20,47 @@ import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.P
 public interface ShelterTechServiceMapper {
 
     ShelterTechServiceMapper INSTANCE = Mappers.getMapper(ShelterTechServiceMapper.class);
+
+    default Optional<Service> mapToService(ServiceRaw serviceRaw) {
+        if (serviceRaw == null || StringUtils.isBlank(serviceRaw.getName())) {
+            return Optional.empty();
+        }
+
+        return Optional.of(toService(serviceRaw));
+    }
+
+    @Named("statusFromCertified")
+    default String statusFromCertified(Boolean certified) {
+        if (certified != null && certified) {
+            return "Certified";
+        } else {
+            return "Non-certified";
+        }
+    }
+
+    default Eligibility eligibilityFromString(String eligibilityString) {
+        if (StringUtils.isBlank(eligibilityString)) {
+            return null;
+        }
+
+       return Eligibility.builder()
+           .eligibility(eligibilityString)
+           .build();
+    }
+
+    default Set<RequiredDocument> docsFromString(String requiredDocumentsString) {
+        Set<RequiredDocument> requiredDocuments = new HashSet<>();
+        if (StringUtils.isBlank(requiredDocumentsString)) {
+            return requiredDocuments;
+        }
+
+        requiredDocuments.add(RequiredDocument.builder()
+            .document(requiredDocumentsString)
+            .providerName(PROVIDER_NAME)
+            .build());
+
+        return requiredDocuments;
+    }
 
     @Mapping(ignore = true, target = "id")
     @Mapping(source = "name", target = "name")
@@ -49,38 +91,5 @@ public interface ShelterTechServiceMapper {
     @Mapping(ignore = true, target = "langs")
     @Mapping(ignore = true, target = "taxonomies")
     @Mapping(ignore = true, target = "phones")
-    Service mapToService(ServiceRaw serviceRaw);
-
-    @Named("statusFromCertified")
-    default String statusFromCertified(Boolean certified) {
-        if (certified) {
-            return "Certified";
-        } else {
-            return "Non-certified";
-        }
-    }
-
-    default Eligibility eligibilityFromString(String eligibilityString) {
-        if (StringUtils.isBlank(eligibilityString)) {
-            return null;
-        }
-
-       return Eligibility.builder()
-           .eligibility(eligibilityString)
-           .build();
-    }
-
-    default Set<RequiredDocument> docsFromString(String requiredDocumentsString) {
-        Set<RequiredDocument> requiredDocuments = new HashSet<>();
-        if (StringUtils.isBlank(requiredDocumentsString)) {
-            return requiredDocuments;
-        }
-
-        requiredDocuments.add(RequiredDocument.builder()
-            .document(requiredDocumentsString)
-            .providerName(PROVIDER_NAME)
-            .build());
-
-        return requiredDocuments;
-    }
+    Service toService(ServiceRaw serviceRaw);
 }
