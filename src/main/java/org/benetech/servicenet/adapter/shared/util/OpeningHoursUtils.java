@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public final class OpeningHoursUtils {
 
+    private static final String TIME_SEPARATOR = ":";
+    private static final String DEFAULT_MINUTES = "00";
+
     public static Optional<Hours> getHoursFromString(String data, String delimiter) {
         if (StringUtils.isBlank(data) || StringUtils.isBlank(delimiter)) {
             return Optional.empty();
@@ -20,6 +23,24 @@ public final class OpeningHoursUtils {
             result.setClose(parts[1]);
         }
         return Optional.of(result);
+    }
+
+    public static String normalizeTime(String time) {
+        if (StringUtils.isBlank(time)) {
+            return null;
+        }
+
+        String[] timeParts = time.split(TIME_SEPARATOR);
+
+        if (timeParts.length == 1) {
+            return formatMinutesOrHours(timeParts[0]) + TIME_SEPARATOR + DEFAULT_MINUTES;
+        }
+
+        return formatMinutesOrHours(timeParts[0]) + TIME_SEPARATOR + formatMinutesOrHours(timeParts[1]);
+    }
+
+    private static String formatMinutesOrHours(String time) {
+        return String.format("%02d", Integer.valueOf(time));
     }
 
     private OpeningHoursUtils() {

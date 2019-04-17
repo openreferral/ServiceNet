@@ -13,6 +13,7 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
 import org.benetech.servicenet.adapter.icarol.model.ICarolWeekday;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
+import org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Language;
@@ -59,6 +60,7 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     String URL = "url";
 
     @Mapping(source = "disabled", target = "accessibility")
+    @Mapping(source = "description", target = "details")
     @Mapping(target = "id", ignore = true)
     AccessibilityForDisabilities mapAccessibility(ICarolAccessibility accessibility);
 
@@ -67,16 +69,18 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(source = "contact.country", target = "country", defaultValue = "N/A")
     @Mapping(source = "contact.stateProvince", target = "stateProvince", defaultValue = "N/A")
     @Mapping(source = "contact.city", target = "city", defaultValue = "N/A")
+    @Mapping(source = "contact.county", target = "region", defaultValue = "N/A")
     @Mapping(target = "id", ignore = true)
     PhysicalAddress mapToPhysicalAddress(ICarolContactDetails details);
 
-    @Mapping(source = "contact.line1", target = "address1", defaultValue = "N/A")
-    @Mapping(source = "contact.zipPostalCode", target = "postalCode", defaultValue = "N/A")
-    @Mapping(source = "contact.country", target = "country", defaultValue = "N/A")
-    @Mapping(source = "contact.stateProvince", target = "stateProvince", defaultValue = "N/A")
-    @Mapping(source = "contact.city", target = "city", defaultValue = "N/A")
-    @Mapping(target = "id", ignore = true)
-    PostalAddress mapToPostalAddress(ICarolContactDetails details);
+    default PostalAddress mapToPostalAddress(ICarolContactDetails details) {
+        if (StringUtils.isBlank(details.getContact().getStateProvince()) || StringUtils.isBlank(details.getContact().getCity())
+            || StringUtils.isBlank(details.getContact().getLine1())) {
+            throw new IllegalArgumentException("Postal address cannot be empty");
+        }
+
+        return toPostalAddress(details);
+    }
 
     @Mapping(target = "name", source = "contact", qualifiedByName = "locationName")
     @Mapping(target = "description", source = "contact.description")
@@ -85,17 +89,19 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(target = "id", ignore = true)
     Location mapToLocation(ICarolContactDetails details);
 
-    @Mapping(target = "number", source = "contact.number")
-    @Mapping(target = "type", source = "contact.type")
-    @Mapping(target = "description", source = "contact.description")
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "contact", ignore = true)
-    Phone mapContactToPhone(ICarolContactDetails details);
+    default Phone mapContactToPhone(ICarolContactDetails details) {
+        if (StringUtils.isBlank(details.getContact().getNumber())) {
+            throw new IllegalArgumentException("Phone number cannot be empty");
+        }
+
+        return toPhone(details);
+    }
 
     @Mapping(target = "name", source = "names", qualifiedByName = "name")
     @Mapping(target = "alternateName", source = "names", qualifiedByName = "alternateName")
     @Mapping(target = "email", source = "contactDetails", qualifiedByName = "email")
     @Mapping(target = "url", source = "contactDetails", qualifiedByName = "url")
+    @Mapping(target = "description", source = "descriptionText")
     @Mapping(target = "externalDbId", source = "id")
     @Mapping(target = "id", ignore = true)
     Organization mapOrganization(ICarolAgency agency);
@@ -114,10 +120,15 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     Eligibility mapEligibility(ICarolProgram program);
 
     @Mapping(target = "weekday", source = "dayOfWeek", qualifiedByName = "weekday")
-    @Mapping(target = "opensAt", source = "opens")
-    @Mapping(target = "closesAt", source = "closes")
+    @Mapping(target = "opensAt", source = "opens", qualifiedByName = "mapTime")
+    @Mapping(target = "closesAt", source = "closes", qualifiedByName = "mapTime")
     @Mapping(target = "id", ignore = true)
     OpeningHours mapOpeningHours(ICarolDay day);
+
+    @Named("mapTime")
+    default String mapTime(String time) {
+        return OpeningHoursUtils.normalizeTime(time);
+    }
 
     default Location mapToLocation(ICarolContactDetails details, String dbId, String providerName) {
         Location result = mapToLocation(details);
@@ -133,15 +144,28 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
 
     default Organization extractOrganization(ICarolAgency agency, String providerName) {
         Organization result = mapOrganization(agency);
-        result.setActive(agency.getStatus().equals(ACTIVE));
+
+        if (StringUtils.isBlank(result.getName())) {
+            throw new IllegalArgumentException("Organization name cannot be empty");
+        }
+
+        if (StringUtils.isBlank(agency.getStatus())) {
+            throw new IllegalArgumentException("Organization status cannot be empty");
+        }
+
+        result.setActive(ACTIVE.equals(agency.getStatus()));
         return result;
     }
 
     default Service extractService(ICarolProgram program, String providerName) {
         Service result = mapService(program);
-        result.setApplicationProcess(
-            MapperUtils.joinNotBlank(" ", program.getApplicationProcess(),
-            "Required items: " + program.getRequiredDocumentation()));
+        if (StringUtils.isBlank(program.getRequiredDocumentation())) {
+            result.setApplicationProcess(program.getApplicationProcess());
+        } else {
+            result.setApplicationProcess(
+                MapperUtils.joinNotBlank(" ", program.getApplicationProcess(),
+                    "Required items: " + program.getRequiredDocumentation()));
+        }
         result.setProviderName(providerName);
         return result;
     }
@@ -157,9 +181,15 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     }
 
     default Optional<AccessibilityForDisabilities> extractAccessibilityForDisabilities(ICarolSite site) {
-        return site.getAccessibility() != null && site.getAccessibility().getDisabled() != null
-            ? Optional.of(mapAccessibility(site.getAccessibility()))
-            : Optional.empty();
+        if (site.getAccessibility() == null) {
+            return Optional.empty();
+        }
+
+        if (StringUtils.isBlank(site.getAccessibility().getDisabled())) {
+            throw new IllegalArgumentException("Accessibility for disabilities cannot be empty");
+        }
+
+        return Optional.of(mapAccessibility(site.getAccessibility()));
     }
 
     default Set<Phone> extractPhones(ICarolContactDetails[] contactDetails) {
@@ -184,10 +214,12 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
             .collect(Collectors.toSet());
     }
 
-    default Optional<Eligibility> extractEligibility(ICarolProgram program) {
-        return StringUtils.isNotBlank(program.getEligibility())
-            ? Optional.of(mapEligibility(program))
-            : Optional.empty();
+    default Eligibility extractEligibility(ICarolProgram program) {
+        if (StringUtils.isBlank(program.getEligibility())) {
+            throw new IllegalArgumentException("Eligibility cannot be empty");
+        }
+
+        return mapEligibility(program);
     }
 
     default Optional<PhysicalAddress> extractPhysicalAddress(ICarolContactDetails[] contactDetails) {
@@ -204,6 +236,26 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
 
     @Named("weekday")
     default int getIdByTheWeekday(String weekday) {
+        if (StringUtils.isBlank(weekday)) {
+            throw new IllegalArgumentException("Day of the week cannot be empty");
+        }
+
         return ICarolWeekday.valueOf(weekday.toUpperCase(Locale.ROOT)).getNumber();
     }
+
+    @Mapping(target = "number", source = "contact.number")
+    @Mapping(target = "type", source = "contact.label")
+    @Mapping(target = "description", source = "contact.description")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "contact", ignore = true)
+    Phone toPhone(ICarolContactDetails details);
+
+    @Mapping(source = "contact.line1", target = "address1", defaultValue = "N/A")
+    @Mapping(source = "contact.zipPostalCode", target = "postalCode", defaultValue = "N/A")
+    @Mapping(source = "contact.country", target = "country", defaultValue = "N/A")
+    @Mapping(source = "contact.stateProvince", target = "stateProvince", defaultValue = "N/A")
+    @Mapping(source = "contact.city", target = "city", defaultValue = "N/A")
+    @Mapping(source = "contact.county", target = "region", defaultValue = "N/A")
+    @Mapping(target = "id", ignore = true)
+    PostalAddress toPostalAddress(ICarolContactDetails details);
 }

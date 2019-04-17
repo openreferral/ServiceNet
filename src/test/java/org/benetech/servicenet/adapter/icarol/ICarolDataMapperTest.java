@@ -40,6 +40,11 @@ public class ICarolDataMapperTest {
     private static final String PHYSICAL_LOCATION = "PhysicalLocation";
     private static final String POSTAL_ADDRESS = "PostalAddress";
     private static final String ACTIVE = "Active";
+    private static final String NUMBER = "12345678";
+    private static final String NAME = "Name";
+    private static final String STATE_PROVINCE = "CA";
+    private static final String CITY = "CarpetHanger";
+    private static final String LINE1 = "12345 Cool Street";
 
     @Before
     public void setUp() {
@@ -52,6 +57,7 @@ public class ICarolDataMapperTest {
         input.setIsConfidential(true);
         ICarolName name = new ICarolName();
         name.setPurpose(PRIMARY);
+        name.setValue(NAME);
         input.setNames(new ICarolName[] { name });
         input.setContactDetails(new ICarolContactDetails[]{});
         input.setStatus(ACTIVE);
@@ -67,6 +73,7 @@ public class ICarolDataMapperTest {
         input.setIsConfidential(true);
         ICarolName name = new ICarolName();
         name.setPurpose(PRIMARY);
+        name.setValue(NAME);
         input.setNames(new ICarolName[] { name });
         input.setContactDetails(new ICarolContactDetails[]{});
 
@@ -108,6 +115,7 @@ public class ICarolDataMapperTest {
         input.setIsConfidential(true);
         ICarolContact contact = new ICarolContact();
         contact.setType(PHONE_NUMBER);
+        contact.setNumber(NUMBER);
         input.setContact(contact);
 
         Set<Phone> extracted = mapper.extractPhones(new ICarolContactDetails[] { input });
@@ -149,10 +157,9 @@ public class ICarolDataMapperTest {
         input.setIsConfidential(true);
         input.setEligibility("Eligibility");
 
-        Optional<Eligibility> extracted = mapper.extractEligibility(input);
+        Eligibility extracted = mapper.extractEligibility(input);
 
-        assertTrue(extracted.isPresent());
-        assertTrue(extracted.get().getIsConfidential());
+        assertTrue(extracted.getIsConfidential());
     }
 
     @Test
@@ -175,6 +182,9 @@ public class ICarolDataMapperTest {
         input.setIsConfidential(true);
         ICarolContact contact = new ICarolContact();
         contact.setType(POSTAL_ADDRESS);
+        contact.setStateProvince(STATE_PROVINCE);
+        contact.setCity(CITY);
+        contact.setLine1(LINE1);
         input.setContact(contact);
 
         Optional<PostalAddress> extracted = mapper.extractPostalAddress(new ICarolContactDetails[] { input });
@@ -188,6 +198,7 @@ public class ICarolDataMapperTest {
         ICarolAgency input = new ICarolAgency();
         ICarolName name = new ICarolName();
         name.setPurpose(PRIMARY);
+        name.setValue(NAME);
         input.setNames(new ICarolName[] { name });
         input.setContactDetails(new ICarolContactDetails[]{});
         input.setStatus(ACTIVE);
@@ -202,6 +213,7 @@ public class ICarolDataMapperTest {
         ICarolProgram input = new ICarolProgram();
         ICarolName name = new ICarolName();
         name.setPurpose(PRIMARY);
+        name.setValue(NAME);
         input.setNames(new ICarolName[] { name });
         input.setContactDetails(new ICarolContactDetails[]{});
 
@@ -243,6 +255,7 @@ public class ICarolDataMapperTest {
         ICarolContactDetails input = new ICarolContactDetails();
         ICarolContact contact = new ICarolContact();
         contact.setType(PHONE_NUMBER);
+        contact.setNumber(NUMBER);
         input.setContact(contact);
 
         Set<Phone> extracted = mapper.extractPhones(new ICarolContactDetails[] { input });
@@ -284,10 +297,9 @@ public class ICarolDataMapperTest {
         ICarolProgram input = new ICarolProgram();
         input.setEligibility("Eligibility");
 
-        Optional<Eligibility> extracted = mapper.extractEligibility(input);
+        Eligibility extracted = mapper.extractEligibility(input);
 
-        assertTrue(extracted.isPresent());
-        assertNull(extracted.get().getIsConfidential());
+        assertNull(extracted.getIsConfidential());
     }
 
     @Test
@@ -308,6 +320,9 @@ public class ICarolDataMapperTest {
         ICarolContactDetails input = new ICarolContactDetails();
         ICarolContact contact = new ICarolContact();
         contact.setType(POSTAL_ADDRESS);
+        contact.setStateProvince(STATE_PROVINCE);
+        contact.setCity(CITY);
+        contact.setLine1(LINE1);
         input.setContact(contact);
 
         Optional<PostalAddress> extracted = mapper.extractPostalAddress(new ICarolContactDetails[] { input });

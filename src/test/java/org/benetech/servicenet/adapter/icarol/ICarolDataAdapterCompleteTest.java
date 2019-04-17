@@ -2,6 +2,7 @@ package org.benetech.servicenet.adapter.icarol;
 
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.icarol.eden.EdenDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
@@ -27,7 +28,6 @@ import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.benetech.servicenet.service.dto.PostalAddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -88,16 +87,19 @@ public class ICarolDataAdapterCompleteTest {
     @Autowired
     private LocationService locationService;
 
+    @Autowired
+    private TestDatabaseManagement testDatabaseManagement;
+
     private SingleImportData importData;
 
     @Before
     public void setUp() throws IOException {
+        testDatabaseManagement.clearDb();
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
         importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true, null);
     }
 
     @Test
-    @Ignore("We should use descriptionText instead of description")
     public void shouldImportCompleteOrganizations() {
         adapter.importData(importData);
 
@@ -109,13 +111,10 @@ public class ICarolDataAdapterCompleteTest {
         assertEquals("Special District; County", result.getLegalStatus());
         assertEquals(DIFF_LOREM_IPSUM, result.getDescription());
         assertTrue(result.getActive());
-        assertEquals("www.example.org", result.getUrl());
-        assertFalse(result.getIsConfidential());
+        assertEquals("www.example.example", result.getUrl());
     }
 
     @Test
-    @Ignore("https://github.com/benetech/ServiceNet/wiki/iCarol-Data-Mapping-(Eden-and-UWBA) " +
-        "Program.requiredDocumentation, column: 'Mapped to'")
     public void shouldImportCompleteService() {
         adapter.importData(importData);
 
@@ -123,7 +122,7 @@ public class ICarolDataAdapterCompleteTest {
         assertEquals("CarpetHanger Office", result.getName());
         assertNull(result.getAlternateName());
         assertEquals(DIFF_LOREM_IPSUM, result.getDescription());
-        assertEquals("www.example.org", result.getUrl());
+        assertEquals("www.example.example", result.getUrl());
         assertNull(result.getEmail());
         assertEquals("Active", result.getStatus());
         assertNull(result.getInterpretationServices());
@@ -151,7 +150,6 @@ public class ICarolDataAdapterCompleteTest {
     }
 
     @Test
-    @Ignore("Map county to region")
     public void shouldImportCompletePhysicalAddress() {
         adapter.importData(importData);
 
@@ -167,7 +165,6 @@ public class ICarolDataAdapterCompleteTest {
     }
 
     @Test
-    @Ignore("Map county to region")
     public void shouldImportCompletePostalAddress() {
         adapter.importData(importData);
 
@@ -194,7 +191,6 @@ public class ICarolDataAdapterCompleteTest {
     }
 
     @Test
-    @Ignore("We should normalize the hours")
     public void shouldImportOpeningHours() {
         adapter.importData(importData);
 
@@ -210,7 +206,6 @@ public class ICarolDataAdapterCompleteTest {
     }
 
     @Test
-    @Ignore("Unhandled languages")
     public void shouldImportLanguages() {
         adapter.importData(importData);
         List<LanguageDTO> result = languageService.findAll();
@@ -222,7 +217,6 @@ public class ICarolDataAdapterCompleteTest {
     }
 
     @Test
-    @Ignore("The type should be based on label or purpose.")
     public void shouldImportCompletePhones() {
         adapter.importData(importData);
 
@@ -249,7 +243,6 @@ public class ICarolDataAdapterCompleteTest {
     }
 
     @Test
-    @Ignore("We should add details based on site.accessibility.public.")
     public void shouldImportCompleteAccessibility() {
         adapter.importData(importData);
 
