@@ -11,6 +11,8 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.manager.ImportManager;
 import org.benetech.servicenet.type.ListType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,8 @@ import java.util.Set;
 
 @Component("LAACDataAdapter")
 public class LAACDataAdapter extends SingleDataAdapter {
+
+    private final Logger log = LoggerFactory.getLogger(LAACDataAdapter.class);
 
     @Autowired
     private ImportManager importManager;
@@ -35,10 +39,14 @@ public class LAACDataAdapter extends SingleDataAdapter {
         LAACDataMapper mapper = LAACDataMapper.INSTANCE;
 
         for (LAACData entity : data) {
-            Location location = getLocationToPersist(mapper, entity);
-            Service service = getServiceToPersist(mapper, entity);
-            Organization organization = getOrganizationToPersist(mapper, entity, location, service);
-            importOrganization(organization, entity.getId(), importData);
+            try {
+                Location location = getLocationToPersist(mapper, entity);
+                Service service = getServiceToPersist(mapper, entity);
+                Organization organization = getOrganizationToPersist(mapper, entity, location, service);
+                importOrganization(organization, entity.getId(), importData);
+            } catch (Exception e) {
+                log.warn("Skipping organization with name: " + entity.getOrganizationName(), e);
+            }
         }
 
         return importData.getReport();
@@ -62,7 +70,7 @@ public class LAACDataAdapter extends SingleDataAdapter {
     private Service getServiceToPersist(LAACDataMapper mapper, LAACData entity) {
         Service service = mapper.extractService(entity);
         mapper.extractEligibility(entity).ifPresent(service::setEligibility);
-        service.setPhones(Collections.singleton(mapper.extractPhone(entity)));
+        mapper.extractPhone(entity).ifPresent(phone -> service.setPhones(Collections.singleton(phone)));
         service.setLangs(mapper.extractLanguages(entity));
         return service;
     }

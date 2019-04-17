@@ -26,7 +26,6 @@ import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +106,6 @@ public class LAACCompleteDataAdapterTest {
     }
 
     @Test
-    @Ignore("ID is not mapped to externalDbId") //TODO: Remove
     public void shouldImportCompleteService() {
         ServiceDTO result = serviceService.findAll().get(0);
         assertEquals("Patients Health - health.com - Service", result.getName());
@@ -117,7 +115,6 @@ public class LAACCompleteDataAdapterTest {
     }
 
     @Test
-    @Ignore("ID is not mapped to externalDbId") //TODO: Remove
     public void shouldImportCompleteLocation() {
         LocationDTO result = locationService.findAll().get(0);
 
@@ -127,7 +124,6 @@ public class LAACCompleteDataAdapterTest {
     }
 
     @Test
-    @Ignore("ID is not mapped to externalDbId") //TODO: Remove
     public void shouldImportCompleteContact() {
         List<ContactDTO> result = contactService.findAll();
 
