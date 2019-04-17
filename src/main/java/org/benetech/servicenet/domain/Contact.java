@@ -91,6 +91,11 @@ public class Contact extends AbstractEntity implements Serializable {
         this.serviceAtLocation = serviceAtLocation;
         return this;
     }
+
+    public Contact externalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+        return this;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

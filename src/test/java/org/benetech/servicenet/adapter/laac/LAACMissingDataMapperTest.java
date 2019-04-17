@@ -14,7 +14,6 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.type.ListType;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class LAACMissingDataMapperTest {
@@ -44,7 +42,6 @@ public class LAACMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("'Authored on' is required") //TODO: Remove
     public void shouldNotThrowExceptionForMinimalDataForOrganization() {
         Organization result = mapper.extractOrganization(data);
 
@@ -52,7 +49,6 @@ public class LAACMissingDataMapperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("Wrong exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForLackOfDataForOrganization() {
         data.setOrganizationName(null);
         Organization result = mapper.extractOrganization(data);
@@ -68,7 +64,6 @@ public class LAACMissingDataMapperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForLackOfDataForService() {
         data.setOrganizationName(null);
         Service result = mapper.extractService(data);
@@ -84,7 +79,6 @@ public class LAACMissingDataMapperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Ignore("No exception is thrown") //TODO: Remove
     public void shouldThrowExceptionForLackOfDataForLocation() {
         data.setOrganizationName(null);
         Location result = mapper.extractLocation(data);
@@ -126,22 +120,19 @@ public class LAACMissingDataMapperTest {
 
     @Test
     public void shouldNotThrowExceptionForMinimalDataForPhone() {
-        Phone result = mapper.extractPhone(data);
+        Phone result = mapper.extractPhone(data).get();
 
         assertEquals("(123) 123-4561 ext. 200", result.getNumber());
     }
 
     @Test
-    @Ignore("Should return Optional.empty() or at least null if there's no phone number") //TODO: Remove
     public void shouldReturnNullForLackOfDataForPhone() {
         data.setPhone(null);
-        Phone result = mapper.extractPhone(data);
 
-        assertNull(result);
+        assertFalse(mapper.extractPhone(data).isPresent());
     }
 
     @Test
-    @Ignore("There is phantom Language created") //TODO: Remove
     public void shouldNotThrowExceptionForMinimalDataForLanguages() {
         Set<Language> result = mapper.extractLanguages(data);
         Set<String> langs = result.stream().map(Language::getLanguage).collect(Collectors.toSet());
@@ -152,7 +143,6 @@ public class LAACMissingDataMapperTest {
     }
 
     @Test
-    @Ignore("There is phantom Language created") //TODO: Remove
     public void shouldReturnEmptyCollectionForLackOfDataForLanguages() {
         data.setSpokenLanguages(null);
         Set<Language> result = mapper.extractLanguages(data);
