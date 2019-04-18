@@ -1,0 +1,13 @@
+[
+  {
+    "id": null,
+    "location_id": null,
+    "attention": null,
+    "address_1": "1st Address",
+    "address_2": null,
+    "city": "MailCity",
+    "state_province": "MailSP",
+    "postal_code": null,
+    "country": null
+  }
+]

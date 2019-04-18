@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.smcconnect;
 
+import java.time.LocalDate;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -50,6 +51,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.benetech.servicenet.adapter.AdapterTestsUtils.readResourceAsString;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.CLOSES_AT;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.COMPLETE;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.DAYS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.OPENS_AT;
 import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SMCCONNECT;
 import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.JSON;
 import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PROVIDER;
@@ -65,10 +70,11 @@ import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources
 import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SERVICES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
-public class SMCConnectDataRelationshipsTest {
+public class SMCConnectDataAdapterCompleteTest {
 
     @Autowired
     private SMCConnectDataAdapter adapter;
@@ -131,7 +137,7 @@ public class SMCConnectDataRelationshipsTest {
             DocumentUpload upload = new DocumentUpload();
             upload.setFilename(fileName);
             uploads.add(upload);
-            data.add(readResourceAsString(SMCCONNECT + fileName + JSON));
+            data.add(readResourceAsString(SMCCONNECT + COMPLETE + fileName + JSON));
         }
 
         MultipleImportData importData = new MultipleImportData(data, uploads,
@@ -324,5 +330,143 @@ public class SMCConnectDataRelationshipsTest {
                 assertEquals(locations.get(0).getId(), r.getLocationId());
             }
         });
+    }
+
+    @Test
+    public void testAfterGetLanguageFromJson() {
+        List<LanguageDTO> results = languageService.findAll();
+        assertEquals(2, results.size());
+
+        results.forEach(r -> {
+            if (r.getSrvcId() != null) {
+                assertEquals("Vietnamese", r.getLanguage());
+            } else {
+                assertEquals("French", r.getLanguage());
+            }
+        });
+    }
+
+    @Test
+    public void testAfterGetEligibilityFromJson() {
+        assertEquals(1, eligibilityService.findAll().size());
+        EligibilityDTO result = eligibilityService.findAll().get(0);
+
+        assertEquals("Age 18 or over to become a member", result.getEligibility());
+    }
+
+    @Test
+    public void testAfterGetPhoneFromJson() {
+        assertEquals(1, phoneService.findAll().size());
+        PhoneDTO result = phoneService.findAll().get(0);
+
+        assertEquals("(900) 500-9000", result.getNumber());
+        assertEquals("500", result.getExtension().toString());
+        assertEquals("voice", result.getType());
+    }
+
+    @Test
+    public void testAfterGetPhysicalAddressFromJson() {
+        assertEquals(1, physicalAddressService.findAll().size());
+        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+
+        assertEquals("1111 Secret Street", result.getAddress1());
+        assertEquals("City", result.getCity());
+        assertEquals("SP", result.getStateProvince());
+        assertEquals("8490", result.getPostalCode());
+        assertEquals("Country", result.getCountry());
+    }
+
+    @Test
+    public void testAfterGetPostalAddressFromJson() {
+        assertEquals(1, postalAddressService.findAll().size());
+        PostalAddressDTO result = postalAddressService.findAll().get(0);
+
+        assertEquals("1st Address", result.getAddress1());
+        assertEquals("MailCity", result.getCity());
+        assertEquals("MailSP", result.getStateProvince());
+        assertEquals("Mail8490", result.getPostalCode());
+        assertEquals("MailCountry", result.getCountry());
+        assertEquals("Room 500", result.getAttention());
+    }
+
+    @Test
+    public void testAfterGetServiceFromJson() {
+        assertEquals(1, serviceService.findAll().size());
+        ServiceDTO result = serviceService.findAll().get(0);
+
+        assertEquals("Service Name", result.getName());
+        assertEquals("Alternate Name", result.getAlternateName());
+        assertEquals("Service Description", result.getDescription());
+        assertEquals("service@email.com", result.getEmail());
+        assertEquals("active", result.getStatus());
+        assertEquals("Donations, Grants, Dues", result.getInterpretationServices());
+        assertEquals("Call Required documents: Government-issued picture identification",
+            result.getApplicationProcess());
+        assertEquals("1 hour", result.getWaitTime());
+        assertEquals("Service Fee", result.getFees());
+        assertEquals("www.service.com", result.getUrl());
+    }
+
+    @Test
+    public void testAfterGetOpeningHoursFromJson() {
+        List<OpeningHoursDTO> results = openingHoursService.findAll();
+        assertEquals(5, results.size());
+
+        results.forEach(r -> {
+                assertThat(DAYS, Matchers.hasItem(r.getWeekday()));
+                assertThat(OPENS_AT, Matchers.hasItem(r.getOpensAt()));
+                assertThat(CLOSES_AT, Matchers.hasItem(r.getClosesAt()));
+            }
+        );
+    }
+
+    @Test
+    public void testAfterGetFundingFromJson() {
+        List<FundingDTO> results = fundingService.findAll();
+        assertEquals(2, results.size());
+
+        results.forEach(r -> {
+            if (r.getSrvcId() != null) {
+                assertEquals("County, Dues", r.getSource());
+            } else {
+                assertEquals("Donations, Federal, Grants", r.getSource());
+            }
+        });
+    }
+
+    @Test
+    public void testAfterGetContactFromJson() {
+        List<ContactDTO> results = contactService.findAll();
+        assertEquals(2, results.size());
+
+        results.forEach(r -> {
+                assertEquals("Contact Name", r.getName());
+                assertEquals("Contact Title", r.getTitle());
+                assertEquals("contact@email.com", r.getEmail());
+                assertEquals("Contact department", r.getDepartment());
+            }
+        );
+    }
+
+    @Test
+    public void testAfterGetProgramFromJson() {
+        assertEquals(1, programService.findAll().size());
+        ProgramDTO result = programService.findAll().get(0);
+
+        assertEquals("Name", result.getName());
+        assertEquals("Alternate Name", result.getAlternateName());
+    }
+
+    @Test
+    public void testAfterGetHolidayScheduleFromJson() {
+        List<HolidayScheduleDTO> results = holidayScheduleService.findAll();
+        assertEquals(2, results.size());
+
+        results.forEach(r -> {
+                assertEquals(LocalDate.of(2001, 12, 24), r.getStartDate());
+                assertEquals(LocalDate.of(2002, 1, 1), r.getEndDate());
+                assertTrue(r.isClosed());
+            }
+        );
     }
 }

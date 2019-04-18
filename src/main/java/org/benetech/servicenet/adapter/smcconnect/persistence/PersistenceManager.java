@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.smcconnect.persistence;
 
+import java.util.Optional;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.SmcConnectDataMapper;
@@ -74,9 +75,9 @@ class PersistenceManager {
             Location location = mapper.extractLocation(smcLocation);
 
             location.setRegularSchedule(getLocationBasedRegularScheduleToPersist(smcLocation.getId()));
-            location.setHolidaySchedule(getLocationBasedHolidayScheduleToPersist(smcLocation.getId()));
-            location.setPhysicalAddress(getPhysicalAddressToPersist(smcLocation.getId()));
-            location.setPostalAddress(getPostalAddressToPersist(smcLocation.getId()));
+            getLocationBasedHolidayScheduleToPersist(smcLocation.getId()).ifPresent(location::setHolidaySchedule);
+            getPhysicalAddressToPersist(smcLocation.getId()).ifPresent(location::setPhysicalAddress);
+            getPostalAddressToPersist(smcLocation.getId()).ifPresent(location::setPostalAddress);
             location.setLangs(getLocationBasedLanguagesToPersist(smcLocation));
 
             result.add(location);
@@ -93,7 +94,7 @@ class PersistenceManager {
             service.setLangs(getServiceBasedLanguagesToPersist(smcService));
             service.setContacts(getServiceBasedContactsToPersist(smcService.getId()));
             service.setRegularSchedule(getServiceBasedRegularScheduleToPersist(smcService.getId()));
-            service.setHolidaySchedule(getServiceBasedHolidayScheduleToPersist(smcService.getId()));
+            getServiceBasedHolidayScheduleToPersist(smcService.getId()).ifPresent(service::setHolidaySchedule);
             service.setPhones(getPhonesToPersist(smcService.getId()));
 
             result.add(service);
@@ -127,19 +128,19 @@ class PersistenceManager {
         return new RegularSchedule().openingHours(openingHours);
     }
 
-    private HolidaySchedule getLocationBasedHolidayScheduleToPersist(String relatedTo) {
+    private Optional<HolidaySchedule> getLocationBasedHolidayScheduleToPersist(String relatedTo) {
         // TODO: currently the relation is one to one, so only one is persisted
         return storage.getRelatedEntities(SmcHolidaySchedule.class, relatedTo, SmcLocation.class)
-            .stream().map(s -> mapper.extractHolidaySchedule(s)).findFirst().orElse(null);
+            .stream().map(s -> mapper.extractHolidaySchedule(s)).findFirst().orElse(Optional.empty());
     }
 
-    private PhysicalAddress getPhysicalAddressToPersist(String relatedTo) {
+    private Optional<PhysicalAddress> getPhysicalAddressToPersist(String relatedTo) {
         //TODO: Only first one is persisted
         return storage.getRelatedEntities(SmcAddress.class, relatedTo, SmcLocation.class).stream()
             .map(a -> mapper.extractPhysicalAddress(a)).findFirst().orElse(null);
     }
 
-    private PostalAddress getPostalAddressToPersist(String relatedTo) {
+    private Optional<PostalAddress> getPostalAddressToPersist(String relatedTo) {
         //TODO: Only first one is persisted
         return storage.getRelatedEntities(SmcMailAddress.class, relatedTo, SmcLocation.class).stream()
             .map(a -> mapper.extractPostalAddress(a)).findFirst().orElse(null);
@@ -163,10 +164,10 @@ class PersistenceManager {
         return new RegularSchedule().openingHours(openingHours);
     }
 
-    private HolidaySchedule getServiceBasedHolidayScheduleToPersist(String relatedTo) {
+    private Optional<HolidaySchedule> getServiceBasedHolidayScheduleToPersist(String relatedTo) {
         // TODO: currently the relation is one to one, so only one is persisted
         return storage.getRelatedEntities(SmcHolidaySchedule.class, relatedTo, SmcService.class).stream()
-                .map(s -> mapper.extractHolidaySchedule(s)).findFirst().orElse(null);
+                .map(s -> mapper.extractHolidaySchedule(s)).findFirst().orElse(Optional.empty());
     }
 
     private Set<Program> getProgramsToPersist(String relatedTo) {

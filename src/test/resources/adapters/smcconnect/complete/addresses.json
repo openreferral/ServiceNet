@@ -2,12 +2,11 @@
   {
     "id": "addressId",
     "location_id": "locationId",
-    "attention": "Room 500",
-    "address_1": "1st Address",
-    "address_2": "2nd Address",
+    "address_1": "1111 Secret Street",
+    "address_2": "2222 Secret Street",
     "city": "City",
     "state_province": "SP",
     "postal_code": "8490",
-    "country": ""
+    "country": "Country"
   }
 ]

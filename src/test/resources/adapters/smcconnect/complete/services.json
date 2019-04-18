@@ -3,7 +3,7 @@
     "id": "serviceId",
     "location_id": "locationId",
     "program_id": "programId",
-    "accepted_patments": "Cash",
+    "accepted_payments": "Cash",
     "alternate_name": "Alternate Name",
     "application_process": "Call",
     "audience": "Adults",
