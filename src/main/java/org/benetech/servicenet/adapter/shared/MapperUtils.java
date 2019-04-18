@@ -20,6 +20,9 @@ public final class MapperUtils {
     }
 
     public static Integer stringToInteger(String source) {
+        if (StringUtils.isBlank(source)) {
+            return null;
+        }
         String numbersOnly = source.replaceAll("\\D+", "");
         if (StringUtils.isNotBlank(numbersOnly)) {
             return Integer.valueOf(numbersOnly);

@@ -4,7 +4,7 @@
     "location_id": "locationId",
     "service_id": null,
     "start_date": "December 24, 0001",
-    "end_date": "January 01, 0001",
+    "end_date": "January 01, 0002",
     "closed": true,
     "opens_at": "",
     "closes_at": ""
@@ -14,7 +14,7 @@
     "location_id": null,
     "service_id": "serviceId",
     "start_date": "December 24, 0001",
-    "end_date": "January 01, 0001",
+    "end_date": "January 01, 0002",
     "closed": true,
     "opens_at": "",
     "closes_at": ""

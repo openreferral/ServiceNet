@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.smcconnect;
 
+import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcAddress;
@@ -66,16 +67,16 @@ public interface SmcConnectDataMapper {
     @Mapping(target = "latitude", qualifiedByName = "double")
     @Mapping(target = "externalDbId", source = "id")
     @Mapping(target = "providerName", defaultValue = PROVIDER_NAME)
-    Location extractLocation(SmcLocation location);
+    Location mapLocation(SmcLocation location);
 
     @Mapping(target = "id", ignore = true)
-    PhysicalAddress extractPhysicalAddress(SmcAddress address);
+    PhysicalAddress mapPhysicalAddress(SmcAddress address);
 
     @Mapping(target = "id", ignore = true)
-    PostalAddress extractPostalAddress(SmcMailAddress address);
+    PostalAddress mapPostalAddress(SmcMailAddress address);
 
     @Mapping(target = "id", ignore = true)
-    Contact extractContact(SmcContact contact);
+    Contact mapContact(SmcContact contact);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "weekday", ignore = true)
@@ -87,14 +88,18 @@ public interface SmcConnectDataMapper {
     HolidaySchedule mapHolidaySchedule(SmcHolidaySchedule startDate);
 
     @Mapping(target = "id", ignore = true)
-    Program extractProgram(SmcProgram program);
+    Program mapProgram(SmcProgram program);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "number", ignore = true)
     @Mapping(target = "extension", qualifiedByName = "int")
     Phone mapPhone(SmcPhone phone);
 
-    default HolidaySchedule extractHolidaySchedule(SmcHolidaySchedule source) {
+    default Optional<HolidaySchedule> extractHolidaySchedule(SmcHolidaySchedule source) {
+        if (StringUtils.isBlank(source.getStartDate()) || StringUtils.isBlank(source.getEndDate())) {
+            return Optional.empty();
+        }
+
         String dateFormat = "MMMM dd, 00yy";
         HolidaySchedule result = mapHolidaySchedule(source);
         if (StringUtils.isNotBlank(source.getStartDate())) {
@@ -103,10 +108,14 @@ public interface SmcConnectDataMapper {
         if (StringUtils.isNotBlank(source.getEndDate())) {
             result.setEndDate(LocalDate.parse(source.getEndDate(), DateTimeFormatter.ofPattern(dateFormat)));
         }
-        return result;
+        return Optional.of(result);
     }
 
     default OpeningHours extractOpeningHours(SmcRegularSchedule regularSchedule) {
+        if (StringUtils.isBlank(regularSchedule.getWeekday())) {
+            return null;
+        }
+
         OpeningHours result = mapOpeningHours(regularSchedule);
         result.setWeekday(getIdByTheWeekday(regularSchedule.getWeekday()));
         return result;
@@ -117,6 +126,10 @@ public interface SmcConnectDataMapper {
     }
 
     default Organization extractOrganization(SmcOrganization source) {
+        if (StringUtils.isBlank(source.getName())) {
+            throw new IllegalArgumentException("Organization name cannot be empty");
+        }
+
         Organization result = mapOrganization(source);
         result.setFunding(extractFunding(source).orElse(null));
         result.setActive(true);
@@ -128,11 +141,23 @@ public interface SmcConnectDataMapper {
     }
 
     default Service extractService(SmcService source) {
+        if (StringUtils.isBlank(source.getName())) {
+            throw new IllegalArgumentException("Service name cannot be empty");
+        }
+
         Service result = mapService(source);
         result.setFunding(extractFunding(source).orElse(null));
         result.setApplicationProcess(MapperUtils.joinNotBlank(" ", source.getApplicationProcess(),
             "Required documents: " + source.getRequiredDocuments()));
         return result;
+    }
+
+    default Location extractLocation(SmcLocation source) {
+        if (StringUtils.isBlank(source.getName())) {
+            throw new IllegalArgumentException("Location name cannot be empty");
+        }
+
+        return mapLocation(source);
     }
 
     default Optional<Eligibility> extractEligibility(SmcService service) {
@@ -159,19 +184,47 @@ public interface SmcConnectDataMapper {
             Phone mapped = mapPhone(phone);
             mapped.setNumber(MapperUtils.joinNotBlank(" ", phone.getCountryPrefix(),
                 phone.getNumber()));
-            result.add(mapped);
+            if (StringUtils.isNotBlank(mapped.getNumber())) {
+                result.add(mapped);
+            }
         }
         return result;
     }
 
     default Set<Language> extractLangs(SmcService service) {
+        if (StringUtils.isBlank(service.getLanguages())) {
+            return Collections.emptySet();
+        }
         String[] langs = service.getLanguages().split(DELIMITER);
         return Arrays.stream(langs).map(lang -> new Language().language(lang)).collect(Collectors.toSet());
     }
 
     default Set<Language> extractLangs(SmcLocation location) {
+        if (StringUtils.isBlank(location.getLanguages())) {
+            return Collections.emptySet();
+        }
         String[] langs = location.getLanguages().split(DELIMITER);
         return Arrays.stream(langs).map(lang -> new Language().language(lang)).collect(Collectors.toSet());
+    }
+
+    default Program extractProgram(SmcProgram program) {
+        return StringUtils.isNotBlank(program.getName()) ? mapProgram(program) : null;
+    }
+
+    default Contact extractContact(SmcContact contact) {
+        return StringUtils.isNotBlank(contact.getName()) ? mapContact(contact) : null;
+    }
+
+    default Optional<PhysicalAddress> extractPhysicalAddress(SmcAddress address) {
+        return StringUtils.isNotBlank(address.getAddress1()) ?
+            Optional.of(mapPhysicalAddress(address)) :
+            Optional.empty();
+    }
+
+    default Optional<PostalAddress> extractPostalAddress(SmcMailAddress mailAddress) {
+        return StringUtils.isNotBlank(mailAddress.getAddress1()) ?
+            Optional.of(mapPostalAddress(mailAddress)) :
+            Optional.empty();
     }
 
     @Named("double")
