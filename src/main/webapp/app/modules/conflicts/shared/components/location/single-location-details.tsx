@@ -38,6 +38,11 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     });
   };
 
+  nextRecord = () => {
+    this.setState({ isAreaOpen: true });
+    this.props.changeRecord();
+  };
+
   render() {
     const { record, isOnlyOne, columnSize } = this.props;
     const customHeader = (
@@ -49,7 +54,7 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
           <Translate contentKey="singleRecordView.details.titleLocations" /> {this.props.locationsCount}
         </div>
         {isOnlyOne ? null : (
-          <Button className="primary" onClick={this.props.changeRecord}>
+          <Button className="primary" onClick={this.nextRecord}>
             <Translate contentKey="singleRecordView.details.seeAnotherLocation" />
           </Button>
         )}

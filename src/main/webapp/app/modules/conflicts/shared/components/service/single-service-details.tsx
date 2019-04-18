@@ -43,6 +43,11 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     });
   };
 
+  nextRecord = () => {
+    this.setState({ isAreaOpen: true });
+    this.props.changeRecord();
+  };
+
   render() {
     const { record, isOnlyOne, columnSize } = this.props;
     const customHeader = (
@@ -54,7 +59,7 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
           <Translate contentKey="singleRecordView.details.titleServices" /> {this.props.servicesCount}
         </div>
         {isOnlyOne ? null : (
-          <Button className="primary" onClick={this.props.changeRecord}>
+          <Button className="primary" onClick={this.nextRecord}>
             <Translate contentKey="singleRecordView.details.seeAnotherService" />
           </Button>
         )}
