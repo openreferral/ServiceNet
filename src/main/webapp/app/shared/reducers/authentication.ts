@@ -3,6 +3,7 @@ import { Storage } from 'react-jhipster';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { setLocale } from 'app/shared/reducers/locale';
+import { resetSearchPreferences } from 'app/shared/util/search-utils';
 
 export const ACTION_TYPES = {
   LOGIN: 'authentication/LOGIN',
@@ -109,6 +110,7 @@ export const getSession = () => async (dispatch, getState) => {
 };
 
 export const login = (username, password, rememberMe = false) => async (dispatch, getState) => {
+  resetSearchPreferences(username);
   const data = `j_username=${encodeURIComponent(username)}&j_password=${encodeURIComponent(
     password
   )}&remember-me=${rememberMe}&submit=Login`;
