@@ -24,6 +24,7 @@
         "title": "Activity"
       },
       "organization": "Organization",
+      "noConflicts": "0 Partner conflicts with this record",
       "conflict": "Conflict",
       "empty": "There are no recent activities",
       "unresolved": {
