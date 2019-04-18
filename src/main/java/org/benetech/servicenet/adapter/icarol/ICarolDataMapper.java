@@ -74,7 +74,8 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     PhysicalAddress mapToPhysicalAddress(ICarolContactDetails details);
 
     default PostalAddress mapToPostalAddress(ICarolContactDetails details) {
-        if (StringUtils.isBlank(details.getContact().getStateProvince()) || StringUtils.isBlank(details.getContact().getCity())
+        if (StringUtils.isBlank(details.getContact().getStateProvince())
+            || StringUtils.isBlank(details.getContact().getCity())
             || StringUtils.isBlank(details.getContact().getLine1())) {
             throw new IllegalArgumentException("Postal address cannot be empty");
         }

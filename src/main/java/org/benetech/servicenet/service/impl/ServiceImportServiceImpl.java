@@ -54,7 +54,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         serviceBasedImportService.createOrUpdateHolidayScheduleForService(
             filledService.getHolidaySchedule(), service, report);
         serviceBasedImportService.createOrUpdateServiceAtLocationForService(
-            filledService.getLocation(), providerName, service,report);
+            filledService.getLocation(), providerName, service, report);
 
         return service;
     }
