@@ -3,7 +3,7 @@ import './home.scss';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Translate, translate, getSortState, IPaginationBaseState } from 'react-jhipster';
+import { Translate, translate, getSortState, IPaginationBaseState, Storage } from 'react-jhipster';
 import { connect } from 'react-redux';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,6 +15,7 @@ import { getEntities, reset } from 'app/shared/reducers/activity.reducer';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import ActivityElement from './activity-element';
 import SortActivity from './sort-activity';
+import { SORT_ARRAY, getSearchPreferences, setSort, setSearchPhrase } from 'app/shared/util/search-utils';
 
 const SEARCH_TIMEOUT = 1000;
 
@@ -31,13 +32,15 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   constructor(props) {
     super(props);
 
+    const { searchPhrase, sort, order } = getSearchPreferences(this.props.account.login);
+
     this.state = {
       ...getSortState(this.props.location, ITEMS_PER_PAGE),
-      sort: SORT_RECENTLY_UPDATED,
-      order: DEFAULT_SORT_ORDER,
+      sort,
+      order,
       dropdownOpen: false,
       loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false,
-      searchPhrase: '',
+      searchPhrase,
       typingTimeout: 0
     };
   }
@@ -47,12 +50,19 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   }
 
   componentDidUpdate(prevProps) {
+    if (this.props.account.login && !(prevProps.account && prevProps.account.login)) {
+      const { searchPhrase, sort, order } = getSearchPreferences(this.props.account.login);
+      this.setState({ searchPhrase, sort, order });
+    }
+
     if (this.props.updateSuccess || (this.props.loginSuccess === true && prevProps.loginSuccess === false)) {
       this.reset();
     }
   }
 
   sort = prop => () => {
+    setSort(this.props.account.login, prop);
+
     this.setState({ sort: prop }, () => {
       this.reset();
     });
@@ -100,8 +110,11 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       clearTimeout(this.state.typingTimeout);
     }
 
+    const searchPhrase = event.target.value;
+    setSearchPhrase(this.props.account.login, searchPhrase);
+
     this.setState({
-      searchPhrase: event.target.value,
+      searchPhrase,
       typingTimeout: setTimeout(() => {
         this.searchEntities();
       }, SEARCH_TIMEOUT)
@@ -110,6 +123,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
 
   clearSearchBar = () => {
     if (this.state.searchPhrase !== '') {
+      setSearchPhrase(this.props.account.login, '');
+
       this.setState({
         searchPhrase: '',
         typingTimeout: setTimeout(() => {
@@ -219,11 +234,6 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     );
   }
 }
-
-const DEFAULT_SORT_ORDER = 'desc';
-const SORT_RECENTLY_UPDATED = 'recent';
-const SORT_RECOMMENDED = 'recommended';
-const SORT_ARRAY = [SORT_RECENTLY_UPDATED, SORT_RECOMMENDED];
 
 const mapStateToProps = (storeState: IRootState) => ({
   account: storeState.authentication.account,
