@@ -82,7 +82,7 @@
         <sonar-maven-plugin.version>3.5.0.1254</sonar-maven-plugin.version>
         <git-commit-id-plugin.version>2.2.5</git-commit-id-plugin.version>
         <maven-checkstyle.version>3.0.0</maven-checkstyle.version>
-        <maven-pmd.version>3.9.0</maven-pmd.version>
+        <maven-pmd.version>3.11.0</maven-pmd.version>
         <findbugs-bug-pattern.version>1.4.1</findbugs-bug-pattern.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <versions-maven-plugin.version>2.5</versions-maven-plugin.version>
@@ -525,9 +525,9 @@
                 <executions>
                     <execution>
                         <id>checkstyle</id>
-                        <phase>prepare-package</phase>
+                        <phase>compile</phase>
                         <goals>
-                            <goal>checkstyle</goal>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -544,16 +544,23 @@
                 <version>${maven-pmd.version}</version>
                 <executions>
                     <execution>
-                        <phase>test</phase>
+                        <phase>compile</phase>
+<!--                        <goals>-->
+<!--                            <goal>check</goal>-->
+<!--                            <goal>cpd-check</goal>-->
+<!--                        </goals>-->
                     </execution>
                 </executions>
                 <configuration>
+                    <linkXRef>false</linkXRef>
                     <analysisCache>true</analysisCache>
                     <rulesets>
                         <ruleset>checks/pmd/pmd.xml</ruleset>
                     </rulesets>
                     <includeTests>true</includeTests>
                     <minimumTokens>100</minimumTokens>
+                    <targetJdk>${java.version}</targetJdk>
+                    <printFailingErrors>true</printFailingErrors>
                     <failOnViolation>true</failOnViolation>
                 </configuration>
             </plugin>
