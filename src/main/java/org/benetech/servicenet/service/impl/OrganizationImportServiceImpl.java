@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Funding;
@@ -18,12 +19,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+import static org.benetech.servicenet.service.util.EntityManagerUtils.updateCollection;
 
 @Component
 public class OrganizationImportServiceImpl implements OrganizationImportService {
@@ -102,26 +102,13 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     private void createOrUpdateFilteredContactsForOrganization(Set<Contact> contacts, Organization organization) {
         contacts.forEach(p -> p.setOrganization(organization));
-
-        Set<Contact> common = new HashSet<>(contacts);
-        common.retainAll(organization.getContacts());
-
-        organization.getContacts().stream().filter(c -> !common.contains(c)).forEach(c -> safeRemove(em, c));
-        contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
-
-        organization.setContacts(contacts);
+        updateCollection(em, organization.getContacts(), contacts, Contact::equals);
     }
 
     private void createOrUpdateFilteredProgramsForOrganization(Set<Program> programs, Organization organization) {
         programs.forEach(p -> p.setOrganization(organization));
-
-        Set<Program> common = new HashSet<>(programs);
-        common.retainAll(organization.getPrograms());
-
-        organization.getPrograms().stream().filter(p -> !common.contains(p)).forEach(p -> safeRemove(em, p));
-        programs.stream().filter(p -> !common.contains(p)).forEach(p -> em.persist(p));
-
-        organization.setPrograms(programs);
+        updateCollection(em, organization.getPrograms(), programs, (p1, p2) ->
+            p1.getName().equals(p2.getName()) && StringUtils.equals(p1.getAlternateName(), p2.getAlternateName()));
     }
 
     private void fillDataFromDb(Organization newOrg, Organization orgFromDb) {

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Phone;
@@ -13,11 +14,12 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+import static org.benetech.servicenet.service.util.EntityManagerUtils.updateCollection;
 
 @Component
 public class SharedImportServiceImpl implements SharedImportService {
@@ -38,13 +40,13 @@ public class SharedImportServiceImpl implements SharedImportService {
         createOrUpdateOpeningHours(openingHours, null, location, schedule);
     }
 
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
     @Override
     public Set<Phone> persistPhones(Set<Phone> phonesToSave, Set<Phone> phonesInDatabase) {
-        Set<Phone> common = new HashSet<>(phonesToSave);
-        common.retainAll(phonesInDatabase);
-
-        phonesInDatabase.stream().filter(phone -> !common.contains(phone)).forEach(x -> safeRemove(em, x));
-        phonesToSave.stream().filter(phone -> !common.contains(phone)).forEach(em::persist);
+        updateCollection(em, phonesInDatabase, phonesToSave, (p1, p2) ->
+            p1.getNumber().equals(p2.getNumber()) && Objects.equals(p1.getExtension(), p2.getExtension())
+                && StringUtils.equals(p1.getType(), p2.getType()) && StringUtils.equals(p1.getLanguage(), p2.getLanguage())
+                && StringUtils.equals(p1.getDescription(), p2.getDescription()));
 
         return phonesToSave;
     }
@@ -64,24 +66,26 @@ public class SharedImportServiceImpl implements SharedImportService {
         } else if (location != null) {
             scheduleFormDb = regularScheduleRepository.findOneByLocationId(location.getId());
         }
-        if (scheduleFormDb.isPresent()) {
-            scheduleToSave.setId(scheduleFormDb.get().getId());
-            Set<OpeningHours> common = new HashSet<>(openingHours);
-            common.retainAll(scheduleFormDb.get().getOpeningHours());
+        scheduleFormDb.ifPresentOrElse(
+            schedule -> {
+                scheduleToSave.setId(schedule.getId());
 
-            scheduleFormDb.get().getOpeningHours().stream().filter(o -> !common.contains(o)).forEach(o -> safeRemove(em, o));
-            openingHours.stream().filter(o -> !common.contains(o)).forEach(o -> em.persist(o));
+                openingHours.forEach(o -> o.setRegularSchedule(schedule));
+                updateCollection(em, schedule.getOpeningHours(), openingHours, (o1, o2) ->
+                    o1.getWeekday().equals(o2.getWeekday()) && StringUtils.equals(o1.getClosesAt(), o2.getClosesAt())
+                        && StringUtils.equals(o1.getOpensAt(), o2.getOpensAt()));
 
-            em.merge(scheduleToSave.openingHours(new HashSet<>(openingHours)).location(location).srvc(service));
-            setSchedule(scheduleToSave, location, service);
-        } else {
-            openingHours.forEach(o -> em.persist(o));
-            RegularSchedule regularSchedule = new RegularSchedule()
-                .openingHours(new HashSet<>(openingHours)).location(location).srvc(service);
-            em.persist(regularSchedule);
-            setSchedule(regularSchedule, location, service);
-            openingHours.forEach(o -> o.setRegularSchedule(regularSchedule));
-        }
+                em.merge(scheduleToSave.openingHours(schedule.getOpeningHours()).location(location).srvc(service));
+                setSchedule(scheduleToSave, location, service);
+            },
+            () -> {
+                openingHours.forEach(o -> em.persist(o));
+                RegularSchedule regularSchedule = new RegularSchedule()
+                    .openingHours(new HashSet<>(openingHours)).location(location).srvc(service);
+                em.persist(regularSchedule);
+                setSchedule(regularSchedule, location, service);
+                openingHours.forEach(o -> o.setRegularSchedule(regularSchedule));
+            });
     }
 
     private void setSchedule(RegularSchedule schedule, Location location, Service service) {

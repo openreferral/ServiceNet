@@ -398,7 +398,7 @@ public class ImportServiceConfidentialityImplIntTest {
 
         Language otherLanguage = new Language().language(OTHER_STRING);
         otherLanguage.setIsConfidential(true);
-        service.setLangs(Set.of(otherLanguage));
+        service.setLangs(Set.of(languageToBeUpdated, otherLanguage));
         importManager.createOrUpdateService(service, EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         assertEquals(1, languageService.findAll().size());
