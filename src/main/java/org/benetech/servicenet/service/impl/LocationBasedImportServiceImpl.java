@@ -20,12 +20,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.persistence.EntityManager;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+import static org.benetech.servicenet.service.util.EntityManagerUtils.updateCollection;
 import static org.benetech.servicenet.validator.EntityValidator.isValid;
 
 @Component
@@ -148,17 +147,14 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
 
     private void createOrUpdateFilteredLangsForLocation(Set<Language> langs, Location location) {
         if (location != null) {
-            Set<Language> common = new HashSet<>(langs);
-            common.retainAll(location.getLangs());
-            location.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(x -> safeRemove(em, x));
-            langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> {
-                lang.setLocation(location);
-                em.persist(lang);
-            });
+            langs.forEach(lang -> lang.setLocation(location));
+            updateCollection(em, location.getLangs(), langs, (lang1, lang2) ->
+                lang1.getLanguage().equals(lang2.getLanguage()));
         }
     }
 
     private void createOrUpdateFilteredPhonesForLocation(Set<Phone> phones, @Nonnull Location location) {
+        phones.forEach(phone -> phone.setLocation(location));
         location.setPhones(sharedImportService.persistPhones(phones, location.getPhones()));
     }
 

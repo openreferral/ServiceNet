@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.benetech.servicenet.service.util.EntityManagerUtils.safeRemove;
+import static org.benetech.servicenet.service.util.EntityManagerUtils.updateCollection;
 import static org.benetech.servicenet.util.CollectionUtils.filterNulls;
 import static org.benetech.servicenet.validator.EntityValidator.isValid;
 
@@ -185,10 +185,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
     @Override
     public void createOrUpdateContactsForService(Set<Contact> contacts, Service service, DataImportReport report) {
         contacts.forEach(c -> c.setSrvc(service));
-        Set<Contact> common = new HashSet<>(contacts);
-        common.retainAll(service.getContacts());
-        createOrUpdateContacts(contacts, common, service.getContacts(), report, service.getExternalDbId());
-        service.setContacts(contacts);
+        createOrUpdateContacts(contacts, service.getContacts(), report, service.getExternalDbId());
     }
 
     @Override
@@ -221,32 +218,28 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         }
     }
 
-    private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source,
+    private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> source,
                                         DataImportReport report, String serviceExternalId) {
         Set<Contact> filtered = contacts.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential())
             && isValid(x, report, serviceExternalId))
             .collect(Collectors.toSet());
-        createOrUpdateFilteredContacts(filtered, common, source);
+        createOrUpdateFilteredContacts(filtered, source);
     }
 
-    private void createOrUpdateFilteredContacts(Set<Contact> contacts, Set<Contact> common, Set<Contact> source) {
-        source.stream().filter(c -> !common.contains(c)).forEach(c -> safeRemove(em, c));
-        contacts.stream().filter(c -> !common.contains(c)).forEach(c -> em.persist(c));
+    private void createOrUpdateFilteredContacts(Set<Contact> contacts, Set<Contact> source) {
+        updateCollection(em, source, contacts, Contact::equals);
     }
 
     private void createOrUpdateFilteredPhonesForService(Set<Phone> phones, @Nonnull Service service) {
+        phones.forEach(phone -> phone.setSrvc(service));
         service.setPhones(sharedImportService.persistPhones(phones, service.getPhones()));
     }
 
     private void createOrUpdateFilteredLangsForService(Set<Language> langs, Service service) {
         if (service != null) {
-            Set<Language> common = new HashSet<>(langs);
-            common.retainAll(service.getLangs());
-            service.getLangs().stream().filter(lang -> !common.contains(lang)).forEach(lang -> safeRemove(em, lang));
-            langs.stream().filter(lang -> !common.contains(lang)).forEach(lang -> {
-                lang.setSrvc(service);
-                em.persist(lang);
-            });
+            langs.forEach(lang -> lang.setSrvc(service));
+            updateCollection(em, service.getLangs(), langs, (lang1, lang2) ->
+                lang1.getLanguage().equals(lang2.getLanguage()));
         }
     }
 }
