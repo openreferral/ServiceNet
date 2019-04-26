@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain.view;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Data
 @Entity(name = "activity_info")
+@Immutable
 public class ActivityInfo {
 
     @Id

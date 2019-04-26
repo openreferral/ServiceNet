@@ -21,9 +21,8 @@ export interface IConflict {
   resourceId?: any;
   ownerId?: any;
   ownerName?: string;
-  firstAcceptedId?: any;
-  firstAcceptedName?: string;
-  acceptedThisChange?: ISystemAccount[];
+  acceptedThisChangeId?: any;
+  acceptedThisChangeName?: string;
 }
 
 export const defaultValue: Readonly<IConflict> = {};

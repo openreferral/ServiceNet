@@ -20,16 +20,16 @@ export interface IConflictUpdateProps extends StateProps, DispatchProps, RouteCo
 
 export interface IConflictUpdateState {
   isNew: boolean;
-  idsacceptedThisChange: any[];
   ownerId: string;
+  acceptedThisChangeId: string;
 }
 
 export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConflictUpdateState> {
   constructor(props) {
     super(props);
     this.state = {
-      idsacceptedThisChange: [],
       ownerId: '0',
+      acceptedThisChangeId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -60,8 +60,7 @@ export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConfl
       const { conflictEntity } = this.props;
       const entity = {
         ...conflictEntity,
-        ...values,
-        acceptedThisChange: mapIdList(values.acceptedThisChange)
+        ...values
       };
 
       if (this.state.isNew) {
@@ -218,17 +217,10 @@ export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConfl
                   </AvInput>
                 </AvGroup>
                 <AvGroup>
-                  <Label for="systemAccounts">
+                  <Label for="acceptedThisChange.id">
                     <Translate contentKey="serviceNetApp.conflict.acceptedThisChange">Accepted This Change</Translate>
                   </Label>
-                  <AvInput
-                    id="conflict-acceptedThisChange"
-                    type="select"
-                    multiple
-                    className="form-control"
-                    name="acceptedThisChange"
-                    value={conflictEntity.acceptedThisChange && conflictEntity.acceptedThisChange.map(e => e.id)}
-                  >
+                  <AvInput id="conflict-acceptedThisChange" type="select" className="form-control" name="acceptedThisChangeId">
                     <option value="" key="0" />
                     {systemAccounts
                       ? systemAccounts.map(otherEntity => (

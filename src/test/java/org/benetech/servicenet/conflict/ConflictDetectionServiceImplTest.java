@@ -117,26 +117,6 @@ public class ConflictDetectionServiceImplTest {
 
     @Test
     @Transactional
-    public void shouldAddToAcceptedThisChangeInsteadOfDuplicatingConflict() {
-        Organization org = OrganizationMother.createDefaultAndPersist(em);
-        Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
-        theSameOrg.setEmail("user@example.example");
-        em.flush();
-        OrganizationMatch match = createMatch(org, theSameOrg);
-        OrganizationMatch match2 = createMatch(theSameOrg, org);
-
-        int dbSize = conflictRepository.findAll().size();
-        int numberOfConflicts = 1;
-        int numberOfMirrorConflicts = 1;
-
-        conflictDetectionService.detect(Arrays.asList(match, match2));
-
-        assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
-        assertEquals(1, conflictRepository.findAll().get(0).getAcceptedThisChange().size());
-    }
-
-    @Test
-    @Transactional
     public void shouldCreateMirrorConflict() {
         Organization org = OrganizationMother.createDefaultAndPersist(em);
         Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
@@ -166,6 +146,7 @@ public class ConflictDetectionServiceImplTest {
         Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);
         theSameOrg.setEmail("user@example.example");
         em.persist(theSameOrg);
+        em.flush();
 
         OrganizationMatch match = createMatch(org, theSameOrg);
         OrganizationMatch match2 = createMatch(theSameOrg, org);

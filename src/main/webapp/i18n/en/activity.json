@@ -29,8 +29,6 @@
       "empty": "There are no recent activities",
       "unresolved": {
         "title": "Recent Service Net Activity",
-        "conflictPlusOne": " partner have a conflicting {{ fieldName }}",
-        "conflictsPlusMany": " partners have a conflicting {{ fieldName }}",
         "conflictPlusZero": " has a conflicting {{ fieldName }}"
       }
     }

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.conflict.detector;
 
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 
@@ -8,12 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class AbstractDetector<T> {
-
-    protected boolean areEquals(String current, String offered) {
-        return StringUtils.equalsIgnoreCase(current, offered) ||
-            (StringUtils.isBlank(current) && StringUtils.isBlank(offered));
-    }
+public abstract class AbstractDetector<T extends AbstractEntity> {
 
     protected List<Conflict> detectConflicts(T current, String name, String name2, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
@@ -27,7 +23,7 @@ public abstract class AbstractDetector<T> {
         return !this.areEquals(name, name2);
     }
 
-    protected<Y> List<Conflict> detectConflicts(T current, Y val, Y val2, String fieldName) {
+    protected <Y> List<Conflict> detectConflicts(T current, Y val, Y val2, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
         if (detect(val, val2)) {
             conflicts.add(createConflict(current, val, val2, fieldName));
@@ -35,12 +31,13 @@ public abstract class AbstractDetector<T> {
         return conflicts;
     }
 
-    protected<Y> boolean detect(Y val, Y val2) {
+    protected <Y> boolean detect(Y val, Y val2) {
         return notEquals(val, val2);
     }
 
-    protected<Y> Conflict createConflict(T obj, Y currentValue, Y offeredValue, String fieldName) {
+    private <Y> Conflict createConflict(T obj, Y currentValue, Y offeredValue, String fieldName) {
         return Conflict.builder()
+            .resourceId(obj.getId())
             .currentValue(getString(currentValue))
             .offeredValue(getString(offeredValue))
             .fieldName(fieldName)
@@ -49,6 +46,11 @@ public abstract class AbstractDetector<T> {
             .stateDate(ZonedDateTime.now())
             .createdDate(ZonedDateTime.now())
             .build();
+    }
+
+    private boolean areEquals(String current, String offered) {
+        return StringUtils.equalsIgnoreCase(current, offered) ||
+            (StringUtils.isBlank(current) && StringUtils.isBlank(offered));
     }
 
     private<Y> boolean notEquals(Y obj, Y obj2) {

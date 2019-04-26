@@ -14,10 +14,8 @@
         {
             "relationshipName": "acceptedThisChange",
             "otherEntityName": "systemAccount",
-            "relationshipType": "many-to-many",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "conflict"
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
         }
     ],
     "fields": [

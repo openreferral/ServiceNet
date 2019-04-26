@@ -16,11 +16,7 @@ public class ConflictsComparator implements Comparator<ConflictDTO> {
 
     @Override
     public int compare(ConflictDTO c1, ConflictDTO c2) {
-        int result = Integer.compare(c2.getAcceptedThisChange().size(), c1.getAcceptedThisChange().size());
-        if (result == 0) {
-            result = compareFieldNames(c1, c2);
-        }
-        return result;
+        return compareFieldNames(c1, c2);
     }
 
     private int compareFieldNames(ConflictDTO c1, ConflictDTO c2) {

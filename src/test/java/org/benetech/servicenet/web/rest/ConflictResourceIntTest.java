@@ -1,7 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
-
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.mother.ConflictMother;
@@ -11,7 +10,6 @@ import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.mapper.ConflictMapper;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -29,21 +26,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.TestConstants.NON_EXISTING_UUID;
 import static org.benetech.servicenet.TestConstants.UUID_1;
 import static org.benetech.servicenet.TestConstants.UUID_2;
 import static org.benetech.servicenet.TestConstants.UUID_42;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -187,39 +179,6 @@ public class ConflictResourceIntTest {
             .andExpect(jsonPath("$.[*].createdDate").value(
                 hasItem(sameInstant(ConflictMother.DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].resourceId").value(hasItem(UUID_1.toString())));
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public void getAllConflictsWithEagerRelationshipsIsEnabled() throws Exception {
-        ConflictResource conflictResource = new ConflictResource(conflictServiceMock);
-        when(conflictServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        MockMvc restConflictMockMvc = MockMvcBuilders.standaloneSetup(conflictResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
-
-        restConflictMockMvc.perform(get("/api/conflicts?eagerload=true"))
-        .andExpect(status().isOk());
-
-        verify(conflictServiceMock, times(1)).findAllWithEagerRelationships(any());
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public void getAllConflictsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        ConflictResource conflictResource = new ConflictResource(conflictServiceMock);
-            when(conflictServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-            MockMvc restConflictMockMvc = MockMvcBuilders.standaloneSetup(conflictResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
-
-        restConflictMockMvc.perform(get("/api/conflicts?eagerload=true"))
-        .andExpect(status().isOk());
-
-            verify(conflictServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test

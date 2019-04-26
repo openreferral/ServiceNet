@@ -7,6 +7,7 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.mother.ConflictMother;
 import org.benetech.servicenet.mother.OrganizationMother;
+import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ConflictService;
@@ -88,6 +89,7 @@ public class ActivityServiceImplTest {
         conflict = ConflictMother.createDefaultAndPersist(em);
         conflict.setResourceId(organization.getId());
         conflict.setOwner(systemAccount);
+        conflict.setAcceptedThisChange(SystemAccountMother.createDifferentAndPersist(em));
         em.persist(conflict);
         em.flush();
 
@@ -139,7 +141,8 @@ public class ActivityServiceImplTest {
         assertEquals(conflict.getResourceId(), actualConflict.getResourceId());
         assertEquals(conflict.getOwner().getId(), actualConflict.getOwnerId());
         assertEquals(conflict.getOwner().getName(), actualConflict.getOwnerName());
-        assertEquals(conflict.getAcceptedThisChange(), actualConflict.getAcceptedThisChange());
+        assertEquals(conflict.getAcceptedThisChange().getId(), actualConflict.getAcceptedThisChange().getId());
+        assertEquals(conflict.getAcceptedThisChange().getName(), actualConflict.getAcceptedThisChange().getName());
     }
 
 }

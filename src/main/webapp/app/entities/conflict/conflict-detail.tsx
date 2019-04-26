@@ -103,16 +103,7 @@ export class ConflictDetail extends React.Component<IConflictDetailProps> {
             <dt>
               <Translate contentKey="serviceNetApp.conflict.acceptedThisChange">Accepted This Change</Translate>
             </dt>
-            <dd>
-              {conflictEntity.acceptedThisChange
-                ? conflictEntity.acceptedThisChange.map((val, i) => (
-                    <span key={val.id}>
-                      <a>{val.id}</a>
-                      {i === conflictEntity.acceptedThisChange.length - 1 ? '' : ', '}
-                    </span>
-                  ))
-                : null}
-            </dd>
+            <dd>{conflictEntity.acceptedThisChangeId ? conflictEntity.acceptedThisChangeId : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/conflict" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

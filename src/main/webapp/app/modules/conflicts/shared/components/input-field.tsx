@@ -112,7 +112,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     let partnersNumber = 0;
     if (suggestedValues) {
       suggestedValues.forEach(v => {
-        partnersNumber += v.acceptedThisChange.length;
+        partnersNumber++;
       });
     }
 
@@ -139,15 +139,13 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
               <hr className="half-rule" />
               {value.offeredValue}
               <br />
-              {value.acceptedThisChange.map(accepted => (
-                <div key={`accepted-${fieldName + accepted.name}`}>
-                  <p className="secondary">
-                    {accepted.name}
-                    <Translate contentKey="singleRecordView.inputField.imported" />
-                    <TextFormat value={value.offeredValueDate} type="date" format={APP_LOCAL_DATE_FORMAT} />
-                  </p>
-                </div>
-              ))}
+              <div>
+                <p className="secondary">
+                  {value.acceptedThisChangeName}
+                  <Translate contentKey="singleRecordView.inputField.imported" />
+                  <TextFormat value={value.offeredValueDate} type="date" format={APP_LOCAL_DATE_FORMAT} />
+                </p>
+              </div>
             </div>
           ))}
         </Tooltip>

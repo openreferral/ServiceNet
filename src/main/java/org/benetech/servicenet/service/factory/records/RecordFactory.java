@@ -56,7 +56,7 @@ public class RecordFactory {
 
     private List<ConflictDTO> filterWithPartnersConfigs(List<ConflictDTO> conflictDTOS) {
         Set<String> conflictingProviders = conflictDTOS.stream()
-            .flatMap(c -> c.getAcceptedThisChangeNames().stream())
+            .map(ConflictDTO::getAcceptedThisChangeName)
             .collect(Collectors.toSet());
 
         if (CollectionUtils.isNotEmpty(conflictingProviders)) {
@@ -114,26 +114,13 @@ public class RecordFactory {
         ConflictDTO conflictDTO = conflictsIterator.next();
         for (FieldExclusion exclusion : excludedFields) {
             if (shouldConflictBeFiltered(config, conflictDTO, exclusion)) {
-                removeAccountFromConflict(config, conflictsIterator, conflictDTO);
+                conflictsIterator.remove();
             }
         }
     }
 
-    private void removeAccountFromConflict(ExclusionsConfigDTO config, Iterator<ConflictDTO> conflictsIterator,
-                                           ConflictDTO conflictDTO) {
-        if (isOnlyOneAccepting(conflictDTO)) {
-            conflictsIterator.remove();
-        } else {
-            conflictDTO.removeAcceptedThisChange(config.getAccountName());
-        }
-    }
-
-    private boolean isOnlyOneAccepting(ConflictDTO conflictDTO) {
-        return conflictDTO.getAcceptedThisChange().size() == 1;
-    }
-
     private boolean shouldConflictBeFiltered(ExclusionsConfigDTO config, ConflictDTO conflictDTO, FieldExclusion exclusion) {
-        return conflictDTO.getAcceptedThisChangeNames().contains(config.getAccountName())
+        return config.getAccountName().equals(conflictDTO.getAcceptedThisChangeName())
             && exclusion.getEntity().equals(conflictDTO.getEntityPath())
             && exclusion.getExcludedFields().contains(conflictDTO.getFieldName());
     }

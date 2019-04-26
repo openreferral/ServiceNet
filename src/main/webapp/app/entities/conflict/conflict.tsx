@@ -107,14 +107,11 @@ export class Conflict extends React.Component<IConflictProps> {
                   <td>{conflict.resourceId}</td>
                   <td>{conflict.ownerId ? <Link to={`system-account/${conflict.ownerId}`}>{conflict.ownerId}</Link> : ''}</td>
                   <td>
-                    {conflict.acceptedThisChange
-                      ? conflict.acceptedThisChange.map((val, j) => (
-                          <span key={j}>
-                            <Link to={`system-account/${val.id}`}>{val.id}</Link>
-                            {j === conflict.acceptedThisChange.length - 1 ? '' : ', '}
-                          </span>
-                        ))
-                      : null}
+                    {conflict.acceptedThisChangeId ? (
+                      <Link to={`system-account/${conflict.acceptedThisChangeId}`}>{conflict.acceptedThisChangeId}</Link>
+                    ) : (
+                      ''
+                    )}
                   </td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">

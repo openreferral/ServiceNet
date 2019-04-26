@@ -32,25 +32,4 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
 
         return conflicts;
     }
-
-    @Override
-    public boolean areConflicted(Organization current, Organization offered) {
-        return detect(current.getName(), offered.getName()) ||
-            detect(current.getAlternateName(), offered.getAlternateName()) ||
-            detect(current.getDescription(), offered.getDescription()) ||
-            detect(current.getEmail(), offered.getEmail()) ||
-            detect(current.getUrl(), offered.getUrl()) ||
-            detect(current.getTaxStatus(), offered.getTaxStatus()) ||
-            detect(current.getTaxId(), offered.getTaxId()) ||
-            detect(current.getYearIncorporated(), offered.getYearIncorporated()) ||
-            detect(current.getLegalStatus(), offered.getLegalStatus()) ||
-            detect(current.getActive(), offered.getActive());
-    }
-
-    @Override
-    protected <Z> Conflict createConflict(Organization current, Z currentValue, Z offeredValue, String fieldName) {
-        Conflict conflict = super.createConflict(current, currentValue, offeredValue, fieldName);
-        conflict.setResourceId(current.getId());
-        return conflict;
-    }
 }
