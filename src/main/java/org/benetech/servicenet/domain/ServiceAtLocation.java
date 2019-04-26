@@ -153,6 +153,12 @@ public class ServiceAtLocation extends AbstractEntity implements Serializable {
         phone.setServiceAtLocation(null);
         return this;
     }
+
+    public ServiceAtLocation providerName(String providerName) {
+        this.providerName = providerName;
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

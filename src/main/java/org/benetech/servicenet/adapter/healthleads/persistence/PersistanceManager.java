@@ -221,7 +221,7 @@ public class PersistanceManager {
             serviceAtLocation.setLocation(serviceLocations.iterator().next());
         }
 
-        return serviceAtLocation;
+        return serviceAtLocation.providerName(PROVIDER_NAME);
     }
 
     private boolean isServiceBased(HealthleadsBaseData data) {

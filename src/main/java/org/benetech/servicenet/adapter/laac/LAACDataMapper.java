@@ -33,6 +33,7 @@ public interface LAACDataMapper {
     String LANGUAGES_DELIMITER = ",";
     String SERVICE_POSTFIX = " - Service";
     String LOCATION_POSTFIX = " - Location";
+    String PROVIDER_NAME = "LAAC";
 
     default Optional<Phone> extractPhone(LAACData data) {
         if (StringUtils.isBlank(data.getPhone())) {
@@ -59,7 +60,7 @@ public interface LAACDataMapper {
         if (StringUtils.isBlank(contactName)) {
             return Optional.empty();
         }
-        return Optional.of(new Contact().name(contactName).externalDbId(data.getId()));
+        return Optional.of(new Contact().name(contactName).externalDbId(data.getId()).providerName(PROVIDER_NAME));
     }
 
     default Organization extractOrganization(LAACData data) {
@@ -107,6 +108,7 @@ public interface LAACDataMapper {
         service.setType(data.getServiceTypes());
         service.setDescription(data.getDescriptionOfServiceTypes());
         service.setExternalDbId(data.getId());
+        service.setProviderName(PROVIDER_NAME);
 
         return service;
     }
@@ -121,6 +123,7 @@ public interface LAACDataMapper {
         location.name(data.getOrganizationName() + LOCATION_POSTFIX);
         location.setDescription(data.getAreasServed());
         location.setExternalDbId(data.getId());
+        location.setProviderName(PROVIDER_NAME);
 
         return location;
     }

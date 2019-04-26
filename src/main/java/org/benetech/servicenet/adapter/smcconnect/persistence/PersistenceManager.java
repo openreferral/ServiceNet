@@ -1,6 +1,5 @@
 package org.benetech.servicenet.adapter.smcconnect.persistence;
 
-import java.util.Optional;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.SmcConnectDataMapper;
@@ -32,12 +31,12 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.manager.ImportManager;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 class PersistenceManager {
 
-    private static final String PROVIDER_NAME = "SMCConnect";
     private final SmcStorage storage;
     private SmcConnectDataMapper mapper;
     private ImportManager importManager;
