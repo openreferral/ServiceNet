@@ -5,6 +5,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate, translate, getSortState, IPaginationBaseState, Storage } from 'react-jhipster';
 import { connect } from 'react-redux';
+import ReactGA from 'react-ga';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Row, Col, Alert, Container, Progress, Spinner, InputGroup, Input } from 'reactstrap';
@@ -63,6 +64,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   sort = prop => () => {
     setSort(this.props.account.login, prop);
 
+    ReactGA.event({ category: 'UserActions', action: 'Sorting Records' });
+
     this.setState({ sort: prop }, () => {
       this.reset();
     });
@@ -112,6 +115,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
 
     const searchPhrase = event.target.value;
     setSearchPhrase(this.props.account.login, searchPhrase);
+
+    ReactGA.event({ category: 'UserActions', action: 'Searching Records' });
 
     this.setState({
       searchPhrase,

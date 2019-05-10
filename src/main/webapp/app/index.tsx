@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { AppContainer } from 'react-hot-loader';
+import ReactGA from 'react-ga';
 
 import DevTools from './config/devtools';
 import initStore from './config/store';
@@ -22,6 +23,8 @@ const actions = bindActionCreators({ clearAuthentication }, store.dispatch);
 setupAxiosInterceptors(() => actions.clearAuthentication('login.error.unauthorized'));
 
 loadIcons();
+
+ReactGA.initialize('UA-2390830-31');
 
 const rootEl = document.getElementById('root');
 
