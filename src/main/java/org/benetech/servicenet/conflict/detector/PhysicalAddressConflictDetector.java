@@ -27,22 +27,4 @@ public class PhysicalAddressConflictDetector extends AbstractDetector<PhysicalAd
 
         return conflicts;
     }
-
-    @Override
-    public boolean areConflicted(PhysicalAddress current, PhysicalAddress offered) {
-        return detect(current.getAttention(), offered.getAttention()) ||
-            detect(current.getAddress1(), offered.getAddress1()) ||
-            detect(current.getCity(), offered.getCity()) ||
-            detect(current.getRegion(), offered.getRegion()) ||
-            detect(current.getStateProvince(), offered.getStateProvince()) ||
-            detect(current.getPostalCode(), offered.getPostalCode()) ||
-            detect(current.getCountry(), offered.getCountry());
-    }
-
-    @Override
-    protected <Z> Conflict createConflict(PhysicalAddress current, Z currentValue, Z offeredValue, String fieldName) {
-        Conflict conflict = super.createConflict(current, currentValue, offeredValue, fieldName);
-        conflict.setResourceId(current.getId());
-        return conflict;
-    }
 }

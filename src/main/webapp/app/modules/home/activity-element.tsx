@@ -29,31 +29,13 @@ const ActivityElement = props => {
             <CardBody>
               {conflictsToDisplay.map((conflict, i) => (
                 <CardTitle className="activity-right-card-title" key={`activityCard${i}`}>
-                  {conflict.firstAcceptedName} {conflict.acceptedThisChange.length > 1 && <b>+{conflict.acceptedThisChange.length}</b>}
-                  {conflict.acceptedThisChange.length > 2 && (
-                    <Translate
-                      contentKey="serviceNetApp.activity.unresolved.conflictsPlusMany"
-                      interpolate={{ fieldName: conflict.fieldName }}
-                    >
-                      partners have a conflicting {conflict.fieldName}
-                    </Translate>
-                  )}
-                  {conflict.acceptedThisChange.length === 2 && (
-                    <Translate
-                      contentKey="serviceNetApp.activity.unresolved.conflictPlusOne"
-                      interpolate={{ fieldName: conflict.fieldName }}
-                    >
-                      partner have a conflicting {conflict.fieldName}
-                    </Translate>
-                  )}
-                  {conflict.acceptedThisChange.length === 1 && (
-                    <Translate
-                      contentKey="serviceNetApp.activity.unresolved.conflictPlusZero"
-                      interpolate={{ fieldName: conflict.fieldName }}
-                    >
-                      has a conflicting {conflict.fieldName}
-                    </Translate>
-                  )}
+                  {conflict.acceptedThisChangeName}
+                  <Translate
+                    contentKey="serviceNetApp.activity.unresolved.conflictPlusZero"
+                    interpolate={{ fieldName: conflict.fieldName }}
+                  >
+                    has a conflicting {conflict.fieldName}
+                  </Translate>
                 </CardTitle>
               ))}
               {areAllDisplayed ? null : `and ${props.activity.record.conflicts.length - maxConflicts} more...`}

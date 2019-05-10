@@ -8,11 +8,8 @@ import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * A DTO for the Conflict entity.
@@ -49,33 +46,11 @@ public class ConflictDTO implements Serializable {
 
     private String ownerName;
 
-    private UUID firstAcceptedId;
+    private UUID acceptedThisChangeId;
 
-    private String firstAcceptedName;
+    private String acceptedThisChangeName;
 
-    @Builder.Default
-    private Set<SystemAccountDTO> acceptedThisChange = new HashSet<>();
-
-    public Set<String> getAcceptedThisChangeNames() {
-        return acceptedThisChange.stream()
-            .map(SystemAccountDTO::getName)
-            .collect(Collectors.toSet());
-    }
-
-    public ConflictDTO addAcceptedThisChange(SystemAccountDTO systemAccount) {
-        this.acceptedThisChange.add(systemAccount);
-        return this;
-    }
-
-    public void removeAcceptedThisChange(String accountName) {
-        this.acceptedThisChange
-            .removeIf(s -> s.getName().equals(accountName));
-    }
-
-    public ConflictDTO removeAcceptedThisChange(SystemAccountDTO systemAccount) {
-        this.acceptedThisChange.remove(systemAccount);
-        return this;
-    }
+    private SystemAccountDTO acceptedThisChange;
 
     @Override
     public boolean equals(Object o) {

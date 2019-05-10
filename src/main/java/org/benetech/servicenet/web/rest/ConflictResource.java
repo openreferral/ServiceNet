@@ -1,11 +1,11 @@
 package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.service.ConflictService;
+import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
-import org.benetech.servicenet.service.dto.ConflictDTO;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -92,12 +90,11 @@ public class ConflictResource {
     /**
      * GET  /conflicts : get all the conflicts.
      *
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
      * @return the ResponseEntity with status 200 (OK) and the list of conflicts in body
      */
     @GetMapping("/conflicts")
     @Timed
-    public List<ConflictDTO> getAllConflicts(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
+    public List<ConflictDTO> getAllConflicts() {
         log.debug("REST request to get all Conflicts");
         return conflictService.findAll();
     }

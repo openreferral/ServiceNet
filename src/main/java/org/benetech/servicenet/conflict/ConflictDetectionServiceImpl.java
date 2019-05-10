@@ -1,5 +1,6 @@
 package org.benetech.servicenet.conflict;
 
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.conflict.detector.ConflictDetector;
 import org.benetech.servicenet.domain.Conflict;
@@ -22,11 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class ConflictDetectionServiceImpl implements ConflictDetectionService {
@@ -59,8 +59,6 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
     @Override
     @Transactional
     public void detect(List<OrganizationMatch> matches) {
-        List<Conflict> conflicts = new LinkedList<>();
-
         long detectionStartTime = System.currentTimeMillis();
         for (OrganizationMatch match : matches) {
             long startTime = System.currentTimeMillis();
@@ -69,8 +67,8 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
             List<EntityEquivalent> equivalents = gatherAllEquivalents(orgEquivalent);
 
-            conflicts.addAll(detect(equivalents, match.getOrganizationRecord().getAccount(),
-                match.getPartnerVersion().getAccount()));
+            detect(equivalents, match.getOrganizationRecord().getAccount(), match.getPartnerVersion().getAccount());
+
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
             //TODO: Remove time counting logic (#264)
@@ -85,7 +83,6 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         long elapsedTime = stopTime - detectionStartTime;
         //TODO: Remove time counting logic (#264)
         log.info("Searching for conflicts took " + elapsedTime + "ms");
-        persistConflicts(conflicts);
     }
 
     private List<EntityEquivalent> gatherAllEquivalents(OrganizationEquivalent orgEquivalent) {
@@ -94,9 +91,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         return equivalents;
     }
 
-    private List<Conflict> detect(List<EntityEquivalent> equivalents, SystemAccount owner, SystemAccount accepted) {
-        List<Conflict> conflicts = new LinkedList<>();
-
+    private void detect(List<EntityEquivalent> equivalents, SystemAccount owner, SystemAccount accepted) {
         for (EntityEquivalent eq : equivalents) {
             Object current = em.find(eq.getClazz(), eq.getBaseResourceId());
             Object mirror = em.find(eq.getClazz(), eq.getPartnerResourceId());
@@ -104,16 +99,19 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
             try {
                 ConflictDetector detector = context.getBean(
                     eq.getClazz().getSimpleName() + Constants.CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
-                List<Conflict> innerConflicts = detector.detectConflicts(current, mirror);
-                innerConflicts.forEach(c -> addConflictingDates(eq, c));
-                innerConflicts.forEach(c -> addAccounts(c, owner, accepted));
+                List<Conflict> conflicts = detector.detectConflicts(current, mirror);
 
-                conflicts.addAll(innerConflicts);
+                conflicts.forEach(c -> addAccounts(c, owner, accepted));
+
+                removeDuplicatesAndRejectOutdatedConflicts(conflicts);
+
+                conflicts.forEach(c -> addConflictingDates(eq, c));
+
+                persistConflicts(conflicts);
             } catch (NoSuchBeanDefinitionException ex) {
                 log.warn("There is no conflict detector for {}", eq.getClazz().getSimpleName());
             }
         }
-        return conflicts;
     }
 
     private void addConflictingDates(EntityEquivalent eq, Conflict conflict) {
@@ -128,27 +126,41 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
     private void addAccounts(Conflict conflict, SystemAccount owner, SystemAccount accepted) {
         conflict.setOwner(owner);
-        conflict.addAcceptedThisChange(accepted);
+        conflict.setAcceptedThisChange(accepted);
     }
 
     private void persistConflicts(List<Conflict> conflicts) {
-        conflicts.forEach(conflict -> {
-            rejectAllOutdatedConflicts(conflict);
-            em.persist(conflict);
-        });
+        conflicts.forEach(em::persist);
     }
 
-    private void rejectAllOutdatedConflicts(Conflict c) {
-        Set<Conflict> outdated = new HashSet<>(conflictService.findAllConflictsWhichOffersTheSameValue(
-            c.getResourceId(), c.getFieldName(), c.getOfferedValue()));
-        outdated.addAll(conflictService.findAllConflictsWhichHoldsTheSameValue(
-            c.getResourceId(), c.getFieldName(), c.getCurrentValue()));
+    private void removeDuplicatesAndRejectOutdatedConflicts(List<Conflict> conflicts) {
+        Iterator<Conflict> conflictIterator = conflicts.iterator();
 
-        outdated.forEach(out -> {
-            out.setState(ConflictStateEnum.REJECTED);
-            out.setStateDate(ZonedDateTime.now());
-            em.persist(out);
-        });
+        while (conflictIterator.hasNext()) {
+            removeDuplicatesAndRejectOutdatedConflicts(conflictIterator);
+        }
+    }
+
+    private void removeDuplicatesAndRejectOutdatedConflicts(Iterator<Conflict> conflictIterator) {
+        Conflict conflict = conflictIterator.next();
+
+        conflictService.findPendingConflictWithResourceIdAndAcceptedThisChangeAndFieldName(
+            conflict.getResourceId(), conflict.getAcceptedThisChange().getName(), conflict.getFieldName())
+            .ifPresent(conf -> {
+                if (!StringUtils.equals(conf.getCurrentValue(), conflict.getCurrentValue())) {
+                    rejectOutdatedConflict(conf);
+                } else if (!StringUtils.equals(conf.getOfferedValue(), conflict.getOfferedValue())) {
+                    rejectOutdatedConflict(conf);
+                } else {
+                    conflictIterator.remove();
+                }
+            });
+    }
+
+    private void rejectOutdatedConflict(Conflict outdated) {
+        outdated.setState(ConflictStateEnum.REJECTED);
+        outdated.setStateDate(ZonedDateTime.now());
+        em.persist(outdated);
     }
 
 }

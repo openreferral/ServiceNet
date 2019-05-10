@@ -3,9 +3,6 @@ package org.benetech.servicenet.service;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,13 +27,6 @@ public interface ConflictService {
      * @return the list of entities
      */
     List<ConflictDTO> findAll();
-
-    /**
-     * Get all the Conflict with eager load of many-to-many relationships.
-     *
-     * @return the list of entities
-     */
-    Page<ConflictDTO> findAllWithEagerRelationships(Pageable pageable);
     
     /**
      * Get the "id" conflict.
@@ -76,25 +66,12 @@ public interface ConflictService {
     Optional<ZonedDateTime> findMostRecentStateDate(UUID resourceId);
 
     /**
-     * Get list of pending conflicts wit specified resourceId, fieldName and offeredValue.
+     * Get pending Conflict with resourceId and acceptedThisChange and fieldName.
      *
      * @param resourceId the id of the resource entity
-     * @param fieldName the currentValue of the resource entity
-     * @param offeredValue the offeredValue of the resource entity
+     * @param acceptedThisChange system account name
+     * @param fieldName the name of the field
      */
-    List<Conflict> findAllConflictsWhichOffersTheSameValue(UUID resourceId,
-                                                           String fieldName,
-                                                           String offeredValue);
-
-    /**
-     * Get list of pending conflicts wit specified resourceId, fieldName and currentValue.
-     *
-     * @param resourceId the id of the resource entity
-     * @param fieldName the currentValue of the resource entity
-     * @param currentValue the offeredValue of the resource entity
-     */
-    List<Conflict> findAllConflictsWhichHoldsTheSameValue(UUID resourceId,
-                                                          String fieldName,
-                                                          String currentValue);
-
+    Optional<Conflict> findPendingConflictWithResourceIdAndAcceptedThisChangeAndFieldName(
+        UUID resourceId, String acceptedThisChange, String fieldName);
 }

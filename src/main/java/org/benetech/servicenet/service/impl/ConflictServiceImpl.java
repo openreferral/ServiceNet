@@ -1,16 +1,13 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
-import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.domain.Conflict;
+import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.benetech.servicenet.repository.ConflictRepository;
+import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.mapper.ConflictMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,20 +60,10 @@ public class ConflictServiceImpl implements ConflictService {
     @Transactional(readOnly = true)
     public List<ConflictDTO> findAll() {
         log.debug("Request to get all Conflicts");
-        return conflictRepository.findAllWithEagerRelationships().stream()
+        return conflictRepository.findAll().stream()
             .map(conflictMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }
-
-    /**
-     * Get all the Conflict with eager load of many-to-many relationships.
-     *
-     * @return the list of entities
-     */
-    public Page<ConflictDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return conflictRepository.findAllWithEagerRelationships(pageable).map(conflictMapper::toDto);
-    }
-    
 
     /**
      * Get one conflict by id.
@@ -88,7 +75,7 @@ public class ConflictServiceImpl implements ConflictService {
     @Transactional(readOnly = true)
     public Optional<ConflictDTO> findOne(UUID id) {
         log.debug("Request to get Conflict : {}", id);
-        return conflictRepository.findOneWithEagerRelationships(id)
+        return conflictRepository.findById(id)
             .map(conflictMapper::toDto);
     }
 
@@ -140,18 +127,10 @@ public class ConflictServiceImpl implements ConflictService {
     }
 
     @Override
-    public List<Conflict> findAllConflictsWhichOffersTheSameValue(UUID resourceId, String fieldName, String offeredValue) {
-        log.debug("Request to get conflicts with resourceId: {}, fieldName: {} and offeredValue: {}.",
-            resourceId, fieldName, offeredValue);
-        return conflictRepository.findAllByResourceIdAndFieldNameAndOfferedValueAndState(resourceId, fieldName,
-            offeredValue, ConflictStateEnum.PENDING);
-    }
-
-    @Override
-    public List<Conflict> findAllConflictsWhichHoldsTheSameValue(UUID resourceId, String fieldName, String currentValue) {
-        log.debug("Request to get conflicts with resourceId: {}, fieldName: {} and offeredValue: {}.",
-            resourceId, fieldName, currentValue);
-        return conflictRepository.findAllByResourceIdAndFieldNameAndCurrentValueAndState(resourceId, fieldName,
-            currentValue, ConflictStateEnum.PENDING);
+    public Optional<Conflict> findPendingConflictWithResourceIdAndAcceptedThisChangeAndFieldName(
+        UUID resourceId, String acceptedThisChange, String fieldName) {
+        log.debug("Request to get all Conflicts with resourceId: {}.", resourceId);
+        return conflictRepository.findByResourceIdAndAcceptedThisChangeNameAndFieldNameAndState(
+            resourceId, acceptedThisChange, fieldName, ConflictStateEnum.PENDING);
     }
 }

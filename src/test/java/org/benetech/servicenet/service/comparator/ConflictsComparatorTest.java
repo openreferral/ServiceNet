@@ -1,11 +1,8 @@
 package org.benetech.servicenet.service.comparator;
 
 import org.benetech.servicenet.service.dto.ConflictDTO;
-import org.benetech.servicenet.service.dto.SystemAccountDTO;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,31 +25,6 @@ public class ConflictsComparatorTest {
     @Before
     public void setUp() {
         comparator = new ConflictsComparator();
-    }
-
-    @Test
-    public void shouldCompareByNumberOfSystemAccounts() {
-        ConflictDTO conflictWithTwoAccounts = getValidConflict().acceptedThisChange(
-            Set.of(new SystemAccountDTO(), new SystemAccountDTO()))
-            .build();
-        ConflictDTO conflictWithOneAccount = getValidConflict().acceptedThisChange(
-            Set.of(new SystemAccountDTO()))
-            .build();
-
-        assertTrue(comparator.compare(conflictWithTwoAccounts, conflictWithOneAccount) < 0);
-        assertTrue(comparator.compare(conflictWithOneAccount, conflictWithTwoAccounts) > 0);
-    }
-
-    @Test
-    public void shouldReturn0WhenNumbersOfSystemAccountsAreTheSame() {
-        ConflictDTO conflictWithTwoAccounts = getValidConflict().acceptedThisChange(
-            Set.of(new SystemAccountDTO()))
-            .build();
-        ConflictDTO conflictWithOneAccount = getValidConflict().acceptedThisChange(
-            Set.of(new SystemAccountDTO()))
-            .build();
-
-        assertEquals(0, comparator.compare(conflictWithTwoAccounts, conflictWithOneAccount));
     }
 
     @Test

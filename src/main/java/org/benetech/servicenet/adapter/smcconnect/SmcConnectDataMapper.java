@@ -1,6 +1,5 @@
 package org.benetech.servicenet.adapter.smcconnect;
 
-import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcAddress;
@@ -36,6 +35,7 @@ import org.mapstruct.factory.Mappers;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
@@ -59,14 +59,14 @@ public interface SmcConnectDataMapper {
     @Mapping(target = "eligibility", ignore = true)
     @Mapping(target = "url", source = "website")
     @Mapping(target = "externalDbId", source = "id")
-    @Mapping(target = "providerName", defaultValue = PROVIDER_NAME)
+    @Mapping(target = "providerName", constant = PROVIDER_NAME)
     Service mapService(SmcService service);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "longitude", qualifiedByName = "double")
     @Mapping(target = "latitude", qualifiedByName = "double")
     @Mapping(target = "externalDbId", source = "id")
-    @Mapping(target = "providerName", defaultValue = PROVIDER_NAME)
+    @Mapping(target = "providerName", constant = PROVIDER_NAME)
     Location mapLocation(SmcLocation location);
 
     @Mapping(target = "id", ignore = true)
@@ -76,6 +76,8 @@ public interface SmcConnectDataMapper {
     PostalAddress mapPostalAddress(SmcMailAddress address);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "externalDbId", source = "id")
+    @Mapping(target = "providerName", constant = PROVIDER_NAME)
     Contact mapContact(SmcContact contact);
 
     @Mapping(target = "id", ignore = true)

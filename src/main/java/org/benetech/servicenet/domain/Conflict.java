@@ -14,18 +14,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -82,26 +77,11 @@ public class Conflict extends AbstractEntity implements Serializable {
     @JsonIgnoreProperties("")
     private SystemAccount owner;
 
-    @ManyToMany
-    @Builder.Default
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @JoinTable(name = "conflict_accepted_this_change",
-               joinColumns = @JoinColumn(name = "conflicts_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "accepted_this_change_id", referencedColumnName = "id"))
-    private Set<SystemAccount> acceptedThisChange = new HashSet<>();
+    @ManyToOne
+    private SystemAccount acceptedThisChange;
 
     public Conflict id(UUID id) {
         this.setId(id);
-        return this;
-    }
-
-    public Conflict addAcceptedThisChange(SystemAccount systemAccount) {
-        this.acceptedThisChange.add(systemAccount);
-        return this;
-    }
-
-    public Conflict removeAcceptedThisChange(SystemAccount systemAccount) {
-        this.acceptedThisChange.remove(systemAccount);
         return this;
     }
 
