@@ -7,9 +7,10 @@ import { Row, Col, Jumbotron, Button } from 'reactstrap';
 import Details from './components/details';
 import { getBaseRecord, getPartnerRecord, getMatches } from './multiple-record-view.reducer';
 import { RouteComponentProps } from 'react-router-dom';
-import { Translate } from 'react-jhipster';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Translate, TextFormat } from 'react-jhipster';
 import ReactGA from 'react-ga';
+
+import { APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface IMultipleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -41,7 +42,6 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     this.setState({ matchNumber });
 
     ReactGA.event({ category: 'UserActions', action: 'Clicking "See Another Match" on side by side view' });
-
     this.props.getPartnerRecord(this.props.matches[matchNumber].partnerVersionId);
   };
 
@@ -64,11 +64,11 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     const seeAnotherMatch =
       this.props.matches.length > 1 ? (
         <Col className="another-match-container" onClick={this.changeRecord}>
-          <h4 className="another-match-text">
-            {`(${this.state.matchNumber + 1}/${this.props.matches.length}) `}
-            <Translate contentKey="multiRecordView.seeAnotherMatch" />
-          </h4>
-          <FontAwesomeIcon className="another-match-icon" icon="angle-right" size="2x" />
+          <Button color="primary" onClick={this.changeRecord}>
+            <h4>
+              <Translate contentKey="multiRecordView.seeAnotherMatch" /> {` (${this.state.matchNumber + 1}/${this.props.matches.length})`}
+            </h4>
+          </Button>
         </Col>
       ) : null;
 
@@ -81,6 +81,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
               <h4 className="from">
                 <Translate contentKey="multiRecordView.yourData" />
               </h4>
+              <h5>
+                <Translate contentKey="multiRecordView.lastUpdated" />
+                <TextFormat value={baseRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+              </h5>
               <Details activity={baseRecord} {...this.props} exclusions={baseRecord.record.exclusions} isBaseRecord />
             </Col>
           ) : (
@@ -95,6 +99,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                     <Translate contentKey="multiRecordView.from" />
                     {partnerRecord.record.organization.accountName}
                   </h4>
+                  <h5>
+                    <Translate contentKey="multiRecordView.lastUpdated" />
+                    <TextFormat value={partnerRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                  </h5>
                 </Col>
                 {seeAnotherMatch}
               </Row>
