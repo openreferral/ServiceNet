@@ -9,6 +9,7 @@ import { getBaseRecord, getPartnerRecord, getMatches } from './multiple-record-v
 import { RouteComponentProps } from 'react-router-dom';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ReactGA from 'react-ga';
 
 export interface IMultipleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -38,7 +39,18 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
       matchNumber = this.state.matchNumber + 1;
     }
     this.setState({ matchNumber });
+
+    ReactGA.event({ category: 'UserActions', action: 'Clicking "See Another Match" on side by side view' });
+
     this.props.getPartnerRecord(this.props.matches[matchNumber].partnerVersionId);
+  };
+
+  confirmMatch = () => {
+    ReactGA.event({ category: 'UserActions', action: 'Confirm Match Button' });
+  };
+
+  denyMatch = () => {
+    ReactGA.event({ category: 'UserActions', action: 'Deny Match Button' });
   };
 
   render() {

@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { Card } from 'reactstrap';
 import { HashRouter as Router } from 'react-router-dom';
 import { ToastContainer, ToastPosition, toast } from 'react-toastify';
+import ReactGA from 'react-ga';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -25,6 +26,12 @@ export class App extends React.Component<IAppProps> {
   componentDidMount() {
     this.props.getSession();
     this.props.getProfile();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.userLogin && !prevProps.userLogin) {
+      ReactGA.set({ dimension1: this.props.userLogin });
+    }
   }
 
   render() {
