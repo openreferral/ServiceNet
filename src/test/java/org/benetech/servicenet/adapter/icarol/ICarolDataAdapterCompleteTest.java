@@ -6,6 +6,7 @@ import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.icarol.eden.EdenDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
+import org.benetech.servicenet.adapter.shared.model.Weekday;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
@@ -53,6 +54,13 @@ public class ICarolDataAdapterCompleteTest {
         "esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui " +
         "officia deserunt mollit anim id est laborum.";
     private static final String DIFF_LOREM_IPSUM = "different " + LOREM_IPSUM;
+    private static final int MONDAY = 0;
+    private static final int TUESDAY = 1;
+    private static final int WEDNESDAY = 2;
+    private static final int THURSDAY = 3;
+    private static final int FRIDAY = 4;
+    private static final int SATURDAY = 5;
+    private static final int SUNDAY = 6;
 
     @Autowired
     private EdenDataAdapter adapter;
@@ -200,8 +208,38 @@ public class ICarolDataAdapterCompleteTest {
             assertEquals((Integer) i, result.get(i).getWeekday());
         }
         for (OpeningHoursDTO hours : result) {
-            assertEquals("08:00", hours.getOpensAt());
-            assertEquals("04:45", hours.getClosesAt());
+            switch (hours.getWeekday()) {
+                case MONDAY:
+                    assertEquals("20:00", hours.getOpensAt());
+                    assertEquals("04:45", hours.getClosesAt());
+                    break;
+                case TUESDAY:
+                    assertEquals("12noon", hours.getOpensAt());
+                    assertEquals("12:00", hours.getClosesAt());
+                    break;
+                case WEDNESDAY:
+                    assertEquals("Noon", hours.getOpensAt());
+                    assertEquals("04:45", hours.getClosesAt());
+                    break;
+                case THURSDAY:
+                    assertEquals("08:00", hours.getOpensAt());
+                    assertEquals("16:45", hours.getClosesAt());
+                    break;
+                case FRIDAY:
+                    assertEquals("07:00", hours.getOpensAt());
+                    assertEquals("10:11", hours.getClosesAt());
+                    break;
+                case SATURDAY:
+                    assertEquals("9-5", hours.getOpensAt());
+                    assertEquals("11:00", hours.getClosesAt());
+                    break;
+                case SUNDAY:
+                    assertEquals("7test:00", hours.getOpensAt());
+                    assertEquals("09:00", hours.getClosesAt());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

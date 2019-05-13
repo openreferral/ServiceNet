@@ -10,7 +10,6 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolDay;
 import org.benetech.servicenet.adapter.icarol.model.ICarolHours;
 import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
-import org.benetech.servicenet.adapter.icarol.model.ICarolWeekday;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
 import org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils;
@@ -31,7 +30,6 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -241,7 +239,7 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
             throw new IllegalArgumentException("Day of the week cannot be empty");
         }
 
-        return ICarolWeekday.valueOf(weekday.toUpperCase(Locale.ROOT)).getNumber();
+        return OpeningHoursUtils.getWeekday(weekday);
     }
 
     @Mapping(target = "number", source = "contact.number")

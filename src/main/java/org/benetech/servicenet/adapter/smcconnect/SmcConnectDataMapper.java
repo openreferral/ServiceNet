@@ -1,5 +1,7 @@
 package org.benetech.servicenet.adapter.smcconnect;
 
+import static org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils.getWeekday;
+
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcAddress;
@@ -12,7 +14,6 @@ import org.benetech.servicenet.adapter.smcconnect.model.SmcPhone;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcProgram;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcRegularSchedule;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcService;
-import org.benetech.servicenet.adapter.smcconnect.model.SmcWeekday;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Funding;
@@ -37,7 +38,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -119,12 +119,8 @@ public interface SmcConnectDataMapper {
         }
 
         OpeningHours result = mapOpeningHours(regularSchedule);
-        result.setWeekday(getIdByTheWeekday(regularSchedule.getWeekday()));
+        result.setWeekday(getWeekday(regularSchedule.getWeekday()));
         return result;
-    }
-
-    default int getIdByTheWeekday(String weekday) {
-        return SmcWeekday.valueOf(weekday.toUpperCase(Locale.ROOT)).ordinal();
     }
 
     default Organization extractOrganization(SmcOrganization source) {

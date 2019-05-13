@@ -426,28 +426,38 @@
       "days": [
         {
           "dayOfWeek": "Mon",
-          "opens": "8",
-          "closes": "4:45"
+          "opens": "8pm",
+          "closes": "4:45am"
         },
         {
           "dayOfWeek": "Tue",
-          "opens": "8",
-          "closes": "4:45"
+          "opens": "12noon",
+          "closes": "12"
         },
         {
           "dayOfWeek": "Wed",
-          "opens": "8",
+          "opens": "Noon",
           "closes": "4:45"
         },
         {
           "dayOfWeek": "Thu",
           "opens": "8",
-          "closes": "4:45"
+          "closes": "4:45pm"
         },
         {
           "dayOfWeek": "Fri",
-          "opens": "8",
-          "closes": "4:45"
+          "opens": "700",
+          "closes": "1011"
+        },
+        {
+          "dayOfWeek": "Sat",
+          "opens": "9-5",
+          "closes": "11  "
+        },
+        {
+          "dayOfWeek": "Sun",
+          "opens": "  7test:00  ",
+          "closes": " 9  "
         }
       ]
     },

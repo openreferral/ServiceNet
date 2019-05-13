@@ -1,7 +1,6 @@
-package org.benetech.servicenet.adapter.sheltertech.model;
+package org.benetech.servicenet.adapter.shared.model;
 
-public enum ShelterTechWeekday {
-
+public enum Weekday {
     MONDAY,
     TUESDAY,
     WEDNESDAY,
