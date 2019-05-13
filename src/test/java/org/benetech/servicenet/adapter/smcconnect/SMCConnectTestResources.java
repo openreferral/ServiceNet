@@ -26,6 +26,6 @@ final class SMCConnectTestResources {
 
     static final List<String> OPENS_AT = Arrays.asList("08:30", "09:00", "10:00",
         "13:00", "21:00");
-    static final List<String> CLOSES_AT = Arrays.asList("03:00", "14:00", "16:30", "17:00");
+    static final List<String> CLOSES_AT = Arrays.asList("03:00", "14:00", "16:30", "17:00", "test wrong value");
 
 }

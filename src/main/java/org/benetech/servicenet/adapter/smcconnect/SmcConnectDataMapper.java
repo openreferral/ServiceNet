@@ -1,9 +1,8 @@
 package org.benetech.servicenet.adapter.smcconnect;
 
-import static org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils.getWeekday;
-
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
+import org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcAddress;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcContact;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcHolidaySchedule;
@@ -80,8 +79,10 @@ public interface SmcConnectDataMapper {
     @Mapping(target = "providerName", constant = PROVIDER_NAME)
     Contact mapContact(SmcContact contact);
 
+    @Mapping(target = "weekday", source = "weekday", qualifiedByName = "weekday")
+    @Mapping(target = "opensAt", source = "opensAt", qualifiedByName = "mapTime")
+    @Mapping(target = "closesAt", source = "closesAt", qualifiedByName = "mapTime")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "weekday", ignore = true)
     OpeningHours mapOpeningHours(SmcRegularSchedule regularSchedule);
 
     @Mapping(target = "id", ignore = true)
@@ -96,6 +97,20 @@ public interface SmcConnectDataMapper {
     @Mapping(target = "number", ignore = true)
     @Mapping(target = "extension", qualifiedByName = "int")
     Phone mapPhone(SmcPhone phone);
+
+    @Named("mapTime")
+    default String mapTime(String time) {
+        return OpeningHoursUtils.normalizeTime(time);
+    }
+
+    @Named("weekday")
+    default int getIdByTheWeekday(String weekday) {
+        if (StringUtils.isBlank(weekday)) {
+            throw new IllegalArgumentException("Day of the week cannot be empty");
+        }
+
+        return OpeningHoursUtils.getWeekday(weekday);
+    }
 
     default Optional<HolidaySchedule> extractHolidaySchedule(SmcHolidaySchedule source) {
         if (StringUtils.isBlank(source.getStartDate()) || StringUtils.isBlank(source.getEndDate())) {
@@ -118,9 +133,7 @@ public interface SmcConnectDataMapper {
             return null;
         }
 
-        OpeningHours result = mapOpeningHours(regularSchedule);
-        result.setWeekday(getWeekday(regularSchedule.getWeekday()));
-        return result;
+        return mapOpeningHours(regularSchedule);
     }
 
     default Organization extractOrganization(SmcOrganization source) {
