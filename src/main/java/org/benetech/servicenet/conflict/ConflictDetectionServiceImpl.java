@@ -146,15 +146,25 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
         conflictService.findPendingConflictWithResourceIdAndAcceptedThisChangeAndFieldName(
             conflict.getResourceId(), conflict.getAcceptedThisChange().getName(), conflict.getFieldName())
-            .ifPresent(conf -> {
-                if (!StringUtils.equals(conf.getCurrentValue(), conflict.getCurrentValue())) {
-                    rejectOutdatedConflict(conf);
-                } else if (!StringUtils.equals(conf.getOfferedValue(), conflict.getOfferedValue())) {
-                    rejectOutdatedConflict(conf);
-                } else {
-                    conflictIterator.remove();
-                }
-            });
+            .ifPresentOrElse(
+                conf -> {
+                    if (!StringUtils.equals(conf.getCurrentValue(), conflict.getCurrentValue())) {
+                        rejectOutdatedConflict(conf);
+                    } else if (StringUtils.isBlank(conflict.getOfferedValue())) {
+                        rejectOutdatedConflict(conf);
+                        conflictIterator.remove();
+                    } else if (!StringUtils.equals(conf.getOfferedValue(), conflict.getOfferedValue())) {
+                        rejectOutdatedConflict(conf);
+                    } else {
+                        conflictIterator.remove();
+
+                    }
+                    },
+                () -> {
+                    if (StringUtils.isBlank(conflict.getOfferedValue())) {
+                        conflictIterator.remove();
+                    }
+                });
     }
 
     private void rejectOutdatedConflict(Conflict outdated) {
