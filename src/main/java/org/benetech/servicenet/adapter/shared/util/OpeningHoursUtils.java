@@ -20,12 +20,8 @@ public final class OpeningHoursUtils {
     private static final int HOURS_ADDITION = 12;
 
     public static int getWeekday(String day) {
-        if (StringUtils.isNotBlank(day)) {
-            Weekday weekday = Weekday.getWeekday(day);
-            return weekday != null ? weekday.ordinal() : 0;
-        }
-
-        return 0;
+        Weekday weekday = Weekday.getWeekday(day);
+        return weekday != null ? weekday.ordinal() : 0;
     }
 
     public static String normalizeTime(String untrimmedTime) {
@@ -46,11 +42,10 @@ public final class OpeningHoursUtils {
 
         try {
             String hours = formatMinutesOrHours(match.group(HOURS_GROUP));
-            String minutes = match.group(MINUTES_GROUP) != null ?
-                formatMinutesOrHours(match.group(MINUTES_GROUP)) : DEFAULT_MINUTES;
+            String minutes = match.group(MINUTES_GROUP) != null ? match.group(MINUTES_GROUP) : DEFAULT_MINUTES;
             String abbrev = match.group(ABBREV_GROUP);
 
-            if (abbrev != null && "pm".equals(abbrev)) {
+            if ("pm".equalsIgnoreCase(abbrev)) {
                 return (Integer.valueOf(hours) + HOURS_ADDITION) + TIME_SEPARATOR + minutes;
             }
             return hours + TIME_SEPARATOR + minutes;
