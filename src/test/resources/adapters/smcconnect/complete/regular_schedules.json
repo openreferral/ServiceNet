@@ -37,6 +37,6 @@
     "service_id": "serviceId",
     "weekday": "Friday",
     "opens_at": "09:00",
-    "closes_at": "17:00"
+    "closes_at": "test wrong value"
   }
 ]

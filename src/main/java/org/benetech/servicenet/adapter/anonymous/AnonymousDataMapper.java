@@ -89,7 +89,7 @@ public interface AnonymousDataMapper {
         int weekday = 0;
         for (String openingHoursString : rawOpeningHours) {
             OpeningHours openingHours = new OpeningHours().weekday(weekday++);
-            OpeningHoursUtils.getHoursFromString(openingHoursString, "-").ifPresent(hours -> {
+            OpeningHoursUtils.getHoursFromStringWithDelimiter(openingHoursString, "-").ifPresent(hours -> {
                 openingHours.setOpensAt(hours.getOpen());
                 openingHours.setClosesAt(hours.getClose());
             });
