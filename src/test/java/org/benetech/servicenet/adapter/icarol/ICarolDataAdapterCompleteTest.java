@@ -214,7 +214,7 @@ public class ICarolDataAdapterCompleteTest {
                     assertEquals("04:45", hours.getClosesAt());
                     break;
                 case TUESDAY:
-                    assertEquals("12noon", hours.getOpensAt());
+                    assertEquals("12:00", hours.getOpensAt());
                     assertEquals("12:00", hours.getClosesAt());
                     break;
                 case WEDNESDAY:

@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -239,9 +240,9 @@ public class ShelterTechCompleteDataAdapterTest {
 
         assertEquals((Integer) 4, result.get(0).getWeekday());
         assertEquals("22:00", result.get(0).getOpensAt());
-        assertEquals(null, result.get(0).getClosesAt());
+        assertNull(result.get(0).getClosesAt());
         assertEquals((Integer) 2, result.get(1).getWeekday());
-        assertEquals(null, result.get(1).getOpensAt());
+        assertNull(result.get(1).getOpensAt());
         assertEquals("06:00", result.get(1).getClosesAt());
     }
 }
