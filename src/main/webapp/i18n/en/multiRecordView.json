@@ -2,9 +2,8 @@
   "multiRecordView": {
     "seeAnotherMatch": "See next match",
     "sameRecord": {
-      "question": "Is this record for the same organization (even if it has a different address, location, etc.) or is it a totally different organization (a mismatch)?",
-      "confirm": "IT’S THE SAME",
-      "deny": "IT’S TOTALLY DIFFERENT"
+      "question": "Is this partner record a mismatch (a totally different organization)?",
+      "deny": "YES, REMOVE THIS RECORD"
     },
     "yourData": "Your data",
     "from": "From ",

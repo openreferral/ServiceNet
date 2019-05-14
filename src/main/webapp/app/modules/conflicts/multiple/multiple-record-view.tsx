@@ -114,9 +114,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                   </h4>
                 </div>
                 <div className="same-record-question-buttons">
-                  <Button color="success" size="lg">
-                    <Translate contentKey="multiRecordView.sameRecord.confirm" />
-                  </Button>
+                  <div />
                   <Button color="danger" size="lg">
                     <Translate contentKey="multiRecordView.sameRecord.deny" />
                   </Button>
