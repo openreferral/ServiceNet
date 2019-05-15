@@ -152,11 +152,10 @@ public interface SmcConnectDataMapper {
     }
 
     default Service extractService(SmcService source) {
-        if (StringUtils.isBlank(source.getName())) {
-            throw new IllegalArgumentException("Service name cannot be empty");
-        }
-
         Service result = mapService(source);
+        if (result.getName() == null) {
+            result.setName("");
+        }
         result.setFunding(extractFunding(source).orElse(null));
         result.setApplicationProcess(MapperUtils.joinNotBlank(" ", source.getApplicationProcess(),
             "Required documents: " + source.getRequiredDocuments()));

@@ -82,11 +82,12 @@ public abstract class HealthLeadsDataMapper {
     }
 
     public Service extractService(HealthleadsService service) {
-        if (StringUtils.isBlank(service.getName())) {
-            throw new IllegalArgumentException("Service name cannot be empty");
+        Service srvc = toService(service);
+        if (srvc.getName() == null) {
+            srvc.setName("");
         }
 
-        return toService(service);
+        return srvc;
     }
 
     @Mapping(target = "id", ignore = true)
