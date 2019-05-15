@@ -82,15 +82,6 @@ public class HealthleadsMissingDataMapperTest {
         assertEquals("Service Name", result.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForLackOfDataForService() throws IOException {
-        String json = AdapterTestsUtils.readResourceAsString(MINIMAL + SERVICES + JSON);
-        List<HealthleadsService> entities = new Gson().fromJson(json, new ListType<>(HealthleadsService.class));
-        entities.get(0).setName(null);
-
-        mapper.extractService(entities.get(0));
-    }
-
     @Test
     public void shouldNotThrowExceptionForMinimalDataForLocation() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + LOCATIONS + JSON);

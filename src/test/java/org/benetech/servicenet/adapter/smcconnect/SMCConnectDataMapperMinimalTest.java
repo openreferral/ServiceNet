@@ -1,31 +1,6 @@
 package org.benetech.servicenet.adapter.smcconnect;
 
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.ADDRESSES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.CONTACTS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.DAYS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.HOLIDAY_SCHEDULE;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.JSON;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.LOCATIONS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.MAIL_ADDRESSES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.MINIMAL;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.ORGANIZATIONS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PHONES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PROGRAMS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.REGULAR_SCHEDULES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SERVICES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SMCCONNECT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import com.google.gson.Gson;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
@@ -49,13 +24,38 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.Program;
-import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.type.ListType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.ADDRESSES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.CONTACTS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.DAYS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.HOLIDAY_SCHEDULE;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.JSON;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.LOCATIONS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.MAIL_ADDRESSES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.MINIMAL;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.ORGANIZATIONS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PHONES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PROGRAMS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.REGULAR_SCHEDULES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SERVICES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SMCCONNECT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
@@ -93,15 +93,6 @@ public class SMCConnectDataMapperMinimalTest {
         Service result = mapper.extractService(entities.get(0));
 
         assertEquals("Service Name", result.getName());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForLackOfDataForService() throws IOException {
-        String json = AdapterTestsUtils.readResourceAsString(DIR + SERVICES + JSON);
-        List<SmcService> entities = new Gson().fromJson(json, new ListType<>(SmcService.class));
-        entities.get(0).setName(null);
-
-        mapper.extractService(entities.get(0));
     }
 
     @Test
