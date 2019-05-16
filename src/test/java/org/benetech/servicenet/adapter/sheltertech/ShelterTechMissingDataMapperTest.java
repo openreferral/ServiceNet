@@ -59,20 +59,6 @@ public class ShelterTechMissingDataMapperTest {
         assertEquals("The Organization", result.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForNullOrganizationName() {
-        data.setName(null);
-        ShelterTechOrganizationMapper.INSTANCE
-            .mapToOrganization(data, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForEmptyOrganizationName() {
-        data.setName("");
-        ShelterTechOrganizationMapper.INSTANCE
-            .mapToOrganization(data, null);
-    }
-
     @Test
     public void shouldNotThrowExceptionForMinimalDataForService() {
         Service result = ShelterTechServiceMapper.INSTANCE

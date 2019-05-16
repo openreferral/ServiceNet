@@ -23,11 +23,15 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LAACDataMapper {
 
     LAACDataMapper INSTANCE = Mappers.getMapper(LAACDataMapper.class);
+
+    Logger LOG = LoggerFactory.getLogger(LAACDataMapper.class);
 
     DateTimeFormatter YEAR_INCORPORATED_FORMATTER = DateTimeFormatter.ofPattern("EEE, MM/dd/yyyy - HH:mm");
     String LANGUAGES_DELIMITER = ",";
@@ -64,13 +68,14 @@ public interface LAACDataMapper {
     }
 
     default Organization extractOrganization(LAACData data) {
-        if (StringUtils.isBlank(data.getOrganizationName())) {
-            throw new IllegalArgumentException("Organization name cannot be empty");
-        }
-
         Organization organization = new Organization();
 
-        organization.setName(data.getOrganizationName());
+        if (StringUtils.isBlank(data.getOrganizationName())) {
+            LOG.warn("Name is empty for organization with ID: " + data.getId());
+        } else {
+            organization.setName(data.getOrganizationName());
+        }
+
         if (StringUtils.isNotBlank(data.getAuthoredOn())) {
             organization.setYearIncorporated(LocalDate.parse(data.getAuthoredOn(), YEAR_INCORPORATED_FORMATTER));
         }
@@ -98,13 +103,14 @@ public interface LAACDataMapper {
     }
 
     default Service extractService(LAACData data) {
-        if (StringUtils.isBlank(data.getOrganizationName())) {
-            throw new IllegalArgumentException("Service name cannot be empty");
-        }
-
         Service service = new Service();
 
-        service.setName(data.getOrganizationName() + SERVICE_POSTFIX);
+        if (StringUtils.isBlank(data.getOrganizationName())) {
+            LOG.warn("Can't create service name for organization with ID: " + data.getId() + ". Leaving name empty");
+        } else {
+            service.setName(data.getOrganizationName() + SERVICE_POSTFIX);
+        }
+
         service.setType(data.getServiceTypes());
         service.setDescription(data.getDescriptionOfServiceTypes());
         service.setExternalDbId(data.getId());
@@ -114,13 +120,14 @@ public interface LAACDataMapper {
     }
 
     default Location extractLocation(LAACData data) {
-        if (StringUtils.isBlank(data.getOrganizationName())) {
-            throw new IllegalArgumentException("Location name cannot be empty");
-        }
-
         Location location = new Location();
 
-        location.name(data.getOrganizationName() + LOCATION_POSTFIX);
+        if (StringUtils.isBlank(data.getOrganizationName())) {
+            LOG.warn("Can't create location name for organization with ID: " + data.getId() + ". Leaving name empty");
+        } else {
+            location.name(data.getOrganizationName() + LOCATION_POSTFIX);
+        }
+
         location.setDescription(data.getAreasServed());
         location.setExternalDbId(data.getId());
         location.setProviderName(PROVIDER_NAME);

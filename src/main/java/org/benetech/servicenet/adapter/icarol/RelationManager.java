@@ -7,6 +7,7 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.RegularSchedule;
@@ -113,7 +114,11 @@ class RelationManager {
         Service extractedService = mapper
             .extractService(program, importData.getProviderName());
 
-        extractedService.setEligibility(mapper.extractEligibility(program));
+        Eligibility eligibility = mapper.extractEligibility(program);
+        if (eligibility != null) {
+            extractedService.setEligibility(eligibility);
+        }
+
         extractedService.setPhones(mapper.extractPhones(program.getContactDetails()));
         extractedService.setLangs(mapper.extractLangs(program));
         extractedService.setRegularSchedule(new RegularSchedule().openingHours(

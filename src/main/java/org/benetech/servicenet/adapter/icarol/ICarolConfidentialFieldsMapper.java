@@ -48,7 +48,7 @@ public interface ICarolConfidentialFieldsMapper {
             .filter(name -> PRIMARY.equals(name.getPurpose())).findFirst()
             .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .map(ICarolName::getValue)
-            .orElseThrow(() -> new IllegalArgumentException("Organization name cannot be empty"));
+            .orElse(null);
     }
 
     @Named("alternateName")

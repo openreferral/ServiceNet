@@ -73,21 +73,6 @@ public class ICarolDataAdapterMissingTest {
         assertEquals("HOUSING AUTHORITY OF THE COUNTY OF Commoncounty (ABCD)", result.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForNullOrganizationName() {
-        ICarolAgency agency = data.getAgencies().get(0);
-        agency.getNames()[0].setValue(null);
-        agency.getNames()[0].setPurpose(null);
-        mapper.extractOrganization(agency, PROVIDER_NAME);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForBlankOrganizationName() {
-        ICarolAgency agency = data.getAgencies().get(0);
-        agency.getNames()[0].setValue("");
-        mapper.extractOrganization(agency, PROVIDER_NAME);
-    }
-
     @Test
     public void shouldNotThrowExceptionForAgencyMinimalDataForPhones() {
         ICarolAgency agency = data.getAgencies().get(0);
@@ -101,51 +86,11 @@ public class ICarolDataAdapterMissingTest {
         assertTrue(phones.stream().anyMatch(x -> x.getNumber().equalsIgnoreCase("678-901-2345")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForAgencyNullPhones() {
-        ICarolAgency agency = data.getAgencies().get(0);
-        for (ICarolContactDetails details : agency.getContactDetails()) {
-            if (details.getContact().getType().equalsIgnoreCase("PhoneNumber")) {
-                details.getContact().setNumber(null);
-            }
-        }
-
-        mapper.extractPhones(agency.getContactDetails());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForAgencyBlankPhones() {
-        ICarolAgency agency = data.getAgencies().get(0);
-        for (ICarolContactDetails details : agency.getContactDetails()) {
-            if (details.getContact().getType().equalsIgnoreCase("PhoneNumber")) {
-                details.getContact().setNumber("");
-            }
-        }
-
-        mapper.extractPhones(agency.getContactDetails());
-    }
-
     @Test
     public void shouldNotThrowExceptionForAgencyStatus() {
         ICarolAgency agency = data.getAgencies().get(0);
         Organization organization = mapper.extractOrganization(agency, PROVIDER_NAME);
         assertTrue(organization.getActive());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForNullOrganizationStatus() {
-        ICarolAgency agency = data.getAgencies().get(0);
-        agency.setStatus(null);
-        Organization organization = mapper.extractOrganization(agency, PROVIDER_NAME);
-        assertFalse(organization.getActive());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForAgencyBlankOrganizationStatus() {
-        ICarolAgency agency = data.getAgencies().get(0);
-        agency.setStatus("");
-        Organization organization = mapper.extractOrganization(agency, PROVIDER_NAME);
-        assertFalse(organization.getActive());
     }
 
     @Test
@@ -158,26 +103,6 @@ public class ICarolDataAdapterMissingTest {
         assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 2));
         assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 3));
         assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 4));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForAgencyNullOpeningHours() {
-        ICarolAgency agency = data.getAgencies().get(0);
-
-        for (ICarolDay day : agency.getHours().getDays()) {
-            day.setDayOfWeek(null);
-        }
-        mapper.extractOpeningHours(agency.getHours());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForAgencyBlankOpeningHours() {
-        ICarolAgency agency = data.getAgencies().get(0);
-
-        for (ICarolDay day : agency.getHours().getDays()) {
-            day.setDayOfWeek("");
-        }
-        mapper.extractOpeningHours(agency.getHours());
     }
 
     @Test
@@ -193,34 +118,6 @@ public class ICarolDataAdapterMissingTest {
         assertEquals("CA", result.getStateProvince());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForProgramNullPostalAddress() {
-        ICarolProgram program = data.getPrograms().get(0);
-        for (ICarolContactDetails details : program.getContactDetails()) {
-            if (details.getContact().getType().equalsIgnoreCase("PostalAddress")) {
-                details.getContact().setLine1(null);
-                details.getContact().setCity(null);
-                details.getContact().setStateProvince(null);
-            }
-        }
-
-        mapper.extractPostalAddress(program.getContactDetails());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForProgramBlankPostalAddress() {
-        ICarolProgram program = data.getPrograms().get(0);
-        for (ICarolContactDetails details : program.getContactDetails()) {
-            if (details.getContact().getType().equalsIgnoreCase("PostalAddress")) {
-                details.getContact().setLine1("");
-                details.getContact().setCity("");
-                details.getContact().setStateProvince("");
-            }
-        }
-
-        mapper.extractPostalAddress(program.getContactDetails());
-    }
-
     @Test
     public void shouldNotThrowExceptionForProgramMinimalDataForPhones() {
         ICarolProgram program = data.getPrograms().get(0);
@@ -230,30 +127,6 @@ public class ICarolDataAdapterMissingTest {
         assertTrue(phones.stream().anyMatch(x -> x.getNumber().equalsIgnoreCase("123-465-7890")));
         assertTrue(phones.stream().anyMatch(x -> x.getNumber().equalsIgnoreCase("678-901-2345")));
         assertTrue(phones.stream().anyMatch(x -> x.getNumber().equalsIgnoreCase("789-012-3456")));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForProgramNullPhones() {
-        ICarolProgram program = data.getPrograms().get(0);
-        for (ICarolContactDetails details : program.getContactDetails()) {
-            if (details.getContact().getType().equalsIgnoreCase("PhoneNumber")) {
-                details.getContact().setNumber(null);
-            }
-        }
-
-        mapper.extractPhones(program.getContactDetails());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForProgramBlankPhones() {
-        ICarolProgram program = data.getPrograms().get(0);
-        for (ICarolContactDetails details : program.getContactDetails()) {
-            if (details.getContact().getType().equalsIgnoreCase("PhoneNumber")) {
-                details.getContact().setNumber("");
-            }
-        }
-
-        mapper.extractPhones(program.getContactDetails());
     }
 
     @Test
@@ -268,26 +141,6 @@ public class ICarolDataAdapterMissingTest {
         assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 4));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForProgramNullOpeningHours() {
-        ICarolProgram program = data.getPrograms().get(0);
-
-        for (ICarolDay day : program.getHours().getDays()) {
-            day.setDayOfWeek(null);
-        }
-        mapper.extractOpeningHours(program.getHours());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForProgramBlankOpeningHours() {
-        ICarolProgram program = data.getPrograms().get(0);
-
-        for (ICarolDay day : program.getHours().getDays()) {
-            day.setDayOfWeek("");
-        }
-        mapper.extractOpeningHours(program.getHours());
-    }
-
     @Test
     public void shouldNotThrowExceptionForProgramEligibility() {
         ICarolProgram program = data.getPrograms().get(0);
@@ -296,22 +149,6 @@ public class ICarolDataAdapterMissingTest {
 
         assertEquals("Low-income family, elderly (age 62 or over), persons with disabilities, or other persons.",
             result.getEligibility());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForProgramNullEligibility() {
-        ICarolProgram program = data.getPrograms().get(0);
-        program.setEligibility(null);
-
-        mapper.extractEligibility(program);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForProgramBlankEligibility() {
-        ICarolProgram program = data.getPrograms().get(0);
-        program.setEligibility("");
-
-        mapper.extractEligibility(program);
     }
 
     @Test
@@ -327,34 +164,6 @@ public class ICarolDataAdapterMissingTest {
         assertEquals("CA", result.getStateProvince());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForSiteNullPostalAddress() {
-        ICarolSite site = data.getSites().get(0);
-        for (ICarolContactDetails details : site.getContactDetails()) {
-            if (details.getContact().getType().equalsIgnoreCase("PostalAddress")) {
-                details.getContact().setLine1(null);
-                details.getContact().setCity(null);
-                details.getContact().setStateProvince(null);
-            }
-        }
-
-        mapper.extractPostalAddress(site.getContactDetails());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForSiteBlankPostalAddress() {
-        ICarolSite site = data.getSites().get(0);
-        for (ICarolContactDetails details : site.getContactDetails()) {
-            if (details.getContact().getType().equalsIgnoreCase("PostalAddress")) {
-                details.getContact().setLine1("");
-                details.getContact().setCity("");
-                details.getContact().setStateProvince("");
-            }
-        }
-
-        mapper.extractPostalAddress(site.getContactDetails());
-    }
-
     @Test
     public void shouldNotThrowExceptionForSiteAccessibilityForDisabilities() {
         ICarolSite site = data.getSites().get(0);
@@ -365,21 +174,5 @@ public class ICarolDataAdapterMissingTest {
         assertTrue(accessibilityOpt.isPresent());
         AccessibilityForDisabilities result = accessibilityOpt.get();
         assertEquals("Wheelchair accessible/Ramp/Special parking/Restroom", result.getAccessibility());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForSiteNullAccessibilityForDisabilities() {
-        ICarolSite site = data.getSites().get(0);
-        site.getAccessibility().setDisabled(null);
-
-        mapper.extractAccessibilityForDisabilities(site);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForSiteBlankAccessibilityForDisabilities() {
-        ICarolSite site = data.getSites().get(0);
-        site.getAccessibility().setDisabled("");
-
-        mapper.extractAccessibilityForDisabilities(site);
     }
 }

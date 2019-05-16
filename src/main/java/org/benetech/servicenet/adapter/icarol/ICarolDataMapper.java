@@ -33,6 +33,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mapstruct.ReportingPolicy.IGNORE;
 
@@ -57,6 +59,8 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     String NAME = "name";
     String URL = "url";
 
+    Logger LOG = LoggerFactory.getLogger(ICarolDataMapper.class);
+
     @Mapping(source = "disabled", target = "accessibility")
     @Mapping(source = "description", target = "details")
     @Mapping(target = "id", ignore = true)
@@ -75,7 +79,8 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
         if (StringUtils.isBlank(details.getContact().getStateProvince())
             || StringUtils.isBlank(details.getContact().getCity())
             || StringUtils.isBlank(details.getContact().getLine1())) {
-            throw new IllegalArgumentException("Postal address cannot be empty");
+            LOG.warn("Missing required postal address information");
+            return null;
         }
 
         return toPostalAddress(details);
@@ -90,7 +95,8 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
 
     default Phone mapContactToPhone(ICarolContactDetails details) {
         if (StringUtils.isBlank(details.getContact().getNumber())) {
-            throw new IllegalArgumentException("Phone number cannot be empty");
+            LOG.warn("Missing phone number");
+            return null;
         }
 
         return toPhone(details);
@@ -145,14 +151,13 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
         Organization result = mapOrganization(agency);
 
         if (StringUtils.isBlank(result.getName())) {
-            throw new IllegalArgumentException("Organization name cannot be empty");
+            LOG.warn("Organization name is empty for organization with ID: " + agency.getId());
         }
 
-        if (StringUtils.isBlank(agency.getStatus())) {
-            throw new IllegalArgumentException("Organization status cannot be empty");
+        if (StringUtils.isNotBlank(agency.getStatus())) {
+            result.setActive(ACTIVE.equals(agency.getStatus()));
         }
 
-        result.setActive(ACTIVE.equals(agency.getStatus()));
         return result;
     }
 
@@ -185,7 +190,9 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
         }
 
         if (StringUtils.isBlank(site.getAccessibility().getDisabled())) {
-            throw new IllegalArgumentException("Accessibility for disabilities cannot be empty");
+            LOG.warn("Missing required parameters for accessibility for disabilities for organization with ID: "
+                + site.getId());
+            return Optional.empty();
         }
 
         return Optional.of(mapAccessibility(site.getAccessibility()));
@@ -215,7 +222,8 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
 
     default Eligibility extractEligibility(ICarolProgram program) {
         if (StringUtils.isBlank(program.getEligibility())) {
-            throw new IllegalArgumentException("Eligibility cannot be empty");
+            LOG.warn("Missing required eligibility field for organization with ID: " + program.getId());
+            return null;
         }
 
         return mapEligibility(program);
@@ -235,10 +243,6 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
 
     @Named("weekday")
     default int getIdByTheWeekday(String weekday) {
-        if (StringUtils.isBlank(weekday)) {
-            throw new IllegalArgumentException("Day of the week cannot be empty");
-        }
-
         return OpeningHoursUtils.getWeekday(weekday);
     }
 

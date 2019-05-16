@@ -40,6 +40,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SmcConnectDataMapper {
@@ -47,6 +49,8 @@ public interface SmcConnectDataMapper {
     String PROVIDER_NAME = "SMCConnect";
     SmcConnectDataMapper INSTANCE = Mappers.getMapper(SmcConnectDataMapper.class);
     String DELIMITER = ",";
+
+    Logger LOG = LoggerFactory.getLogger(SmcConnectDataMapper.class);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "url", source = "website")
@@ -105,10 +109,6 @@ public interface SmcConnectDataMapper {
 
     @Named("weekday")
     default int getIdByTheWeekday(String weekday) {
-        if (StringUtils.isBlank(weekday)) {
-            throw new IllegalArgumentException("Day of the week cannot be empty");
-        }
-
         return OpeningHoursUtils.getWeekday(weekday);
     }
 
@@ -138,7 +138,7 @@ public interface SmcConnectDataMapper {
 
     default Organization extractOrganization(SmcOrganization source) {
         if (StringUtils.isBlank(source.getName())) {
-            throw new IllegalArgumentException("Organization name cannot be empty");
+            LOG.warn("Organization name is empty for organization with ID: " + source.getId());
         }
 
         Organization result = mapOrganization(source);
@@ -164,7 +164,7 @@ public interface SmcConnectDataMapper {
 
     default Location extractLocation(SmcLocation source) {
         if (StringUtils.isBlank(source.getName())) {
-            throw new IllegalArgumentException("Location name cannot be empty");
+            LOG.warn("Location name is empty for organization with ID: " + source.getOrganizationId());
         }
 
         return mapLocation(source);

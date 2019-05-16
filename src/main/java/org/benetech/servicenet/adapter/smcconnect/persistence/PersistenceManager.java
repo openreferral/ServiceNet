@@ -136,13 +136,13 @@ class PersistenceManager {
     private Optional<PhysicalAddress> getPhysicalAddressToPersist(String relatedTo) {
         //TODO: Only first one is persisted
         return storage.getRelatedEntities(SmcAddress.class, relatedTo, SmcLocation.class).stream()
-            .map(a -> mapper.extractPhysicalAddress(a)).findFirst().orElse(null);
+            .map(a -> mapper.extractPhysicalAddress(a)).findFirst().orElse(Optional.empty());
     }
 
     private Optional<PostalAddress> getPostalAddressToPersist(String relatedTo) {
         //TODO: Only first one is persisted
         return storage.getRelatedEntities(SmcMailAddress.class, relatedTo, SmcLocation.class).stream()
-            .map(a -> mapper.extractPostalAddress(a)).findFirst().orElse(null);
+            .map(a -> mapper.extractPostalAddress(a)).findFirst().orElse(Optional.empty());
     }
 
     private Funding getFundingToPersist(SmcService smcService) {

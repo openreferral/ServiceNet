@@ -109,4 +109,5 @@
     <include file="config/liquibase/changelog/20181220100327_insert_initial_SystemAccounts.xml"
              relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190508173955_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190515120552_changelog.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

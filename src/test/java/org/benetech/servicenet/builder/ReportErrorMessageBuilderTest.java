@@ -22,9 +22,7 @@ public class ReportErrorMessageBuilderTest {
                 "\n" +
                 "For object related to/identified with id=123, of class Organization:\n" +
                 "account must not be null\n" +
-                "active must not be null\n" +
-                "name must not be null" +
-                "\n";
+                "active must not be null\n";
 
         assertEquals(expected, result);
     }
@@ -40,7 +38,6 @@ public class ReportErrorMessageBuilderTest {
                 "For object related to/identified with id=123, of class Organization:\n" +
                 "account must not be null\n" +
                 "active must not be null\n" +
-                "name must not be null\n" +
                 "\n" +
                 "For object related to/identified with id=453, of class Language:\n" +
                 "language must not be null" +
