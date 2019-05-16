@@ -33,11 +33,15 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { IntegerMapper.class })
 public abstract class HealthLeadsDataMapper {
 
     public static final HealthLeadsDataMapper INSTANCE = Mappers.getMapper(HealthLeadsDataMapper.class);
+
+    private Logger log = LoggerFactory.getLogger(HealthLeadsDataMapper.class);
 
     private static final String LISTS_DELIMITER = ";";
 
@@ -51,7 +55,7 @@ public abstract class HealthLeadsDataMapper {
 
     public Location extractLocation(HealthleadsLocation location) {
         if (StringUtils.isBlank(location.getName())) {
-            throw new IllegalArgumentException("Location name cannot be empty");
+            log.warn("Location name is empty for organization with ID: " + location.getOrganizationId());
         }
 
         return toLocation(location);
@@ -59,7 +63,7 @@ public abstract class HealthLeadsDataMapper {
 
     public Organization extractOrganization(HealthleadsOrganization organization) {
         if (StringUtils.isBlank(organization.getName())) {
-            throw new IllegalArgumentException("Organization name cannot be empty");
+            log.warn("organization name is empty for organization with ID: " + organization.getId());
         }
 
         return toOrganization(organization);

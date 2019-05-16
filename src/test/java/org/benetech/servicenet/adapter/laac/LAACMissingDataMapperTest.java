@@ -48,14 +48,6 @@ public class LAACMissingDataMapperTest {
         assertEquals("Patients Health - health.com", result.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForLackOfDataForOrganization() {
-        data.setOrganizationName(null);
-        Organization result = mapper.extractOrganization(data);
-
-        assertEquals("Patients Health - health.com", result.getName());
-    }
-
     @Test
     public void shouldNotThrowExceptionForMinimalDataForService() {
         Service result = mapper.extractService(data);
@@ -63,24 +55,8 @@ public class LAACMissingDataMapperTest {
         assertEquals("Patients Health - health.com - Service", result.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForLackOfDataForService() {
-        data.setOrganizationName(null);
-        Service result = mapper.extractService(data);
-
-        assertEquals("Patients Health - health.com - Service", result.getName());
-    }
-
     @Test
     public void shouldNotThrowExceptionForMinimalDataForLocation() {
-        Location result = mapper.extractLocation(data);
-
-        assertEquals("Patients Health - health.com - Location", result.getName());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForLackOfDataForLocation() {
-        data.setOrganizationName(null);
         Location result = mapper.extractLocation(data);
 
         assertEquals("Patients Health - health.com - Location", result.getName());

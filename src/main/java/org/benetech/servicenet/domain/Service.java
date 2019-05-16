@@ -16,7 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -35,11 +34,14 @@ public class Service extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
-    @Column(name = "name", nullable = false)
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "name", columnDefinition = "clob")
     private String name;
 
-    @Column(name = "alternate_name")
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "alternate_name", columnDefinition = "clob")
     private String alternateName;
 
     @Lob

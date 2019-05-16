@@ -60,7 +60,7 @@ public class ImportManagerTest {
         importManager.createOrUpdateOrganization(org2, EXTERNAL_ID_2, new ImportData(new DataImportReport(), PROVIDER, true, null));
         importManager.createOrUpdateOrganization(org3, EXTERNAL_ID_3, new ImportData(new DataImportReport(), PROVIDER, true, null));
 
-        assertEquals(2, organizationService.findAll().size());
+        assertEquals(3, organizationService.findAll().size());
     }
 
     private Organization generateOrganization(String string, String id) {

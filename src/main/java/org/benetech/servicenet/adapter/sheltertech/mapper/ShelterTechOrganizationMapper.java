@@ -15,15 +15,19 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mapper
 public interface ShelterTechOrganizationMapper {
 
     ShelterTechOrganizationMapper INSTANCE = Mappers.getMapper(ShelterTechOrganizationMapper.class);
 
+    Logger LOG = LoggerFactory.getLogger(ShelterTechOrganizationMapper.class);
+
     default Organization mapToOrganization(OrganizationRaw orgRaw, DocumentUpload documentUpload) {
         if (StringUtils.isBlank(orgRaw.getName())) {
-            throw new IllegalArgumentException("Organization name cannot be empty");
+            LOG.warn("Organization name is empty for organization with ID: " + orgRaw.getId());
         }
 
         return toOrganization(orgRaw, documentUpload);

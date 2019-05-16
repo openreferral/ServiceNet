@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain.view;
 
+import javax.persistence.Lob;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Immutable;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 import java.util.UUID;
+import org.hibernate.annotations.Type;
 
 @Data
 @Entity(name = "activity_info")
@@ -24,10 +26,14 @@ public class ActivityInfo {
     )
     private UUID id;
 
-    @Column(name = "name")
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "name", columnDefinition = "clob")
     private String name;
 
-    @Column(name = "alternate_name")
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "alternate_name", columnDefinition = "clob")
     private String alternateName;
 
     @Column(name = "recent")

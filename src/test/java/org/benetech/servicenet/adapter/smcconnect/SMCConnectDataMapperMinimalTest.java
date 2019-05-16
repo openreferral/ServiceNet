@@ -76,15 +76,6 @@ public class SMCConnectDataMapperMinimalTest {
         assertEquals("Organization Name", result.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForLackOfDataForOrganization() throws IOException {
-        String json = AdapterTestsUtils.readResourceAsString(DIR + ORGANIZATIONS + JSON);
-        List<SmcOrganization> entities = new Gson().fromJson(json, new ListType<>(SmcOrganization.class));
-        entities.get(0).setName(null);
-
-        mapper.extractOrganization(entities.get(0));
-    }
-
     @Test
     public void shouldNotThrowExceptionForMinimalDataForService() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(DIR + SERVICES + JSON);
@@ -103,15 +94,6 @@ public class SMCConnectDataMapperMinimalTest {
         Location result = mapper.extractLocation(entities.get(0));
 
         assertEquals("Name", result.getName());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionForLackOfDataForLocation() throws IOException {
-        String json = AdapterTestsUtils.readResourceAsString(DIR + LOCATIONS + JSON);
-        List<SmcLocation> entities = new Gson().fromJson(json, new ListType<>(SmcLocation.class));
-        entities.get(0).setName(null);
-
-        mapper.extractLocation(entities.get(0));
     }
 
     @Test

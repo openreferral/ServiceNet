@@ -18,7 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -38,11 +37,14 @@ public class Organization extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
-    @Column(name = "name", nullable = false)
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "name", columnDefinition = "clob")
     private String name;
 
-    @Column(name = "alternate_name")
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "alternate_name", columnDefinition = "clob")
     private String alternateName;
 
     @Lob
@@ -50,8 +52,7 @@ public class Organization extends AbstractEntity implements Serializable {
     @Column(name = "description", columnDefinition = "clob")
     private String description;
 
-    @Size(max = 50)
-    @Column(name = "email", length = 50)
+    @Column(name = "email")
     private String email;
 
     @Column(name = "url")
