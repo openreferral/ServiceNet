@@ -19,10 +19,11 @@ export interface IConflict {
   stateDate?: Moment;
   createdDate?: Moment;
   resourceId?: any;
+  partnerResourceId?: any;
   ownerId?: any;
   ownerName?: string;
-  acceptedThisChangeId?: any;
-  acceptedThisChangeName?: string;
+  partnerId?: any;
+  partnerName?: string;
 }
 
 export const defaultValue: Readonly<IConflict> = {};

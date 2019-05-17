@@ -30,6 +30,6 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
         "where conflict.resourceId =:resourceId and conflict.state = 'PENDING'")
     Optional<ZonedDateTime> findMostRecentStateDate(@Param("resourceId") UUID resourceId);
 
-    Optional<Conflict> findByResourceIdAndAcceptedThisChangeNameAndFieldNameAndState(
-        UUID resourceId, String acceptedThisChange, String fieldName, ConflictStateEnum state);
+    List<Conflict> findByResourceIdAndPartnerResourceIdAndState(
+        UUID resourceId, UUID partnerResourceId, ConflictStateEnum state);
 }

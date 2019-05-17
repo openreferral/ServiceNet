@@ -2,25 +2,12 @@
     "name": "OrganizationMatch",
     "fields": [
         {
-            "fieldName": "fieldName",
-            "fieldType": "String"
-        },
-        {
             "fieldName": "timestamp",
             "fieldType": "ZonedDateTime"
         },
         {
             "fieldName": "deleted",
             "fieldType": "Boolean"
-        },
-        {
-            "fieldName": "fieldPath",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "matchedValue",
-            "fieldType": "byte[]",
-            "fieldTypeBlobContent": "text"
         }
     ],
     "relationships": [

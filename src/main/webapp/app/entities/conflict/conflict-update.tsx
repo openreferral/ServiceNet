@@ -21,7 +21,7 @@ export interface IConflictUpdateProps extends StateProps, DispatchProps, RouteCo
 export interface IConflictUpdateState {
   isNew: boolean;
   ownerId: string;
-  acceptedThisChangeId: string;
+  partnerId: string;
 }
 
 export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConflictUpdateState> {
@@ -29,7 +29,7 @@ export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConfl
     super(props);
     this.state = {
       ownerId: '0',
-      acceptedThisChangeId: '0',
+      partnerId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -203,6 +203,12 @@ export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConfl
                   <AvField id="conflict-resourceId" type="text" name="resourceId" />
                 </AvGroup>
                 <AvGroup>
+                  <Label id="partnerResourceIdLabel" for="partnerResourceId">
+                    <Translate contentKey="serviceNetApp.conflict.partnerResourceId">Partner Resource Id</Translate>
+                  </Label>
+                  <AvField id="conflict-partnerResourceId" type="text" name="partnerResourceId" />
+                </AvGroup>
+                <AvGroup>
                   <Label for="owner.id">
                     <Translate contentKey="serviceNetApp.conflict.owner">Owner</Translate>
                   </Label>
@@ -217,10 +223,10 @@ export class ConflictUpdate extends React.Component<IConflictUpdateProps, IConfl
                   </AvInput>
                 </AvGroup>
                 <AvGroup>
-                  <Label for="acceptedThisChange.id">
-                    <Translate contentKey="serviceNetApp.conflict.acceptedThisChange">Accepted This Change</Translate>
+                  <Label for="partner.id">
+                    <Translate contentKey="serviceNetApp.conflict.partner">Partner</Translate>
                   </Label>
-                  <AvInput id="conflict-acceptedThisChange" type="select" className="form-control" name="acceptedThisChangeId">
+                  <AvInput id="conflict-partner" type="select" className="form-control" name="partnerId">
                     <option value="" key="0" />
                     {systemAccounts
                       ? systemAccounts.map(otherEntity => (

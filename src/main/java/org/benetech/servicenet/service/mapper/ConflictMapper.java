@@ -17,8 +17,8 @@ public interface ConflictMapper extends EntityMapper<ConflictDTO, Conflict> {
 
     @Mapping(source = "owner.id", target = "ownerId")
     @Mapping(source = "owner.name", target = "ownerName")
-    @Mapping(source = "acceptedThisChange.id", target = "acceptedThisChangeId")
-    @Mapping(source = "acceptedThisChange.name", target = "acceptedThisChangeName")
+    @Mapping(source = "partner.id", target = "partnerId")
+    @Mapping(source = "partner.name", target = "partnerName")
     ConflictDTO toDto(Conflict conflict);
 
     @Mapping(source = "ownerId", target = "owner")
