@@ -16,13 +16,14 @@ const ActivityElement = props => {
       <Col>
         <CardGroup>
           <Card className="activity-card">
-            <CardBody>
-              <CardTitle className="activity-left-card-title">
-                {props.activity.record.organization.name} <FontAwesomeIcon icon="angle-right" />
-              </CardTitle>
-              <CardTitle>
-                <FontAwesomeIcon icon="map-marker-alt" /> {props.activity.record.organization.locationName}
-              </CardTitle>
+            <CardBody className="activity-card-body">
+              <CardTitle className="activity-left-card-title">{props.activity.record.organization.name}</CardTitle>
+              {props.activity.record.organization.locationName && (
+                <CardTitle className="activity-left-card-title">
+                  <FontAwesomeIcon icon="map-marker-alt" className="mr-1" />
+                  {props.activity.record.organization.locationName}
+                </CardTitle>
+              )}
             </CardBody>
           </Card>
           <Card className="activity-right-card">
@@ -38,13 +39,16 @@ const ActivityElement = props => {
                   </Translate>
                 </CardTitle>
               ))}
-              {areAllDisplayed ? null : `and ${props.activity.record.conflicts.length - maxConflicts} more...`}
-              {conflictsToDisplay.length ? (
-                <CardText className="activity-left-card-text">
-                  Last updated <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-                </CardText>
-              ) : (
-                <CardText className="activity-left-card-text">
+              <div className="info-container">
+                {areAllDisplayed ? <div /> : `and ${props.activity.record.conflicts.length - maxConflicts} more...`}
+                {conflictsToDisplay.length > 0 && (
+                  <CardText className="activity-right-card-info">
+                    Last updated <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                  </CardText>
+                )}
+              </div>
+              {conflictsToDisplay.length === 0 && (
+                <CardText className="activity-right-card-info">
                   <Translate contentKey="serviceNetApp.activity.noConflicts" />
                 </CardText>
               )}
