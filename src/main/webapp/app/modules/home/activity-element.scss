@@ -1,8 +1,23 @@
 @import '../../app-variables';
 @import '../../bootstrap-variables';
 
+.activity-card-body {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .activity-row {
   margin-bottom: 15px;
+}
+
+.alert-link {
+  &:hover {
+    text-decoration: none !important;
+    .activity-left-card-title {
+      color: $blue-card-darker;
+    }
+  }
 }
 
 .activity-left-card {
@@ -10,7 +25,14 @@
 }
 
 .activity-left-card-title {
-  color: $blue-card-text;
+  color: $purple-card-text;
+  font-size: 20px;
+  margin-bottom: 0;
+}
+
+.info-container {
+  display: flex;
+  justify-content: space-between;
 }
 
 .activity-right-card {
@@ -18,11 +40,10 @@
 }
 
 .activity-right-card-title {
-  color: $blue-card-text;
+  color: $black;
+  font-size: 14px;
 }
 
-.activity-left-card-text {
+.activity-right-card-info {
   color: $gray-card-accent;
-  position: absolute;
-  bottom: 5;
 }
