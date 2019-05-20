@@ -135,6 +135,7 @@ public class ConflictResourceIntTest {
         assertThat(testConflict.getStateDate()).isEqualTo(ConflictMother.DEFAULT_STATE_DATE);
         assertThat(testConflict.getCreatedDate()).isEqualTo(ConflictMother.DEFAULT_CREATED_DATE);
         assertThat(testConflict.getResourceId()).isEqualTo(UUID_1);
+        assertThat(testConflict.getPartnerResourceId()).isEqualTo(UUID_2);
     }
 
     @Test
@@ -178,7 +179,8 @@ public class ConflictResourceIntTest {
             .andExpect(jsonPath("$.[*].stateDate").value(hasItem(sameInstant(ConflictMother.DEFAULT_STATE_DATE))))
             .andExpect(jsonPath("$.[*].createdDate").value(
                 hasItem(sameInstant(ConflictMother.DEFAULT_CREATED_DATE))))
-            .andExpect(jsonPath("$.[*].resourceId").value(hasItem(UUID_1.toString())));
+            .andExpect(jsonPath("$.[*].resourceId").value(hasItem(UUID_1.toString())))
+            .andExpect(jsonPath("$.[*].partnerResourceId").value(hasItem(UUID_2.toString())));
     }
 
     @Test
@@ -201,7 +203,8 @@ public class ConflictResourceIntTest {
             .andExpect(jsonPath("$.state").value(ConflictMother.DEFAULT_STATE.toString()))
             .andExpect(jsonPath("$.stateDate").value(sameInstant(ConflictMother.DEFAULT_STATE_DATE)))
             .andExpect(jsonPath("$.createdDate").value(sameInstant(ConflictMother.DEFAULT_CREATED_DATE)))
-            .andExpect(jsonPath("$.resourceId").value(UUID_1.toString()));
+            .andExpect(jsonPath("$.resourceId").value(UUID_1.toString()))
+            .andExpect(jsonPath("$.partnerResourceId").value(UUID_2.toString()));
     }
 
     @Test
@@ -236,6 +239,7 @@ public class ConflictResourceIntTest {
             .stateDate(ConflictMother.UPDATED_STATE_DATE)
             .createdDate(ConflictMother.UPDATED_CREATED_DATE)
             .resourceId(UUID_2)
+            .partnerResourceId(UUID_1)
             .build()
             .id(fetchedConflict.getId());
         ConflictDTO conflictDTO = conflictMapper.toDto(updatedConflict);
@@ -259,6 +263,7 @@ public class ConflictResourceIntTest {
         assertThat(testConflict.getStateDate()).isEqualTo(ConflictMother.UPDATED_STATE_DATE);
         assertThat(testConflict.getCreatedDate()).isEqualTo(ConflictMother.UPDATED_CREATED_DATE);
         assertThat(testConflict.getResourceId()).isEqualTo(UUID_2);
+        assertThat(testConflict.getPartnerResourceId()).isEqualTo(UUID_1);
     }
 
     @Test

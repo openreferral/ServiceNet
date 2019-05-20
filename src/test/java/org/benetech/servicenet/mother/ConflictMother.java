@@ -10,6 +10,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import static org.benetech.servicenet.TestConstants.UUID_1;
+import static org.benetech.servicenet.TestConstants.UUID_2;
 
 public class ConflictMother {
 
@@ -56,6 +57,7 @@ public class ConflictMother {
             .stateDate(DEFAULT_STATE_DATE)
             .createdDate(DEFAULT_CREATED_DATE)
             .resourceId(UUID_1)
+            .partnerResourceId(UUID_2)
             .build();
         conflict.setOwner(SystemAccountMother.createDefault());
         return conflict;
@@ -73,6 +75,7 @@ public class ConflictMother {
             .stateDate(UPDATED_STATE_DATE)
             .createdDate(UPDATED_CREATED_DATE)
             .resourceId(UUID_1)
+            .partnerResourceId(UUID_2)
             .build();
         conflict.setOwner(SystemAccountMother.createDefault());
         return conflict;

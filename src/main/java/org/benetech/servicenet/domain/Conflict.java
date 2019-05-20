@@ -72,13 +72,16 @@ public class Conflict extends AbstractEntity implements Serializable {
     @Column(name = "resource_id")
     private UUID resourceId;
 
+    @Column(name = "partner_resource_id")
+    private UUID partnerResourceId;
+
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties("")
     private SystemAccount owner;
 
     @ManyToOne
-    private SystemAccount acceptedThisChange;
+    private SystemAccount partner;
 
     public Conflict id(UUID id) {
         this.setId(id);

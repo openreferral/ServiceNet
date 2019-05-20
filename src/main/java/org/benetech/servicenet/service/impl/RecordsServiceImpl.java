@@ -28,7 +28,6 @@ public class RecordsServiceImpl implements RecordsService {
     @Override
     public Optional<RecordDTO> getRecordFromOrganization(UUID organizationId, UUID resourceId) {
         return organizationService.findOne(organizationId)
-            .flatMap(organization -> userService.getCurrentSystemAccount()
-                .flatMap(account -> recordFactory.getFilteredResult(resourceId, organization)));
+            .flatMap(organization ->  recordFactory.getFilteredResult(resourceId, organization));
     }
 }

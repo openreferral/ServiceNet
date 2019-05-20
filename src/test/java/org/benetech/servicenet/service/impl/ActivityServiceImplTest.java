@@ -69,8 +69,6 @@ public class ActivityServiceImplTest {
 
     private Conflict conflict;
 
-    private SystemAccount systemAccount;
-
     @Autowired
     private RecordsService recordsService;
 
@@ -84,12 +82,12 @@ public class ActivityServiceImplTest {
     @Before
     public void initTest() {
         organization = OrganizationMother.createDefaultAndPersist(em);
-        systemAccount = organization.getAccount();
+        SystemAccount systemAccount = organization.getAccount();
 
         conflict = ConflictMother.createDefaultAndPersist(em);
         conflict.setResourceId(organization.getId());
         conflict.setOwner(systemAccount);
-        conflict.setAcceptedThisChange(SystemAccountMother.createDifferentAndPersist(em));
+        conflict.setPartner(SystemAccountMother.createDifferentAndPersist(em));
         em.persist(conflict);
         em.flush();
 
@@ -139,10 +137,11 @@ public class ActivityServiceImplTest {
         assertEquals(conflict.getStateDate(), actualConflict.getStateDate());
         assertEquals(conflict.getCreatedDate(), actualConflict.getCreatedDate());
         assertEquals(conflict.getResourceId(), actualConflict.getResourceId());
+        assertEquals(conflict.getPartnerResourceId(), actualConflict.getPartnerResourceId());
         assertEquals(conflict.getOwner().getId(), actualConflict.getOwnerId());
         assertEquals(conflict.getOwner().getName(), actualConflict.getOwnerName());
-        assertEquals(conflict.getAcceptedThisChange().getId(), actualConflict.getAcceptedThisChange().getId());
-        assertEquals(conflict.getAcceptedThisChange().getName(), actualConflict.getAcceptedThisChange().getName());
+        assertEquals(conflict.getPartner().getId(), actualConflict.getPartnerId());
+        assertEquals(conflict.getPartner().getName(), actualConflict.getPartnerName());
     }
 
 }

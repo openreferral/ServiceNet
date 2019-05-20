@@ -88,7 +88,7 @@ public class Organization extends AbstractEntity implements Serializable {
     @JsonIgnoreProperties("")
     private DocumentUpload sourceDocument;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties("")
     private SystemAccount account;

@@ -97,13 +97,19 @@ export class ConflictDetail extends React.Component<IConflictDetailProps> {
             </dt>
             <dd>{conflictEntity.resourceId}</dd>
             <dt>
+              <span id="partnerResourceId">
+                <Translate contentKey="serviceNetApp.conflict.partnerResourceId">Partner Resource Id</Translate>
+              </span>
+            </dt>
+            <dd>{conflictEntity.partnerResourceId}</dd>
+            <dt>
               <Translate contentKey="serviceNetApp.conflict.owner">Owner</Translate>
             </dt>
             <dd>{conflictEntity.ownerId ? conflictEntity.ownerId : ''}</dd>
             <dt>
-              <Translate contentKey="serviceNetApp.conflict.acceptedThisChange">Accepted This Change</Translate>
+              <Translate contentKey="serviceNetApp.conflict.partner">Partner</Translate>
             </dt>
-            <dd>{conflictEntity.acceptedThisChangeId ? conflictEntity.acceptedThisChangeId : ''}</dd>
+            <dd>{conflictEntity.partnerId ? conflictEntity.partnerId : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/conflict" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

@@ -3,6 +3,7 @@ package org.benetech.servicenet.conflict;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.conflict.detector.ConflictDetector;
+import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.OrganizationMatch;
@@ -23,10 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ConflictDetectionServiceImpl implements ConflictDetectionService {
@@ -93,18 +94,17 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
     private void detect(List<EntityEquivalent> equivalents, SystemAccount owner, SystemAccount accepted) {
         for (EntityEquivalent eq : equivalents) {
-            Object current = em.find(eq.getClazz(), eq.getBaseResourceId());
-            Object mirror = em.find(eq.getClazz(), eq.getPartnerResourceId());
+            AbstractEntity current = (AbstractEntity) em.find(eq.getClazz(), eq.getBaseResourceId());
+            AbstractEntity mirror = (AbstractEntity) em.find(eq.getClazz(), eq.getPartnerResourceId());
 
             try {
                 ConflictDetector detector = context.getBean(
                     eq.getClazz().getSimpleName() + Constants.CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
                 List<Conflict> conflicts = detector.detectConflicts(current, mirror);
 
+                removeDuplicatesAndRejectOutdatedConflicts(conflicts, current.getId(), mirror.getId());
+
                 conflicts.forEach(c -> addAccounts(c, owner, accepted));
-
-                removeDuplicatesAndRejectOutdatedConflicts(conflicts);
-
                 conflicts.forEach(c -> addConflictingDates(eq, c));
 
                 persistConflicts(conflicts);
@@ -124,47 +124,37 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         offeredMetadata.ifPresent(m -> conflict.setOfferedValueDate(m.getLastActionDate()));
     }
 
-    private void addAccounts(Conflict conflict, SystemAccount owner, SystemAccount accepted) {
+    private void addAccounts(Conflict conflict, SystemAccount owner, SystemAccount partner) {
         conflict.setOwner(owner);
-        conflict.setAcceptedThisChange(accepted);
+        conflict.setPartner(partner);
     }
 
     private void persistConflicts(List<Conflict> conflicts) {
         conflicts.forEach(em::persist);
     }
 
-    private void removeDuplicatesAndRejectOutdatedConflicts(List<Conflict> conflicts) {
-        Iterator<Conflict> conflictIterator = conflicts.iterator();
+    private void removeDuplicatesAndRejectOutdatedConflicts(List<Conflict> conflicts,
+        UUID resourceId, UUID partnerResourceId) {
 
-        while (conflictIterator.hasNext()) {
-            removeDuplicatesAndRejectOutdatedConflicts(conflictIterator);
-        }
-    }
+        List<Conflict> existingConflicts = conflictService.findAllPendingWithResourceIdAndPartnerResourceId(
+            resourceId, partnerResourceId);
 
-    private void removeDuplicatesAndRejectOutdatedConflicts(Iterator<Conflict> conflictIterator) {
-        Conflict conflict = conflictIterator.next();
+        conflicts.removeIf(conflict -> StringUtils.isBlank(conflict.getOfferedValue()));
 
-        conflictService.findPendingConflictWithResourceIdAndAcceptedThisChangeAndFieldName(
-            conflict.getResourceId(), conflict.getAcceptedThisChange().getName(), conflict.getFieldName())
-            .ifPresentOrElse(
+        existingConflicts.forEach(conflict -> conflicts.stream()
+            .filter(c -> c.getFieldName().equals(conflict.getFieldName()))
+            .findFirst().ifPresentOrElse(
                 conf -> {
                     if (!StringUtils.equals(conf.getCurrentValue(), conflict.getCurrentValue())) {
-                        rejectOutdatedConflict(conf);
-                    } else if (StringUtils.isBlank(conflict.getOfferedValue())) {
-                        rejectOutdatedConflict(conf);
-                        conflictIterator.remove();
+                        rejectOutdatedConflict(conflict);
                     } else if (!StringUtils.equals(conf.getOfferedValue(), conflict.getOfferedValue())) {
-                        rejectOutdatedConflict(conf);
+                        rejectOutdatedConflict(conflict);
                     } else {
-                        conflictIterator.remove();
-
+                        conflicts.remove(conf);
                     }
-                    },
-                () -> {
-                    if (StringUtils.isBlank(conflict.getOfferedValue())) {
-                        conflictIterator.remove();
-                    }
-                });
+                },
+                () -> rejectOutdatedConflict(conflict)
+            ));
     }
 
     private void rejectOutdatedConflict(Conflict outdated) {

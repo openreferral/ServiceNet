@@ -66,12 +66,10 @@ public interface ConflictService {
     Optional<ZonedDateTime> findMostRecentStateDate(UUID resourceId);
 
     /**
-     * Get pending Conflict with resourceId and acceptedThisChange and fieldName.
+     * Get pending Conflict with resourceId and partner and fieldName.
      *
      * @param resourceId the id of the resource entity
-     * @param acceptedThisChange system account name
-     * @param fieldName the name of the field
+     * @param partnerResourceId system account name
      */
-    Optional<Conflict> findPendingConflictWithResourceIdAndAcceptedThisChangeAndFieldName(
-        UUID resourceId, String acceptedThisChange, String fieldName);
+    List<Conflict> findAllPendingWithResourceIdAndPartnerResourceId(UUID resourceId, UUID partnerResourceId);
 }

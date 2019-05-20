@@ -42,15 +42,15 @@ public class ConflictDTO implements Serializable {
 
     private UUID resourceId;
 
+    private UUID partnerResourceId;
+
     private UUID ownerId;
 
     private String ownerName;
 
-    private UUID acceptedThisChangeId;
+    private UUID partnerId;
 
-    private String acceptedThisChangeName;
-
-    private SystemAccountDTO acceptedThisChange;
+    private String partnerName;
 
     @Override
     public boolean equals(Object o) {

@@ -12,7 +12,7 @@
             "otherEntityField": "id"
         },
         {
-            "relationshipName": "acceptedThisChange",
+            "relationshipName": "partner",
             "otherEntityName": "systemAccount",
             "relationshipType": "many-to-one",
             "otherEntityField": "id"
@@ -59,6 +59,10 @@
         {
             "fieldName": "resourceId",
             "fieldType": "String"
+        },
+        {
+          "fieldName": "partnerResourceId",
+          "fieldType": "String"
         }
     ],
     "changelogDate": "20181224110136",

@@ -141,7 +141,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
               <br />
               <div>
                 <p className="secondary">
-                  {value.acceptedThisChangeName}
+                  {value.partnerName}
                   <Translate contentKey="singleRecordView.inputField.imported" />
                   <TextFormat value={value.offeredValueDate} type="date" format={APP_LOCAL_DATE_FORMAT} />
                 </p>

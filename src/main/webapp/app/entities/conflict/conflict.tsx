@@ -69,10 +69,13 @@ export class Conflict extends React.Component<IConflictProps> {
                   <Translate contentKey="serviceNetApp.conflict.resourceId">Resource Id</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="serviceNetApp.conflict.partnerResourceId">Partner Resource Id</Translate>
+                </th>
+                <th>
                   <Translate contentKey="serviceNetApp.conflict.owner">Owner</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="serviceNetApp.conflict.acceptedThisChange">Accepted This Change</Translate>
+                  <Translate contentKey="serviceNetApp.conflict.partner">Partner</Translate>
                 </th>
                 <th />
               </tr>
@@ -105,14 +108,9 @@ export class Conflict extends React.Component<IConflictProps> {
                     <TextFormat type="date" value={conflict.createdDate} format={APP_DATE_FORMAT} />
                   </td>
                   <td>{conflict.resourceId}</td>
+                  <td>{conflict.partnerResourceId}</td>
                   <td>{conflict.ownerId ? <Link to={`system-account/${conflict.ownerId}`}>{conflict.ownerId}</Link> : ''}</td>
-                  <td>
-                    {conflict.acceptedThisChangeId ? (
-                      <Link to={`system-account/${conflict.acceptedThisChangeId}`}>{conflict.acceptedThisChangeId}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
+                  <td>{conflict.partnerId ? <Link to={`system-account/${conflict.partnerId}`}>{conflict.partnerId}</Link> : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${conflict.id}`} color="info" size="sm">

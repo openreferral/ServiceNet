@@ -11,37 +11,39 @@ import java.util.List;
 
 public abstract class AbstractDetector<T extends AbstractEntity> {
 
-    protected List<Conflict> detectConflicts(T current, String name, String name2, String fieldName) {
+    protected List<Conflict> detectConflicts(T current, T offered,
+        String currentValue, String offeredValue, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
-        if (detect(name, name2)) {
-            conflicts.add(createConflict(current, name, name2, fieldName));
+        if (detect(currentValue, offeredValue)) {
+            conflicts.add(createConflict(current, offered, currentValue, offeredValue, fieldName));
         }
         return conflicts;
     }
 
-    protected boolean detect(String name, String name2) {
-        return !this.areEquals(name, name2);
+    protected boolean detect(String currentValue, String offeredValue) {
+        return !this.areEquals(currentValue, offeredValue);
     }
 
-    protected <Y> List<Conflict> detectConflicts(T current, Y val, Y val2, String fieldName) {
+    protected <Y> List<Conflict> detectConflicts(T current, T offered, Y currentValue, Y offeredValue, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
-        if (detect(val, val2)) {
-            conflicts.add(createConflict(current, val, val2, fieldName));
+        if (detect(currentValue, offeredValue)) {
+            conflicts.add(createConflict(current, offered, currentValue, offeredValue, fieldName));
         }
         return conflicts;
     }
 
-    protected <Y> boolean detect(Y val, Y val2) {
-        return notEquals(val, val2);
+    protected <Y> boolean detect(Y currentValue, Y offeredValue) {
+        return notEquals(currentValue, offeredValue);
     }
 
-    private <Y> Conflict createConflict(T obj, Y currentValue, Y offeredValue, String fieldName) {
+    private <Y> Conflict createConflict(T current, T offered, Y currentValue, Y offeredValue, String fieldName) {
         return Conflict.builder()
-            .resourceId(obj.getId())
+            .resourceId(current.getId())
+            .partnerResourceId(offered.getId())
             .currentValue(getString(currentValue))
             .offeredValue(getString(offeredValue))
             .fieldName(fieldName)
-            .entityPath(obj.getClass().getCanonicalName())
+            .entityPath(current.getClass().getCanonicalName())
             .state(ConflictStateEnum.PENDING)
             .stateDate(ZonedDateTime.now())
             .createdDate(ZonedDateTime.now())

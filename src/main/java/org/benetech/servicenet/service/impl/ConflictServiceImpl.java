@@ -127,10 +127,9 @@ public class ConflictServiceImpl implements ConflictService {
     }
 
     @Override
-    public Optional<Conflict> findPendingConflictWithResourceIdAndAcceptedThisChangeAndFieldName(
-        UUID resourceId, String acceptedThisChange, String fieldName) {
+    public List<Conflict> findAllPendingWithResourceIdAndPartnerResourceId(UUID resourceId, UUID partnerResourceId) {
         log.debug("Request to get all Conflicts with resourceId: {}.", resourceId);
-        return conflictRepository.findByResourceIdAndAcceptedThisChangeNameAndFieldNameAndState(
-            resourceId, acceptedThisChange, fieldName, ConflictStateEnum.PENDING);
+        return conflictRepository.findByResourceIdAndPartnerResourceIdAndState(
+            resourceId, partnerResourceId, ConflictStateEnum.PENDING);
     }
 }

@@ -56,7 +56,7 @@ public class RecordFactory {
 
     private List<ConflictDTO> filterWithPartnersConfigs(List<ConflictDTO> conflictDTOS) {
         Set<String> conflictingProviders = conflictDTOS.stream()
-            .map(ConflictDTO::getAcceptedThisChangeName)
+            .map(ConflictDTO::getPartnerName)
             .collect(Collectors.toSet());
 
         if (CollectionUtils.isNotEmpty(conflictingProviders)) {
@@ -120,7 +120,7 @@ public class RecordFactory {
     }
 
     private boolean shouldConflictBeFiltered(ExclusionsConfigDTO config, ConflictDTO conflictDTO, FieldExclusion exclusion) {
-        return config.getAccountName().equals(conflictDTO.getAcceptedThisChangeName())
+        return config.getAccountName().equals(conflictDTO.getPartnerName())
             && exclusion.getEntity().equals(conflictDTO.getEntityPath())
             && exclusion.getExcludedFields().contains(conflictDTO.getFieldName());
     }

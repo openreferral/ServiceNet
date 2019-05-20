@@ -29,7 +29,7 @@ const ActivityElement = props => {
             <CardBody>
               {conflictsToDisplay.map((conflict, i) => (
                 <CardTitle className="activity-right-card-title" key={`activityCard${i}`}>
-                  {conflict.acceptedThisChangeName}
+                  {conflict.partnerName}
                   <Translate
                     contentKey="serviceNetApp.activity.unresolved.conflictPlusZero"
                     interpolate={{ fieldName: conflict.fieldName }}
