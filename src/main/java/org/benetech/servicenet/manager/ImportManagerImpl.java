@@ -25,7 +25,7 @@ public class ImportManagerImpl implements ImportManager {
         try {
             return importService.createOrUpdateOrganization(filledOrganization, externalDbId, importData);
         } catch (Exception e) {
-            handleError(e.getMessage(), importData.getReport());
+            handleError(e, importData.getReport());
             return null;
         }
     }
@@ -36,7 +36,7 @@ public class ImportManagerImpl implements ImportManager {
         try {
             return importService.createOrUpdateTaxonomy(taxonomy, externalDbId, providerName, report);
         } catch (Exception e) {
-            handleError(e.getMessage(), report);
+            handleError(e, report);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class ImportManagerImpl implements ImportManager {
         try {
             return importService.createOrUpdateLocation(filledLocation, externalDbId, importData);
         } catch (Exception e) {
-            handleError(e.getMessage(), importData.getReport());
+            handleError(e, importData.getReport());
             return null;
         }
     }
@@ -57,13 +57,13 @@ public class ImportManagerImpl implements ImportManager {
         try {
             return importService.createOrUpdateService(filledService, externalDbId, providerName, report);
         } catch (Exception e) {
-            handleError(e.getMessage(), report);
+            handleError(e, report);
             return null;
         }
     }
 
-    private void handleError(String message, DataImportReport report) {
-        report.setErrorMessage(ReportErrorMessageBuilder.buildForError(message, report));
-        log.error(message);
+    private void handleError(Exception e, DataImportReport report) {
+        report.setErrorMessage(ReportErrorMessageBuilder.buildForError(e.getMessage(), report));
+        log.error(e.getMessage(), e);
     }
 }
