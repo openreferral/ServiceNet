@@ -135,12 +135,17 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     @Async
     @Override
     public void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context) {
-        List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
-            .map(m -> m.getPartnerVersion().getId())
-            .collect(Collectors.toList());
-        List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getAccount().getName());
-        findAndPersistMatches(organization, notMatchedOrgs, context);
-        detectConflictsForCurrentMatches(organization);
+        if (organization.getActive()) {
+            List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
+                .map(m -> m.getPartnerVersion().getId())
+                .collect(Collectors.toList());
+            List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getAccount().getName());
+            findAndPersistMatches(organization, notMatchedOrgs, context);
+            detectConflictsForCurrentMatches(organization);
+        } else {
+            removeMatches(findCurrentMatches(organization));
+            removeMatches(findNotDismissedPartnersMatches(organization));
+        }
     }
 
     @Override
@@ -221,6 +226,14 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             organization.getAccount().getName() + "'s organization '" +
             organization.getName() + "' took: " + elapsedTime + "ms, " + matches.size() + " matches found.");
         return matches;
+    }
+
+    private void removeMatches(List<OrganizationMatch>  matches) {
+        DismissMatchDTO dismissMatchDTO = new DismissMatchDTO();
+        dismissMatchDTO.setComment("Dismissed match for inactive organization");
+        for (OrganizationMatch match : matches) {
+            dismissOrganizationMatch(match.getId(), dismissMatchDTO);
+        }
     }
 
     private List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner) {
