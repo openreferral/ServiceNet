@@ -54,8 +54,8 @@ public class OrganizationMatchResourceIntTest {
     private static final ZonedDateTime DEFAULT_TIMESTAMP = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_TIMESTAMP = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    private static final Boolean DEFAULT_DELETED = false;
-    private static final Boolean UPDATED_DELETED = true;
+    private static final Boolean DEFAULT_DISMISSED = false;
+    private static final Boolean UPDATED_DISMISSED = true;
 
     @Autowired
     private OrganizationMatchRepository organizationMatchRepository;
@@ -91,7 +91,7 @@ public class OrganizationMatchResourceIntTest {
     public static OrganizationMatch createEntity(EntityManager em) {
         return new OrganizationMatch()
             .timestamp(DEFAULT_TIMESTAMP)
-            .deleted(DEFAULT_DELETED);
+            .dismissed(DEFAULT_DISMISSED);
     }
 
     @Before
@@ -127,7 +127,7 @@ public class OrganizationMatchResourceIntTest {
         assertThat(organizationMatchList).hasSize(databaseSizeBeforeCreate + 1);
         OrganizationMatch testOrganizationMatch = organizationMatchList.get(organizationMatchList.size() - 1);
         assertThat(testOrganizationMatch.getTimestamp()).isEqualTo(DEFAULT_TIMESTAMP);
-        assertThat(testOrganizationMatch.isDeleted()).isEqualTo(DEFAULT_DELETED);
+        assertThat(testOrganizationMatch.isDismissed()).isEqualTo(DEFAULT_DISMISSED);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class OrganizationMatchResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organizationMatch.getId().toString())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
-            .andExpect(jsonPath("$.[*].deleted").value(hasItem(DEFAULT_DELETED)));
+            .andExpect(jsonPath("$.[*].dismissed").value(hasItem(DEFAULT_DISMISSED)));
     }
 
     @Test
@@ -177,7 +177,7 @@ public class OrganizationMatchResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(organizationMatch.getId().toString()))
             .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
-            .andExpect(jsonPath("$.deleted").value(DEFAULT_DELETED));
+            .andExpect(jsonPath("$.dismissed").value(DEFAULT_DISMISSED));
     }
 
     @Test
@@ -202,7 +202,7 @@ public class OrganizationMatchResourceIntTest {
         em.detach(updatedOrganizationMatch);
         updatedOrganizationMatch
             .timestamp(UPDATED_TIMESTAMP)
-            .deleted(UPDATED_DELETED);
+            .dismissed(UPDATED_DISMISSED);
         OrganizationMatchDTO organizationMatchDTO = organizationMatchMapper.toDto(updatedOrganizationMatch);
 
         restOrganizationMatchMockMvc.perform(put("/api/organization-matches")
@@ -215,7 +215,7 @@ public class OrganizationMatchResourceIntTest {
         assertThat(organizationMatchList).hasSize(databaseSizeBeforeUpdate);
         OrganizationMatch testOrganizationMatch = organizationMatchList.get(organizationMatchList.size() - 1);
         assertThat(testOrganizationMatch.getTimestamp()).isEqualTo(UPDATED_TIMESTAMP);
-        assertThat(testOrganizationMatch.isDeleted()).isEqualTo(UPDATED_DELETED);
+        assertThat(testOrganizationMatch.isDismissed()).isEqualTo(UPDATED_DISMISSED);
     }
 
     @Test

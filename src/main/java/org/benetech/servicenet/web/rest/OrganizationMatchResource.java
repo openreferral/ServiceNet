@@ -3,6 +3,7 @@ package org.benetech.servicenet.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.service.OrganizationMatchService;
+import org.benetech.servicenet.service.dto.DismissMatchDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
@@ -128,5 +129,35 @@ public class OrganizationMatchResource {
         log.debug("REST request to delete OrganizationMatch : {}", id);
         organizationMatchService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * POST  /organization-matches/:id/dismiss : Dismiss organizationMatch.
+     *
+     * @param id the id of the organizationMatchDTO to dismiss
+     * @param dismissMatchDTO match dismiss properties (comment)
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @PostMapping("/organization-matches/{id}/dismiss")
+    @Timed
+    public ResponseEntity<Void> dismissOrganizationMatch(@PathVariable UUID id,
+        @RequestBody DismissMatchDTO dismissMatchDTO) {
+        log.debug("REST request to dismiss OrganizationMatch : {}", id);
+        organizationMatchService.dismissOrganizationMatch(id, dismissMatchDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * POST  /organization-matches/:id/revertDismiss : Revert dismiss organizationMatch.
+     *
+     * @param id the id of the organizationMatchDTO to revert the dismiss
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @PostMapping("/organization-matches/{id}/revertDismiss")
+    @Timed
+    public ResponseEntity<Void> revertDismissOrganizationMatch(@PathVariable UUID id) {
+        log.debug("REST request to revert dismiss of OrganizationMatch : {}", id);
+        organizationMatchService.revertDismissOrganizationMatch(id);
+        return ResponseEntity.ok().build();
     }
 }

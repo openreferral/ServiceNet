@@ -23,4 +23,6 @@ public class ActivityDTO implements Serializable {
     private RecordDTO record;
 
     private List<OrganizationMatchDTO> organizationMatches;
+
+    private List<OrganizationMatchDTO> dismissedMatches;
 }

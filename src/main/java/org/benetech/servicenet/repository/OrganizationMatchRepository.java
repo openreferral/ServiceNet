@@ -21,4 +21,8 @@ public interface OrganizationMatchRepository extends JpaRepository<OrganizationM
 
     @Query("SELECT orgMatch FROM OrganizationMatch orgMatch WHERE orgMatch.partnerVersion.id = :organizationRecordId")
     List<OrganizationMatch> findAllByPartnerVersionId(@Param("organizationRecordId") UUID uuid);
+
+    List<OrganizationMatch> findAllByOrganizationRecordIdAndDismissed(UUID uuid, Boolean dismissed);
+
+    List<OrganizationMatch> findAllByPartnerVersionIdAndDismissed(UUID uuid, Boolean dismissed);
 }

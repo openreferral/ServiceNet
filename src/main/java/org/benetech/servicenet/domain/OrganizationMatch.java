@@ -27,8 +27,17 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
     @Column(name = "jhi_timestamp")
     private ZonedDateTime timestamp;
 
-    @Column(name = "deleted")
-    private Boolean deleted;
+    @Column(name = "dismissed")
+    private Boolean dismissed = false;
+
+    @Column(name = "dismiss_comment")
+    private String dismissComment;
+
+    @ManyToOne
+    private User dismissedBy;
+
+    @Column(name = "dismiss_date")
+    private ZonedDateTime dismissDate;
 
     @ManyToOne
     @JsonIgnoreProperties("")
@@ -45,12 +54,12 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public Boolean isDeleted() {
-        return deleted;
+    public Boolean isDismissed() {
+        return dismissed;
     }
 
-    public OrganizationMatch deleted(Boolean deleted) {
-        this.deleted = deleted;
+    public OrganizationMatch dismissed(Boolean dismissed) {
+        this.dismissed = dismissed;
         return this;
     }
 

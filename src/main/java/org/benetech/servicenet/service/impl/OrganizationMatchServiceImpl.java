@@ -9,6 +9,8 @@ import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.DismissMatchDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMatchMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +18,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +45,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private final ConflictDetectionService conflictDetectionService;
 
+    private final UserService userService;
+
     private final float orgMatchThreshold;
 
     public OrganizationMatchServiceImpl(OrganizationMatchRepository organizationMatchRepository,
@@ -48,6 +54,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
                                         OrganizationService organizationService,
                                         OrganizationSimilarityCounter organizationSimilarityCounter,
                                         ConflictDetectionService conflictDetectionService,
+                                        UserService userService,
                                         @Value("${similarity-ratio.config.organization-match-threshold}")
                                             float orgMatchThreshold) {
         this.organizationMatchRepository = organizationMatchRepository;
@@ -55,6 +62,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         this.organizationService = organizationService;
         this.organizationSimilarityCounter = organizationSimilarityCounter;
         this.conflictDetectionService = conflictDetectionService;
+        this.userService = userService;
         this.orgMatchThreshold = orgMatchThreshold;
     }
 
@@ -135,9 +143,41 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         detectConflictsForCurrentMatches(organization);
     }
 
+    @Override
+    public void dismissOrganizationMatch(UUID id, DismissMatchDTO dismissMatchDTO) {
+        organizationMatchRepository.findById(id).ifPresent(match -> {
+            match.setDismissed(true);
+            match.setDismissComment(dismissMatchDTO.getComment());
+            match.setDismissDate(ZonedDateTime.now(ZoneId.systemDefault()));
+
+            userService.getUserWithAuthoritiesAndAccount().ifPresentOrElse(
+                match::setDismissedBy,
+                () -> { throw new IllegalStateException("No current user found"); }
+            );
+
+            organizationMatchRepository.save(match);
+
+            conflictDetectionService.remove(match);
+        });
+    }
+
+    @Override
+    public void revertDismissOrganizationMatch(UUID id) {
+        organizationMatchRepository.findById(id).ifPresent(match -> {
+            match.setDismissed(false);
+            match.setDismissComment(null);
+            match.setDismissedBy(null);
+            match.setDismissDate(null);
+
+            organizationMatchRepository.save(match);
+
+            conflictDetectionService.detect(Collections.singletonList(match));
+        });
+    }
+
     private void detectConflictsForCurrentMatches(Organization organization) {
-        List<OrganizationMatch> matches = findCurrentMatches(organization);
-        matches.addAll(findCurrentPartnersMatches(organization));
+        List<OrganizationMatch> matches = findNotDismissedMatches(organization);
+        matches.addAll(findNotDismissedPartnersMatches(organization));
         conflictDetectionService.detect(matches);
     }
 
@@ -146,9 +186,14 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .findAllByOrganizationRecordId(organization.getId());
     }
 
-    private List<OrganizationMatch> findCurrentPartnersMatches(Organization organization) {
+    private List<OrganizationMatch> findNotDismissedMatches(Organization organization) {
         return organizationMatchRepository
-            .findAllByPartnerVersionId(organization.getId());
+            .findAllByOrganizationRecordIdAndDismissed(organization.getId(), false);
+    }
+
+    private List<OrganizationMatch> findNotDismissedPartnersMatches(Organization organization) {
+        return organizationMatchRepository
+            .findAllByPartnerVersionIdAndDismissed(organization.getId(), false);
     }
 
     private List<Organization> findNotMatchedOrgs(List<UUID> currentMatchesIds, String providerName) {
