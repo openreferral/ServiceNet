@@ -12,4 +12,11 @@ public interface ConflictDetectionService {
      * @param matches a list of organization matches
      */
     void detect(List<OrganizationMatch> matches);
+
+    /**
+     * Remove conflicts for organization match.
+     *
+     * @param match organization match
+     */
+    void remove(OrganizationMatch match);
 }

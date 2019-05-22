@@ -9,6 +9,7 @@ import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMatchMapper;
 import org.junit.Before;
@@ -58,6 +59,9 @@ public class OrganizationMatchServiceImplTest {
     @Autowired
     private ConflictDetectionService conflictDetectionService;
 
+    @Autowired
+    private UserService userService;
+
     private OrganizationMatchService organizationMatchService;
 
     @Autowired
@@ -77,7 +81,8 @@ public class OrganizationMatchServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         organizationMatchService = new OrganizationMatchServiceImpl(organizationMatchRepository,
-            organizationMatchMapper, organizationService, organizationSimilarityCounter, conflictDetectionService,0.4f);
+            organizationMatchMapper, organizationService, organizationSimilarityCounter,
+            conflictDetectionService, userService,0.4f);
     }
 
     @Test

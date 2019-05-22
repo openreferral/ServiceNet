@@ -169,7 +169,7 @@ public class ConflictDetectionServiceImplTest {
             .organizationRecord(org)
             .partnerVersion(org2)
             .timestamp(ZonedDateTime.now())
-            .deleted(false);
+            .dismissed(false);
     }
 
     private Organization getConflictingOrganization() {

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Activity.
@@ -90,14 +91,20 @@ public class ActivityServiceImpl implements ActivityService {
                 return Optional.of(ActivityDTO.builder()
                     .record(record)
                     .organizationMatches(new ArrayList<>())
+                    .dismissedMatches(new ArrayList<>())
                     .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
                     .build());
             } else {
-                List<OrganizationMatchDTO> matches = organizationMatchService.findAllForOrganization(orgId);
+                List<OrganizationMatchDTO> allMatches = organizationMatchService.findAllForOrganization(orgId);
+                List<OrganizationMatchDTO> matches = allMatches.stream()
+                    .filter(it -> !it.isDismissed()).collect(Collectors.toList());
+                List<OrganizationMatchDTO> dismissedMatches = allMatches.stream()
+                    .filter(OrganizationMatchDTO::isDismissed).collect(Collectors.toList());
 
                 return Optional.of(ActivityDTO.builder()
                     .record(record)
                     .organizationMatches(matches)
+                    .dismissedMatches(dismissedMatches)
                     .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
                     .build());
             }

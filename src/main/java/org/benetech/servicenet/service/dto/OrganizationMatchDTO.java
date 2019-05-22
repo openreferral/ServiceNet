@@ -17,7 +17,7 @@ public class OrganizationMatchDTO implements Serializable {
 
     private ZonedDateTime timestamp;
 
-    private Boolean deleted;
+    private Boolean dismissed;
 
     private UUID organizationRecordId;
 
@@ -27,8 +27,8 @@ public class OrganizationMatchDTO implements Serializable {
 
     private String partnerVersionName;
 
-    public Boolean isDeleted() {
-        return deleted;
+    public Boolean isDismissed() {
+        return dismissed;
     }
 
     @Override
