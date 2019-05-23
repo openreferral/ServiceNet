@@ -33,6 +33,6 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
                                                                                      @Param("providerName")
                                                                                          String providerName);
 
-    @Query("SELECT org FROM Organization org WHERE org.account.name != :providerName")
+    @Query("SELECT org FROM Organization org WHERE org.account.name != :providerName AND org.active = True")
     List<Organization> findAllByProviderNameNot(@Param("providerName") String providerName);
 }

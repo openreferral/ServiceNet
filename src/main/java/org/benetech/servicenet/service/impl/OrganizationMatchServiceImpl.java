@@ -135,12 +135,17 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     @Async
     @Override
     public void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context) {
-        List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
-            .map(m -> m.getPartnerVersion().getId())
-            .collect(Collectors.toList());
-        List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getAccount().getName());
-        findAndPersistMatches(organization, notMatchedOrgs, context);
-        detectConflictsForCurrentMatches(organization);
+        if (organization.getActive()) {
+            List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
+                .map(m -> m.getPartnerVersion().getId())
+                .collect(Collectors.toList());
+            List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getAccount().getName());
+            findAndPersistMatches(organization, notMatchedOrgs, context);
+            detectConflictsForCurrentMatches(organization);
+        } else {
+            removeMatches(findCurrentMatches(organization));
+            removeMatches(findCurrentPartnersMatches(organization));
+        }
     }
 
     @Override
@@ -191,6 +196,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .findAllByOrganizationRecordIdAndDismissed(organization.getId(), false);
     }
 
+    private List<OrganizationMatch> findCurrentPartnersMatches(Organization organization) {
+        return organizationMatchRepository
+            .findAllByPartnerVersionId(organization.getId());
+    }
+
     private List<OrganizationMatch> findNotDismissedPartnersMatches(Organization organization) {
         return organizationMatchRepository
             .findAllByPartnerVersionIdAndDismissed(organization.getId(), false);
@@ -221,6 +231,13 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             organization.getAccount().getName() + "'s organization '" +
             organization.getName() + "' took: " + elapsedTime + "ms, " + matches.size() + " matches found.");
         return matches;
+    }
+
+    private void removeMatches(List<OrganizationMatch>  matches) {
+        for (OrganizationMatch match : matches) {
+            conflictDetectionService.remove(match);
+            organizationMatchRepository.delete(match);
+        }
     }
 
     private List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner) {

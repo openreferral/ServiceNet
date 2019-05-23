@@ -78,6 +78,8 @@ public class OrganizationResourceIntTest {
 
     private Organization organization;
 
+    private static final Boolean DEFAULT_ACTIVE = true;
+
     /**
      * Create an entity for this test.
      * <p>
@@ -85,7 +87,7 @@ public class OrganizationResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static Organization createEntity(EntityManager em) {
-        Organization result = OrganizationMother.createDefault();
+        Organization result = OrganizationMother.createDefault(DEFAULT_ACTIVE);
         result.setAccount(SystemAccountMother.createDefaultAndPersist(em));
         return result;
     }

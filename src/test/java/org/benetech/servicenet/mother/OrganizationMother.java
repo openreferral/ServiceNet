@@ -38,14 +38,15 @@ public class OrganizationMother {
     public static final String DEFAULT_LEGAL_STATUS = "AAAAAAAAAA";
     public static final String UPDATED_LEGAL_STATUS = "BBBBBBBBBB";
 
-    public static final Boolean DEFAULT_ACTIVE = false;
+    public static final Boolean DEFAULT_ACTIVE = true;
+    public static final Boolean DEFAULT_INACTIVE = false;
     public static final Boolean UPDATED_ACTIVE = true;
 
     public static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
         ZoneOffset.UTC);
     public static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    public static Organization createDefault() {
+    public static Organization createDefault(Boolean active) {
         Organization org = new Organization()
             .name(DEFAULT_NAME)
             .alternateName(DEFAULT_ALTERNATE_NAME)
@@ -56,7 +57,7 @@ public class OrganizationMother {
             .taxId(DEFAULT_TAX_ID)
             .yearIncorporated(DEFAULT_YEAR_INCORPORATED)
             .legalStatus(DEFAULT_LEGAL_STATUS)
-            .active(DEFAULT_ACTIVE)
+            .active(active)
             .updatedAt(DEFAULT_UPDATED_AT);
         org.setAccount(SystemAccountMother.createDefault());
         return org;
@@ -80,7 +81,7 @@ public class OrganizationMother {
     }
 
     public static Organization createDefaultAndPersist(EntityManager em) {
-        Organization org = createDefault();
+        Organization org = createDefault(DEFAULT_ACTIVE);
         org.setAccount(SystemAccountMother.createDefaultAndPersist(em));
         em.persist(org);
         em.flush();
@@ -90,6 +91,14 @@ public class OrganizationMother {
     public static Organization createDifferentAndPersist(EntityManager em) {
         Organization org = createDifferent();
         org.setAccount(SystemAccountMother.createDifferentAndPersist(em));
+        em.persist(org);
+        em.flush();
+        return org;
+    }
+
+    public static Organization createInactiveAndPersist(EntityManager em) {
+        Organization org = createDefault(DEFAULT_INACTIVE);
+        org.setAccount(SystemAccountMother.createDefaultAndPersist(em));
         em.persist(org);
         em.flush();
         return org;

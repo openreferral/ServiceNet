@@ -81,7 +81,7 @@ public class ConflictDetectionServiceImplTest {
 
     @Test
     @Transactional
-    public void shouldFindAllOrganizationConflicts() {
+    public void shouldFindAllOrganizationConflictsWithoutDuplicates() {
         Organization org1 = OrganizationMother.createDefaultAndPersist(em);
         Organization org2 = getConflictingOrganization();
         em.flush();
@@ -89,26 +89,8 @@ public class ConflictDetectionServiceImplTest {
         OrganizationMatch match2 = createMatch(org2, org1);
 
         int dbSize = conflictRepository.findAll().size();
-        int numberOfConflicts = 10;
-        int numberOfMirrorConflicts = 10;
-
-        conflictDetectionService.detect(Arrays.asList(match, match2));
-
-        assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
-    }
-
-    @Test
-    @Transactional
-    public void shouldNotDuplicateConflicts() {
-        Organization org1 = OrganizationMother.createDefaultAndPersist(em);
-        Organization org2 = getConflictingOrganization();
-        em.flush();
-        OrganizationMatch match = createMatch(org1, org2);
-        OrganizationMatch match2 = createMatch(org2, org1);
-
-        int dbSize = conflictRepository.findAll().size();
-        int numberOfConflicts = 10;
-        int numberOfMirrorConflicts = 10;
+        int numberOfConflicts = 9;
+        int numberOfMirrorConflicts = 9;
 
         conflictDetectionService.detect(Arrays.asList(match, match2));
 

@@ -63,12 +63,14 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         long detectionStartTime = System.currentTimeMillis();
         for (OrganizationMatch match : matches) {
             long startTime = System.currentTimeMillis();
-            OrganizationEquivalent orgEquivalent = organizationEquivalentsService.generateEquivalent(
-                match.getOrganizationRecord(), match.getPartnerVersion());
+            OrganizationEquivalent orgEquivalent = organizationEquivalentsService
+                .generateEquivalent(
+                    match.getOrganizationRecord(), match.getPartnerVersion());
 
             List<EntityEquivalent> equivalents = gatherAllEquivalents(orgEquivalent);
 
-            detect(equivalents, match.getOrganizationRecord().getAccount(), match.getPartnerVersion().getAccount());
+            detect(equivalents, match.getOrganizationRecord().getAccount(),
+                match.getPartnerVersion().getAccount());
 
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
