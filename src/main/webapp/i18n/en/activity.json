@@ -5,6 +5,8 @@
         "title": "Activities",
         "createLabel": "Create a new Activity",
         "createOrEditLabel": "Create or edit a Activity",
+        "leftColumnTitle": "Record Name",
+        "rightColumnTitle": "Matches found",
         "sort": {
           "toggle": "Sort",
           "recommended": "Recommended",

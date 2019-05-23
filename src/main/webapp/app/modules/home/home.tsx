@@ -220,6 +220,14 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                   />
                 </Col>
               </Row>
+              <Row className="text-center font-weight-bold column-title">
+                <Col className="col-6">
+                  <Translate contentKey="serviceNetApp.activity.home.leftColumnTitle" />
+                </Col>
+                <Col className="col-6">
+                  <Translate contentKey="serviceNetApp.activity.home.rightColumnTitle" />
+                </Col>
+              </Row>
               {activityList.map((activity, i) => (
                 <Link key={`linkToActivity${i}`} to={`/single-record-view/${activity.record.organization.id}`} className="alert-link">
                   <ActivityElement activity={activity} />
