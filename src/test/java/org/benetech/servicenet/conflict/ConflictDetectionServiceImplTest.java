@@ -99,22 +99,6 @@ public class ConflictDetectionServiceImplTest {
 
     @Test
     @Transactional
-    public void shouldNotFindConflictsForInactiveOrganization() {
-        Organization org1 = OrganizationMother.createInactiveAndPersist(em);
-        Organization org2 = getConflictingOrganization();
-        em.flush();
-        OrganizationMatch match = createMatch(org1, org2);
-        OrganizationMatch match2 = createMatch(org2, org1);
-
-        int dbSize = conflictRepository.findAll().size();
-
-        conflictDetectionService.detect(Arrays.asList(match, match2));
-
-        assertEquals(dbSize, conflictRepository.findAll().size());
-    }
-
-    @Test
-    @Transactional
     public void shouldCreateMirrorConflict() {
         Organization org = OrganizationMother.createDefaultAndPersist(em);
         Organization theSameOrg = OrganizationMother.createDefaultAndPersist(em);

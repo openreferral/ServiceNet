@@ -144,7 +144,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             detectConflictsForCurrentMatches(organization);
         } else {
             removeMatches(findCurrentMatches(organization));
-            removeMatches(findNotDismissedPartnersMatches(organization));
+            removeMatches(findCurrentPartnersMatches(organization));
         }
     }
 
@@ -196,6 +196,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .findAllByOrganizationRecordIdAndDismissed(organization.getId(), false);
     }
 
+    private List<OrganizationMatch> findCurrentPartnersMatches(Organization organization) {
+        return organizationMatchRepository
+            .findAllByPartnerVersionId(organization.getId());
+    }
+
     private List<OrganizationMatch> findNotDismissedPartnersMatches(Organization organization) {
         return organizationMatchRepository
             .findAllByPartnerVersionIdAndDismissed(organization.getId(), false);
@@ -229,10 +234,9 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     }
 
     private void removeMatches(List<OrganizationMatch>  matches) {
-        DismissMatchDTO dismissMatchDTO = new DismissMatchDTO();
-        dismissMatchDTO.setComment("Dismissed match for inactive organization");
         for (OrganizationMatch match : matches) {
-            dismissOrganizationMatch(match.getId(), dismissMatchDTO);
+            conflictDetectionService.remove(match);
+            organizationMatchRepository.delete(match);
         }
     }
 
