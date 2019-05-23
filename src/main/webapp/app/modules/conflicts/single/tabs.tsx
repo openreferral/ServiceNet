@@ -37,11 +37,6 @@ export class Tabs extends React.Component<ISingleRecordViewProp, ISingleRecordVi
               <Translate contentKey="singleRecordView.tabs.details" />
             </NavLink>
           </NavItem>
-          <NavItem>
-            <NavLink className={classnames({ active: false, disabled: true })}>
-              <Translate contentKey="singleRecordView.tabs.otherTabs" />
-            </NavLink>
-          </NavItem>
         </Nav>
         <TabContent activeTab={this.state.activeTab}>
           <TabPane tabId="1">

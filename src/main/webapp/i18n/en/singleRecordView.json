@@ -1,8 +1,7 @@
 {
   "singleRecordView": {
     "tabs": {
-      "details": "Details",
-      "otherTabs": "Other tabs..."
+      "details": "Details"
     },
     "details": {
       "titleOrganization": "Organization details",
@@ -25,9 +24,9 @@
       "contactsTitle": "Contacts",
       "seeAnotherRecord": "See another record",
       "seeAnotherLocation": "See another location",
-      "seeAnotherService": "See another service",  
+      "seeAnotherService": "See another service",
       "seeAnotherContact": "See another contact",
-      "seeAnotherPhone": "See another phone",       
+      "seeAnotherPhone": "See another phone",
       "excludedCopy": "This field has been excluded from ServiceNet per your data sharing agreement",
       "compare": {
         "title": "Compare",
