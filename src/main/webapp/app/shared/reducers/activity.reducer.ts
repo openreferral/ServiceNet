@@ -1,17 +1,10 @@
 import axios from 'axios';
-import {
-  parseHeaderForLinks,
-  loadMoreDataWhenScrolled,
-  ICrudGetAction,
-  ICrudGetAllAction,
-  ICrudPutAction,
-  ICrudDeleteAction
-} from 'react-jhipster';
+import { parseHeaderForLinks, loadMoreDataWhenScrolled, ICrudGetAction } from 'react-jhipster';
 
-import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IActivity, defaultValue } from 'app/shared/model/activity.model';
+import _ from 'lodash';
 
 export const ACTION_TYPES = {
   FETCH_ACTIVITY_LIST: 'activity/FETCH_ACTIVITY_LIST',
@@ -84,11 +77,17 @@ const apiUrl = 'api/activities';
 
 // Actions
 
-export const getEntities = (search, page, size, sort) => {
+export const getEntities = (search, page, size, sort, filter) => {
   const requestUrl = `${apiUrl}${sort ? `?search=${search}&page=${page}&size=${size}&sort=${sort}` : ''}`;
+
+  const filterDataToSend = _.clone(filter);
+  if (!_.isEmpty(filterDataToSend) && !_.isEmpty(filterDataToSend.partnerFilterList)) {
+    filterDataToSend.partnerFilterList = _.map(filterDataToSend.partnerFilterList, partner => partner.value);
+  }
+
   return {
     type: ACTION_TYPES.FETCH_ACTIVITY_LIST,
-    payload: axios.get<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+    payload: axios.post<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`, filterDataToSend)
   };
 };
 

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Row, Col, Alert, Container, Progress, Spinner, InputGroup, Input } from 'reactstrap';
+import { Row, Col, Alert, Container, Progress, Spinner, Input, Button } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -17,6 +17,8 @@ import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import ActivityElement from './activity-element';
 import SortActivity from './sort-activity';
 import { SORT_ARRAY, getSearchPreferences, setSort, setSearchPhrase } from 'app/shared/util/search-utils';
+import FilterActivity from './filter-activity';
+import _ from 'lodash';
 
 const SEARCH_TIMEOUT = 1000;
 
@@ -24,9 +26,11 @@ export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProp
 
 export interface IHomeState extends IPaginationBaseState {
   dropdownOpen: boolean;
+  filterCollapseExpanded: boolean;
   loggingOut: boolean;
   searchPhrase: string;
   typingTimeout: number;
+  activityFilter: any;
 }
 
 export class Home extends React.Component<IHomeProp, IHomeState> {
@@ -34,15 +38,16 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     super(props);
 
     const { searchPhrase, sort, order } = getSearchPreferences(this.props.account.login);
-
     this.state = {
       ...getSortState(this.props.location, ITEMS_PER_PAGE),
       sort,
       order,
       dropdownOpen: false,
+      filterCollapseExpanded: _.some(this.props.activityFilter, filter => !_.isEmpty(filter)),
       loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false,
       searchPhrase,
-      typingTimeout: 0
+      typingTimeout: 0,
+      activityFilter: []
     };
   }
 
@@ -77,6 +82,12 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     }));
   };
 
+  toggleFilter = () => {
+    this.setState(prevState => ({
+      filterCollapseExpanded: !prevState.filterCollapseExpanded
+    }));
+  };
+
   reset = () => {
     this.props.reset();
     if (!this.state.loggingOut) {
@@ -99,7 +110,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
     if (this.props.isAuthenticated) {
-      this.props.getEntities(this.state.searchPhrase, activePage - 1, itemsPerPage, `${sort},${order}`);
+      return this.props.getEntities(this.state.searchPhrase, activePage - 1, itemsPerPage, `${sort},${order}`, this.props.activityFilter);
     }
   };
 
@@ -206,9 +217,12 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                 </Col>
                 <Col className="col-1">
                   <div className="text-center">
-                    {this.props.activityList.length} / {this.props.totalItems}
+                    {!!this.props.activityList ? this.props.activityList.length : 0} / {this.props.totalItems}
                   </div>
-                  <Progress color="info" value={(this.props.activityList.length / this.props.totalItems) * 100} />
+                  <Progress
+                    color="info"
+                    value={(!!this.props.activityList ? this.props.activityList.length : 0 / this.props.totalItems) * 100}
+                  />
                 </Col>
                 <Col className="col-auto">
                   <SortActivity
@@ -218,6 +232,16 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                     sortFunc={this.sort}
                     values={SORT_ARRAY}
                   />
+                </Col>
+                <Col className="col-auto">
+                  <Button color="primary" onClick={this.toggleFilter} style={{ marginBottom: '1rem' }}>
+                    <Translate contentKey="serviceNetApp.activity.home.filter.toggle" />
+                  </Button>
+                </Col>
+              </Row>
+              <Row>
+                <Col md="12">
+                  <FilterActivity filterCollapseExpanded={this.state.filterCollapseExpanded} getActivityEntities={this.getEntities} />
                 </Col>
               </Row>
               <Row className="text-center font-weight-bold column-title">
@@ -256,7 +280,8 @@ const mapStateToProps = (storeState: IRootState) => ({
   totalItems: storeState.activity.totalItems,
   links: storeState.activity.links,
   entity: storeState.activity.entity,
-  updateSuccess: storeState.activity.updateSuccess
+  updateSuccess: storeState.activity.updateSuccess,
+  activityFilter: storeState.filterActivity.activityFilter
 });
 
 const mapDispatchToProps = {

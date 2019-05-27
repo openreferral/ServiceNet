@@ -150,6 +150,7 @@ import exclusionsConfig, {
 import geocodingResult, {
   GeocodingResultState
 } from 'app/entities/geocoding-result/geocoding-result.reducer';
+import filterActivity, { FilterActivityState } from 'app/modules/home/filter-activity.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -196,6 +197,7 @@ export interface IRootState {
   readonly conflict: ConflictState;
   readonly dataImportReport: DataImportReportState;
   readonly activity: ActivityState;
+  readonly filterActivity: FilterActivityState;
   readonly fieldExclusion: FieldExclusionState;
   readonly exclusionsConfig: ExclusionsConfigState;
   readonly geocodingResult: GeocodingResultState;
@@ -251,7 +253,8 @@ const rootReducer = combineReducers<IRootState>({
   exclusionsConfig,
   geocodingResult,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
-  loadingBar
+  loadingBar,
+  filterActivity
 });
 
 export default rootReducer;

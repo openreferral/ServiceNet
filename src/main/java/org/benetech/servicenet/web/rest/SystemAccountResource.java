@@ -32,7 +32,6 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api")
-@PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
 public class SystemAccountResource {
 
     private static final String ENTITY_NAME = "systemAccount";
@@ -53,6 +52,7 @@ public class SystemAccountResource {
      */
     @PostMapping("/system-accounts")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SystemAccountDTO> createSystemAccount(
         @Valid @RequestBody SystemAccountDTO systemAccountDTO) throws URISyntaxException {
         log.debug("REST request to save SystemAccount : {}", systemAccountDTO);
@@ -76,6 +76,7 @@ public class SystemAccountResource {
      */
     @PutMapping("/system-accounts")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SystemAccountDTO> updateSystemAccount(
         @Valid @RequestBody SystemAccountDTO systemAccountDTO) throws URISyntaxException {
         log.debug("REST request to update SystemAccount : {}", systemAccountDTO);
@@ -108,6 +109,7 @@ public class SystemAccountResource {
      */
     @GetMapping("/system-accounts/{id}")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SystemAccountDTO> getSystemAccount(@PathVariable UUID id) {
         log.debug("REST request to get SystemAccount : {}", id);
         Optional<SystemAccountDTO> systemAccountDTO = systemAccountService.findOne(id);
@@ -122,6 +124,7 @@ public class SystemAccountResource {
      */
     @DeleteMapping("/system-accounts/{id}")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteSystemAccount(@PathVariable UUID id) {
         log.debug("REST request to delete SystemAccount : {}", id);
         systemAccountService.delete(id);
