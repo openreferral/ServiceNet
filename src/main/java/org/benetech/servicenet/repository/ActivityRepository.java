@@ -65,15 +65,17 @@ public class ActivityRepository {
         "SELECT org.id, org.NAME, org.alternate_name, org.account_id, conf.recent, conf.recommended " +
                 "FROM ORGANIZATION org " +
                 "LEFT JOIN " +
-                    "(SELECT resource_id, partner_id, count(resource_id) recommended, " +
+                    "(SELECT resource_id, count(resource_id) recommended, " +
                     "max(offered_value_date) recent " +
                     "FROM CONFLICT " +
                     "WHERE state = 'PENDING' " +
-                    "GROUP BY resource_id, partner_id) conf " +
+                    "GROUP BY resource_id) conf " +
                 "ON org.id = conf.resource_id " +
                 "LEFT JOIN location l ON l.organization_id = org.id " +
                 "LEFT JOIN postal_address pos_a ON l.id = pos_a.location_id " +
                 "LEFT JOIN physical_address ph_a ON l.id = ph_a.location_id " +
+                "LEFT JOIN organization_match om ON om.organization_record_id = org.id " +
+                "LEFT JOIN organization matchedOrganization ON matchedOrganization.id = om.partner_version_id " +
                 "WHERE " +
                     "('' IN (:citiesFilterList) OR " +
                         "pos_a.city IN (:citiesFilterList) OR " +
@@ -85,8 +87,7 @@ public class ActivityRepository {
                         "pos_a.postal_code IN (:postalCodesFilterList) OR " +
                         "ph_a.postal_code IN (:postalCodesFilterList)) AND " +
                     "('00000000-0000-0000-0000-000000000000' IN (:partnersList) OR " +
-                        "conf.partner_id IN (:partnersList) OR " +
-                        "conf.partner_id IN (:partnersList)) AND " +
+                        "matchedOrganization.account_id IN (:partnersList)) AND " +
                     "(org.name ILIKE :searchName OR " +
                     "org.alternate_name ILIKE :searchName) AND " +
                     "org.account_id = :ownerId AND " +
@@ -96,8 +97,7 @@ public class ActivityRepository {
                     "org.name, " +
                     "org.account_id, " +
                     "conf.recent, " +
-                    "conf.recommended, " +
-                    "conf.partner_id " +
+                    "conf.recommended " +
                 "ORDER BY " +
                     (!recentSortParameter.isEmpty() ?
                     "conf.recent " + recentSortParameter :
@@ -119,14 +119,16 @@ public class ActivityRepository {
                  "(SELECT org.id, org.name, org.alternate_name, org.account_id " +
             "FROM ORGANIZATION org " +
             "LEFT JOIN " +
-                 "(SELECT resource_id, partner_id " +
+                 "(SELECT resource_id " +
                  "FROM CONFLICT " +
                  "WHERE state = 'PENDING' " +
-                 "GROUP BY resource_id, partner_id) conf " +
+                 "GROUP BY resource_id) conf " +
             "ON org.id = conf.resource_id " +
             "LEFT JOIN location l ON l.organization_id = org.id " +
             "LEFT JOIN postal_address pos_a ON l.id = pos_a.location_id " +
             "LEFT JOIN physical_address ph_a ON l.id = ph_a.location_id " +
+            "LEFT JOIN organization_match om ON om.organization_record_id = org.id " +
+            "LEFT JOIN organization matchedOrganization ON matchedOrganization.id = om.partner_version_id " +
             "WHERE " +
                 "('' IN (:citiesFilterList) OR " +
                     "pos_a.city IN (:citiesFilterList) OR " +
@@ -138,8 +140,7 @@ public class ActivityRepository {
                     "pos_a.postal_code IN (:postalCodesFilterList) OR " +
                     "ph_a.postal_code IN (:postalCodesFilterList)) AND " +
                 "('00000000-0000-0000-0000-000000000000' IN (:partnersList) OR " +
-                    "conf.partner_id IN (:partnersList) OR " +
-                    "conf.partner_id IN (:partnersList)) AND " +
+                    "matchedOrganization.account_id IN (:partnersList)) AND " +
                 "(org.name ILIKE :searchName OR " +
                 "org.alternate_name ILIKE :searchName) AND " +
                 "org.account_id = :ownerId AND " +
@@ -147,8 +148,7 @@ public class ActivityRepository {
             "GROUP BY " +
                  "org.id, " +
                  "org.name, " +
-                 "org.account_id, " +
-                 "conf.partner_id) o"
+                 "org.account_id) o"
         )
             .setParameter("citiesFilterList", cityParameter)
             .setParameter("regionFilterList", regionParameter)

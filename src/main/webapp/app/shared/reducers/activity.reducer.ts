@@ -80,10 +80,10 @@ const apiUrl = 'api/activities';
 export const getEntities = (search, page, size, sort, filter) => {
   const requestUrl = `${apiUrl}${sort ? `?search=${search}&page=${page}&size=${size}&sort=${sort}` : ''}`;
 
-  const filterDataToSend = _.clone(filter);
-  if (!_.isEmpty(filterDataToSend) && !_.isEmpty(filterDataToSend.partnerFilterList)) {
-    filterDataToSend.partnerFilterList = _.map(filterDataToSend.partnerFilterList, partner => partner.value);
-  }
+  const filterDataToSend = {
+    ...filter,
+    partnerFilterList: _.map(filter.partnerFilterList, partner => partner.value)
+  };
 
   return {
     type: ACTION_TYPES.FETCH_ACTIVITY_LIST,

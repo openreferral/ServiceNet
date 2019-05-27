@@ -66,7 +66,7 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
         partnerList: action.payload.data,
         loading: false
       };
-    case SUCCESS(ACTION_TYPES.UPDATE_ACTIVITY_FILTER):
+    case ACTION_TYPES.UPDATE_ACTIVITY_FILTER:
       return {
         ...state,
         activityFilter: action.payload,
@@ -111,7 +111,10 @@ export const getPartnerList = () => {
   };
 };
 
-export const updateActivityFilter = activityFilter => ({
-  type: ACTION_TYPES.UPDATE_ACTIVITY_FILTER,
-  payload: activityFilter
-});
+// tslint:disable-next-line:ter-arrow-body-style
+export const updateActivityFilter = activityFilter => {
+  return {
+    type: ACTION_TYPES.UPDATE_ACTIVITY_FILTER,
+    payload: activityFilter
+  };
+};
