@@ -30,7 +30,8 @@ export interface IHomeState extends IPaginationBaseState {
   loggingOut: boolean;
   searchPhrase: string;
   typingTimeout: number;
-  activityFilter: any;
+  activityList: [];
+  activityFilter: [];
 }
 
 export class Home extends React.Component<IHomeProp, IHomeState> {
@@ -47,6 +48,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false,
       searchPhrase,
       typingTimeout: 0,
+      activityList: [],
       activityFilter: []
     };
   }
@@ -217,12 +219,9 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                 </Col>
                 <Col className="col-1">
                   <div className="text-center">
-                    {!!this.props.activityList ? this.props.activityList.length : 0} / {this.props.totalItems}
+                    {!_.isEmpty(activityList) ? activityList.length : 0} / {this.props.totalItems}
                   </div>
-                  <Progress
-                    color="info"
-                    value={(!!this.props.activityList ? this.props.activityList.length : 0 / this.props.totalItems) * 100}
-                  />
+                  <Progress color="info" value={(!_.isEmpty(activityList) ? activityList.length : 0 / this.props.totalItems) * 100} />
                 </Col>
                 <Col className="col-auto">
                   <SortActivity
@@ -241,7 +240,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
               </Row>
               <Row>
                 <Col md="12">
-                  <FilterActivity filterCollapseExpanded={this.state.filterCollapseExpanded} getActivityEntities={this.getEntities} />
+                  <FilterActivity filterCollapseExpanded={this.state.filterCollapseExpanded} getActivityEntities={this.searchEntities} />
                 </Col>
               </Row>
               <Row className="text-center font-weight-bold column-title">
@@ -252,18 +251,19 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                   <Translate contentKey="serviceNetApp.activity.home.rightColumnTitle" />
                 </Col>
               </Row>
-              {activityList.map((activity, i) => (
-                <Link key={`linkToActivity${i}`} to={`/single-record-view/${activity.record.organization.id}`} className="alert-link">
-                  <ActivityElement activity={activity} />
-                </Link>
-              ))}
-              {activityList.length === 0 ? (
+              {!_.isEmpty(activityList) ? (
+                activityList.map((activity, i) => (
+                  <Link key={`linkToActivity${i + 1}`} to={`/single-record-view/${activity.record.organization.id}`} className="alert-link">
+                    <ActivityElement activity={activity} />
+                  </Link>
+                ))
+              ) : (
                 <Row>
                   <Col md="8">
                     <Translate contentKey="serviceNetApp.activity.empty" />
                   </Col>
                 </Row>
-              ) : null}
+              )}
             </Container>
           </InfiniteScroll>
         ) : null}
