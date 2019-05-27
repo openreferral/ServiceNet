@@ -1,6 +1,5 @@
 package org.benetech.servicenet.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
@@ -8,6 +7,7 @@ import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
+import org.benetech.servicenet.service.dto.FiltersActivityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
@@ -56,9 +56,11 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId, String search) {
+    public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId,
+    String search, FiltersActivityDTO filtersForActivity) {
         List<ActivityDTO> activities = new ArrayList<>();
-        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, pageable);
+        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, pageable,
+            filtersForActivity);
 
         for (ActivityInfo info : activitiesInfo) {
             try {
@@ -113,13 +115,11 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
-    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, String search, Pageable pageable) {
+    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, String search, Pageable pageable,
+                                                                FiltersActivityDTO filtersActivityDTO) {
         if (ownerId != null) {
-            if (StringUtils.isBlank(search)) {
-                return activityRepository.findAllWithOwnerId(ownerId, pageable);
-            } else {
-                return activityRepository.findAllWithOwnerIdAndSearchPhrase(ownerId, search, pageable);
-            }
+            return activityRepository.findAllWithOwnerIdAndSearchPhraseAndFilter(ownerId, search, pageable,
+                filtersActivityDTO);
         } else {
             return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
         }

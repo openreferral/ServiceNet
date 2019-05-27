@@ -7,6 +7,14 @@
         "createOrEditLabel": "Create or edit a Activity",
         "leftColumnTitle": "Record Name",
         "rightColumnTitle": "Matches found",
+        "filter": {
+          "toggle": "Filter",
+          "city": "City",
+          "county": "County",
+          "zip": "ZIP",
+          "partner": "Partner Sources",
+          "applyFilter": "Apply"
+        },
         "sort": {
           "toggle": "Sort",
           "recommended": "Recommended",
