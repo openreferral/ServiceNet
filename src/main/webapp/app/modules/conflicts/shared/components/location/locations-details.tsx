@@ -9,6 +9,7 @@ export interface ILocationsDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   columnSize: number;
   locations: ILocationRecord[];
+  showClipboard: boolean;
 }
 
 export interface ILocationsDetailsState {

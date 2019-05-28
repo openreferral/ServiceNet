@@ -13,6 +13,7 @@ import { Translate } from 'react-jhipster';
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   activity: IActivity;
   isBaseRecord: boolean;
+  showClipboard: boolean;
 }
 
 export interface ISingleRecordViewState {

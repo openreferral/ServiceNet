@@ -9,6 +9,7 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 export interface IPostalAddressDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   address: IPostalAddress;
+  showClipboard: boolean;
 }
 
 export class PostalAddressDetails extends React.Component<IPostalAddressDetailsProp> {

@@ -36,6 +36,7 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons/faAngleRight';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons/faQuestionCircle';
 import { faAngleUp } from '@fortawesome/free-solid-svg-icons/faAngleUp';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons/faAngleDown';
+import { faClipboard } from '@fortawesome/free-solid-svg-icons/faClipboard';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -78,6 +79,7 @@ export const loadIcons = () => {
     faBellSlash,
     faMapMarkerAlt,
     faAngleRight,
-    faQuestionCircle
+    faQuestionCircle,
+    faClipboard
   );
 };

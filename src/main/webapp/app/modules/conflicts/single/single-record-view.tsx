@@ -8,7 +8,9 @@ import Tabs from './tabs';
 import { getActivityDetails } from './single-record-view.reducer';
 import { RouteComponentProps } from 'react-router-dom';
 
-export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {}
+export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
+  showClipboard: boolean;
+}
 
 export interface ISingleRecordViewState {
   match: any;

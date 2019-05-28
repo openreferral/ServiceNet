@@ -85,7 +85,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 <Translate contentKey="multiRecordView.lastUpdated" />
                 <TextFormat value={baseRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
               </h5>
-              <Details activity={baseRecord} {...this.props} exclusions={baseRecord.record.exclusions} isBaseRecord />
+              <Details activity={baseRecord} {...this.props} exclusions={baseRecord.record.exclusions} isBaseRecord showClipboard={false} />
             </Col>
           ) : (
             loading
@@ -106,7 +106,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 </Col>
                 {seeAnotherMatch}
               </Row>
-              <Details activity={partnerRecord} {...this.props} exclusions={[]} isBaseRecord={false} />
+              <Details activity={partnerRecord} {...this.props} exclusions={[]} isBaseRecord={false} showClipboard />
               <Jumbotron className="same-record-question-container">
                 <div className="same-record-question">
                   <h4>

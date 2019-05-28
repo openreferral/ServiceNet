@@ -9,6 +9,7 @@ export interface IPhonesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   phones: IPhone[];
   columnSize: number;
+  showClipboard: boolean;
 }
 
 export interface IPhonesDetailsState {

@@ -26,6 +26,7 @@ export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   changeRecord: any;
   isOnlyOne: boolean;
   columnSize: number;
+  showClipboard: boolean;
 }
 
 export interface ISingleServiceDetailsState {

@@ -9,6 +9,7 @@ import { RouteComponentProps } from 'react-router-dom';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   activity: IActivity;
+  showClipboard: boolean;
 }
 
 export interface ISingleRecordViewState {

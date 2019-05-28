@@ -16,6 +16,7 @@ export interface ISinglePhoneDetailsProp extends StateProps, DispatchProps {
   changeRecord: any;
   isOnlyOne: boolean;
   columnSize: number;
+  showClipboard: boolean;
 }
 
 export interface ISinglePhoneDetailsState {

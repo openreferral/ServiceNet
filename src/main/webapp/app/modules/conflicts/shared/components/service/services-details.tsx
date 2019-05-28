@@ -9,6 +9,7 @@ export interface IServicesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   columnSize: number;
   services: IServiceRecord[];
+  showClipboard: boolean;
 }
 
 export interface IServicesDetailsState {

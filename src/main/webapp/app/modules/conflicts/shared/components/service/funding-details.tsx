@@ -9,6 +9,7 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 export interface IFundingDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   funding: IFunding;
+  showClipboard: boolean;
 }
 
 export class FundingDetails extends React.Component<IFundingDetailsProp> {

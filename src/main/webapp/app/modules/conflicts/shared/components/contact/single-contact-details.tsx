@@ -16,6 +16,7 @@ export interface ISingleContactDetailsProp extends StateProps, DispatchProps {
   changeRecord: any;
   isOnlyOne: boolean;
   columnSize: number;
+  showClipboard: boolean;
 }
 
 export interface ISingleContactDetailsState {

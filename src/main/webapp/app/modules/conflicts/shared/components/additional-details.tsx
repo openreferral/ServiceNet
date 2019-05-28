@@ -16,6 +16,7 @@ export interface IAdditionalDetailsProp extends StateProps, DispatchProps {
   toggleAvailable: boolean;
   isCustomToggle: boolean;
   customToggleValue: boolean;
+  showClipboard: boolean;
 }
 
 export interface IAdditionalDetailsState {

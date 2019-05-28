@@ -9,6 +9,7 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 export interface ILanguagesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   langs: ILanguage[];
+  showClipboard: boolean;
 }
 
 export class LanguagesDetails extends React.Component<ILanguagesDetailsProp> {

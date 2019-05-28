@@ -108,3 +108,36 @@
   display: inline;
   margin-right: 5px;
 }
+
+.copy-to-clipboard-icon {
+  position: absolute;
+  right: 32px;
+  margin-top: 6px;
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s linear;
+  color: $gray-card-accent;
+  padding: 0 5px;
+}
+
+.input-field-container {
+  &:hover {
+    .copy-to-clipboard-icon {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.tooltip-clip-inner {
+  color: white !important;
+  background-color: $tooltip-dark-bg !important;
+}
+
+.tooltip-clip {
+  top: 5px !important;
+  .arrow::before {
+    border-bottom-color: $tooltip-dark-bg !important;
+  }
+}
