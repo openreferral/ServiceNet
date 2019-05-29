@@ -9,6 +9,7 @@ export interface IContactsDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   contacts: IContact[];
   columnSize: number;
+  showClipboard: boolean;
 }
 
 export interface IContactsDetailsState {

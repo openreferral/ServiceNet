@@ -11,6 +11,7 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   taxonomies: IServiceTaxonomy[];
+  showClipboard: boolean;
 }
 
 export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomiesDetailsProp> {

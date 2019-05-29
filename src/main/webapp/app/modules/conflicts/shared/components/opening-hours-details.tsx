@@ -11,6 +11,7 @@ import { mapWeekdayToString } from 'app/shared/util/schedule-utils';
 export interface IOpeningHoursDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   hours: IOpeningHours[];
+  showClipboard: boolean;
 }
 
 export interface IOpeningHoursDetailsState {

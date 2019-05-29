@@ -9,6 +9,7 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 export interface IEligibilityDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   eligibility: IEligibility;
+  showClipboard: boolean;
 }
 
 export class EligibilityDetails extends React.Component<IEligibilityDetailsProp> {

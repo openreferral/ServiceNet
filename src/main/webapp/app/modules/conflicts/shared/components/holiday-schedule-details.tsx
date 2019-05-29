@@ -9,6 +9,7 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 export interface IHolidayScheduleDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   schedule: IHolidaySchedule;
+  showClipboard: boolean;
 }
 
 export class HolidayScheduleDetails extends React.Component<IHolidayScheduleDetailsProp> {

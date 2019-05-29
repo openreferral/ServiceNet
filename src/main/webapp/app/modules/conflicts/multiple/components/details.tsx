@@ -12,6 +12,7 @@ export interface IMultipleRecordViewProp extends StateProps, DispatchProps, Rout
   activity: IActivity;
   exclusions: any[];
   isBaseRecord: boolean;
+  showClipboard: boolean;
 }
 
 export class Details extends React.Component<IMultipleRecordViewProp> {

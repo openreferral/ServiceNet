@@ -9,6 +9,7 @@ export interface IOrganizationDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   sideSection: any;
   columnSize: number;
+  showClipboard: boolean;
 }
 
 export class OrganizationDetails extends React.Component<IOrganizationDetailsProp> {
@@ -19,7 +20,7 @@ export class OrganizationDetails extends React.Component<IOrganizationDetailsPro
   });
 
   render() {
-    const { columnSize, sideSection } = this.props;
+    const { columnSize, sideSection, showClipboard } = this.props;
     const { organization } = this.props.activity.record;
 
     const fields = [
@@ -52,6 +53,7 @@ export class OrganizationDetails extends React.Component<IOrganizationDetailsPro
             toggleAvailable={false}
             isCustomToggle={false}
             customToggleValue={false}
+            showClipboard={showClipboard}
           />
         </Col>
         {sideSection}

@@ -1,8 +1,9 @@
 import React from 'react';
+import ReactGA from 'react-ga';
 import { Col, Row, FormGroup, Label, Input, Tooltip } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { Translate, TextFormat } from 'react-jhipster';
+import { Translate, TextFormat, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IActivity } from 'app/shared/model/activity.model';
 import '../shared-record-view.scss';
@@ -17,19 +18,32 @@ export interface IInputFieldProp extends StateProps, DispatchProps {
   type: string;
   defaultValue: any;
   isBaseRecord: boolean;
+  showClipboard: boolean;
 }
 
 export interface IInputFieldState {
   tooltipOpen: boolean;
   isConflicting: boolean;
   isExcluded: boolean;
+  clipboardTooltipOpen: boolean;
+  clipboardText: string;
+}
+
+interface IClipboard {
+  writeText(newClipText: string): Promise<void>;
+}
+
+interface INavigator {
+  readonly clipboard?: IClipboard;
 }
 
 export class InputField extends React.Component<IInputFieldProp, IInputFieldState> {
   state: IInputFieldState = {
     tooltipOpen: false,
     isConflicting: this.isConflictingField(this.props.fieldName),
-    isExcluded: this.isExcludedField(this.props.fieldName)
+    isExcluded: this.isExcludedField(this.props.fieldName),
+    clipboardTooltipOpen: false,
+    clipboardText: translate('multiRecordView.copyToClipboard')
   };
 
   getSuggestedValues(fieldName) {
@@ -71,12 +85,24 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     });
   };
 
+  toggleClipboardTooltip = () => {
+    this.setState({
+      clipboardText: translate('multiRecordView.copyToClipboard'),
+      clipboardTooltipOpen: !this.state.clipboardTooltipOpen
+    });
+  };
+
   getIdentifierName(entityClass, fieldName) {
     return entityClass.charAt(0).toLowerCase() + entityClass.slice(1) + fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
   }
 
+  copyToClipboard = text => () => {
+    ReactGA.event({ category: 'UserActions', action: 'Copied Field' });
+    (navigator as INavigator).clipboard.writeText(text).then(() => this.setState({ clipboardText: translate('multiRecordView.copied') }));
+  };
+
   render() {
-    const { entityClass, fieldName, type, defaultValue } = this.props;
+    const { entityClass, fieldName, type, defaultValue, showClipboard } = this.props;
     const identifier = this.getIdentifierName(entityClass, fieldName);
     const input = (
       <Input
@@ -166,6 +192,30 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
       );
     }
 
+    let clipboardButton = null;
+    let clipboardTooltip = null;
+    if (showClipboard && defaultValue) {
+      clipboardButton = (
+        <div className="copy-to-clipboard-icon" id={`${identifier}-clipboard`} onClick={this.copyToClipboard(defaultValue)}>
+          <FontAwesomeIcon size="lg" icon="clipboard" />
+        </div>
+      );
+
+      clipboardTooltip = (
+        <Tooltip
+          placement="bottom"
+          innerClassName="tooltip-clip-inner"
+          className="tooltip-clip"
+          isOpen={this.state.clipboardTooltipOpen}
+          target={`${identifier}-clipboard`}
+          toggle={this.toggleClipboardTooltip}
+          autohide
+        >
+          {this.state.clipboardText}
+        </Tooltip>
+      );
+    }
+
     const content =
       type === 'checkbox' ? (
         <FormGroup check>
@@ -177,10 +227,12 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
       ) : (
         <FormGroup>
           {label}
-          <Row>
+          <Row className="input-field-container">
             <Col>{input}</Col>
             {icon}
             {tooltip}
+            {clipboardButton}
+            {clipboardTooltip}
           </Row>
         </FormGroup>
       );

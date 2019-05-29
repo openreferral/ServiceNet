@@ -11,6 +11,7 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 export interface IRequiredDocumentsDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   docs: IRequiredDocument[];
+  showClipboard: boolean;
 }
 
 export class RequiredDocumentsDetails extends React.Component<IRequiredDocumentsDetailsProp> {

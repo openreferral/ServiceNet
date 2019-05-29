@@ -9,6 +9,7 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 export interface IPaymentsAcceptedDetailsProp extends StateProps, DispatchProps {
   activity: IActivity;
   payments: IPaymentAccepted[];
+  showClipboard: boolean;
 }
 
 export class PaymentsAcceptedDetails extends React.Component<IPaymentsAcceptedDetailsProp> {
