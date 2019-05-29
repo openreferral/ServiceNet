@@ -4,7 +4,9 @@ This application was generated using JHipster 5.6.1, you can find documentation 
 ##Setting up the environment
 
 To run the application locally you will need to install PostgreSQL, MongoDB and Java 11.
-Crete new database named ServiceNet in PostgreSQL and set up the JAVA_HOME environment variable.
+Create a new database named ServiceNet in PostgreSQL and set up the following environment variables:
+ * JAVA_HOME
+ * GOOGLE_API_KEY
 
 ## IntelliJ Idea development
 
@@ -36,6 +38,12 @@ java -jar target/*.war
 ```
 
 Refer to [Using JHipster in production][] for more details.
+
+## UI Development
+To enable live reloading of your client-side code, run:
+```bash
+npm start
+```
 
 ## Testing
 
@@ -70,13 +78,13 @@ You can use Docker to improve your JHipster development experience. A number of 
 For example, to start a  database in a docker container, run:
 
 ```bash
-docker-compose -f src/main/docker/mysql.yml up -d
+docker-compose -f src/main/docker/postgresql.yml up -d
 ```
 
 To stop it and remove the container, run:
 
 ```bash
-docker-compose -f src/main/docker/mysql.yml down
+docker-compose -f src/main/docker/postgresql.yml down
 ```
 
 You can also fully dockerize your application and all the services that it depends on.
