@@ -13,34 +13,37 @@ export interface ILocationsDetailsProp extends StateProps, DispatchProps {
 }
 
 export interface ILocationsDetailsState {
-  locationsNumber: number;
+  locationNumber: number;
 }
 
 export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILocationsDetailsState> {
   state: ILocationsDetailsState = {
-    locationsNumber: 0
+    locationNumber: 0
   };
 
-  changeRecord = () => {
-    let locationsNumber = 0;
-    if (this.state.locationsNumber !== this.props.locations.length - 1) {
-      locationsNumber = this.state.locationsNumber + 1;
+  changeRecord = offset => {
+    let locationNumber = 0;
+    const offsetServiceNumber = this.state.locationNumber + offset;
+    if (offsetServiceNumber < 0) {
+      locationNumber = this.props.locations.length - 1;
+    } else if (offsetServiceNumber < this.props.locations.length) {
+      locationNumber = offsetServiceNumber;
     }
-    this.setState({ locationsNumber });
+    this.setState({ locationNumber });
   };
 
   render() {
     const { locations } = this.props;
-    const { locationsNumber } = this.state;
-    const record = locations[locationsNumber];
+    const { locationNumber } = this.state;
+    const record = locations[locationNumber];
     const locationDetails =
-      locations.length > locationsNumber ? (
+      locations.length > locationNumber ? (
         <SingleLocationDetails
           {...this.props}
           changeRecord={this.changeRecord}
           isOnlyOne={locations.length <= 1}
           record={record}
-          locationsCount={`(${locationsNumber + 1}/${locations.length}) `}
+          locationsCount={`(${locationNumber + 1}/${locations.length}) `}
         />
       ) : null;
 

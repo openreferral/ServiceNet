@@ -13,34 +13,37 @@ export interface IServicesDetailsProp extends StateProps, DispatchProps {
 }
 
 export interface IServicesDetailsState {
-  servicesNumber: number;
+  serviceNumber: number;
 }
 
 export class ServicesDetails extends React.Component<IServicesDetailsProp, IServicesDetailsState> {
   state: IServicesDetailsState = {
-    servicesNumber: 0
+    serviceNumber: 0
   };
 
-  changeRecord = () => {
-    let servicesNumber = 0;
-    if (this.state.servicesNumber !== this.props.services.length - 1) {
-      servicesNumber = this.state.servicesNumber + 1;
+  changeRecord = offset => {
+    let serviceNumber = 0;
+    const offsetServiceNumber = this.state.serviceNumber + offset;
+    if (offsetServiceNumber < 0) {
+      serviceNumber = this.props.services.length - 1;
+    } else if (offsetServiceNumber < this.props.services.length) {
+      serviceNumber = offsetServiceNumber;
     }
-    this.setState({ servicesNumber });
+    this.setState({ serviceNumber });
   };
 
   render() {
     const { services } = this.props;
-    const { servicesNumber } = this.state;
-    const record = services[servicesNumber];
+    const { serviceNumber } = this.state;
+    const record = services[serviceNumber];
     const serviceDetails =
-      services.length > servicesNumber ? (
+      services.length > serviceNumber ? (
         <SingleServiceDetails
           {...this.props}
           changeRecord={this.changeRecord}
           isOnlyOne={services.length <= 1}
           record={record}
-          servicesCount={`(${servicesNumber + 1}/${services.length}) `}
+          servicesCount={`(${serviceNumber + 1}/${services.length}) `}
         />
       ) : null;
 

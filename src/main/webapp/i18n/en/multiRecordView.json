@@ -1,6 +1,6 @@
 {
   "multiRecordView": {
-    "seeAnotherMatch": "See next match",
+    "seeAnotherMatch": "See another match",
     "sameRecord": {
       "question": "Is this partner record a mismatch (a totally different organization)?",
       "deny": "YES, REMOVE THIS RECORD"
