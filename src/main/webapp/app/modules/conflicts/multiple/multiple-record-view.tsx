@@ -34,10 +34,13 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     });
   }
 
-  changeRecord = () => {
+  changeRecord = offset => () => {
     let matchNumber = 0;
-    if (this.state.matchNumber !== this.props.matches.length - 1) {
-      matchNumber = this.state.matchNumber + 1;
+    const offsetMatchNumber = this.state.matchNumber + offset;
+    if (offsetMatchNumber < 0) {
+      matchNumber = this.props.matches.length - 1;
+    } else if (offsetMatchNumber < this.props.matches.length) {
+      matchNumber = offsetMatchNumber;
     }
     this.setState({ matchNumber });
 
@@ -63,12 +66,16 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
     const seeAnotherMatch =
       this.props.matches.length > 1 ? (
-        <Col className="another-match-container" onClick={this.changeRecord}>
-          <Button color="primary" onClick={this.changeRecord}>
-            <h4>
-              <Translate contentKey="multiRecordView.seeAnotherMatch" /> {` (${this.state.matchNumber + 1}/${this.props.matches.length})`}
-            </h4>
-          </Button>
+        <Col>
+          <h4>
+            <span role="button" onClick={this.changeRecord(-1)} className="text-blue">
+              〈
+            </span>
+            <span role="button" onClick={this.changeRecord(1)}>
+              <Translate contentKey="multiRecordView.seeAnotherMatch" />
+              <span className="text-blue">{` (${this.state.matchNumber + 1}/${this.props.matches.length}) 〉`}</span>
+            </span>
+          </h4>
         </Col>
       ) : null;
 

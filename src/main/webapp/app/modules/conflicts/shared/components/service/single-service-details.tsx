@@ -44,9 +44,9 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     });
   };
 
-  nextRecord = () => {
+  changeRecord = offset => () => {
     this.setState({ isAreaOpen: true });
-    this.props.changeRecord();
+    this.props.changeRecord(offset);
   };
 
   render() {
@@ -57,12 +57,17 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleServices" /> {this.props.servicesCount}
+          <Translate contentKey="singleRecordView.details.titleServices" /> <span className="text-blue">{this.props.servicesCount}</span>
         </div>
         {isOnlyOne ? null : (
-          <Button className="primary" onClick={this.nextRecord}>
-            <Translate contentKey="singleRecordView.details.seeAnotherService" />
-          </Button>
+          <span>
+            <span role="button" onClick={this.changeRecord(-1)}>
+              <span className="text-blue">〈</span> Prev
+            </span>
+            <span role="button" onClick={this.changeRecord(1)}>
+              Next <span className="text-blue">〉</span>
+            </span>
+          </span>
         )}
       </h4>
     );

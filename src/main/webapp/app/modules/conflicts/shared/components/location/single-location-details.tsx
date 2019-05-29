@@ -39,9 +39,9 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     });
   };
 
-  nextRecord = () => {
+  changeRecord = offset => () => {
     this.setState({ isAreaOpen: true });
-    this.props.changeRecord();
+    this.props.changeRecord(offset);
   };
 
   render() {
@@ -52,12 +52,17 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleLocations" /> {this.props.locationsCount}
+          <Translate contentKey="singleRecordView.details.titleLocations" /> <span className="text-blue">{this.props.locationsCount}</span>
         </div>
         {isOnlyOne ? null : (
-          <Button className="primary" onClick={this.nextRecord}>
-            <Translate contentKey="singleRecordView.details.seeAnotherLocation" />
-          </Button>
+          <span>
+            <span role="button" onClick={this.changeRecord(-1)}>
+              <span className="text-blue">〈</span> Prev
+            </span>
+            <span role="button" onClick={this.changeRecord(1)}>
+              Next <span className="text-blue">〉</span>
+            </span>
+          </span>
         )}
       </h4>
     );
