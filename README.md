@@ -7,6 +7,12 @@ To run the application locally you will need to install PostgreSQL, MongoDB and 
 Create a new database named ServiceNet in PostgreSQL and set up the following environment variables:
  * JAVA_HOME
  * GOOGLE_API_KEY
+ 
+Optionally, you can install JHipster generator with the following command:
+
+```bash
+npm install -g generator-jhipster
+```
 
 ## IntelliJ Idea development
 
