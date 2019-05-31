@@ -3,6 +3,7 @@
     "title": "Benetech Service Net",
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
     "menu": {
+      "aboutUs": "About",
       "home": "Home",
       "upload": "Upload data",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
@@ -83,11 +84,14 @@
         "authenticated": {
           "prefix": "If you want to ",
           "link": "sign in",
-          "suffix": ", make sure you contact Benetech after registering for approval."
+          "suffix": ", make sure you contact Benetech after registering for approval.",
+          "signIn": "Existing users sign in"
         },
         "register": {
-          "noaccount": "You don't have an account yet?",
-          "link": "Register a new account"
+          "noaccount": "Don't have an account yet?",
+          "start": "Pilot partners can",
+          "link": "register a new account.",
+          "end": "Make sure you contact Benetech after registering for approval."
         }
       },
       "error": {
@@ -166,5 +170,6 @@
     "idnull": "Invalid ID",
     "badrequest": "Bad Request"
   },
-  "footer": "Copyright 2019 | Benetech | Software for Social Good"
+  "footerLeft": "Copyright {{ year }} | Benetech | Software for Social Good",
+  "footerRight": "<a href=\"/#/about-us\">About us</a> | <a href=\"mailto:servicenet@benetech.org\">Contact</a>"
 }

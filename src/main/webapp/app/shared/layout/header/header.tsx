@@ -2,10 +2,8 @@ import './header.scss';
 
 import React from 'react';
 import { Translate, Storage } from 'react-jhipster';
-import { Navbar, Nav, NavbarToggler, NavbarBrand, Collapse } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Navbar, Nav, NavbarToggler, Collapse } from 'reactstrap';
 
-import { NavLink as Link } from 'react-router-dom';
 import LoadingBar from 'react-redux-loading-bar';
 
 import { Home, Brand, Upload } from './header-components';
@@ -59,7 +57,7 @@ export default class Header extends React.Component<IHeaderProps, IHeaderState> 
       <div id="app-header">
         {this.renderDevRibbon()}
         <LoadingBar className="loading-bar" />
-        <Navbar expand="sm" fixed="top" className="navbar-dark bg-primary">
+        <Navbar expand="sm" fixed="top" className="navbar-light bg-white">
           <NavbarToggler aria-label="Menu" onClick={this.toggleMenu} />
           <Brand />
           <Collapse isOpen={this.state.menuOpen} navbar>

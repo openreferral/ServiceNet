@@ -21,17 +21,19 @@ export const NavDropdown = props => (
 
 export const BrandIcon = props => (
   <div {...props} className="brand-icon">
-    <img src="content/images/logo.png" alt="Logo" />
+    <img src="content/images/benetech-logo.png" alt="Logo" />
   </div>
 );
 
 export const Brand = props => (
-  <NavbarBrand tag={Link} to="/" className="brand-logo">
+  <NavbarBrand tag={Link} to="/" className="brand-logo d-flex align-items-center">
     <BrandIcon />
-    <span className="brand-title navbar-label">
-      <Translate contentKey="global.title" />
-    </span>
-    <span className="navbar-version">{appConfig.VERSION}</span>
+    <span className="navbar-version mt-1">{appConfig.VERSION}</span>
+    <NavLink exact tag={Link} to="/about-us">
+      <span className="navbar-label text-dark about-us-link">
+        <Translate contentKey="global.menu.aboutUs" />
+      </span>
+    </NavLink>
   </NavbarBrand>
 );
 

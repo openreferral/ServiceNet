@@ -16,6 +16,7 @@ import { AUTHORITIES } from 'app/config/constants';
 import UploadPage from './modules/upload/upload-page';
 import SingleRecordView from './modules/conflicts/single/single-record-view';
 import MultipleRecordView from './modules/conflicts/multiple/multiple-record-view';
+import { AboutUs } from 'app/modules/about-us/about-us';
 
 // tslint:disable:space-in-parens
 const Account = Loadable({
@@ -54,6 +55,7 @@ const Routes = ({ isAdmin }) => (
         component={MultipleRecordView}
         hasAnyAuthorities={[AUTHORITIES.USER]}
       />
+      <ErrorBoundaryRoute path="/about-us" component={AboutUs} />
       <ErrorBoundaryRoute path="/" component={Home} />
     </Switch>
   </div>

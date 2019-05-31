@@ -94,6 +94,7 @@ Navbar styles
     display: inline-block;
     img {
       height: 45px;
+      margin-top: -5px;
     }
     margin-right: 5px;
   }
@@ -114,4 +115,9 @@ Navbar styles
   position: absolute;
   top: 0px;
   z-index: 1031;
+}
+
+.about-us-link {
+  text-decoration: underline;
+  font-size: 0.875rem;
 }
