@@ -20,7 +20,7 @@ exports[`Header Renders a Header component in dev profile with LoadingBar, Navba
     className="loading-bar"
   />
   <Navbar
-    className="navbar-dark bg-primary"
+    className="navbar-light bg-white"
     expand="sm"
     fixed="top"
     tag="nav"
@@ -86,7 +86,7 @@ exports[`Header Renders a Header component in prod profile with LoadingBar, Navb
     className="loading-bar"
   />
   <Navbar
-    className="navbar-dark bg-primary"
+    className="navbar-light bg-white"
     expand="sm"
     fixed="top"
     tag="nav"
