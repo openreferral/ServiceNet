@@ -31,9 +31,17 @@ $web-font-path: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400
   border-color: darken($dark, 5%);
 }
 
-.bg-light {
+.bg-white {
   background-color: #fff !important;
   border-color: darken(#fff, 5%);
+}
+
+.bg-light {
+  background-color: $light-grey !important;
+}
+
+.bg-blue {
+  background-color: $light-blue;
 }
 
 // Buttons =====================================================================

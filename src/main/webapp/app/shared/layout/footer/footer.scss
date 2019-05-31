@@ -4,7 +4,13 @@
 .footer {
   margin-top: $marginTop;
   height: $footerSize;
-  color: $white;
-  background-color: $primary;
+  color: $black;
+  background-color: $light-blue;
   text-align: center;
+}
+
+.link-content {
+  a {
+    color: $black;
+  }
 }
