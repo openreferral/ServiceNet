@@ -22,6 +22,8 @@
       "openingHoursOpensAt": "Opens at",
       "openingHoursClosesAt": "Closes at",
       "contactsTitle": "Contacts",
+      "prev": "Prev",
+      "next": "Next",
       "seeAnotherRecord": "See another record",
       "seeAnotherLocation": "See another location",
       "seeAnotherService": "See another service",

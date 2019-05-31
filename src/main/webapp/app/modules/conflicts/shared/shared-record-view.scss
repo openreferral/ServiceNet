@@ -141,3 +141,12 @@
     border-bottom-color: $tooltip-dark-bg !important;
   }
 }
+
+span[role='button'] {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.text-blue {
+  color: #158cba;
+}
