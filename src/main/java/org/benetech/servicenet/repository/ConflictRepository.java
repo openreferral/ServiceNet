@@ -26,9 +26,9 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
             "and conflict.state = 'PENDING'")
     List<Conflict> findAllPendingWithResourceId(@Param("resourceId") UUID resourceId);
 
-    @Query("select max(conflict.stateDate) from Conflict conflict " +
+    @Query("select max(conflict.offeredValueDate) from Conflict conflict " +
         "where conflict.resourceId =:resourceId and conflict.state = 'PENDING'")
-    Optional<ZonedDateTime> findMostRecentStateDate(@Param("resourceId") UUID resourceId);
+    Optional<ZonedDateTime> findMostRecentOfferedValueDate(@Param("resourceId") UUID resourceId);
 
     List<Conflict> findByResourceIdAndPartnerResourceIdAndState(
         UUID resourceId, UUID partnerResourceId, ConflictStateEnum state);

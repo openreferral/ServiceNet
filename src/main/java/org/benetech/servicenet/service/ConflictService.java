@@ -63,7 +63,7 @@ public interface ConflictService {
      *
      * @param resourceId the id of the resource entity
      */
-    Optional<ZonedDateTime> findMostRecentStateDate(UUID resourceId);
+    Optional<ZonedDateTime> findMostRecentOfferedValueDate(UUID resourceId);
 
     /**
      * Get pending Conflict with resourceId and partner and fieldName.

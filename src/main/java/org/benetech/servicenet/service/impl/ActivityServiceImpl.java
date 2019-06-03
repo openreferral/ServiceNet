@@ -72,7 +72,10 @@ public class ActivityServiceImpl implements ActivityService {
         }
 
         return new PageImpl<>(
-            activities, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), activitiesInfo.getTotalElements());
+            activities,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            activitiesInfo.getTotalElements()
+        );
     }
 
     @Override
@@ -88,7 +91,7 @@ public class ActivityServiceImpl implements ActivityService {
             RecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
                 String.format("Activity record couldn't be created for organization: %s", orgId)));
 
-            Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentStateDate(orgId);
+            Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(orgId);
             if (CollectionUtils.isEmpty(record.getConflicts())) {
                 return Optional.of(ActivityDTO.builder()
                     .record(record)
