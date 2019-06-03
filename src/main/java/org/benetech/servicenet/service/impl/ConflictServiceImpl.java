@@ -121,9 +121,9 @@ public class ConflictServiceImpl implements ConflictService {
      * @param resourceId the id of the resource entity
      */
     @Override
-    public Optional<ZonedDateTime> findMostRecentStateDate(UUID resourceId) {
+    public Optional<ZonedDateTime> findMostRecentOfferedValueDate(UUID resourceId) {
         log.debug("Request to get conflict's  most recent stateDate with conflict's resourceId: {}.", resourceId);
-        return conflictRepository.findMostRecentStateDate(resourceId);
+        return conflictRepository.findMostRecentOfferedValueDate(resourceId);
     }
 
     @Override

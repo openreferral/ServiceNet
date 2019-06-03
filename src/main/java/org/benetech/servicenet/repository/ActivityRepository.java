@@ -66,7 +66,7 @@ public class ActivityRepository {
                 "FROM ORGANIZATION org " +
                 "LEFT JOIN " +
                     "(SELECT resource_id, count(resource_id) recommended, " +
-                    "max(offered_value_date) recent " +
+            "max(offered_value_date) recent " +
                     "FROM CONFLICT " +
                     "WHERE state = 'PENDING' " +
                     "GROUP BY resource_id) conf " +
