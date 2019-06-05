@@ -34,7 +34,9 @@ public class Location extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "name")
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "name", columnDefinition = "clob")
     private String name;
 
     @Column(name = "alternate_name")
