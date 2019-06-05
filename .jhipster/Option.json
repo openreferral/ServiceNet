@@ -1,0 +1,25 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+    ],
+    "fields": [
+        {
+            "fieldName": "type",
+            "fieldType": "OptionType",
+            "fieldValues": "LANGUAGE,DEFINED_COVERAGE_AREA,TAG"
+        },
+        {
+            "fieldName": "value",
+            "fieldType": "Integer"
+        }
+    ],
+    "changelogDate": "20190530112155",
+    "dto": "no",
+    "searchEngine": false,
+    "service": "yes",
+    "entityTableName": "option",
+    "databaseType": "sql",
+    "jpaMetamodelFiltering": false,
+    "pagination": "no"
+}

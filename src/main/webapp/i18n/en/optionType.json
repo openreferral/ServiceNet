@@ -1,0 +1,10 @@
+{
+  "serviceNetApp": {
+    "OptionType": {
+      "null": "",
+      "LANGUAGE": "LANGUAGE",
+      "DEFINED_COVERAGE_AREA": "DEFINED_COVERAGE_AREA",
+      "TAG": "TAG"
+    }
+  }
+}

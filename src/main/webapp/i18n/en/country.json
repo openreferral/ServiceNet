@@ -1,0 +1,16 @@
+{
+  "serviceNetApp": {
+    "Country": {
+      "null": "",
+      "Sacramento": "Sacramento",
+      "Yolo": "Yolo",
+      "Solano": "Solano",
+      "Contra_Costa": "Contra_Costa",
+      "Sutter": "Sutter",
+      "Placer": "Placer",
+      "El_Dorado": "El_Dorado",
+      "San_Joaquin": "San_Joaquin",
+      "Amador": "Amador"
+    }
+  }
+}

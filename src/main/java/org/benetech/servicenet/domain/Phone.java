@@ -67,6 +67,10 @@ public class Phone extends AbstractEntity implements Serializable {
     @JsonIgnoreProperties("phones")
     private ServiceAtLocation serviceAtLocation;
 
+    @ManyToOne
+    @JsonIgnoreProperties("phones")
+    private Shelter shelter;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public Phone number(String number) {

@@ -1,0 +1,134 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "phones",
+            "otherEntityName": "phone",
+            "otherEntityRelationshipName": "shelter",
+            "otherEntityRelationshipNameUndefined": false
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "beds",
+            "otherEntityName": "beds",
+            "otherEntityRelationshipName": "shelter",
+            "otherEntityRelationshipNameUndefined": false,
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "tags",
+            "otherEntityName": "option",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "value",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "shelter",
+            "otherEntityRelationshipNameUndefined": false
+        },
+        {
+          "relationshipName": "languages",
+          "otherEntityName": "option",
+          "relationshipType": "many-to-many",
+          "otherEntityField": "value",
+          "ownerSide": true,
+          "otherEntityRelationshipName": "shelter",
+          "otherEntityRelationshipNameUndefined": false
+        },
+        {
+          "relationshipName": "definedCoverageAreas",
+          "otherEntityName": "option",
+          "relationshipType": "many-to-many",
+          "otherEntityField": "value",
+          "ownerSide": true,
+          "otherEntityRelationshipName": "shelter",
+          "otherEntityRelationshipNameUndefined": false
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "agencyName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "programName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "alternateName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "website",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "eligibilityDetails",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "documentsRequired",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "applicationProcess",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "fees",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "programHours",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "holidaySchedule",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "emails",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "address1",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "address2",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "city",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "zipcode",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "locationDescription",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "busService",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "transportation",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "disabilityAccess",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20190530112157",
+    "dto": "yes",
+    "searchEngine": false,
+    "service": "yes",
+    "entityTableName": "shelter",
+    "databaseType": "sql",
+    "jpaMetamodelFiltering": false,
+    "pagination": "no"
+}

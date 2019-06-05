@@ -151,6 +151,18 @@ import geocodingResult, {
   GeocodingResultState
 } from 'app/entities/geocoding-result/geocoding-result.reducer';
 import filterActivity, { FilterActivityState } from 'app/modules/home/filter-activity.reducer';
+// prettier-ignore
+import beds, {
+  BedsState
+} from 'app/entities/beds/beds.reducer';
+// prettier-ignore
+import shelter, {
+  ShelterState
+} from 'app/entities/shelter/shelter.reducer';
+// prettier-ignore
+import option, {
+  OptionState
+} from 'app/entities/option/option.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -201,6 +213,9 @@ export interface IRootState {
   readonly fieldExclusion: FieldExclusionState;
   readonly exclusionsConfig: ExclusionsConfigState;
   readonly geocodingResult: GeocodingResultState;
+  readonly beds: BedsState;
+  readonly shelter: ShelterState;
+  readonly option: OptionState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -252,6 +267,9 @@ const rootReducer = combineReducers<IRootState>({
   fieldExclusion,
   exclusionsConfig,
   geocodingResult,
+  beds,
+  shelter,
+  option,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
   filterActivity
