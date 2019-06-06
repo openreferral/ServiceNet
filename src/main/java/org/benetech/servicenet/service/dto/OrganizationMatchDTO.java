@@ -19,6 +19,14 @@ public class OrganizationMatchDTO implements Serializable {
 
     private Boolean dismissed;
 
+    private String dismissComment;
+
+    private UUID dismissedById;
+
+    private String dismissedByName;
+
+    private ZonedDateTime dismissDate;
+
     private UUID organizationRecordId;
 
     private String organizationRecordName;

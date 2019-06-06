@@ -38,11 +38,27 @@ export class OrganizationMatchDetail extends React.Component<IOrganizationMatchD
               <TextFormat value={organizationMatchEntity.timestamp} type="date" format={APP_DATE_FORMAT} />
             </dd>
             <dt>
-              <span id="deleted">
-                <Translate contentKey="serviceNetApp.organizationMatch.deleted">Deleted</Translate>
+              <span id="dismissed">
+                <Translate contentKey="serviceNetApp.organizationMatch.dismissed">Dismissed</Translate>
               </span>
             </dt>
-            <dd>{organizationMatchEntity.deleted ? 'true' : 'false'}</dd>
+            <dd>{organizationMatchEntity.dismissed ? 'true' : 'false'}</dd>
+            <dt>
+              <Translate contentKey="serviceNetApp.organizationMatch.dismissComment">Dismiss Comment</Translate>
+            </dt>
+            <dd>{organizationMatchEntity.dismissComment || ''}</dd>
+            <dt>
+              <span id="dismissDate">
+                <Translate contentKey="serviceNetApp.organizationMatch.dismissDate">Dismiss Date</Translate>
+              </span>
+            </dt>
+            <dd>
+              <TextFormat value={organizationMatchEntity.dismissDate} type="date" format={APP_DATE_FORMAT} />
+            </dd>
+            <dt>
+              <Translate contentKey="serviceNetApp.organizationMatch.dismissedBy">Dismissed By</Translate>
+            </dt>
+            <dd>{organizationMatchEntity.dismissedByName || ''}</dd>
             <dt>
               <Translate contentKey="serviceNetApp.organizationMatch.organizationRecord">Organization Record</Translate>
             </dt>
@@ -53,14 +69,16 @@ export class OrganizationMatchDetail extends React.Component<IOrganizationMatchD
             <dd>{organizationMatchEntity.partnerVersionName ? organizationMatchEntity.partnerVersionName : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/organization-match" replace color="info">
-            <FontAwesomeIcon icon="arrow-left" />{' '}
+            <FontAwesomeIcon icon="arrow-left" />
+            &nbsp;
             <span className="d-none d-md-inline">
               <Translate contentKey="entity.action.back">Back</Translate>
             </span>
           </Button>
           &nbsp;
           <Button tag={Link} to={`/entity/organization-match/${organizationMatchEntity.id}/edit`} replace color="primary">
-            <FontAwesomeIcon icon="pencil-alt" />{' '}
+            <FontAwesomeIcon icon="pencil-alt" />
+            &nbsp;
             <span className="d-none d-md-inline">
               <Translate contentKey="entity.action.edit">Edit</Translate>
             </span>

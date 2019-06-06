@@ -19,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Activity.
@@ -92,27 +90,15 @@ public class ActivityServiceImpl implements ActivityService {
                 String.format("Activity record couldn't be created for organization: %s", orgId)));
 
             Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(orgId);
-            if (CollectionUtils.isEmpty(record.getConflicts())) {
-                return Optional.of(ActivityDTO.builder()
-                    .record(record)
-                    .organizationMatches(new ArrayList<>())
-                    .dismissedMatches(new ArrayList<>())
-                    .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
-                    .build());
-            } else {
-                List<OrganizationMatchDTO> allMatches = organizationMatchService.findAllForOrganization(orgId);
-                List<OrganizationMatchDTO> matches = allMatches.stream()
-                    .filter(it -> !it.isDismissed()).collect(Collectors.toList());
-                List<OrganizationMatchDTO> dismissedMatches = allMatches.stream()
-                    .filter(OrganizationMatchDTO::isDismissed).collect(Collectors.toList());
+            List<OrganizationMatchDTO> dismissedMatches = organizationMatchService.findAllDismissedForOrganization(orgId);
+            List<OrganizationMatchDTO> matches = organizationMatchService.findAllNotDismissedForOrganization(orgId);
 
-                return Optional.of(ActivityDTO.builder()
-                    .record(record)
-                    .organizationMatches(matches)
-                    .dismissedMatches(dismissedMatches)
-                    .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
-                    .build());
-            }
+            return Optional.of(ActivityDTO.builder()
+                .record(record)
+                .organizationMatches(matches)
+                .dismissedMatches(dismissedMatches)
+                .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
+                .build());
         } catch (IllegalAccessException e) {
             return Optional.empty();
         }

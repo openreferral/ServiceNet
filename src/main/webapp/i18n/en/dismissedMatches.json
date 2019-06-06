@@ -1,0 +1,18 @@
+{
+  "dismissedMatches": {
+    "header": "Mismatches for [Individual Record Name]",
+    "back": "Back",
+    "record": "Record",
+    "dateDismissed": "Date Dismissed",
+    "user": "User",
+    "notes": "Notes",
+    "notesPlaceholder": "No note added",
+    "view": "View",
+    "reinstate": "Reinstate",
+    "reinstateError": "Error occurred when reinstating record!",
+    "reinstatedSuccessfully": "Record was reinstated successfully!",
+    "yourData": "Your Data",
+    "lastUpdated": "Last Updated",
+    "from": "From {{ name }}"
+  }
+}

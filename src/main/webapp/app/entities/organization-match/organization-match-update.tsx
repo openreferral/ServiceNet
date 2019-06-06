@@ -10,6 +10,7 @@ import { IRootState } from 'app/shared/reducers';
 
 import { IOrganization } from 'app/shared/model/organization.model';
 import { getEntities as getOrganizations } from 'app/entities/organization/organization.reducer';
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getEntity, updateEntity, createEntity, setBlob, reset } from './organization-match.reducer';
 import { IOrganizationMatch } from 'app/shared/model/organization-match.model';
 // tslint:disable-next-line:no-unused-variable
@@ -48,6 +49,7 @@ export class OrganizationMatchUpdate extends React.Component<IOrganizationMatchU
     }
 
     this.props.getOrganizations();
+    this.props.getUsers();
   }
 
   onBlobChange = (isAnImage, name) => event => {
@@ -81,7 +83,7 @@ export class OrganizationMatchUpdate extends React.Component<IOrganizationMatchU
   };
 
   render() {
-    const { organizationMatchEntity, organizations, loading, updating } = this.props;
+    const { organizationMatchEntity, organizations, users, loading, updating } = this.props;
     const { isNew } = this.state;
 
     return (
@@ -120,10 +122,42 @@ export class OrganizationMatchUpdate extends React.Component<IOrganizationMatchU
                   />
                 </AvGroup>
                 <AvGroup>
-                  <Label id="deletedLabel" check>
-                    <AvInput id="organization-match-deleted" type="checkbox" className="form-control" name="deleted" />
-                    <Translate contentKey="serviceNetApp.organizationMatch.deleted">Deleted</Translate>
+                  <Label id="dismissedLabel" check>
+                    <AvInput id="organization-match-dismissed" type="checkbox" className="form-control" name="dismissed" />
+                    <Translate contentKey="serviceNetApp.organizationMatch.dismissed">Dismissed</Translate>
                   </Label>
+                </AvGroup>
+                <AvGroup>
+                  <Label id="dismissCommentLabel" for="dismissComment">
+                    <Translate contentKey="serviceNetApp.organizationMatch.dismissComment">Dismiss Comment</Translate>
+                  </Label>
+                  <AvField id="organization-match-dismissComment" type="textarea" name="dismissComment" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="dismissDateLabel" for="dismissDate">
+                    <Translate contentKey="serviceNetApp.organizationMatch.dismissDate">Dismiss Date</Translate>
+                  </Label>
+                  <AvInput
+                    id="organization-match-dismissDate"
+                    type="datetime-local"
+                    className="form-control"
+                    name="dismissDate"
+                    value={isNew ? null : convertDateTimeFromServer(this.props.organizationMatchEntity.dismissDate)}
+                  />
+                </AvGroup>
+                <AvGroup>
+                  <Label for="dismissedBy.login">
+                    <Translate contentKey="serviceNetApp.organizationMatch.dismissedBy">Dismissed By</Translate>
+                  </Label>
+                  <AvInput id="organization-match-dismissedBy" type="select" className="form-control" name="dismissedById">
+                    {users
+                      ? users.map(otherEntity => (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {otherEntity.login}
+                          </option>
+                        ))
+                      : null}
+                  </AvInput>
                 </AvGroup>
                 <AvGroup>
                   <Label for="organizationRecord.name">
@@ -179,6 +213,7 @@ export class OrganizationMatchUpdate extends React.Component<IOrganizationMatchU
 
 const mapStateToProps = (storeState: IRootState) => ({
   organizations: storeState.organization.entities,
+  users: storeState.userManagement.users,
   organizationMatchEntity: storeState.organizationMatch.entity,
   loading: storeState.organizationMatch.loading,
   updating: storeState.organizationMatch.updating,
@@ -187,6 +222,7 @@ const mapStateToProps = (storeState: IRootState) => ({
 
 const mapDispatchToProps = {
   getOrganizations,
+  getUsers,
   getEntity,
   updateEntity,
   setBlob,

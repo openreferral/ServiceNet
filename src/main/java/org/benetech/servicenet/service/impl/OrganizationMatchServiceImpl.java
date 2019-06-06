@@ -107,6 +107,20 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    public List<OrganizationMatchDTO> findAllDismissedForOrganization(UUID orgId) {
+        return organizationMatchRepository.findAllByOrganizationRecordIdAndDismissed(orgId, true).stream()
+            .map(organizationMatchMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public List<OrganizationMatchDTO> findAllNotDismissedForOrganization(UUID orgId) {
+        return organizationMatchRepository.findAllByOrganizationRecordIdAndDismissed(orgId, false).stream()
+            .map(organizationMatchMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
     /**
      * Get one organizationMatch by id.
      *

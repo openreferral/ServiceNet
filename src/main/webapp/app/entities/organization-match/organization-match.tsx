@@ -42,7 +42,16 @@ export class OrganizationMatch extends React.Component<IOrganizationMatchProps> 
                   <Translate contentKey="serviceNetApp.organizationMatch.timestamp">Timestamp</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="serviceNetApp.organizationMatch.deleted">Deleted</Translate>
+                  <Translate contentKey="serviceNetApp.organizationMatch.dismissed">Dismissed</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.organizationMatch.dismissComment">Dismiss Comment</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.organizationMatch.dismissDate">Dismiss Date</Translate>
+                </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.organizationMatch.dismissedBy">Dismissed By</Translate>
                 </th>
                 <th>
                   <Translate contentKey="serviceNetApp.organizationMatch.organizationRecord">Organization Record</Translate>
@@ -64,7 +73,12 @@ export class OrganizationMatch extends React.Component<IOrganizationMatchProps> 
                   <td>
                     <TextFormat type="date" value={organizationMatch.timestamp} format={APP_DATE_FORMAT} />
                   </td>
-                  <td>{organizationMatch.deleted ? 'true' : 'false'}</td>
+                  <td>{organizationMatch.dismissed ? 'true' : 'false'}</td>
+                  <td>{organizationMatch.dismissComment}</td>
+                  <td>
+                    <TextFormat type="date" value={organizationMatch.dismissDate} format={APP_DATE_FORMAT} />
+                  </td>
+                  <td>{organizationMatch.dismissedByName ? organizationMatch.dismissedByName : ''}</td>
                   <td>
                     {organizationMatch.organizationRecordName ? (
                       <Link to={`organization/${organizationMatch.organizationRecordId}`}>{organizationMatch.organizationRecordName}</Link>

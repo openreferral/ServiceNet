@@ -5,24 +5,33 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Jumbotron, Button } from 'reactstrap';
 import Details from './components/details';
-import { getBaseRecord, getPartnerRecord, getMatches } from './multiple-record-view.reducer';
-import { RouteComponentProps } from 'react-router-dom';
+import { getBaseRecord, getPartnerRecord, getMatches } from '../shared/shared-record-view.reducer';
+import { RouteComponentProps, Link } from 'react-router-dom';
 import { Translate, TextFormat } from 'react-jhipster';
 import ReactGA from 'react-ga';
+import axios from 'axios';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
+import DismissModal from './components/dismiss-modal';
+import SuccessModal from './components/success-modal';
 
 export interface IMultipleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
 export interface IMultipleRecordViewState {
   match: any;
   matchNumber: number;
+  showDismissModal: boolean;
+  showSuccessModal: boolean;
+  dismissError: boolean;
 }
 
 export class MultipleRecordView extends React.Component<IMultipleRecordViewProp, IMultipleRecordViewState> {
   state: IMultipleRecordViewState = {
     match: null,
-    matchNumber: 0
+    matchNumber: 0,
+    showDismissModal: false,
+    showSuccessModal: false,
+    dismissError: false
   };
 
   componentDidMount() {
@@ -33,6 +42,38 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
       }
     });
   }
+
+  handleDismissModalClose = () => {
+    this.setState({ showDismissModal: false, dismissError: false });
+  };
+
+  handleSuccessModalClose = () => {
+    this.setState({ showSuccessModal: false });
+  };
+
+  handleDismiss = dismissParams => {
+    const { orgId } = this.props;
+    const matchId = this.props.matches[this.state.matchNumber].id;
+    axios
+      .post(`/api/organization-matches/${matchId}/dismiss`, dismissParams)
+      .then(() => {
+        this.setState({ showDismissModal: false, showSuccessModal: true, matchNumber: 0 });
+        Promise.all([this.props.getMatches(this.props.orgId)]).then(() => {
+          if (this.props.matches.length > 0) {
+            this.props.getPartnerRecord(this.props.matches[0].partnerVersionId);
+          } else {
+            this.props.history.push(`/single-record-view/${orgId}`);
+          }
+        });
+      })
+      .catch(() => {
+        this.setState({ dismissError: true });
+      });
+  };
+
+  showDismissModal = () => {
+    this.setState({ showDismissModal: true });
+  };
 
   changeRecord = offset => () => {
     let matchNumber = 0;
@@ -46,10 +87,6 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
     ReactGA.event({ category: 'UserActions', action: 'Clicking "See Another Match" on side by side view' });
     this.props.getPartnerRecord(this.props.matches[matchNumber].partnerVersionId);
-  };
-
-  confirmMatch = () => {
-    ReactGA.event({ category: 'UserActions', action: 'Confirm Match Button' });
   };
 
   denyMatch = () => {
@@ -81,6 +118,13 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
     return (
       <div>
+        <SuccessModal showModal={this.state.showSuccessModal} handleClose={this.handleSuccessModalClose} />
+        <DismissModal
+          showModal={this.state.showDismissModal}
+          dismissError={this.state.dismissError}
+          handleClose={this.handleDismissModalClose}
+          handleDismiss={this.handleDismiss}
+        />
         <Row>
           {baseRecord ? (
             <Col sm="6">
@@ -121,8 +165,14 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                   </h4>
                 </div>
                 <div className="same-record-question-buttons">
-                  <div />
-                  <Button color="danger" size="lg">
+                  <div>
+                    {!this.props.dismissedMatches.length ? null : (
+                      <Link to={`/dismissed-matches/${this.props.orgId}`}>
+                        <Translate contentKey="multiRecordView.sameRecord.viewDismissedMatches" />
+                      </Link>
+                    )}
+                  </div>
+                  <Button color="danger" size="lg" onClick={this.showDismissModal}>
                     <Translate contentKey="multiRecordView.sameRecord.deny" />
                   </Button>
                 </div>
@@ -139,9 +189,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
 const mapStateToProps = (storeState, { match }: IMultipleRecordViewState) => ({
   orgId: match.params.orgId,
-  baseRecord: storeState.multipleRecordView.baseRecord,
-  partnerRecord: storeState.multipleRecordView.partnerRecord,
-  matches: storeState.multipleRecordView.matches
+  baseRecord: storeState.sharedRecordView.baseRecord,
+  partnerRecord: storeState.sharedRecordView.partnerRecord,
+  matches: storeState.sharedRecordView.matches,
+  dismissedMatches: storeState.sharedRecordView.dismissedMatches
 });
 
 const mapDispatchToProps = { getBaseRecord, getPartnerRecord, getMatches };

@@ -171,5 +171,6 @@
     "badrequest": "Bad Request"
   },
   "footerLeft": "Copyright {{ year }} | Benetech | Software for Social Good",
-  "footerRight": "<a href=\"/#/about-us\">About us</a> | <a href=\"mailto:servicenet@benetech.org\">Contact</a>"
+  "footerRight": "<a href=\"/#/about-us\">About us</a> | <a href=\"mailto:servicenet@benetech.org\">Contact</a>",
+  "loading": "Loading..."
 }

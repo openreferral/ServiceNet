@@ -38,7 +38,8 @@
         "content2": "A manual review is the easiest way to confirm that these records match.",
         "review": "Review similar partner records:",
         "other": "other",
-        "others": "others"
+        "others": "others",
+        "viewDismissedMatches": "View previously removed records"
       }
     },
     "inputField": {

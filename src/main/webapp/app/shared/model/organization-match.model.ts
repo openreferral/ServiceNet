@@ -3,7 +3,11 @@ import { Moment } from 'moment';
 export interface IOrganizationMatch {
   id?: number;
   timestamp?: Moment;
-  deleted?: boolean;
+  dismissed?: boolean;
+  dismissComment?: string;
+  dismissedById?: number;
+  dismissedByName?: string;
+  dismissDate?: Moment;
   organizationRecordName?: string;
   organizationRecordId?: number;
   partnerVersionName?: string;
@@ -11,5 +15,5 @@ export interface IOrganizationMatch {
 }
 
 export const defaultValue: Readonly<IOrganizationMatch> = {
-  deleted: false
+  dismissed: false
 };

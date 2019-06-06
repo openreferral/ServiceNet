@@ -3,22 +3,23 @@ import axios from 'axios';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 export const ACTION_TYPES = {
-  FETCH_BASE_ORGANIZATION: 'uploadPage/FETCH_BASE_ORGANIZATION',
-  FETCH_PARTNER_ORGANIZATION: 'uploadPage/FETCH_PARTNER_ORGANIZATION',
-  FETCH_MATCHES: 'uploadPage/FETCH_MATCHES'
+  FETCH_BASE_ORGANIZATION: 'recordView/FETCH_BASE_ORGANIZATION',
+  FETCH_PARTNER_ORGANIZATION: 'recordView/FETCH_PARTNER_ORGANIZATION',
+  FETCH_MATCHES: 'recordView/FETCH_MATCHES'
 };
 
 const initialState = {
   errorMessage: null,
   baseRecord: null,
   partnerRecord: null,
-  matches: []
+  matches: [],
+  dismissedMatches: []
 };
 
-export type MultipleRecordViewState = Readonly<typeof initialState>;
+export type SharedRecordViewState = Readonly<typeof initialState>;
 
 // Reducer
-export default (state: MultipleRecordViewState = initialState, action): MultipleRecordViewState => {
+export default (state: SharedRecordViewState = initialState, action): SharedRecordViewState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_BASE_ORGANIZATION):
     case REQUEST(ACTION_TYPES.FETCH_PARTNER_ORGANIZATION):
@@ -44,9 +45,21 @@ export default (state: MultipleRecordViewState = initialState, action): Multiple
         partnerRecord: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_MATCHES):
+      const matches = [];
+      const dismissedMatches = [];
+
+      action.payload.data.forEach(item => {
+        if (item.dismissed) {
+          dismissedMatches.push(item);
+        } else {
+          matches.push(item);
+        }
+      });
+
       return {
         ...state,
-        matches: action.payload.data
+        matches,
+        dismissedMatches
       };
     default:
       return state;
