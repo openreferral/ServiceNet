@@ -20,11 +20,8 @@ public abstract class AbstractDetector<T extends AbstractEntity> {
         return conflicts;
     }
 
-    protected boolean detect(String currentValue, String offeredValue) {
-        return !this.areEquals(currentValue, offeredValue);
-    }
-
-    protected <Y> List<Conflict> detectConflicts(T current, T offered, Y currentValue, Y offeredValue, String fieldName) {
+    protected List<Conflict> detectConflicts(T current, T offered,
+        Object currentValue, Object offeredValue, String fieldName) {
         List<Conflict> conflicts = new LinkedList<>();
         if (detect(currentValue, offeredValue)) {
             conflicts.add(createConflict(current, offered, currentValue, offeredValue, fieldName));
@@ -32,8 +29,12 @@ public abstract class AbstractDetector<T extends AbstractEntity> {
         return conflicts;
     }
 
-    protected <Y> boolean detect(Y currentValue, Y offeredValue) {
+    private boolean detect(Object currentValue, Object offeredValue) {
         return notEquals(currentValue, offeredValue);
+    }
+
+    private boolean detect(String currentValue, String offeredValue) {
+        return !areEquals(currentValue, offeredValue);
     }
 
     private <Y> Conflict createConflict(T current, T offered, Y currentValue, Y offeredValue, String fieldName) {

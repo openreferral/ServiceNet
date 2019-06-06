@@ -28,13 +28,6 @@ public interface ServiceService {
     List<ServiceDTO> findAll();
 
     /**
-     * Get all the ServiceDTO where Location is null.
-     *
-     * @return the list of entities
-     */
-    List<ServiceDTO> findAllWhereLocationIsNull();
-
-    /**
      * Get all the ServiceDTO where RegularSchedule is null.
      *
      * @return the list of entities

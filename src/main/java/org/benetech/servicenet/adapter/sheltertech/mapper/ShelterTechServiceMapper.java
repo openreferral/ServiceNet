@@ -80,7 +80,7 @@ public interface ShelterTechServiceMapper {
     @Mapping(constant = PROVIDER_NAME, target = "providerName")
     @Mapping(ignore = true, target = "organization")
     @Mapping(ignore = true, target = "program")
-    @Mapping(ignore = true, target = "location")
+    @Mapping(ignore = true, target = "locations")
     @Mapping(ignore = true, target = "regularSchedule")
     @Mapping(ignore = true, target = "holidaySchedule")
     @Mapping(ignore = true, target = "funding")
