@@ -8,6 +8,21 @@ import { NavDropdown } from '../header-components';
 export const EntitiesMenu = props => (
   // tslint:disable-next-line:jsx-self-close
   <NavDropdown icon="th-list" name={translate('global.menu.entities.main')} id="entity-menu">
+    <DropdownItem tag={Link} to="/entity/shelter">
+      <FontAwesomeIcon icon="asterisk" fixedWidth />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.shelter" />
+    </DropdownItem>
+    <DropdownItem tag={Link} to="/entity/beds">
+      <FontAwesomeIcon icon="asterisk" fixedWidth />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.beds" />
+    </DropdownItem>
+    <DropdownItem tag={Link} to="/entity/option">
+      <FontAwesomeIcon icon="asterisk" fixedWidth />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.option" />
+    </DropdownItem>
     <DropdownItem tag={Link} to="/entity/system-account">
       <FontAwesomeIcon icon="asterisk" />
       &nbsp;

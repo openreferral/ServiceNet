@@ -40,6 +40,9 @@
         "fieldExclusion": "Field Exclusion",
         "exclusionsConfig": "Exclusions Config",
         "geocodingResult": "Geocoding Result",
+        "beds": "Beds",
+        "shelter": "Shelter",
+        "option": "Option",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

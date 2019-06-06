@@ -51,6 +51,9 @@
     <include file="config/liquibase/changelog/20190124144536_added_entity_FieldExclusion.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190124145536_added_entity_ExclusionsConfig.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190222165806_added_entity_GeocodingResult.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190530112156_added_entity_Beds.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190530112157_added_entity_Shelter.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190530112155_added_entity_Option.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
              relativeToChangelogFile="false"/>
@@ -105,6 +108,8 @@
     <include file="config/liquibase/changelog/20190301112806_create_activity_info_view.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190315164106_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190409141106_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190530112157_added_entity_constraints_Shelter.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190530112156_added_entity_constraints_Beds.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <include file="config/liquibase/changelog/20181220100327_insert_initial_SystemAccounts.xml"
              relativeToChangelogFile="false"/>
@@ -112,6 +117,7 @@
     <include file="config/liquibase/changelog/20190515120552_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190517123504_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190521171012_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190522132906_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190605133534_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190605133534_changelog.xml" relativeToChangelogFile="false"/>    <include file="config/liquibase/changelog/20190522132906_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190530112158_alter_entity_Phone.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190530112159_insert_initial_Options.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

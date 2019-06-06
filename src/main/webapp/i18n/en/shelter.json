@@ -1,0 +1,47 @@
+{
+  "serviceNetApp": {
+    "shelter": {
+      "home": {
+        "title": "Shelters",
+        "createLabel": "Create a new Shelter",
+        "createOrEditLabel": "Create or edit a Shelter"
+      },
+      "created": "A new Shelter is created with identifier {{ param }}",
+      "updated": "A Shelter is updated with identifier {{ param }}",
+      "deleted": "A Shelter is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Shelter {{ id }}?"
+      },
+      "detail": {
+        "title": "Shelter"
+      },
+      "agencyName": "Agency Name",
+      "programName": "Program Name",
+      "alternateName": "Alternate Name",
+      "website": "Website",
+      "eligibilityDetails": "Eligibility Details",
+      "documentsRequired": "Documents Required",
+      "applicationProcess": "Application Process",
+      "fees": "Fees",
+      "programHours": "Program Hours",
+      "holidaySchedule": "Holiday Schedule",
+      "email": "Email",
+      "address1": "Address 1",
+      "address2": "Address 2",
+      "city": "City",
+      "zipcode": "Zipcode",
+      "locationDescription": "Location Description",
+      "busService": "Bus Service",
+      "transportation": "Transportation",
+      "disabilityAccess": "Disability Access",
+      "phones": "Phones",
+      "beds": "Beds",
+      "tags": "Tags",
+      "languages": "Languages",
+      "definedCoverageAreas": "Defined Coverage Areas",
+      "emails": "Emails",
+      "availableBeds": "Available Beds",
+      "waitlist": "Waitlist"
+    }
+  }
+}
