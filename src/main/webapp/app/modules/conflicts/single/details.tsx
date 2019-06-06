@@ -7,13 +7,15 @@ import { OrganizationDetails } from '../shared/components/organization-details';
 import { LocationsDetails } from '../shared/components/location/locations-details';
 import { ServicesDetails } from '../shared/components/service/services-details';
 import { ContactsDetails } from '../shared/components/contact/contacts-details';
-import { Col, Row, Jumbotron } from 'reactstrap';
+import { Col, Jumbotron } from 'reactstrap';
 import { Translate } from 'react-jhipster';
+import ReactGA from 'react-ga';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   activity: IActivity;
   isBaseRecord: boolean;
   showClipboard: boolean;
+  orgId: string;
 }
 
 export interface ISingleRecordViewState {
@@ -31,6 +33,10 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
         activeTab: tab
       });
     }
+  };
+
+  handleMatchClick = () => {
+    ReactGA.event({ category: 'UserActions', action: 'Clicking On Side By Side View' });
   };
 
   render() {
@@ -64,7 +70,7 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
               <Translate contentKey="singleRecordView.details.compare.review" />
             </p>
             <div>
-              <Link to={`/multi-record-view/${firstMatch.organizationRecordId}`}>
+              <Link to={`/multi-record-view/${firstMatch.organizationRecordId}`} onClick={this.handleMatchClick}>
                 {activity.organizationMatches.length === 1
                   ? `${firstMatch.partnerVersionName}`
                   : `${firstMatch.partnerVersionName} +${activity.organizationMatches.length - 1}`}
@@ -73,7 +79,13 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
           </div>
         </Jumbotron>
       </Col>
-    ) : null;
+    ) : !activity.dismissedMatches.length ? null : (
+      <div>
+        <Link to={`/dismissed-matches/${this.props.orgId}`}>
+          <Translate contentKey="singleRecordView.details.compare.viewDismissedMatches" />
+        </Link>
+      </div>
+    );
 
     const columnSize = 6;
     return (

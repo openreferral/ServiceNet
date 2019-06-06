@@ -159,6 +159,10 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
+  handleRecordClick = () => {
+    ReactGA.event({ category: 'UserActions', action: 'Clicking On A Record' });
+  };
+
   render() {
     const { account, activityList } = this.props;
     return (
@@ -289,6 +293,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                       key={`linkToActivity${i + 1}`}
                       to={`/single-record-view/${activity.record.organization.id}`}
                       className="alert-link"
+                      onClick={this.handleRecordClick}
                     >
                       <ActivityElement activity={activity} />
                     </Link>

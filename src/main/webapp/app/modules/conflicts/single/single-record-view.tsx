@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'reactstrap';
 import Tabs from './tabs';
-import { getActivityDetails } from './single-record-view.reducer';
+import { getBaseRecord } from '../shared/shared-record-view.reducer';
 import { RouteComponentProps } from 'react-router-dom';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
@@ -22,7 +22,7 @@ export class SingleRecordView extends React.Component<ISingleRecordViewProp, ISi
   };
 
   componentDidMount() {
-    this.props.getActivityDetails(this.props.orgId);
+    this.props.getBaseRecord(this.props.orgId);
   }
 
   render() {
@@ -48,10 +48,10 @@ export class SingleRecordView extends React.Component<ISingleRecordViewProp, ISi
 
 const mapStateToProps = (storeState, { match }: ISingleRecordViewState) => ({
   orgId: match.params.orgId,
-  activityDetails: storeState.singleRecordView.activityDetails
+  activityDetails: storeState.sharedRecordView.baseRecord
 });
 
-const mapDispatchToProps = { getActivityDetails };
+const mapDispatchToProps = { getBaseRecord };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

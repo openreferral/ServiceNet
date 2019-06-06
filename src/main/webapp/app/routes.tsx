@@ -16,6 +16,8 @@ import { AUTHORITIES } from 'app/config/constants';
 import UploadPage from './modules/upload/upload-page';
 import SingleRecordView from './modules/conflicts/single/single-record-view';
 import MultipleRecordView from './modules/conflicts/multiple/multiple-record-view';
+import DismissedMatches from './modules/conflicts/dismissed/dismissed-matches';
+import DismissedMatchView from './modules/conflicts/dismissed/dismissed-match-view';
 import { AboutUs } from 'app/modules/about-us/about-us';
 
 // tslint:disable:space-in-parens
@@ -53,6 +55,18 @@ const Routes = ({ isAdmin }) => (
         path="/multi-record-view/:orgId?"
         isAdmin={isAdmin}
         component={MultipleRecordView}
+        hasAnyAuthorities={[AUTHORITIES.USER]}
+      />
+      <PrivateRoute
+        path="/dismissed-matches/:orgId"
+        isAdmin={isAdmin}
+        component={DismissedMatches}
+        hasAnyAuthorities={[AUTHORITIES.USER]}
+      />
+      <PrivateRoute
+        path="/dismissed-match-view/:orgId/partner/:partnerId"
+        isAdmin={isAdmin}
+        component={DismissedMatchView}
         hasAnyAuthorities={[AUTHORITIES.USER]}
       />
       <ErrorBoundaryRoute path="/about-us" component={AboutUs} />

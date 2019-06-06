@@ -7,6 +7,7 @@ export interface IActivity {
   lastUpdated?: Moment;
   record?: any;
   organizationMatches?: IOrganizationMatch[];
+  dismissedMatches?: IOrganizationMatch[];
 }
 
 export const defaultValue: Readonly<IActivity> = {};

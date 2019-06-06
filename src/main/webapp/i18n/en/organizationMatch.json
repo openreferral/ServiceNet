@@ -16,7 +16,10 @@
         "title": "Organization Match"
       },
       "timestamp": "Timestamp",
-      "deleted": "Deleted",
+      "dismissed": "Dismissed",
+      "dismissComment": "Dismiss Comment",
+      "dismissedBy": "Dismissed By",
+      "dismissDate": "Dismiss Date",
       "organizationRecord": "Organization Record",
       "partnerVersion": "Partner Version"
     }

@@ -3,7 +3,16 @@
     "seeAnotherMatch": "See another match",
     "sameRecord": {
       "question": "Is this partner record a mismatch (a totally different organization)?",
-      "deny": "YES, REMOVE THIS RECORD"
+      "deny": "YES, REMOVE THIS RECORD",
+      "viewDismissedMatches": "View previously removed records"
+    },
+    "dismiss": {
+      "question": "Just to confirm, is this partner record a complete mismatch you want removed from this list?",
+      "commentPleceholder": "Add a note (optional)",
+      "remove": "Yes, remove this",
+      "cancel": "Cancel",
+      "success": "Thanks! Your feedback has been saved.",
+      "error": "Error occurred while removing the match!"
     },
     "yourData": "Your data",
     "from": "From ",
