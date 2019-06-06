@@ -26,15 +26,17 @@ export const BrandIcon = props => (
 );
 
 export const Brand = props => (
-  <NavbarBrand tag={Link} to="/" className="brand-logo d-flex align-items-center">
-    <BrandIcon />
-    <span className="navbar-version mt-1">{appConfig.VERSION}</span>
-    <NavLink exact tag={Link} to="/about-us">
+  <div className="d-flex align-items-center">
+    <NavbarBrand tag={Link} to="/" className="brand-logo d-flex align-items-center mr-1">
+      <BrandIcon />
+      <span className="navbar-version mt-1">{appConfig.VERSION}</span>
+    </NavbarBrand>
+    <NavLink exact tag={Link} to="/about-us" className="pl-0">
       <span className="navbar-label text-dark about-us-link">
         <Translate contentKey="global.menu.aboutUs" />
       </span>
     </NavLink>
-  </NavbarBrand>
+  </div>
 );
 
 export const Home = props => (
