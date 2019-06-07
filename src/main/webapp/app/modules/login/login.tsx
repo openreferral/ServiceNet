@@ -5,6 +5,8 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { IRootState } from 'app/shared/reducers';
 import { login } from 'app/shared/reducers/authentication';
 import LoginModal from './login-modal';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface ILoginProps extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -32,8 +34,11 @@ export class Login extends React.Component<ILoginProps, ILoginState> {
   };
 
   render() {
-    const { location, isAuthenticated } = this.props;
-    const { from } = location.state || { from: { pathname: '/', search: location.search } };
+    const { location, isAuthenticated, account } = this.props;
+    const defaultRoute = hasAnyAuthority(account.authorities, [AUTHORITIES.SACRAMENTO])
+      ? { pathname: '/shelters' }
+      : { pathname: '/', search: location.search };
+    const { from } = location.state || { from: defaultRoute };
     const { showModal } = this.state;
     if (isAuthenticated) {
       return <Redirect to={from} />;
@@ -46,6 +51,7 @@ export class Login extends React.Component<ILoginProps, ILoginState> {
 
 const mapStateToProps = ({ authentication }: IRootState) => ({
   isAuthenticated: authentication.isAuthenticated,
+  account: authentication.account,
   loginError: authentication.loginError,
   showModal: authentication.showModalLogin
 });
