@@ -105,7 +105,7 @@ public class PersistanceManager {
             service.setLangs(getLanguagesForServiceToPersist(externalServiceId));
             getEligibilityToPersist(externalServiceId).ifPresent(service::setEligibility);
             service.setDocs(getRequiredDocumentsToPersist(externalServiceId));
-            service.setLocation(getServiceAtLocationToPersist(externalServiceId, locations));
+            service.setLocations(getServiceAtLocationsToPersist(externalServiceId, locations));
 
             result.add(service);
         }
@@ -201,27 +201,27 @@ public class PersistanceManager {
         return result;
     }
 
-    private ServiceAtLocation getServiceAtLocationToPersist(String serviceId, Set<Location> locations) {
+    private Set<ServiceAtLocation> getServiceAtLocationsToPersist(String serviceId, Set<Location> locations) {
         Set<HealthleadsServiceAtLocation> serviceAtLocationSet = dictionary.getRelatedEntities(
             HealthleadsServiceAtLocation.class, serviceId, HealthleadsService.class);
 
-        if (serviceAtLocationSet.isEmpty()) {
-            return null;
-        }
+        Set<ServiceAtLocation> serviceAtLocations = new HashSet<>();
 
-        HealthleadsServiceAtLocation healthleadsServiceAtLocation = serviceAtLocationSet.iterator().next();
+        serviceAtLocationSet.forEach(healthleadsServiceAtLocation -> {
+            Set<Location> serviceLocations = locations.stream().
+                filter(l -> l.getExternalDbId().equals(healthleadsServiceAtLocation.getLocationId()))
+                .collect(Collectors.toSet());
 
-        Set<Location> serviceLocations = locations.stream().
-            filter(l -> l.getExternalDbId().equals(healthleadsServiceAtLocation.getLocationId()))
-            .collect(Collectors.toSet());
+            ServiceAtLocation serviceAtLocation = mapper.extractServiceAtLocation(healthleadsServiceAtLocation);
 
-        ServiceAtLocation serviceAtLocation = mapper.extractServiceAtLocation(healthleadsServiceAtLocation);
+            if (!serviceLocations.isEmpty()) {
+                serviceAtLocation.setLocation(serviceLocations.iterator().next());
+            }
 
-        if (!serviceLocations.isEmpty()) {
-            serviceAtLocation.setLocation(serviceLocations.iterator().next());
-        }
+            serviceAtLocations.add(serviceAtLocation.providerName(PROVIDER_NAME));
+        });
 
-        return serviceAtLocation.providerName(PROVIDER_NAME);
+        return serviceAtLocations;
     }
 
     private boolean isServiceBased(HealthleadsBaseData data) {

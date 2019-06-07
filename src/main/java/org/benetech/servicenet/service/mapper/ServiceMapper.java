@@ -28,7 +28,7 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
 
     @Mapping(source = "organizationId", target = "organization")
     @Mapping(source = "programId", target = "program")
-    @Mapping(target = "location", ignore = true)
+    @Mapping(target = "locations", ignore = true)
     @Mapping(target = "regularSchedule", ignore = true)
     @Mapping(target = "holidaySchedule", ignore = true)
     @Mapping(target = "funding", ignore = true)

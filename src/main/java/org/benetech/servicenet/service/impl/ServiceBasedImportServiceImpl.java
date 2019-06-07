@@ -206,15 +206,17 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
 
     @Override
     @ConfidentialFilter
-    public void createOrUpdateServiceAtLocationForService(ServiceAtLocation serviceAtLocation, String providerName,
+    public void createOrUpdateServiceAtLocationsForService(Set<ServiceAtLocation> serviceAtLocations, String providerName,
         Service service, DataImportReport report) {
-        if (serviceAtLocation != null) {
-            serviceAtLocation.setSrvc(service);
+        if (serviceAtLocations != null) {
+            serviceAtLocations.forEach(serviceAtLocation -> {
+                serviceAtLocation.setSrvc(service);
 
-            serviceAtLocationImportService.createOrUpdateServiceAtLocationForService(
-                serviceAtLocation, providerName, service, report);
+                serviceAtLocationImportService.createOrUpdateServiceAtLocationForService(
+                    serviceAtLocation, providerName, service, report);
+            });
 
-            service.setLocation(serviceAtLocation);
+            service.setLocations(serviceAtLocations);
         }
     }
 

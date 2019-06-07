@@ -108,9 +108,9 @@ public class Service extends AbstractEntity implements Serializable {
     @JsonIgnoreProperties("services")
     private Program program;
 
-    @OneToOne(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc")
     @JsonIgnore
-    private ServiceAtLocation location;
+    private Set<ServiceAtLocation> locations;
 
     @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -255,11 +255,6 @@ public class Service extends AbstractEntity implements Serializable {
 
     public Service program(Program program) {
         this.program = program;
-        return this;
-    }
-
-    public Service location(ServiceAtLocation serviceAtLocation) {
-        this.location = serviceAtLocation;
         return this;
     }
 

@@ -43,6 +43,6 @@ public interface ServiceBasedImportService {
 
     void createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service, DataImportReport report);
 
-    void createOrUpdateServiceAtLocationForService(ServiceAtLocation serviceAtLocation, String providerName,
+    void createOrUpdateServiceAtLocationsForService(Set<ServiceAtLocation> serviceAtLocations, String providerName,
         Service service, DataImportReport report);
 }

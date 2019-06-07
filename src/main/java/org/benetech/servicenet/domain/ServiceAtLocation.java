@@ -36,8 +36,8 @@ public class ServiceAtLocation extends AbstractEntity implements Serializable {
     @Column(name = "description", columnDefinition = "clob")
     private String description;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @ManyToOne
+    @JoinColumn
     private Service srvc;
 
     @ManyToOne

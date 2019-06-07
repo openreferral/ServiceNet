@@ -93,10 +93,6 @@ public class ServiceResource {
     @GetMapping("/services")
     @Timed
     public List<ServiceDTO> getAllServices(@RequestParam(required = false) String filter) {
-        if ("location-is-null".equals(filter)) {
-            log.debug("REST request to get all Services where location is null");
-            return serviceService.findAllWhereLocationIsNull();
-        }
         if ("regularschedule-is-null".equals(filter)) {
             log.debug("REST request to get all Services where regularSchedule is null");
             return serviceService.findAllWhereRegularScheduleIsNull();

@@ -63,23 +63,6 @@ public class ServiceServiceImpl implements ServiceService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-
-    /**
-     * get all the services where Location is null.
-     *
-     * @return the list of entities
-     */
-    @Transactional(readOnly = true)
-    public List<ServiceDTO> findAllWhereLocationIsNull() {
-        log.debug("Request to get all services where Location is null");
-        return StreamSupport
-            .stream(serviceRepository.findAll().spliterator(), false)
-            .filter(service -> service.getLocation() == null)
-            .map(serviceMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-
     /**
      * get all the services where RegularSchedule is null.
      *
