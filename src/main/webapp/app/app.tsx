@@ -54,12 +54,13 @@ export class App extends React.Component<IAppProps> {
               isInProduction={this.props.isInProduction}
               isSwaggerEnabled={this.props.isSwaggerEnabled}
               userLogin={this.props.userLogin}
+              isSacramento={this.props.isSacramento}
             />
           </ErrorBoundary>
           <div className="container-fluid view-container" id="app-view-container">
             <Card className="jh-card" style={{ padding }}>
               <ErrorBoundary>
-                <AppRoutes isAdmin={this.props.isAdmin} />
+                <AppRoutes isAdmin={this.props.isAdmin} isSacramento={this.props.isSacramento} />
               </ErrorBoundary>
             </Card>
           </div>
@@ -74,6 +75,7 @@ const mapStateToProps = ({ authentication, applicationProfile, locale }: IRootSt
   currentLocale: locale.currentLocale,
   isAuthenticated: authentication.isAuthenticated,
   isAdmin: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.ADMIN]),
+  isSacramento: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.SACRAMENTO]),
   ribbonEnv: applicationProfile.ribbonEnv,
   isInProduction: applicationProfile.inProduction,
   isSwaggerEnabled: applicationProfile.isSwaggerEnabled,

@@ -19,6 +19,7 @@ import MultipleRecordView from './modules/conflicts/multiple/multiple-record-vie
 import DismissedMatches from './modules/conflicts/dismissed/dismissed-matches';
 import DismissedMatchView from './modules/conflicts/dismissed/dismissed-match-view';
 import { AboutUs } from 'app/modules/about-us/about-us';
+import Shelters from 'app/modules/shelter/shelters';
 
 // tslint:disable:space-in-parens
 const Account = Loadable({
@@ -32,7 +33,7 @@ const Admin = Loadable({
 });
 // tslint:enable
 
-const Routes = ({ isAdmin }) => (
+const Routes = ({ isAdmin, isSacramento }) => (
   <div className="view-routes">
     <ErrorBoundaryRoute path="/login" component={Login} />
     <Switch>
@@ -41,6 +42,7 @@ const Routes = ({ isAdmin }) => (
       <ErrorBoundaryRoute path="/activate/:key?" component={Activate} />
       <ErrorBoundaryRoute path="/reset/request" component={PasswordResetInit} />
       <ErrorBoundaryRoute path="/reset/finish/:key?" component={PasswordResetFinish} />
+      <PrivateRoute path="/shelters" component={Shelters} hasAnyAuthorities={[AUTHORITIES.SACRAMENTO]} isAdmin={isAdmin} />
       <PrivateRoute path="/admin" isAdmin={isAdmin} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <PrivateRoute path="/account" isAdmin={isAdmin} component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]} />
       <PrivateRoute path="/entity" isAdmin={isAdmin} component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]} />

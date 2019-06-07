@@ -5,6 +5,7 @@
     "menu": {
       "aboutUs": "About",
       "home": "Home",
+      "shelters": "Shelters",
       "upload": "Upload data",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
