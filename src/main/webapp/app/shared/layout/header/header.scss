@@ -121,3 +121,9 @@ Navbar styles
   text-decoration: underline;
   font-size: 0.875rem;
 }
+
+@media only screen and (max-width: 768px) {
+  .navbar-version {
+    display: none;
+  }
+}
