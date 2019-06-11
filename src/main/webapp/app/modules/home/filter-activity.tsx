@@ -4,6 +4,7 @@ import { Translate } from 'react-jhipster';
 import Select from 'react-select';
 import { IRootState } from 'app/shared/reducers';
 import { getPostalCodeList, getRegionList, getCityList, getPartnerList, updateActivityFilter } from './filter-activity.reducer';
+import ReactGA from 'react-ga';
 
 import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -53,6 +54,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   applyFilter = () => {
+    ReactGA.event({ category: 'UserActions', action: 'Applied Filter' });
     this.props.getActivityEntities().then(() => this.setState({ filtersChanged: false }));
   };
 

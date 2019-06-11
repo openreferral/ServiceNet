@@ -87,6 +87,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   };
 
   toggleFilter = () => {
+    ReactGA.event({ category: 'UserActions', action: 'Clicked Filter' });
     this.setState(prevState => ({
       filterCollapseExpanded: !prevState.filterCollapseExpanded
     }));
