@@ -183,7 +183,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                 <div>
                   <img src="content/images/homepage-network.svg" className="video-network-img" />
                 </div>
-                <h3 className="text-center">Connecting Comminities to Weave a Stronger Social Safety Net</h3>
+                <h3 className="text-center">Connecting Communities to Weave a Stronger Social Safety Net</h3>
                 <Button className="btn-black" onClick={this.toggle}>
                   <FontAwesomeIcon icon="play" size="lg" className="play-button-icon mr-1" />
                   Play Video
