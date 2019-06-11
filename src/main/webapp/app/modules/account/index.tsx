@@ -8,11 +8,11 @@ import Settings from './settings/settings';
 import Password from './password/password';
 import Sessions from './sessions/sessions';
 
-const Routes = ({ match }) => (
+const Routes = ({ match, isAdmin }) => (
   <div>
     <ErrorBoundaryRoute path={`${match.url}/settings`} component={Settings} />
     <ErrorBoundaryRoute path={`${match.url}/password`} component={Password} />
-    <PrivateRoute path={`${match.url}/sessions`} component={Sessions} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
+    <PrivateRoute path={`${match.url}/sessions`} isAdmin={isAdmin} component={Sessions} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
   </div>
 );
 
