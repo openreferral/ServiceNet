@@ -3,7 +3,7 @@ import './about-us.scss';
 import React from 'react';
 
 export const AboutUs = props => (
-  <div className="m-5">
+  <div className="m-5 text-justify">
     <h3>Service Net</h3>
     <p>
       Benetech Service Net is an innovative initiative that will make the social safety net more visible and efficient. A collaborative data
