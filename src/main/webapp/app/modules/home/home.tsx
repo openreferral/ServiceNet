@@ -258,7 +258,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                     <div className="text-center">
                       {!_.isEmpty(activityList) ? activityList.length : 0} / {this.props.totalItems}
                     </div>
-                    <Progress color="info" value={(!_.isEmpty(activityList) ? activityList.length : 0 / this.props.totalItems) * 100} />
+                    <Progress color="info" value={(!_.isEmpty(activityList) ? activityList.length / this.props.totalItems : 0) * 100} />
                   </Col>
                   <Col className="col-auto">
                     <SortActivity
