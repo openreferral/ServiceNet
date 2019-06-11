@@ -1,6 +1,8 @@
 import React from 'react';
 
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
+import PrivateRoute from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 
 import Settings from './settings/settings';
 import Password from './password/password';
@@ -10,7 +12,7 @@ const Routes = ({ match }) => (
   <div>
     <ErrorBoundaryRoute path={`${match.url}/settings`} component={Settings} />
     <ErrorBoundaryRoute path={`${match.url}/password`} component={Password} />
-    <ErrorBoundaryRoute path={`${match.url}/sessions`} component={Sessions} />
+    <PrivateRoute path={`${match.url}/sessions`} component={Sessions} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
   </div>
 );
 
