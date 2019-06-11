@@ -96,9 +96,37 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
     return entityClass.charAt(0).toLowerCase() + entityClass.slice(1) + fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
   }
 
+  getBrowserName = () => {
+    const aKeys = ['MSIE', 'Firefox', 'Safari', 'Chrome', 'Opera'];
+    const sUsrAg = navigator.userAgent;
+    let nIdx = aKeys.length - 1;
+
+    for (nIdx; nIdx > -1 && sUsrAg.indexOf(aKeys[nIdx]) === -1; nIdx--);
+
+    return aKeys[nIdx];
+  };
+
   copyToClipboard = text => () => {
     ReactGA.event({ category: 'UserActions', action: 'Copied Field' });
-    (navigator as INavigator).clipboard.writeText(text).then(() => this.setState({ clipboardText: translate('multiRecordView.copied') }));
+
+    const browserName = this.getBrowserName();
+
+    if (browserName === 'MSIE' || browserName === 'Safari') {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      if (successful) {
+        this.setState({ clipboardText: translate('multiRecordView.copied') });
+      }
+
+      document.body.removeChild(textArea);
+    } else {
+      (navigator as INavigator).clipboard.writeText(text).then(() => this.setState({ clipboardText: translate('multiRecordView.copied') }));
+    }
   };
 
   render() {
