@@ -69,6 +69,7 @@ exports[`Header Renders a Header component in dev profile with LoadingBar, Navba
           onClick={[Function]}
         />
         <Component
+          isAdmin={true}
           isAuthenticated={true}
           userLogin="user"
         />
@@ -135,6 +136,7 @@ exports[`Header Renders a Header component in prod profile with LoadingBar, Navb
           onClick={[Function]}
         />
         <Component
+          isAdmin={true}
           isAuthenticated={true}
           userLogin="user"
         />
