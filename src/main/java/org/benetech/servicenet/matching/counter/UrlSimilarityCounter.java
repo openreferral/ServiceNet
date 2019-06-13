@@ -13,7 +13,8 @@ public class UrlSimilarityCounter extends AbstractSimilarityCounter<String> {
     public static final String WWW = "WWW.";
     public static final String HTTPS = "HTTPS://";
     public static final String HTTP = "HTTP://";
-
+    public static final String TRAILING = "/";
+    
     @Value("${similarity-ratio.weight.url.equal-upper-cased}")
     private float uppercasedWeight;
 
@@ -43,6 +44,9 @@ public class UrlSimilarityCounter extends AbstractSimilarityCounter<String> {
         }
         if (result.toUpperCase(Locale.ROOT).startsWith(WWW)) {
             result = result.substring(WWW.length());
+        }
+        if (result.toUpperCase(Locale.ROOT).endsWith(TRAILING)) {
+            result = result.substring(0, result.length() - 1);
         }
         return result;
     }

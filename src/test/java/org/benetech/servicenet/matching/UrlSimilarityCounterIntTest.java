@@ -32,5 +32,6 @@ public class UrlSimilarityCounterIntTest {
     @Test
     public void shouldReturnMaxRatioForSameNormalized() {
         assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("www.one.com", "https://one.com", null), PRECISION);
-    }
+        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("http://www.one.com/", "https://one.com", null), PRECISION);
+        }
 }
