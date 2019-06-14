@@ -6,10 +6,10 @@ import { OrganizationDetails } from '../../shared/components/organization-detail
 import { LocationsDetails } from '../../shared/components/location/locations-details';
 import { ServicesDetails } from '../../shared/components/service/services-details';
 import { ContactsDetails } from '../../shared/components/contact/contacts-details';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 
 export interface IMultipleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
-  activity: IActivity;
+  activity: IActivityRecord;
   exclusions: any[];
   isBaseRecord: boolean;
   showClipboard: boolean;
@@ -21,9 +21,9 @@ export class Details extends React.Component<IMultipleRecordViewProp> {
     return (
       <div>
         <OrganizationDetails {...this.props} sideSection={null} columnSize={columnSize} />
-        <LocationsDetails {...this.props} locations={this.props.activity.record.locations} columnSize={columnSize} />
-        <ServicesDetails {...this.props} services={this.props.activity.record.services} columnSize={columnSize} />
-        <ContactsDetails {...this.props} contacts={this.props.activity.record.contacts} columnSize={columnSize} />
+        <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} />
+        <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} />
+        <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} />
       </div>
     );
   }

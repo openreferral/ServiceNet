@@ -1,13 +1,13 @@
 import React from 'react';
 import '../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from './additional-details';
 import { ILanguage } from 'app/shared/model/language.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ILanguagesDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   langs: ILanguage[];
   showClipboard: boolean;
 }

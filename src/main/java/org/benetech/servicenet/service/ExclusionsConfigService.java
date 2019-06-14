@@ -1,8 +1,11 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.ExclusionsConfig;
+import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -27,7 +30,9 @@ public interface ExclusionsConfigService {
      */
     List<ExclusionsConfigDTO> findAll();
 
-    List<ExclusionsConfigDTO> findAllBySystemAccountNameIn(Set<String> accountNames);
+    List<ExclusionsConfig> findAllBySystemAccountIdIn(Set<UUID> accountIds);
+
+    Map<UUID, Set<FieldExclusion>> getAllBySystemAccountId();
 
     /**
      * Get the "id" exclusionsConfig.
@@ -37,7 +42,7 @@ public interface ExclusionsConfigService {
      */
     Optional<ExclusionsConfigDTO> findOne(UUID id);
 
-    Optional<ExclusionsConfigDTO> findOneBySystemAccountName(String accountName);
+    Optional<ExclusionsConfig> findOneBySystemAccountId(UUID accountId);
 
     /**
      * Delete the "id" exclusionsConfig.

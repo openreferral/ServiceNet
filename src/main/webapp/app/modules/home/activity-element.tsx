@@ -8,8 +8,8 @@ import { APP_DATE_FORMAT } from 'app/config/constants';
 
 const ActivityElement = props => {
   const maxConflicts = 3;
-  const conflictsToDisplay = props.activity.record.conflicts.slice(0, maxConflicts);
-  const areAllDisplayed = props.activity.record.conflicts.length <= maxConflicts;
+  const conflictsToDisplay = props.activity.conflicts.slice(0, maxConflicts);
+  const areAllDisplayed = props.activity.conflicts.length <= maxConflicts;
 
   return (
     <Row className="activity-row">
@@ -17,13 +17,7 @@ const ActivityElement = props => {
         <CardGroup>
           <Card className="activity-card">
             <CardBody className="activity-card-body">
-              <CardTitle className="activity-left-card-title">{props.activity.record.organization.name}</CardTitle>
-              {props.activity.record.organization.locationName && (
-                <CardTitle className="activity-left-card-title">
-                  <FontAwesomeIcon icon="map-marker-alt" className="mr-1" />
-                  {props.activity.record.organization.locationName}
-                </CardTitle>
-              )}
+              <CardTitle className="activity-left-card-title">{props.activity.organizationName}</CardTitle>
             </CardBody>
           </Card>
           <Card className="activity-right-card">
@@ -40,7 +34,7 @@ const ActivityElement = props => {
                 </CardTitle>
               ))}
               <div className="info-container">
-                {areAllDisplayed ? <div /> : `and ${props.activity.record.conflicts.length - maxConflicts} more...`}
+                {areAllDisplayed ? <div /> : `and ${props.activity.conflicts.length - maxConflicts} more...`}
                 {conflictsToDisplay.length > 0 && (
                   <CardText className="activity-right-card-info">
                     Last updated <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />

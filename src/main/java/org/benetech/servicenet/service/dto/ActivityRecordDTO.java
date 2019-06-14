@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.benetech.servicenet.service.comparator.ConflictsComparator;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -14,9 +15,11 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecordDTO implements Serializable {
+public class ActivityRecordDTO implements Serializable {
 
     private OrganizationDTO organization;
+
+    private ZonedDateTime lastUpdated;
 
     private Set<LocationRecordDTO> locations;
 

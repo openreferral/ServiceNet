@@ -41,7 +41,7 @@ export class DismissedMatchView extends React.Component<IDismissedMatchViewProp>
         <Row>
           {baseRecord ? (
             <Col sm="6">
-              <h2>{baseRecord.record.organization.name}</h2>
+              <h2>{baseRecord.organization.name}</h2>
               <h4 className="from">
                 <Translate contentKey="dismissedMatches.yourData" />
               </h4>
@@ -49,16 +49,16 @@ export class DismissedMatchView extends React.Component<IDismissedMatchViewProp>
                 <Translate contentKey="dismissedMatches.lastUpdated" />
                 <TextFormat value={baseRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
               </h5>
-              <Details activity={baseRecord} {...this.props} exclusions={baseRecord.record.exclusions} isBaseRecord showClipboard={false} />
+              <Details activity={baseRecord} {...this.props} exclusions={baseRecord.exclusions} isBaseRecord showClipboard={false} />
             </Col>
           ) : (
             loading
           )}
           {partnerRecord ? (
             <Col sm="6">
-              <h2>{partnerRecord.record.organization.name}</h2>
+              <h2>{partnerRecord.organization.name}</h2>
               <h4 className="from">
-                <Translate contentKey="dismissedMatches.from" interpolate={{ name: partnerRecord.record.organization.accountName }} />
+                <Translate contentKey="dismissedMatches.from" interpolate={{ name: partnerRecord.organization.accountName }} />
               </h4>
               <h5>
                 <Translate contentKey="dismissedMatches.lastUpdated" />

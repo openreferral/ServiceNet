@@ -292,7 +292,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                   activityList.map((activity, i) => (
                     <Link
                       key={`linkToActivity${i + 1}`}
-                      to={`/single-record-view/${activity.record.organization.id}`}
+                      to={`/single-record-view/${activity.organizationId}`}
                       className="alert-link"
                       onClick={this.handleRecordClick}
                     >

@@ -3,7 +3,7 @@ import { Col, Row, Button } from 'reactstrap';
 import '../../shared-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { OpeningHoursDetails } from '../opening-hours-details';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdditionalDetails } from '../additional-details';
@@ -20,7 +20,7 @@ import { PhonesDetails } from '../phone/phones-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   record: IServiceRecord;
   servicesCount: string;
   changeRecord: any;

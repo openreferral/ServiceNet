@@ -80,7 +80,7 @@ public class Organization extends AbstractEntity implements Serializable {
     @Column(name = "external_db_id")
     private String externalDbId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(unique = true)
     private Organization replacedBy;
 

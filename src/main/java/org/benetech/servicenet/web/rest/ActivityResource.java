@@ -5,6 +5,7 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
+import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.FiltersActivityDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class ActivityResource {
 
     @GetMapping("/activities/{orgId}")
     @Timed
-    public ResponseEntity<ActivityDTO> getActivityDetails(@PathVariable UUID orgId) {
+    public ResponseEntity<ActivityRecordDTO> getActivityDetails(@PathVariable UUID orgId) {
         return activityService.getOneByOrganizationId(orgId)
             .map(r -> ResponseEntity.ok().body(r))
             .orElse(ResponseEntity.badRequest()

@@ -22,10 +22,6 @@ export interface IOrganization {
   sourceDocumentId?: number;
   accountName?: string;
   accountId?: number;
-  fundingId?: number;
-  programs?: IProgram[];
-  services?: IService[];
-  locations?: ILocation[];
 }
 
 export const defaultValue: Readonly<IOrganization> = {

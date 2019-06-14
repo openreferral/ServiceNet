@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.ExclusionsConfig;
+import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.repository.ExclusionsConfigRepository;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -55,11 +57,14 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
     }
 
     @Override
-    public List<ExclusionsConfigDTO> findAllBySystemAccountNameIn(Set<String> accountNames) {
-        return exclusionsConfigRepository.findAllBySystemAccountNameIn(accountNames)
-            .stream()
-            .map(exclusionsConfigMapper::toDto)
-            .collect(Collectors.toList());
+    public List<ExclusionsConfig> findAllBySystemAccountIdIn(Set<UUID> accountIds) {
+        return exclusionsConfigRepository.findAllBySystemAccountIdIn(accountIds);
+    }
+
+    @Override
+    public Map<UUID, Set<FieldExclusion>> getAllBySystemAccountId() {
+        return exclusionsConfigRepository.findAll().stream().collect(Collectors.toMap(config -> config.getAccount().getId(),
+            ExclusionsConfig::getExclusions));
     }
 
     @Override
@@ -71,9 +76,8 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
     }
 
     @Override
-    public Optional<ExclusionsConfigDTO> findOneBySystemAccountName(String accountName) {
-        return exclusionsConfigRepository.findOneBySystemAccountName(accountName)
-            .map(exclusionsConfigMapper::toDto);
+    public Optional<ExclusionsConfig> findOneBySystemAccountId(UUID accountId) {
+        return exclusionsConfigRepository.findOneBySystemAccountId(accountId);
     }
 
     @Override

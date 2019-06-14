@@ -1,12 +1,12 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { SingleLocationDetails } from './single-location-details';
 import { ILocationRecord } from 'app/shared/model/location-record.model';
 
 export interface ILocationsDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   columnSize: number;
   locations: ILocationRecord[];
   showClipboard: boolean;

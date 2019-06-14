@@ -1,13 +1,13 @@
 import React from 'react';
 import '../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from './additional-details';
 import { IHolidaySchedule } from 'app/shared/model/holiday-schedule.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IHolidayScheduleDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   schedule: IHolidaySchedule;
   showClipboard: boolean;
 }

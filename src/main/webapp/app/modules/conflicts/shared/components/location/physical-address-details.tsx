@@ -1,13 +1,13 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IPhysicalAddress } from 'app/shared/model/physical-address.model';
 import { AdditionalDetails } from '../additional-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IPhysicalAddressDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   address: IPhysicalAddress;
   showClipboard: boolean;
 }

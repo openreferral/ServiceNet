@@ -124,4 +124,5 @@
     <include file="config/liquibase/changelog/20190530112159_insert_initial_Options.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190606153145_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190606150430_insert_Sacramento_profile.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190612171323_changelog.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

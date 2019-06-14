@@ -2,11 +2,11 @@ import React from 'react';
 import { Col, Row } from 'reactstrap';
 import '../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from './additional-details';
 
 export interface IOrganizationDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   sideSection: any;
   columnSize: number;
   showClipboard: boolean;
@@ -21,7 +21,7 @@ export class OrganizationDetails extends React.Component<IOrganizationDetailsPro
 
   render() {
     const { columnSize, sideSection, showClipboard } = this.props;
-    const { organization } = this.props.activity.record;
+    const { organization } = this.props.activity;
 
     const fields = [
       this.getTextField(organization, 'name'),

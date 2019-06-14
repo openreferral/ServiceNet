@@ -1,13 +1,13 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from '../additional-details';
 import { IPaymentAccepted } from 'app/shared/model/payment-accepted.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IPaymentsAcceptedDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   payments: IPaymentAccepted[];
   showClipboard: boolean;
 }

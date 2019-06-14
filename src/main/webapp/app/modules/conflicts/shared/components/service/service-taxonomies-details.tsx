@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from '../additional-details';
 import { Translate } from 'react-jhipster';
 import { Badge } from 'reactstrap';
@@ -9,7 +9,7 @@ import { IServiceTaxonomy } from 'app/shared/model/service-taxonomy.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   taxonomies: IServiceTaxonomy[];
   showClipboard: boolean;
 }

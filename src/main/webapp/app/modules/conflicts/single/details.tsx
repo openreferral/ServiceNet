@@ -2,7 +2,8 @@ import React from 'react';
 import './single-record-view.scss';
 import { connect } from 'react-redux';
 import { RouteComponentProps, Link } from 'react-router-dom';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
+import { IOrganizationMatch } from 'app/shared/model//organization-match.model';
 import { OrganizationDetails } from '../shared/components/organization-details';
 import { LocationsDetails } from '../shared/components/location/locations-details';
 import { ServicesDetails } from '../shared/components/service/services-details';
@@ -12,7 +13,9 @@ import { Translate } from 'react-jhipster';
 import ReactGA from 'react-ga';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
-  activity: IActivity;
+  activity: IActivityRecord;
+  organizationMatches?: IOrganizationMatch[];
+  dismissedMatches?: IOrganizationMatch[];
   isBaseRecord: boolean;
   showClipboard: boolean;
   orgId: string;
@@ -40,8 +43,8 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
   };
 
   render() {
-    const { activity } = this.props;
-    const firstMatch = activity.organizationMatches.length !== 0 ? activity.organizationMatches[0] : null;
+    const { activity, organizationMatches, dismissedMatches } = this.props;
+    const firstMatch = organizationMatches.length !== 0 ? organizationMatches[0] : null;
 
     const sideSection = firstMatch ? (
       <Col sm="3">
@@ -51,8 +54,8 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
               <Translate contentKey="singleRecordView.details.compare.title" />
             </h4>
             <p className="jumbotron-header-text">
-              {activity.organizationMatches.length}
-              {activity.organizationMatches.length === 1 ? (
+              {organizationMatches.length}
+              {organizationMatches.length === 1 ? (
                 <Translate contentKey="singleRecordView.details.compare.singleHeader" />
               ) : (
                 <Translate contentKey="singleRecordView.details.compare.multiHeader" />
@@ -71,15 +74,15 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
             </p>
             <div>
               <Link to={`/multi-record-view/${firstMatch.organizationRecordId}`} onClick={this.handleMatchClick}>
-                {activity.organizationMatches.length === 1
+                {organizationMatches.length === 1
                   ? `${firstMatch.partnerVersionName}`
-                  : `${firstMatch.partnerVersionName} +${activity.organizationMatches.length - 1}`}
+                  : `${firstMatch.partnerVersionName} +${organizationMatches.length - 1}`}
               </Link>
             </div>
           </div>
         </Jumbotron>
       </Col>
-    ) : !activity.dismissedMatches.length ? null : (
+    ) : !dismissedMatches.length ? null : (
       <div>
         <Link to={`/dismissed-matches/${this.props.orgId}`}>
           <Translate contentKey="singleRecordView.details.compare.viewDismissedMatches" />
@@ -91,9 +94,9 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
     return (
       <div>
         <OrganizationDetails {...this.props} sideSection={sideSection} columnSize={columnSize} />
-        <LocationsDetails {...this.props} locations={this.props.activity.record.locations} columnSize={columnSize} />
-        <ServicesDetails {...this.props} services={this.props.activity.record.services} columnSize={columnSize} />
-        <ContactsDetails {...this.props} contacts={this.props.activity.record.contacts} columnSize={columnSize} />
+        <LocationsDetails {...this.props} locations={activity.locations} columnSize={columnSize} />
+        <ServicesDetails {...this.props} services={activity.services} columnSize={columnSize} />
+        <ContactsDetails {...this.props} contacts={activity.contacts} columnSize={columnSize} />
       </div>
     );
   }

@@ -3,7 +3,7 @@ import { Col, Row, Button } from 'reactstrap';
 import '../../shared-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { PhysicalAddressDetails } from './physical-address-details';
 import { PostalAddressDetails } from './postal-address-details';
 import { OpeningHoursDetails } from '../opening-hours-details';
@@ -15,7 +15,7 @@ import { HolidayScheduleDetails } from '../holiday-schedule-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   record: ILocationRecord;
   locationsCount: string;
   changeRecord: any;
