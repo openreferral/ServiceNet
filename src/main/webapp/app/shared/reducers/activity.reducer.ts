@@ -8,10 +8,6 @@ import _ from 'lodash';
 
 export const ACTION_TYPES = {
   FETCH_ACTIVITY_LIST: 'activity/FETCH_ACTIVITY_LIST',
-  FETCH_ACTIVITY: 'activity/FETCH_ACTIVITY',
-  CREATE_ACTIVITY: 'activity/CREATE_ACTIVITY',
-  UPDATE_ACTIVITY: 'activity/UPDATE_ACTIVITY',
-  DELETE_ACTIVITY: 'activity/DELETE_ACTIVITY',
   RESET: 'activity/RESET'
 };
 
@@ -33,7 +29,6 @@ export type ActivityState = Readonly<typeof initialState>;
 export default (state: ActivityState = initialState, action): ActivityState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_ACTIVITY_LIST):
-    case REQUEST(ACTION_TYPES.FETCH_ACTIVITY):
       return {
         ...state,
         errorMessage: null,
@@ -41,7 +36,6 @@ export default (state: ActivityState = initialState, action): ActivityState => {
         loading: true
       };
     case FAILURE(ACTION_TYPES.FETCH_ACTIVITY_LIST):
-    case FAILURE(ACTION_TYPES.FETCH_ACTIVITY):
       return {
         ...state,
         loading: false,
@@ -57,12 +51,6 @@ export default (state: ActivityState = initialState, action): ActivityState => {
         loading: false,
         totalItems: action.payload.headers['x-total-count'],
         entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links)
-      };
-    case SUCCESS(ACTION_TYPES.FETCH_ACTIVITY):
-      return {
-        ...state,
-        loading: false,
-        entity: action.payload.data
       };
     case ACTION_TYPES.RESET:
       return {
@@ -88,14 +76,6 @@ export const getEntities = (search, page, size, sort, filter) => {
   return {
     type: ACTION_TYPES.FETCH_ACTIVITY_LIST,
     payload: axios.post<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`, filterDataToSend)
-  };
-};
-
-export const getEntity: ICrudGetAction<IActivity> = id => {
-  const requestUrl = `${apiUrl}/${id}`;
-  return {
-    type: ACTION_TYPES.FETCH_ACTIVITY,
-    payload: axios.get<IActivity>(requestUrl)
   };
 };
 

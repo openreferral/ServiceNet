@@ -2,13 +2,13 @@ import React from 'react';
 import '../shared-record-view.scss';
 import { connect } from 'react-redux';
 import InputField from './input-field';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Translate } from 'react-jhipster';
 import { Collapse } from 'reactstrap';
 
 export interface IAdditionalDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   fields: any[];
   entityClass: string;
   customHeader: any;

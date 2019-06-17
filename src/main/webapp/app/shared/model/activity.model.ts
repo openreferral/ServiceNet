@@ -1,13 +1,11 @@
 import { IConflict } from 'app/shared/model//conflict.model';
-import { IOrganization } from 'app/shared/model//organization.model';
-import { IOrganizationMatch } from 'app/shared/model//organization-match.model';
 import { Moment } from 'moment';
 
 export interface IActivity {
+  organizationId?: String;
+  organizationName?: String;
   lastUpdated?: Moment;
-  record?: any;
-  organizationMatches?: IOrganizationMatch[];
-  dismissedMatches?: IOrganizationMatch[];
+  conflicts?: IConflict[];
 }
 
 export const defaultValue: Readonly<IActivity> = {};

@@ -1,24 +1,22 @@
 package org.benetech.servicenet.service.factory.records;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
-import org.benetech.servicenet.service.FieldExclusionService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.ActivityDTO;
+import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
-import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
-import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.factory.records.builder.RecordBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -32,9 +30,6 @@ public class RecordFactory {
     private ExclusionsConfigService exclusionsConfigService;
 
     @Autowired
-    private FieldExclusionService fieldExclusionService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -43,109 +38,83 @@ public class RecordFactory {
     @Autowired
     private RecordBuilder recordBuilder;
 
-    public Optional<RecordDTO> getFilteredResult(UUID resourceId, Organization organization) {
-        List<ConflictDTO> conflictDTOS = getBaseConflicts(resourceId);
-        List<ConflictDTO> filteredByPartners = filterWithPartnersConfigs(conflictDTOS);
-        Set<FieldExclusion> exclusions = getExclusions(organization);
-        return filterExclusions(organization, filteredByPartners, exclusions);
+    public Optional<ActivityRecordDTO> getFilteredRecord(ActivityInfo info) {
+        List<ConflictDTO> conflicts = getBaseConflicts(info.getId());
+
+        Map<UUID, Set<FieldExclusion>> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
+
+        Set<FieldExclusion> baseExclusions = getBaseExclusions(info.getAccountId(), exclusionsMap);
+        List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, baseExclusions, exclusionsMap);
+
+        return filterRecord(info, filteredConflicts, baseExclusions);
+    }
+
+    public ActivityDTO getFilteredResult(ActivityInfo info, Map<UUID, Set<FieldExclusion>> exclusionsMap) {
+        Set<FieldExclusion> baseExclusions = exclusionsMap.get(info.getAccountId());
+
+        List<ConflictDTO> conflicts = getBaseConflicts(info.getId());
+        List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, baseExclusions, exclusionsMap);
+
+        return ActivityDTO.builder()
+            .organizationId(info.getId())
+            .organizationName(info.getName())
+            .lastUpdated(info.getRecent())
+            .conflicts(filteredConflicts)
+            .build();
     }
 
     private List<ConflictDTO> getBaseConflicts(UUID resourceId) {
         return conflictService.findAllPendingWithResourceId(resourceId);
     }
 
-    private List<ConflictDTO> filterWithPartnersConfigs(List<ConflictDTO> conflictDTOS) {
-        Set<String> conflictingProviders = conflictDTOS.stream()
-            .map(ConflictDTO::getPartnerName)
-            .collect(Collectors.toSet());
+    private List<ConflictDTO> filterConflicts(List<ConflictDTO> conflicts, Set<FieldExclusion> baseExclusions,
+        Map<UUID, Set<FieldExclusion>> exclusionsMap) {
 
-        if (CollectionUtils.isNotEmpty(conflictingProviders)) {
-            List<ExclusionsConfigDTO> configs = exclusionsConfigService.findAllBySystemAccountNameIn(conflictingProviders);
-
-            for (ExclusionsConfigDTO config : configs) {
-                filterConflictsByConfig(conflictDTOS, config);
-            }
-        }
-
-        return conflictDTOS;
+        return conflicts.stream()
+            .filter(conf -> isNotExcluded(conf, baseExclusions)
+                && isNotExcluded(conf, exclusionsMap.get(conf.getPartnerId())))
+            .collect(Collectors.toList());
     }
 
-    private Set<FieldExclusion> getExclusions(Organization organization) {
-        Set<FieldExclusion> exclusions = new HashSet<>();
+    private boolean isNotExcluded(ConflictDTO conflict, Set<FieldExclusion> exclusions) {
+        return exclusions == null || exclusions.stream().noneMatch(x ->
+            x.getEntity().equals(conflict.getEntityPath())
+                && x.getExcludedFields().contains(conflict.getFieldName()));
+    }
 
-        exclusions.addAll(getBaseExclusions(organization));
-        exclusions.addAll(getPartnerExclusions());
+    private Set<FieldExclusion> getBaseExclusions(UUID accountId, Map<UUID, Set<FieldExclusion>> exclusionsMap) {
+        Set<FieldExclusion> exclusions = userService.getCurrentSystemAccount()
+            .map(systemAccount -> exclusionsMap.get(systemAccount.getId()))
+            .orElseGet(HashSet::new);
+
+        Set<FieldExclusion> baseExclusions = exclusionsMap.get(accountId);
+
+        if (baseExclusions != null) {
+            exclusions.addAll(baseExclusions);
+        }
 
         return exclusions;
     }
 
-    private Set<FieldExclusion> getBaseExclusions(Organization organization) {
-        return getOrganizationConfig(organization.getAccount())
-            .map(conf -> getExclusions(conf.getId()))
-            .orElseGet(HashSet::new);
-    }
-
-    private Set<FieldExclusion> getPartnerExclusions() {
-        return getCurrentUserConfig()
-            .map(conf -> getExclusions(conf.getId()))
-            .orElseGet(HashSet::new);
-    }
-
-    private Optional<ExclusionsConfigDTO> getCurrentUserConfig() {
-        return userService.getCurrentSystemAccount()
-            .flatMap(this::getOrganizationConfig);
-    }
-
-    private Optional<ExclusionsConfigDTO> getOrganizationConfig(SystemAccount account) {
-        return exclusionsConfigService.findOneBySystemAccountName(
-            account.getName());
-    }
-
-    private void filterConflictsByConfig(List<ConflictDTO> conflictDTOS, ExclusionsConfigDTO config) {
-        Set<FieldExclusion> excludedFields = fieldExclusionService.findAllByConfigId(config.getId());
-        Iterator<ConflictDTO> conflictsIterator = conflictDTOS.iterator();
-        while (conflictsIterator.hasNext()) {
-            filterConflictByConfig(config, excludedFields, conflictsIterator);
-        }
-    }
-
-    private void filterConflictByConfig(ExclusionsConfigDTO config, Set<FieldExclusion> excludedFields,
-                                        Iterator<ConflictDTO> conflictsIterator) {
-        ConflictDTO conflictDTO = conflictsIterator.next();
-        for (FieldExclusion exclusion : excludedFields) {
-            if (shouldConflictBeFiltered(config, conflictDTO, exclusion)) {
-                conflictsIterator.remove();
-            }
-        }
-    }
-
-    private boolean shouldConflictBeFiltered(ExclusionsConfigDTO config, ConflictDTO conflictDTO, FieldExclusion exclusion) {
-        return config.getAccountName().equals(conflictDTO.getPartnerName())
-            && exclusion.getEntity().equals(conflictDTO.getEntityPath())
-            && exclusion.getExcludedFields().contains(conflictDTO.getFieldName());
-    }
-
-    private Optional<RecordDTO> filterExclusions(Organization organization, List<ConflictDTO> conflictDTOS,
-                                                 Set<FieldExclusion> exclusions) {
+    private Optional<ActivityRecordDTO> filterRecord(ActivityInfo info, List<ConflictDTO> conflicts,
+        Set<FieldExclusion> exclusions) {
         try {
-            return Optional.of(buildRecord(organization, conflictDTOS, exclusions));
+            return Optional.of(buildRecord(info, conflicts, exclusions));
         } catch (IllegalAccessException e) {
             log.error("Unable to filter record.");
             return Optional.empty();
         }
     }
 
-    private Set<FieldExclusion> getExclusions(UUID configId) {
-        return new HashSet<>(fieldExclusionService.findAllByConfigId(configId));
-    }
+    private ActivityRecordDTO buildRecord(ActivityInfo info, List<ConflictDTO> conflictDTOS,
+        Set<FieldExclusion> exclusions) throws IllegalAccessException {
 
-    private RecordDTO buildRecord(Organization organization, List<ConflictDTO> conflictDTOS,
-                                  Set<FieldExclusion> allExclusions) throws IllegalAccessException {
-        if (allExclusions.isEmpty()) {
-            return recordBuilder.buildBasicRecord(organization, conflictDTOS);
+        Organization org = info.getOrganization();
+
+        if (exclusions.isEmpty()) {
+            return recordBuilder.buildBasicRecord(org, info.getLastUpdated(), conflictDTOS);
         } else {
-            return recordBuilder.buildFilteredRecord(
-                organization, conflictDTOS, getBaseExclusions(organization), allExclusions);
+            return recordBuilder.buildFilteredRecord(org, info.getLastUpdated(), conflictDTOS, exclusions);
         }
     }
 }

@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'reactstrap';
 import Tabs from './tabs';
-import { getBaseRecord } from '../shared/shared-record-view.reducer';
+import { getBaseRecord, getMatches } from '../shared/shared-record-view.reducer';
 import { RouteComponentProps } from 'react-router-dom';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
@@ -23,15 +23,16 @@ export class SingleRecordView extends React.Component<ISingleRecordViewProp, ISi
 
   componentDidMount() {
     this.props.getBaseRecord(this.props.orgId);
+    this.props.getMatches(this.props.orgId);
   }
 
   render() {
-    const { activityDetails } = this.props;
-    const content = activityDetails ? (
+    const { activityRecord } = this.props;
+    const content = activityRecord ? (
       <Row>
         <Col>
-          <h2>{activityDetails.record.organization.name}</h2>
-          <Tabs activity={activityDetails} {...this.props} />
+          <h2>{activityRecord.organization.name}</h2>
+          <Tabs activity={activityRecord} {...this.props} />
         </Col>
       </Row>
     ) : (
@@ -48,10 +49,12 @@ export class SingleRecordView extends React.Component<ISingleRecordViewProp, ISi
 
 const mapStateToProps = (storeState, { match }: ISingleRecordViewState) => ({
   orgId: match.params.orgId,
-  activityDetails: storeState.sharedRecordView.baseRecord
+  activityRecord: storeState.sharedRecordView.baseRecord,
+  organizationMatches: storeState.sharedRecordView.matches,
+  dismissedMatches: storeState.sharedRecordView.dismissedMatches
 });
 
-const mapDispatchToProps = { getBaseRecord };
+const mapDispatchToProps = { getBaseRecord, getMatches };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

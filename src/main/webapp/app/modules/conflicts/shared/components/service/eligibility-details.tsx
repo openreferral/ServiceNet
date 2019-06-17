@@ -1,13 +1,13 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from '../additional-details';
 import { IEligibility } from 'app/shared/model/eligibility.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IEligibilityDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   eligibility: IEligibility;
   showClipboard: boolean;
 }

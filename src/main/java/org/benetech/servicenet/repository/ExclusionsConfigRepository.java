@@ -19,9 +19,9 @@ import java.util.UUID;
 @Repository
 public interface ExclusionsConfigRepository extends JpaRepository<ExclusionsConfig, UUID> {
 
-    @Query("SELECT config FROM ExclusionsConfig config where config.account.name = :accountName")
-    Optional<ExclusionsConfig> findOneBySystemAccountName(@Param("accountName") String accountName);
+    @Query("SELECT config FROM ExclusionsConfig config where config.account.id = :accountId")
+    Optional<ExclusionsConfig> findOneBySystemAccountId(@Param("accountId") UUID accountId);
 
-    @Query("SELECT config FROM ExclusionsConfig config where config.account.name in :accountNames")
-    List<ExclusionsConfig> findAllBySystemAccountNameIn(@Param("accountNames") Set<String> accountNames);
+    @Query("SELECT config FROM ExclusionsConfig config where config.account.id in :accountIds")
+    List<ExclusionsConfig> findAllBySystemAccountIdIn(@Param("accountIds") Set<UUID> accountIds);
 }

@@ -3,14 +3,14 @@ import { Col, Row, Button } from 'reactstrap';
 import '../../shared-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdditionalDetails } from '../additional-details';
 import { IPhone } from 'app/shared/model/phone.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface ISinglePhoneDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   phone: IPhone;
   phonesCount: string;
   changeRecord: any;

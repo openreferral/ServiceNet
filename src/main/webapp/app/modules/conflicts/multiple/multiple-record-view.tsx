@@ -128,7 +128,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
         <Row>
           {baseRecord ? (
             <Col sm="6">
-              <h2>{baseRecord.record.organization.name}</h2>
+              <h2>{baseRecord.organization.name}</h2>
               <h4 className="from">
                 <Translate contentKey="multiRecordView.yourData" />
               </h4>
@@ -136,7 +136,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 <Translate contentKey="multiRecordView.lastUpdated" />
                 <TextFormat value={baseRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
               </h5>
-              <Details activity={baseRecord} {...this.props} exclusions={baseRecord.record.exclusions} isBaseRecord showClipboard={false} />
+              <Details activity={baseRecord} {...this.props} exclusions={baseRecord.exclusions} isBaseRecord showClipboard={false} />
             </Col>
           ) : (
             loading
@@ -145,10 +145,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
             <Col sm="6">
               <Row>
                 <Col>
-                  <h2>{partnerRecord.record.organization.name}</h2>
+                  <h2>{partnerRecord.organization.name}</h2>
                   <h4 className="from">
                     <Translate contentKey="multiRecordView.from" />
-                    {partnerRecord.record.organization.accountName}
+                    {partnerRecord.organization.accountName}
                   </h4>
                   <h5>
                     <Translate contentKey="multiRecordView.lastUpdated" />

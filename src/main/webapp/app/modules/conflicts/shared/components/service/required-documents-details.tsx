@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from '../additional-details';
 import { IRequiredDocument } from 'app/shared/model/required-document.model';
 import { Translate } from 'react-jhipster';
@@ -9,7 +9,7 @@ import { Badge } from 'reactstrap';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IRequiredDocumentsDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   docs: IRequiredDocument[];
   showClipboard: boolean;
 }

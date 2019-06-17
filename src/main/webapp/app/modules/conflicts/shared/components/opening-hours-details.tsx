@@ -1,7 +1,7 @@
 import React from 'react';
 import '../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IOpeningHours } from 'app/shared/model/opening-hours.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Translate } from 'react-jhipster';
@@ -9,7 +9,7 @@ import { Collapse, Table } from 'reactstrap';
 import { mapWeekdayToString } from 'app/shared/util/schedule-utils';
 
 export interface IOpeningHoursDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   hours: IOpeningHours[];
   showClipboard: boolean;
 }

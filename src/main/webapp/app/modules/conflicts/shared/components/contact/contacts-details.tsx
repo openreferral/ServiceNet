@@ -1,12 +1,12 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { SingleContactDetails } from './single-contact-details';
 import { IContact } from 'app/shared/model/contact.model';
 
 export interface IContactsDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   contacts: IContact[];
   columnSize: number;
   showClipboard: boolean;

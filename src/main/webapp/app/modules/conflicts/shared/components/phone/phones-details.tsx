@@ -1,12 +1,12 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IPhone } from 'app/shared/model/phone.model';
 import { SinglePhoneDetails } from '../phone/single-phone-details';
 
 export interface IPhonesDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   phones: IPhone[];
   columnSize: number;
   showClipboard: boolean;

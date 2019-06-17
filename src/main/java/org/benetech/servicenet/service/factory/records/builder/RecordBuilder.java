@@ -5,14 +5,12 @@ import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.service.ExclusionsConfigService;
-import org.benetech.servicenet.service.FieldExclusionService;
+import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
-import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.benetech.servicenet.service.mapper.ContactMapper;
 import org.benetech.servicenet.service.mapper.FieldExclusionMapper;
@@ -22,12 +20,12 @@ import org.benetech.servicenet.service.mapper.ServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.benetech.servicenet.service.factory.records.builder.ConflictsBuilder.buildFilteredConflicts;
 import static org.benetech.servicenet.service.factory.records.builder.FilteredEntityBuilder.buildCollection;
 import static org.benetech.servicenet.service.factory.records.builder.FilteredEntityBuilder.buildObject;
 
@@ -47,17 +45,13 @@ public class RecordBuilder {
     private ContactMapper contactMapper;
 
     @Autowired
-    private ExclusionsConfigService exclusionsConfigService;
-
-    @Autowired
-    private FieldExclusionService fieldExclusionService;
-
-    @Autowired
     private FieldExclusionMapper exclusionMapper;
 
-    public RecordDTO buildBasicRecord(Organization organization, List<ConflictDTO> conflictDTOS) {
-        return new RecordDTO(
+    public ActivityRecordDTO buildBasicRecord(Organization organization, ZonedDateTime lastUpdated,
+        List<ConflictDTO> conflictDTOS) {
+        return new ActivityRecordDTO(
             mapOrganization(organization),
+            lastUpdated,
             mapLocations(organization.getLocations()),
             mapServices(organization.getServices()),
             mapContacts(organization.getContacts()),
@@ -65,16 +59,17 @@ public class RecordBuilder {
             conflictDTOS);
     }
 
-    public RecordDTO buildFilteredRecord(Organization organization, List<ConflictDTO> conflictDTOS,
-                                         Set<FieldExclusion> baseExclusions, Set<FieldExclusion> allExclusions)
+    public ActivityRecordDTO buildFilteredRecord(Organization organization, ZonedDateTime lastUpdated,
+        List<ConflictDTO> conflictDTOS, Set<FieldExclusion> baseExclusions)
         throws IllegalAccessException {
-        return new RecordDTO(
-            mapOrganization(buildObject(organization, Organization.class, allExclusions)),
-            mapLocations(buildCollection(organization.getLocations(), Location.class, allExclusions)),
-            mapServices(buildCollection(organization.getServices(), Service.class, allExclusions)),
-            mapContacts(buildCollection(organization.getContacts(), Contact.class, allExclusions)),
+        return new ActivityRecordDTO(
+            mapOrganization(buildObject(organization, Organization.class, baseExclusions)),
+            lastUpdated,
+            mapLocations(buildCollection(organization.getLocations(), Location.class, baseExclusions)),
+            mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
+            mapContacts(buildCollection(organization.getContacts(), Contact.class, baseExclusions)),
             mapExclusions(baseExclusions),
-            buildFilteredConflicts(conflictDTOS, allExclusions));
+            conflictDTOS);
     }
 
     private Set<FieldExclusionDTO> mapExclusions(Set<FieldExclusion> exclusions) {

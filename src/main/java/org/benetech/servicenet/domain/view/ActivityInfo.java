@@ -1,19 +1,27 @@
 package org.benetech.servicenet.domain.view;
 
-import javax.persistence.Lob;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.OrganizationMatch;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.sql.Timestamp;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import java.time.ZonedDateTime;
+import java.util.Set;
 import java.util.UUID;
-import org.hibernate.annotations.Type;
 
-@Data
+@Getter
+@Setter
 @Entity(name = "activity_info")
 @Immutable
 public class ActivityInfo {
@@ -37,11 +45,26 @@ public class ActivityInfo {
     private String alternateName;
 
     @Column(name = "recent")
-    private Timestamp recent;
+    private ZonedDateTime recent;
+
+    @Column(name = "last_updated")
+    private ZonedDateTime lastUpdated;
 
     @Column(name = "recommended")
     private Long recommended;
 
     @Column(name = "account_id")
     private UUID accountId;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id")
+    private Set<Organization> organizations;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_record_id")
+    private Set<OrganizationMatch> organizationMatches;
+
+    public Organization getOrganization() {
+        return organizations.iterator().next();
+    }
 }

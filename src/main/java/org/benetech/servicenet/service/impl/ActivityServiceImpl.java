@@ -1,15 +1,14 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
-import org.benetech.servicenet.service.ConflictService;
-import org.benetech.servicenet.service.OrganizationMatchService;
+import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
+import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.FiltersActivityDTO;
-import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
-import org.benetech.servicenet.service.dto.RecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +19,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -38,32 +38,32 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityRepository activityRepository;
 
-    private final OrganizationMatchService organizationMatchService;
-
-    private final ConflictService conflictService;
-
     private final RecordsService recordsService;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, ConflictService conflictService,
-                               OrganizationMatchService organizationMatchService, RecordsService recordsService) {
+    private final ExclusionsConfigService exclusionsConfigService;
+
+    public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
+        ExclusionsConfigService exclusionsConfigService) {
+
         this.activityRepository = activityRepository;
-        this.conflictService = conflictService;
-        this.organizationMatchService = organizationMatchService;
         this.recordsService = recordsService;
+        this.exclusionsConfigService = exclusionsConfigService;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId,
-    String search, FiltersActivityDTO filtersForActivity) {
+        String search, FiltersActivityDTO filtersForActivity) {
+
         List<ActivityDTO> activities = new ArrayList<>();
         Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, pageable,
             filtersForActivity);
 
+        Map<UUID, Set<FieldExclusion>> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
+
         for (ActivityInfo info : activitiesInfo) {
             try {
-                Optional<ActivityDTO> activityOpt = getEntityActivity(info.getId());
-                activityOpt.ifPresent(activities::add);
+                activities.add(getEntityActivity(info, exclusionsMap));
             } catch (ActivityCreationException ex) {
                 log.error(ex.getMessage());
             }
@@ -78,37 +78,30 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ActivityDTO> getOneByOrganizationId(UUID organizationId) {
-        return getEntityActivity(organizationId);
-    }
-
-    private Optional<ActivityDTO> getEntityActivity(UUID orgId) throws ActivityCreationException {
-        log.debug("Creating Activity for organization: {}", orgId);
+    public Optional<ActivityRecordDTO> getOneByOrganizationId(UUID orgId) {
+        log.debug("Creating Activity Record for organization: {}", orgId);
         try {
-            Optional<RecordDTO> opt = recordsService.getRecordFromOrganization(orgId, orgId);
-            RecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
+            ActivityInfo activityInfo = activityRepository.findOneByOrganizationId(orgId);
+            Optional<ActivityRecordDTO> opt = recordsService.getRecordFromActivityInfo(activityInfo);
+            ActivityRecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
                 String.format("Activity record couldn't be created for organization: %s", orgId)));
 
-            Optional<ZonedDateTime> lastUpdated = conflictService.findMostRecentOfferedValueDate(orgId);
-            List<OrganizationMatchDTO> dismissedMatches = organizationMatchService.findAllDismissedForOrganization(orgId);
-            List<OrganizationMatchDTO> matches = organizationMatchService.findAllNotDismissedForOrganization(orgId);
-
-            return Optional.of(ActivityDTO.builder()
-                .record(record)
-                .organizationMatches(matches)
-                .dismissedMatches(dismissedMatches)
-                .lastUpdated(lastUpdated.orElse(ZonedDateTime.now()))
-                .build());
+            return Optional.of(record);
         } catch (IllegalAccessException e) {
             return Optional.empty();
         }
     }
 
+    private ActivityDTO getEntityActivity(ActivityInfo info, Map<UUID, Set<FieldExclusion>> exclusionsMap) {
+        log.debug("Creating Activity for organization: {}", info.getId());
+
+        return recordsService.getActivityDTOFromActivityInfo(info, exclusionsMap);
+    }
+
     private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, String search, Pageable pageable,
                                                                 FiltersActivityDTO filtersActivityDTO) {
         if (ownerId != null) {
-            return activityRepository.findAllWithOwnerIdAndSearchPhraseAndFilter(ownerId, search, pageable,
-                filtersActivityDTO);
+            return activityRepository.findAllWithFilters(ownerId, search, filtersActivityDTO, pageable);
         } else {
             return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
         }

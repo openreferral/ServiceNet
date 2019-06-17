@@ -1,13 +1,13 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from '../additional-details';
 import { IFunding } from 'app/shared/model/funding.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
 export interface IFundingDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   funding: IFunding;
   showClipboard: boolean;
 }

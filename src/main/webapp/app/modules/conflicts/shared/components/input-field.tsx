@@ -5,14 +5,14 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { Translate, TextFormat, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import '../shared-record-view.scss';
 import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 const DOMAIN_CLASS = 'org.benetech.servicenet.domain';
 
 export interface IInputFieldProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   entityClass: string;
   fieldName: string;
   type: string;
@@ -48,7 +48,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
 
   getSuggestedValues(fieldName) {
     if (this.state.isConflicting) {
-      return this.props.activity.record.conflicts.filter(e => e.fieldName === fieldName);
+      return this.props.activity.conflicts.filter(e => e.fieldName === fieldName);
     }
     return null;
   }
@@ -64,13 +64,11 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
   }
 
   isConflicting(fieldName, entityPath) {
-    return (
-      this.props.activity.record.conflicts.some(e => e.fieldName === fieldName && e.entityPath === entityPath) && this.props.isBaseRecord
-    );
+    return this.props.activity.conflicts.some(e => e.fieldName === fieldName && e.entityPath === entityPath) && this.props.isBaseRecord;
   }
 
   isExcluded(fieldName, entityPath) {
-    return this.props.activity.record.exclusions.some(
+    return this.props.activity.exclusions.some(
       e =>
         e.fields
           .replace(' ', '')

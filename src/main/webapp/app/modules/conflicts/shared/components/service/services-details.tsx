@@ -1,12 +1,12 @@
 import React from 'react';
 import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IServiceRecord } from 'app/shared/model/service-record.model';
 import { SingleServiceDetails } from './single-service-details';
 
 export interface IServicesDetailsProp extends StateProps, DispatchProps {
-  activity: IActivity;
+  activity: IActivityRecord;
   columnSize: number;
   services: IServiceRecord[];
   showClipboard: boolean;

@@ -4,11 +4,14 @@ import classnames from 'classnames';
 import Details from './details';
 import { connect } from 'react-redux';
 import { Translate } from 'react-jhipster';
-import { IActivity } from 'app/shared/model/activity.model';
+import { IActivityRecord } from 'app/shared/model/activity-record.model';
+import { IOrganizationMatch } from 'app/shared/model//organization-match.model';
 import { RouteComponentProps } from 'react-router-dom';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
-  activity: IActivity;
+  activity: IActivityRecord;
+  organizationMatches?: IOrganizationMatch[];
+  dismissedMatches?: IOrganizationMatch[];
   showClipboard: boolean;
   orgId: string;
 }
