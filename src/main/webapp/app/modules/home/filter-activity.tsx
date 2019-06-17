@@ -3,7 +3,14 @@ import { Button, Col, Container, Row, Collapse, Card, CardBody } from 'reactstra
 import { Translate } from 'react-jhipster';
 import Select from 'react-select';
 import { IRootState } from 'app/shared/reducers';
-import { getPostalCodeList, getRegionList, getCityList, getPartnerList, updateActivityFilter } from './filter-activity.reducer';
+import {
+  getPostalCodeList,
+  getRegionList,
+  getCityList,
+  getPartnerList,
+  updateActivityFilter,
+  initialState
+} from './filter-activity.reducer';
 import ReactGA from 'react-ga';
 
 import { RouteComponentProps } from 'react-router-dom';
@@ -56,6 +63,21 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   applyFilter = () => {
     ReactGA.event({ category: 'UserActions', action: 'Applied Filter' });
     this.props.getActivityEntities().then(() => this.setState({ filtersChanged: false }));
+  };
+
+  resetFilter = () => {
+    ReactGA.event({ category: 'UserActions', action: 'Filter Reset' });
+    this.props.getActivityEntities().then(() =>
+      this.setState({
+        selectedCity: '',
+        selectedCounty: '',
+        selectedZip: '',
+        selectedPartner: '',
+        filtersChanged: false
+      })
+    );
+
+    //this.props.getActivityEntities().then(() => this.state = this.initialState);
   };
 
   handleCityChange = selectedCity => {
@@ -126,6 +148,17 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                       block
                     >
                       <Translate contentKey="serviceNetApp.activity.home.filter.applyFilter" />
+                    </Button>
+                  </Col>
+                  <Col md={{ size: 2, offset: 10 }}>
+                    <Button
+                      color="primary"
+                      onClick={this.applyFilter}
+                      disabled={!this.state.filtersChanged}
+                      style={{ marginTop: '2rem' }}
+                      block
+                    >
+                      <Translate contentKey="serviceNetApp.activity.home.filter.resetFilter" />
                     </Button>
                   </Col>
                 </Row>
