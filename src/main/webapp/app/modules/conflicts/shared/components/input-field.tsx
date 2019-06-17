@@ -97,7 +97,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
   }
 
   getBrowserName = () => {
-    const aKeys = ['MSIE', 'Firefox', 'Safari', 'Chrome', 'Opera'];
+    const aKeys = ['MSIE', 'Firefox', 'Safari', 'Chrome', 'Opera', 'Edge'];
     const sUsrAg = navigator.userAgent;
     let nIdx = aKeys.length - 1;
 
@@ -111,7 +111,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
 
     const browserName = this.getBrowserName();
 
-    if (browserName === 'MSIE' || browserName === 'Safari') {
+    if (['MSIE', 'Safari', 'Edge'].indexOf(browserName) > -1) {
       const textArea = document.createElement('textarea');
       textArea.value = text;
       document.body.appendChild(textArea);
