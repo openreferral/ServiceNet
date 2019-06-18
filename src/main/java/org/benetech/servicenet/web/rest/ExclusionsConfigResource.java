@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * REST controller for managing ExclusionsConfig.
+ * REST controller for managing {@link org.benetech.servicenet.domain.ExclusionsConfig}.
  */
 @RestController
 @RequestMapping("/api")
@@ -43,12 +43,12 @@ public class ExclusionsConfigResource {
     }
 
     /**
-     * POST  /exclusions-configs : Create a new exclusionsConfig.
+     * {@code POST  /exclusions-configs} : Create a new exclusionsConfig.
      *
-     * @param exclusionsConfigDTO the exclusionsConfigDTO to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new exclusionsConfigDTO,
-     * or with status 400 (Bad Request) if the exclusionsConfig has already an ID
-     * @throws URISyntaxException if the Location URI syntax is incorrect
+     * @param exclusionsConfigDTO the exclusionsConfigDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new exclusionsConfigDTO,
+     * or with status {@code 400 (Bad Request)} if the exclusionsConfig has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/exclusions-configs")
     @Timed
@@ -65,13 +65,13 @@ public class ExclusionsConfigResource {
     }
 
     /**
-     * PUT  /exclusions-configs : Updates an existing exclusionsConfig.
+     * {@code PUT  /exclusions-configs} : Updates an existing exclusionsConfig.
      *
-     * @param exclusionsConfigDTO the exclusionsConfigDTO to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated exclusionsConfigDTO,
-     * or with status 400 (Bad Request) if the exclusionsConfigDTO is not valid,
-     * or with status 500 (Internal Server Error) if the exclusionsConfigDTO couldn't be updated
-     * @throws URISyntaxException if the Location URI syntax is incorrect
+     * @param exclusionsConfigDTO the exclusionsConfigDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated exclusionsConfigDTO,
+     * or with status {@code 400 (Bad Request)} if the exclusionsConfigDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the exclusionsConfigDTO couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/exclusions-configs")
     @Timed
@@ -88,9 +88,9 @@ public class ExclusionsConfigResource {
     }
 
     /**
-     * GET  /exclusions-configs : get all the exclusionsConfigs.
+     * {@code GET  /exclusions-configs} : get all the exclusionsConfigs.
      *
-     * @return the ResponseEntity with status 200 (OK) and the list of exclusionsConfigs in body
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of exclusionsConfigs in body.
      */
     @GetMapping("/exclusions-configs")
     @Timed
@@ -100,10 +100,11 @@ public class ExclusionsConfigResource {
     }
 
     /**
-     * GET  /exclusions-configs/:id : get the "id" exclusionsConfig.
+     * {@code GET  /exclusions-configs/:id} : get the "id" exclusionsConfig.
      *
-     * @param id the id of the exclusionsConfigDTO to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the exclusionsConfigDTO, or with status 404 (Not Found)
+     * @param id the id of the exclusionsConfigDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the exclusionsConfigDTO,
+     * or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/exclusions-configs/{id}")
     @Timed
@@ -114,10 +115,10 @@ public class ExclusionsConfigResource {
     }
 
     /**
-     * DELETE  /exclusions-configs/:id : delete the "id" exclusionsConfig.
+     * {@code DELETE  /exclusions-configs/:id} : delete the "id" exclusionsConfig.
      *
-     * @param id the id of the exclusionsConfigDTO to delete
-     * @return the ResponseEntity with status 200 (OK)
+     * @param id the id of the exclusionsConfigDTO to delete.
+     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/exclusions-configs/{id}")
     @Timed

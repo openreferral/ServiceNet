@@ -1,7 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.benetech.servicenet.domain.FieldExclusion;
+import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -29,7 +28,7 @@ public class RecordsServiceImpl implements RecordsService {
 
     @Override
     public ActivityDTO getActivityDTOFromActivityInfo(ActivityInfo activityInfo,
-        Map<UUID, Set<FieldExclusion>> exclusionsMap) {
+        Map<UUID, ExclusionsConfig> exclusionsMap) {
         return recordFactory.getFilteredResult(activityInfo, exclusionsMap);
     }
 }

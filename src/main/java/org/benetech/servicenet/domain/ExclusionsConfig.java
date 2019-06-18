@@ -1,7 +1,5 @@
 package org.benetech.servicenet.domain;
 
-import lombok.Data;
-import lombok.ToString;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,7 +17,6 @@ import java.util.Set;
 /**
  * A ExclusionsConfig.
  */
-@Data
 @Entity
 @Table(name = "exclusions_config")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -32,15 +29,30 @@ public class ExclusionsConfig extends AbstractEntity implements Serializable {
     @JoinColumn(unique = true)
     private SystemAccount account;
 
-    @ToString.Exclude
     @OneToMany(mappedBy = "config")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<FieldExclusion> exclusions = new HashSet<>();
+
+    @OneToMany(mappedBy = "config")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<LocationExclusion> locationExclusions = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    public SystemAccount getAccount() {
+        return account;
+    }
 
     public ExclusionsConfig account(SystemAccount systemAccount) {
         this.account = systemAccount;
         return this;
+    }
+
+    public void setAccount(SystemAccount systemAccount) {
+        this.account = systemAccount;
+    }
+
+    public Set<FieldExclusion> getExclusions() {
+        return exclusions;
     }
 
     public ExclusionsConfig exclusions(Set<FieldExclusion> fieldExclusions) {
@@ -48,6 +60,46 @@ public class ExclusionsConfig extends AbstractEntity implements Serializable {
         return this;
     }
 
+    public ExclusionsConfig addExclusions(FieldExclusion fieldExclusion) {
+        this.exclusions.add(fieldExclusion);
+        fieldExclusion.setConfig(this);
+        return this;
+    }
+
+    public ExclusionsConfig removeExclusions(FieldExclusion fieldExclusion) {
+        this.exclusions.remove(fieldExclusion);
+        fieldExclusion.setConfig(null);
+        return this;
+    }
+
+    public void setExclusions(Set<FieldExclusion> fieldExclusions) {
+        this.exclusions = fieldExclusions;
+    }
+
+    public Set<LocationExclusion> getLocationExclusions() {
+        return locationExclusions;
+    }
+
+    public ExclusionsConfig locationExclusions(Set<LocationExclusion> locationExclusions) {
+        this.locationExclusions = locationExclusions;
+        return this;
+    }
+
+    public ExclusionsConfig addLocationExclusions(LocationExclusion locationExclusion) {
+        this.locationExclusions.add(locationExclusion);
+        locationExclusion.setConfig(this);
+        return this;
+    }
+
+    public ExclusionsConfig removeLocationExclusions(LocationExclusion locationExclusion) {
+        this.locationExclusions.remove(locationExclusion);
+        locationExclusion.setConfig(null);
+        return this;
+    }
+
+    public void setLocationExclusions(Set<LocationExclusion> locationExclusions) {
+        this.locationExclusions = locationExclusions;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

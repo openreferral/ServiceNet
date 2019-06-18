@@ -168,6 +168,11 @@ export const EntitiesMenu = props => (
       &nbsp;
       <Translate contentKey="global.menu.entities.fieldExclusion" />
     </DropdownItem>
+    <DropdownItem tag={Link} to="/entity/location-exclusion">
+      <FontAwesomeIcon icon="asterisk" />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.locationExclusion" />
+    </DropdownItem>
     <DropdownItem tag={Link} to="/entity/exclusions-config">
       <FontAwesomeIcon icon="asterisk" />
       &nbsp;

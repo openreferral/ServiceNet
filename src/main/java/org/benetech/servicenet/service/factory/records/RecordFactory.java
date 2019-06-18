@@ -1,7 +1,9 @@
 package org.benetech.servicenet.service.factory.records;
 
 import lombok.extern.slf4j.Slf4j;
+import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.FieldExclusion;
+import org.benetech.servicenet.domain.LocationExclusion;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.service.ConflictService;
@@ -41,16 +43,25 @@ public class RecordFactory {
     public Optional<ActivityRecordDTO> getFilteredRecord(ActivityInfo info) {
         List<ConflictDTO> conflicts = getBaseConflicts(info.getId());
 
-        Map<UUID, Set<FieldExclusion>> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
+        Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
 
-        Set<FieldExclusion> baseExclusions = getBaseExclusions(info.getAccountId(), exclusionsMap);
-        List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, baseExclusions, exclusionsMap);
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(info.getAccountId(), exclusionsMap);
+        Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
+            .flatMap(e -> e.getExclusions().stream())
+            .collect(Collectors.toSet());
 
-        return filterRecord(info, filteredConflicts, baseExclusions);
+        Set<LocationExclusion> locationExclusions = baseExclusions.stream()
+            .flatMap(e -> e.getLocationExclusions().stream())
+            .collect(Collectors.toSet());
+
+        List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, fieldExclusions, exclusionsMap);
+
+        return filterRecord(info, filteredConflicts, fieldExclusions, locationExclusions);
     }
 
-    public ActivityDTO getFilteredResult(ActivityInfo info, Map<UUID, Set<FieldExclusion>> exclusionsMap) {
-        Set<FieldExclusion> baseExclusions = exclusionsMap.get(info.getAccountId());
+    public ActivityDTO getFilteredResult(ActivityInfo info, Map<UUID, ExclusionsConfig> exclusionsMap) {
+        Set<FieldExclusion> baseExclusions = Optional.ofNullable(exclusionsMap.get(info.getAccountId()))
+            .map(ExclusionsConfig::getExclusions).orElse(new HashSet<>());
 
         List<ConflictDTO> conflicts = getBaseConflicts(info.getId());
         List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, baseExclusions, exclusionsMap);
@@ -68,38 +79,38 @@ public class RecordFactory {
     }
 
     private List<ConflictDTO> filterConflicts(List<ConflictDTO> conflicts, Set<FieldExclusion> baseExclusions,
-        Map<UUID, Set<FieldExclusion>> exclusionsMap) {
+        Map<UUID, ExclusionsConfig> exclusionsMap) {
 
         return conflicts.stream()
             .filter(conf -> isNotExcluded(conf, baseExclusions)
-                && isNotExcluded(conf, exclusionsMap.get(conf.getPartnerId())))
+                && isNotExcluded(conf, Optional.ofNullable(exclusionsMap.get(conf.getPartnerId()))
+                .map(ExclusionsConfig::getExclusions).orElse(new HashSet<>())))
             .collect(Collectors.toList());
     }
 
     private boolean isNotExcluded(ConflictDTO conflict, Set<FieldExclusion> exclusions) {
-        return exclusions == null || exclusions.stream().noneMatch(x ->
+        return exclusions.stream().noneMatch(x ->
             x.getEntity().equals(conflict.getEntityPath())
                 && x.getExcludedFields().contains(conflict.getFieldName()));
     }
 
-    private Set<FieldExclusion> getBaseExclusions(UUID accountId, Map<UUID, Set<FieldExclusion>> exclusionsMap) {
-        Set<FieldExclusion> exclusions = userService.getCurrentSystemAccount()
-            .map(systemAccount -> exclusionsMap.get(systemAccount.getId()))
-            .orElseGet(HashSet::new);
+    private Set<ExclusionsConfig> getBaseExclusions(UUID accountId, Map<UUID, ExclusionsConfig> exclusionsMap) {
+        Set<ExclusionsConfig> exclusions = new HashSet<>();
 
-        Set<FieldExclusion> baseExclusions = exclusionsMap.get(accountId);
+        userService.getCurrentSystemAccount()
+            .map(systemAccount -> Optional.ofNullable(exclusionsMap.get(systemAccount.getId())))
+            .ifPresent(exclusionsConfig -> exclusionsConfig.ifPresent(exclusions::add));
 
-        if (baseExclusions != null) {
-            exclusions.addAll(baseExclusions);
-        }
+        Optional.ofNullable(exclusionsMap.get(accountId))
+            .ifPresent(exclusions::add);
 
         return exclusions;
     }
 
     private Optional<ActivityRecordDTO> filterRecord(ActivityInfo info, List<ConflictDTO> conflicts,
-        Set<FieldExclusion> exclusions) {
+        Set<FieldExclusion> exclusions, Set<LocationExclusion> locationExclusions) {
         try {
-            return Optional.of(buildRecord(info, conflicts, exclusions));
+            return Optional.of(buildRecord(info, conflicts, exclusions, locationExclusions));
         } catch (IllegalAccessException e) {
             log.error("Unable to filter record.");
             return Optional.empty();
@@ -107,14 +118,15 @@ public class RecordFactory {
     }
 
     private ActivityRecordDTO buildRecord(ActivityInfo info, List<ConflictDTO> conflictDTOS,
-        Set<FieldExclusion> exclusions) throws IllegalAccessException {
+        Set<FieldExclusion> exclusions, Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
 
         Organization org = info.getOrganization();
 
         if (exclusions.isEmpty()) {
-            return recordBuilder.buildBasicRecord(org, info.getLastUpdated(), conflictDTOS);
+            return recordBuilder.buildBasicRecord(org, info.getLastUpdated(), conflictDTOS, locationExclusions);
         } else {
-            return recordBuilder.buildFilteredRecord(org, info.getLastUpdated(), conflictDTOS, exclusions);
+            return recordBuilder.buildFilteredRecord(org, info.getLastUpdated(),
+                conflictDTOS, exclusions, locationExclusions);
         }
     }
 }

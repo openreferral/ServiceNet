@@ -159,6 +159,10 @@ import shelter, {
 import option, {
   OptionState
 } from 'app/entities/option/option.reducer';
+// prettier-ignore
+import locationExclusion, {
+  LocationExclusionState
+} from 'app/entities/location-exclusion/location-exclusion.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -211,6 +215,7 @@ export interface IRootState {
   readonly beds: BedsState;
   readonly shelter: ShelterState;
   readonly option: OptionState;
+  readonly locationExclusion: LocationExclusionState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -264,6 +269,7 @@ const rootReducer = combineReducers<IRootState>({
   beds,
   shelter,
   option,
+  locationExclusion,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
   filterActivity
