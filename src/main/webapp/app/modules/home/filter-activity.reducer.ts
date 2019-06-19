@@ -10,7 +10,7 @@ export const ACTION_TYPES = {
   UPDATE_ACTIVITY_FILTER: 'filterActivity/UPDATE_ACTIVITY_FILTER'
 };
 
-export const initialState = {
+const initialState = {
   loading: false,
   errorMessage: null,
   postalCodeList: [],
