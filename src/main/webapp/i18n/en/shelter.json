@@ -1,10 +1,34 @@
 {
   "serviceNetApp": {
     "shelter": {
+      "empty": "There are no shelters",
       "home": {
         "title": "Shelters",
         "createLabel": "Create a new Shelter",
-        "createOrEditLabel": "Create or edit a Shelter"
+        "createOrEditLabel": "Create or edit a Shelter",
+        "sort": {
+          "toggle": "Sort",
+          "beds": "Beds available",
+          "distance": "Distance"
+        },
+        "search": {
+          "placeholder": "Search Shelters"
+        },
+        "filter": {
+          "county": "Change county",
+          "toggle": "Filter"
+        },
+        "card": {
+          "bedsAvailable": "Beds available",
+          "waitlist": "Waitlist",
+          "moreInfo": "more info ▼",
+          "lessInfo": "less info ▲",
+          "eligibilityRequirements": "Eligibility & Requirements",
+          "process": "Process",
+          "contactInfo": "Contact Info",
+          "address": "Address",
+          "notAvailable": "N/A"
+        }
       },
       "created": "A new Shelter is created with identifier {{ param }}",
       "updated": "A Shelter is updated with identifier {{ param }}",
