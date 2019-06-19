@@ -183,10 +183,6 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   }
 }
 
-export interface IFilterActivityProps extends StateProps, DispatchProps {
-  filterCollapseExpanded: boolean;
-  getActivityEntities(): any;
-}
 const mapStateToProps = (storeState: IRootState) => ({
   postalCodeList: storeState.filterActivity.postalCodeList.map(code => ({ label: code, value: code })),
   regionList: storeState.filterActivity.regionList.map(region => ({ label: region, value: region })),
