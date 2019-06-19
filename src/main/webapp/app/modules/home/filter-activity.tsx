@@ -3,13 +3,13 @@ import { Button, Col, Container, Row, Collapse, Card, CardBody } from 'reactstra
 import { Translate } from 'react-jhipster';
 import Select from 'react-select';
 import { IRootState } from 'app/shared/reducers';
-import {
+import { initialState } from 'app/modules/home/filter-activity.reducer';
+import filterActivityReducer, {
   getPostalCodeList,
   getRegionList,
   getCityList,
   getPartnerList,
-  updateActivityFilter,
-  initialState
+  updateActivityFilter
 } from './filter-activity.reducer';
 import ReactGA from 'react-ga';
 
@@ -29,6 +29,7 @@ export interface IFilterActivityState {
 export interface IFilterActivityProps extends StateProps, DispatchProps {
   filterCollapseExpanded: boolean;
   getActivityEntities(): any;
+  resetActivityFilter(): any;
 }
 
 export class FilterActivity extends React.Component<IFilterActivityProps, IFilterActivityState> {
@@ -67,17 +68,28 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
   resetFilter = () => {
     ReactGA.event({ category: 'UserActions', action: 'Filter Reset' });
-    this.props.getActivityEntities().then(() =>
-      this.setState({
-        selectedCity: '',
-        selectedCounty: '',
-        selectedZip: '',
-        selectedPartner: '',
-        filtersChanged: false
-      })
-    );
+    this.setState({
+      selectedCity: initialState.cityList,
+      selectedCounty: initialState.regionList,
+      selectedZip: initialState.postalCodeList,
+      selectedPartner: initialState.partnerList,
+      filtersChanged: true
+    });
 
-    //this.props.getActivityEntities().then(() => this.state = this.initialState);
+    const citiesFilterList = initialState.cityList.map(city => city.value);
+    const regionFilterList = initialState.regionList.map(county => county.value);
+    const postalCodesFilterList = initialState.postalCodeList.map(zip => zip.value);
+    const partnerFilterList = initialState.partnerList.map(partner => partner.value);
+
+    this.props.updateActivityFilter({
+      ...this.props.activityFilter,
+      citiesFilterList,
+      regionFilterList,
+      postalCodesFilterList,
+      partnerFilterList
+    });
+
+    this.props.resetActivityFilter();
   };
 
   handleCityChange = selectedCity => {
@@ -153,9 +165,9 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                   <Col md={{ size: 2, offset: 10 }}>
                     <Button
                       color="primary"
-                      onClick={this.applyFilter}
+                      onClick={this.resetFilter}
                       disabled={!this.state.filtersChanged}
-                      style={{ marginTop: '2rem' }}
+                      style={{ marginTop: '1rem' }}
                       block
                     >
                       <Translate contentKey="serviceNetApp.activity.home.filter.resetFilter" />
@@ -171,6 +183,10 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   }
 }
 
+export interface IFilterActivityProps extends StateProps, DispatchProps {
+  filterCollapseExpanded: boolean;
+  getActivityEntities(): any;
+}
 const mapStateToProps = (storeState: IRootState) => ({
   postalCodeList: storeState.filterActivity.postalCodeList.map(code => ({ label: code, value: code })),
   regionList: storeState.filterActivity.regionList.map(region => ({ label: region, value: region })),
