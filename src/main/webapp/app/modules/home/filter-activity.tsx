@@ -3,10 +3,8 @@ import { Button, Col, Container, Row, Collapse, Card, CardBody } from 'reactstra
 import { Translate } from 'react-jhipster';
 import Select from 'react-select';
 import { IRootState } from 'app/shared/reducers';
-import { initialState } from 'app/modules/home/filter-activity.reducer';
 import { getPostalCodeList, getRegionList, getCityList, getPartnerList, updateActivityFilter } from './filter-activity.reducer';
 import ReactGA from 'react-ga';
-
 import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -62,24 +60,19 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
   resetFilter = () => {
     this.setState({
-      selectedCity: initialState.cityList,
-      selectedCounty: initialState.regionList,
-      selectedZip: initialState.postalCodeList,
-      selectedPartner: initialState.partnerList,
+      selectedCity: [],
+      selectedCounty: [],
+      selectedZip: [],
+      selectedPartner: [],
       filtersChanged: true
     });
 
-    const citiesFilterList = initialState.cityList.map(city => city.value);
-    const regionFilterList = initialState.regionList.map(county => county.value);
-    const postalCodesFilterList = initialState.postalCodeList.map(zip => zip.value);
-    const partnerFilterList = initialState.partnerList.map(partner => partner.value);
-
     this.props.updateActivityFilter({
       ...this.props.activityFilter,
-      citiesFilterList,
-      regionFilterList,
-      postalCodesFilterList,
-      partnerFilterList
+      citiesFilterList: [],
+      regionFilterList: [],
+      postalCodesFilterList: [],
+      partnerFilterList: []
     });
 
     this.props.resetActivityFilter();
