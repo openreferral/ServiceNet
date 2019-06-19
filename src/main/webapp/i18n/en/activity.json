@@ -13,7 +13,8 @@
           "county": "County",
           "zip": "ZIP",
           "partner": "Partner Sources",
-          "applyFilter": "Apply"
+          "applyFilter": "Apply",
+          "resetFilter": "Reset"
         },
         "sort": {
           "toggle": "Sort",

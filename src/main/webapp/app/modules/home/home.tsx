@@ -93,6 +93,10 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     }));
   };
 
+  toggleReset = () => {
+    this.reset();
+  };
+
   reset = () => {
     this.props.reset();
     if (!this.state.loggingOut) {
@@ -277,7 +281,11 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                 </Row>
                 <Row>
                   <Col md="12">
-                    <FilterActivity filterCollapseExpanded={this.state.filterCollapseExpanded} getActivityEntities={this.searchEntities} />
+                    <FilterActivity
+                      filterCollapseExpanded={this.state.filterCollapseExpanded}
+                      getActivityEntities={this.searchEntities}
+                      resetActivityFilter={this.toggleReset}
+                    />
                   </Col>
                 </Row>
                 <Row className="text-center font-weight-bold column-title">
