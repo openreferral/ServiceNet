@@ -132,6 +132,7 @@ describe('Entities reducer tests', () => {
         })
       ).toEqual({
         ...initialState,
+        totalItems: 2,
         loading: false,
         entities: payload.data
       });
