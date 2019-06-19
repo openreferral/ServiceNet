@@ -33,7 +33,9 @@ describe('Entities reducer tests', () => {
     entities: [] as ReadonlyArray<IShelter>,
     entity: defaultValue,
     updating: false,
-    updateSuccess: false
+    updateSuccess: false,
+    links: { next: 0 },
+    totalItems: 0
   };
 
   function testInitialState(state) {

@@ -1,0 +1,62 @@
+@import '../../app-variables';
+@import '../../bootstrap-variables';
+
+.shelter-card-body {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.shelter-row {
+  margin-bottom: 15px;
+}
+
+.alert-link {
+  &:hover {
+    text-decoration: none !important;
+    .shelter-left-card-title {
+      color: $blue-card-darker;
+    }
+  }
+}
+
+.shelter-left-card {
+  margin-bottom: 0;
+}
+
+.shelter-left-card-text {
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.shelter-card {
+  color: $gray-card-accent;
+  background-color: $gray-card-bg;
+}
+
+.shelter-left-container {
+  flex: 2;
+}
+
+.shelter-right-container {
+  flex: 3;
+}
+
+.shelter-right-card-info {
+  margin-left: 20%;
+}
+
+.shelter-expand-label {
+  text-decoration: underline;
+  float: right;
+}
+
+.shelter-card-expanded p > div {
+  margin-left: 1em;
+}
+
+.shelter-card-expanded .shelter-info-header {
+  text-decoration: underline;
+  margin: 0;
+}

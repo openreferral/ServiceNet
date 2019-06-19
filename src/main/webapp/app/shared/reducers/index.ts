@@ -148,6 +148,8 @@ import geocodingResult, {
 } from 'app/entities/geocoding-result/geocoding-result.reducer';
 import filterActivity, { FilterActivityState } from 'app/modules/home/filter-activity.reducer';
 // prettier-ignore
+import filterShelter, { FilterShelterState } from 'app/modules/shelter/filter-shelter.reducer';
+// prettier-ignore
 import beds, {
   BedsState
 } from 'app/entities/beds/beds.reducer';
@@ -218,6 +220,7 @@ export interface IRootState {
   readonly locationExclusion: LocationExclusionState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
+  readonly filterShelter: FilterShelterState;
 }
 
 const rootReducer = combineReducers<IRootState>({
@@ -272,7 +275,8 @@ const rootReducer = combineReducers<IRootState>({
   locationExclusion,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
-  filterActivity
+  filterActivity,
+  filterShelter
 });
 
 export default rootReducer;

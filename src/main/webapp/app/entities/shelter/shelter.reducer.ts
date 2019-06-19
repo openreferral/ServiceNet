@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } from 'react-jhipster';
+import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction, parseHeaderForLinks } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
@@ -21,6 +21,8 @@ const initialState = {
   entities: [] as ReadonlyArray<IShelter>,
   entity: defaultValue,
   updating: false,
+  links: { next: 0 },
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +65,8 @@ export default (state: ShelterState = initialState, action): ShelterState => {
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count'] || action.payload.data.length
       };
     case SUCCESS(ACTION_TYPES.FETCH_SHELTER):
       return {
@@ -98,6 +101,14 @@ export default (state: ShelterState = initialState, action): ShelterState => {
 const apiUrl = 'api/shelters';
 
 // Actions
+export const searchEntities = (search, page, size, sort, filter) => {
+  const requestUrl = `${apiUrl}${sort ? `?search=${search}&page=${page}&size=${size}&sort=${sort}` : ''}`;
+
+  return {
+    type: ACTION_TYPES.FETCH_SHELTER_LIST,
+    payload: axios.get<IShelter>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntities: ICrudGetAllAction<IShelter> = (page, size, sort) => ({
   type: ACTION_TYPES.FETCH_SHELTER_LIST,
