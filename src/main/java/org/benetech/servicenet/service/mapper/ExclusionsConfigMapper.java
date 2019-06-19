@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 import java.util.UUID;
 
 /**
- * Mapper for the entity ExclusionsConfig and its DTO ExclusionsConfigDTO.
+ * Mapper for the entity {@link ExclusionsConfig} and its DTO {@link ExclusionsConfigDTO}.
  */
 @Mapper(componentModel = "spring", uses = {SystemAccountMapper.class})
 public interface ExclusionsConfigMapper extends EntityMapper<ExclusionsConfigDTO, ExclusionsConfig> {
@@ -19,6 +19,7 @@ public interface ExclusionsConfigMapper extends EntityMapper<ExclusionsConfigDTO
 
     @Mapping(source = "accountId", target = "account")
     @Mapping(target = "exclusions", ignore = true)
+    @Mapping(target = "locationExclusions", ignore = true)
     ExclusionsConfig toEntity(ExclusionsConfigDTO exclusionsConfigDTO);
 
     default ExclusionsConfig fromId(UUID id) {

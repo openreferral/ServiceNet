@@ -1,12 +1,12 @@
 package org.benetech.servicenet.service.dto;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-@Data
+/**
+ * A DTO for the {@link org.benetech.servicenet.domain.ExclusionsConfig} entity.
+ */
 public class ExclusionsConfigDTO implements Serializable {
 
     private UUID id;
@@ -14,6 +14,30 @@ public class ExclusionsConfigDTO implements Serializable {
     private UUID accountId;
 
     private String accountName;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(UUID systemAccountId) {
+        this.accountId = systemAccountId;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String systemAccountName) {
+        this.accountName = systemAccountName;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -41,6 +65,7 @@ public class ExclusionsConfigDTO implements Serializable {
         return "ExclusionsConfigDTO{" +
             "id=" + getId() +
             ", account=" + getAccountId() +
+            ", account='" + getAccountName() + "'" +
             "}";
     }
 }

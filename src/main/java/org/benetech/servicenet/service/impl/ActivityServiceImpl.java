@@ -1,6 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.domain.FieldExclusion;
+import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -59,7 +58,7 @@ public class ActivityServiceImpl implements ActivityService {
         Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, pageable,
             filtersForActivity);
 
-        Map<UUID, Set<FieldExclusion>> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
+        Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
 
         for (ActivityInfo info : activitiesInfo) {
             try {
@@ -92,7 +91,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
-    private ActivityDTO getEntityActivity(ActivityInfo info, Map<UUID, Set<FieldExclusion>> exclusionsMap) {
+    private ActivityDTO getEntityActivity(ActivityInfo info, Map<UUID, ExclusionsConfig> exclusionsMap) {
         log.debug("Creating Activity for organization: {}", info.getId());
 
         return recordsService.getActivityDTOFromActivityInfo(info, exclusionsMap);

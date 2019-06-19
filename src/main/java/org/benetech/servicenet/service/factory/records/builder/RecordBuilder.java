@@ -1,8 +1,10 @@
 package org.benetech.servicenet.service.factory.records.builder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.LocationExclusion;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,11 +51,11 @@ public class RecordBuilder {
     private FieldExclusionMapper exclusionMapper;
 
     public ActivityRecordDTO buildBasicRecord(Organization organization, ZonedDateTime lastUpdated,
-        List<ConflictDTO> conflictDTOS) {
+        List<ConflictDTO> conflictDTOS, Set<LocationExclusion> locationExclusions) {
         return new ActivityRecordDTO(
             mapOrganization(organization),
             lastUpdated,
-            mapLocations(organization.getLocations()),
+            mapLocations(filterLocations(organization.getLocations(), locationExclusions)),
             mapServices(organization.getServices()),
             mapContacts(organization.getContacts()),
             new HashSet<>(),
@@ -60,16 +63,34 @@ public class RecordBuilder {
     }
 
     public ActivityRecordDTO buildFilteredRecord(Organization organization, ZonedDateTime lastUpdated,
-        List<ConflictDTO> conflictDTOS, Set<FieldExclusion> baseExclusions)
+        List<ConflictDTO> conflictDTOS, Set<FieldExclusion> baseExclusions, Set<LocationExclusion> locationExclusions)
         throws IllegalAccessException {
         return new ActivityRecordDTO(
             mapOrganization(buildObject(organization, Organization.class, baseExclusions)),
             lastUpdated,
-            mapLocations(buildCollection(organization.getLocations(), Location.class, baseExclusions)),
+            mapLocations(buildCollection(filterLocations(organization.getLocations(), locationExclusions),
+                Location.class, baseExclusions)),
             mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
             mapContacts(buildCollection(organization.getContacts(), Contact.class, baseExclusions)),
             mapExclusions(baseExclusions),
             conflictDTOS);
+    }
+
+    private Set<Location> filterLocations(Set<Location> locations, Set<LocationExclusion> locationExclusions) {
+        if (locationExclusions == null || locationExclusions.isEmpty()) {
+            return locations;
+        }
+
+        return locations.stream()
+            .filter(location -> locationExclusions.stream().noneMatch(exclusion -> isExcluded(location, exclusion)))
+            .collect(Collectors.toSet());
+    }
+
+    private boolean isExcluded(Location location, LocationExclusion exclusion) {
+        return Optional.ofNullable(location.getPhysicalAddress())
+            .map(address -> StringUtils.containsIgnoreCase(address.getRegion(), exclusion.getRegion())
+                || StringUtils.containsIgnoreCase(address.getCity(), exclusion.getCity()))
+            .orElse(false);
     }
 
     private Set<FieldExclusionDTO> mapExclusions(Set<FieldExclusion> exclusions) {

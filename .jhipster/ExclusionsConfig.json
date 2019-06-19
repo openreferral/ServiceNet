@@ -10,11 +10,19 @@
                 "required"
             ],
             "ownerSide": true,
-            "otherEntityField": "id"
+            "otherEntityField": "name"
         },
         {
             "relationshipName": "exclusions",
             "otherEntityName": "fieldExclusion",
+            "relationshipType": "one-to-many",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "config"
+        },
+        {
+            "relationshipName": "locationExclusions",
+            "otherEntityName": "locationExclusion",
             "relationshipType": "one-to-many",
             "otherEntityField": "id",
             "ownerSide": true,

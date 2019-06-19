@@ -2,32 +2,32 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
+import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
 // tslint:disable-next-line:no-unused-variable
 import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
-import { ISystemAccount } from 'app/shared/model/system-account.model';
-import { getEntities as getSystemAccounts } from 'app/entities/system-account/system-account.reducer';
-import { getEntity, updateEntity, createEntity, reset } from './exclusions-config.reducer';
 import { IExclusionsConfig } from 'app/shared/model/exclusions-config.model';
+import { getEntities as getExclusionsConfigs } from 'app/entities/exclusions-config/exclusions-config.reducer';
+import { getEntity, updateEntity, createEntity, reset } from './location-exclusion.reducer';
+import { ILocationExclusion } from 'app/shared/model/location-exclusion.model';
 // tslint:disable-next-line:no-unused-variable
 import { convertDateTimeFromServer, convertDateTimeToServer } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 
-export interface IExclusionsConfigUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export interface ILocationExclusionUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
-export interface IExclusionsConfigUpdateState {
+export interface ILocationExclusionUpdateState {
   isNew: boolean;
-  accountId: string;
+  configId: string;
 }
 
-export class ExclusionsConfigUpdate extends React.Component<IExclusionsConfigUpdateProps, IExclusionsConfigUpdateState> {
+export class LocationExclusionUpdate extends React.Component<ILocationExclusionUpdateProps, ILocationExclusionUpdateState> {
   constructor(props) {
     super(props);
     this.state = {
-      accountId: '0',
+      configId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -45,14 +45,14 @@ export class ExclusionsConfigUpdate extends React.Component<IExclusionsConfigUpd
       this.props.getEntity(this.props.match.params.id);
     }
 
-    this.props.getSystemAccounts();
+    this.props.getExclusionsConfigs();
   }
 
   saveEntity = (event, errors, values) => {
     if (errors.length === 0) {
-      const { exclusionsConfigEntity } = this.props;
+      const { locationExclusionEntity } = this.props;
       const entity = {
-        ...exclusionsConfigEntity,
+        ...locationExclusionEntity,
         ...values
       };
 
@@ -65,19 +65,19 @@ export class ExclusionsConfigUpdate extends React.Component<IExclusionsConfigUpd
   };
 
   handleClose = () => {
-    this.props.history.push('/entity/exclusions-config');
+    this.props.history.push('/entity/location-exclusion');
   };
 
   render() {
-    const { exclusionsConfigEntity, systemAccounts, loading, updating } = this.props;
+    const { locationExclusionEntity, exclusionsConfigs, loading, updating } = this.props;
     const { isNew } = this.state;
 
     return (
       <div>
         <Row className="justify-content-center">
           <Col md="8">
-            <h2 id="serviceNetApp.exclusionsConfig.home.createOrEditLabel">
-              <Translate contentKey="serviceNetApp.exclusionsConfig.home.createOrEditLabel">Create or edit a ExclusionsConfig</Translate>
+            <h2 id="serviceNetApp.locationExclusion.home.createOrEditLabel">
+              <Translate contentKey="serviceNetApp.locationExclusion.home.createOrEditLabel">Create or edit a LocationExclusion</Translate>
             </h2>
           </Col>
         </Row>
@@ -86,31 +86,43 @@ export class ExclusionsConfigUpdate extends React.Component<IExclusionsConfigUpd
             {loading ? (
               <p>Loading...</p>
             ) : (
-              <AvForm model={isNew ? {} : exclusionsConfigEntity} onSubmit={this.saveEntity}>
+              <AvForm model={isNew ? {} : locationExclusionEntity} onSubmit={this.saveEntity}>
                 {!isNew ? (
                   <AvGroup>
-                    <Label for="exclusions-config-id">
+                    <Label for="location-exclusion-id">
                       <Translate contentKey="global.field.id">ID</Translate>
                     </Label>
-                    <AvInput id="exclusions-config-id" type="text" className="form-control" name="id" required readOnly />
+                    <AvInput id="location-exclusion-id" type="text" className="form-control" name="id" required readOnly />
                   </AvGroup>
                 ) : null}
                 <AvGroup>
-                  <Label for="exclusions-config-account">
-                    <Translate contentKey="serviceNetApp.exclusionsConfig.account">Account</Translate>
+                  <Label id="regionLabel" for="location-exclusion-region">
+                    <Translate contentKey="serviceNetApp.locationExclusion.region">Region</Translate>
                   </Label>
-                  <AvInput id="exclusions-config-account" type="select" className="form-control" name="accountId">
+                  <AvField id="location-exclusion-region" type="text" name="region" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="cityLabel" for="location-exclusion-city">
+                    <Translate contentKey="serviceNetApp.locationExclusion.city">City</Translate>
+                  </Label>
+                  <AvField id="location-exclusion-city" type="text" name="city" />
+                </AvGroup>
+                <AvGroup>
+                  <Label for="location-exclusion-config">
+                    <Translate contentKey="serviceNetApp.locationExclusion.config">Config</Translate>
+                  </Label>
+                  <AvInput id="location-exclusion-config" type="select" className="form-control" name="configId">
                     <option value="" key="0" />
-                    {systemAccounts
-                      ? systemAccounts.map(otherEntity => (
+                    {exclusionsConfigs
+                      ? exclusionsConfigs.map(otherEntity => (
                           <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.name}
+                            {otherEntity.id}
                           </option>
                         ))
                       : null}
                   </AvInput>
                 </AvGroup>
-                <Button tag={Link} id="cancel-save" to="/entity/exclusions-config" replace color="info">
+                <Button tag={Link} id="cancel-save" to="/entity/location-exclusion" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
                   <span className="d-none d-md-inline">
@@ -133,15 +145,15 @@ export class ExclusionsConfigUpdate extends React.Component<IExclusionsConfigUpd
 }
 
 const mapStateToProps = (storeState: IRootState) => ({
-  systemAccounts: storeState.systemAccount.entities,
-  exclusionsConfigEntity: storeState.exclusionsConfig.entity,
-  loading: storeState.exclusionsConfig.loading,
-  updating: storeState.exclusionsConfig.updating,
-  updateSuccess: storeState.exclusionsConfig.updateSuccess
+  exclusionsConfigs: storeState.exclusionsConfig.entities,
+  locationExclusionEntity: storeState.locationExclusion.entity,
+  loading: storeState.locationExclusion.loading,
+  updating: storeState.locationExclusion.updating,
+  updateSuccess: storeState.locationExclusion.updateSuccess
 });
 
 const mapDispatchToProps = {
-  getSystemAccounts,
+  getExclusionsConfigs,
   getEntity,
   updateEntity,
   createEntity,
@@ -154,4 +166,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ExclusionsConfigUpdate);
+)(LocationExclusionUpdate);

@@ -1,7 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.ExclusionsConfig;
-import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.repository.ExclusionsConfigRepository;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
@@ -15,12 +14,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Service Implementation for managing ExclusionsConfig.
+ * Service Implementation for managing {@link ExclusionsConfig}.
  */
 @Service
 @Transactional
@@ -38,15 +36,25 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
         this.exclusionsConfigMapper = exclusionsConfigMapper;
     }
 
+    /**
+     * Save a exclusionsConfig.
+     *
+     * @param exclusionsConfigDTO the entity to save.
+     * @return the persisted entity.
+     */
     @Override
     public ExclusionsConfigDTO save(ExclusionsConfigDTO exclusionsConfigDTO) {
         log.debug("Request to save ExclusionsConfig : {}", exclusionsConfigDTO);
-
         ExclusionsConfig exclusionsConfig = exclusionsConfigMapper.toEntity(exclusionsConfigDTO);
         exclusionsConfig = exclusionsConfigRepository.save(exclusionsConfig);
         return exclusionsConfigMapper.toDto(exclusionsConfig);
     }
 
+    /**
+     * Get all the exclusionsConfigs.
+     *
+     * @return the list of entities.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ExclusionsConfigDTO> findAll() {
@@ -57,16 +65,17 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
     }
 
     @Override
-    public List<ExclusionsConfig> findAllBySystemAccountIdIn(Set<UUID> accountIds) {
-        return exclusionsConfigRepository.findAllBySystemAccountIdIn(accountIds);
-    }
-
-    @Override
-    public Map<UUID, Set<FieldExclusion>> getAllBySystemAccountId() {
+    public Map<UUID, ExclusionsConfig> getAllBySystemAccountId() {
         return exclusionsConfigRepository.findAll().stream().collect(Collectors.toMap(config -> config.getAccount().getId(),
-            ExclusionsConfig::getExclusions));
+            config -> config));
     }
 
+    /**
+     * Get one exclusionsConfig by id.
+     *
+     * @param id the id of the entity.
+     * @return the entity.
+     */
     @Override
     @Transactional(readOnly = true)
     public Optional<ExclusionsConfigDTO> findOne(UUID id) {
@@ -75,11 +84,11 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
             .map(exclusionsConfigMapper::toDto);
     }
 
-    @Override
-    public Optional<ExclusionsConfig> findOneBySystemAccountId(UUID accountId) {
-        return exclusionsConfigRepository.findOneBySystemAccountId(accountId);
-    }
-
+    /**
+     * Delete the exclusionsConfig by id.
+     *
+     * @param id the id of the entity.
+     */
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete ExclusionsConfig : {}", id);

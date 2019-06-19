@@ -16,7 +16,8 @@
         "title": "Exclusions Config"
       },
       "account": "Account",
-      "exclusions": "Exclusions"
+      "exclusions": "Exclusions",
+      "locationExclusions": "Location Exclusions"
     }
   }
 }

@@ -54,6 +54,7 @@
     <include file="config/liquibase/changelog/20190530112156_added_entity_Beds.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190530112157_added_entity_Shelter.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190530112155_added_entity_Option.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190614184536_added_entity_LocationExclusion.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
              relativeToChangelogFile="false"/>
@@ -110,6 +111,7 @@
     <include file="config/liquibase/changelog/20190409141106_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190530112157_added_entity_constraints_Shelter.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190530112156_added_entity_constraints_Beds.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190614184536_added_entity_constraints_LocationExclusion.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <include file="config/liquibase/changelog/20181220100327_insert_initial_SystemAccounts.xml"
              relativeToChangelogFile="false"/>

@@ -32,7 +32,7 @@ export class ExclusionsConfigDetail extends React.Component<IExclusionsConfigDet
             <dt>
               <Translate contentKey="serviceNetApp.exclusionsConfig.account">Account</Translate>
             </dt>
-            <dd>{exclusionsConfigEntity.accountId ? exclusionsConfigEntity.accountId : ''}</dd>
+            <dd>{exclusionsConfigEntity.accountName ? exclusionsConfigEntity.accountName : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/exclusions-config" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}
