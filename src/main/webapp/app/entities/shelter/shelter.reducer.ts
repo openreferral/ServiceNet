@@ -62,11 +62,12 @@ export default (state: ShelterState = initialState, action): ShelterState => {
         errorMessage: action.payload
       };
     case SUCCESS(ACTION_TYPES.FETCH_SHELTER_LIST):
+      const headers = action.payload.headers || {};
       return {
         ...state,
         loading: false,
         entities: action.payload.data,
-        totalItems: action.payload.headers['x-total-count'] || action.payload.data.length
+        totalItems: headers['x-total-count'] || action.payload.data.length
       };
     case SUCCESS(ACTION_TYPES.FETCH_SHELTER):
       return {

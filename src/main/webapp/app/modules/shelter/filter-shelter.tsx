@@ -35,7 +35,7 @@ export class FilterShelter extends React.Component<IFilterShelterProps, IFilterS
   };
 
   applyFilter = () => {
-    ReactGA.event({ category: 'UserActions', action: 'Applied Filter' });
+    ReactGA.event({ category: 'UserActions', action: 'Shelter - Applied Filter' });
     this.props.getShelterEntities().then(() => this.setState({ filtersChanged: false }));
   };
 
@@ -53,7 +53,7 @@ export class FilterShelter extends React.Component<IFilterShelterProps, IFilterS
     });
 
     this.props.resetShelterFilter();
-    ReactGA.event({ category: 'UserActions', action: 'Filter Reset' });
+    ReactGA.event({ category: 'UserActions', action: 'Shelter - Filter Reset' });
   };
 
   handleCountyChange = selectedCounty => {
