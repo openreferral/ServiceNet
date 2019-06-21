@@ -32,7 +32,7 @@
       "excludedCopy": "This field has been excluded from ServiceNet per your data sharing agreement",
       "compare": {
         "title": "Compare",
-        "singleHeader": " partner have similar records",
+        "singleHeader": " partner has similar record",
         "multiHeader": " partners have similar records",
         "content1": "Reviewing these records will help us give you better recommendation in the future.",
         "content2": "A manual review is the easiest way to confirm that these records match.",
@@ -102,9 +102,9 @@
       "holidayScheduleEndDate": "End date",
       "languageLanguage": "Language",
       "serviceTaxonomyTaxonomyDetails": "Details",
-      "imported": " imported ",
+      "imported": " updated on ",
       "conflictingDataOnePartner": " partner has conflicting data:",
-      "conflictingDataMultiPartners": " partners has conflicting data:"
+      "conflictingDataMultiPartners": " partners have conflicting data:"
     }
   }
 }
