@@ -109,9 +109,7 @@ module.exports = options => ({
     }),
     new ForkTsCheckerWebpackPlugin({ tslint: true }),
     new CopyWebpackPlugin([
-      { from: './node_modules/swagger-ui/dist/css', to: 'swagger-ui/dist/css' },
-      { from: './node_modules/swagger-ui/dist/lib', to: 'swagger-ui/dist/lib' },
-      { from: './node_modules/swagger-ui/dist/swagger-ui.min.js', to: 'swagger-ui/dist/swagger-ui.min.js' },
+      { from: './node_modules/swagger-ui/dist/*', to: 'swagger-ui/dist/*' },
       { from: './src/main/webapp//swagger-ui/', to: 'swagger-ui' },
       { from: './src/main/webapp/static/', to: 'content' },
       { from: './src/main/webapp/favicon.ico', to: 'favicon.ico' },
