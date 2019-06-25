@@ -22,6 +22,7 @@ public class UrlSimilarityCounterIntTest {
     @Test
     public void shouldReturnMinRatioForDifferentNormalizedAndUpperCased() {
         assertEquals(0, urlSimilarityCounter.countSimilarityRatio("one.com", "two.com", null), PRECISION);
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio(null, "two.com", null), PRECISION);
     }
 
     @Test
