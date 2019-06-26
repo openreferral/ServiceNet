@@ -8,7 +8,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { Row, Col, Container, Progress, Spinner, Input, Button } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities, searchEntities } from 'app/entities/shelter/shelter.reducer';
+import { searchEntities } from 'app/entities/shelter/shelter.reducer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SortShelter from 'app/modules/shelter/sort-shelter';
 import FilterShelter from 'app/modules/shelter/filter-shelter';
@@ -54,7 +54,7 @@ export class Shelters extends React.Component<ISheltersProp, ISheltersState> {
   }
 
   componentDidMount() {
-    this.props.getEntities();
+    this.getEntities();
   }
 
   handleLoadMore = () => {
@@ -72,7 +72,7 @@ export class Shelters extends React.Component<ISheltersProp, ISheltersState> {
 
   searchEntities = () => {
     this.props.reset();
-    this.getEntities();
+    return this.getEntities();
   };
 
   changeSearchPhrase = event => {
@@ -242,7 +242,6 @@ const mapStateToProps = (storeState: IRootState) => ({
 const mapDispatchToProps = {
   getSession,
   searchEntities,
-  getEntities,
   reset
 };
 

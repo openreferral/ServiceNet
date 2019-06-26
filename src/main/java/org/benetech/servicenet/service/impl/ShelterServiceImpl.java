@@ -15,9 +15,14 @@ import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
+import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
 import org.benetech.servicenet.service.mapper.ShelterMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,6 +100,20 @@ public class ShelterServiceImpl implements ShelterService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ShelterDTO> search(ShelterFiltersDTO shelterFilters, Pageable pageable) {
+        Page<Shelter> shelters = shelterRepository.search(shelterFilters, pageable);
+
+        List<ShelterDTO> shelterDTOs = shelters.stream()
+            .map(shelterMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+        return new PageImpl<>(
+            shelterDTOs,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            shelters.getTotalElements()
+        );
+    }
 
     /**
      * Get one shelter by id.

@@ -18,7 +18,7 @@ export const ACTION_TYPES = {
   RESET: 'option/RESET'
 };
 
-const initialState = {
+export const initialState = {
   loading: false,
   errorMessage: null,
   entities: [] as ReadonlyArray<IOption>,
