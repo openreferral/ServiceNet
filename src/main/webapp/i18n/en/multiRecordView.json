@@ -18,6 +18,7 @@
     "from": "From ",
     "lastUpdated": "Last updated  ",
     "copyToClipboard": "Copy to Clipboard",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "backToTop": "Back to Top"
   }
 }
