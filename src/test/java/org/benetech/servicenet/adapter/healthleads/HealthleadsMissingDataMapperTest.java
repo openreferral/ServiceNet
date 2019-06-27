@@ -145,18 +145,9 @@ public class HealthleadsMissingDataMapperTest {
         String json = AdapterTestsUtils.readResourceAsString(MINIMAL + SERVICES_TAXONOMY + JSON);
         List<HealthleadsServiceTaxonomy> entities = new Gson().fromJson(json, new ListType<>(HealthleadsServiceTaxonomy.class));
 
-        ServiceTaxonomy result = mapper.extractServiceTaxonomy(entities.get(0)).get();
+        ServiceTaxonomy result = mapper.extractServiceTaxonomy(entities.get(0));
 
         assertEquals("Taxonomy Detail", result.getTaxonomyDetails());
-    }
-
-    @Test
-    public void shouldReturnEmptyOptionalForLackOfDataForServiceTaxonomy() throws IOException {
-        String json = AdapterTestsUtils.readResourceAsString(MINIMAL + SERVICES_TAXONOMY + JSON);
-        List<HealthleadsServiceTaxonomy> entities = new Gson().fromJson(json, new ListType<>(HealthleadsServiceTaxonomy.class));
-        entities.get(0).setTaxonomyDetail(null);
-
-        assertFalse(mapper.extractServiceTaxonomy(entities.get(0)).isPresent());
     }
 
     @Test

@@ -37,7 +37,8 @@ const ActivityElement = props => {
                 {areAllDisplayed ? <div /> : `and ${props.activity.conflicts.length - maxConflicts} more...`}
                 {conflictsToDisplay.length > 0 && (
                   <CardText className="activity-right-card-info">
-                    Last updated <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                    <Translate contentKey="serviceNetApp.activity.lastPartnerUpdate" />
+                    <TextFormat value={props.activity.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
                   </CardText>
                 )}
               </div>

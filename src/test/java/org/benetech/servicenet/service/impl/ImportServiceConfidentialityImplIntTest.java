@@ -227,7 +227,7 @@ public class ImportServiceConfidentialityImplIntTest {
 
         AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING).details(NEW_STRING);
         newAccessibility.setIsConfidential(true);
-        location.setAccessibilities(Set.of(newAccessibility));
+        location.setAccessibilities(Set.of(otherAccessibility, newAccessibility));
         locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         assertEquals(1, accessibilityService.findAll().size());

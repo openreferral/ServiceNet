@@ -11,6 +11,7 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.benetech.servicenet.validator.EntityValidator;
@@ -40,6 +41,9 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     @Autowired
     private FundingRepository fundingRepository;
 
+    @Autowired
+    private SharedImportService sharedImportService;
+
     @Override
     @Transactional
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
@@ -47,7 +51,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         Organization organization = new Organization(filledOrganization);
         Optional<SystemAccount> systemAccount = systemAccountService.findByName(providerName);
 
-        if (!systemAccount.isPresent()) {
+        if (systemAccount.isEmpty()) {
             return null;
         }
         organization.setAccount(systemAccount.get());
@@ -102,7 +106,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     private void createOrUpdateFilteredContactsForOrganization(Set<Contact> contacts, Organization organization) {
         contacts.forEach(p -> p.setOrganization(organization));
-        updateCollection(em, organization.getContacts(), contacts, Contact::equals);
+        organization.setContacts(sharedImportService.createOrUpdateContacts(contacts));
     }
 
     private void createOrUpdateFilteredProgramsForOrganization(Set<Program> programs, Organization organization) {

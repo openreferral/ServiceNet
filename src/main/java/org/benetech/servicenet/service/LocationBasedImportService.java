@@ -18,8 +18,8 @@ public interface LocationBasedImportService {
 
     void createOrUpdatePostalAddress(PostalAddress postalAddress, Location location, DataImportReport report);
 
-    AccessibilityForDisabilities createOrUpdateAccessibility(AccessibilityForDisabilities accessibility,
-                                                                       Location location, DataImportReport report);
+    void createOrUpdateAccessibilities(Set<AccessibilityForDisabilities> accessibilities,
+        Location location, DataImportReport report);
 
     void createOrUpdateOpeningHoursForLocation(RegularSchedule schedule, Location location, DataImportReport report);
 
