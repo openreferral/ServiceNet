@@ -1,13 +1,19 @@
 package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
+import javax.validation.Valid;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
+import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
@@ -91,6 +97,20 @@ public class ShelterResource {
     public List<ShelterDTO> getAllShelters() {
         log.debug("REST request to get all Shelters");
         return shelterService.findAll();
+    }
+
+    /**
+     * GET  /shelters/search : search shelters.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of shelters in body
+     */
+    @PostMapping("/shelters/search")
+    public ResponseEntity<List<ShelterDTO>> searchShelters(
+        @Valid @RequestBody ShelterFiltersDTO shelterFilters, Pageable pageable) {
+        log.debug("REST request to search Shelters");
+        Page<ShelterDTO> page = shelterService.search(shelterFilters, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/activities");
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.benetech.servicenet.service.dto.ShelterDTO;
+import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing Shelter.
@@ -24,6 +27,15 @@ public interface ShelterService {
      * @return the list of entities
      */
     List<ShelterDTO> findAll();
+
+    /**
+     * Search shelters.
+     *
+     * @param shelterFilters search filters
+     * @param pageable pagination properties
+     * @return the list of entities
+     */
+    Page<ShelterDTO> search(ShelterFiltersDTO shelterFilters, Pageable pageable);
 
 
     /**

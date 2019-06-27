@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction, parseHeaderForLinks } from 'react-jhipster';
+import {
+  ICrudGetAction,
+  ICrudGetAllAction,
+  ICrudPutAction,
+  ICrudDeleteAction,
+  parseHeaderForLinks,
+  loadMoreDataWhenScrolled
+} from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
@@ -8,6 +15,7 @@ import { IShelter, defaultValue } from 'app/shared/model/shelter.model';
 
 export const ACTION_TYPES = {
   FETCH_SHELTER_LIST: 'shelter/FETCH_SHELTER_LIST',
+  SEARCH_SHELTERS: 'shelter/SEARCH_SHELTERS',
   FETCH_SHELTER: 'shelter/FETCH_SHELTER',
   CREATE_SHELTER: 'shelter/CREATE_SHELTER',
   UPDATE_SHELTER: 'shelter/UPDATE_SHELTER',
@@ -33,6 +41,7 @@ export type ShelterState = Readonly<typeof initialState>;
 export default (state: ShelterState = initialState, action): ShelterState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_SHELTER_LIST):
+    case REQUEST(ACTION_TYPES.SEARCH_SHELTERS):
     case REQUEST(ACTION_TYPES.FETCH_SHELTER):
       return {
         ...state,
@@ -50,6 +59,7 @@ export default (state: ShelterState = initialState, action): ShelterState => {
         updating: true
       };
     case FAILURE(ACTION_TYPES.FETCH_SHELTER_LIST):
+    case FAILURE(ACTION_TYPES.SEARCH_SHELTERS):
     case FAILURE(ACTION_TYPES.FETCH_SHELTER):
     case FAILURE(ACTION_TYPES.CREATE_SHELTER):
     case FAILURE(ACTION_TYPES.UPDATE_SHELTER):
@@ -62,12 +72,20 @@ export default (state: ShelterState = initialState, action): ShelterState => {
         errorMessage: action.payload
       };
     case SUCCESS(ACTION_TYPES.FETCH_SHELTER_LIST):
-      const headers = action.payload.headers || {};
       return {
         ...state,
         loading: false,
         entities: action.payload.data,
-        totalItems: headers['x-total-count'] || action.payload.data.length
+        totalItems: action.payload.data.length
+      };
+    case SUCCESS(ACTION_TYPES.SEARCH_SHELTERS):
+      const links = parseHeaderForLinks(action.payload.headers.link);
+      return {
+        ...state,
+        links,
+        loading: false,
+        totalItems: action.payload.headers['x-total-count'],
+        entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links)
       };
     case SUCCESS(ACTION_TYPES.FETCH_SHELTER):
       return {
@@ -103,11 +121,16 @@ const apiUrl = 'api/shelters';
 
 // Actions
 export const searchEntities = (search, page, size, sort, filter) => {
-  const requestUrl = `${apiUrl}${sort ? `?search=${search}&page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}/search${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+
+  const filterDataToSend = {
+    ...filter,
+    searchQuery: search
+  };
 
   return {
-    type: ACTION_TYPES.FETCH_SHELTER_LIST,
-    payload: axios.get<IShelter>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+    type: ACTION_TYPES.SEARCH_SHELTERS,
+    payload: axios.post<IShelter>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`, filterDataToSend)
   };
 };
 
