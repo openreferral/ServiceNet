@@ -15,6 +15,7 @@ export const ACTION_TYPES = {
 
 const initialState = {
   loading: false,
+  loggingOut: false,
   isAuthenticated: false,
   loginSuccess: false,
   loginError: false, // Errors returned from server side
@@ -31,6 +32,11 @@ export type AuthenticationState = Readonly<typeof initialState>;
 
 export default (state: AuthenticationState = initialState, action): AuthenticationState => {
   switch (action.type) {
+    case REQUEST(ACTION_TYPES.LOGOUT):
+      return {
+        ...state,
+        loggingOut: true
+      };
     case REQUEST(ACTION_TYPES.LOGIN):
     case REQUEST(ACTION_TYPES.GET_SESSION):
       return {
@@ -59,12 +65,14 @@ export default (state: AuthenticationState = initialState, action): Authenticati
         loading: false,
         loginError: false,
         showModalLogin: false,
-        loginSuccess: true
+        loginSuccess: true,
+        loggingOut: false
       };
-    case ACTION_TYPES.LOGOUT:
+    case SUCCESS(ACTION_TYPES.LOGOUT):
       return {
         ...initialState,
-        showModalLogin: true
+        showModalLogin: true,
+        loggingOut: false
       };
     case SUCCESS(ACTION_TYPES.GET_SESSION): {
       const isAuthenticated = action.payload && action.payload.data && action.payload.data.activated;
