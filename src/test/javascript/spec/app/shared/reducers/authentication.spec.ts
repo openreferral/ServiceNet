@@ -101,7 +101,7 @@ describe('Authentication reducer tests', () => {
 
   describe('Other cases', () => {
     it('should properly reset the current state when a logout is requested', () => {
-      const toTest = authentication(undefined, { type: ACTION_TYPES.LOGOUT });
+      const toTest = authentication(undefined, { type: SUCCESS(ACTION_TYPES.LOGOUT) });
       expect(toTest).toMatchObject({
         loading: false,
         isAuthenticated: false,
