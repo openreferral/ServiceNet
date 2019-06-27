@@ -28,13 +28,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = { IntegerMapper.class })
 public abstract class HealthLeadsDataMapper {
@@ -98,13 +98,9 @@ public abstract class HealthLeadsDataMapper {
     @Mapping(target = "externalDbId", source = "id")
     public abstract ServiceAtLocation extractServiceAtLocation(HealthleadsServiceAtLocation serviceAtLocation);
 
-    public Optional<ServiceTaxonomy> extractServiceTaxonomy(HealthleadsServiceTaxonomy serviceTaxonomy) {
-        if (StringUtils.isBlank(serviceTaxonomy.getTaxonomyDetail())) {
-            return Optional.empty();
-        }
-
-        return Optional.of(toServiceTaxonomy(serviceTaxonomy));
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "taxonomyDetails", source = "taxonomyDetail")
+    public abstract ServiceTaxonomy extractServiceTaxonomy(HealthleadsServiceTaxonomy serviceTaxonomy);
 
     public Optional<Taxonomy> extractTaxonomy(HealthleadsTaxonomy taxonomy) {
         if (StringUtils.isBlank(taxonomy.getName())) {
@@ -152,10 +148,6 @@ public abstract class HealthLeadsDataMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "externalDbId", source = "id")
     protected abstract RequiredDocument toRequiredDocument(HealthleadsRequiredDocument requiredDocument);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "taxonomyDetails", source = "taxonomyDetail")
-    protected abstract ServiceTaxonomy toServiceTaxonomy(HealthleadsServiceTaxonomy serviceTaxonomy);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "externalDbId", source = "id")

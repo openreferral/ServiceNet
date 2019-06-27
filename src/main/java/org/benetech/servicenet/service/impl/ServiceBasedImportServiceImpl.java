@@ -31,7 +31,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.benetech.servicenet.service.util.EntityManagerUtils.updateCollection;
 import static org.benetech.servicenet.util.CollectionUtils.filterNulls;
 import static org.benetech.servicenet.validator.EntityValidator.isValid;
 
@@ -185,7 +184,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
     @Override
     public void createOrUpdateContactsForService(Set<Contact> contacts, Service service, DataImportReport report) {
         contacts.forEach(c -> c.setSrvc(service));
-        createOrUpdateContacts(contacts, service.getContacts(), report, service.getExternalDbId());
+        createOrUpdateContacts(contacts, service, report, service.getExternalDbId());
     }
 
     @Override
@@ -212,36 +211,33 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
             serviceAtLocations.forEach(serviceAtLocation -> {
                 serviceAtLocation.setSrvc(service);
 
-                serviceAtLocationImportService.createOrUpdateServiceAtLocationForService(
-                    serviceAtLocation, providerName, service, report);
+                serviceAtLocationImportService.createOrUpdateServiceAtLocationForService(serviceAtLocation, providerName);
             });
 
             service.setLocations(serviceAtLocations);
         }
     }
 
-    private void createOrUpdateContacts(Set<Contact> contacts, Set<Contact> source,
+    private void createOrUpdateContacts(Set<Contact> contacts, Service service,
                                         DataImportReport report, String serviceExternalId) {
         Set<Contact> filtered = contacts.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential())
             && isValid(x, report, serviceExternalId))
             .collect(Collectors.toSet());
-        createOrUpdateFilteredContacts(filtered, source);
+        createOrUpdateFilteredContacts(filtered, service);
     }
 
-    private void createOrUpdateFilteredContacts(Set<Contact> contacts, Set<Contact> source) {
-        updateCollection(em, source, contacts, Contact::equals);
+    private void createOrUpdateFilteredContacts(Set<Contact> contacts, Service service) {
+        contacts.forEach(contact -> contact.setSrvc(service));
+        service.setContacts(sharedImportService.createOrUpdateContacts(contacts));
     }
 
     private void createOrUpdateFilteredPhonesForService(Set<Phone> phones, @Nonnull Service service) {
         phones.forEach(phone -> phone.setSrvc(service));
-        service.setPhones(sharedImportService.persistPhones(phones, service.getPhones()));
+        sharedImportService.persistPhones(service.getPhones(), phones);
     }
 
     private void createOrUpdateFilteredLangsForService(Set<Language> langs, Service service) {
-        if (service != null) {
-            langs.forEach(lang -> lang.setSrvc(service));
-            updateCollection(em, service.getLangs(), langs, (lang1, lang2) ->
-                lang1.getLanguage().equals(lang2.getLanguage()));
-        }
+        langs.forEach(lang -> lang.setSrvc(service));
+        sharedImportService.persistLangs(service.getLangs(), langs);
     }
 }

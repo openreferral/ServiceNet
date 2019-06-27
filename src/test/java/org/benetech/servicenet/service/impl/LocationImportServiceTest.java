@@ -283,7 +283,7 @@ public class LocationImportServiceTest {
         AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities()
             .accessibility(NEW_STRING).details(NEW_STRING);
         Location locationToUpdate = helper.generateExistingLocationDoNotPersist();
-        locationToUpdate.setAccessibilities(helper.mutableSet(newAccessibility));
+        locationToUpdate.setAccessibilities(helper.mutableSet(newAccessibility, otherAccessibility));
 
         assertEquals(1, accessibilityService.findAll().size());
 
@@ -313,7 +313,7 @@ public class LocationImportServiceTest {
         Location locationToUpdate = helper.generateExistingLocationDoNotPersist();
         AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities()
             .accessibility(EXISTING_STRING).details(NEW_STRING);
-        locationToUpdate.setAccessibilities(helper.mutableSet(newAccessibility));
+        locationToUpdate.setAccessibilities(helper.mutableSet(otherAccessibility, newAccessibility));
 
         assertEquals(2, accessibilityService.findAll().size());
 

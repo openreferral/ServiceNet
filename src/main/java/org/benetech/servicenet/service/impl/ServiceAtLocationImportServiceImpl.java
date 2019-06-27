@@ -1,7 +1,5 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.ServiceAtLocationImportService;
@@ -25,8 +23,8 @@ public class ServiceAtLocationImportServiceImpl implements ServiceAtLocationImpo
     private LocationService locationService;
 
     @Override
-    public ServiceAtLocation createOrUpdateServiceAtLocationForService(ServiceAtLocation serviceAtLocation,
-        String providerName, Service service, DataImportReport report) {
+    public void createOrUpdateServiceAtLocationForService(ServiceAtLocation serviceAtLocation,
+        String providerName) {
         Optional<ServiceAtLocation> serviceAtLocationFromDb = serviceAtLocationService.findForExternalDb(
             serviceAtLocation.getExternalDbId(), providerName);
 
@@ -37,10 +35,9 @@ public class ServiceAtLocationImportServiceImpl implements ServiceAtLocationImpo
 
         if (serviceAtLocationFromDb.isPresent()) {
             serviceAtLocation.setId(serviceAtLocationFromDb.get().getId());
-            return em.merge(serviceAtLocation);
+            em.merge(serviceAtLocation);
         } else {
             em.persist(serviceAtLocation);
-            return serviceAtLocation;
         }
     }
 }

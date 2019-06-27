@@ -185,17 +185,16 @@ public class PersistanceManager {
 
         Set<ServiceTaxonomy> result = new HashSet<>();
         for (HealthleadsServiceTaxonomy healthleadsServiceTaxonomy : serviceTaxonomies) {
-            mapper.extractServiceTaxonomy(healthleadsServiceTaxonomy).ifPresent(serviceTaxonomy -> {
-                Set<HealthleadsTaxonomy> taxonomies = dictionary.getRelatedEntities(
-                    HealthleadsTaxonomy.class, healthleadsServiceTaxonomy.getTaxonomyId(), HealthleadsBaseData.class);
+            ServiceTaxonomy serviceTaxonomy = mapper.extractServiceTaxonomy(healthleadsServiceTaxonomy);
+            Set<HealthleadsTaxonomy> taxonomies = dictionary.getRelatedEntities(
+                HealthleadsTaxonomy.class, healthleadsServiceTaxonomy.getTaxonomyId(), HealthleadsBaseData.class);
 
-                if (!taxonomies.isEmpty()) {
-                    mapper.extractTaxonomy(taxonomies.iterator().next()).ifPresent(taxonomy ->
-                        serviceTaxonomy.setTaxonomy(taxonomy.providerName(PROVIDER_NAME)));
-                }
+            if (!taxonomies.isEmpty()) {
+                mapper.extractTaxonomy(taxonomies.iterator().next()).ifPresent(taxonomy ->
+                    serviceTaxonomy.setTaxonomy(taxonomy.providerName(PROVIDER_NAME)));
+            }
 
-                result.add(serviceTaxonomy.providerName(PROVIDER_NAME).externalDbId(serviceId));
-            });
+            result.add(serviceTaxonomy.providerName(PROVIDER_NAME).externalDbId(serviceId));
         }
 
         return result;

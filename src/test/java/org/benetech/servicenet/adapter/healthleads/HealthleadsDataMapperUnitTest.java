@@ -154,7 +154,7 @@ public class HealthleadsDataMapperUnitTest {
         serviceTaxonomy.setTaxonomyDetail("taxDetail");
 
         org.benetech.servicenet.domain.ServiceTaxonomy extracted
-            = HealthLeadsDataMapper.INSTANCE.extractServiceTaxonomy(serviceTaxonomy).get();
+            = HealthLeadsDataMapper.INSTANCE.extractServiceTaxonomy(serviceTaxonomy);
 
         assertEquals("taxDetail", extracted.getTaxonomyDetails());
     }

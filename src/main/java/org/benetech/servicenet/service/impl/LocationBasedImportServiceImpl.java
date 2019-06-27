@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.HolidaySchedule;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.persistence.EntityManager;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -118,44 +118,28 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
 
     @Override
     @ConfidentialFilter
-    public AccessibilityForDisabilities createOrUpdateAccessibility(AccessibilityForDisabilities accessibility,
-                                                                               Location location, DataImportReport report) {
-        if (EntityValidator.isNotValid(accessibility, report, location.getExternalDbId())) {
-            return null;
-        }
-        accessibility.setLocation(location);
-        Optional<AccessibilityForDisabilities> existingAccessibility = getExistingAccessibility(accessibility, location);
-        if (existingAccessibility.isPresent()) {
-            accessibility.setId(existingAccessibility.get().getId());
-            em.merge(accessibility);
-        } else {
-            em.persist(accessibility);
-        }
+    public void createOrUpdateAccessibilities(Set<AccessibilityForDisabilities> accessibilities,
+        Location location, DataImportReport report) {
+        Set<AccessibilityForDisabilities> filtered = accessibilities.stream()
+            .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()) && isValid(x, report, location.getExternalDbId()))
+            .collect(Collectors.toSet());
 
-        return accessibility;
-    }
+        filtered.forEach(x -> x.setLocation(location));
 
-    private Optional<AccessibilityForDisabilities> getExistingAccessibility(AccessibilityForDisabilities accessibility,
-                                                                            Location location) {
-        if (accessibility == null) {
-            return Optional.empty();
-        }
-        return location.getAccessibilities().stream()
-            .filter(a -> a.getAccessibility().equals(accessibility.getAccessibility()))
-            .findFirst();
+        updateCollection(em, location.getAccessibilities(), filtered, (x1, x2) ->
+            StringUtils.equals(x1.getAccessibility(), x2.getAccessibility())
+                && StringUtils.equals(x1.getDetails(), x2.getDetails()));
+
     }
 
     private void createOrUpdateFilteredLangsForLocation(Set<Language> langs, Location location) {
-        if (location != null) {
-            langs.forEach(lang -> lang.setLocation(location));
-            updateCollection(em, location.getLangs(), langs, (lang1, lang2) ->
-                lang1.getLanguage().equals(lang2.getLanguage()));
-        }
+        langs.forEach(lang -> lang.setLocation(location));
+        sharedImportService.persistLangs(location.getLangs(), langs);
     }
 
     private void createOrUpdateFilteredPhonesForLocation(Set<Phone> phones, @Nonnull Location location) {
         phones.forEach(phone -> phone.setLocation(location));
-        location.setPhones(sharedImportService.persistPhones(phones, location.getPhones()));
+        sharedImportService.persistPhones(location.getPhones(), phones);
     }
 
 }

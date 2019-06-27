@@ -2,12 +2,15 @@ package org.benetech.servicenet.service.impl;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.Contact;
+import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
+import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,6 +33,9 @@ public class SharedImportServiceImpl implements SharedImportService {
     @Autowired
     private RegularScheduleRepository regularScheduleRepository;
 
+    @Autowired
+    private ContactService contactService;
+
     @Override
     public void createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, RegularSchedule schedule) {
         createOrUpdateOpeningHours(openingHours, service, null, schedule);
@@ -42,13 +48,34 @@ public class SharedImportServiceImpl implements SharedImportService {
 
     @SuppressWarnings("checkstyle:booleanExpressionComplexity")
     @Override
-    public Set<Phone> persistPhones(Set<Phone> phonesToSave, Set<Phone> phonesInDatabase) {
+    public void persistPhones(Set<Phone> phonesInDatabase, Set<Phone> phonesToSave) {
         updateCollection(em, phonesInDatabase, phonesToSave, (p1, p2) ->
             p1.getNumber().equals(p2.getNumber()) && Objects.equals(p1.getExtension(), p2.getExtension())
                 && StringUtils.equals(p1.getType(), p2.getType()) && StringUtils.equals(p1.getLanguage(), p2.getLanguage())
                 && StringUtils.equals(p1.getDescription(), p2.getDescription()));
+    }
 
-        return phonesToSave;
+    @Override
+    public void persistLangs(Set<Language> langsInDatabase, Set<Language> langsToSave) {
+        updateCollection(em, langsInDatabase, langsToSave, (lang1, lang2) ->
+            lang1.getLanguage().equals(lang2.getLanguage()));
+    }
+
+    @Override
+    public Set<Contact> createOrUpdateContacts(Set<Contact> contacts) {
+        contacts.forEach(c -> {
+            Optional<Contact> contactFromDb = contactService.findForExternalDb(c.getExternalDbId(), c.getProviderName());
+
+            contactFromDb.ifPresentOrElse(
+                contact -> {
+                    c.setId(contact.getId());
+                    em.merge(c);
+                },
+                () -> em.persist(c)
+            );
+        });
+
+        return contacts;
     }
 
     private void createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location,

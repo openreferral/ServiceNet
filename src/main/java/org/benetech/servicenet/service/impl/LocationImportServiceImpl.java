@@ -2,8 +2,6 @@ package org.benetech.servicenet.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
-import org.benetech.servicenet.domain.AccessibilityForDisabilities;
-import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
@@ -16,11 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-
-import static org.benetech.servicenet.util.CollectionUtils.filterNulls;
 
 @Slf4j
 @Component
@@ -84,7 +78,8 @@ public class LocationImportServiceImpl implements LocationImportService {
             filledLocation.getRegularSchedule(), location, importData.getReport());
         locationBasedImportService.createOrUpdateHolidayScheduleForLocation(
             filledLocation.getHolidaySchedule(), location, importData.getReport());
-        importAccessibilities(filledLocation.getAccessibilities(), location, importData.getReport());
+        locationBasedImportService.createOrUpdateAccessibilities(filledLocation.getAccessibilities(),
+            location, importData.getReport());
     }
 
     private void fetchGeocodeIfNeeded(ImportData importData, Location location) {
@@ -96,16 +91,6 @@ public class LocationImportServiceImpl implements LocationImportService {
     private boolean geocodeShouldBeFetched(Location location) {
         return location.getLongitude() == null || location.getLatitude() == null
             || location.getLongitude().equals(0.0) || location.getLatitude().equals(0.0);
-    }
-
-    private void importAccessibilities(Set<AccessibilityForDisabilities> accessibilities,
-                                       Location location, DataImportReport report) {
-        Set<AccessibilityForDisabilities> savedAccessibilities = new HashSet<>();
-        for (AccessibilityForDisabilities accessibility : accessibilities) {
-            savedAccessibilities.add(
-                locationBasedImportService.createOrUpdateAccessibility(accessibility, location, report));
-        }
-        location.setAccessibilities(filterNulls(savedAccessibilities));
     }
 
     private void fillDataFromDb(Location newLocation, Location locationFromDb) {
