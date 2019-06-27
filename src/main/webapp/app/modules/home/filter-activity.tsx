@@ -5,7 +5,6 @@ import Select from 'react-select';
 import { IRootState } from 'app/shared/reducers';
 import { getPostalCodeList, getRegionList, getCityList, getPartnerList, updateActivityFilter } from './filter-activity.reducer';
 import ReactGA from 'react-ga';
-import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
@@ -35,11 +34,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   componentDidMount() {
-    this.getPostalCodeList();
-    this.getRegionList();
-    this.getCityList();
-    this.getPartnerList();
+    if (!this.props.isLoggingOut) {
+      this.getPostalCodeList();
+      this.getRegionList();
+      this.getCityList();
+      this.getPartnerList();
+    }
   }
+
   getPartnerList = () => {
     this.props.getPartnerList();
   };
@@ -172,6 +174,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
 const mapStateToProps = (storeState: IRootState) => ({
   postalCodeList: storeState.filterActivity.postalCodeList.map(code => ({ label: code, value: code })),
+  isLoggingOut: storeState.authentication.loggingOut,
   regionList: storeState.filterActivity.regionList.map(region => ({ label: region, value: region })),
   cityList: storeState.filterActivity.cityList.map(city => ({ label: city, value: city })),
   partnerList: storeState.filterActivity.partnerList.map(partner => ({ label: partner.name, value: partner.id })),
