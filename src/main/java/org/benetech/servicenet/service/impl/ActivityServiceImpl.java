@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.view.ActivityInfo;
+import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
@@ -80,7 +81,7 @@ public class ActivityServiceImpl implements ActivityService {
     public Optional<ActivityRecordDTO> getOneByOrganizationId(UUID orgId) {
         log.debug("Creating Activity Record for organization: {}", orgId);
         try {
-            ActivityInfo activityInfo = activityRepository.findOneByOrganizationId(orgId);
+            ActivityRecord activityInfo = activityRepository.findOneByOrganizationId(orgId);
             Optional<ActivityRecordDTO> opt = recordsService.getRecordFromActivityInfo(activityInfo);
             ActivityRecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
                 String.format("Activity record couldn't be created for organization: %s", orgId)));

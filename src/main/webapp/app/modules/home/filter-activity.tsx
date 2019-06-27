@@ -13,7 +13,6 @@ export interface IFilterActivityState {
   selectedCounty: any;
   selectedZip: any;
   selectedPartner: any;
-  activityFilter: any;
   filtersChanged: boolean;
 }
 
@@ -29,7 +28,6 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     selectedCounty: this.props.activityFilter.regionFilterList.map(city => ({ label: city, value: city })),
     selectedZip: this.props.activityFilter.postalCodesFilterList.map(city => ({ label: city, value: city })),
     selectedPartner: this.props.activityFilter.partnerFilterList.map(city => ({ label: city.label, value: city.value })),
-    activityFilter: [],
     filtersChanged: false
   };
 

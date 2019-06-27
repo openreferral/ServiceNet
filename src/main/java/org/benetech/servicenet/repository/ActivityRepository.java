@@ -9,6 +9,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.view.ActivityInfo;
+import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.service.dto.FiltersActivityDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,9 +59,9 @@ public class ActivityRepository {
         this.cb = em.getCriteriaBuilder();
     }
 
-    public ActivityInfo findOneByOrganizationId(UUID orgId) {
-        CriteriaQuery<ActivityInfo> queryCriteria = cb.createQuery(ActivityInfo.class);
-        Root<ActivityInfo> root = queryCriteria.from(ActivityInfo.class);
+    public ActivityRecord findOneByOrganizationId(UUID orgId) {
+        CriteriaQuery<ActivityRecord> queryCriteria = cb.createQuery(ActivityRecord.class);
+        Root<ActivityRecord> root = queryCriteria.from(ActivityRecord.class);
 
         queryCriteria.select(root);
 

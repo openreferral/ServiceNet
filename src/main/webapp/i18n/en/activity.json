@@ -41,7 +41,8 @@
       "unresolved": {
         "title": "Recent Service Net Activity",
         "conflictPlusZero": " has a conflicting {{ fieldName }}"
-      }
+      },
+      "lastPartnerUpdate": "Last Partner Update "
     }
   }
 }
