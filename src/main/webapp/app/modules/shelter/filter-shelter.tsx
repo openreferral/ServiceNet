@@ -39,7 +39,7 @@ export class FilterShelter extends React.Component<IFilterShelterProps, IFilterS
 
   applyFilter = () => {
     ReactGA.event({ category: 'UserActions', action: 'Shelter - Applied Filter' });
-    this.props.getShelterEntities().then(() => this.setState({ filtersChanged: false }));
+    this.props.getShelterEntities();
   };
 
   resetFilter = () => {
@@ -56,7 +56,8 @@ export class FilterShelter extends React.Component<IFilterShelterProps, IFilterS
     this.props.updateShelterFilter({
       ...this.props.shelterFilter,
       definedCoverageAreas,
-      tags
+      tags,
+      showOnlyAvailableBeds: false
     });
 
     this.props.resetShelterFilter();
