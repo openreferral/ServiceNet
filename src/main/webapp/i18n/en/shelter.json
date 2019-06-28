@@ -23,10 +23,11 @@
         "card": {
           "bedsAvailable": "Beds available",
           "waitlist": "Waitlist",
-          "moreInfo": "more info ▼",
-          "lessInfo": "less info ▲",
+          "moreInfo": "more info",
+          "lessInfo": "less info",
           "eligibilityRequirements": "Eligibility & Requirements",
           "process": "Process",
+          "contact": "Contact",
           "contactInfo": "Contact Info",
           "address": "Address",
           "notAvailable": "N/A"
