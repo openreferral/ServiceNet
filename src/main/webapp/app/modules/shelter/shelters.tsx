@@ -1,7 +1,7 @@
 import './shelters.scss';
 
 import React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { getSortState, IPaginationBaseState, translate, Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroller';

@@ -20,6 +20,7 @@ import DismissedMatches from './modules/conflicts/dismissed/dismissed-matches';
 import DismissedMatchView from './modules/conflicts/dismissed/dismissed-match-view';
 import { AboutUs } from 'app/modules/about-us/about-us';
 import Shelters from 'app/modules/shelter/shelters';
+import ShelterDetails from 'app/modules/shelter/shelter-details';
 
 // tslint:disable:space-in-parens
 const Account = Loadable({
@@ -43,6 +44,7 @@ const Routes = ({ isAdmin, isSacramento }) => (
       <ErrorBoundaryRoute path="/reset/request" component={PasswordResetInit} />
       <ErrorBoundaryRoute path="/reset/finish/:key?" component={PasswordResetFinish} />
       <PrivateRoute path="/shelters" component={Shelters} hasAnyAuthorities={[AUTHORITIES.SACRAMENTO]} isAdmin={isAdmin} />
+      <PrivateRoute path="/shelter/:id" component={ShelterDetails} hasAnyAuthorities={[AUTHORITIES.SACRAMENTO]} isAdmin={isAdmin} />
       <PrivateRoute path="/admin" isAdmin={isAdmin} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <PrivateRoute path="/account" isAdmin={isAdmin} component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]} />
       <PrivateRoute path="/entity" isAdmin={isAdmin} component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]} />

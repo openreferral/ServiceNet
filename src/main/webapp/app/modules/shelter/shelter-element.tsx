@@ -1,7 +1,7 @@
 import './shelter-element.scss';
 
 import React from 'react';
-import { Row, Col, Card, CardText, CardBody } from 'reactstrap';
+import { Row, Col, Card, CardText, CardBody, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { IShelter } from 'app/shared/model/shelter.model';
 import { Translate, translate } from 'react-jhipster';
@@ -54,9 +54,13 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
                     </div>
                     <div className="shelter-expand-label">
                       {this.state.open ? (
-                        <Translate contentKey="serviceNetApp.shelter.home.card.lessInfo" />
+                        <span>
+                          <Translate contentKey="serviceNetApp.shelter.home.card.lessInfo" /> ▲
+                        </span>
                       ) : (
-                        <Translate contentKey="serviceNetApp.shelter.home.card.moreInfo" />
+                        <span>
+                          <Translate contentKey="serviceNetApp.shelter.home.card.moreInfo" /> ▼
+                        </span>
                       )}
                     </div>
                   </CardText>
@@ -102,6 +106,13 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
                     <div>{shelter.address2}</div>
                     <div>{shelter.city}</div>
                     <div>{shelter.zipcode}</div>
+                  </p>
+                  <p>
+                    <Button tag={Link} to={`/shelter/${shelter.id}`} replace color="info">
+                      <span className="d-none d-md-inline">
+                        <Translate contentKey="serviceNetApp.shelter.home.card.moreInfo">More info</Translate>
+                      </span>
+                    </Button>
                   </p>
                 </CardText>
               </CardBody>
