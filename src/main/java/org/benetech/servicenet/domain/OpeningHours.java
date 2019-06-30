@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -27,9 +28,11 @@ public class OpeningHours extends AbstractEntity implements Serializable {
     private Integer weekday;
 
     @Column(name = "opens_at")
+    @Size(max = 255, message = "Field value is too long.")
     private String opensAt;
 
     @Column(name = "closes_at")
+    @Size(max = 255, message = "Field value is too long.")
     private String closesAt;
 
     @ManyToOne

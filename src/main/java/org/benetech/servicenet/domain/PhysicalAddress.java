@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -23,27 +24,34 @@ public class PhysicalAddress extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "attention")
+    @Size(max = 255, message = "Field value is too long.")
     private String attention;
 
     @NotNull
     @Column(name = "address_1", nullable = false)
-    private String address1;
+    @Size(max = 255, message = "Field value is too long.")
+    private String address1 = "";
 
     @NotNull
     @Column(name = "city", nullable = false)
-    private String city;
+    @Size(max = 255, message = "Field value is too long.")
+    private String city = "";
 
     @Column(name = "region")
+    @Size(max = 255, message = "Field value is too long.")
     private String region;
 
     @NotNull
     @Column(name = "state_province", nullable = false)
-    private String stateProvince;
+    @Size(max = 255, message = "Field value is too long.")
+    private String stateProvince = "";
 
     @Column(name = "postal_code")
+    @Size(max = 255, message = "Field value is too long.")
     private String postalCode;
 
     @Column(name = "country")
+    @Size(max = 255, message = "Field value is too long.")
     private String country;
 
     @OneToOne

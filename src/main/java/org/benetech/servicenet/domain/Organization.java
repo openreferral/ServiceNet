@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
@@ -53,15 +54,19 @@ public class Organization extends AbstractEntity implements Serializable {
     private String description;
 
     @Column(name = "email")
+    @Size(max = 255, message = "Field value is too long.")
     private String email;
 
     @Column(name = "url")
+    @Size(max = 255, message = "Field value is too long.")
     private String url;
 
     @Column(name = "tax_status")
+    @Size(max = 255, message = "Field value is too long.")
     private String taxStatus;
 
     @Column(name = "tax_id")
+    @Size(max = 255, message = "Field value is too long.")
     private String taxId;
 
     @Column(name = "year_incorporated")
@@ -72,12 +77,13 @@ public class Organization extends AbstractEntity implements Serializable {
 
     @NotNull
     @Column(name = "active", nullable = false)
-    private Boolean active;
+    private Boolean active = true;
 
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
     @Column(name = "external_db_id")
+    @Size(max = 255, message = "Field value is too long.")
     private String externalDbId;
 
     @OneToOne(fetch = FetchType.LAZY)

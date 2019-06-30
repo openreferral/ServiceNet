@@ -58,9 +58,11 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
     @Override
     @ConfidentialFilter
     public void createOrUpdateEligibility(Eligibility eligibility, Service service, DataImportReport report) {
-        if (EntityValidator.isNotValid(eligibility, report, service.getExternalDbId())) {
+        if (eligibility == null) {
             return;
         }
+        EntityValidator.validateAndFix(eligibility, report, service.getExternalDbId());
+        
         eligibility.setSrvc(service);
         if (service.getEligibility() != null) {
             eligibility.setId(service.getEligibility().getId());
@@ -81,8 +83,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
 
     @Override
     public void createOrUpdatePhonesForService(Set<Phone> phones, Service service, DataImportReport report) {
-        Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential())
-            && isValid(x, report, service.getExternalDbId()))
+        Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .collect(Collectors.toSet());
         filtered.forEach(p -> p.setSrvc(service));
         createOrUpdateFilteredPhonesForService(filtered, service);
@@ -91,9 +92,11 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
     @Override
     @ConfidentialFilter
     public void createOrUpdateFundingForService(Funding funding, Service service, DataImportReport report) {
-        if (EntityValidator.isNotValid(funding, report, service.getExternalDbId())) {
+        if (funding == null) {
             return;
         }
+        EntityValidator.validateAndFix(funding, report, service.getExternalDbId());
+        
         funding.setSrvc(service);
         if (service.getFunding() != null) {
             funding.setId(service.getFunding().getId());
@@ -128,9 +131,11 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
     @ConfidentialFilter
     public ServiceTaxonomy persistServiceTaxonomy(ServiceTaxonomy serviceTaxonomy,
                                                             String providerName, Service service, DataImportReport report) {
-        if (EntityValidator.isNotValid(serviceTaxonomy, report, service.getExternalDbId())) {
+        if (serviceTaxonomy == null) {
             return null;
         }
+        EntityValidator.validateAndFix(serviceTaxonomy, report, service.getExternalDbId());
+        
         serviceTaxonomy.setSrvc(service);
 
         if (serviceTaxonomy.getTaxonomy() != null) {
@@ -165,9 +170,11 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
     @ConfidentialFilter
     public RequiredDocument persistRequiredDocument(RequiredDocument document, String externalDbId,
                                                      String providerName, Service service, DataImportReport report) {
-        if (EntityValidator.isNotValid(document, report, externalDbId)) {
+        if (document == null) {
             return null;
         }
+        EntityValidator.validateAndFix(document, report, externalDbId);
+        
         document.setSrvc(service);
         Optional<RequiredDocument> requiredDocumentFromDb
             = requiredDocumentService.findForExternalDb(externalDbId, providerName);
@@ -190,9 +197,11 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
     @Override
     @ConfidentialFilter
     public void createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service, DataImportReport report) {
-        if (EntityValidator.isNotValid(schedule, report, service.getExternalDbId())) {
+        if (schedule == null) {
             return;
         }
+        EntityValidator.validateAndFix(schedule, report, service.getExternalDbId());
+        
         schedule.setSrvc(service);
         if (service.getHolidaySchedule() != null) {
             schedule.setId(service.getHolidaySchedule().getId());
@@ -227,17 +236,26 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
     }
 
     private void createOrUpdateFilteredContacts(Set<Contact> contacts, Service service) {
-        contacts.forEach(contact -> contact.setSrvc(service));
+        contacts.forEach(contact -> {
+            EntityValidator.validateAndFix(contact, null, "");
+            contact.setSrvc(service);
+        });
         service.setContacts(sharedImportService.createOrUpdateContacts(contacts));
     }
 
     private void createOrUpdateFilteredPhonesForService(Set<Phone> phones, @Nonnull Service service) {
-        phones.forEach(phone -> phone.setSrvc(service));
+        phones.forEach(phone -> {
+            EntityValidator.validateAndFix(phone, null, "");
+            phone.setSrvc(service);
+        });
         sharedImportService.persistPhones(service.getPhones(), phones);
     }
 
     private void createOrUpdateFilteredLangsForService(Set<Language> langs, Service service) {
-        langs.forEach(lang -> lang.setSrvc(service));
+        langs.forEach(lang -> {
+            EntityValidator.validateAndFix(lang, null, "");
+            lang.setSrvc(service);
+        });
         sharedImportService.persistLangs(service.getLangs(), langs);
     }
 }

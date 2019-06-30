@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -24,15 +25,19 @@ public class Taxonomy extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "name")
+    @Size(max = 255, message = "Field value is too long.")
     private String name;
 
     @Column(name = "vocabulary")
+    @Size(max = 255, message = "Field value is too long.")
     private String vocabulary;
 
     @Column(name = "external_db_id")
+    @Size(max = 255, message = "Field value is too long.")
     private String externalDbId;
 
     @Column(name = "provider_name")
+    @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
     @ManyToOne

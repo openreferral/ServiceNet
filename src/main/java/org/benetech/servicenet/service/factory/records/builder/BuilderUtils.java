@@ -5,8 +5,12 @@ import org.benetech.servicenet.domain.FieldExclusion;
 import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-final class BuilderUtils {
+public final class BuilderUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BuilderUtils.class);
 
     static Set<String> getFieldNamesFromExclusions(Set<FieldExclusion> exclusions, Class clazz) {
         return exclusions.stream()
@@ -20,6 +24,16 @@ final class BuilderUtils {
             if (excludedNames.contains(field.getName())) {
                 resetField(object, field);
             }
+        }
+    }
+
+    public static void setField(Object object, String fieldName, String value, Class clazz) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(object, value);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
         }
     }
 

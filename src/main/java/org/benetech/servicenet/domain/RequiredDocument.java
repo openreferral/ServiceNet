@@ -15,6 +15,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -36,16 +37,18 @@ public class RequiredDocument extends AbstractEntity implements Serializable {
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "document", nullable = false, columnDefinition = "clob")
-    private String document;
+    private String document = "";
 
     @ManyToOne
     @JsonIgnoreProperties("docs")
     private Service srvc;
 
     @Column(name = "external_db_id")
+    @Size(max = 255, message = "Field value is too long.")
     private String externalDbId;
 
     @Column(name = "provider_name")
+    @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

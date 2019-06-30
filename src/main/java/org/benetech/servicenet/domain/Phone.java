@@ -15,6 +15,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -31,15 +32,18 @@ public class Phone extends AbstractEntity implements Serializable {
 
     @NotNull
     @Column(name = "jhi_number", nullable = false)
-    private String number;
+    @Size(max = 255, message = "Field value is too long.")
+    private String number = "";
 
     @Column(name = "extension")
     private Integer extension;
 
     @Column(name = "jhi_type")
+    @Size(max = 255, message = "Field value is too long.")
     private String type;
 
     @Column(name = "language")
+    @Size(max = 255, message = "Field value is too long.")
     private String language;
 
     @Lob

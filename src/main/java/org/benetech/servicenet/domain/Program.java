@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -27,9 +28,11 @@ public class Program extends AbstractEntity implements Serializable {
 
     @NotNull
     @Column(name = "name", nullable = false)
-    private String name;
+    @Size(max = 255, message = "Field value is too long.")
+    private String name = "";
 
     @Column(name = "alternate_name")
+    @Size(max = 255, message = "Field value is too long.")
     private String alternateName;
 
     @ManyToOne
