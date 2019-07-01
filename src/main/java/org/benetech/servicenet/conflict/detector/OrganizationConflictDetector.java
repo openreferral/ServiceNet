@@ -2,6 +2,7 @@ package org.benetech.servicenet.conflict.detector;
 
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.util.UrlNormalizationUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -21,7 +22,8 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
         conflicts.addAll(detectConflicts(current, offered, current.getDescription(), offered.getDescription(),
             "description"));
         conflicts.addAll(detectConflicts(current, offered, current.getEmail(), offered.getEmail(), "email"));
-        conflicts.addAll(detectConflicts(current, offered, current.getUrl(), offered.getUrl(), "url"));
+        conflicts.addAll(detectConflicts(current, offered, UrlNormalizationUtils.normalize(current.getUrl()),
+            UrlNormalizationUtils.normalize(offered.getUrl()), "url"));
         conflicts.addAll(detectConflicts(current, offered, current.getTaxStatus(), offered.getTaxStatus(), "taxStatus"));
         conflicts.addAll(detectConflicts(current, offered, current.getTaxId(), offered.getTaxId(), "taxId"));
         conflicts.addAll(detectConflicts(current, offered, current.getYearIncorporated(), offered.getYearIncorporated(),

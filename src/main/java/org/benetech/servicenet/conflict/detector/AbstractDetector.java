@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
-
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;

@@ -25,13 +25,15 @@ public class UrlSimilarityCounterIntTest {
     }
 
     @Test
-    public void shouldReturnProperRatioForSameNormalizedAndUpperCased() {
+    public void shouldReturnMinRatioForDifferentNormalized() {
         assertEquals(0.95, urlSimilarityCounter.countSimilarityRatio("one.com", "http://ONE.com", null), PRECISION);
     }
 
     @Test
     public void shouldReturnMaxRatioForSameNormalized() {
         assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("www.one.com", "https://one.com", null), PRECISION);
-        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("http://www.one.com/", "https://one.com", null), PRECISION);
-        }
+        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("http://www.one.com/ ", "https://one.com", null), PRECISION);
+        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("https:// zuckerbergsanfranciscogeneral.org/", "http://zuckerbergsanfranciscogeneral. org/", null), PRECISION);
+        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("http://rotacarebayarea.org/index.html ", "http://www.rotacarebayarea.org/index.html", null), PRECISION);
+    }
 }
