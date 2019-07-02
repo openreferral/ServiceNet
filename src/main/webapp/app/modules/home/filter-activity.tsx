@@ -38,6 +38,9 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       this.getCityList();
       this.getPartnerList();
     }
+    if (this.props.isLoggingOut || this.props.hasSessionBeenFetched) {
+      this.resetFilter();
+    }
   }
 
   getPartnerList = () => {
@@ -173,6 +176,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 const mapStateToProps = (storeState: IRootState) => ({
   postalCodeList: storeState.filterActivity.postalCodeList.map(code => ({ label: code, value: code })),
   isLoggingOut: storeState.authentication.loggingOut,
+  hasSessionBeenFetched: storeState.authentication.sessionHasBeenFetched,
   regionList: storeState.filterActivity.regionList.map(region => ({ label: region, value: region })),
   cityList: storeState.filterActivity.cityList.map(city => ({ label: city, value: city })),
   partnerList: storeState.filterActivity.partnerList.map(partner => ({ label: partner.name, value: partner.id })),
