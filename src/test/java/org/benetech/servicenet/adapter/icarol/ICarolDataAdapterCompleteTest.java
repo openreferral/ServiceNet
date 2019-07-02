@@ -6,7 +6,6 @@ import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.icarol.eden.EdenDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
-import org.benetech.servicenet.adapter.shared.model.Weekday;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
