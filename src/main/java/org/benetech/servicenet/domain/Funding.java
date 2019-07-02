@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -25,7 +26,8 @@ public class Funding extends AbstractEntity implements Serializable {
 
     @NotNull
     @Column(name = "source", nullable = false)
-    private String source;
+    @Size(max = 255, message = "Field value is too long.")
+    private String source = "";
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(unique = true)

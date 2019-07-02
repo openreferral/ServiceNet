@@ -36,7 +36,7 @@ public class Eligibility extends AbstractEntity implements Serializable {
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "eligibility", nullable = false, columnDefinition = "clob")
-    private String eligibility;
+    private String eligibility = "";
 
     @OneToOne
     @JoinColumn(unique = true)

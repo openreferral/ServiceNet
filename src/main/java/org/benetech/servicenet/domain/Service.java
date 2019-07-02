@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -50,12 +51,15 @@ public class Service extends AbstractEntity implements Serializable {
     private String description;
 
     @Column(name = "url")
+    @Size(max = 255, message = "Field value is too long.")
     private String url;
 
     @Column(name = "email")
+    @Size(max = 255, message = "Field value is too long.")
     private String email;
 
     @Column(name = "status")
+    @Size(max = 255, message = "Field value is too long.")
     private String status;
 
     @Lob
@@ -89,15 +93,18 @@ public class Service extends AbstractEntity implements Serializable {
     private String licenses;
 
     @Column(name = "jhi_type")
+    @Size(max = 255, message = "Field value is too long.")
     private String type;
 
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
     @Column(name = "external_db_id")
+    @Size(max = 255, message = "Field value is too long.")
     private String externalDbId;
 
     @Column(name = "provider_name")
+    @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
     @ManyToOne

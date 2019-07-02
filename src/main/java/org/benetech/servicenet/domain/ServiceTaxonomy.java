@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -35,9 +36,11 @@ public class ServiceTaxonomy extends AbstractEntity implements Serializable {
     private Service srvc;
 
     @Column(name = "external_db_id")
+    @Size(max = 255, message = "Field value is too long.")
     private String externalDbId;
 
     @Column(name = "provider_name")
+    @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
     @ManyToOne

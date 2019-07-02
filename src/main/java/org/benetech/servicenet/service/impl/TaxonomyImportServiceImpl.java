@@ -23,9 +23,10 @@ public class TaxonomyImportServiceImpl implements TaxonomyImportService {
     @Override
     public Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName,
                                            DataImportReport report) {
-        if (EntityValidator.isNotValid(taxonomy, report, externalDbId)) {
+        if (taxonomy == null) {
             return null;
         }
+        EntityValidator.validateAndFix(taxonomy, report, externalDbId);
 
         Optional<Taxonomy> taxonomyFromDb = taxonomyService.findForExternalDb(externalDbId, providerName);
 

@@ -42,9 +42,11 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
     @Override
     @ConfidentialFilter
     public void createOrUpdatePhysicalAddress(PhysicalAddress physicalAddress, Location location, DataImportReport report) {
-        if (EntityValidator.isNotValid(physicalAddress, report, location.getExternalDbId())) {
+        if (physicalAddress == null) {
             return;
         }
+        EntityValidator.validateAndFix(physicalAddress, report, location.getExternalDbId());
+
         physicalAddress.setLocation(location);
         if (location.getPhysicalAddress() != null) {
             physicalAddress.setId(location.getPhysicalAddress().getId());
@@ -59,9 +61,10 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
     @Override
     @ConfidentialFilter
     public void createOrUpdatePostalAddress(PostalAddress postalAddress, Location location, DataImportReport report) {
-        if (EntityValidator.isNotValid(postalAddress, report, location.getExternalDbId())) {
+        if (postalAddress == null) {
             return;
         }
+        EntityValidator.validateAndFix(postalAddress, report, location.getExternalDbId());
         postalAddress.setLocation(location);
         if (location.getPostalAddress() != null) {
             postalAddress.setId(location.getPostalAddress().getId());
@@ -86,9 +89,10 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
     @ConfidentialFilter
     public void createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location,
                                                          DataImportReport report) {
-        if (EntityValidator.isNotValid(schedule, report, location.getExternalDbId())) {
+        if (schedule == null) {
             return;
         }
+        EntityValidator.validateAndFix(schedule, report, location.getExternalDbId());
         schedule.setLocation(location);
         if (location.getHolidaySchedule() != null) {
             schedule.setId(location.getHolidaySchedule().getId());
@@ -109,8 +113,7 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
 
     @Override
     public void createOrUpdatePhonesForLocation(Set<Phone> phones, Location location, DataImportReport report) {
-        Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential())
-            && isValid(x, report, location.getExternalDbId()))
+        Set<Phone> filtered = phones.stream().filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .collect(Collectors.toSet());
         filtered.forEach(p -> p.setLocation(location));
         createOrUpdateFilteredPhonesForLocation(filtered, location);
@@ -121,10 +124,13 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
     public void createOrUpdateAccessibilities(Set<AccessibilityForDisabilities> accessibilities,
         Location location, DataImportReport report) {
         Set<AccessibilityForDisabilities> filtered = accessibilities.stream()
-            .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()) && isValid(x, report, location.getExternalDbId()))
+            .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()))
             .collect(Collectors.toSet());
 
-        filtered.forEach(x -> x.setLocation(location));
+        filtered.forEach(x -> {
+            EntityValidator.validateAndFix(x, report, location.getExternalDbId());
+            x.setLocation(location);
+        });
 
         updateCollection(em, location.getAccessibilities(), filtered, (x1, x2) ->
             StringUtils.equals(x1.getAccessibility(), x2.getAccessibility())
@@ -133,12 +139,18 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
     }
 
     private void createOrUpdateFilteredLangsForLocation(Set<Language> langs, Location location) {
-        langs.forEach(lang -> lang.setLocation(location));
+        langs.forEach(lang -> {
+            EntityValidator.validateAndFix(lang, null, "");
+            lang.setLocation(location);
+        });
         sharedImportService.persistLangs(location.getLangs(), langs);
     }
 
     private void createOrUpdateFilteredPhonesForLocation(Set<Phone> phones, @Nonnull Location location) {
-        phones.forEach(phone -> phone.setLocation(location));
+        phones.forEach(phone -> {
+            EntityValidator.validateAndFix(phone, null, "");
+            phone.setLocation(location);
+        });
         sharedImportService.persistPhones(location.getPhones(), phones);
     }
 

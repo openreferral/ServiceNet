@@ -38,10 +38,10 @@ public class LocationImportServiceImpl implements LocationImportService {
     @Override
     @ConfidentialFilter
     public Location createOrUpdateLocation(Location filledLocation, String externalDbId, ImportData importData) {
-        if (EntityValidator.isNotValid(filledLocation, importData.getReport(), externalDbId)) {
-            return null;
-        }
         long startTime = System.currentTimeMillis();
+
+        EntityValidator.validateAndFix(filledLocation, importData.getReport(), externalDbId);
+
         Location location = new Location(filledLocation);
         Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId,
             importData.getProviderName());

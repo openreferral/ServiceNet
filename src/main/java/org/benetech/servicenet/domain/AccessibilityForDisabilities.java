@@ -12,6 +12,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -30,9 +31,10 @@ public class AccessibilityForDisabilities extends AbstractEntity implements Seri
     @Type(type = "org.hibernate.type.TextType")
     @NotNull
     @Column(name = "accessibility", nullable = false, columnDefinition = "clob")
-    private String accessibility;
+    private String accessibility = "";
 
     @Column(name = "details")
+    @Size(max = 255, message = "Field value is too long.")
     private String details;
 
     @ManyToOne

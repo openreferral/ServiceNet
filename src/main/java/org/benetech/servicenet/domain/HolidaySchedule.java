@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -25,12 +26,14 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
 
     @NotNull
     @Column(name = "closed", nullable = false)
-    private Boolean closed;
+    private Boolean closed = true;
 
     @Column(name = "opens_at")
+    @Size(max = 255, message = "Field value is too long.")
     private String opensAt;
 
     @Column(name = "closes_at")
+    @Size(max = 255, message = "Field value is too long.")
     private String closesAt;
 
     @NotNull

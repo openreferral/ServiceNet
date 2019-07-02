@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -22,6 +23,7 @@ public class PaymentAccepted extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "payment")
+    @Size(max = 255, message = "Field value is too long.")
     private String payment;
 
     @ManyToOne

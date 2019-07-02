@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -40,6 +41,7 @@ public class Location extends AbstractEntity implements Serializable {
     private String name;
 
     @Column(name = "alternate_name")
+    @Size(max = 255, message = "Field value is too long.")
     private String alternateName;
 
     @Lob
@@ -48,6 +50,7 @@ public class Location extends AbstractEntity implements Serializable {
     private String description;
 
     @Column(name = "transportation")
+    @Size(max = 255, message = "Field value is too long.")
     private String transportation;
 
     @Column(name = "latitude")
@@ -57,9 +60,11 @@ public class Location extends AbstractEntity implements Serializable {
     private Double longitude;
 
     @Column(name = "external_db_id")
+    @Size(max = 255, message = "Field value is too long.")
     private String externalDbId;
 
     @Column(name = "provider_name")
+    @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
     @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)

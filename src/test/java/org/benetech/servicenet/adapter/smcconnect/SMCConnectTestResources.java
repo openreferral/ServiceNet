@@ -8,6 +8,7 @@ final class SMCConnectTestResources {
     static final String SMCCONNECT = "smcconnect/";
     static final String MINIMAL = "minimal/";
     static final String COMPLETE = "complete/";
+    static final String INVALID_FIELDS = "invalid_fields/";
     static final String JSON = ".json";
     static final String PROVIDER = "SMCConnect";
 
