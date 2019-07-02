@@ -194,7 +194,7 @@ public class PersistanceManager {
                     serviceTaxonomy.setTaxonomy(taxonomy.providerName(PROVIDER_NAME)));
             }
 
-            result.add(serviceTaxonomy.providerName(PROVIDER_NAME).externalDbId(serviceId));
+            result.add(serviceTaxonomy.providerName(PROVIDER_NAME));
         }
 
         return result;

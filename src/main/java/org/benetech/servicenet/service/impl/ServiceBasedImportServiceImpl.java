@@ -144,7 +144,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         }
 
         Optional<ServiceTaxonomy> serviceTaxonomyFromDb
-            = serviceTaxonomyService.findForExternalDb(service.getExternalDbId(), providerName);
+            = serviceTaxonomyService.findForExternalDb(serviceTaxonomy.getExternalDbId(), providerName);
 
         if (serviceTaxonomyFromDb.isPresent()) {
             serviceTaxonomy.setId(serviceTaxonomyFromDb.get().getId());

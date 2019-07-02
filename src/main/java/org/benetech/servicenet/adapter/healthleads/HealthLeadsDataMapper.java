@@ -100,6 +100,7 @@ public abstract class HealthLeadsDataMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "taxonomyDetails", source = "taxonomyDetail")
+    @Mapping(target = "externalDbId", source = "id")
     public abstract ServiceTaxonomy extractServiceTaxonomy(HealthleadsServiceTaxonomy serviceTaxonomy);
 
     public Optional<Taxonomy> extractTaxonomy(HealthleadsTaxonomy taxonomy) {
