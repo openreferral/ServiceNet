@@ -150,3 +150,20 @@ span[role='button'] {
 .text-blue {
   color: #158cba;
 }
+
+.back-to-top {
+  div:first-child {
+    margin-right: 10px;
+    text-align: center;
+    height: 100px;
+    width: 100px;
+    border-radius: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+      background-color: $transparent005;
+    }
+  }
+}

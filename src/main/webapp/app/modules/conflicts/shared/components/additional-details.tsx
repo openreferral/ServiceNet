@@ -1,6 +1,7 @@
 import React from 'react';
 import '../shared-record-view.scss';
 import { connect } from 'react-redux';
+import ScrollToTop from 'react-scroll-up';
 import InputField from './input-field';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -59,6 +60,14 @@ export class AdditionalDetails extends React.Component<IAdditionalDetailsProp, I
           ))}
           {additionalFields}
         </Collapse>
+        <div className="back-to-top">
+          <ScrollToTop showUnder={150} duration={500}>
+            <FontAwesomeIcon size="3x" icon={'angle-up'} color="lightblue" />
+            <div>
+              <Translate contentKey={'multiRecordView.backToTop'} />
+            </div>
+          </ScrollToTop>
+        </div>
       </div>
     );
   }
