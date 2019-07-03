@@ -65,7 +65,7 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
 
     private List<GeocodingResult> getGeoCodingResult(Location location, MatchingContext context) {
         if (coordinatesAreMissing(location)) {
-            return geocodingResultService.findAllForLocationOrFetchIfEmpty(location, context);
+            return geocodingResultService.findAllForAddressOrFetchIfEmpty(location.getPhysicalAddress(), context);
         } else {
             return singletonList(new GeocodingResult(location.getName(), location.getLatitude(), location.getLongitude()));
         }

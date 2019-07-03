@@ -83,7 +83,7 @@ public class ShelterServiceImpl implements ShelterService {
         shelter.setEmails(emails);
 
         shelter = shelterRepository.save(shelter);
-        return shelterMapper.toDto(shelter);
+        return shelterMapper.toGeocodedDto(shelter);
     }
 
     /**
@@ -126,7 +126,7 @@ public class ShelterServiceImpl implements ShelterService {
     public Optional<ShelterDTO> findOne(UUID id) {
         log.debug("Request to get Shelter : {}", id);
         return shelterRepository.findById(id)
-            .map(shelterMapper::toDto);
+            .map(shelterMapper::toGeocodedDto);
     }
 
     /**
