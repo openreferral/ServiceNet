@@ -7,17 +7,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.Address;
 import org.benetech.servicenet.domain.Beds;
+import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Option;
 import org.benetech.servicenet.domain.Phone;
 
 /**
  * A DTO for the Shelter entity.
  */
-public class ShelterDTO implements Serializable {
+public class ShelterDTO implements Serializable, Address {
 
     @Getter
     @Setter
@@ -124,6 +129,10 @@ public class ShelterDTO implements Serializable {
     @Setter
     private Set<Option> definedCoverageAreas;
 
+    @Getter
+    @Setter
+    private List<GeocodingResult> geocodingResults;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -171,5 +180,11 @@ public class ShelterDTO implements Serializable {
             ", languages='" + getLanguages() + "'" +
             ", phones='" + getPhones() + "'" +
             "}";
+    }
+
+    @Override
+    public String getAddress() {
+        return Stream.of(getAddress1(), getAddress2(), getCity(), getZipcode())
+            .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER));
     }
 }

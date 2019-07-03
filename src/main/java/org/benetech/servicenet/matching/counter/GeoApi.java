@@ -4,13 +4,9 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
-import org.apache.commons.lang3.StringUtils;
-import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.Address;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GeoApi {
 
@@ -25,15 +21,9 @@ public class GeoApi {
         context = getGeoApiContext(googleApiKey);
     }
 
-    public GeocodingResult[] geocode(Location location) {
-        return geocode(extract255AddressChars(location.getPhysicalAddress()));
-    }
-
-    public String extract255AddressChars(PhysicalAddress address) {
-        String result = Stream.of(address.getAddress1(), address.getCity(), address.getCountry(), address.getPostalCode(),
-            address.getRegion(), address.getStateProvince())
-            .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER));
-        return result.length() <= MAX_ADDRESS_LENGTH ? result : result.substring(0, MAX_ADDRESS_LENGTH);
+    public String extract255AddressChars(Address address) {
+        return address.getAddress().length() <= MAX_ADDRESS_LENGTH
+            ? address.getAddress() : address.getAddress().substring(0, MAX_ADDRESS_LENGTH);
     }
 
     private GeoApiContext getGeoApiContext(String googleApiKey) {
@@ -42,7 +32,7 @@ public class GeoApi {
             .build();
     }
 
-    private GeocodingResult[] geocode(String address) {
+    public GeocodingResult[] geocode(String address) {
         try {
             return GeocodingApi.geocode(context,
                 address).await();

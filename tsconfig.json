@@ -15,7 +15,12 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": ["webpack-env", "jest"],
+    "types": [
+      "webpack-env",
+      "jest",
+      "googlemaps",
+      "markerclustererplus"
+    ],
     "allowJs": true,
     "checkJs": false,
     "baseUrl": "./",

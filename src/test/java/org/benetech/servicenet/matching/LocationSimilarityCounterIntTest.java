@@ -168,9 +168,9 @@ public class LocationSimilarityCounterIntTest {
         when(geoApiMock.extract255AddressChars(physicalAddress2)).thenReturn(location2
             .getName());
 
-        when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location1, matchingContext))
+        when(geocodingResultService.findAllForAddressOrFetchIfEmpty(physicalAddress1, matchingContext))
             .thenReturn(Collections.singletonList(new org.benetech.servicenet.domain.GeocodingResult(location1.getName(), location1.getLatitude(), location1.getLongitude())));
-        when(geocodingResultService.findAllForLocationOrFetchIfEmpty(location2, matchingContext))
+        when(geocodingResultService.findAllForAddressOrFetchIfEmpty(physicalAddress2, matchingContext))
             .thenReturn(Collections.singletonList(new org.benetech.servicenet.domain.GeocodingResult(location2.getName(), location2.getLatitude(), location2.getLongitude())));
     }
 

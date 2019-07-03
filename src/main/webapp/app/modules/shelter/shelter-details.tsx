@@ -1,14 +1,31 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { ComponentClass, StatelessComponent } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Row, Col, Card, CardText, CardBody, CardTitle, Button } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IRootState } from 'app/shared/reducers';
 import { getEntity } from 'app/entities/shelter/shelter.reducer';
+import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
+import { GOOGLE_API_KEY } from 'app/config/constants';
+import { IRootState } from 'app/shared/reducers';
+import { connect } from 'react-redux';
 
 export interface IShelterDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+
+const withLatLong = (
+  wrappedComponent: string | ComponentClass<any> | StatelessComponent<any>
+): string | React.ComponentClass<any> | React.StatelessComponent<any> => wrappedComponent;
+
+const Map = withScriptjs(
+  withGoogleMap(
+    withLatLong(props => (
+      <GoogleMap defaultZoom={8} defaultCenter={{ lat: props.latitude, lng: props.longitude }}>
+        {<Marker position={{ lat: props.latitude, lng: props.longitude }} />}
+      </GoogleMap>
+    ))
+  )
+);
+const mapUrl = 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=' + GOOGLE_API_KEY;
 
 export class ShelterDetails extends React.Component<IShelterDetailProps> {
   componentDidMount() {
@@ -17,9 +34,10 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
 
   render() {
     const { shelterEntity } = this.props;
+
     return (
-      <Row className="shelter-details">
-        <Col md="6">
+      <Row>
+        <Col md="6" className="shelter-details">
           <h2>
             {shelterEntity.agencyName}
             {shelterEntity.programName ? <span>: {shelterEntity.programName}</span> : null}
@@ -166,6 +184,18 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
               <Translate contentKey="entity.action.back">Back</Translate>
             </span>
           </Button>
+        </Col>
+        <Col md="6">
+          {shelterEntity.geocodingResults && (
+            <Map
+              googleMapURL={mapUrl}
+              latitude={shelterEntity.geocodingResults[0].latitude}
+              longitude={shelterEntity.geocodingResults[0].longitude}
+              loadingElement={<div style={{ height: `100%` }} />}
+              containerElement={<div style={{ height: `100%` }} />}
+              mapElement={<div style={{ height: `100%` }} />}
+            />
+          )}
         </Col>
       </Row>
     );

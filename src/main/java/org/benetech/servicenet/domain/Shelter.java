@@ -3,12 +3,15 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -30,7 +33,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "shelter")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Shelter extends AbstractEntity implements Serializable {
+public class Shelter extends AbstractEntity implements Serializable, Address {
 
     private static final long serialVersionUID = 1L;
 
@@ -494,6 +497,12 @@ public class Shelter extends AbstractEntity implements Serializable {
         this.definedCoverageAreas = option;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+    @Override
+    public String getAddress() {
+        return Stream.of(getAddress1(), getAddress2(), getCity(), getZipcode())
+            .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER));
+    }
 
     @Override
     public boolean equals(Object o) {
