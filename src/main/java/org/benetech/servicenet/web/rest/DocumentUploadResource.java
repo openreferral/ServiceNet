@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.adapter.shared.model.FileInfo;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,6 +83,7 @@ public class DocumentUploadResource {
      */
     @PostMapping("/file")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<DocumentUploadDTO> uploadDocument(@RequestParam("filepond") MultipartFile file,
                                                             HttpServletRequest request)
         throws URISyntaxException, IOException {
