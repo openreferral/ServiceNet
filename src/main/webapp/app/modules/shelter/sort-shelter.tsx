@@ -15,7 +15,7 @@ const SortShelter = props => {
       <DropdownToggle color="primary" caret>
         <Translate contentKey="serviceNetApp.shelter.home.sort.toggle" />
       </DropdownToggle>
-      <DropdownMenu right="false">
+      <DropdownMenu right={false}>
         {values.map((value, i) => (
           <DropdownItem onClick={sortFunc(value)} key={`sortItem${i}`}>
             <Translate contentKey={`serviceNetApp.shelter.home.sort.${value}`} />{' '}

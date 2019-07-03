@@ -15,7 +15,7 @@ const SortActivity = props => {
       <DropdownToggle color="primary" caret>
         <Translate contentKey="serviceNetApp.activity.home.sort.toggle" />
       </DropdownToggle>
-      <DropdownMenu right="false">
+      <DropdownMenu right={false}>
         {values.map((value, i) => (
           <DropdownItem onClick={sortFunc(value)} key={`sortItem${i}`}>
             <Translate contentKey={`serviceNetApp.activity.home.sort.${value}`} />{' '}

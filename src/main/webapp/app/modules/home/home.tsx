@@ -96,10 +96,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   reset = () => {
     this.props.reset();
     if (!this.state.loggingOut) {
-      Promise.all([this.props.getSession()]).then(() => {
-        this.setState({ activePage: 1 }, () => {
-          this.getEntities();
-        });
+      this.setState({ activePage: 1 }, () => {
+        this.getEntities();
       });
     } else {
       this.setState({ activePage: 1, loggingOut: false });
