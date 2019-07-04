@@ -58,7 +58,7 @@ export class OpeningHoursDetails extends React.Component<IOpeningHoursDetailsPro
                 </tr>
               </thead>
               <tbody>
-                {hours.map((day, i) => (
+                {hours.sort((a, b) => a.weekday - b.weekday).map((day, i) => (
                   <tr key={i}>
                     <th scope="row">{mapWeekdayToString(day.weekday)}</th>
                     <td>{day.opensAt}</td>
