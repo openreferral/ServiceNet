@@ -34,6 +34,11 @@ export class SinglePhoneDetails extends React.Component<ISinglePhoneDetailsProp,
     });
   };
 
+  changeRecord = offset => () => {
+    this.setState({ isAreaOpen: true });
+    this.props.changeRecord(offset);
+  };
+
   render() {
     const { phone, isOnlyOne, columnSize } = this.props;
     const customHeader = (
@@ -42,12 +47,17 @@ export class SinglePhoneDetails extends React.Component<ISinglePhoneDetailsProp,
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titlePhones" /> {this.props.phonesCount}
+          <Translate contentKey="singleRecordView.details.titlePhones" /> <span className="text-blue">{this.props.phonesCount}</span>
         </div>
         {isOnlyOne ? null : (
-          <Button className="primary" onClick={this.props.changeRecord}>
-            <Translate contentKey="singleRecordView.details.seeAnotherPhone" />
-          </Button>
+          <span>
+            <span role="button" onClick={this.changeRecord(-1)}>
+              <FontAwesomeIcon className="text-blue" icon="chevron-left" /> <Translate contentKey="singleRecordView.details.prev" />
+            </span>
+            <span role="button" onClick={this.changeRecord(1)}>
+              <Translate contentKey="singleRecordView.details.next" /> <FontAwesomeIcon className="text-blue" icon="chevron-right" />
+            </span>
+          </span>
         )}
       </h4>
     );

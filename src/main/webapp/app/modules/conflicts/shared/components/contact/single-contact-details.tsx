@@ -34,6 +34,11 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
     });
   };
 
+  changeRecord = offset => () => {
+    this.setState({ isAreaOpen: true });
+    this.props.changeRecord(offset);
+  };
+
   render() {
     const { contact, isOnlyOne, columnSize } = this.props;
     const customHeader = (
@@ -42,12 +47,17 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleContacts" /> {this.props.contactsCount}
+          <Translate contentKey="singleRecordView.details.titleContacts" /> <span className="text-blue">{this.props.contactsCount}</span>
         </div>
         {isOnlyOne ? null : (
-          <Button className="primary" onClick={this.props.changeRecord}>
-            <Translate contentKey="singleRecordView.details.seeAnotherContact" />
-          </Button>
+          <span>
+            <span role="button" onClick={this.changeRecord(-1)}>
+              <FontAwesomeIcon className="text-blue" icon="chevron-left" /> <Translate contentKey="singleRecordView.details.prev" />
+            </span>
+            <span role="button" onClick={this.changeRecord(1)}>
+              <Translate contentKey="singleRecordView.details.next" /> <FontAwesomeIcon className="text-blue" icon="chevron-right" />
+            </span>
+          </span>
         )}
       </h4>
     );

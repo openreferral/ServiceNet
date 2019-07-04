@@ -57,10 +57,10 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
         {isOnlyOne ? null : (
           <span>
             <span role="button" onClick={this.changeRecord(-1)}>
-              <span className="text-blue">〈</span> <Translate contentKey="singleRecordView.details.prev" />
+              <FontAwesomeIcon className="text-blue" icon="chevron-left" /> <Translate contentKey="singleRecordView.details.prev" />
             </span>
             <span role="button" onClick={this.changeRecord(1)}>
-              <Translate contentKey="singleRecordView.details.next" /> <span className="text-blue">〉</span>
+              <Translate contentKey="singleRecordView.details.next" /> <FontAwesomeIcon className="text-blue" icon="chevron-right" />
             </span>
           </span>
         )}
