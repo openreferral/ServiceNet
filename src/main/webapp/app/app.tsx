@@ -19,6 +19,7 @@ import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
+import GoBackButton from 'app/shared/layout/go-back-button';
 
 export interface IAppProps extends StateProps, DispatchProps {}
 
@@ -39,6 +40,7 @@ export class App extends React.Component<IAppProps> {
     return (
       <Router>
         <div className="app-container">
+          <GoBackButton />
           <ToastContainer
             position={toast.POSITION.TOP_LEFT as ToastPosition}
             className="toastify-container"
