@@ -14,7 +14,8 @@ import java.util.stream.Stream;
 
 public class GeoApi {
 
-    private static final String CONNECTION_ERROR = "Cannot connect with Google Maps API";
+    private static final String CONNECTION_ERROR = "Cannot connect with Google Maps API. Using address: '%s'. " +
+        "API Error: %s ";
     private static final String DELIMITER = ", ";
     private static final int MAX_ADDRESS_LENGTH = 255;
 
@@ -46,7 +47,7 @@ public class GeoApi {
             return GeocodingApi.geocode(context,
                 address).await();
         } catch (ApiException | InterruptedException | IOException e) {
-            throw new IllegalStateException(CONNECTION_ERROR);
+            throw new IllegalStateException(String.format(CONNECTION_ERROR, address, e.getMessage()));
         }
     }
 }
