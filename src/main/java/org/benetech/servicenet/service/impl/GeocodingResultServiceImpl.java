@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.matching.model.MatchingContext;
@@ -87,6 +88,10 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
         }
 
         String addressString = context.getGeoApi().extract255AddressChars(location.getPhysicalAddress());
+        if (StringUtils.isBlank(addressString)) {
+            return new ArrayList<>();
+        }
+
         List<GeocodingResult> currentResults = geocodingResultRepository.findAllByAddress(addressString);
         if (!currentResults.isEmpty()) {
             return currentResults;
