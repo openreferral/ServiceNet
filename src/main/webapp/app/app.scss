@@ -15,7 +15,7 @@
 }
 
 #app-view-container {
-  min-height: calc(100vh - #{$footerSize} - #{$paddingTop} - #{$marginTop});
+  min-height: calc(100vh - #{$footerSize} - #{$paddingTop} - #{$marginTop} - #{$goBackButtonHeight});
 }
 
 .btn-black {
