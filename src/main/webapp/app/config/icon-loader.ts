@@ -38,6 +38,8 @@ import { faAngleUp } from '@fortawesome/free-solid-svg-icons/faAngleUp';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons/faAngleDown';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons/faClipboard';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons/faAngleLeft';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -82,6 +84,8 @@ export const loadIcons = () => {
     faAngleRight,
     faQuestionCircle,
     faClipboard,
-    faAngleLeft
+    faAngleLeft,
+    faChevronLeft,
+    faChevronRight
   );
 };
