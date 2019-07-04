@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.UUID;
 
 @Component
 public class HibernatePostDeleteListener extends AbstractHibernateListener implements PostDeleteEventListener {
@@ -30,8 +31,7 @@ public class HibernatePostDeleteListener extends AbstractHibernateListener imple
 
     private void persistMetaData(PostDeleteEvent event) {
         metadataService.saveForCurrentOrSystemUser(
-            Collections.singletonList(
-                prepareMetadataForAllFields(
-                    event.getId().toString(), ActionType.DELETE, event.getEntity().getClass().getSimpleName())));
+            Collections.singletonList(prepareMetadataForAllFields(
+                (UUID) event.getId(), ActionType.DELETE, event.getEntity().getClass().getSimpleName())));
     }
 }

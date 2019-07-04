@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A Metadata.
@@ -30,7 +31,7 @@ public class Metadata extends AbstractEntity implements Serializable {
 
     @NotNull
     @Column(name = "resource_id", nullable = false)
-    private String resourceId;
+    private UUID resourceId;
 
     @NotNull
     @Column(name = "last_action_date", nullable = false)
@@ -66,15 +67,15 @@ public class Metadata extends AbstractEntity implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
-    public String getResourceId() {
+    public UUID getResourceId() {
         return resourceId;
     }
 
-    public void setResourceId(String resourceId) {
+    public void setResourceId(UUID resourceId) {
         this.resourceId = resourceId;
     }
 
-    public Metadata resourceId(String resourceId) {
+    public Metadata resourceId(UUID resourceId) {
         this.resourceId = resourceId;
         return this;
     }

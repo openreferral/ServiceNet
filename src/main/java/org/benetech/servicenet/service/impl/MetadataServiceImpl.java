@@ -90,7 +90,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Metadata> findMetadataForConflict(String resourceId, String fieldName, String replacementValue) {
+    public Optional<Metadata> findMetadataForConflict(UUID resourceId, String fieldName, String replacementValue) {
         log.debug("Request to get most recent metadata for specific change of entity with resourceId: {}.", resourceId);
         Optional<Metadata> metadataOpt =
             metadataRepository.findFirstByResourceIdAndFieldNameAndReplacementValueOrderByLastActionDateAsc(

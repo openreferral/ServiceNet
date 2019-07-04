@@ -140,11 +140,11 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
     private void addConflictingDates(EntityEquivalent eq, Conflict conflict) {
         Optional<Metadata> currentMetadata = metadataService.findMetadataForConflict(
-            eq.getBaseResourceId().toString(), conflict.getFieldName(), conflict.getCurrentValue());
+            eq.getBaseResourceId(), conflict.getFieldName(), conflict.getCurrentValue());
         currentMetadata.ifPresent(m -> conflict.setCurrentValueDate(m.getLastActionDate()));
 
         Optional<Metadata> offeredMetadata = metadataService.findMetadataForConflict(
-            eq.getPartnerResourceId().toString(), conflict.getFieldName(), conflict.getOfferedValue());
+            eq.getPartnerResourceId(), conflict.getFieldName(), conflict.getOfferedValue());
         offeredMetadata.ifPresent(m -> conflict.setOfferedValueDate(m.getLastActionDate()));
     }
 

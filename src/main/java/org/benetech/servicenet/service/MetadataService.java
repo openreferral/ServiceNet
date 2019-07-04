@@ -59,5 +59,5 @@ public interface MetadataService {
      *
      * @return a metadata related to field change or to creation of the whole entity.
      */
-    Optional<Metadata> findMetadataForConflict(String resourceId, String fieldName, String replacementValue);
+    Optional<Metadata> findMetadataForConflict(UUID resourceId, String fieldName, String replacementValue);
 }
