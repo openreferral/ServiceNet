@@ -32,6 +32,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
@@ -54,8 +55,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class MetadataResourceIntTest {
 
-    private static final String DEFAULT_RESOURCE_ID = "AAAAAAAAAA";
-    private static final String UPDATED_RESOURCE_ID = "BBBBBBBBBB";
+    private static final UUID DEFAULT_RESOURCE_ID = TestConstants.UUID_1;
+    private static final UUID UPDATED_RESOURCE_ID = TestConstants.UUID_2;
 
     private static final ZonedDateTime DEFAULT_LAST_ACTION_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
         ZoneOffset.UTC);
@@ -288,7 +289,7 @@ public class MetadataResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(metadata.getId().toString())))
-            .andExpect(jsonPath("$.[*].resourceId").value(hasItem(DEFAULT_RESOURCE_ID)))
+            .andExpect(jsonPath("$.[*].resourceId").value(hasItem(DEFAULT_RESOURCE_ID.toString())))
             .andExpect(jsonPath("$.[*].lastActionDate").value(hasItem(sameInstant(DEFAULT_LAST_ACTION_DATE))))
             .andExpect(jsonPath("$.[*].lastActionType").value(hasItem(DEFAULT_LAST_ACTION_TYPE.toString())))
             .andExpect(jsonPath("$.[*].fieldName").value(hasItem(DEFAULT_FIELD_NAME)))
@@ -309,7 +310,7 @@ public class MetadataResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(metadata.getId().toString()))
-            .andExpect(jsonPath("$.resourceId").value(DEFAULT_RESOURCE_ID))
+            .andExpect(jsonPath("$.resourceId").value(DEFAULT_RESOURCE_ID.toString()))
             .andExpect(jsonPath("$.lastActionDate").value(sameInstant(DEFAULT_LAST_ACTION_DATE)))
             .andExpect(jsonPath("$.lastActionType").value(DEFAULT_LAST_ACTION_TYPE.toString()))
             .andExpect(jsonPath("$.fieldName").value(DEFAULT_FIELD_NAME))

@@ -17,7 +17,7 @@ public class MetadataDTO implements Serializable {
     private UUID id;
 
     @NotNull
-    private String resourceId;
+    private UUID resourceId;
 
     @NotNull
     private ZonedDateTime lastActionDate;
@@ -49,11 +49,11 @@ public class MetadataDTO implements Serializable {
         this.id = id;
     }
 
-    public String getResourceId() {
+    public UUID getResourceId() {
         return resourceId;
     }
 
-    public void setResourceId(String resourceId) {
+    public void setResourceId(UUID resourceId) {
         this.resourceId = resourceId;
     }
 

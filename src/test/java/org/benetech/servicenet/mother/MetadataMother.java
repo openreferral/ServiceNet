@@ -1,5 +1,6 @@
 package org.benetech.servicenet.mother;
 
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.enumeration.ActionType;
@@ -9,11 +10,12 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 public final class MetadataMother {
 
-    private static final String DEFAULT_RESOURCE_ID = "DEFAULT_RESOURCE_ID";
-    private static final String DIFFERENT_RESOURCE_ID = "DIFFERENT_RESOURCE_ID";
+    private static final UUID DEFAULT_RESOURCE_ID = TestConstants.UUID_1;
+    private static final UUID DIFFERENT_RESOURCE_ID = TestConstants.UUID_2;
 
     private static final ZonedDateTime DEFAULT_LAST_ACTION_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
         ZoneOffset.UTC);

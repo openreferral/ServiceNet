@@ -22,12 +22,12 @@ public interface MetadataRepository extends JpaRepository<Metadata, UUID> {
     List<Metadata> findByUserIsCurrentUser();
 
     Optional<Metadata> findFirstByResourceIdAndFieldNameAndReplacementValueOrderByLastActionDateAsc(
-                        String resourceId,
+                        UUID resourceId,
                         String fieldName,
                         String replacementValue);
 
     Optional<Metadata> findFirstByResourceIdAndFieldNameAndLastActionTypeOrderByLastActionDateAsc(
-                        String resourceId,
+                        UUID resourceId,
                         String fieldName,
                         ActionType lastActionType);
 

@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class HibernatePostUpdateListener extends AbstractHibernateListener implements PostUpdateEventListener {
@@ -67,7 +68,7 @@ public class HibernatePostUpdateListener extends AbstractHibernateListener imple
 
     private Metadata extractMetadata(PostUpdateEvent event, Integer fieldId) {
         return new Metadata()
-            .resourceId(event.getId().toString())
+            .resourceId((UUID) event.getId())
             .fieldName(event.getPersister().getPropertyNames()[fieldId])
             .previousValue(event.getOldState()[fieldId].toString())
             .replacementValue(event.getState()[fieldId].toString())

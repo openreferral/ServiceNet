@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.UUID;
 
 @Component
 public class HibernatePostCreateListener extends AbstractHibernateListener implements PostInsertEventListener {
@@ -31,6 +32,6 @@ public class HibernatePostCreateListener extends AbstractHibernateListener imple
     private void persistMetaData(PostInsertEvent event) {
         metadataService.saveForCurrentOrSystemUser(
             Collections.singletonList(prepareMetadataForAllFields(
-                event.getId().toString(), ActionType.CREATE, event.getEntity().getClass().getSimpleName())));
+                (UUID) event.getId(), ActionType.CREATE, event.getEntity().getClass().getSimpleName())));
     }
 }
