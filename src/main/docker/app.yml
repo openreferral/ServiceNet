@@ -3,7 +3,7 @@ services:
     servicenet-app:
         image: servicenet
         environment:
-        - _JAVA_OPTIONS=-Xmx512m -Xms256m
+        - _JAVA_OPTIONS=-Xmx3072m -Xms1536m
         - SPRING_PROFILES_ACTIVE=prod,swagger
         - SPRING_DATASOURCE_URL=jdbc:postgresql://servicenet-postgresql:5432/ServiceNet
         - SPRING_DATA_MONGODB_URI=mongodb://servicenet-mongo:27017/serviceNet
