@@ -196,20 +196,16 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
 
     @Override
     @ConfidentialFilter
-    public void createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service, DataImportReport report) {
-        if (schedule == null) {
-            return;
+    public void createOrUpdateHolidaySchedulesForService(Set<HolidaySchedule> schedules,
+        Service service, DataImportReport report) {
+        if (schedules != null) {
+            schedules.forEach(schedule -> {
+                EntityValidator.validateAndFix(schedule, report, service.getExternalDbId());
+                schedule.setSrvc(service);
+            });
+
+            service.setHolidaySchedules(sharedImportService.createOrUpdateHolidaySchedules(schedules));
         }
-        EntityValidator.validateAndFix(schedule, report, service.getExternalDbId());
-        
-        schedule.setSrvc(service);
-        if (service.getHolidaySchedule() != null) {
-            schedule.setId(service.getHolidaySchedule().getId());
-            em.merge(schedule);
-        } else {
-            em.persist(schedule);
-        }
-        service.setHolidaySchedule(schedule);
     }
 
     @Override

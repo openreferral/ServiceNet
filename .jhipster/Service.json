@@ -104,10 +104,9 @@
             "otherEntityRelationshipName": "srvc"
         },
         {
-            "relationshipType": "one-to-one",
+            "relationshipType": "one-to-many",
             "relationshipName": "holidaySchedule",
             "otherEntityName": "holidaySchedule",
-            "ownerSide": false,
             "otherEntityRelationshipName": "srvc"
         },
         {

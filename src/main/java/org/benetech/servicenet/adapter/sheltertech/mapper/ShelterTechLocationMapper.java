@@ -65,7 +65,7 @@ public interface ShelterTechLocationMapper {
     @Mapping(ignore = true, target = "physicalAddress")
     @Mapping(ignore = true, target = "postalAddress")
     @Mapping(ignore = true, target = "regularSchedule")
-    @Mapping(ignore = true, target = "holidaySchedule")
+    @Mapping(ignore = true, target = "holidaySchedules")
     @Mapping(ignore = true, target = "langs")
     @Mapping(ignore = true, target = "accessibilities")
     Location toLocation(AddressRaw raw);

@@ -97,10 +97,6 @@ public class ServiceResource {
             log.debug("REST request to get all Services where regularSchedule is null");
             return serviceService.findAllWhereRegularScheduleIsNull();
         }
-        if ("holidayschedule-is-null".equals(filter)) {
-            log.debug("REST request to get all Services where holidaySchedule is null");
-            return serviceService.findAllWhereHolidayScheduleIsNull();
-        }
         if ("funding-is-null".equals(filter)) {
             log.debug("REST request to get all Services where funding is null");
             return serviceService.findAllWhereFundingIsNull();

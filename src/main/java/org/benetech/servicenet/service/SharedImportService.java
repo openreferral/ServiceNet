@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Contact;
+import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
@@ -23,4 +24,6 @@ public interface SharedImportService {
     void persistLangs(Set<Language> langsInDatabase, Set<Language> langsToSave);
 
     Set<Contact> createOrUpdateContacts(Set<Contact> contacts);
+
+    Set<HolidaySchedule> createOrUpdateHolidaySchedules(Set<HolidaySchedule> schedules);
 }

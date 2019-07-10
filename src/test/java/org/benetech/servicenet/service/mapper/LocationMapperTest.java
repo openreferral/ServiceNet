@@ -15,6 +15,7 @@ import org.benetech.servicenet.mother.RegularScheduleMother;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.benetech.servicenet.mother.AccessibilityForDisabilitiesMother.DEFAULT_ACCESSIBILITY;
@@ -110,15 +111,15 @@ public class LocationMapperTest {
     @Test
     public void shouldMapHolidayScheduleToRecord() {
         HolidaySchedule schedule = HolidayScheduleMother.createDefault();
-        Location entry = new Location().holidaySchedule(schedule);
+        Location entry = new Location().holidaySchedules(Collections.singleton(schedule));
 
         LocationRecordDTO result = locationMapper.toRecord(entry);
 
-        assertEquals(HolidayScheduleMother.START_DATE, result.getHolidaySchedule().getStartDate());
-        assertEquals(HolidayScheduleMother.END_DATE, result.getHolidaySchedule().getEndDate());
-        assertEquals(HolidayScheduleMother.OPENS_AT, result.getHolidaySchedule().getOpensAt());
-        assertEquals(HolidayScheduleMother.CLOSES_AT, result.getHolidaySchedule().getClosesAt());
-        assertEquals(HolidayScheduleMother.CLOSED, result.getHolidaySchedule().isClosed());
+        assertEquals(HolidayScheduleMother.START_DATE, result.getHolidaySchedules().iterator().next().getStartDate());
+        assertEquals(HolidayScheduleMother.END_DATE, result.getHolidaySchedules().iterator().next().getEndDate());
+        assertEquals(HolidayScheduleMother.OPENS_AT, result.getHolidaySchedules().iterator().next().getOpensAt());
+        assertEquals(HolidayScheduleMother.CLOSES_AT, result.getHolidaySchedules().iterator().next().getClosesAt());
+        assertEquals(HolidayScheduleMother.CLOSED, result.getHolidaySchedules().iterator().next().isClosed());
     }
 
     @Test

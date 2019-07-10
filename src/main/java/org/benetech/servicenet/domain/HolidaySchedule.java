@@ -6,6 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -44,12 +45,20 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @Column(name = "external_db_id")
+    @Size(max = 255, message = "Field value is too long.")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    @Size(max = 255, message = "Field value is too long.")
+    private String providerName;
+
+    @ManyToOne
+    @JoinColumn(name = "srvc_id")
     private Service srvc;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @ManyToOne
+    @JoinColumn(name = "location_id")
     private Location location;
 
     @OneToOne
@@ -120,6 +129,32 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
 
     public HolidaySchedule endDate(LocalDate endDate) {
         this.endDate = endDate;
+        return this;
+    }
+
+    public String getExternalDbId() {
+        return externalDbId;
+    }
+
+    public void setExternalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+    }
+
+    public HolidaySchedule externalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+        return this;
+    }
+
+    public String getProviderName() {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
+    }
+
+    public HolidaySchedule providerName(String providerName) {
+        this.providerName = providerName;
         return this;
     }
 

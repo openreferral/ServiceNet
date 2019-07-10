@@ -33,19 +33,17 @@
     ],
     "relationships": [
         {
-            "relationshipType": "one-to-one",
+            "relationshipType": "many-to-one",
             "relationshipName": "srvc",
             "otherEntityName": "service",
             "otherEntityField": "name",
-            "ownerSide": true,
             "otherEntityRelationshipName": "holidaySchedule"
         },
         {
-            "relationshipType": "one-to-one",
+            "relationshipType": "many-to-one",
             "relationshipName": "location",
             "otherEntityName": "location",
             "otherEntityField": "name",
-            "ownerSide": true,
             "otherEntityRelationshipName": "holidaySchedule"
         },
         {

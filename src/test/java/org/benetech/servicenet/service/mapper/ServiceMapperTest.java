@@ -19,6 +19,7 @@ import org.benetech.servicenet.mother.ServiceTaxonomyMother;
 import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.benetech.servicenet.mother.RegularScheduleMother.CLOSES_AT_1;
@@ -115,15 +116,15 @@ public class ServiceMapperTest {
     @Test
     public void shouldMapHolidayScheduleToRecord() {
         HolidaySchedule schedule = HolidayScheduleMother.createDefault();
-        Service entry = new Service().holidaySchedule(schedule);
+        Service entry = new Service().holidaySchedules(Collections.singleton(schedule));
 
         ServiceRecordDTO result = mapper.toRecord(entry);
 
-        assertEquals(HolidayScheduleMother.START_DATE, result.getHolidaySchedule().getStartDate());
-        assertEquals(HolidayScheduleMother.END_DATE, result.getHolidaySchedule().getEndDate());
-        assertEquals(HolidayScheduleMother.OPENS_AT, result.getHolidaySchedule().getOpensAt());
-        assertEquals(HolidayScheduleMother.CLOSES_AT, result.getHolidaySchedule().getClosesAt());
-        assertEquals(HolidayScheduleMother.CLOSED, result.getHolidaySchedule().isClosed());
+        assertEquals(HolidayScheduleMother.START_DATE, result.getHolidaySchedules().iterator().next().getStartDate());
+        assertEquals(HolidayScheduleMother.END_DATE, result.getHolidaySchedules().iterator().next().getEndDate());
+        assertEquals(HolidayScheduleMother.OPENS_AT, result.getHolidaySchedules().iterator().next().getOpensAt());
+        assertEquals(HolidayScheduleMother.CLOSES_AT, result.getHolidaySchedules().iterator().next().getClosesAt());
+        assertEquals(HolidayScheduleMother.CLOSED, result.getHolidaySchedules().iterator().next().isClosed());
     }
 
     @Test

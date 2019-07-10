@@ -87,20 +87,16 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
 
     @Override
     @ConfidentialFilter
-    public void createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location,
+    public void createOrUpdateHolidaySchedulesForLocation(Set<HolidaySchedule> schedules, Location location,
                                                          DataImportReport report) {
-        if (schedule == null) {
-            return;
+        if (schedules != null) {
+            schedules.forEach(schedule -> {
+                EntityValidator.validateAndFix(schedule, report, location.getExternalDbId());
+                schedule.setLocation(location);
+            });
+
+            location.setHolidaySchedules(sharedImportService.createOrUpdateHolidaySchedules(schedules));
         }
-        EntityValidator.validateAndFix(schedule, report, location.getExternalDbId());
-        schedule.setLocation(location);
-        if (location.getHolidaySchedule() != null) {
-            schedule.setId(location.getHolidaySchedule().getId());
-            em.merge(schedule);
-        } else {
-            em.persist(schedule);
-        }
-        location.setHolidaySchedule(schedule);
     }
 
     @Override

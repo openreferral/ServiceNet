@@ -11,7 +11,7 @@ export interface ILocationRecord {
   physicalAddress?: IPhysicalAddress;
   postalAddress?: IPostalAddress;
   regularScheduleOpeningHours?: IOpeningHours[];
-  holidaySchedule?: IHolidaySchedule;
+  holidaySchedules?: IHolidaySchedule[];
   langs?: ILanguage[];
   accessibilities?: IAccessibilityForDisabilities[];
 }

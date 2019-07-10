@@ -19,7 +19,7 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
     @Mapping(target = "physicalAddress", ignore = true)
     @Mapping(target = "postalAddress", ignore = true)
     @Mapping(target = "regularSchedule", ignore = true)
-    @Mapping(target = "holidaySchedule", ignore = true)
+    @Mapping(target = "holidaySchedules", ignore = true)
     @Mapping(target = "langs", ignore = true)
     @Mapping(target = "accessibilities", ignore = true)
     Location toEntity(LocationDTO locationDTO);
