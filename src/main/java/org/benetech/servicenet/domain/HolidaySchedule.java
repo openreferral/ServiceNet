@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -60,10 +59,6 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
-
-    @OneToOne
-    @JoinColumn(unique = true)
-    private ServiceAtLocation serviceAtlocation;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
@@ -181,19 +176,6 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
 
     public HolidaySchedule location(Location location) {
         this.location = location;
-        return this;
-    }
-
-    public ServiceAtLocation getServiceAtlocation() {
-        return serviceAtlocation;
-    }
-
-    public void setServiceAtlocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtlocation = serviceAtLocation;
-    }
-
-    public HolidaySchedule serviceAtlocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtlocation = serviceAtLocation;
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

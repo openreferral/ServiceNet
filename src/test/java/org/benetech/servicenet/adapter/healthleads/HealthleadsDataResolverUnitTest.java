@@ -191,7 +191,6 @@ public class HealthleadsDataResolverUnitTest {
             HealthleadsPhone phone = (HealthleadsPhone) baseData;
             assertEquals(PHONE_NUMBER + i, phone.getNumber());
             assertEquals(String.valueOf(i), phone.getExtension());
-            assertEquals(SERVICE_AT_LOCATION + i, phone.getServiceAtLocationId());
             assertEquals(SERV + i, phone.getServiceId());
             assertEquals(ORG + i, phone.getOrganizationId());
             assertEquals(DESCRIPTION + i, phone.getDescription());

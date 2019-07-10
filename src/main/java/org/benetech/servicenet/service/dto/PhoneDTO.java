@@ -41,8 +41,6 @@ public class PhoneDTO implements Serializable {
 
     private String contactName;
 
-    private UUID serviceAtLocationId;
-
     public UUID getId() {
         return id;
     }
@@ -155,14 +153,6 @@ public class PhoneDTO implements Serializable {
         this.contactName = contactName;
     }
 
-    public UUID getServiceAtLocationId() {
-        return serviceAtLocationId;
-    }
-
-    public void setServiceAtLocationId(UUID serviceAtLocationId) {
-        this.serviceAtLocationId = serviceAtLocationId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -201,7 +191,6 @@ public class PhoneDTO implements Serializable {
             ", organization='" + getOrganizationName() + "'" +
             ", contact=" + getContactId() +
             ", contact='" + getContactName() + "'" +
-            ", serviceAtLocation=" + getServiceAtLocationId() +
             "}";
     }
 }

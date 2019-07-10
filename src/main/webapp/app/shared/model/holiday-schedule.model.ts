@@ -11,7 +11,6 @@ export interface IHolidaySchedule {
   srvcId?: number;
   locationName?: string;
   locationId?: number;
-  serviceAtlocationId?: number;
 }
 
 export const defaultValue: Readonly<IHolidaySchedule> = {

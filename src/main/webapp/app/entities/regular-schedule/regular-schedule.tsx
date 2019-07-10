@@ -44,9 +44,6 @@ export class RegularSchedule extends React.Component<IRegularScheduleProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.regularSchedule.location">Location</Translate>
                 </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.regularSchedule.serviceAtlocation">Service Atlocation</Translate>
-                </th>
                 <th />
               </tr>
             </thead>
@@ -64,13 +61,6 @@ export class RegularSchedule extends React.Component<IRegularScheduleProps> {
                   <td>
                     {regularSchedule.locationName ? (
                       <Link to={`location/${regularSchedule.locationId}`}>{regularSchedule.locationName}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
-                  <td>
-                    {regularSchedule.serviceAtlocationId ? (
-                      <Link to={`service-at-location/${regularSchedule.serviceAtlocationId}`}>{regularSchedule.serviceAtlocationId}</Link>
                     ) : (
                       ''
                     )}

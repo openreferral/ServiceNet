@@ -37,10 +37,6 @@ export class RegularScheduleDetail extends React.Component<IRegularScheduleDetai
               <Translate contentKey="serviceNetApp.regularSchedule.location">Location</Translate>
             </dt>
             <dd>{regularScheduleEntity.locationName ? regularScheduleEntity.locationName : ''}</dd>
-            <dt>
-              <Translate contentKey="serviceNetApp.regularSchedule.serviceAtlocation">Service Atlocation</Translate>
-            </dt>
-            <dd>{regularScheduleEntity.serviceAtlocationId ? regularScheduleEntity.serviceAtlocationId : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/regular-schedule" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

@@ -1,6 +1,5 @@
 package org.benetech.servicenet.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
@@ -12,14 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * A ServiceAtLocation.
@@ -52,18 +47,6 @@ public class ServiceAtLocation extends AbstractEntity implements Serializable {
     @Column(name = "provider_name")
     @Size(max = 255, message = "Field value is too long.")
     private String providerName;
-
-    @OneToOne(mappedBy = "serviceAtlocation")
-    @JsonIgnore
-    private RegularSchedule regularSchedule;
-
-    @OneToOne(mappedBy = "serviceAtlocation")
-    @JsonIgnore
-    private HolidaySchedule holidaySchedule;
-
-    @OneToMany(mappedBy = "serviceAtLocation")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Phone> phones = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
@@ -103,57 +86,6 @@ public class ServiceAtLocation extends AbstractEntity implements Serializable {
 
     public ServiceAtLocation location(Location location) {
         this.location = location;
-        return this;
-    }
-
-    public RegularSchedule getRegularSchedule() {
-        return regularSchedule;
-    }
-
-    public void setRegularSchedule(RegularSchedule regularSchedule) {
-        this.regularSchedule = regularSchedule;
-    }
-
-    public ServiceAtLocation regularSchedule(RegularSchedule regularSchedule) {
-        this.regularSchedule = regularSchedule;
-        return this;
-    }
-
-    public HolidaySchedule getHolidaySchedule() {
-        return holidaySchedule;
-    }
-
-    public void setHolidaySchedule(HolidaySchedule holidaySchedule) {
-        this.holidaySchedule = holidaySchedule;
-    }
-
-    public ServiceAtLocation holidaySchedule(HolidaySchedule holidaySchedule) {
-        this.holidaySchedule = holidaySchedule;
-        return this;
-    }
-
-    public Set<Phone> getPhones() {
-        return phones;
-    }
-
-    public void setPhones(Set<Phone> phones) {
-        this.phones = phones;
-    }
-
-    public ServiceAtLocation phones(Set<Phone> phones) {
-        this.phones = phones;
-        return this;
-    }
-
-    public ServiceAtLocation addPhones(Phone phone) {
-        this.phones.add(phone);
-        phone.setServiceAtLocation(this);
-        return this;
-    }
-
-    public ServiceAtLocation removePhones(Phone phone) {
-        this.phones.remove(phone);
-        phone.setServiceAtLocation(null);
         return this;
     }
 

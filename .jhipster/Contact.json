@@ -41,12 +41,6 @@
             "relationshipName": "srvc",
             "otherEntityName": "service",
             "otherEntityField": "name"
-        },
-        {
-            "relationshipType": "many-to-one",
-            "relationshipName": "serviceAtLocation",
-            "otherEntityName": "serviceAtLocation",
-            "otherEntityField": "id"
         }
     ],
     "changelogDate": "20181119125402",

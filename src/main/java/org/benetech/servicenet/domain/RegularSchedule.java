@@ -31,10 +31,6 @@ public class RegularSchedule extends AbstractEntity implements Serializable {
     @JoinColumn(unique = true)
     private Location location;
 
-    @OneToOne
-    @JoinColumn(unique = true)
-    private ServiceAtLocation serviceAtlocation;
-
     @OneToMany(mappedBy = "regularSchedule")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<OpeningHours> openingHours = new HashSet<>();
@@ -65,19 +61,6 @@ public class RegularSchedule extends AbstractEntity implements Serializable {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public ServiceAtLocation getServiceAtlocation() {
-        return serviceAtlocation;
-    }
-
-    public RegularSchedule serviceAtlocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtlocation = serviceAtLocation;
-        return this;
-    }
-
-    public void setServiceAtlocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtlocation = serviceAtLocation;
     }
 
     public Set<OpeningHours> getOpeningHours() {

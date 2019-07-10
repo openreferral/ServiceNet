@@ -65,9 +65,6 @@ export class Phone extends React.Component<IPhoneProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.phone.contact">Contact</Translate>
                 </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.phone.serviceAtLocation">Service At Location</Translate>
-                </th>
                 <th />
               </tr>
             </thead>
@@ -88,13 +85,6 @@ export class Phone extends React.Component<IPhoneProps> {
                   <td>{phone.srvcName ? <Link to={`service/${phone.srvcId}`}>{phone.srvcName}</Link> : ''}</td>
                   <td>{phone.organizationName ? <Link to={`organization/${phone.organizationId}`}>{phone.organizationName}</Link> : ''}</td>
                   <td>{phone.contactName ? <Link to={`contact/${phone.contactId}`}>{phone.contactName}</Link> : ''}</td>
-                  <td>
-                    {phone.serviceAtLocationId ? (
-                      <Link to={`service-at-location/${phone.serviceAtLocationId}`}>{phone.serviceAtLocationId}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${phone.id}`} color="info" size="sm">

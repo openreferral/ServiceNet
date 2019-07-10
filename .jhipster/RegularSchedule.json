@@ -20,14 +20,6 @@
             "otherEntityRelationshipName": "regularSchedule"
         },
         {
-          "relationshipType": "one-to-one",
-          "relationshipName": "serviceAtlocation",
-          "otherEntityName": "serviceAtLocation",
-          "otherEntityField": "id",
-          "ownerSide": true,
-          "otherEntityRelationshipName": "regularSchedule"
-        },
-        {
           "relationshipType": "one-to-many",
           "relationshipName": "openingHours",
           "otherEntityName": "openingHours",

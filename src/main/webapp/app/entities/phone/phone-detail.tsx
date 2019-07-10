@@ -74,10 +74,6 @@ export class PhoneDetail extends React.Component<IPhoneDetailProps> {
               <Translate contentKey="serviceNetApp.phone.contact">Contact</Translate>
             </dt>
             <dd>{phoneEntity.contactName ? phoneEntity.contactName : ''}</dd>
-            <dt>
-              <Translate contentKey="serviceNetApp.phone.serviceAtLocation">Service At Location</Translate>
-            </dt>
-            <dd>{phoneEntity.serviceAtLocationId ? phoneEntity.serviceAtLocationId : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/phone" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

@@ -21,8 +21,7 @@
       "startDate": "Start Date",
       "endDate": "End Date",
       "srvc": "Srvc",
-      "location": "Location",
-      "serviceAtlocation": "Service Atlocation"
+      "location": "Location"
     }
   }
 }

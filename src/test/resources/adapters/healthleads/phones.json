@@ -2,7 +2,6 @@
   {
     "number": "(123) 123-4567-1",
     "extension": "1",
-    "service_at_location_id": "serviceAtLocation1",
     "service_id": "serv1",
     "organization_id": "org1",
     "description": "description1",
@@ -15,7 +14,6 @@
   {
     "number": "(123) 123-4567-2",
     "extension": "2",
-    "service_at_location_id": "serviceAtLocation2",
     "service_id": "serv2",
     "organization_id": "org2",
     "description": "description2",
@@ -28,7 +26,6 @@
   {
     "number": "(123) 123-4567-3",
     "extension": "3",
-    "service_at_location_id": "serviceAtLocation3",
     "service_id": "serv3",
     "organization_id": "org3",
     "description": "description3",

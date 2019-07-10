@@ -94,14 +94,6 @@ public class ServiceAtLocationResource {
     @GetMapping("/service-at-locations")
     @Timed
     public List<ServiceAtLocationDTO> getAllServiceAtLocations(@RequestParam(required = false) String filter) {
-        if ("regularschedule-is-null".equals(filter)) {
-            log.debug("REST request to get all ServiceAtLocations where regularSchedule is null");
-            return serviceAtLocationService.findAllWhereRegularScheduleIsNull();
-        }
-        if ("holidayschedule-is-null".equals(filter)) {
-            log.debug("REST request to get all ServiceAtLocations where holidaySchedule is null");
-            return serviceAtLocationService.findAllWhereHolidayScheduleIsNull();
-        }
         log.debug("REST request to get all ServiceAtLocations");
         return serviceAtLocationService.findAll();
     }

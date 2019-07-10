@@ -21,7 +21,6 @@
       "email": "Email",
       "organization": "Organization",
       "srvc": "Srvc",
-      "serviceAtLocation": "Service At Location",
       "externalDbId": "External Database Id",
       "providerName": "Provider Name"
     }

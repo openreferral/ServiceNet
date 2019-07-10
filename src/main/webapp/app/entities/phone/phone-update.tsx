@@ -16,8 +16,6 @@ import { IOrganization } from 'app/shared/model/organization.model';
 import { getEntities as getOrganizations } from 'app/entities/organization/organization.reducer';
 import { IContact } from 'app/shared/model/contact.model';
 import { getEntities as getContacts } from 'app/entities/contact/contact.reducer';
-import { IServiceAtLocation } from 'app/shared/model/service-at-location.model';
-import { getEntities as getServiceAtLocations } from 'app/entities/service-at-location/service-at-location.reducer';
 import { getEntity, updateEntity, createEntity, setBlob, reset } from './phone.reducer';
 import { IPhone } from 'app/shared/model/phone.model';
 // tslint:disable-next-line:no-unused-variable
@@ -32,7 +30,6 @@ export interface IPhoneUpdateState {
   srvcId: string;
   organizationId: string;
   contactId: string;
-  serviceAtLocationId: string;
 }
 
 export class PhoneUpdate extends React.Component<IPhoneUpdateProps, IPhoneUpdateState> {
@@ -43,7 +40,6 @@ export class PhoneUpdate extends React.Component<IPhoneUpdateProps, IPhoneUpdate
       srvcId: '0',
       organizationId: '0',
       contactId: '0',
-      serviceAtLocationId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -65,7 +61,6 @@ export class PhoneUpdate extends React.Component<IPhoneUpdateProps, IPhoneUpdate
     this.props.getServices();
     this.props.getOrganizations();
     this.props.getContacts();
-    this.props.getServiceAtLocations();
   }
 
   onBlobChange = (isAnImage, name) => event => {
@@ -97,7 +92,7 @@ export class PhoneUpdate extends React.Component<IPhoneUpdateProps, IPhoneUpdate
   };
 
   render() {
-    const { phoneEntity, locations, services, organizations, contacts, serviceAtLocations, loading, updating } = this.props;
+    const { phoneEntity, locations, services, organizations, contacts, loading, updating } = this.props;
     const { isNew } = this.state;
 
     const { description } = phoneEntity;
@@ -222,21 +217,6 @@ export class PhoneUpdate extends React.Component<IPhoneUpdateProps, IPhoneUpdate
                       : null}
                   </AvInput>
                 </AvGroup>
-                <AvGroup>
-                  <Label for="serviceAtLocation.id">
-                    <Translate contentKey="serviceNetApp.phone.serviceAtLocation">Service At Location</Translate>
-                  </Label>
-                  <AvInput id="phone-serviceAtLocation" type="select" className="form-control" name="serviceAtLocationId">
-                    <option value="" key="0" />
-                    {serviceAtLocations
-                      ? serviceAtLocations.map(otherEntity => (
-                          <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.id}
-                          </option>
-                        ))
-                      : null}
-                  </AvInput>
-                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/phone" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
@@ -264,7 +244,6 @@ const mapStateToProps = (storeState: IRootState) => ({
   services: storeState.service.entities,
   organizations: storeState.organization.entities,
   contacts: storeState.contact.entities,
-  serviceAtLocations: storeState.serviceAtLocation.entities,
   phoneEntity: storeState.phone.entity,
   loading: storeState.phone.loading,
   updating: storeState.phone.updating,
@@ -276,7 +255,6 @@ const mapDispatchToProps = {
   getServices,
   getOrganizations,
   getContacts,
-  getServiceAtLocations,
   getEntity,
   updateEntity,
   setBlob,

@@ -50,12 +50,6 @@
             "relationshipName": "contact",
             "otherEntityName": "contact",
             "otherEntityField": "name"
-        },
-        {
-            "relationshipType": "many-to-one",
-            "relationshipName": "serviceAtLocation",
-            "otherEntityName": "serviceAtLocation",
-            "otherEntityField": "id"
         }
     ],
     "changelogDate": "20181119125401",

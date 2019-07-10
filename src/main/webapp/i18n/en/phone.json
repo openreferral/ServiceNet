@@ -23,8 +23,7 @@
       "location": "Location",
       "srvc": "Srvc",
       "organization": "Organization",
-      "contact": "Contact",
-      "serviceAtLocation": "Service At Location"
+      "contact": "Contact"
     }
   }
 }

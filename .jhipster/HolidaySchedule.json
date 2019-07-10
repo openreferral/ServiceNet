@@ -45,14 +45,6 @@
             "otherEntityName": "location",
             "otherEntityField": "name",
             "otherEntityRelationshipName": "holidaySchedule"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "serviceAtlocation",
-            "otherEntityName": "serviceAtLocation",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "holidaySchedule"
         }
     ],
     "changelogDate": "20181119125404",

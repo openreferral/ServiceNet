@@ -65,8 +65,6 @@ export class ServiceAtLocation extends React.Component<IServiceAtLocationProps> 
                     </Button>
                   </td>
                   <td>{serviceAtLocation.description}</td>
-                  <td>{serviceAtLocation.externalDbId}</td>
-                  <td>{serviceAtLocation.providerName}</td>
                   <td>
                     {serviceAtLocation.srvcName ? <Link to={`service/${serviceAtLocation.srvcId}`}>{serviceAtLocation.srvcName}</Link> : ''}
                   </td>
@@ -77,6 +75,8 @@ export class ServiceAtLocation extends React.Component<IServiceAtLocationProps> 
                       ''
                     )}
                   </td>
+                  <td>{serviceAtLocation.externalDbId}</td>
+                  <td>{serviceAtLocation.providerName}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${serviceAtLocation.id}`} color="info" size="sm">

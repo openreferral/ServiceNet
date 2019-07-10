@@ -13,7 +13,7 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
  * Mapper for the entity Phone and its DTO PhoneDTO.
  */
 @Mapper(componentModel = "spring", uses = {LocationMapper.class, ServiceMapper.class,
-    OrganizationMapper.class, ContactMapper.class, ServiceAtLocationMapper.class}, unmappedTargetPolicy = IGNORE)
+    OrganizationMapper.class, ContactMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface PhoneMapper extends EntityMapper<PhoneDTO, Phone> {
 
     @Mapping(source = "location.id", target = "locationId")
@@ -24,14 +24,12 @@ public interface PhoneMapper extends EntityMapper<PhoneDTO, Phone> {
     @Mapping(source = "organization.name", target = "organizationName")
     @Mapping(source = "contact.id", target = "contactId")
     @Mapping(source = "contact.name", target = "contactName")
-    @Mapping(source = "serviceAtLocation.id", target = "serviceAtLocationId")
     PhoneDTO toDto(Phone phone);
 
     @Mapping(source = "locationId", target = "location")
     @Mapping(source = "srvcId", target = "srvc")
     @Mapping(source = "organizationId", target = "organization")
     @Mapping(source = "contactId", target = "contact")
-    @Mapping(source = "serviceAtLocationId", target = "serviceAtLocation")
     Phone toEntity(PhoneDTO phoneDTO);
 
     default Phone fromId(UUID id) {

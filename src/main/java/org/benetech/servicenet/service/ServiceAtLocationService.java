@@ -28,21 +28,6 @@ public interface ServiceAtLocationService {
     List<ServiceAtLocationDTO> findAll();
 
     /**
-     * Get all the ServiceAtLocationDTO where RegularSchedule is null.
-     *
-     * @return the list of entities
-     */
-    List<ServiceAtLocationDTO> findAllWhereRegularScheduleIsNull();
-
-    /**
-     * Get all the ServiceAtLocationDTO where HolidaySchedule is null.
-     *
-     * @return the list of entities
-     */
-    List<ServiceAtLocationDTO> findAllWhereHolidayScheduleIsNull();
-
-
-    /**
      * Get the "id" serviceAtLocation.
      *
      * @param id the id of the entity
