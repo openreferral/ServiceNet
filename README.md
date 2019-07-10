@@ -18,6 +18,7 @@ npm install -g generator-jhipster
 
 1. Install Lombok, MapStruct nad NodeJS plugins under File -> Settings -> Plugins -> Browse repositories... search for the Lombok, MapStruct support and NodeJS plugins and install them all.
 2. Check the Enable annotation processing checkbox under File -> Settings -> Build, Execution, Deployment -> Compiler -> Annotation Processors.
+3. Import google styleguide settings under File -> Settings -> Editor -> Code Style, click on the little gear next to Scheme. Click on import Scheme and select the google-styleguide file (https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) as the current code style for the project.
 
 ## Development
 
