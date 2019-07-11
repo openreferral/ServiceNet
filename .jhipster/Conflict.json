@@ -71,5 +71,5 @@
     "service": "serviceImpl",
     "entityTableName": "conflict",
     "jpaMetamodelFiltering": false,
-    "pagination": "no"
+    "pagination": true
 }

@@ -33,6 +33,7 @@ describe('Entities reducer tests', () => {
     entities: [] as ReadonlyArray<IConflict>,
     entity: defaultValue,
     updating: false,
+    totalItems: 0,
     updateSuccess: false
   };
 
@@ -122,6 +123,7 @@ describe('Entities reducer tests', () => {
 
   describe('Successes', () => {
     it('should fetch all entities', () => {
+      const headers = { 'x-total-count': 0 };
       const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }] };
       expect(
         reducer(undefined, {
@@ -131,7 +133,8 @@ describe('Entities reducer tests', () => {
       ).toEqual({
         ...initialState,
         loading: false,
-        entities: payload.data
+        entities: payload.data,
+        totalItems: headers
       });
     });
 

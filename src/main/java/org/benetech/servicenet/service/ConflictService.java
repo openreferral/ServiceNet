@@ -2,6 +2,8 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.service.dto.ConflictDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -27,7 +29,15 @@ public interface ConflictService {
      * @return the list of entities
      */
     List<ConflictDTO> findAll();
-    
+
+        /**
+     * Get all the conflicts on page.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<ConflictDTO> findAll(Pageable pageable);
+
     /**
      * Get the "id" conflict.
      *

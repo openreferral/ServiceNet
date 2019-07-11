@@ -217,6 +217,21 @@ public class ConflictResourceIntTest {
 
     @Test
     @Transactional
+    public void equalsVerifier() throws Exception {
+        TestUtil.equalsVerifier(Conflict.class);
+        Conflict conflict1 = new Conflict();
+        conflict1.setId(UUID_1);
+        Conflict conflict2 = new Conflict();
+        conflict2.setId(conflict1.getId());
+        assertThat(conflict1).isEqualTo(conflict2);
+        conflict2.setId(UUID_2);
+        assertThat(conflict1).isNotEqualTo(conflict2);
+        conflict1.setId(null);
+        assertThat(conflict1).isNotEqualTo(conflict2);
+    }
+
+    @Test
+    @Transactional
     public void updateConflict() throws Exception {
         // Initialize the database
         conflictRepository.saveAndFlush(conflict);
@@ -304,21 +319,6 @@ public class ConflictResourceIntTest {
         // Validate the database is empty
         List<Conflict> conflictList = conflictRepository.findAll();
         assertThat(conflictList).hasSize(databaseSizeBeforeDelete - 1);
-    }
-
-    @Test
-    @Transactional
-    public void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(Conflict.class);
-        Conflict conflict1 = new Conflict();
-        conflict1.setId(UUID_1);
-        Conflict conflict2 = new Conflict();
-        conflict2.setId(conflict1.getId());
-        assertThat(conflict1).isEqualTo(conflict2);
-        conflict2.setId(UUID_2);
-        assertThat(conflict1).isNotEqualTo(conflict2);
-        conflict1.setId(null);
-        assertThat(conflict1).isNotEqualTo(conflict2);
     }
 
     @Test
