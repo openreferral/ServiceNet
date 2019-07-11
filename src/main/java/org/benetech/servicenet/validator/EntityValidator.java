@@ -71,7 +71,9 @@ public final class EntityValidator {
                 organizationError.setCause(violation.getMessage());
                 organizationErrors.add(organizationError);
             }
-            report.setOrganizationErrors(organizationErrors);
+            if (report != null) {
+                report.setOrganizationErrors(organizationErrors);
+            }
         }
     }
 

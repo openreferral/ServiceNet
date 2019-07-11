@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
 
@@ -48,7 +49,7 @@ public class DataImportReportDTO implements Serializable {
 
     @Getter
     @Setter
-    private Set<OrganizationError> organizationErrors;
+    private Set<OrganizationError> organizationErrors = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

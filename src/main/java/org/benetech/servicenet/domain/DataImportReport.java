@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.OneToMany;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -71,7 +70,6 @@ public class DataImportReport extends AbstractEntity implements Serializable {
     private DocumentUpload documentUpload;
 
     @Getter
-    @Setter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataImportReport")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JsonIgnoreProperties("dataImportReport")
@@ -133,6 +131,13 @@ public class DataImportReport extends AbstractEntity implements Serializable {
 
     public void incrementNumberOfUpdatedServices() {
         numberOfUpdatedServices++;
+    }
+
+    public void setOrganizationErrors(Set<OrganizationError> organizationErrors) {
+        this.organizationErrors.clear();
+        if (organizationErrors != null) {
+            this.organizationErrors.addAll(organizationErrors);
+        }
     }
 
     @Override
