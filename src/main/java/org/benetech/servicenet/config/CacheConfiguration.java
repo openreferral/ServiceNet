@@ -102,6 +102,8 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.Conflict.class.getName() + ".partner",
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.DataImportReport.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.DataImportReport.class.getName() + ".organizationErrors",
+                jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.FieldExclusion.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.ExclusionsConfig.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.ExclusionsConfig.class.getName() + ".exclusions",
@@ -118,6 +120,7 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".definedCoverageAreas",
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.LocationExclusion.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.OrganizationError.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

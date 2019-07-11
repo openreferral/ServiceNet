@@ -1,9 +1,12 @@
 package org.benetech.servicenet.validator;
 
+import java.util.HashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.builder.ReportErrorMessageBuilder;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.service.factory.records.builder.BuilderUtils;
 
 import javax.validation.ConstraintViolation;
@@ -36,30 +39,39 @@ public final class EntityValidator {
         return true;
     }
 
-    public static <V extends AbstractEntity> void validateAndFix(V entity, DataImportReport report, String externalDbId) {
+    public static <V extends AbstractEntity> void validateAndFix(
+        V entity, Organization org, DataImportReport report, String externalDbId) {
         Set<ConstraintViolation<V>> violations = getViolations(entity);
 
         if (!violations.isEmpty()) {
-
-            if (report != null) {
-                report.setErrorMessage(
-                    ReportErrorMessageBuilder.build(violations, entity.getClass().getSimpleName(),
-                        report.getErrorMessage(), externalDbId));
-            }
-
+            Set<OrganizationError> organizationErrors = new HashSet<>();
             for (ConstraintViolation violation : violations) {
+                String propertyPath = violation.getPropertyPath().toString();
                 log.info(
-                    "Field for {} with ID: {} is invalid. Replacing with empty string.",
+                    "Field {} for {} with ID: {} is invalid. Replacing with empty string.",
+                    propertyPath,
                     entity.getClass(),
                     entity.getId()
                 );
                 BuilderUtils.setField(
                     entity,
-                    violation.getPropertyPath().toString(),
+                    propertyPath,
                     "",
                     entity.getClass()
                 );
+                OrganizationError organizationError = new OrganizationError();
+                organizationError.setOrganization(org);
+                organizationError.setDataImportReport(report);
+                if (!"externalDbId".equals(propertyPath)) {
+                    organizationError.setExternalDbId(externalDbId);
+                }
+                organizationError.setEntityName(entity.getClass().getSimpleName());
+                organizationError.setFieldName(propertyPath);
+                organizationError.setInvalidValue(violation.getInvalidValue().toString());
+                organizationError.setCause(violation.getMessage());
+                organizationErrors.add(organizationError);
             }
+            report.setOrganizationErrors(organizationErrors);
         }
     }
 

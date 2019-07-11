@@ -163,6 +163,11 @@ export const EntitiesMenu = props => (
       &nbsp;
       <Translate contentKey="global.menu.entities.dataImportReport" />
     </DropdownItem>
+    <DropdownItem tag={Link} to="/entity/organization-error">
+      <FontAwesomeIcon icon="asterisk" />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.organizationError" />
+    </DropdownItem>
     <DropdownItem tag={Link} to="/entity/field-exclusion">
       <FontAwesomeIcon icon="asterisk" />
       &nbsp;

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.dto;
 
+import java.util.Set;
 import lombok.Data;
 
 import javax.persistence.Lob;
@@ -8,6 +9,9 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
+import org.benetech.servicenet.domain.OrganizationError;
 
 /**
  * A DTO for the DataImportReport entity.
@@ -41,6 +45,10 @@ public class DataImportReportDTO implements Serializable {
     private String errorMessage;
 
     private UUID documentUploadId;
+
+    @Getter
+    @Setter
+    private Set<OrganizationError> organizationErrors;
 
     @Override
     public boolean equals(Object o) {

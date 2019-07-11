@@ -1,0 +1,28 @@
+{
+  "serviceNetApp": {
+    "organizationError": {
+      "home": {
+        "title": "Organization Errors",
+        "createLabel": "Create a new Organization Error",
+        "createOrEditLabel": "Create or edit a Organization Error",
+        "notFound": "No Organization Error found"
+      },
+      "created": "A new Organization Error is created with identifier {{ param }}",
+      "updated": "A Organization Error is updated with identifier {{ param }}",
+      "deleted": "A Organization Error is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Organization Error {{ id }}?"
+      },
+      "detail": {
+        "title": "Organization Error"
+      },
+      "entityName": "Entity Name",
+      "fieldName": "Field Name",
+      "externalDbId": "External Db Id",
+      "invalidValue": "Invalid Value",
+      "cause": "Cause",
+      "organization": "Organization",
+      "dataImportReport": "Data Import Report"
+    }
+  }
+}

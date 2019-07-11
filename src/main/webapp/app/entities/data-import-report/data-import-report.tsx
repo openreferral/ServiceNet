@@ -65,6 +65,9 @@ export class DataImportReport extends React.Component<IDataImportReportProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="serviceNetApp.dataImportReport.organizationErrors">Organization Errors</Translate>
+                </th>
                 <th />
               </tr>
             </thead>
@@ -95,6 +98,7 @@ export class DataImportReport extends React.Component<IDataImportReportProps> {
                       ''
                     )}
                   </td>
+                  <td>{dataImportReport.organizationErrors ? dataImportReport.organizationErrors.length : '-'}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${dataImportReport.id}`} color="info" size="sm">

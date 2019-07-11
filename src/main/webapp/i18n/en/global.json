@@ -46,6 +46,7 @@
         "shelter": "Shelter",
         "option": "Option",
         "locationExclusion": "Location Exclusion",
+        "organizationError": "Organization Error",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

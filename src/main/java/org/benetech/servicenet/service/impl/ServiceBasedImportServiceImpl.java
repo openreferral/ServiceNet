@@ -61,7 +61,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         if (eligibility == null) {
             return;
         }
-        EntityValidator.validateAndFix(eligibility, report, service.getExternalDbId());
+        EntityValidator.validateAndFix(eligibility, service.getOrganization(), report, service.getExternalDbId());
         
         eligibility.setSrvc(service);
         if (service.getEligibility() != null) {
@@ -95,7 +95,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         if (funding == null) {
             return;
         }
-        EntityValidator.validateAndFix(funding, report, service.getExternalDbId());
+        EntityValidator.validateAndFix(funding, service.getOrganization(), report, service.getExternalDbId());
         
         funding.setSrvc(service);
         if (service.getFunding() != null) {
@@ -134,7 +134,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         if (serviceTaxonomy == null) {
             return null;
         }
-        EntityValidator.validateAndFix(serviceTaxonomy, report, service.getExternalDbId());
+        EntityValidator.validateAndFix(serviceTaxonomy, service.getOrganization(), report, service.getExternalDbId());
         
         serviceTaxonomy.setSrvc(service);
 
@@ -173,7 +173,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         if (document == null) {
             return null;
         }
-        EntityValidator.validateAndFix(document, report, externalDbId);
+        EntityValidator.validateAndFix(document, service.getOrganization(), report, externalDbId);
         
         document.setSrvc(service);
         Optional<RequiredDocument> requiredDocumentFromDb
@@ -200,7 +200,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
         Service service, DataImportReport report) {
         if (schedules != null) {
             schedules.forEach(schedule -> {
-                EntityValidator.validateAndFix(schedule, report, service.getExternalDbId());
+                EntityValidator.validateAndFix(schedule, service.getOrganization(), report, service.getExternalDbId());
                 schedule.setSrvc(service);
             });
 
@@ -233,7 +233,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
 
     private void createOrUpdateFilteredContacts(Set<Contact> contacts, Service service) {
         contacts.forEach(contact -> {
-            EntityValidator.validateAndFix(contact, null, "");
+            EntityValidator.validateAndFix(contact, service.getOrganization(), null, "");
             contact.setSrvc(service);
         });
         service.setContacts(sharedImportService.createOrUpdateContacts(contacts));
@@ -241,7 +241,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
 
     private void createOrUpdateFilteredPhonesForService(Set<Phone> phones, @Nonnull Service service) {
         phones.forEach(phone -> {
-            EntityValidator.validateAndFix(phone, null, "");
+            EntityValidator.validateAndFix(phone, service.getOrganization(), null, "");
             phone.setSrvc(service);
         });
         sharedImportService.persistPhones(service.getPhones(), phones);
@@ -249,7 +249,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
 
     private void createOrUpdateFilteredLangsForService(Set<Language> langs, Service service) {
         langs.forEach(lang -> {
-            EntityValidator.validateAndFix(lang, null, "");
+            EntityValidator.validateAndFix(lang, service.getOrganization(), null, "");
             lang.setSrvc(service);
         });
         sharedImportService.persistLangs(service.getLangs(), langs);

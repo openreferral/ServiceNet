@@ -1,0 +1,42 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "relationships": [
+        {
+            "relationshipName": "organization",
+            "otherEntityName": "organization",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "name"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "entityName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "fieldName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "externalDbId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "invalidValue",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "cause",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20190709161437",
+    "dto": "no",
+    "searchEngine": false,
+    "service": "no",
+    "entityTableName": "organization_error",
+    "databaseType": "sql",
+    "jpaMetamodelFiltering": false,
+    "pagination": "infinite-scroll"
+}

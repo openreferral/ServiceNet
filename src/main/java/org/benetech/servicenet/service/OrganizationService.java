@@ -21,6 +21,14 @@ public interface OrganizationService {
     OrganizationDTO save(OrganizationDTO organizationDTO);
 
     /**
+     * Save a organization.
+     *
+     * @param organization the entity to save
+     * @return the persisted entity
+     */
+    Organization save(Organization organization);
+
+    /**
      * Get all the organizations.
      *
      * @return the list of entities

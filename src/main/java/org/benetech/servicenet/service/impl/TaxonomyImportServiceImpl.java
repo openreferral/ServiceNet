@@ -26,7 +26,7 @@ public class TaxonomyImportServiceImpl implements TaxonomyImportService {
         if (taxonomy == null) {
             return null;
         }
-        EntityValidator.validateAndFix(taxonomy, report, externalDbId);
+        EntityValidator.validateAndFix(taxonomy, null, report, externalDbId);
 
         Optional<Taxonomy> taxonomyFromDb = taxonomyService.findForExternalDb(externalDbId, providerName);
 

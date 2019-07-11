@@ -165,6 +165,10 @@ import option, {
 import locationExclusion, {
   LocationExclusionState
 } from 'app/entities/location-exclusion/location-exclusion.reducer';
+// prettier-ignore
+import organizationError, {
+  OrganizationErrorState
+} from 'app/entities/organization-error/organization-error.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -218,6 +222,7 @@ export interface IRootState {
   readonly shelter: ShelterState;
   readonly option: OptionState;
   readonly locationExclusion: LocationExclusionState;
+  readonly organizationError: OrganizationErrorState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
   readonly filterShelter: FilterShelterState;
@@ -273,6 +278,7 @@ const rootReducer = combineReducers<IRootState>({
   shelter,
   option,
   locationExclusion,
+  organizationError,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
   filterActivity,

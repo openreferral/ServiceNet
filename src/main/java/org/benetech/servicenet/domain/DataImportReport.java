@@ -1,6 +1,13 @@
 package org.benetech.servicenet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -62,6 +69,13 @@ public class DataImportReport extends AbstractEntity implements Serializable {
     @OneToOne
     @JoinColumn(unique = true)
     private DocumentUpload documentUpload;
+
+    @Getter
+    @Setter
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataImportReport")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JsonIgnoreProperties("dataImportReport")
+    private Set<OrganizationError> organizationErrors = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
