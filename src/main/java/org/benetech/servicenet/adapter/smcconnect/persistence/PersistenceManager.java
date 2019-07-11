@@ -74,7 +74,7 @@ class PersistenceManager {
             Location location = mapper.extractLocation(smcLocation);
 
             location.setRegularSchedule(getLocationBasedRegularScheduleToPersist(smcLocation.getId()));
-            getLocationBasedHolidayScheduleToPersist(smcLocation.getId()).ifPresent(location::setHolidaySchedule);
+            location.setHolidaySchedules(getLocationBasedHolidaySchedulesToPersist(smcLocation.getId()));
             getPhysicalAddressToPersist(smcLocation.getId()).ifPresent(location::setPhysicalAddress);
             getPostalAddressToPersist(smcLocation.getId()).ifPresent(location::setPostalAddress);
             location.setLangs(getLocationBasedLanguagesToPersist(smcLocation));
@@ -93,7 +93,7 @@ class PersistenceManager {
             service.setLangs(getServiceBasedLanguagesToPersist(smcService));
             service.setContacts(getServiceBasedContactsToPersist(smcService.getId()));
             service.setRegularSchedule(getServiceBasedRegularScheduleToPersist(smcService.getId()));
-            getServiceBasedHolidayScheduleToPersist(smcService.getId()).ifPresent(service::setHolidaySchedule);
+            service.setHolidaySchedules(getServiceBasedHolidaySchedulesToPersist(smcService.getId()));
             service.setPhones(getPhonesToPersist(smcService.getId()));
 
             result.add(service);
@@ -127,10 +127,12 @@ class PersistenceManager {
         return new RegularSchedule().openingHours(openingHours);
     }
 
-    private Optional<HolidaySchedule> getLocationBasedHolidayScheduleToPersist(String relatedTo) {
-        // TODO: currently the relation is one to one, so only one is persisted
-        return storage.getRelatedEntities(SmcHolidaySchedule.class, relatedTo, SmcLocation.class)
-            .stream().map(s -> mapper.extractHolidaySchedule(s)).findFirst().orElse(Optional.empty());
+    private Set<HolidaySchedule> getLocationBasedHolidaySchedulesToPersist(String relatedTo) {
+        return storage.getRelatedEntities(SmcHolidaySchedule.class, relatedTo, SmcLocation.class).stream()
+            .map(s -> mapper.extractHolidaySchedule(s))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toSet());
     }
 
     private Optional<PhysicalAddress> getPhysicalAddressToPersist(String relatedTo) {
@@ -163,10 +165,12 @@ class PersistenceManager {
         return new RegularSchedule().openingHours(openingHours);
     }
 
-    private Optional<HolidaySchedule> getServiceBasedHolidayScheduleToPersist(String relatedTo) {
-        // TODO: currently the relation is one to one, so only one is persisted
+    private Set<HolidaySchedule> getServiceBasedHolidaySchedulesToPersist(String relatedTo) {
         return storage.getRelatedEntities(SmcHolidaySchedule.class, relatedTo, SmcService.class).stream()
-                .map(s -> mapper.extractHolidaySchedule(s)).findFirst().orElse(Optional.empty());
+            .map(s -> mapper.extractHolidaySchedule(s))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toSet());
     }
 
     private Set<Program> getProgramsToPersist(String relatedTo) {

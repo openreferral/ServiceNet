@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.impl;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Contact;
+import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
@@ -11,6 +12,7 @@ import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.service.ContactService;
+import org.benetech.servicenet.service.HolidayScheduleService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,9 @@ public class SharedImportServiceImpl implements SharedImportService {
 
     @Autowired
     private ContactService contactService;
+
+    @Autowired
+    private HolidayScheduleService holidayScheduleService;
 
     @Override
     public void createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, RegularSchedule schedule) {
@@ -76,6 +81,24 @@ public class SharedImportServiceImpl implements SharedImportService {
         });
 
         return contacts;
+    }
+
+    @Override
+    public Set<HolidaySchedule> createOrUpdateHolidaySchedules(Set<HolidaySchedule> schedules) {
+        schedules.forEach(schedule -> {
+            Optional<HolidaySchedule> scheduleFromDB =
+                holidayScheduleService.findForExternalDb(schedule.getExternalDbId(), schedule.getProviderName());
+
+            scheduleFromDB.ifPresentOrElse(
+                holidaySchedule -> {
+                    schedule.setId(holidaySchedule.getId());
+                    em.merge(schedule);
+                },
+                () -> em.persist(schedule)
+            );
+        });
+
+        return schedules;
     }
 
     private void createOrUpdateOpeningHours(Set<OpeningHours> openingHours, Service service, Location location,

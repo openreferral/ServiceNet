@@ -41,7 +41,7 @@ public interface ServiceBasedImportService {
 
     void createOrUpdateContactsForService(Set<Contact> contacts, Service service, DataImportReport report);
 
-    void createOrUpdateHolidayScheduleForService(HolidaySchedule schedule, Service service, DataImportReport report);
+    void createOrUpdateHolidaySchedulesForService(Set<HolidaySchedule> schedules, Service service, DataImportReport report);
 
     void createOrUpdateServiceAtLocationsForService(Set<ServiceAtLocation> serviceAtLocations, String providerName,
         Service service, DataImportReport report);

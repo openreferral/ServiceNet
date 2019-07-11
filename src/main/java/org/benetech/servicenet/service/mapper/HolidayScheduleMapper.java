@@ -12,7 +12,7 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 /**
  * Mapper for the entity HolidaySchedule and its DTO HolidayScheduleDTO.
  */
-@Mapper(componentModel = "spring", uses = {ServiceMapper.class, LocationMapper.class, ServiceAtLocationMapper.class},
+@Mapper(componentModel = "spring", uses = {ServiceMapper.class, LocationMapper.class},
     unmappedTargetPolicy = IGNORE)
 public interface HolidayScheduleMapper extends EntityMapper<HolidayScheduleDTO, HolidaySchedule> {
 
@@ -20,12 +20,10 @@ public interface HolidayScheduleMapper extends EntityMapper<HolidayScheduleDTO, 
     @Mapping(source = "srvc.name", target = "srvcName")
     @Mapping(source = "location.id", target = "locationId")
     @Mapping(source = "location.name", target = "locationName")
-    @Mapping(source = "serviceAtlocation.id", target = "serviceAtlocationId")
     HolidayScheduleDTO toDto(HolidaySchedule holidaySchedule);
 
     @Mapping(source = "srvcId", target = "srvc")
     @Mapping(source = "locationId", target = "location")
-    @Mapping(source = "serviceAtlocationId", target = "serviceAtlocation")
     HolidaySchedule toEntity(HolidayScheduleDTO holidayScheduleDTO);
 
     default HolidaySchedule fromId(UUID id) {

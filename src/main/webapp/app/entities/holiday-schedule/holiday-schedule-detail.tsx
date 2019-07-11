@@ -71,10 +71,6 @@ export class HolidayScheduleDetail extends React.Component<IHolidayScheduleDetai
               <Translate contentKey="serviceNetApp.holidaySchedule.location">Location</Translate>
             </dt>
             <dd>{holidayScheduleEntity.locationName ? holidayScheduleEntity.locationName : ''}</dd>
-            <dt>
-              <Translate contentKey="serviceNetApp.holidaySchedule.serviceAtlocation">Service Atlocation</Translate>
-            </dt>
-            <dd>{holidayScheduleEntity.serviceAtlocationId ? holidayScheduleEntity.serviceAtlocationId : ''}</dd>
           </dl>
           <Button tag={Link} to="/entity/holiday-schedule" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

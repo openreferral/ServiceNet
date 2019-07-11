@@ -12,8 +12,6 @@ import { IService } from 'app/shared/model/service.model';
 import { getEntities as getServices } from 'app/entities/service/service.reducer';
 import { ILocation } from 'app/shared/model/location.model';
 import { getEntities as getLocations } from 'app/entities/location/location.reducer';
-import { IServiceAtLocation } from 'app/shared/model/service-at-location.model';
-import { getEntities as getServiceAtLocations } from 'app/entities/service-at-location/service-at-location.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './holiday-schedule.reducer';
 import { IHolidaySchedule } from 'app/shared/model/holiday-schedule.model';
 // tslint:disable-next-line:no-unused-variable
@@ -26,7 +24,6 @@ export interface IHolidayScheduleUpdateState {
   isNew: boolean;
   srvcId: string;
   locationId: string;
-  serviceAtlocationId: string;
 }
 
 export class HolidayScheduleUpdate extends React.Component<IHolidayScheduleUpdateProps, IHolidayScheduleUpdateState> {
@@ -35,7 +32,6 @@ export class HolidayScheduleUpdate extends React.Component<IHolidayScheduleUpdat
     this.state = {
       srvcId: '0',
       locationId: '0',
-      serviceAtlocationId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -55,7 +51,6 @@ export class HolidayScheduleUpdate extends React.Component<IHolidayScheduleUpdat
 
     this.props.getServices();
     this.props.getLocations();
-    this.props.getServiceAtLocations();
   }
 
   saveEntity = (event, errors, values) => {
@@ -79,7 +74,7 @@ export class HolidayScheduleUpdate extends React.Component<IHolidayScheduleUpdat
   };
 
   render() {
-    const { holidayScheduleEntity, services, locations, serviceAtLocations, loading, updating } = this.props;
+    const { holidayScheduleEntity, services, locations, loading, updating } = this.props;
     const { isNew } = this.state;
 
     return (
@@ -181,21 +176,6 @@ export class HolidayScheduleUpdate extends React.Component<IHolidayScheduleUpdat
                       : null}
                   </AvInput>
                 </AvGroup>
-                <AvGroup>
-                  <Label for="serviceAtlocation.id">
-                    <Translate contentKey="serviceNetApp.holidaySchedule.serviceAtlocation">Service Atlocation</Translate>
-                  </Label>
-                  <AvInput id="holiday-schedule-serviceAtlocation" type="select" className="form-control" name="serviceAtlocationId">
-                    <option value="" key="0" />
-                    {serviceAtLocations
-                      ? serviceAtLocations.map(otherEntity => (
-                          <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.id}
-                          </option>
-                        ))
-                      : null}
-                  </AvInput>
-                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/holiday-schedule" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
@@ -221,7 +201,6 @@ export class HolidayScheduleUpdate extends React.Component<IHolidayScheduleUpdat
 const mapStateToProps = (storeState: IRootState) => ({
   services: storeState.service.entities,
   locations: storeState.location.entities,
-  serviceAtLocations: storeState.serviceAtLocation.entities,
   holidayScheduleEntity: storeState.holidaySchedule.entity,
   loading: storeState.holidaySchedule.loading,
   updating: storeState.holidaySchedule.updating,
@@ -231,7 +210,6 @@ const mapStateToProps = (storeState: IRootState) => ({
 const mapDispatchToProps = {
   getServices,
   getLocations,
-  getServiceAtLocations,
   getEntity,
   updateEntity,
   createEntity,

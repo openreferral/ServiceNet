@@ -1,35 +1,30 @@
 import React from 'react';
-import { Col, Row, Button } from 'reactstrap';
-import '../../shared-record-view.scss';
+import { Col, Row } from 'reactstrap';
+import '../shared-record-view.scss';
 import { Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
-import { PhysicalAddressDetails } from './physical-address-details';
-import { PostalAddressDetails } from './postal-address-details';
-import { OpeningHoursDetails } from '../opening-hours-details';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AdditionalDetails } from '../additional-details';
-import { ILocationRecord } from 'app/shared/model/location-record.model';
-import { LanguagesDetails } from '../languages-details';
-import { HolidaySchedulesDetails } from '../holiday-schedules-details';
+import { AdditionalDetails } from './additional-details';
+import { IHolidaySchedule } from 'app/shared/model/holiday-schedule.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 
-export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
+export interface ISingleHolidayScheduleDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
-  record: ILocationRecord;
-  locationsCount: string;
+  schedule: IHolidaySchedule;
+  schedulesCount: string;
   changeRecord: any;
   isOnlyOne: boolean;
   columnSize: number;
   showClipboard: boolean;
 }
 
-export interface ISingleLocationDetailsState {
+export interface ISingleHolidayScheduleDetails {
   isAreaOpen: boolean;
 }
 
-export class SingleLocationDetails extends React.Component<ISingleLocationDetailsProp, ISingleLocationDetailsState> {
-  state: ISingleLocationDetailsState = {
+export class SingleHolidayScheduleDetails extends React.Component<ISingleHolidayScheduleDetailsProp> {
+  state: ISingleHolidayScheduleDetails = {
     isAreaOpen: false
   };
 
@@ -45,14 +40,15 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
   };
 
   render() {
-    const { record, isOnlyOne, columnSize } = this.props;
+    const { schedule, isOnlyOne, columnSize } = this.props;
     const customHeader = (
       <h4 className="title">
         <div className="collapseBtn" onClick={this.toggleAreaOpen}>
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleLocations" /> <span className="text-blue">{this.props.locationsCount}</span>
+          <Translate contentKey="singleRecordView.details.titleHolidaySchedules" />{' '}
+          <span className="text-blue">{this.props.schedulesCount}</span>
         </div>
         {isOnlyOne ? null : (
           <span>
@@ -66,26 +62,19 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
         )}
       </h4>
     );
-    const additionalFields = [
-      <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />,
-      <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />,
-      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
-      <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
-      <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />
-    ];
 
     const fields = [
-      getTextField(record.location, 'name'),
-      getTextField(record.location, 'alternateName'),
       {
-        type: 'textarea',
-        fieldName: 'description',
-        defaultValue: record.location.description
+        type: 'checkbox',
+        fieldName: 'closed',
+        defaultValue: schedule.closed
       },
-      getTextField(record.location, 'transportation'),
-      getTextField(record.location, 'latitude'),
-      getTextField(record.location, 'longitude')
+      getTextField(schedule, 'opensAt'),
+      getTextField(schedule, 'closesAt'),
+      getTextField(schedule, 'startDate'),
+      getTextField(schedule, 'endDate')
     ];
+
     return (
       <Row>
         <Col sm={columnSize}>
@@ -93,9 +82,9 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
           <AdditionalDetails
             {...this.props}
             fields={fields}
-            entityClass={'Location'}
+            entityClass={'HolidaySchedule'}
             customHeader={customHeader}
-            additionalFields={additionalFields}
+            additionalFields={false}
             toggleAvailable
             isCustomToggle
             customToggleValue={this.state.isAreaOpen}
@@ -116,4 +105,4 @@ type DispatchProps = typeof mapDispatchToProps;
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SingleLocationDetails);
+)(SingleHolidayScheduleDetails);

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing ServiceAtLocation.
@@ -61,38 +60,6 @@ public class ServiceAtLocationServiceImpl implements ServiceAtLocationService {
     public List<ServiceAtLocationDTO> findAll() {
         log.debug("Request to get all ServiceAtLocations");
         return serviceAtLocationRepository.findAll().stream()
-            .map(serviceAtLocationMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-
-    /**
-     * get all the serviceAtLocations where RegularSchedule is null.
-     *
-     * @return the list of entities
-     */
-    @Transactional(readOnly = true)
-    public List<ServiceAtLocationDTO> findAllWhereRegularScheduleIsNull() {
-        log.debug("Request to get all serviceAtLocations where RegularSchedule is null");
-        return StreamSupport
-            .stream(serviceAtLocationRepository.findAll().spliterator(), false)
-            .filter(serviceAtLocation -> serviceAtLocation.getRegularSchedule() == null)
-            .map(serviceAtLocationMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-
-    /**
-     * get all the serviceAtLocations where HolidaySchedule is null.
-     *
-     * @return the list of entities
-     */
-    @Transactional(readOnly = true)
-    public List<ServiceAtLocationDTO> findAllWhereHolidayScheduleIsNull() {
-        log.debug("Request to get all serviceAtLocations where HolidaySchedule is null");
-        return StreamSupport
-            .stream(serviceAtLocationRepository.findAll().spliterator(), false)
-            .filter(serviceAtLocation -> serviceAtLocation.getHolidaySchedule() == null)
             .map(serviceAtLocationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

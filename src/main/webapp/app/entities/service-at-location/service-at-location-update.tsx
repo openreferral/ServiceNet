@@ -12,10 +12,6 @@ import { IService } from 'app/shared/model/service.model';
 import { getEntities as getServices } from 'app/entities/service/service.reducer';
 import { ILocation } from 'app/shared/model/location.model';
 import { getEntities as getLocations } from 'app/entities/location/location.reducer';
-import { IRegularSchedule } from 'app/shared/model/regular-schedule.model';
-import { getEntities as getRegularSchedules } from 'app/entities/regular-schedule/regular-schedule.reducer';
-import { IHolidaySchedule } from 'app/shared/model/holiday-schedule.model';
-import { getEntities as getHolidaySchedules } from 'app/entities/holiday-schedule/holiday-schedule.reducer';
 import { getEntity, updateEntity, createEntity, setBlob, reset } from './service-at-location.reducer';
 import { IServiceAtLocation } from 'app/shared/model/service-at-location.model';
 // tslint:disable-next-line:no-unused-variable
@@ -28,8 +24,6 @@ export interface IServiceAtLocationUpdateState {
   isNew: boolean;
   srvcId: string;
   locationId: string;
-  regularScheduleId: string;
-  holidayScheduleId: string;
 }
 
 export class ServiceAtLocationUpdate extends React.Component<IServiceAtLocationUpdateProps, IServiceAtLocationUpdateState> {
@@ -38,8 +32,6 @@ export class ServiceAtLocationUpdate extends React.Component<IServiceAtLocationU
     this.state = {
       srvcId: '0',
       locationId: '0',
-      regularScheduleId: '0',
-      holidayScheduleId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -59,8 +51,6 @@ export class ServiceAtLocationUpdate extends React.Component<IServiceAtLocationU
 
     this.props.getServices();
     this.props.getLocations();
-    this.props.getRegularSchedules();
-    this.props.getHolidaySchedules();
   }
 
   onBlobChange = (isAnImage, name) => event => {
@@ -92,7 +82,7 @@ export class ServiceAtLocationUpdate extends React.Component<IServiceAtLocationU
   };
 
   render() {
-    const { serviceAtLocationEntity, services, locations, regularSchedules, holidaySchedules, loading, updating } = this.props;
+    const { serviceAtLocationEntity, services, locations, loading, updating } = this.props;
     const { isNew } = this.state;
 
     const { description } = serviceAtLocationEntity;
@@ -193,8 +183,6 @@ export class ServiceAtLocationUpdate extends React.Component<IServiceAtLocationU
 const mapStateToProps = (storeState: IRootState) => ({
   services: storeState.service.entities,
   locations: storeState.location.entities,
-  regularSchedules: storeState.regularSchedule.entities,
-  holidaySchedules: storeState.holidaySchedule.entities,
   serviceAtLocationEntity: storeState.serviceAtLocation.entity,
   loading: storeState.serviceAtLocation.loading,
   updating: storeState.serviceAtLocation.updating,
@@ -204,8 +192,6 @@ const mapStateToProps = (storeState: IRootState) => ({
 const mapDispatchToProps = {
   getServices,
   getLocations,
-  getRegularSchedules,
-  getHolidaySchedules,
   getEntity,
   updateEntity,
   setBlob,

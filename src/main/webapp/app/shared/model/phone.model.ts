@@ -13,7 +13,6 @@ export interface IPhone {
   organizationId?: number;
   contactName?: string;
   contactId?: number;
-  serviceAtLocationId?: number;
 }
 
 export const defaultValue: Readonly<IPhone> = {};

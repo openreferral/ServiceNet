@@ -29,26 +29,6 @@
             "relationshipName": "location",
             "otherEntityName": "location",
             "otherEntityField": "name"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "regularSchedule",
-            "otherEntityName": "regularSchedule",
-            "ownerSide": false,
-            "otherEntityRelationshipName": "serviceAtlocation"
-        },
-        {
-            "relationshipType": "one-to-one",
-            "relationshipName": "holidaySchedule",
-            "otherEntityName": "holidaySchedule",
-            "ownerSide": false,
-            "otherEntityRelationshipName": "serviceAtlocation"
-        },
-        {
-            "relationshipType": "one-to-many",
-            "relationshipName": "phones",
-            "otherEntityName": "phone",
-            "otherEntityRelationshipName": "serviceAtLocation"
         }
     ],
     "changelogDate": "20181119125357",

@@ -79,6 +79,11 @@ public class HolidayScheduleServiceImpl implements HolidayScheduleService {
             .map(holidayScheduleMapper::toDto);
     }
 
+    @Override
+    public Optional<HolidaySchedule> findForExternalDb(String externalDbId, String providerName) {
+        return holidayScheduleRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
     /**
      * Delete the holidaySchedule by id.
      *

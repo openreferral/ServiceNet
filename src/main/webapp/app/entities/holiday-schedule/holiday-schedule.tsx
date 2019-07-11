@@ -59,9 +59,6 @@ export class HolidaySchedule extends React.Component<IHolidayScheduleProps> {
                 <th>
                   <Translate contentKey="serviceNetApp.holidaySchedule.location">Location</Translate>
                 </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.holidaySchedule.serviceAtlocation">Service Atlocation</Translate>
-                </th>
                 <th />
               </tr>
             </thead>
@@ -88,13 +85,6 @@ export class HolidaySchedule extends React.Component<IHolidayScheduleProps> {
                   <td>
                     {holidaySchedule.locationName ? (
                       <Link to={`location/${holidaySchedule.locationId}`}>{holidaySchedule.locationName}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
-                  <td>
-                    {holidaySchedule.serviceAtlocationId ? (
-                      <Link to={`service-at-location/${holidaySchedule.serviceAtlocationId}`}>{holidaySchedule.serviceAtlocationId}</Link>
                     ) : (
                       ''
                     )}

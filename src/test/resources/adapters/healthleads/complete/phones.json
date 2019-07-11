@@ -2,7 +2,6 @@
   {
     "number": "(900) 500-9000",
     "extension": "500",
-    "service_at_location_id": "serviceAtLocationId",
     "service_id": "serviceId",
     "organization_id": "organizationId",
     "description": "Phone Description",
@@ -15,7 +14,6 @@
   {
     "number": "(200) 200-2000",
     "extension": "200",
-    "service_at_location_id": "serviceAtLocationId",
     "service_id": null,
     "organization_id": "organizationId",
     "description": "Phone Description For Location",

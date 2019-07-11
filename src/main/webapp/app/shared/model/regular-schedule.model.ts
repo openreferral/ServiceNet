@@ -6,7 +6,6 @@ export interface IRegularSchedule {
   srvcId?: number;
   locationName?: string;
   locationId?: number;
-  serviceAtlocationId?: number;
   openingHours?: IOpeningHours[];
 }
 

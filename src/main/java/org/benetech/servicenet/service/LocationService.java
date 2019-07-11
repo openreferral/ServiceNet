@@ -50,13 +50,6 @@ public interface LocationService {
      */
     List<LocationDTO> findAllWhereRegularScheduleIsNull();
 
-    /**
-     * Get all the LocationDTO where HolidaySchedule is null.
-     *
-     * @return the list of entities
-     */
-    List<LocationDTO> findAllWhereHolidayScheduleIsNull();
-
     Optional<Location> findWithEagerAssociations(String externalDbId, String providerName);
 
     /**

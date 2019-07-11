@@ -80,22 +80,6 @@ public class ServiceServiceImpl implements ServiceService {
 
 
     /**
-     * get all the services where HolidaySchedule is null.
-     *
-     * @return the list of entities
-     */
-    @Transactional(readOnly = true)
-    public List<ServiceDTO> findAllWhereHolidayScheduleIsNull() {
-        log.debug("Request to get all services where HolidaySchedule is null");
-        return StreamSupport
-            .stream(serviceRepository.findAll().spliterator(), false)
-            .filter(service -> service.getHolidaySchedule() == null)
-            .map(serviceMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-
-    /**
      * get all the services where Funding is null.
      *
      * @return the list of entities

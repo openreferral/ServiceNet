@@ -45,6 +45,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.benetech.servicenet.TestConstants.EXISTING_EXTERNAL_ID;
@@ -335,8 +336,8 @@ public class LocationImportServiceTest {
         LocalDate start = LocalDate.of(2019, 1, 1);
         LocalDate end = LocalDate.of(2019, 1, 3);
         HolidaySchedule schedule = new HolidaySchedule().closesAt(NEW_STRING).closed(false)
-            .startDate(start).endDate(end);
-        location.setHolidaySchedule(schedule);
+            .startDate(start).endDate(end).providerName(PROVIDER).externalDbId(NEW_EXTERNAL_ID);
+        location.setHolidaySchedules(Collections.singleton(schedule));
 
         assertEquals(0, holidayScheduleService.findAll().size());
         importService.createOrUpdateLocation(location, NEW_EXTERNAL_ID, IMPORT_DATA);
@@ -358,16 +359,16 @@ public class LocationImportServiceTest {
         LocalDate start = LocalDate.of(2018, 1, 1);
         LocalDate end = LocalDate.of(2018, 1, 3);
         HolidaySchedule schedule = new HolidaySchedule().closesAt(EXISTING_STRING).closed(true).location(location)
-            .startDate(start).endDate(end);
+            .startDate(start).endDate(end).providerName(PROVIDER).externalDbId(EXISTING_EXTERNAL_ID);
         helper.persist(schedule);
         helper.flushAndRefresh(location);
 
         LocalDate newStart = LocalDate.of(2019, 1, 1);
         LocalDate newEnd = LocalDate.of(2019, 1, 3);
         HolidaySchedule newSchedule = new HolidaySchedule().closesAt(NEW_STRING).closed(false)
-            .startDate(newStart).endDate(newEnd);
+            .startDate(newStart).endDate(newEnd).providerName(PROVIDER).externalDbId(EXISTING_EXTERNAL_ID);
         Location locationToUpdate = helper.generateExistingLocationDoNotPersist();
-        locationToUpdate.setHolidaySchedule(newSchedule);
+        locationToUpdate.setHolidaySchedules(Collections.singleton(newSchedule));
 
         assertEquals(1, holidayScheduleService.findAll().size());
         importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);

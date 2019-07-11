@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public interface HolidayScheduleService {
      * @return the entity
      */
     Optional<HolidayScheduleDTO> findOne(UUID id);
+
+    Optional<HolidaySchedule> findForExternalDb(String externalDbId, String providerName);
 
     /**
      * Delete the "id" holidaySchedule.

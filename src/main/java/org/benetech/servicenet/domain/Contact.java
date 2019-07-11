@@ -56,10 +56,6 @@ public class Contact extends AbstractEntity implements Serializable {
     @JsonIgnoreProperties("")
     private Service srvc;
 
-    @ManyToOne
-    @JsonIgnoreProperties("")
-    private ServiceAtLocation serviceAtLocation;
-
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public Contact name(String name) {
@@ -89,11 +85,6 @@ public class Contact extends AbstractEntity implements Serializable {
 
     public Contact srvc(Service service) {
         this.srvc = service;
-        return this;
-    }
-
-    public Contact serviceAtLocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtLocation = serviceAtLocation;
         return this;
     }
 

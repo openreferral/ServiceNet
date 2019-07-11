@@ -34,8 +34,6 @@ public class HolidayScheduleDTO implements Serializable {
 
     private String locationName;
 
-    private UUID serviceAtlocationId;
-
     public UUID getId() {
         return id;
     }
@@ -116,14 +114,6 @@ public class HolidayScheduleDTO implements Serializable {
         this.locationName = locationName;
     }
 
-    public UUID getServiceAtlocationId() {
-        return serviceAtlocationId;
-    }
-
-    public void setServiceAtlocationId(UUID serviceAtLocationId) {
-        this.serviceAtlocationId = serviceAtLocationId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -158,7 +148,6 @@ public class HolidayScheduleDTO implements Serializable {
             ", srvc='" + getSrvcName() + "'" +
             ", location=" + getLocationId() +
             ", location='" + getLocationName() + "'" +
-            ", serviceAtlocation=" + getServiceAtlocationId() +
             "}";
     }
 }

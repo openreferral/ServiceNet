@@ -29,8 +29,6 @@ public class ContactDTO implements Serializable {
 
     private String srvcName;
 
-    private UUID serviceAtLocationId;
-
     private String externalDbId;
 
     private String providerName;
@@ -107,14 +105,6 @@ public class ContactDTO implements Serializable {
         this.srvcName = serviceName;
     }
 
-    public UUID getServiceAtLocationId() {
-        return serviceAtLocationId;
-    }
-
-    public void setServiceAtLocationId(UUID serviceAtLocationId) {
-        this.serviceAtLocationId = serviceAtLocationId;
-    }
-
     public String getExternalDbId() {
         return externalDbId;
     }
@@ -164,7 +154,6 @@ public class ContactDTO implements Serializable {
             ", organization='" + getOrganizationName() + "'" +
             ", srvc=" + getSrvcId() +
             ", srvc='" + getSrvcName() + "'" +
-            ", serviceAtLocation=" + getServiceAtLocationId() +
             "}";
     }
 }

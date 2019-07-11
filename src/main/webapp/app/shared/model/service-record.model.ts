@@ -13,7 +13,7 @@ import { IContact } from './contact.model';
 export interface IServiceRecord {
   service?: IService;
   regularScheduleOpeningHours?: IOpeningHours[];
-  holidaySchedule?: IHolidaySchedule;
+  holidaySchedules?: IHolidaySchedule[];
   funding?: IFunding;
   eligibility?: IEligibility;
   docs?: IRequiredDocument[];

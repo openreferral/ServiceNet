@@ -6,7 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -44,17 +44,21 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @Column(name = "external_db_id")
+    @Size(max = 255, message = "Field value is too long.")
+    private String externalDbId;
+
+    @Column(name = "provider_name")
+    @Size(max = 255, message = "Field value is too long.")
+    private String providerName;
+
+    @ManyToOne
+    @JoinColumn(name = "srvc_id")
     private Service srvc;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @ManyToOne
+    @JoinColumn(name = "location_id")
     private Location location;
-
-    @OneToOne
-    @JoinColumn(unique = true)
-    private ServiceAtLocation serviceAtlocation;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
@@ -123,6 +127,32 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
         return this;
     }
 
+    public String getExternalDbId() {
+        return externalDbId;
+    }
+
+    public void setExternalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+    }
+
+    public HolidaySchedule externalDbId(String externalDbId) {
+        this.externalDbId = externalDbId;
+        return this;
+    }
+
+    public String getProviderName() {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
+    }
+
+    public HolidaySchedule providerName(String providerName) {
+        this.providerName = providerName;
+        return this;
+    }
+
     public Service getSrvc() {
         return srvc;
     }
@@ -146,19 +176,6 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
 
     public HolidaySchedule location(Location location) {
         this.location = location;
-        return this;
-    }
-
-    public ServiceAtLocation getServiceAtlocation() {
-        return serviceAtlocation;
-    }
-
-    public void setServiceAtlocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtlocation = serviceAtLocation;
-    }
-
-    public HolidaySchedule serviceAtlocation(ServiceAtLocation serviceAtLocation) {
-        this.serviceAtlocation = serviceAtLocation;
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

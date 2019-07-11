@@ -76,8 +76,8 @@ public class LocationImportServiceImpl implements LocationImportService {
             filledLocation.getPhones(), location, importData.getReport());
         locationBasedImportService.createOrUpdateOpeningHoursForLocation(
             filledLocation.getRegularSchedule(), location, importData.getReport());
-        locationBasedImportService.createOrUpdateHolidayScheduleForLocation(
-            filledLocation.getHolidaySchedule(), location, importData.getReport());
+        locationBasedImportService.createOrUpdateHolidaySchedulesForLocation(
+            filledLocation.getHolidaySchedules(), location, importData.getReport());
         locationBasedImportService.createOrUpdateAccessibilities(filledLocation.getAccessibilities(),
             location, importData.getReport());
     }
@@ -101,6 +101,6 @@ public class LocationImportServiceImpl implements LocationImportService {
         newLocation.setPhones(locationFromDb.getPhones());
         newLocation.setLangs(locationFromDb.getLangs());
         newLocation.setRegularSchedule(locationFromDb.getRegularSchedule());
-        newLocation.setHolidaySchedule(locationFromDb.getHolidaySchedule());
+        newLocation.setHolidaySchedules(locationFromDb.getHolidaySchedules());
     }
 }

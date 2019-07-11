@@ -50,8 +50,8 @@ public class ServiceImportServiceImpl implements ServiceImportService {
             filledService.getTaxonomies(), providerName, service, report);
         serviceBasedImportService.createOrUpdateRequiredDocuments(filledService.getDocs(), providerName, service, report);
         serviceBasedImportService.createOrUpdateContactsForService(filledService.getContacts(), service, report);
-        serviceBasedImportService.createOrUpdateHolidayScheduleForService(
-            filledService.getHolidaySchedule(), service, report);
+        serviceBasedImportService.createOrUpdateHolidaySchedulesForService(
+            filledService.getHolidaySchedules(), service, report);
         serviceBasedImportService.createOrUpdateServiceAtLocationsForService(
             filledService.getLocations(), providerName, service, report);
 
@@ -64,7 +64,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         newService.setId(serviceFromDb.getId());
         newService.setRegularSchedule(serviceFromDb.getRegularSchedule());
         newService.setFunding(serviceFromDb.getFunding());
-        newService.setHolidaySchedule(serviceFromDb.getHolidaySchedule());
+        newService.setHolidaySchedules(serviceFromDb.getHolidaySchedules());
         newService.setContacts(serviceFromDb.getContacts());
         newService.setLangs(serviceFromDb.getLangs());
     }

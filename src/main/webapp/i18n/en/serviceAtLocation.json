@@ -18,8 +18,6 @@
       "description": "Description",
       "srvc": "Srvc",
       "location": "Location",
-      "regularSchedule": "Regular Schedule",
-      "holidaySchedule": "Holiday Schedule",
       "phones": "Phones",
       "externalDbId": "External Database Id",
       "providerName": "Provider Name"

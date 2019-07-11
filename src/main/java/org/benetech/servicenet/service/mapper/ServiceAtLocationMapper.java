@@ -23,9 +23,6 @@ public interface ServiceAtLocationMapper extends EntityMapper<ServiceAtLocationD
 
     @Mapping(source = "srvcId", target = "srvc")
     @Mapping(source = "locationId", target = "location")
-    @Mapping(target = "regularSchedule", ignore = true)
-    @Mapping(target = "holidaySchedule", ignore = true)
-    @Mapping(target = "phones", ignore = true)
     ServiceAtLocation toEntity(ServiceAtLocationDTO serviceAtLocationDTO);
 
     default ServiceAtLocation fromId(UUID id) {

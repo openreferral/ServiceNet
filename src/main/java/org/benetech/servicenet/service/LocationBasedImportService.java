@@ -23,7 +23,8 @@ public interface LocationBasedImportService {
 
     void createOrUpdateOpeningHoursForLocation(RegularSchedule schedule, Location location, DataImportReport report);
 
-    void createOrUpdateHolidayScheduleForLocation(HolidaySchedule schedule, Location location, DataImportReport report);
+    void createOrUpdateHolidaySchedulesForLocation(Set<HolidaySchedule> schedules,
+        Location location, DataImportReport report);
 
     void createOrUpdateLangsForLocation(Set<Language> langs, Location location, DataImportReport report);
 

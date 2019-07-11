@@ -123,9 +123,9 @@ public class Service extends AbstractEntity implements Serializable {
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY)
     @JsonIgnore
-    private HolidaySchedule holidaySchedule;
+    private Set<HolidaySchedule> holidaySchedules;
 
     @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -270,8 +270,8 @@ public class Service extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public Service holidaySchedule(HolidaySchedule holidaySchedule) {
-        this.holidaySchedule = holidaySchedule;
+    public Service holidaySchedules(Set<HolidaySchedule> holidaySchedules) {
+        this.holidaySchedules = holidaySchedules;
         return this;
     }
 

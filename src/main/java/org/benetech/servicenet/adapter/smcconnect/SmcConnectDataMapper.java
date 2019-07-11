@@ -31,6 +31,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,8 +42,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SmcConnectDataMapper {
@@ -92,6 +92,8 @@ public interface SmcConnectDataMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "startDate", ignore = true)
     @Mapping(target = "endDate", ignore = true)
+    @Mapping(target = "externalDbId", source = "id")
+    @Mapping(target = "providerName", constant = PROVIDER_NAME)
     HolidaySchedule mapHolidaySchedule(SmcHolidaySchedule startDate);
 
     @Mapping(target = "id", ignore = true)

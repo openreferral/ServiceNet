@@ -57,9 +57,6 @@ export class Contact extends React.Component<IContactProps> {
                   <Translate contentKey="serviceNetApp.contact.srvc">Srvc</Translate>
                 </th>
                 <th>
-                  <Translate contentKey="serviceNetApp.contact.serviceAtLocation">Service At Location</Translate>
-                </th>
-                <th>
                   <Translate contentKey="serviceNetApp.contact.externalDbId" />
                 </th>
                 <th>
@@ -84,13 +81,6 @@ export class Contact extends React.Component<IContactProps> {
                     {contact.organizationName ? <Link to={`organization/${contact.organizationId}`}>{contact.organizationName}</Link> : ''}
                   </td>
                   <td>{contact.srvcName ? <Link to={`service/${contact.srvcId}`}>{contact.srvcName}</Link> : ''}</td>
-                  <td>
-                    {contact.serviceAtLocationId ? (
-                      <Link to={`service-at-location/${contact.serviceAtLocationId}`}>{contact.serviceAtLocationId}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${contact.id}`} color="info" size="sm">

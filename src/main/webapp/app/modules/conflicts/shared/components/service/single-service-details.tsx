@@ -14,7 +14,7 @@ import { RequiredDocumentsDetails } from './required-documents-details';
 import { ServiceTaxonomiesDetails } from './service-taxonomies-details';
 import { PaymentsAcceptedDetails } from './payments-accepted-details';
 import { LanguagesDetails } from '../languages-details';
-import { HolidayScheduleDetails } from '../holiday-schedule-details';
+import { HolidaySchedulesDetails } from '../holiday-schedules-details';
 import { ContactsDetails } from '../contact/contacts-details';
 import { PhonesDetails } from '../phone/phones-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
@@ -79,7 +79,7 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
       <ServiceTaxonomiesDetails key="service-taxonomies-details" {...this.props} taxonomies={record.taxonomies} />,
       <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
       <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
-      <HolidayScheduleDetails key="holiday-schedule-details" {...this.props} schedule={record.holidaySchedule} />,
+      <HolidaySchedulesDetails key="holiday-schedules-details" {...this.props} schedules={record.holidaySchedules} />,
       <ContactsDetails key="contacts-details" {...this.props} contacts={record.contacts} />,
       <PhonesDetails key="phones-details" {...this.props} phones={record.phones} />
     ];

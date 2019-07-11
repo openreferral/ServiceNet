@@ -115,22 +115,6 @@ public class LocationServiceImpl implements LocationService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
-
-    /**
-     * get all the locations where HolidaySchedule is null.
-     *
-     * @return the list of entities
-     */
-    @Transactional(readOnly = true)
-    public List<LocationDTO> findAllWhereHolidayScheduleIsNull() {
-        log.debug("Request to get all locations where HolidaySchedule is null");
-        return StreamSupport
-            .stream(locationRepository.findAll().spliterator(), false)
-            .filter(location -> location.getHolidaySchedule() == null)
-            .map(locationMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
-    }
-
     @Override
     public Optional<Location> findWithEagerAssociations(String externalDbId, String providerName) {
         return locationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, providerName);

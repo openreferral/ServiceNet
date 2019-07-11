@@ -17,7 +17,6 @@
       },
       "srvc": "Srvc",
       "location": "Location",
-      "serviceAtlocation": "Service Atlocation",
       "openingHours": "Opening Hours"
     }
   }

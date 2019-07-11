@@ -61,10 +61,6 @@ export class ContactDetail extends React.Component<IContactDetailProps> {
             </dt>
             <dd>{contactEntity.srvcName ? contactEntity.srvcName : ''}</dd>
             <dt>
-              <Translate contentKey="serviceNetApp.contact.serviceAtLocation">Service At Location</Translate>
-            </dt>
-            <dd>{contactEntity.serviceAtLocationId ? contactEntity.serviceAtLocationId : ''}</dd>
-            <dt>
               <span id="externalDbId">
                 <Translate contentKey="serviceNetApp.contact.externalDbId" />
               </span>

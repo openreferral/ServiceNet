@@ -107,10 +107,6 @@ public class LocationResource {
             log.debug("REST request to get all Locations where regularSchedule is null");
             return locationService.findAllWhereRegularScheduleIsNull();
         }
-        if ("holidayschedule-is-null".equals(filter)) {
-            log.debug("REST request to get all Locations where holidaySchedule is null");
-            return locationService.findAllWhereHolidayScheduleIsNull();
-        }
         log.debug("REST request to get all Locations");
         return locationService.findAll();
     }

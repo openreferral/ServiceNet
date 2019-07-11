@@ -79,9 +79,9 @@ public class Location extends AbstractEntity implements Serializable {
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonIgnore
-    private HolidaySchedule holidaySchedule;
+    private Set<HolidaySchedule> holidaySchedules;
 
     @OneToMany(mappedBy = "location")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -177,8 +177,8 @@ public class Location extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public Location holidaySchedule(HolidaySchedule holidaySchedule) {
-        this.holidaySchedule = holidaySchedule;
+    public Location holidaySchedules(Set<HolidaySchedule> holidaySchedules) {
+        this.holidaySchedules = holidaySchedules;
         return this;
     }
 

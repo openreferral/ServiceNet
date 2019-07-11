@@ -12,8 +12,6 @@ import { IOrganization } from 'app/shared/model/organization.model';
 import { getEntities as getOrganizations } from 'app/entities/organization/organization.reducer';
 import { IService } from 'app/shared/model/service.model';
 import { getEntities as getServices } from 'app/entities/service/service.reducer';
-import { IServiceAtLocation } from 'app/shared/model/service-at-location.model';
-import { getEntities as getServiceAtLocations } from 'app/entities/service-at-location/service-at-location.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './contact.reducer';
 import { IContact } from 'app/shared/model/contact.model';
 // tslint:disable-next-line:no-unused-variable
@@ -26,7 +24,6 @@ export interface IContactUpdateState {
   isNew: boolean;
   organizationId: string;
   srvcId: string;
-  serviceAtLocationId: string;
 }
 
 export class ContactUpdate extends React.Component<IContactUpdateProps, IContactUpdateState> {
@@ -35,7 +32,6 @@ export class ContactUpdate extends React.Component<IContactUpdateProps, IContact
     this.state = {
       organizationId: '0',
       srvcId: '0',
-      serviceAtLocationId: '0',
       isNew: !this.props.match.params || !this.props.match.params.id
     };
   }
@@ -55,7 +51,6 @@ export class ContactUpdate extends React.Component<IContactUpdateProps, IContact
 
     this.props.getOrganizations();
     this.props.getServices();
-    this.props.getServiceAtLocations();
   }
 
   saveEntity = (event, errors, values) => {
@@ -79,7 +74,7 @@ export class ContactUpdate extends React.Component<IContactUpdateProps, IContact
   };
 
   render() {
-    const { contactEntity, organizations, services, serviceAtLocations, loading, updating } = this.props;
+    const { contactEntity, organizations, services, loading, updating } = this.props;
     const { isNew } = this.state;
 
     return (
@@ -167,21 +162,6 @@ export class ContactUpdate extends React.Component<IContactUpdateProps, IContact
                   </AvInput>
                 </AvGroup>
                 <AvGroup>
-                  <Label for="serviceAtLocation.id">
-                    <Translate contentKey="serviceNetApp.contact.serviceAtLocation">Service At Location</Translate>
-                  </Label>
-                  <AvInput id="contact-serviceAtLocation" type="select" className="form-control" name="serviceAtLocationId">
-                    <option value="" key="0" />
-                    {serviceAtLocations
-                      ? serviceAtLocations.map(otherEntity => (
-                          <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.id}
-                          </option>
-                        ))
-                      : null}
-                  </AvInput>
-                </AvGroup>
-                <AvGroup>
                   <Label id="externalDbIdLabel" for="externalDbId">
                     <Translate contentKey="serviceNetApp.contact.externalDbId" />
                   </Label>
@@ -218,7 +198,6 @@ export class ContactUpdate extends React.Component<IContactUpdateProps, IContact
 const mapStateToProps = (storeState: IRootState) => ({
   organizations: storeState.organization.entities,
   services: storeState.service.entities,
-  serviceAtLocations: storeState.serviceAtLocation.entities,
   contactEntity: storeState.contact.entity,
   loading: storeState.contact.loading,
   updating: storeState.contact.updating,
@@ -228,7 +207,6 @@ const mapStateToProps = (storeState: IRootState) => ({
 const mapDispatchToProps = {
   getOrganizations,
   getServices,
-  getServiceAtLocations,
   getEntity,
   updateEntity,
   createEntity,

@@ -11,9 +11,6 @@ public class HealthleadsPhone extends HealthleadsBaseData {
     @SerializedName("contact_id")
     private String contactId;
 
-    @SerializedName("service_at_location_id")
-    private String serviceAtLocationId;
-
     private String number;
 
     private String extension;

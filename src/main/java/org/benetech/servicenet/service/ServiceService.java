@@ -35,13 +35,6 @@ public interface ServiceService {
     List<ServiceDTO> findAllWhereRegularScheduleIsNull();
 
     /**
-     * Get all the ServiceDTO where HolidaySchedule is null.
-     *
-     * @return the list of entities
-     */
-    List<ServiceDTO> findAllWhereHolidayScheduleIsNull();
-
-    /**
      * Get all the ServiceDTO where Funding is null.
      *
      * @return the list of entities

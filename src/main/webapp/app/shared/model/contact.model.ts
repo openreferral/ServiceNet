@@ -8,7 +8,6 @@ export interface IContact {
   organizationId?: number;
   srvcName?: string;
   srvcId?: number;
-  serviceAtLocationId?: number;
   externalDbId?: string;
   providerName?: string;
 }

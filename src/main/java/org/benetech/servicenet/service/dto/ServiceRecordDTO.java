@@ -15,7 +15,7 @@ public class ServiceRecordDTO {
 
     private Set<OpeningHoursDTO> regularScheduleOpeningHours;
 
-    private HolidayScheduleDTO holidaySchedule;
+    private Set<HolidayScheduleDTO> holidaySchedules;
 
     private FundingDTO funding;
 
