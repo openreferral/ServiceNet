@@ -50,6 +50,7 @@
         https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/${spring-boot.version} -->
         <liquibase.version>3.6.2</liquibase.version>
         <liquibase-hibernate5.version>3.6</liquibase-hibernate5.version>
+        <spring.version>5.0.10.RELEASE</spring.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <jaxb.version>2.3.0</jaxb.version>
@@ -765,14 +766,14 @@
                     <configuration>
                         <changeLogFile>src/main/resources/config/liquibase/master.xml</changeLogFile>
                         <diffChangeLogFile>src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
-                        <driver></driver>
-                        <url></url>
-                        <defaultSchemaName></defaultSchemaName>
-                        <username>ServiceNet</username>
-                        <password></password>
-                        <referenceUrl>hibernate:spring:org.benetech.servicenet.domain?dialect=&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5432/ServiceNet</url>
+                        <username>postgres</username>
+                        <password>password</password>
+                        <referenceUrl>hibernate:spring:org.benetech.servicenet.domain?dialect=org.hibernate.dialect.PostgreSQL9Dialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
                         <verbose>true</verbose>
                         <logging>debug</logging>
+                        <diffExcludeObjects>hibernate_sequence, activity_info, activity_record, FK6hd0y0qtu4vaduoyjlurkugb6</diffExcludeObjects>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -794,6 +795,21 @@
                             <groupId>javax.validation</groupId>
                             <artifactId>validation-api</artifactId>
                             <version>${validation-api.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-core</artifactId>
+                            <version>${spring.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-context</artifactId>
+                            <version>${spring.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-beans</artifactId>
+                            <version>${spring.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
