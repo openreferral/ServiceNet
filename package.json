@@ -43,7 +43,8 @@
     "redux-promise-middleware": "5.1.1",
     "redux-thunk": "2.3.0",
     "tslib": "1.9.3",
-    "uuid": "3.3.2"
+    "uuid": "3.3.2",
+    "react-google-maps": "^9.4.5"
   },
   "devDependencies": {
     "@types/enzyme": "3.1.13",
@@ -57,6 +58,8 @@
     "@types/react-select": "2.0.17",
     "@types/redux": "3.6.31",
     "@types/webpack-env": "1.13.6",
+    "@types/googlemaps": "3.36.6",
+    "@types/markerclustererplus": "2.1.33",
     "autoprefixer": "9.2.0",
     "browser-sync": "^2.26.7",
     "browser-sync-webpack-plugin": "2.2.2",

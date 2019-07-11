@@ -1,7 +1,7 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Address;
 import org.benetech.servicenet.domain.GeocodingResult;
-import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 import org.springframework.data.domain.Page;
@@ -50,7 +50,7 @@ public interface GeocodingResultService {
      */
     void delete(UUID id);
 
-    List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location, MatchingContext context);
+    List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context);
 
-    List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context);
+    List<GeocodingResult> createOrUpdateGeocodingResult(Address address, MatchingContext context);
 }

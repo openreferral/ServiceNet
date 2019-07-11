@@ -2,8 +2,8 @@ package org.benetech.servicenet.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.Address;
 import org.benetech.servicenet.domain.GeocodingResult;
-import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
@@ -72,22 +72,22 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
     }
 
     @Override
-    public List<GeocodingResult> findAllForLocationOrFetchIfEmpty(Location location, MatchingContext context) {
-        String addressString = context.getGeoApi().extract255AddressChars(location.getPhysicalAddress());
+    public List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context) {
+        String addressString = context.getGeoApi().extract255AddressChars(address);
         List<GeocodingResult> result = geocodingResultRepository.findAllByAddress(addressString);
         if (result.isEmpty()) {
-            return createOrUpdateGeocodingResult(location, context);
+            return createOrUpdateGeocodingResult(address, context);
         }
         return result;
     }
 
     @Override
-    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
-        if (location.getPhysicalAddress() == null) {
+    public List<GeocodingResult> createOrUpdateGeocodingResult(Address address, MatchingContext context) {
+        if (address.getAddress() == null) {
             return new ArrayList<>();
         }
 
-        String addressString = context.getGeoApi().extract255AddressChars(location.getPhysicalAddress());
+        String addressString = context.getGeoApi().extract255AddressChars(address);
         if (StringUtils.isBlank(addressString)) {
             return new ArrayList<>();
         }
@@ -96,7 +96,7 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
         if (!currentResults.isEmpty()) {
             return currentResults;
         }
-        return Arrays.stream(context.getGeoApi().geocode(location))
+        return Arrays.stream(context.getGeoApi().geocode(address.getAddress()))
             .map(x -> save(new GeocodingResult(addressString, x)))
             .collect(Collectors.toList());
     }

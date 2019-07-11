@@ -1,5 +1,8 @@
 package org.benetech.servicenet.domain;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,7 +22,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "physical_address")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PhysicalAddress extends AbstractEntity implements Serializable {
+public class PhysicalAddress extends AbstractEntity implements Serializable, Address {
 
     private static final long serialVersionUID = 1L;
 
@@ -197,5 +200,11 @@ public class PhysicalAddress extends AbstractEntity implements Serializable {
             ", postalCode='" + getPostalCode() + "'" +
             ", country='" + getCountry() + "'" +
             "}";
+    }
+
+    @Override
+    public String getAddress() {
+        return Stream.of(getAddress1(), getCity(), getCountry(), getPostalCode(), getRegion(), getStateProvince())
+            .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER));
     }
 }

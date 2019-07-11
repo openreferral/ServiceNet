@@ -1,7 +1,7 @@
 package org.benetech.servicenet;
 
+import org.benetech.servicenet.domain.Address;
 import org.benetech.servicenet.domain.GeocodingResult;
-import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.impl.GeocodingResultServiceImpl;
@@ -25,7 +25,7 @@ public class TestGeocodingResultService extends GeocodingResultServiceImpl {
     }
 
     @Override
-    public List<GeocodingResult> createOrUpdateGeocodingResult(Location location, MatchingContext context) {
+    public List<GeocodingResult> createOrUpdateGeocodingResult(Address address, MatchingContext context) {
         return new ArrayList<>();
     }
 }

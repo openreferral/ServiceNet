@@ -28,6 +28,7 @@ export interface IShelter {
   tags?: IOption[];
   languages?: IOption[];
   definedCoverageAreas?: IOption[];
+  geocodingResults?: any[];
 }
 
 export const defaultValue: Readonly<IShelter> = {};
