@@ -44,9 +44,13 @@ public final class EntityValidator {
         Set<ConstraintViolation<V>> violations = getViolations(entity);
 
         if (!violations.isEmpty()) {
+            boolean isExternalIdValid = true;
             Set<OrganizationError> organizationErrors = new HashSet<>();
             for (ConstraintViolation violation : violations) {
                 String propertyPath = violation.getPropertyPath().toString();
+                if ("externalDbId".equals(propertyPath)) {
+                    isExternalIdValid = false;
+                }
                 log.info(
                     "Field {} for {} with ID: {} is invalid. Replacing with empty string.",
                     propertyPath,
@@ -62,9 +66,6 @@ public final class EntityValidator {
                 OrganizationError organizationError = new OrganizationError();
                 organizationError.setOrganization(org);
                 organizationError.setDataImportReport(report);
-                if (!"externalDbId".equals(propertyPath)) {
-                    organizationError.setExternalDbId(externalDbId);
-                }
                 organizationError.setEntityName(entity.getClass().getSimpleName());
                 organizationError.setFieldName(propertyPath);
                 organizationError.setInvalidValue(violation.getInvalidValue().toString());
@@ -72,6 +73,9 @@ public final class EntityValidator {
                 organizationErrors.add(organizationError);
             }
             if (report != null) {
+                for (OrganizationError organizationError : organizationErrors) {
+                    organizationError.setExternalDbId(isExternalIdValid ? externalDbId : null);
+                }
                 report.setOrganizationErrors(organizationErrors);
             }
         }

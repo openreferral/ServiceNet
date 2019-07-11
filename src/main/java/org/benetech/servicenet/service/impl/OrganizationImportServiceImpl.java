@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.HashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -7,6 +8,7 @@ import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.FundingRepository;
@@ -75,7 +77,15 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         createOrUpdateProgramsForOrganization(filledOrganization.getPrograms(), organization);
         createOrUpdateContactsForOrganization(filledOrganization.getContacts(), organization);
 
-        return em.merge(organization);
+        Organization org = em.merge(organization);
+
+        Set<OrganizationError> errors = new HashSet<>();
+        for (OrganizationError organizationError : report.getOrganizationErrors()) {
+            organizationError.setOrganization(org);
+            errors.add(organizationError);
+        }
+        report.setOrganizationErrors(errors);
+        return org;
     }
 
     @ConfidentialFilter
