@@ -27,7 +27,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     @Override
     public Service createOrUpdateService(Service filledService, String externalDbId, String providerName,
                                          DataImportReport report) {
-        EntityValidator.validateAndFix(filledService, report, externalDbId);
+        EntityValidator.validateAndFix(filledService, filledService.getOrganization(), report, externalDbId);
 
         Service service = new Service(filledService);
         Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);

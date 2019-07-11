@@ -60,6 +60,13 @@
       "otherEntityName": "documentUpload",
       "otherEntityField": "id",
       "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "relationshipName": "organizationErrors",
+      "otherEntityName": "organizationError",
+      "otherEntityRelationshipName": "dataImportReport",
+      "otherEntityRelationshipNameUndefined": false
     }
   ],
   "changelogDate": "20181231125401",

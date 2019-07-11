@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.HashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -7,6 +8,7 @@ import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.FundingRepository;
@@ -58,7 +60,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         }
         organization.setAccount(systemAccount.get());
 
-        EntityValidator.validateAndFix(organization, report, externalDbId);
+        EntityValidator.validateAndFix(organization, filledOrganization, report, externalDbId);
 
         Optional<Organization> organizationFromDb =
             organizationService.findWithEagerAssociations(externalDbId, providerName);
@@ -75,13 +77,21 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         createOrUpdateProgramsForOrganization(filledOrganization.getPrograms(), organization);
         createOrUpdateContactsForOrganization(filledOrganization.getContacts(), organization);
 
-        return em.merge(organization);
+        Organization org = em.merge(organization);
+
+        Set<OrganizationError> errors = new HashSet<>();
+        for (OrganizationError organizationError : report.getOrganizationErrors()) {
+            organizationError.setOrganization(org);
+            errors.add(organizationError);
+        }
+        report.setOrganizationErrors(errors);
+        return org;
     }
 
     @ConfidentialFilter
     private void createOrUpdateFundingForOrganization(Funding funding, Organization organization) {
         if (funding != null) {
-            EntityValidator.validateAndFix(funding, null, "");
+            EntityValidator.validateAndFix(funding, organization, null, "");
             Optional<Funding> fundingFormDb = fundingRepository.findOneByOrganizationId(organization.getId());
             funding.setOrganization(organization);
             if (fundingFormDb.isPresent()) {
@@ -108,7 +118,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     private void createOrUpdateFilteredContactsForOrganization(Set<Contact> contacts, Organization organization) {
         contacts.forEach(p -> {
-            EntityValidator.validateAndFix(p, null, "");
+            EntityValidator.validateAndFix(p, organization, null, "");
             p.setOrganization(organization);
         });
         organization.setContacts(sharedImportService.createOrUpdateContacts(contacts));
@@ -116,7 +126,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     private void createOrUpdateFilteredProgramsForOrganization(Set<Program> programs, Organization organization) {
         programs.forEach(p -> {
-            EntityValidator.validateAndFix(p, null, "");
+            EntityValidator.validateAndFix(p, organization, null, "");
             p.setOrganization(organization);
         });
         updateCollection(em, organization.getPrograms(), programs, (p1, p2) ->

@@ -40,7 +40,8 @@ public class LocationImportServiceImpl implements LocationImportService {
     public Location createOrUpdateLocation(Location filledLocation, String externalDbId, ImportData importData) {
         long startTime = System.currentTimeMillis();
 
-        EntityValidator.validateAndFix(filledLocation, importData.getReport(), externalDbId);
+        EntityValidator.validateAndFix(
+            filledLocation, filledLocation.getOrganization(), importData.getReport(), externalDbId);
 
         Location location = new Location(filledLocation);
         Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId,

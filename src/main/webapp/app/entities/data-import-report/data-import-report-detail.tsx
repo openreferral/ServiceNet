@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, Input } from 'reactstrap';
+import { Button, Row, Col, Input, Table } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
 import { Translate, ICrudGetAction, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -87,6 +87,56 @@ export class DataImportReportDetail extends React.Component<IDataImportReportDet
               <Translate contentKey="serviceNetApp.dataImportReport.documentUpload">Document Upload</Translate>
             </dt>
             <dd>{dataImportReportEntity.documentUploadId ? dataImportReportEntity.documentUploadId : ''}</dd>
+            <dt>
+              <Translate contentKey="serviceNetApp.dataImportReport.organizationErrors">Organization Errors</Translate>
+            </dt>
+            <dd>
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th>
+                      <Translate contentKey="serviceNetApp.organizationError.organization">Organization</Translate>{' '}
+                    </th>
+                    <th>
+                      <Translate contentKey="serviceNetApp.organizationError.entityName">Entity Name</Translate>{' '}
+                    </th>
+                    <th>
+                      <Translate contentKey="serviceNetApp.organizationError.fieldName">Field Name</Translate>{' '}
+                    </th>
+                    <th>
+                      <Translate contentKey="serviceNetApp.organizationError.externalDbId">External Db Id</Translate>{' '}
+                    </th>
+                    <th>
+                      <Translate contentKey="serviceNetApp.organizationError.cause">Cause</Translate>
+                    </th>
+                    <th>
+                      <Translate contentKey="serviceNetApp.organizationError.invalidValue">Invalid Value</Translate>{' '}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataImportReportEntity.organizationErrors &&
+                    dataImportReportEntity.organizationErrors.map((organizationError, i) => (
+                      <tr key={`entity-${i}`}>
+                        <td>
+                          {organizationError.organization ? (
+                            <Link to={`/entity/organization/${organizationError.organization.id}`}>
+                              {organizationError.organization.name}
+                            </Link>
+                          ) : (
+                            ''
+                          )}
+                        </td>
+                        <td>{organizationError.entityName}</td>
+                        <td>{organizationError.fieldName}</td>
+                        <td>{organizationError.externalDbId}</td>
+                        <td>{organizationError.cause}</td>
+                        <td>{organizationError.invalidValue}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </Table>
+            </dd>
           </dl>
           <Button tag={Link} to="/entity/data-import-report" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

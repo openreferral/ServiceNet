@@ -50,6 +50,19 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     /**
+     * Save a organization.
+     *
+     * @param organization the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public Organization save(Organization organization) {
+        log.debug("Request to save Organization : {}", organization);
+
+        return organizationRepository.save(organization);
+    }
+
+    /**
      * Get all the organizations.
      *
      * @return the list of entities

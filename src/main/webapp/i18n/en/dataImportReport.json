@@ -4,7 +4,8 @@
       "home": {
         "title": "Data Import Reports",
         "createLabel": "Create a new Data Import Report",
-        "createOrEditLabel": "Create or edit a Data Import Report"
+        "createOrEditLabel": "Create or edit a Data Import Report",
+        "notFound": "No Data Import Report found"
       },
       "created": "A new Data Import Report is created with identifier {{ param }}",
       "updated": "A Data Import Report is updated with identifier {{ param }}",
@@ -23,7 +24,8 @@
       "endDate": "End Date",
       "jobName": "Job Name",
       "errorMessage": "Error Message",
-      "documentUpload": "Document Upload"
+      "documentUpload": "Document Upload",
+      "organizationErrors": "Parsing Errors"
     }
   }
 }

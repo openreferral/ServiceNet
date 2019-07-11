@@ -45,7 +45,7 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
         if (physicalAddress == null) {
             return;
         }
-        EntityValidator.validateAndFix(physicalAddress, report, location.getExternalDbId());
+        EntityValidator.validateAndFix(physicalAddress, location.getOrganization(), report, location.getExternalDbId());
 
         physicalAddress.setLocation(location);
         if (location.getPhysicalAddress() != null) {
@@ -64,7 +64,7 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
         if (postalAddress == null) {
             return;
         }
-        EntityValidator.validateAndFix(postalAddress, report, location.getExternalDbId());
+        EntityValidator.validateAndFix(postalAddress, location.getOrganization(), report, location.getExternalDbId());
         postalAddress.setLocation(location);
         if (location.getPostalAddress() != null) {
             postalAddress.setId(location.getPostalAddress().getId());
@@ -91,7 +91,7 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
                                                          DataImportReport report) {
         if (schedules != null) {
             schedules.forEach(schedule -> {
-                EntityValidator.validateAndFix(schedule, report, location.getExternalDbId());
+                EntityValidator.validateAndFix(schedule, location.getOrganization(), report, location.getExternalDbId());
                 schedule.setLocation(location);
             });
 
@@ -124,7 +124,7 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
             .collect(Collectors.toSet());
 
         filtered.forEach(x -> {
-            EntityValidator.validateAndFix(x, report, location.getExternalDbId());
+            EntityValidator.validateAndFix(x, location.getOrganization(), report, location.getExternalDbId());
             x.setLocation(location);
         });
 
@@ -136,7 +136,7 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
 
     private void createOrUpdateFilteredLangsForLocation(Set<Language> langs, Location location) {
         langs.forEach(lang -> {
-            EntityValidator.validateAndFix(lang, null, "");
+            EntityValidator.validateAndFix(lang, location.getOrganization(), null, "");
             lang.setLocation(location);
         });
         sharedImportService.persistLangs(location.getLangs(), langs);
@@ -144,7 +144,7 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
 
     private void createOrUpdateFilteredPhonesForLocation(Set<Phone> phones, @Nonnull Location location) {
         phones.forEach(phone -> {
-            EntityValidator.validateAndFix(phone, null, "");
+            EntityValidator.validateAndFix(phone, location.getOrganization(), null, "");
             phone.setLocation(location);
         });
         sharedImportService.persistPhones(location.getPhones(), phones);

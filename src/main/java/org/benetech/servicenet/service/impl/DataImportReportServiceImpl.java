@@ -1,8 +1,10 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.repository.DataImportReportRepository;
 import org.benetech.servicenet.service.DataImportReportService;
+import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.DataImportReportDTO;
 import org.benetech.servicenet.service.mapper.DataImportReportMapper;
 import org.slf4j.Logger;
@@ -29,10 +31,13 @@ public class DataImportReportServiceImpl implements DataImportReportService {
 
     private final DataImportReportMapper dataImportReportMapper;
 
+    private final OrganizationService organizationService;
+
     public DataImportReportServiceImpl(DataImportReportRepository dataImportReportRepository,
-                                       DataImportReportMapper dataImportReportMapper) {
+        DataImportReportMapper dataImportReportMapper, OrganizationService organizationService) {
         this.dataImportReportRepository = dataImportReportRepository;
         this.dataImportReportMapper = dataImportReportMapper;
+        this.organizationService = organizationService;
     }
 
     /**
@@ -64,6 +69,9 @@ public class DataImportReportServiceImpl implements DataImportReportService {
     @Override
     public DataImportReport save(DataImportReport dataImportReport) {
         log.debug("Request to save DataImportReport : {}", dataImportReport);
+        for (OrganizationError organizationError : dataImportReport.getOrganizationErrors()) {
+            organizationService.save(organizationError.getOrganization());
+        }
 
         return dataImportReportRepository.save(dataImportReport);
     }
