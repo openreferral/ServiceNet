@@ -37,7 +37,7 @@ public abstract class ShelterMapper {
         MatchingContext context = new MatchingContext(googleApiKey);
         if (StringUtils.isNotBlank(shelter.getAddress())) {
             List<GeocodingResult> geocodingResults = geocodingResultService
-                .createOrUpdateGeocodingResult(shelter, context);
+                .findAllForAddressOrFetchIfEmpty(shelter, context);
             dto.setGeocodingResults(geocodingResults);
         }
         return dto;

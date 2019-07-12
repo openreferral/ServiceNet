@@ -84,14 +84,8 @@ public class LocationImportServiceImpl implements LocationImportService {
     }
 
     private void fetchGeocodeIfNeeded(ImportData importData, Location location) {
-        if (geocodeShouldBeFetched(location)) {
-            geocodingResultService.createOrUpdateGeocodingResult(location.getPhysicalAddress(), importData.getContext());
-        }
-    }
-
-    private boolean geocodeShouldBeFetched(Location location) {
-        return location.getLongitude() == null || location.getLatitude() == null
-            || location.getLongitude().equals(0.0) || location.getLatitude().equals(0.0);
+        geocodingResultService.findAllForAddressOrFetchIfEmpty(location.getPhysicalAddress(),
+            importData.getContext());
     }
 
     private void fillDataFromDb(Location newLocation, Location locationFromDb) {

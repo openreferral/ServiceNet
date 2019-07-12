@@ -73,16 +73,6 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
 
     @Override
     public List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context) {
-        String addressString = context.getGeoApi().extract255AddressChars(address);
-        List<GeocodingResult> result = geocodingResultRepository.findAllByAddress(addressString);
-        if (result.isEmpty()) {
-            return createOrUpdateGeocodingResult(address, context);
-        }
-        return result;
-    }
-
-    @Override
-    public List<GeocodingResult> createOrUpdateGeocodingResult(Address address, MatchingContext context) {
         if (address.getAddress() == null) {
             return new ArrayList<>();
         }

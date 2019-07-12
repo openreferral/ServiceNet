@@ -25,7 +25,7 @@ public class TestGeocodingResultService extends GeocodingResultServiceImpl {
     }
 
     @Override
-    public List<GeocodingResult> createOrUpdateGeocodingResult(Address address, MatchingContext context) {
+    public List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context) {
         return new ArrayList<>();
     }
 }

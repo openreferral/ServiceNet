@@ -51,6 +51,4 @@ public interface GeocodingResultService {
     void delete(UUID id);
 
     List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context);
-
-    List<GeocodingResult> createOrUpdateGeocodingResult(Address address, MatchingContext context);
 }
