@@ -1,6 +1,6 @@
 {
   "scheduler": {
-    "title": "Scheduler administation",
+    "title": "Scheduler administration",
     "name": "Job name",
     "description": "Description",
     "nextFireDate": "Next Fire Date",

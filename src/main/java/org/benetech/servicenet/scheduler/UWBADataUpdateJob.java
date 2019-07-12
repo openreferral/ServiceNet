@@ -8,7 +8,7 @@ public class UWBADataUpdateJob extends AbstractICarolUpdateJob {
 
     private static final String NAME = "UWBA Data Update Job";
     private static final String SYSTEM_ACCOUNT = "UWBA";
-    private static final String DESCRIPTION = "Collect UWBA Data thought iCarol API, map it to the common structure and " +
+    private static final String DESCRIPTION = "Collect UWBA Data through iCarol API, map it to the common structure and " +
         "persist it to the database";
 
     @Value("${scheduler.uwba-data.interval}")

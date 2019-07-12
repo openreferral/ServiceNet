@@ -21,7 +21,7 @@ public class ShelterTechDataUpdateJob extends BaseJob {
 
     private static final String NAME = "ShelterTech Data Update Job";
 
-    private static final String DESCRIPTION = "Collect ShelterTech Data thought the API, map it to the common structure"
+    private static final String DESCRIPTION = "Collect ShelterTech Data through the API, map it to the common structure"
         + " and persist it to the database";
 
     @Value("${scheduler.shelter-tech-data.interval}")

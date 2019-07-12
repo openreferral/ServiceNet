@@ -8,7 +8,7 @@ public class EdenDataUpdateJob extends AbstractICarolUpdateJob {
 
     private static final String NAME = "Eden Data Update Job";
     private static final String SYSTEM_ACCOUNT = "Eden";
-    private static final String DESCRIPTION = "Collect Eden Data thought iCarol API, map it to the common structure and " +
+    private static final String DESCRIPTION = "Collect Eden Data through iCarol API, map it to the common structure and " +
         "persist it to the database";
 
     @Value("${scheduler.eden-data.interval}")
