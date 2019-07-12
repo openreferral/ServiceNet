@@ -39,6 +39,7 @@ import Shelter from './shelter';
 import Option from './option';
 import LocationExclusion from './location-exclusion';
 import OrganizationError from './organization-error';
+import MatchSimilarity from './match-similarity';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ match }) => (
@@ -80,6 +81,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute path={`${match.url}/option`} component={Option} />
       <ErrorBoundaryRoute path={`${match.url}/location-exclusion`} component={LocationExclusion} />
       <ErrorBoundaryRoute path={`${match.url}/organization-error`} component={OrganizationError} />
+      <ErrorBoundaryRoute path={`${match.url}/match-similarity`} component={MatchSimilarity} />
       {/* jhipster-needle-add-route-path - JHipster will routes here */}
     </Switch>
   </div>

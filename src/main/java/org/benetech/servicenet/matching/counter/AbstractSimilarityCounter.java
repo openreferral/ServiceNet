@@ -1,5 +1,7 @@
 package org.benetech.servicenet.matching.counter;
 
+import java.util.Collections;
+import java.util.List;
 import org.benetech.servicenet.matching.model.MatchingContext;
 
 public abstract class AbstractSimilarityCounter<V> {
@@ -14,6 +16,10 @@ public abstract class AbstractSimilarityCounter<V> {
      * @return similarity ratio
      */
     public abstract float countSimilarityRatio(V obj1, V obj2, MatchingContext context);
+
+    public List getMatchSimilarityDTOs(V obj1, V obj2, MatchingContext context) {
+        return Collections.emptyList();
+    }
 
     protected static final float NO_MATCH_RATIO = 0;
     protected static final float COMPLETE_MATCH_RATIO = 1;
