@@ -2,18 +2,21 @@ package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.repository.OrganizationErrorRepository;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Integration tests for the {@Link OrganizationErrorResource} REST controller.
  */
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
-public class OrganizationErrorResourceIT {
+public class OrganizationErrorResourceIntTest {
 
     private static final String DEFAULT_ENTITY_NAME = "AAAAAAAAAA";
     private static final String UPDATED_ENTITY_NAME = "BBBBBBBBBB";
@@ -203,7 +207,7 @@ public class OrganizationErrorResourceIT {
     @Transactional
     public void getNonExistingOrganizationError() throws Exception {
         // Get the organizationError
-        restOrganizationErrorMockMvc.perform(get("/api/organization-errors/{id}", Long.MAX_VALUE))
+        restOrganizationErrorMockMvc.perform(get("/api/organization-errors/{id}",  TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 

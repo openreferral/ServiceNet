@@ -221,7 +221,7 @@
         </module>
         <module name="ParameterNumber">
             <property name="severity" value="error"/>
-            <property name="max" value="7"/>
+            <property name="max" value="8"/>
             <property name="tokens" value="METHOD_DEF,CTOR_DEF"/>
         </module>
         <module name="ParenPad">

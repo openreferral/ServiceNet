@@ -1,0 +1,25 @@
+{
+  "serviceNetApp": {
+    "matchSimilarity": {
+      "home": {
+        "title": "Match Similarities",
+        "createLabel": "Create a new Match Similarity",
+        "createOrEditLabel": "Create or edit a Match Similarity",
+        "notFound": "No Match Similarity found"
+      },
+      "created": "A new Match Similarity is created with identifier {{ param }}",
+      "updated": "A Match Similarity is updated with identifier {{ param }}",
+      "deleted": "A Match Similarity is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Match Similarity {{ id }}?"
+      },
+      "detail": {
+        "title": "Match Similarity"
+      },
+      "similarity": "Similarity",
+      "resourceClass": "Resource Class",
+      "fieldName": "Field Name",
+      "organizationMatch": "Organization Match"
+    }
+  }
+}

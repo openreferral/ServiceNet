@@ -7,10 +7,12 @@ import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
+import org.benetech.servicenet.service.MatchSimilarityService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.DismissMatchDTO;
+import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMatchMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +49,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private final UserService userService;
 
+    private final MatchSimilarityService matchSimilarityService;
+
     private final float orgMatchThreshold;
 
     public OrganizationMatchServiceImpl(OrganizationMatchRepository organizationMatchRepository,
@@ -55,6 +59,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
                                         OrganizationSimilarityCounter organizationSimilarityCounter,
                                         ConflictDetectionService conflictDetectionService,
                                         UserService userService,
+                                        MatchSimilarityService matchSimilarityService,
                                         @Value("${similarity-ratio.config.organization-match-threshold}")
                                             float orgMatchThreshold) {
         this.organizationMatchRepository = organizationMatchRepository;
@@ -64,6 +69,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         this.conflictDetectionService = conflictDetectionService;
         this.userService = userService;
         this.orgMatchThreshold = orgMatchThreshold;
+        this.matchSimilarityService = matchSimilarityService;
     }
 
     /**
@@ -234,8 +240,10 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         log.debug("Searching for matches for " + organization.getAccount().getName() + "'s organization '" +
             organization.getName() + "' has started. There are " + notMatchedOrgs.size() + " organizations to compare with");
         for (Organization partner : notMatchedOrgs) {
-            if (isSimilar(organization, partner, context)) {
-                matches.addAll(createOrganizationMatches(organization, partner));
+            List<MatchSimilarityDTO> similarityDTOs = organizationSimilarityCounter
+                .getMatchSimilarityDTOs(organization, partner, context);
+            if (isSimilar(similarityDTOs)) {
+                matches.addAll(createOrganizationMatches(organization, partner, similarityDTOs));
             }
         }
         long stopTime = System.currentTimeMillis();
@@ -254,7 +262,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         }
     }
 
-    private List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner) {
+    private List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner,
+        List<MatchSimilarityDTO> similarityDTOS) {
         List<OrganizationMatch> matches = new LinkedList<>();
         OrganizationMatch match = new OrganizationMatch()
             .organizationRecord(organization)
@@ -269,10 +278,18 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         matches.add(save(match));
         matches.add(save(mirrorMatch));
 
+        for (MatchSimilarityDTO similarityDTO : similarityDTOS) {
+            similarityDTO.setOrganizationMatchId(match.getId());
+            matchSimilarityService.save(similarityDTO);
+            similarityDTO.setOrganizationMatchId(mirrorMatch.getId());
+            matchSimilarityService.save(similarityDTO);
+        }
         return matches;
     }
 
-    private boolean isSimilar(Organization organization, Organization partner, MatchingContext context) {
-        return organizationSimilarityCounter.countSimilarityRatio(organization, partner, context) >= orgMatchThreshold;
+    private boolean isSimilar(List<MatchSimilarityDTO> similarityDTOS) {
+        return similarityDTOS.stream()
+            .map(MatchSimilarityDTO::getSimilarity)
+            .reduce(0f, Float::sum) >= orgMatchThreshold;
     }
 }

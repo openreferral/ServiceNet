@@ -47,6 +47,7 @@
         "option": "Option",
         "locationExclusion": "Location Exclusion",
         "organizationError": "Organization Error",
+        "matchSimilarity": "Match Similarity",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
