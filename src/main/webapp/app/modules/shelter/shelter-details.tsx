@@ -34,6 +34,8 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
 
   render() {
     const { shelterEntity } = this.props;
+    const results = shelterEntity.geocodingResults;
+    const geocodingResult = !Array.isArray(results) || !results.length ? null : results[0];
 
     return (
       <Row>
@@ -186,11 +188,11 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
           </Button>
         </Col>
         <Col md="6">
-          {shelterEntity.geocodingResults && (
+          {geocodingResult && (
             <Map
               googleMapURL={mapUrl}
-              latitude={shelterEntity.geocodingResults[0].latitude}
-              longitude={shelterEntity.geocodingResults[0].longitude}
+              latitude={geocodingResult.latitude}
+              longitude={geocodingResult.longitude}
               loadingElement={<div style={{ height: `100%` }} />}
               containerElement={<div style={{ height: `100%` }} />}
               mapElement={<div style={{ height: `100%` }} />}
