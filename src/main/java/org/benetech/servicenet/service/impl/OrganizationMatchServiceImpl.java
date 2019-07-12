@@ -288,9 +288,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     }
 
     private boolean isSimilar(List<MatchSimilarityDTO> similarityDTOS) {
-        float start = 0;
         return similarityDTOS.stream()
             .map(MatchSimilarityDTO::getSimilarity)
-            .reduce(start, Float::sum) >= orgMatchThreshold;
+            .reduce(0f, Float::sum) >= orgMatchThreshold;
     }
 }

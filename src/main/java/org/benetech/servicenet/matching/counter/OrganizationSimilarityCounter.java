@@ -40,10 +40,9 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
 
     @Override
     public float countSimilarityRatio(Organization org1, Organization org2, MatchingContext context) {
-        float start = 0;
         return getMatchSimilarityDTOs(org1, org2, context).stream()
             .map(MatchSimilarityDTO::getSimilarity)
-            .reduce(start, Float::sum);
+            .reduce(0f, Float::sum);
     }
 
     @Override
@@ -73,10 +72,9 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
             getYearIncorporatedSimilarity(org1, org2, context),
             "YearIncorporated"
         ));
-        float start = 0;
         float currentResult = similarityDtos.stream()
             .map(MatchSimilarityDTO::getSimilarity)
-            .reduce(start, Float::sum);
+            .reduce(0f, Float::sum);
         if (BooleanUtils.isTrue(alwaysCompareLocations) || currentResult > 0) {
             //TODO Compare multiple locations
             if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {

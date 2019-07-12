@@ -10,6 +10,9 @@
     <property name="uuidFunction" value="uuid_generate_v4()" dbms="postgresql"/>
     <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
 
+    <property name="floatType" value="float4" dbms="postgresql, h2"/>
+    <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
+
     <!--
         Added the entity MatchSimilarity.
     -->
@@ -36,10 +39,6 @@
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
-
-    </changeSet>
-
-    <changeSet id="20190709132431-1-relations" author="jhipster">
 
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
