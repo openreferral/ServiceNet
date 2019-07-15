@@ -1,6 +1,6 @@
 import React, { ComponentClass, StatelessComponent } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Row, Col, Card, CardText, CardBody, CardTitle, Button } from 'reactstrap';
+import { Row, Col, Card, CardBody, CardTitle, Button } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -10,7 +10,7 @@ import { GOOGLE_API_KEY } from 'app/config/constants';
 import { IRootState } from 'app/shared/reducers';
 import { connect } from 'react-redux';
 
-export interface IShelterDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export interface IShelterDetailsProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 const withLatLong = (
   wrappedComponent: string | ComponentClass<any> | StatelessComponent<any>
@@ -27,7 +27,7 @@ const Map = withScriptjs(
 );
 const mapUrl = 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=' + GOOGLE_API_KEY;
 
-export class ShelterDetails extends React.Component<IShelterDetailProps> {
+export class ShelterDetails extends React.Component<IShelterDetailsProps> {
   componentDidMount() {
     this.props.getEntity(this.props.match.params.id);
   }
@@ -50,7 +50,7 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
               <Translate contentKey="serviceNetApp.shelter.home.card.eligibilityRequirements" />
             </CardTitle>
             <CardBody>
-              <CardText>
+              <div className="card-text">
                 <ul>
                   <li>
                     <Translate contentKey="serviceNetApp.shelter.eligibilityDetails" />
@@ -87,7 +87,7 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
                       : null}
                   </li>
                 </ul>
-              </CardText>
+              </div>
             </CardBody>
           </Card>
           <Card>
@@ -95,7 +95,7 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
               <Translate contentKey="serviceNetApp.shelter.home.card.process" />
             </CardTitle>
             <CardBody>
-              <CardText>
+              <div className="card-text">
                 <ul>
                   <li>
                     <Translate contentKey="serviceNetApp.shelter.applicationProcess" />
@@ -140,7 +140,7 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
                     {shelterEntity.beds ? shelterEntity.beds.waitlist : ''}
                   </li>
                 </ul>
-              </CardText>
+              </div>
             </CardBody>
           </Card>
           <Card>
@@ -148,14 +148,14 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
               <Translate contentKey="serviceNetApp.shelter.home.card.contact" />
             </CardTitle>
             <CardBody>
-              <CardText>
+              <div className="card-text">
                 <ul>
                   <li>
                     <Translate contentKey="serviceNetApp.shelter.phones" />
                     {': '}
                     {shelterEntity.phones
                       ? shelterEntity.phones.map((val, i) => (
-                          <span>
+                          <span key={i}>
                             {val.number} {val.type},{' '}
                           </span>
                         ))
@@ -177,7 +177,7 @@ export class ShelterDetails extends React.Component<IShelterDetailProps> {
                     {shelterEntity.website}
                   </li>
                 </ul>
-              </CardText>
+              </div>
             </CardBody>
           </Card>
           <Button tag={Link} to="/shelters" replace color="info">
