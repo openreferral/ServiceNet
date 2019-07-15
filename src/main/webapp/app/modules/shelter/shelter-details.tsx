@@ -19,7 +19,7 @@ const withLatLong = (
 const Map = withScriptjs(
   withGoogleMap(
     withLatLong(props => (
-      <GoogleMap defaultZoom={8} defaultCenter={{ lat: props.latitude, lng: props.longitude }}>
+      <GoogleMap defaultZoom={8} center={{ lat: props.latitude, lng: props.longitude }}>
         {<Marker position={{ lat: props.latitude, lng: props.longitude }} />}
       </GoogleMap>
     ))
