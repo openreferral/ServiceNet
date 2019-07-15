@@ -1,10 +1,10 @@
 import './shelter-element.scss';
 
 import React from 'react';
-import { Row, Col, Card, CardText, CardBody, Button } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Row, Col, Card, CardBody, Button } from 'reactstrap';
 import { IShelter } from 'app/shared/model/shelter.model';
 import { Translate, translate } from 'react-jhipster';
+import { Link } from 'react-router-dom';
 
 export interface IShelterElementProps {
   shelter: IShelter;
@@ -29,17 +29,17 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
     return (
       <Row className="shelter-row">
         <Col>
-          <Link to={`#`} className="alert-link" onClick={this.toggle}>
+          <a className="alert-link" onClick={this.toggle}>
             <Card className="shelter-card">
               <CardBody className="shelter-card-body">
                 <div className="shelter-left-container">
-                  <CardText className="shelter-left-card-text">
+                  <div className="shelter-left-card-text card-text">
                     <div>{shelter.agencyName}</div>
                     <div>{shelter.programName}</div>
-                  </CardText>
+                  </div>
                 </div>
                 <div className="shelter-right-container">
-                  <CardText className="shelter-right-card-info">
+                  <div className="shelter-right-card-info card-text">
                     <div>
                       <Translate contentKey="serviceNetApp.shelter.home.card.bedsAvailable" />:{' '}
                       {shelter.beds && shelter.beds.availableBeds
@@ -63,29 +63,29 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
                         </span>
                       )}
                     </div>
-                  </CardText>
+                  </div>
                 </div>
               </CardBody>
             </Card>
-          </Link>
+          </a>
           {this.state.open && (
             <Card className="shelter-card-expanded">
               <CardBody>
-                <CardText>
-                  <p>
+                <div className="card-text">
+                  <div className="section">
                     <div className="shelter-info-header">
                       <Translate contentKey="serviceNetApp.shelter.home.card.eligibilityRequirements" />:
                     </div>
                     <div>{shelter.eligibilityDetails}</div>
                     <div>{shelter.documentsRequired}</div>
-                  </p>
-                  <p>
+                  </div>
+                  <div className="section">
                     <div className="shelter-info-header">
                       <Translate contentKey="serviceNetApp.shelter.home.card.process" />:
                     </div>
                     <div>{shelter.applicationProcess}</div>
-                  </p>
-                  <p>
+                  </div>
+                  <div className="section">
                     <div className="shelter-info-header">
                       <Translate contentKey="serviceNetApp.shelter.home.card.contactInfo" />:
                     </div>
@@ -97,8 +97,8 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
                           </div>
                         ))
                       : null}
-                  </p>
-                  <p>
+                  </div>
+                  <div className="section">
                     <div className="shelter-info-header">
                       <Translate contentKey="serviceNetApp.shelter.home.card.address" />:
                     </div>
@@ -106,15 +106,15 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
                     <div>{shelter.address2}</div>
                     <div>{shelter.city}</div>
                     <div>{shelter.zipcode}</div>
-                  </p>
-                  <p>
-                    <Button tag={Link} to={`/shelter/${shelter.id}`} replace color="info">
+                  </div>
+                  <div className="section">
+                    <Button tag={Link} to={`/shelter/${shelter.id}`} color="info">
                       <span className="d-none d-md-inline">
                         <Translate contentKey="serviceNetApp.shelter.home.card.moreInfo">More info</Translate>
                       </span>
                     </Button>
-                  </p>
-                </CardText>
+                  </div>
+                </div>
               </CardBody>
             </Card>
           )}
@@ -123,5 +123,4 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
     );
   }
 }
-
 export default ShelterElement;

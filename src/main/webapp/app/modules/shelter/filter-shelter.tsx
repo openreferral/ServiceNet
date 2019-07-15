@@ -113,7 +113,7 @@ export class FilterShelter extends React.Component<IFilterShelterProps, IFilterS
                     <Translate contentKey="serviceNetApp.shelter.home.filter.onlyShowSheltersThat" />
                     {tags
                       ? tags.map(tag => (
-                          <div>
+                          <div key={tag.value}>
                             <input checked={this.isTagSelected(tag.value)} onChange={this.handleTagChange(tag.value)} type="checkbox" />
                             <span className="checkbox-label">{tag.value}</span>
                           </div>
