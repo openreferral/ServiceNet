@@ -6,6 +6,7 @@ import org.benetech.servicenet.conflict.detector.ConflictDetector;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Metadata;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
@@ -59,7 +60,8 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
     @Async
     @Override
     @Transactional
-    public void detect(List<OrganizationMatch> matches) {
+    public void detect(Organization organization, List<OrganizationMatch> matches) {
+        log.info(organization.getName() + ": Searching for conflicts");
         long detectionStartTime = System.currentTimeMillis();
         for (OrganizationMatch match : matches) {
             long startTime = System.currentTimeMillis();
@@ -85,7 +87,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - detectionStartTime;
         //TODO: Remove time counting logic (#264)
-        log.info("Searching for conflicts took " + elapsedTime + "ms");
+        log.info(organization.getName() + ": Searching for conflicts took " + elapsedTime + "ms");
     }
 
     @Override

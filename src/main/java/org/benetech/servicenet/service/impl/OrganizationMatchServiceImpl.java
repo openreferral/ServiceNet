@@ -155,6 +155,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     @Async
     @Override
     public void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context) {
+        log.info(organization.getName() + ": Updating organization matches");
         if (organization.getActive()) {
             List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
                 .map(m -> m.getPartnerVersion().getId())
@@ -196,14 +197,14 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
             organizationMatchRepository.save(match);
 
-            conflictDetectionService.detect(Collections.singletonList(match));
+            conflictDetectionService.detect(match.getOrganizationRecord(), Collections.singletonList(match));
         });
     }
 
     private void detectConflictsForCurrentMatches(Organization organization) {
         List<OrganizationMatch> matches = findNotDismissedMatches(organization);
         matches.addAll(findNotDismissedPartnersMatches(organization));
-        conflictDetectionService.detect(matches);
+        conflictDetectionService.detect(organization, matches);
     }
 
     private List<OrganizationMatch> findCurrentMatches(Organization organization) {
