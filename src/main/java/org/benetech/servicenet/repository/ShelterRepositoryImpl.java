@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -47,7 +48,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
         CriteriaQuery<Shelter> queryCriteria = cb.createQuery(Shelter.class);
         Root<Shelter> selectRoot = queryCriteria.from(Shelter.class);
 
-        queryCriteria.select(selectRoot).distinct(true);
+        queryCriteria.select(selectRoot);
 
         addFilters(queryCriteria, selectRoot, filters);
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
@@ -104,12 +105,14 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
     }
 
     private void addSorting(CriteriaQuery<Shelter> queryCriteria, Sort sort, Root<Shelter> root) {
-        setOrder(queryCriteria, root, sort, BEDS);
-        setOrder(queryCriteria, root, sort, DISTANCE);
-        queryCriteria.orderBy(cb.desc(root.get(AGENCY_NAME)));
+        List<Order> orderList = new ArrayList<>();
+        addOrder(orderList, root, sort, DISTANCE);
+        addOrder(orderList, root, sort, BEDS);
+        orderList.add(cb.desc(root.get(AGENCY_NAME)));
+        queryCriteria.orderBy(orderList);
     }
 
-    private void setOrder(CriteriaQuery<Shelter> queryCriteria, Root<Shelter> root,
+    private void addOrder(List<Order> orderList, Root<Shelter> root,
         final Sort sort, final String field) {
 
         Sort.Order order = sort.getOrderFor(field);
@@ -117,9 +120,9 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
         if (order != null) {
             if (BEDS.equals(field)) {
                 if (order.isAscending()) {
-                    queryCriteria.orderBy(cb.asc(root.get(BEDS).get(AVAILABLE_BEDS)));
+                    orderList.add(cb.asc(cb.coalesce(root.get(BEDS).get(AVAILABLE_BEDS), 0)));
                 } else {
-                    queryCriteria.orderBy(cb.desc(root.get(BEDS).get(AVAILABLE_BEDS)));
+                    orderList.add(cb.desc(cb.coalesce(root.get(BEDS).get(AVAILABLE_BEDS), 0)));
                 }
             }
         }
