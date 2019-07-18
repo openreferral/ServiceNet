@@ -92,7 +92,7 @@ public class ConflictDetectionServiceImplTest {
         int numberOfConflicts = 9;
         int numberOfMirrorConflicts = 9;
 
-        conflictDetectionService.detect(Arrays.asList(match, match2));
+        conflictDetectionService.detect(org1, Arrays.asList(match, match2));
 
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
     }
@@ -111,7 +111,7 @@ public class ConflictDetectionServiceImplTest {
         int numberOfConflicts = 1;
         int numberOfMirrorConflicts = 1;
 
-        conflictDetectionService.detect(Arrays.asList(match, match2));
+        conflictDetectionService.detect(org, Arrays.asList(match, match2));
 
         assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
         assertEquals(conflictRepository.findAll().get(0).getOfferedValue(),
@@ -134,7 +134,7 @@ public class ConflictDetectionServiceImplTest {
         OrganizationMatch match2 = createMatch(theSameOrg, org);
 
         // Act
-        conflictDetectionService.detect(Arrays.asList(match, match2));
+        conflictDetectionService.detect(org, Arrays.asList(match, match2));
 
         // Assert
         assertFalse(CollectionUtils.isEmpty(conflictRepository.findAllPendingWithResourceId(org.getId())));
