@@ -60,7 +60,7 @@ export default class Header extends React.Component<IHeaderProps, IHeaderState> 
         <LoadingBar className="loading-bar" />
         <Navbar expand="sm" fixed="top" className="navbar-light bg-white">
           <NavbarToggler aria-label="Menu" onClick={this.toggleMenu} />
-          <Brand />
+          <Brand isSacramento={isSacramento} />
           <Collapse isOpen={this.state.menuOpen} navbar>
             <Nav id="header-tabs" className="ml-auto" navbar>
               {(!isAuthenticated || !isSacramento) && <Home />}
