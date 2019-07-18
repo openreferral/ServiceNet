@@ -18,4 +18,9 @@ public class ScheduleDayRaw {
     @SerializedName("closes_at")
     private Integer closesAt;
 
+    @SerializedName("open_time")
+    private Integer openTime;
+
+    @SerializedName("close_time")
+    private Integer closeTime;
 }

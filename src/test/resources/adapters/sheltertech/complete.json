@@ -36,14 +36,18 @@
               {
                 "id": 443,
                 "day": "Friday",
-                "opens_at": 2200,
-                "closes_at": null
+                "opens_at": null,
+                "closes_at": null,
+                "open_time": 2200,
+                "close_time": null
               },
               {
                 "id": 444,
                 "day": "Wednesday",
-                "opens_at": null,
-                "closes_at": 600
+                "opens_at": 2200,
+                "closes_at": 600,
+                "open_time": 1234,
+                "close_time": null
               }
             ]
           },
@@ -82,7 +86,9 @@
             "id": 321,
             "day": "Monday",
             "opens_at": 910,
-            "closes_at": 950
+            "closes_at": null,
+            "open_time": null,
+            "close_time": 950
           }
         ]
       },

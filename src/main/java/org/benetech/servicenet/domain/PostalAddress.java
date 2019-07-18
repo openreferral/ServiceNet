@@ -32,6 +32,10 @@ public class PostalAddress extends AbstractEntity implements Serializable {
     @Size(max = 255, message = "Field value is too long.")
     private String address1 = "";
 
+    @Column(name = "address_2")
+    @Size(max = 255, message = "Field value is too long.")
+    private String address2 = "";
+
     @NotNull
     @Column(name = "city", nullable = false)
     @Size(max = 255, message = "Field value is too long.")
@@ -83,6 +87,19 @@ public class PostalAddress extends AbstractEntity implements Serializable {
 
     public PostalAddress address1(String address1) {
         this.address1 = address1;
+        return this;
+    }
+
+    public String getAddress2() {
+        return address2;
+    }
+
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
+
+    public PostalAddress address2(String address2) {
+        this.address2 = address2;
         return this;
     }
 

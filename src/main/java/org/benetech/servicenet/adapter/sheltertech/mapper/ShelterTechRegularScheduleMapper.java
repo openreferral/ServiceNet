@@ -50,9 +50,24 @@ public interface ShelterTechRegularScheduleMapper {
     }
 
     default OpeningHours mapToOpeningHours(ScheduleDayRaw scheduleRaw) {
+        String open = "";
+        String close = "";
+
+        if (scheduleRaw.getOpensAt() != null) {
+            open = scheduleRaw.getOpensAt().toString();
+        } else if (scheduleRaw.getOpenTime() != null) {
+            open = scheduleRaw.getOpenTime().toString();
+        }
+
+        if (scheduleRaw.getClosesAt() != null) {
+            close = scheduleRaw.getClosesAt().toString();
+        } else if (scheduleRaw.getCloseTime() != null) {
+            close = scheduleRaw.getCloseTime().toString();
+        }
+
         return new OpeningHours()
-            .opensAt(normalizeTime(scheduleRaw.getOpensAt() == null ? "" : scheduleRaw.getOpensAt().toString()))
-            .closesAt(normalizeTime(scheduleRaw.getClosesAt() == null ? "" : scheduleRaw.getClosesAt().toString()))
+            .opensAt(normalizeTime(open))
+            .closesAt(normalizeTime(close))
             .weekday(getWeekday(scheduleRaw.getScheduleDays()));
     }
 }

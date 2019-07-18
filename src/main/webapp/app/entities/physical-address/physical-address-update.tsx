@@ -115,6 +115,12 @@ export class PhysicalAddressUpdate extends React.Component<IPhysicalAddressUpdat
                   />
                 </AvGroup>
                 <AvGroup>
+                  <Label id="address2Label" for="address2">
+                    <Translate contentKey="serviceNetApp.physicalAddress.address2">Address 2</Translate>
+                  </Label>
+                  <AvField id="physical-address-address2" type="text" name="address2" />
+                </AvGroup>
+                <AvGroup>
                   <Label id="cityLabel" for="city">
                     <Translate contentKey="serviceNetApp.physicalAddress.city">City</Translate>
                   </Label>

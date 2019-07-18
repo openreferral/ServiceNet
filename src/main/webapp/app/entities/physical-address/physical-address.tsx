@@ -45,6 +45,9 @@ export class PhysicalAddress extends React.Component<IPhysicalAddressProps> {
                   <Translate contentKey="serviceNetApp.physicalAddress.address1">Address 1</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="serviceNetApp.physicalAddress.address2">Address 2</Translate>
+                </th>
+                <th>
                   <Translate contentKey="serviceNetApp.physicalAddress.city">City</Translate>
                 </th>
                 <th>
@@ -75,6 +78,7 @@ export class PhysicalAddress extends React.Component<IPhysicalAddressProps> {
                   </td>
                   <td>{physicalAddress.attention}</td>
                   <td>{physicalAddress.address1}</td>
+                  <td>{physicalAddress.address2}</td>
                   <td>{physicalAddress.city}</td>
                   <td>{physicalAddress.region}</td>
                   <td>{physicalAddress.stateProvince}</td>

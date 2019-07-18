@@ -35,6 +35,10 @@ public class PhysicalAddress extends AbstractEntity implements Serializable, Add
     @Size(max = 255, message = "Field value is too long.")
     private String address1 = "";
 
+    @Column(name = "address_2")
+    @Size(max = 255, message = "Field value is too long.")
+    private String address2 = "";
+
     @NotNull
     @Column(name = "city", nullable = false)
     @Size(max = 255, message = "Field value is too long.")
@@ -86,6 +90,19 @@ public class PhysicalAddress extends AbstractEntity implements Serializable, Add
 
     public PhysicalAddress address1(String address1) {
         this.address1 = address1;
+        return this;
+    }
+
+    public String getAddress2() {
+        return address2;
+    }
+
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
+
+    public PhysicalAddress address2(String address2) {
+        this.address2 = address2;
         return this;
     }
 

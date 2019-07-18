@@ -171,6 +171,7 @@ public class ShelterTechCompleteDataAdapterTest {
 
         assertEquals("Room 540", result.getAttention());
         assertEquals("1233 90th St.", result.getAddress1());
+        assertEquals("#78", result.getAddress2());
         assertEquals("San Francisco", result.getCity());
         assertEquals("CA", result.getStateProvince());
         assertEquals("65454", result.getPostalCode());
@@ -186,6 +187,7 @@ public class ShelterTechCompleteDataAdapterTest {
 
         assertEquals("Room 540", result.getAttention());
         assertEquals("1233 90th St.", result.getAddress1());
+        assertEquals("#78", result.getAddress2());
         assertEquals("San Francisco", result.getCity());
         assertEquals("CA", result.getStateProvince());
         assertEquals("65454", result.getPostalCode());
@@ -242,7 +244,7 @@ public class ShelterTechCompleteDataAdapterTest {
         assertEquals("22:00", result.get(0).getOpensAt());
         assertNull(result.get(0).getClosesAt());
         assertEquals((Integer) 2, result.get(1).getWeekday());
-        assertNull(result.get(1).getOpensAt());
+        assertEquals("22:00", result.get(1).getOpensAt());
         assertEquals("06:00", result.get(1).getClosesAt());
     }
 }

@@ -41,6 +41,12 @@ export class PostalAddressDetail extends React.Component<IPostalAddressDetailPro
             </dt>
             <dd>{postalAddressEntity.address1}</dd>
             <dt>
+              <span id="address2">
+                <Translate contentKey="serviceNetApp.postalAddress.address2">Address 2</Translate>
+              </span>
+            </dt>
+            <dd>{postalAddressEntity.address2}</dd>
+            <dt>
               <span id="city">
                 <Translate contentKey="serviceNetApp.postalAddress.city">City</Translate>
               </span>
