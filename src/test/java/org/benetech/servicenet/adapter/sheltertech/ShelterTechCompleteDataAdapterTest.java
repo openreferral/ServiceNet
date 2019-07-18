@@ -244,7 +244,7 @@ public class ShelterTechCompleteDataAdapterTest {
         assertEquals("22:00", result.get(0).getOpensAt());
         assertNull(result.get(0).getClosesAt());
         assertEquals((Integer) 2, result.get(1).getWeekday());
-        assertNull(result.get(1).getOpensAt());
+        assertEquals("22:00", result.get(1).getOpensAt());
         assertEquals("06:00", result.get(1).getClosesAt());
     }
 }
