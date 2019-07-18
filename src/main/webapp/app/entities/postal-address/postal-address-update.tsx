@@ -115,6 +115,12 @@ export class PostalAddressUpdate extends React.Component<IPostalAddressUpdatePro
                   />
                 </AvGroup>
                 <AvGroup>
+                  <Label id="address2Label" for="address2">
+                    <Translate contentKey="serviceNetApp.postalAddress.address2">Address 2</Translate>
+                  </Label>
+                  <AvField id="postal-address-address2" type="text" name="address2" />
+                </AvGroup>
+                <AvGroup>
                   <Label id="cityLabel" for="city">
                     <Translate contentKey="serviceNetApp.postalAddress.city">City</Translate>
                   </Label>

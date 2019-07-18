@@ -171,6 +171,7 @@ public class ShelterTechCompleteDataAdapterTest {
 
         assertEquals("Room 540", result.getAttention());
         assertEquals("1233 90th St.", result.getAddress1());
+        assertEquals("#78", result.getAddress2());
         assertEquals("San Francisco", result.getCity());
         assertEquals("CA", result.getStateProvince());
         assertEquals("65454", result.getPostalCode());
@@ -186,6 +187,7 @@ public class ShelterTechCompleteDataAdapterTest {
 
         assertEquals("Room 540", result.getAttention());
         assertEquals("1233 90th St.", result.getAddress1());
+        assertEquals("#78", result.getAddress2());
         assertEquals("San Francisco", result.getCity());
         assertEquals("CA", result.getStateProvince());
         assertEquals("65454", result.getPostalCode());

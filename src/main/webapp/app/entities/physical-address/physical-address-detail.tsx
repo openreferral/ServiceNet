@@ -42,6 +42,12 @@ export class PhysicalAddressDetail extends React.Component<IPhysicalAddressDetai
             </dt>
             <dd>{physicalAddressEntity.address1}</dd>
             <dt>
+              <span id="address2">
+                <Translate contentKey="serviceNetApp.physicalAddress.address2">Address 2</Translate>
+              </span>
+            </dt>
+            <dd>{physicalAddressEntity.address2}</dd>
+            <dt>
               <span id="city">
                 <Translate contentKey="serviceNetApp.physicalAddress.city">City</Translate>
               </span>

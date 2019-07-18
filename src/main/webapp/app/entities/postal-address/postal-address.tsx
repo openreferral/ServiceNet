@@ -45,6 +45,9 @@ export class PostalAddress extends React.Component<IPostalAddressProps> {
                   <Translate contentKey="serviceNetApp.postalAddress.address1">Address 1</Translate>
                 </th>
                 <th>
+                  <Translate contentKey="serviceNetApp.postalAddress.address2">Address 2</Translate>
+                </th>
+                <th>
                   <Translate contentKey="serviceNetApp.postalAddress.city">City</Translate>
                 </th>
                 <th>
@@ -75,6 +78,7 @@ export class PostalAddress extends React.Component<IPostalAddressProps> {
                   </td>
                   <td>{postalAddress.attention}</td>
                   <td>{postalAddress.address1}</td>
+                  <td>{postalAddress.address2}</td>
                   <td>{postalAddress.city}</td>
                   <td>{postalAddress.region}</td>
                   <td>{postalAddress.stateProvince}</td>

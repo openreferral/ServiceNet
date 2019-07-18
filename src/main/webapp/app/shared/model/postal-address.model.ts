@@ -2,6 +2,7 @@ export interface IPostalAddress {
   id?: number;
   attention?: string;
   address1?: string;
+  address2?: string;
   city?: string;
   region?: string;
   stateProvince?: string;
