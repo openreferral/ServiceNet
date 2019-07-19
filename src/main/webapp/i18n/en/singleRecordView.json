@@ -24,6 +24,8 @@
       "contactsTitle": "Contacts",
       "prev": "Prev",
       "next": "Next",
+      "expandAll": "Expand All Sections",
+      "collapseAll": "Collapse All Sections",
       "seeAnotherRecord": "See another record",
       "seeAnotherLocation": "See another location",
       "seeAnotherService": "See another service",

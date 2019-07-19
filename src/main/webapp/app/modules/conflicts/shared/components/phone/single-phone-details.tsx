@@ -25,7 +25,7 @@ export interface ISinglePhoneDetailsState {
 
 export class SinglePhoneDetails extends React.Component<ISinglePhoneDetailsProp, ISinglePhoneDetailsState> {
   state: ISinglePhoneDetailsState = {
-    isAreaOpen: false
+    isAreaOpen: true
   };
 
   toggleAreaOpen = () => {

@@ -27,6 +27,7 @@ export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   isOnlyOne: boolean;
   columnSize: number;
   showClipboard: boolean;
+  isAreaOpen: boolean;
 }
 
 export interface ISingleServiceDetailsState {
@@ -35,7 +36,7 @@ export interface ISingleServiceDetailsState {
 
 export class SingleServiceDetails extends React.Component<ISingleServiceDetailsProp, ISingleServiceDetailsState> {
   state: ISingleServiceDetailsState = {
-    isAreaOpen: false
+    isAreaOpen: this.props.isAreaOpen
   };
 
   toggleAreaOpen = () => {

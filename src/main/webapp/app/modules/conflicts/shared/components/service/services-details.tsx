@@ -10,15 +10,18 @@ export interface IServicesDetailsProp extends StateProps, DispatchProps {
   columnSize: number;
   services: IServiceRecord[];
   showClipboard: boolean;
+  isAreaOpen: boolean;
 }
 
 export interface IServicesDetailsState {
   serviceNumber: number;
+  isAreaOpen: boolean;
 }
 
 export class ServicesDetails extends React.Component<IServicesDetailsProp, IServicesDetailsState> {
   state: IServicesDetailsState = {
-    serviceNumber: 0
+    serviceNumber: 0,
+    isAreaOpen: this.props.isAreaOpen
   };
 
   changeRecord = offset => {
@@ -33,7 +36,7 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
   };
 
   render() {
-    const { services } = this.props;
+    const { services, isAreaOpen } = this.props;
     const { serviceNumber } = this.state;
     const record = services[serviceNumber];
     const serviceDetails =
@@ -44,6 +47,7 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
           isOnlyOne={services.length <= 1}
           record={record}
           servicesCount={`(${serviceNumber + 1}/${services.length}) `}
+          isAreaOpen={isAreaOpen}
         />
       ) : null;
 

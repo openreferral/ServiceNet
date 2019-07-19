@@ -20,9 +20,9 @@ export class Details extends React.Component<IDetailsProp> {
     return (
       <div>
         <OrganizationDetails {...this.props} sideSection={null} columnSize={columnSize} />
-        <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} />
-        <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} />
-        <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} />
+        <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} isAreaOpen={false} />
+        <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} isAreaOpen={false} />
+        <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} isAreaOpen={false} />
       </div>
     );
   }
