@@ -10,6 +10,9 @@ public final class UrlNormalizationUtils {
     private static final String TRAILING = "/";
 
     public static String normalize(String url) {
+        if (url == null) {
+            return null;
+        }
         String result = url.replaceAll(" ", "");
 
         if (result.toUpperCase(Locale.ROOT).startsWith(HTTP)) {
@@ -26,7 +29,7 @@ public final class UrlNormalizationUtils {
         }
         return result;
     }
-
+    
     private UrlNormalizationUtils() {
     }
 }

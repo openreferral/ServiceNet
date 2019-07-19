@@ -32,11 +32,11 @@ public abstract class AbstractDetector<T extends AbstractEntity> {
         return notEquals(currentValue, offeredValue);
     }
 
-    private boolean detect(String currentValue, String offeredValue) {
+    protected boolean detect(String currentValue, String offeredValue) {
         return !areEquals(currentValue, offeredValue);
     }
 
-    private <Y> Conflict createConflict(T current, T offered, Y currentValue, Y offeredValue, String fieldName) {
+    protected <Y> Conflict createConflict(T current, T offered, Y currentValue, Y offeredValue, String fieldName) {
         return Conflict.builder()
             .resourceId(current.getId())
             .partnerResourceId(offered.getId())
