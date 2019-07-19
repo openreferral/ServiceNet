@@ -73,7 +73,7 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
 
     @Override
     public List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context) {
-        if (address.getAddress() == null) {
+        if (address == null || address.getAddress() == null) {
             return new ArrayList<>();
         }
 
