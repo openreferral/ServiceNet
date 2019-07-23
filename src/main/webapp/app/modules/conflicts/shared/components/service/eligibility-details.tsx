@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from '../additional-details';
 import { IEligibility } from 'app/shared/model/eligibility.model';
-import { getTextField } from 'app/shared/util/single-record-view-utils';
+import { getTextAreaField } from 'app/shared/util/single-record-view-utils';
 
 export interface IEligibilityDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -15,7 +15,7 @@ export interface IEligibilityDetailsProp extends StateProps, DispatchProps {
 export class EligibilityDetails extends React.Component<IEligibilityDetailsProp> {
   render() {
     const eligibility = this.props.eligibility ? this.props.eligibility : {};
-    const fields = [getTextField(eligibility, 'eligibility')];
+    const fields = [getTextAreaField(eligibility, 'eligibility')];
 
     return (
       <AdditionalDetails
