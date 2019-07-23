@@ -2,6 +2,7 @@ package org.benetech.servicenet.config;
 
 import io.github.jhipster.config.JHipsterProperties;
 import io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory;
+import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -34,6 +35,7 @@ public class CacheConfiguration {
     @Bean
     public JCacheManagerCustomizer cacheManagerCustomizer() {
         return cm -> {
+            cm.createCache(GeocodingResultRepository.ADDRESS_CACHE, jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.repository.UserRepository.USERS_BY_LOGIN_CACHE, jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.repository.UserRepository.USERS_BY_EMAIL_CACHE, jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Authority.class.getName(), jcacheConfiguration);
@@ -77,6 +79,8 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".accessibilities",
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".phones",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".geocodingResults",
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.PhysicalAddress.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.PostalAddress.class.getName(), jcacheConfiguration);

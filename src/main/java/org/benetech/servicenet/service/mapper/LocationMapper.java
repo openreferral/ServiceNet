@@ -1,17 +1,17 @@
 package org.benetech.servicenet.service.mapper;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
+import java.util.UUID;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.service.dto.LocationDTO;
+
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.UUID;
-
-import static org.mapstruct.ReportingPolicy.IGNORE;
-
 /**
- * Mapper for the entity Location and its DTO LocationDTO.
+ * Mapper for the entity {@link Location} and its DTO {@link LocationDTO}.
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = IGNORE)
 public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
@@ -22,6 +22,7 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
     @Mapping(target = "holidaySchedules", ignore = true)
     @Mapping(target = "langs", ignore = true)
     @Mapping(target = "accessibilities", ignore = true)
+    @Mapping(target = "geocodingResults", ignore = true)
     Location toEntity(LocationDTO locationDTO);
 
     @Mapping(source = "organization.id", target = "organizationId")

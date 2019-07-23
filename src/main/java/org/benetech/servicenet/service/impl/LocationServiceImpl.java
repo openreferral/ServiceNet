@@ -1,12 +1,15 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.LocationRepository;
+import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +33,16 @@ public class LocationServiceImpl implements LocationService {
 
     private final LocationMapper locationMapper;
 
-    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper) {
+    private final GeocodingResultService geocodingResultService;
+
+    @Value("${similarity-ratio.credentials.google-api}")
+    private String googleApiKey;
+
+    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper,
+        GeocodingResultService geocodingResultService) {
         this.locationRepository = locationRepository;
         this.locationMapper = locationMapper;
+        this.geocodingResultService = geocodingResultService;
     }
 
     /**
@@ -50,6 +60,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location save(Location location) {
+        location.setGeocodingResults(
+            geocodingResultService.findAllForAddressOrFetchIfEmpty(
+                location.getPhysicalAddress(), new MatchingContext(googleApiKey)));
         return locationRepository.save(location);
     }
 

@@ -32,91 +32,110 @@ export class Location extends React.Component<ILocationProps> {
           </Link>
         </h2>
         <div className="table-responsive">
-          <Table responsive>
-            <thead>
-              <tr>
-                <th>
-                  <Translate contentKey="global.field.id">ID</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.name">Name</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.alternateName">Alternate Name</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.description">Description</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.organization">Organization</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.transportation">Transportation</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.latitude">Latitude</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.longitude">Longitude</Translate>
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.externalDbId" />
-                </th>
-                <th>
-                  <Translate contentKey="serviceNetApp.location.providerName" />
-                </th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {locationList.map((location, i) => (
-                <tr key={`entity-${i}`}>
-                  <td>
-                    <Button tag={Link} to={`${match.url}/${location.id}`} color="link" size="sm">
-                      {location.id}
-                    </Button>
-                  </td>
-                  <td>{location.name}</td>
-                  <td>{location.alternateName}</td>
-                  <td>{location.description}</td>
-                  <td>
-                    {location.organizationName ? (
-                      <Link to={`organization/${location.organizationId}`}>{location.organizationName}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
-                  <td>{location.transportation}</td>
-                  <td>{location.latitude}</td>
-                  <td>{location.longitude}</td>
-                  <td>{location.externalDbId}</td>
-                  <td>{location.providerName}</td>
-                  <td className="text-right">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${location.id}`} color="info" size="sm">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                      </Button>
-                      <Button tag={Link} to={`${match.url}/${location.id}/edit`} color="primary" size="sm">
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                      </Button>
-                      <Button tag={Link} to={`${match.url}/${location.id}/delete`} color="danger" size="sm">
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.delete">Delete</Translate>
-                        </span>
-                      </Button>
-                    </div>
-                  </td>
+          {locationList && locationList.length > 0 ? (
+            <Table responsive>
+              <thead>
+                <tr>
+                  <th>
+                    <Translate contentKey="global.field.id">ID</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.name">Name</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.alternateName">Alternate Name</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.description">Description</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.organization">Organization</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.transportation">Transportation</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.latitude">Latitude</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.longitude">Longitude</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.externalDbId">External Db Id</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.providerName">Provider Name</Translate>
+                  </th>
+                  <th>
+                    <Translate contentKey="serviceNetApp.location.geocodingResults">Geocoding Results</Translate>
+                  </th>
+                  <th />
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {locationList.map((location, i) => (
+                  <tr key={`entity-${i}`}>
+                    <td>
+                      <Button tag={Link} to={`${match.url}/${location.id}`} color="link" size="sm">
+                        {location.id}
+                      </Button>
+                    </td>
+                    <td>{location.name}</td>
+                    <td>{location.alternateName}</td>
+                    <td>{location.description}</td>
+                    <td>
+                      {location.organizationName ? (
+                        <Link to={`organization/${location.organizationId}`}>{location.organizationName}</Link>
+                      ) : (
+                        ''
+                      )}
+                    </td>
+                    <td>{location.transportation}</td>
+                    <td>{location.latitude}</td>
+                    <td>{location.longitude}</td>
+                    <td>{location.externalDbId}</td>
+                    <td>{location.providerName}</td>
+                    <td>
+                      {location.geocodingResults
+                        ? location.geocodingResults.map((val, j) => (
+                            <span key={j}>
+                              <Link to={`geocoding-result/${val.id}`}>{val.address}</Link>
+                              {j === location.geocodingResults.length - 1 ? '' : ', '}
+                            </span>
+                          ))
+                        : null}
+                    </td>
+                    <td className="text-right">
+                      <div className="btn-group flex-btn-group-container">
+                        <Button tag={Link} to={`${match.url}/${location.id}`} color="info" size="sm">
+                          <FontAwesomeIcon icon="eye" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.view">View</Translate>
+                          </span>
+                        </Button>
+                        <Button tag={Link} to={`${match.url}/${location.id}/edit`} color="primary" size="sm">
+                          <FontAwesomeIcon icon="pencil-alt" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.edit">Edit</Translate>
+                          </span>
+                        </Button>
+                        <Button tag={Link} to={`${match.url}/${location.id}/delete`} color="danger" size="sm">
+                          <FontAwesomeIcon icon="trash" />{' '}
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="entity.action.delete">Delete</Translate>
+                          </span>
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          ) : (
+            <div className="alert alert-warning">
+              <Translate contentKey="serviceNetApp.location.home.notFound">No Locations found</Translate>
+            </div>
+          )}
         </div>
       </div>
     );

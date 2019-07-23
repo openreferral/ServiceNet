@@ -39,6 +39,8 @@ public interface OrganizationService {
 
     List<Organization> findAllOthers(String providerName);
 
+    List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds);
+
     /**
      * Get all the OrganizationDTO where Funding is null.
      *

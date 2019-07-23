@@ -4,7 +4,8 @@
       "home": {
         "title": "Locations",
         "createLabel": "Create a new Location",
-        "createOrEditLabel": "Create or edit a Location"
+        "createOrEditLabel": "Create or edit a Location",
+        "notFound": "No Location found"
       },
       "created": "A new Location is created with identifier {{ param }}",
       "updated": "A Location is updated with identifier {{ param }}",
@@ -22,14 +23,15 @@
       "organization": "Organization",
       "latitude": "Latitude",
       "longitude": "Longitude",
-      "externalDbId": "External Database Id",
+      "externalDbId": "External Db Id",
       "providerName": "Provider Name",
       "physicalAddress": "Physical Address",
       "postalAddress": "Postal Address",
       "regularSchedule": "Regular Schedule",
       "holidaySchedule": "Holiday Schedule",
       "langs": "Langs",
-      "accessibilities": "Accessibilities"
+      "accessibilities": "Accessibilities",
+      "geocodingResults": "Geocoding Results"
     }
   }
 }
