@@ -10,15 +10,18 @@ export interface ILocationsDetailsProp extends StateProps, DispatchProps {
   columnSize: number;
   locations: ILocationRecord[];
   showClipboard: boolean;
+  isAreaOpen: boolean;
 }
 
 export interface ILocationsDetailsState {
   locationNumber: number;
+  isAreaOpen: boolean;
 }
 
 export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILocationsDetailsState> {
   state: ILocationsDetailsState = {
-    locationNumber: 0
+    locationNumber: 0,
+    isAreaOpen: this.props.isAreaOpen
   };
 
   changeRecord = offset => {
@@ -33,7 +36,7 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
   };
 
   render() {
-    const { locations } = this.props;
+    const { locations, isAreaOpen } = this.props;
     const { locationNumber } = this.state;
     const record = locations[locationNumber];
     const locationDetails =
@@ -44,6 +47,7 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
           isOnlyOne={locations.length <= 1}
           record={record}
           locationsCount={`(${locationNumber + 1}/${locations.length}) `}
+          isAreaOpen={isAreaOpen}
         />
       ) : null;
 

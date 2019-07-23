@@ -17,6 +17,7 @@ export interface ISingleContactDetailsProp extends StateProps, DispatchProps {
   isOnlyOne: boolean;
   columnSize: number;
   showClipboard: boolean;
+  isAreaOpen: boolean;
 }
 
 export interface ISingleContactDetailsState {
@@ -25,7 +26,7 @@ export interface ISingleContactDetailsState {
 
 export class SingleContactDetails extends React.Component<ISingleContactDetailsProp, ISingleContactDetailsState> {
   state: ISingleContactDetailsState = {
-    isAreaOpen: false
+    isAreaOpen: this.props.isAreaOpen
   };
 
   toggleAreaOpen = () => {

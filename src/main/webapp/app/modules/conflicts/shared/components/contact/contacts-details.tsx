@@ -10,15 +10,18 @@ export interface IContactsDetailsProp extends StateProps, DispatchProps {
   contacts: IContact[];
   columnSize: number;
   showClipboard: boolean;
+  isAreaOpen: boolean;
 }
 
 export interface IContactsDetailsState {
   contactsNumber: number;
+  isAreaOpen: boolean;
 }
 
 export class ContactsDetails extends React.Component<IContactsDetailsProp, IContactsDetailsState> {
   state: IContactsDetailsState = {
-    contactsNumber: 0
+    contactsNumber: 0,
+    isAreaOpen: this.props.isAreaOpen
   };
 
   changeRecord = () => {
@@ -30,7 +33,7 @@ export class ContactsDetails extends React.Component<IContactsDetailsProp, ICont
   };
 
   render() {
-    const { contacts } = this.props;
+    const { contacts, isAreaOpen } = this.props;
     const { contactsNumber } = this.state;
     const contact = contacts[contactsNumber];
     const contactDetails =
@@ -41,6 +44,7 @@ export class ContactsDetails extends React.Component<IContactsDetailsProp, ICont
           isOnlyOne={contacts.length <= 1}
           contact={contact}
           contactsCount={`(${contactsNumber + 1}/${contacts.length}) `}
+          isAreaOpen={isAreaOpen}
         />
       ) : null;
 

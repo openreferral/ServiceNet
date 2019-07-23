@@ -10,6 +10,7 @@ import { ServicesDetails } from '../shared/components/service/services-details';
 import { ContactsDetails } from '../shared/components/contact/contacts-details';
 import { Col, Jumbotron } from 'reactstrap';
 import { Translate } from 'react-jhipster';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactGA from 'react-ga';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
@@ -23,11 +24,13 @@ export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteC
 
 export interface ISingleRecordViewState {
   activeTab: string;
+  isAreaOpen: boolean;
 }
 
 export class Details extends React.Component<ISingleRecordViewProp, ISingleRecordViewState> {
   state: ISingleRecordViewState = {
-    activeTab: '1'
+    activeTab: '1',
+    isAreaOpen: false
   };
 
   toggle = tab => {
@@ -36,6 +39,12 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
         activeTab: tab
       });
     }
+  };
+
+  toggleAreaOpen = () => {
+    this.setState({
+      isAreaOpen: !this.state.isAreaOpen
+    });
   };
 
   handleMatchClick = () => {
@@ -91,12 +100,33 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
     );
 
     const columnSize = 6;
+    const { isAreaOpen } = this.state;
+
     return (
       <div>
         <OrganizationDetails {...this.props} sideSection={sideSection} columnSize={columnSize} />
-        <LocationsDetails {...this.props} locations={activity.locations} columnSize={columnSize} />
-        <ServicesDetails {...this.props} services={activity.services} columnSize={columnSize} />
-        <ContactsDetails {...this.props} contacts={activity.contacts} columnSize={columnSize} />
+        <h5 className="expandBtn">
+          <div className="collapseBtn" onClick={this.toggleAreaOpen}>
+            <div className="collapseIcon">
+              <FontAwesomeIcon size="xs" icon={isAreaOpen ? 'angle-up' : 'angle-down'} />
+            </div>
+            <Translate contentKey={isAreaOpen ? 'singleRecordView.details.collapseAll' : 'singleRecordView.details.expandAll'} />
+          </div>
+        </h5>
+        {isAreaOpen ? (
+          <div>
+            <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} isAreaOpen />
+            <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} isAreaOpen />
+            <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} isAreaOpen />
+          </div>
+        ) : null}
+        {isAreaOpen ? null : (
+          <div>
+            <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} isAreaOpen={false} />
+            <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} isAreaOpen={false} />
+            <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} isAreaOpen={false} />
+          </div>
+        )}
       </div>
     );
   }

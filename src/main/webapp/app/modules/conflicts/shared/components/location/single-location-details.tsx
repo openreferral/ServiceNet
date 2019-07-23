@@ -22,6 +22,7 @@ export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   isOnlyOne: boolean;
   columnSize: number;
   showClipboard: boolean;
+  isAreaOpen: boolean;
 }
 
 export interface ISingleLocationDetailsState {
@@ -30,7 +31,7 @@ export interface ISingleLocationDetailsState {
 
 export class SingleLocationDetails extends React.Component<ISingleLocationDetailsProp, ISingleLocationDetailsState> {
   state: ISingleLocationDetailsState = {
-    isAreaOpen: false
+    isAreaOpen: this.props.isAreaOpen
   };
 
   toggleAreaOpen = () => {
