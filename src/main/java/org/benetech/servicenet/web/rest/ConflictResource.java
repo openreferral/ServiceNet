@@ -6,8 +6,13 @@ import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,14 +51,14 @@ public class ConflictResource {
      * POST  /conflicts : Create a new conflict.
      *
      * @param conflictDTO the conflictDTO to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new conflictDTO, or with status
+     * @return the ResponseEntity with status 201 (Created) and with body the new conflictDTO, or with status 
      * 400 (Bad Request) if the conflict has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/conflicts")
     @Timed
-    public ResponseEntity<ConflictDTO> createConflict(@Valid @RequestBody ConflictDTO conflictDTO)
-        throws URISyntaxException {
+    public ResponseEntity<ConflictDTO> createConflict(@Valid @RequestBody ConflictDTO conflictDTO) 
+    throws URISyntaxException {
         log.debug("REST request to save Conflict : {}", conflictDTO);
         if (conflictDTO.getId() != null) {
             throw new BadRequestAlertException("A new conflict cannot already have an ID", ENTITY_NAME, "idexists");
@@ -75,8 +80,8 @@ public class ConflictResource {
      */
     @PutMapping("/conflicts")
     @Timed
-    public ResponseEntity<ConflictDTO> updateConflict(@Valid @RequestBody ConflictDTO conflictDTO)
-        throws URISyntaxException {
+    public ResponseEntity<ConflictDTO> updateConflict(@Valid @RequestBody ConflictDTO conflictDTO) 
+    throws URISyntaxException {
         log.debug("REST request to update Conflict : {}", conflictDTO);
         if (conflictDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -90,13 +95,16 @@ public class ConflictResource {
     /**
      * GET  /conflicts : get all the conflicts.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of conflicts in body
      */
     @GetMapping("/conflicts")
     @Timed
-    public List<ConflictDTO> getAllConflicts() {
-        log.debug("REST request to get all Conflicts");
-        return conflictService.findAll();
+    public ResponseEntity<List<ConflictDTO>> findAll(Pageable pageable) {
+        log.debug("REST request to get a page of Conflicts");
+        Page<ConflictDTO> page = conflictService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/conflicts");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

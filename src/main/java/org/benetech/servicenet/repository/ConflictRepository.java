@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Conflict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +34,8 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
 
     List<Conflict> findByResourceIdAndPartnerResourceIdAndState(
         UUID resourceId, UUID partnerResourceId, ConflictStateEnum state);
+
+    List<Conflict> findAll();
+    
+    Page<Conflict> findAll(Pageable pageable);
 }
