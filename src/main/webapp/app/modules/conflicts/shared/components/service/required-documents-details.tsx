@@ -6,7 +6,7 @@ import { AdditionalDetails } from '../additional-details';
 import { IRequiredDocument } from 'app/shared/model/required-document.model';
 import { Translate } from 'react-jhipster';
 import { Badge } from 'reactstrap';
-import { getTextField } from 'app/shared/util/single-record-view-utils';
+import { getTextAreaField } from 'app/shared/util/single-record-view-utils';
 
 export interface IRequiredDocumentsDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -17,7 +17,7 @@ export interface IRequiredDocumentsDetailsProp extends StateProps, DispatchProps
 export class RequiredDocumentsDetails extends React.Component<IRequiredDocumentsDetailsProp> {
   render() {
     const { docs } = this.props;
-    const fields = docs.map(document => getTextField(document, 'document'));
+    const fields = docs.map(document => getTextAreaField(document, 'document'));
 
     return fields.length > 0 ? (
       <AdditionalDetails
