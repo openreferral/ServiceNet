@@ -160,8 +160,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
                 .map(m -> m.getPartnerVersion().getId())
                 .collect(Collectors.toList());
+
             List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getAccount().getName());
+
             findAndPersistMatches(organization, notMatchedOrgs, context);
+
             detectConflictsForCurrentMatches(organization);
         } else {
             removeMatches(findCurrentMatches(organization));
@@ -228,13 +231,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     }
 
     private List<Organization> findNotMatchedOrgs(List<UUID> currentMatchesIds, String providerName) {
-        return organizationService.findAllOthers(providerName).stream()
-            .filter(o -> !currentMatchesIds.contains(o.getId()))
-            .collect(Collectors.toList());
+        return organizationService.findAllOthersExcept(providerName, currentMatchesIds);
     }
 
     private List<OrganizationMatch> findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs,
-                                                          MatchingContext context) {
+        MatchingContext context) {
         List<OrganizationMatch> matches = new LinkedList<>();
         long startTime = System.currentTimeMillis();
         //TODO: Remove time counting logic (#264)

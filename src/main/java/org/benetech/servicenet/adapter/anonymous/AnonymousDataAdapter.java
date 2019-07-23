@@ -11,6 +11,7 @@ import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,9 @@ public class AnonymousDataAdapter extends SingleDataAdapter {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private LocationService locationService;
+
     @Override
     public DataImportReport importData(SingleImportData data) {
         Type listType = new TypeToken<ArrayList<RawData>>() {
@@ -42,7 +46,7 @@ public class AnonymousDataAdapter extends SingleDataAdapter {
         //TODO: handle updates in reports as well
         for (RawData rawData : entries) {
             Location location = mapper.extractLocation(rawData);
-            em.persist(location);
+            locationService.save(location);
 
             Organization organization = mapper.extractOrganization(rawData)
                 .locations(Collections.singleton(location))

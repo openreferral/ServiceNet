@@ -70,16 +70,29 @@ export class LocationDetail extends React.Component<ILocationDetailProps> {
             <dd>{locationEntity.longitude}</dd>
             <dt>
               <span id="externalDbId">
-                <Translate contentKey="serviceNetApp.location.externalDbId" />
+                <Translate contentKey="serviceNetApp.location.externalDbId">External Db Id</Translate>
               </span>
             </dt>
             <dd>{locationEntity.externalDbId}</dd>
             <dt>
               <span id="providerName">
-                <Translate contentKey="serviceNetApp.location.providerName" />
+                <Translate contentKey="serviceNetApp.location.providerName">Provider Name</Translate>
               </span>
             </dt>
             <dd>{locationEntity.providerName}</dd>
+            <dt>
+              <Translate contentKey="serviceNetApp.location.geocodingResults">Geocoding Results</Translate>
+            </dt>
+            <dd>
+              {locationEntity.geocodingResults
+                ? locationEntity.geocodingResults.map((val, i) => (
+                    <span key={val.id}>
+                      <a>{val.address}</a>
+                      {i === locationEntity.geocodingResults.length - 1 ? '' : ', '}
+                    </span>
+                  ))
+                : null}
+            </dd>
           </dl>
           <Button tag={Link} to="/entity/location" replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}

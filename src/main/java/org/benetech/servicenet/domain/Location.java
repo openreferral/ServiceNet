@@ -3,6 +3,11 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.maps.model.LatLng;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
@@ -95,6 +100,13 @@ public class Location extends AbstractEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
 
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "location_geocoding_results",
+                       joinColumns = @JoinColumn(name = "location_id", referencedColumnName = "id"),
+                       inverseJoinColumns = @JoinColumn(name = "geocoding_results_id", referencedColumnName = "id"))
+    private List<GeocodingResult> geocodingResults = new ArrayList<>();
+
     @ManyToOne
     @JsonIgnoreProperties("locations")
     private Organization organization;
@@ -184,6 +196,11 @@ public class Location extends AbstractEntity implements Serializable {
 
     public Location langs(Set<Language> languages) {
         this.langs = languages;
+        return this;
+    }
+
+    public Location geocodingResults(List<GeocodingResult> geocodingResults) {
+        this.geocodingResults = geocodingResults;
         return this;
     }
 

@@ -52,8 +52,8 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
     private float countRatioIfCoordinatesAreMissing(Location location1, Location location2, MatchingContext context) {
         float max = NO_MATCH_RATIO;
 
-        List<GeocodingResult> baseGeocoding = getGeoCodingResult(location1, context);
-        List<GeocodingResult> partnerGeocoding = getGeoCodingResult(location2, context);
+        List<GeocodingResult> baseGeocoding = getGeoCodingResult(location1);
+        List<GeocodingResult> partnerGeocoding = getGeoCodingResult(location2);
         for (GeocodingResult result1 : baseGeocoding) {
             for (GeocodingResult result2 : partnerGeocoding) {
                 max = Math.max(max, countSimilarityRatio(result1, result2));
@@ -63,9 +63,9 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
         return max;
     }
 
-    private List<GeocodingResult> getGeoCodingResult(Location location, MatchingContext context) {
+    private List<GeocodingResult> getGeoCodingResult(Location location) {
         if (coordinatesAreMissing(location)) {
-            return geocodingResultService.findAllForAddressOrFetchIfEmpty(location.getPhysicalAddress(), context);
+            return location.getGeocodingResults();
         } else {
             return singletonList(new GeocodingResult(location.getName(), location.getLatitude(), location.getLongitude()));
         }

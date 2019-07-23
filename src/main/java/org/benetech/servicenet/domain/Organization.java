@@ -90,11 +90,11 @@ public class Organization extends AbstractEntity implements Serializable {
     @JoinColumn(unique = true)
     private Organization replacedBy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private DocumentUpload sourceDocument;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties("")
     private SystemAccount account;
@@ -103,19 +103,19 @@ public class Organization extends AbstractEntity implements Serializable {
     @JsonIgnore
     private Funding funding;
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Location> locations = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Program> programs = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Service> services = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Contact> contacts = new HashSet<>();
 

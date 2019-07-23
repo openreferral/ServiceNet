@@ -1,42 +1,69 @@
 package org.benetech.servicenet.service.dto;
 
-import lombok.Data;
-
-import javax.persistence.Lob;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import javax.persistence.Lob;
+import javax.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * A DTO for the Location entity.
+ * A DTO for the {@link org.benetech.servicenet.domain.Location} entity.
  */
-@Data
 public class LocationDTO implements Serializable {
 
+    @Getter
+    @Setter
     private UUID id;
 
     @NotNull
+    @Getter
+    @Setter
     private String name;
 
+    @Getter
+    @Setter
     private String alternateName;
 
     @Lob
+    @Getter
+    @Setter
     private String description;
 
+    @Getter
+    @Setter
     private String transportation;
 
+    @Getter
+    @Setter
     private Double latitude;
 
+    @Getter
+    @Setter
     private Double longitude;
 
+    @Getter
+    @Setter
     private String externalDbId;
 
+    @Getter
+    @Setter
     private String providerName;
 
+    @Getter
+    @Setter
     private UUID organizationId;
 
+    @Getter
+    @Setter
     private String organizationName;
+
+    @Getter
+    @Setter
+    private List<GeocodingResultDTO> geocodingResults = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
@@ -68,8 +95,9 @@ public class LocationDTO implements Serializable {
             ", description='" + getDescription() + "'" +
             ", transportation='" + getTransportation() + "'" +
             ", latitude=" + getLatitude() +
-            ", Longitude=" + getLongitude() +
-            ", organization=" + getOrganizationId() +
+            ", longitude=" + getLongitude() +
+            ", externalDbId='" + getExternalDbId() + "'" +
+            ", providerName='" + getProviderName() + "'" +
             "}";
     }
 }

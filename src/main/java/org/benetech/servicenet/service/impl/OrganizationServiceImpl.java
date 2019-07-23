@@ -90,6 +90,19 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.findAllByProviderNameNot(providerName);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds) {
+        log.debug("Request to get all Organizations which are not associated with provider: {} and not in: {}",
+            providerName, exceptIds);
+        if (exceptIds.size() > 0) {
+            return organizationRepository
+                .findAllByProviderNameNotAnAndIdNotIn(providerName, exceptIds);
+        } else {
+            return organizationRepository.findAllByProviderNameNot(providerName);
+        }
+    }
+
     /**
      * get all the organizations where Funding is null.
      *

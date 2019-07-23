@@ -30,11 +30,11 @@
             "fieldType": "Double"
         },
         {
-            "fieldName": "external_db_id",
+            "fieldName": "externalDbId",
             "fieldType": "String"
         },
         {
-            "fieldName": "provider_name",
+            "fieldName": "providerName",
             "fieldType": "String"
         }
     ],
@@ -77,6 +77,15 @@
             "relationshipName": "accessibilities",
             "otherEntityName": "accessibilityForDisabilities",
             "otherEntityRelationshipName": "location"
+        },
+        {
+          "relationshipName": "geocodingResults",
+          "otherEntityName": "geocodingResult",
+          "relationshipType": "many-to-many",
+          "otherEntityField": "address",
+          "ownerSide": true,
+          "otherEntityRelationshipName": "location",
+          "otherEntityRelationshipNameUndefined": false
         }
     ],
     "changelogDate": "20181119125358",

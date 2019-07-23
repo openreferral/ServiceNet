@@ -3,6 +3,7 @@ package org.benetech.servicenet.matching;
 import com.google.maps.model.LatLng;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.matching.counter.GeoApi;
@@ -176,6 +177,8 @@ public class LocationSimilarityCounterIntTest {
 
     private Location locationOf(String address, double lat, double lng) {
         PhysicalAddress physicalAddress = new PhysicalAddress().address1(address);
-        return new Location().name(address).physicalAddress(physicalAddress).latitude(lat).longitude(lng);
+        GeocodingResult geocodingResult = new GeocodingResult().address(address).latitude(lat).longitude(lng);
+        return new Location().name(address).physicalAddress(physicalAddress).latitude(lat).longitude(lng)
+            .geocodingResults(Collections.singletonList(geocodingResult));
     }
 }
