@@ -2,7 +2,7 @@
   "serviceNetApp": {
     "serviceAtLocation": {
       "home": {
-        "title": "Service At Locations",
+        "title": "Services At Location",
         "createLabel": "Create a new Service At Location",
         "createOrEditLabel": "Create or edit a Service At Location"
       },

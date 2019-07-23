@@ -2,7 +2,7 @@
   "serviceNetApp": {
     "documentUpload": {
       "home": {
-        "title": "Document Uploads",
+        "title": "Documents Upload",
         "createLabel": "Create a new Document Upload",
         "createOrEditLabel": "Create or edit a Document Upload"
       },

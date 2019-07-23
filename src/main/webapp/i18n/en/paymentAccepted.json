@@ -2,7 +2,7 @@
   "serviceNetApp": {
     "paymentAccepted": {
       "home": {
-        "title": "Payment Accepteds",
+        "title": "Payments Accepted",
         "createLabel": "Create a new Payment Accepted",
         "createOrEditLabel": "Create or edit a Payment Accepted"
       },
