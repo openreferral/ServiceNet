@@ -3,8 +3,11 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
+import org.benetech.servicenet.scheduler.EdenTaxonomyUpdateJob;
+import org.benetech.servicenet.scheduler.SMCConnectTaxonomyUpdateJob;
 import org.benetech.servicenet.scheduler.ShelterTechDataUpdateJob;
 import org.benetech.servicenet.scheduler.UWBADataUpdateJob;
+import org.benetech.servicenet.scheduler.UWBATaxonomyUpdateJob;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.SchedulerService;
 import org.benetech.servicenet.service.dto.JobDTO;
@@ -36,6 +39,15 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Autowired
     private ShelterTechDataUpdateJob shelterTechDataUpdateJob;
+
+    @Autowired
+    private SMCConnectTaxonomyUpdateJob smcConnectTaxonomyUpdateJob;
+
+    @Autowired
+    private EdenTaxonomyUpdateJob edenTaxonomyUpdateJob;
+
+    @Autowired
+    private UWBATaxonomyUpdateJob uwbaTaxonomyUpdateJob;
 
     @Autowired
     private DataImportReportService dataImportReportService;
@@ -107,6 +119,9 @@ public class SchedulerServiceImpl implements SchedulerService {
         allBeans.add(edenDataUpdateJob);
         allBeans.add(uwbaDataUpdateJob);
         allBeans.add(shelterTechDataUpdateJob);
+        allBeans.add(smcConnectTaxonomyUpdateJob);
+        allBeans.add(edenTaxonomyUpdateJob);
+        allBeans.add(uwbaTaxonomyUpdateJob);
 
         return allBeans.stream()
             .filter(b -> b.getFullName().equals(name))

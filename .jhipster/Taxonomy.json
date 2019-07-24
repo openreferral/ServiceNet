@@ -16,6 +16,14 @@
         {
           "fieldName": "provider_name",
           "fieldType": "String"
+        },
+        {
+          "fieldName": "taxonomy_id",
+          "fieldType": "String"
+        },
+        {
+          "fieldName": "details",
+          "fieldType": "String"
         }
     ],
     "relationships": [

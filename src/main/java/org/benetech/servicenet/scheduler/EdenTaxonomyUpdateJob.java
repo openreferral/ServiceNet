@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EdenDataUpdateJob extends AbstractICarolUpdateJob {
+public class EdenTaxonomyUpdateJob extends AbstractICarolTaxonomyUpdateJob {
 
-    private static final String NAME = "Eden Data Update Job";
-    private static final String DESCRIPTION = "Collect Eden Data through iCarol API, map it to the common structure and " +
-        "persist it to the database";
+    private static final String NAME = "Eden Taxonomy Update Job";
+    private static final String DESCRIPTION = "Collect Eden Taxonomies through iCarol API,"
+        + " map it to the common structure and persist it to the database";
 
-    @Value("${scheduler.eden-data.interval}")
+    @Value("${scheduler.eden-taxonomies.interval}")
     private int intervalInSeconds;
 
     @Value("${scheduler.eden-data.api-key}")
@@ -24,7 +24,7 @@ public class EdenDataUpdateJob extends AbstractICarolUpdateJob {
     }
 
     @Override
-    protected String getSystemAccount() {
+    protected String getProviderName() {
         return EDEN_PROVIDER;
     }
 

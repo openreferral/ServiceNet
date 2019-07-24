@@ -101,6 +101,18 @@ export class TaxonomyUpdate extends React.Component<ITaxonomyUpdateProps, ITaxon
                   <AvField id="taxonomy-name" type="text" name="name" />
                 </AvGroup>
                 <AvGroup>
+                  <Label id="taxonomyIdLabel" for="taxonomyId">
+                    <Translate contentKey="serviceNetApp.taxonomy.taxonomyId">Taxonomy Id</Translate>
+                  </Label>
+                  <AvField id="taxonomy-taxonomyId" type="text" name="taxonomyId" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="detailsLabel" for="details">
+                    <Translate contentKey="serviceNetApp.taxonomy.details">Details</Translate>
+                  </Label>
+                  <AvField id="taxonomy-details" type="text" name="details" />
+                </AvGroup>
+                <AvGroup>
                   <Label id="vocabularyLabel" for="vocabulary">
                     <Translate contentKey="serviceNetApp.taxonomy.vocabulary">Vocabulary</Translate>
                   </Label>

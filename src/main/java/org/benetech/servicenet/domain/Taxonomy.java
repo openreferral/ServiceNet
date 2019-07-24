@@ -1,17 +1,18 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.Objects;
+import lombok.Data;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 /**
  * A Taxonomy.
@@ -27,6 +28,15 @@ public class Taxonomy extends AbstractEntity implements Serializable {
     @Column(name = "name")
     @Size(max = 255, message = "Field value is too long.")
     private String name;
+
+    @Column(name = "taxonomy_id")
+    @Size(max = 255, message = "Field value is too long.")
+    private String taxonomyId;
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "details", columnDefinition = "clob")
+    private String details;
 
     @Column(name = "vocabulary")
     @Size(max = 255, message = "Field value is too long.")
@@ -92,6 +102,11 @@ public class Taxonomy extends AbstractEntity implements Serializable {
 
     public Taxonomy providerName(String providerName) {
         this.providerName = providerName;
+        return this;
+    }
+
+    public Taxonomy taxonomyId(String taxonomyId) {
+        this.taxonomyId = taxonomyId;
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

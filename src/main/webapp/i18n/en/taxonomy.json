@@ -19,7 +19,9 @@
       "vocabulary": "Vocabulary",
       "parent": "Parent",
       "externalDbId": "External Database Id",
-      "providerName": "Provider Name"
+      "providerName": "Provider Name",
+      "taxonomyId": "Taxonomy Id",
+      "details": "Details"
     }
   }
 }

@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UWBADataUpdateJob extends AbstractICarolUpdateJob {
+public class UWBATaxonomyUpdateJob extends AbstractICarolTaxonomyUpdateJob {
 
-    private static final String NAME = "UWBA Data Update Job";
-    private static final String DESCRIPTION = "Collect UWBA Data through iCarol API, map it to the common structure and " +
-        "persist it to the database";
+    private static final String NAME = "UWBA Taxonomy Update Job";
+    private static final String DESCRIPTION = "Collect UWBA Taxonomies through iCarol API,"
+        + " map it to the common structure and persist it to the database";
 
-    @Value("${scheduler.uwba-data.interval}")
+    @Value("${scheduler.uwba-taxonomies.interval}")
     private int intervalInSeconds;
 
     @Value("${scheduler.uwba-data.api-key}")
@@ -24,7 +24,7 @@ public class UWBADataUpdateJob extends AbstractICarolUpdateJob {
     }
 
     @Override
-    protected String getSystemAccount() {
+    protected String getProviderName() {
         return UWBA_PROVIDER;
     }
 

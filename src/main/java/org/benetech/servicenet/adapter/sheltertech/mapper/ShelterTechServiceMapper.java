@@ -1,20 +1,21 @@
 package org.benetech.servicenet.adapter.sheltertech.mapper;
 
-import org.apache.commons.lang3.StringUtils;
-import org.benetech.servicenet.adapter.sheltertech.model.ServiceRaw;
-import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.domain.RequiredDocument;
-import org.benetech.servicenet.domain.Service;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
+import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
-import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.PROVIDER_NAME;
+import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.adapter.sheltertech.model.CategoryRaw;
+import org.benetech.servicenet.adapter.sheltertech.model.ServiceRaw;
+import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.RequiredDocument;
+import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.Taxonomy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface ShelterTechServiceMapper {
@@ -56,11 +57,16 @@ public interface ShelterTechServiceMapper {
 
         requiredDocuments.add(RequiredDocument.builder()
             .document(requiredDocumentsString)
-            .providerName(PROVIDER_NAME)
+            .providerName(SHELTER_TECH_PROVIDER)
             .build());
 
         return requiredDocuments;
     }
+
+    @Mapping(ignore = true, target = "id")
+    @Mapping(source = "id", target = "externalDbId")
+    @Mapping(constant = SHELTER_TECH_PROVIDER, target = "providerName")
+    Taxonomy taxonomyFromCategory(CategoryRaw categoryRaw);
 
     @Mapping(ignore = true, target = "id")
     @Mapping(source = "name", target = "name")
@@ -77,7 +83,7 @@ public interface ShelterTechServiceMapper {
     @Mapping(ignore = true, target = "type")
     @Mapping(ignore = true, target = "updatedAt")
     @Mapping(source = "id", target = "externalDbId")
-    @Mapping(constant = PROVIDER_NAME, target = "providerName")
+    @Mapping(constant = SHELTER_TECH_PROVIDER, target = "providerName")
     @Mapping(ignore = true, target = "organization")
     @Mapping(ignore = true, target = "program")
     @Mapping(ignore = true, target = "locations")

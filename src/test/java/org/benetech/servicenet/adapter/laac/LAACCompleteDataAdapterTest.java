@@ -1,5 +1,14 @@
 package org.benetech.servicenet.adapter.laac;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static org.benetech.servicenet.config.Constants.LAAC_PROVIDER;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -32,21 +41,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class LAACCompleteDataAdapterTest {
 
     private static final String COMPLETE_JSON = "laac/complete.json";
-    private static final String PROVIDER_NAME = "LAAC";
 
     @Autowired
     private LAACDataAdapter adapter;
@@ -91,7 +90,7 @@ public class LAACCompleteDataAdapterTest {
     public void setUp() throws IOException {
         testDatabaseManagement.clearDb();
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
-        SingleImportData importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true, null);
+        SingleImportData importData = new SingleImportData(json, new DataImportReport(), LAAC_PROVIDER, true, null);
         adapter.importData(importData);
     }
 

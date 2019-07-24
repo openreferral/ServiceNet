@@ -1,5 +1,14 @@
 package org.benetech.servicenet.adapter.smcconnect.persistence;
 
+import static org.benetech.servicenet.adapter.smcconnect.SmcConnectDataMapper.DELIMITER;
+import static org.benetech.servicenet.config.Constants.SMC_CONNECT_PROVIDER;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.SmcConnectDataMapper;
@@ -28,12 +37,9 @@ import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.manager.ImportManager;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 class PersistenceManager {
 
@@ -95,6 +101,7 @@ class PersistenceManager {
             service.setRegularSchedule(getServiceBasedRegularScheduleToPersist(smcService.getId()));
             service.setHolidaySchedules(getServiceBasedHolidaySchedulesToPersist(smcService.getId()));
             service.setPhones(getPhonesToPersist(smcService.getId()));
+            service.setTaxonomies(getServiceTaxonomiesToPersist(smcService));
 
             result.add(service);
         }
@@ -185,5 +192,23 @@ class PersistenceManager {
 
     private Funding getFundingToPersist(SmcOrganization smcOrganization) {
         return mapper.extractFunding(smcOrganization).orElse(null);
+    }
+
+    private Set<ServiceTaxonomy> getServiceTaxonomiesToPersist(SmcService smcService) {
+        Set<ServiceTaxonomy> serviceTaxonomies = new HashSet<>();
+
+        if (StringUtils.isNotBlank(smcService.getTaxonomyIds())) {
+            Arrays.stream(smcService.getTaxonomyIds().split(DELIMITER))
+                .map(String::trim)
+                .forEach(id -> {
+                    Taxonomy taxonomy = new Taxonomy().taxonomyId(id).providerName(SMC_CONNECT_PROVIDER);
+                    serviceTaxonomies.add(new ServiceTaxonomy()
+                        .taxonomy(taxonomy)
+                        .providerName(SMC_CONNECT_PROVIDER)
+                        .externalDbId(smcService.getId() + id));
+                });
+        }
+
+        return serviceTaxonomies;
     }
 }

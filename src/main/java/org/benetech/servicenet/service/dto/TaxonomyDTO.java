@@ -16,6 +16,10 @@ public class TaxonomyDTO implements Serializable {
 
     private String name;
 
+    private String taxonomyId;
+
+    private String details;
+
     private String vocabulary;
 
     private UUID parentId;

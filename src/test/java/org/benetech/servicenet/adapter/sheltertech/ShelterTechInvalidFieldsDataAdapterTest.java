@@ -1,5 +1,11 @@
 package org.benetech.servicenet.adapter.sheltertech;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
+
+import java.io.IOException;
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -24,18 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EntityManager;
-import java.io.IOException;
-import java.util.List;
-
-import static junit.framework.TestCase.assertEquals;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class ShelterTechInvalidFieldsDataAdapterTest {
 
     private static final String INVALID_FIELDS_JSON = "sheltertech/invalid_fields.json";
-    private static final String PROVIDER_NAME = "ShelterTech";
 
     @Autowired
     private ShelterTechDataAdapter adapter;
@@ -66,7 +65,7 @@ public class ShelterTechInvalidFieldsDataAdapterTest {
     @BeforeClass
     public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(INVALID_FIELDS_JSON);
-        importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true, null);
     }
 
     @Before

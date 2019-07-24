@@ -16,4 +16,6 @@ import java.util.UUID;
 public interface TaxonomyRepository extends JpaRepository<Taxonomy, UUID> {
 
     Optional<Taxonomy> findOneByExternalDbIdAndProviderName(String externalDbId, String providerName);
+
+    Optional<Taxonomy> findOneByTaxonomyIdAndProviderName(String taxonomyId, String providerName);
 }

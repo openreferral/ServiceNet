@@ -1,5 +1,26 @@
 package org.benetech.servicenet.adapter.healthleads;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.benetech.servicenet.adapter.AdapterTestsUtils.readResourceAsString;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.ELIGIBILITY;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.JSON;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LANGUAGES;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LOCATIONS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.ORGANIZATIONS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHONES;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHYSICAL_ADDRESSES;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.REQUIRED_DOCUMENTS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES_AT_LOCATION;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES_TAXONOMY;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.TAXONOMY;
+import static org.benetech.servicenet.config.Constants.HEALTHLEADS_PROVIDER;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -28,33 +49,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.benetech.servicenet.adapter.AdapterTestsUtils.readResourceAsString;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.ELIGIBILITY;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.JSON;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LANGUAGES;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LOCATIONS;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.ORGANIZATIONS;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHONES;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHYSICAL_ADDRESSES;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.REQUIRED_DOCUMENTS;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES_AT_LOCATION;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.SERVICES_TAXONOMY;
-import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.TAXONOMY;
-import static org.junit.Assert.assertTrue;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class HealthleadsInvalidFieldsDataAdapterTest {
 
     private static final String INCOMPLETE = "healthleads/invalid_fields/";
-    private static final String PROVIDER_NAME = "healthleads";
 
     @Autowired
     private HealthleadsDataAdapter adapter;
@@ -104,7 +103,7 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
             data.add(readResourceAsString(INCOMPLETE + fileName + JSON));
         }
 
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), PROVIDER_NAME, true, null);
+        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true, null);
         adapter.importData(importData);
     }
 

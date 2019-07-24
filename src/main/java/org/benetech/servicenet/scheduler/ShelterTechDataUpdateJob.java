@@ -1,7 +1,9 @@
 package org.benetech.servicenet.scheduler;
 
+import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
+
+import java.time.ZonedDateTime;
 import org.benetech.servicenet.adapter.sheltertech.ShelterTechCollector;
-import org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
@@ -11,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.time.ZonedDateTime;
 
 @Component
 public class ShelterTechDataUpdateJob extends BaseJob {
@@ -44,7 +44,7 @@ public class ShelterTechDataUpdateJob extends BaseJob {
     }
 
     protected String getSystemAccount() {
-        return ShelterTechConstants.PROVIDER_NAME;
+        return SHELTER_TECH_PROVIDER;
     }
 
     @Override

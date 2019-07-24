@@ -38,6 +38,10 @@ public interface TaxonomyService {
 
     Optional<Taxonomy> findForExternalDb(String externalDbId, String providerName);
 
+    Optional<Taxonomy> findForTaxonomyId(String taxonomyId, String providerName);
+
+    Taxonomy save(Taxonomy taxonomy);
+
     /**
      * Delete the "id" taxonomy.
      *
