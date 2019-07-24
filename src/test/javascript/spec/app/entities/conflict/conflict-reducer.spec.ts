@@ -123,8 +123,8 @@ describe('Entities reducer tests', () => {
 
   describe('Successes', () => {
     it('should fetch all entities', () => {
-      const headers = { 'x-total-count': 0 };
-      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }] };
+      const headers = { ['x-total-count']: 2 };
+      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }], headers };
       expect(
         reducer(undefined, {
           type: SUCCESS(ACTION_TYPES.FETCH_CONFLICT_LIST),
@@ -134,7 +134,7 @@ describe('Entities reducer tests', () => {
         ...initialState,
         loading: false,
         entities: payload.data,
-        totalItems: headers
+        totalItems: headers['x-total-count']
       });
     });
 
