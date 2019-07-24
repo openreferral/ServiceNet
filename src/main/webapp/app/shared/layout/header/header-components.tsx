@@ -27,7 +27,7 @@ export const BrandIcon = props => (
 
 export const Brand = props => (
   <div className="d-flex align-items-center">
-    <NavbarBrand tag={Link} to={props.isSacramento ? 'shelters' : '/'} className="brand-logo d-flex align-items-center mr-1">
+    <NavbarBrand tag={Link} to={props.isSacramento ? '/shelters' : '/'} className="brand-logo d-flex align-items-center mr-1">
       <BrandIcon />
       <span className="navbar-version mt-1">{appConfig.VERSION}</span>
     </NavbarBrand>
