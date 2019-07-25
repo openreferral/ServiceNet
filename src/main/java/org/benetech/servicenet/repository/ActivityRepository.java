@@ -1,6 +1,15 @@
 package org.benetech.servicenet.repository;
 
+import java.util.List;
+import java.util.UUID;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Location;
@@ -9,7 +18,9 @@ import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.service.dto.FiltersActivityDTO;
@@ -19,16 +30,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.UUID;
 
 @Repository
 public class ActivityRepository {
@@ -40,7 +41,6 @@ public class ActivityRepository {
     private static final String ID = "id";
 
     private static final String ORGANIZATIONS = "organizations";
-    private static final String SERVICES = "services";
     private static final String NAME = "name";
     private static final String ALTERNATE_NAME = "alternateName";
 
@@ -54,6 +54,10 @@ public class ActivityRepository {
     private static final String ORGANIZATION_MATCHES = "organizationMatches";
     private static final String PARTNER_VERSION = "partnerVersion";
     private static final String ACCOUNT = "account";
+
+    private static final String SERVICES = "services";
+    private static final String TAXONOMIES = "taxonomies";
+    private static final String TAXONOMY = "taxonomy";
 
     private final EntityManager em;
     private final CriteriaBuilder cb;
@@ -138,6 +142,7 @@ public class ActivityRepository {
         return updatedPredicate;
     }
 
+    @SuppressWarnings("checkstyle:cyclomaticComplexity")
     private <T> void addFilters(CriteriaQuery<T> query, Root<ActivityInfo> root, UUID ownerId,
         String searchName, SearchOn searchOn, FiltersActivityDTO filtersActivityDTO) {
 
@@ -145,6 +150,8 @@ public class ActivityRepository {
 
         Join<ActivityInfo, Organization> orgJoin = null;
         Join<Organization, Location> locationJoin = null;
+        Join<Organization, Service> serviceJoin = null;
+
         if (StringUtils.isNotBlank(searchName)) {
             if (searchOn.equals(SearchOn.ORGANIZATION)) {
                 predicate = searchNames(predicate, root, searchName);
@@ -154,7 +161,7 @@ public class ActivityRepository {
                 predicate = searchNames(predicate, locationJoin, searchName);
             } else {
                 orgJoin = root.join(ORGANIZATIONS, JoinType.LEFT);
-                Join<Organization, Service> serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
+                serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
                 predicate = searchNames(predicate, serviceJoin, searchName);
             }
         }
@@ -175,6 +182,15 @@ public class ActivityRepository {
             locationJoin = (locationJoin != null) ? locationJoin : orgJoin.join(LOCATIONS, JoinType.LEFT);
 
             predicate = addLocationFilters(filtersActivityDTO, predicate, locationJoin);
+        }
+
+        if (CollectionUtils.isNotEmpty(filtersActivityDTO.getTaxonomiesFilterList())) {
+            orgJoin = (orgJoin != null) ? orgJoin : root.join(ORGANIZATIONS, JoinType.LEFT);
+            serviceJoin = (serviceJoin != null) ? serviceJoin : orgJoin.join(SERVICES, JoinType.LEFT);
+            Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(TAXONOMIES, JoinType.LEFT);
+            Join<ServiceTaxonomy, Taxonomy> taxonomyJoin = taxonomiesJoin.join(TAXONOMY, JoinType.LEFT);
+
+            predicate = cb.and(predicate, taxonomyJoin.get(NAME).in(filtersActivityDTO.getTaxonomiesFilterList()));
         }
 
         query.where(predicate);

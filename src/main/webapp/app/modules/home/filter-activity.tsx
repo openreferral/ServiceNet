@@ -3,7 +3,14 @@ import { Button, Col, Container, Row, Collapse, Card, CardBody } from 'reactstra
 import { Translate } from 'react-jhipster';
 import Select from 'react-select';
 import { IRootState } from 'app/shared/reducers';
-import { getPostalCodeList, getRegionList, getCityList, getPartnerList, updateActivityFilter } from './filter-activity.reducer';
+import {
+  getPostalCodeList,
+  getRegionList,
+  getCityList,
+  getPartnerList,
+  updateActivityFilter,
+  getTaxonomyList
+} from './filter-activity.reducer';
 import ReactGA from 'react-ga';
 import { connect } from 'react-redux';
 
@@ -16,6 +23,7 @@ export interface IFilterActivityState {
   selectedCounty: any;
   selectedZip: any;
   selectedPartner: any;
+  selectedTaxonomy: any;
   filtersChanged: boolean;
   searchOn: string;
 }
@@ -32,6 +40,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     selectedCounty: this.props.activityFilter.regionFilterList.map(city => ({ label: city, value: city })),
     selectedZip: this.props.activityFilter.postalCodesFilterList.map(city => ({ label: city, value: city })),
     selectedPartner: this.props.activityFilter.partnerFilterList.map(city => ({ label: city.label, value: city.value })),
+    selectedTaxonomy: this.props.activityFilter.taxonomiesFilterList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
     filtersChanged: false,
     searchOn: this.props.activityFilter.searchOn
   };
@@ -42,6 +51,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       this.getRegionList();
       this.getCityList();
       this.getPartnerList();
+      this.getTaxonomyList();
     }
     if (this.props.isLoggingOut || this.props.hasSessionBeenFetched) {
       this.resetFilter();
@@ -60,6 +70,9 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   getCityList = () => {
     this.props.getCityList();
   };
+  getTaxonomyList = () => {
+    this.props.getTaxonomyList();
+  };
 
   applyFilter = () => {
     ReactGA.event({ category: 'UserActions', action: 'Applied Filter' });
@@ -72,6 +85,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       selectedCounty: [],
       selectedZip: [],
       selectedPartner: [],
+      selectedTaxonomy: [],
       filtersChanged: true,
       searchOn: ORGANIZATION
     });
@@ -82,6 +96,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       regionFilterList: [],
       postalCodesFilterList: [],
       partnerFilterList: [],
+      taxonomiesFilterList: [],
       searchOn: ORGANIZATION
     });
 
@@ -113,6 +128,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.updateActivityFilter({ ...this.props.activityFilter, postalCodesFilterList });
   };
 
+  handleTaxonomyChange = selectedTaxonomy => {
+    this.setState({ selectedTaxonomy, filtersChanged: true });
+
+    const taxonomiesFilterList = selectedTaxonomy.map(taxonomy => taxonomy.value);
+
+    this.props.updateActivityFilter({ ...this.props.activityFilter, taxonomiesFilterList });
+  };
+
   handlePartnerChange = selectedPartner => {
     this.setState({ selectedPartner, filtersChanged: true });
 
@@ -130,7 +153,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   render() {
-    const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList } = this.props;
+    const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList, taxonomyList } = this.props;
     return (
       <div>
         <Collapse isOpen={filterCollapseExpanded} style={{ marginBottom: '1rem' }}>
@@ -203,6 +226,12 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                   </Col>
                 </Row>
                 <Row>
+                  <Col md="3">
+                    <Translate contentKey="serviceNetApp.activity.home.filter.taxonomy" />
+                    <Select value={this.state.selectedTaxonomy} onChange={this.handleTaxonomyChange} options={taxonomyList} isMulti />
+                  </Col>
+                </Row>
+                <Row>
                   <Col md={{ size: 2, offset: 10 }}>
                     <Button
                       color="primary"
@@ -241,11 +270,12 @@ const mapStateToProps = (storeState: IRootState) => ({
   hasSessionBeenFetched: storeState.authentication.sessionHasBeenFetched,
   regionList: storeState.filterActivity.regionList.map(region => ({ label: region, value: region })),
   cityList: storeState.filterActivity.cityList.map(city => ({ label: city, value: city })),
+  taxonomyList: storeState.filterActivity.taxonomyList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
   partnerList: storeState.filterActivity.partnerList.map(partner => ({ label: partner.name, value: partner.id })),
   activityFilter: storeState.filterActivity.activityFilter
 });
 
-const mapDispatchToProps = { getPostalCodeList, getRegionList, getCityList, getPartnerList, updateActivityFilter };
+const mapDispatchToProps = { getPostalCodeList, getRegionList, getCityList, getPartnerList, getTaxonomyList, updateActivityFilter };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
