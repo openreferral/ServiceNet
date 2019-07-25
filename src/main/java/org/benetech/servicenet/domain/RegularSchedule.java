@@ -1,5 +1,7 @@
 package org.benetech.servicenet.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Lob;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,6 +14,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.hibernate.annotations.Type;
 
 /**
  * A RegularSchedule.
@@ -34,6 +37,11 @@ public class RegularSchedule extends AbstractEntity implements Serializable {
     @OneToMany(mappedBy = "regularSchedule")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<OpeningHours> openingHours = new HashSet<>();
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "notes", columnDefinition = "clob")
+    private String notes = "";
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
@@ -87,6 +95,20 @@ public class RegularSchedule extends AbstractEntity implements Serializable {
     public void setOpeningHours(Set<OpeningHours> openingHours) {
         this.openingHours = openingHours;
     }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public RegularSchedule notes(String notes) {
+        this.notes = notes;
+        return this;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -113,6 +135,7 @@ public class RegularSchedule extends AbstractEntity implements Serializable {
     public String toString() {
         return "RegularSchedule{" +
             "id=" + getId() +
+            "notes=" + getNotes() +
             "}";
     }
 }

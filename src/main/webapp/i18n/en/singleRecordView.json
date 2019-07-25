@@ -106,7 +106,8 @@
       "serviceTaxonomyTaxonomyDetails": "Details",
       "imported": " updated on ",
       "conflictingDataOnePartner": " partner has conflicting data:",
-      "conflictingDataMultiPartners": " partners have conflicting data:"
+      "conflictingDataMultiPartners": " partners have conflicting data:",
+      "locationRegularScheduleNotes": "Regular schedule notes"
     }
   }
 }

@@ -7,6 +7,7 @@ import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.manager.ImportManager;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.ContactService;
@@ -18,6 +19,7 @@ import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.PhysicalAddressService;
 import org.benetech.servicenet.service.PostalAddressService;
+import org.benetech.servicenet.service.RegularScheduleService;
 import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
@@ -28,6 +30,7 @@ import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
@@ -122,6 +125,9 @@ public class HealthleadsCompleteDataAdapterTest {
     private ServiceTaxonomyService serviceTaxonomyService;
 
     @Autowired
+    private RegularScheduleService regularScheduleService;
+
+    @Autowired
     private TaxonomyService taxonomyService;
 
     @Autowired
@@ -197,6 +203,7 @@ public class HealthleadsCompleteDataAdapterTest {
         assertEquals(1, locationService.findAll().size());
 
         LocationDTO result = locationService.findAll().get(0);
+        List<RegularScheduleDTO> schedules = regularScheduleService.findAll();
 
         assertEquals("Location Name", result.getName());
         assertEquals("Alternate Location", result.getAlternateName());
@@ -204,6 +211,8 @@ public class HealthleadsCompleteDataAdapterTest {
         assertEquals("Location Transportation", result.getTransportation());
         assertEquals(-10.321321, result.getLongitude());
         assertEquals(20.456654, result.getLatitude());
+
+        assertEquals("Mon-Fri 8:30am-5pm", schedules.get(0).getNotes());
     }
 
     @Test
