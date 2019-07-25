@@ -17,7 +17,7 @@ const initialState = {
   regionList: [],
   cityList: [],
   partnerList: [],
-  activityFilter: { citiesFilterList: [], regionFilterList: [], postalCodesFilterList: [], partnerFilterList: [] }
+  activityFilter: { citiesFilterList: [], regionFilterList: [], postalCodesFilterList: [], partnerFilterList: [], searchOn: '' }
 };
 
 export type FilterActivityState = Readonly<typeof initialState>;

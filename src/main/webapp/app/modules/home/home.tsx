@@ -237,7 +237,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                       type="search"
                       name="search"
                       id="searchBar"
-                      placeholder={translate('serviceNetApp.activity.home.search.placeholder')}
+                      placeholder={translate('serviceNetApp.activity.home.search.placeholder-' + this.props.activityFilter.searchOn)}
                       value={this.state.searchPhrase}
                       onChange={this.changeSearchPhrase}
                     />

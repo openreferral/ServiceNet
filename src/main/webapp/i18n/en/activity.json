@@ -14,7 +14,11 @@
           "zip": "ZIP",
           "partner": "Partner Sources",
           "applyFilter": "Apply",
-          "resetFilter": "Reset"
+          "resetFilter": "Reset",
+          "searchOn": "Search On",
+          "organization": "Organization",
+          "services": "Services",
+          "locations": "Locations"
         },
         "sort": {
           "toggle": "Sort",
@@ -22,7 +26,9 @@
           "recent": "Recently Updated"
         },
         "search": {
-          "placeholder": "Search by Organization Name or Alternate Name"
+          "placeholder-organization": "Search by Organization Name or Alternate Name",
+          "placeholder-services": "Search by Service Name or Alternate Name",
+          "placeholder-locations": "Search by Location Name or Alternate Name"
         }
       },
       "created": "A new Activity is created with identifier {{ param }}",

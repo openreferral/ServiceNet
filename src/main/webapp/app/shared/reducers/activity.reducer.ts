@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { parseHeaderForLinks, loadMoreDataWhenScrolled, ICrudGetAction } from 'react-jhipster';
+import { parseHeaderForLinks, loadMoreDataWhenScrolled } from 'react-jhipster';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
@@ -66,7 +66,7 @@ const apiUrl = 'api/activities';
 // Actions
 
 export const getEntities = (search, page, size, sort, filter) => {
-  const requestUrl = `${apiUrl}${sort ? `?search=${search}&page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}${sort ? `?search=${search}&searchOn=${filter.searchOn}&page=${page}&size=${size}&sort=${sort}` : ''}`;
 
   const filterDataToSend = {
     ...filter,

@@ -11,6 +11,7 @@ import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.FiltersActivityDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
+import org.benetech.servicenet.web.rest.SearchOn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -53,10 +54,10 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId,
-        String search, FiltersActivityDTO filtersForActivity) {
+        String search, SearchOn searchOn, FiltersActivityDTO filtersForActivity) {
 
         List<ActivityDTO> activities = new ArrayList<>();
-        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, pageable,
+        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, searchOn, pageable,
             filtersForActivity);
 
         Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
@@ -98,10 +99,10 @@ public class ActivityServiceImpl implements ActivityService {
         return recordsService.getActivityDTOFromActivityInfo(info, exclusionsMap);
     }
 
-    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, String search, Pageable pageable,
-                                                                FiltersActivityDTO filtersActivityDTO) {
+    private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, String search, SearchOn searchOn,
+        Pageable pageable, FiltersActivityDTO filtersActivityDTO) {
         if (ownerId != null) {
-            return activityRepository.findAllWithFilters(ownerId, search, filtersActivityDTO, pageable);
+            return activityRepository.findAllWithFilters(ownerId, search, searchOn, filtersActivityDTO, pageable);
         } else {
             return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
         }

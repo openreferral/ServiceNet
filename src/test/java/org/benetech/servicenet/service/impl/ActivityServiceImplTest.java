@@ -19,6 +19,7 @@ import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.FiltersActivityDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.web.rest.ActivityResource;
+import org.benetech.servicenet.web.rest.SearchOn;
 import org.benetech.servicenet.web.rest.errors.InternalServerErrorException;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +103,7 @@ public class ActivityServiceImplTest {
     public void getAllActivities() {
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId(), "", new FiltersActivityDTO());
+            pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, new FiltersActivityDTO());
 
         assertEquals(1, activities.getTotalElements());
         ActivityDTO actualAct = activities.stream().collect(Collectors.toList()).get(0);

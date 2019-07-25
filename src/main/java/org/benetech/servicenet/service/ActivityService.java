@@ -3,6 +3,7 @@ package org.benetech.servicenet.service;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.FiltersActivityDTO;
+import org.benetech.servicenet.web.rest.SearchOn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,7 +16,7 @@ import java.util.UUID;
 public interface ActivityService {
 
     Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId,
-    String search, FiltersActivityDTO filtersForActivity);
+    String search, SearchOn searchOn, FiltersActivityDTO filtersForActivity);
 
     Optional<ActivityRecordDTO> getOneByOrganizationId(UUID orgId);
 }
