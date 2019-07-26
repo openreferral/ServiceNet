@@ -1,5 +1,7 @@
 package org.benetech.servicenet.adapter.healthleads.persistence;
 
+import static org.benetech.servicenet.config.Constants.HEALTHLEADS_PROVIDER;
+
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.healthleads.HealthLeadsDataMapper;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsBaseData;
@@ -44,8 +46,6 @@ public class PersistanceManager {
     private EntryDictionary<HealthleadsBaseData> dictionary = new EntryDictionary<>();
     private HealthLeadsDataMapper mapper;
     private ImportManager importManager;
-
-    private static final String PROVIDER_NAME = "healthleads";
 
     public PersistanceManager(ImportManager importManager) {
         this.mapper = HealthLeadsDataMapper.INSTANCE;
@@ -100,7 +100,7 @@ public class PersistanceManager {
             String externalServiceId = healthleadsService.getId();
             Service service = mapper.extractService(healthleadsService);
 
-            service.setProviderName(PROVIDER_NAME);
+            service.setProviderName(HEALTHLEADS_PROVIDER);
             service.setTaxonomies(getTaxonomiesToPersist(externalServiceId));
             service.setPhones(getPhonesForServiceToPersist(externalServiceId));
             service.setLangs(getLanguagesForServiceToPersist(externalServiceId));
@@ -128,7 +128,7 @@ public class PersistanceManager {
         return dictionary.getRelatedEntities(HealthleadsRequiredDocument.class, externalServiceId, HealthleadsService.class)
             .stream().map(x -> mapper.extractRequiredDocument(x))
             .filter(Optional::isPresent)
-            .map(requiredDocument -> requiredDocument.get().providerName(PROVIDER_NAME))
+            .map(requiredDocument -> requiredDocument.get().providerName(HEALTHLEADS_PROVIDER))
             .collect(Collectors.toSet());
     }
 
@@ -147,7 +147,7 @@ public class PersistanceManager {
 
             Location location = mapper.extractLocation(healthleadsLocation);
 
-            location.setProviderName(PROVIDER_NAME);
+            location.setProviderName(HEALTHLEADS_PROVIDER);
             getPhysicalAddressesToPersist(externalLocationId).ifPresent(location::setPhysicalAddress);
             location.setPhones(getPhonesForLocationToPersist(externalLocationId));
             location.setLangs(getLanguagesForLocationToPersist(externalLocationId));
@@ -196,10 +196,10 @@ public class PersistanceManager {
 
             if (!taxonomies.isEmpty()) {
                 mapper.extractTaxonomy(taxonomies.iterator().next()).ifPresent(taxonomy ->
-                    serviceTaxonomy.setTaxonomy(taxonomy.providerName(PROVIDER_NAME)));
+                    serviceTaxonomy.setTaxonomy(taxonomy.providerName(HEALTHLEADS_PROVIDER)));
             }
 
-            result.add(serviceTaxonomy.providerName(PROVIDER_NAME));
+            result.add(serviceTaxonomy.providerName(HEALTHLEADS_PROVIDER));
         }
 
         return result;
@@ -222,7 +222,7 @@ public class PersistanceManager {
                 serviceAtLocation.setLocation(serviceLocations.iterator().next());
             }
 
-            serviceAtLocations.add(serviceAtLocation.providerName(PROVIDER_NAME));
+            serviceAtLocations.add(serviceAtLocation.providerName(HEALTHLEADS_PROVIDER));
         });
 
         return serviceAtLocations;

@@ -1,5 +1,7 @@
 package org.benetech.servicenet.adapter.smcconnect;
 
+import static org.benetech.servicenet.config.Constants.SMC_CONNECT_PROVIDER;
+
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils;
@@ -13,6 +15,7 @@ import org.benetech.servicenet.adapter.smcconnect.model.SmcPhone;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcProgram;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcRegularSchedule;
 import org.benetech.servicenet.adapter.smcconnect.model.SmcService;
+import org.benetech.servicenet.adapter.smcconnect.model.SmcTaxonomy;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Funding;
@@ -26,6 +29,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -46,7 +50,6 @@ import java.util.stream.Collectors;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SmcConnectDataMapper {
 
-    String PROVIDER_NAME = "SMCConnect";
     SmcConnectDataMapper INSTANCE = Mappers.getMapper(SmcConnectDataMapper.class);
     String DELIMITER = ",";
 
@@ -62,14 +65,14 @@ public interface SmcConnectDataMapper {
     @Mapping(target = "eligibility", ignore = true)
     @Mapping(target = "url", source = "website")
     @Mapping(target = "externalDbId", source = "id")
-    @Mapping(target = "providerName", constant = PROVIDER_NAME)
+    @Mapping(target = "providerName", constant = SMC_CONNECT_PROVIDER)
     Service mapService(SmcService service);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "longitude", qualifiedByName = "double")
     @Mapping(target = "latitude", qualifiedByName = "double")
     @Mapping(target = "externalDbId", source = "id")
-    @Mapping(target = "providerName", constant = PROVIDER_NAME)
+    @Mapping(target = "providerName", constant = SMC_CONNECT_PROVIDER)
     Location mapLocation(SmcLocation location);
 
     @Mapping(target = "id", ignore = true)
@@ -80,7 +83,7 @@ public interface SmcConnectDataMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "externalDbId", source = "id")
-    @Mapping(target = "providerName", constant = PROVIDER_NAME)
+    @Mapping(target = "providerName", constant = SMC_CONNECT_PROVIDER)
     Contact mapContact(SmcContact contact);
 
     @Mapping(target = "weekday", source = "weekday", qualifiedByName = "weekday")
@@ -93,7 +96,7 @@ public interface SmcConnectDataMapper {
     @Mapping(target = "startDate", ignore = true)
     @Mapping(target = "endDate", ignore = true)
     @Mapping(target = "externalDbId", source = "id")
-    @Mapping(target = "providerName", constant = PROVIDER_NAME)
+    @Mapping(target = "providerName", constant = SMC_CONNECT_PROVIDER)
     HolidaySchedule mapHolidaySchedule(SmcHolidaySchedule startDate);
 
     @Mapping(target = "id", ignore = true)
@@ -103,6 +106,27 @@ public interface SmcConnectDataMapper {
     @Mapping(target = "number", ignore = true)
     @Mapping(target = "extension", qualifiedByName = "int")
     Phone mapPhone(SmcPhone phone);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "externalDbId", source = "id")
+    @Mapping(target = "providerName", constant = SMC_CONNECT_PROVIDER)
+    Taxonomy mapTaxonomy(SmcTaxonomy taxonomy);
+
+    default Taxonomy extractTaxonomy(SmcTaxonomy smcTaxonomy) {
+        if (smcTaxonomy == null) {
+            return null;
+        }
+
+        Taxonomy taxonomy = mapTaxonomy(smcTaxonomy);
+
+        if (StringUtils.isNoneBlank(smcTaxonomy.getParentId())) {
+            taxonomy.setParent(new Taxonomy()
+                .externalDbId(smcTaxonomy.getParentId())
+                .providerName(SMC_CONNECT_PROVIDER));
+        }
+
+        return taxonomy;
+    }
 
     @Named("mapTime")
     default String mapTime(String time) {

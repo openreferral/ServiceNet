@@ -1,5 +1,12 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import static org.benetech.servicenet.adapter.icarol.ICarolDataCollector.findRelatedEntities;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
 import org.benetech.servicenet.adapter.icarol.model.ICarolDataToPersist;
@@ -12,14 +19,9 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.manager.ImportManager;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.benetech.servicenet.adapter.icarol.ICarolDataCollector.findRelatedEntities;
 
 @Slf4j
 class RelationManager {
@@ -76,8 +78,7 @@ class RelationManager {
 
         Set<Service> result = new HashSet<>();
         for (ICarolProgram program : relatedPrograms) {
-            Optional<Service> service = getServiceToPersist(importData, program);
-            service.ifPresent(result::add);
+            result.add(getServiceToPersist(importData, program));
         }
         return result;
     }
@@ -110,7 +111,7 @@ class RelationManager {
             });
     }
 
-    private Optional<Service> getServiceToPersist(ImportData importData, ICarolProgram program) {
+    private Service getServiceToPersist(ImportData importData, ICarolProgram program) {
         Service extractedService = mapper
             .extractService(program, importData.getProviderName());
 
@@ -123,7 +124,25 @@ class RelationManager {
         extractedService.setLangs(mapper.extractLangs(program));
         extractedService.setRegularSchedule(new RegularSchedule().openingHours(
             mapper.extractOpeningHours(program.getHours())));
+        extractedService.setTaxonomies(getServiceTaxonomiesToPersist(program, importData.getProviderName()));
 
-        return Optional.of(extractedService);
+        return extractedService;
+    }
+
+    private Set<ServiceTaxonomy> getServiceTaxonomiesToPersist(ICarolProgram program, String providerName) {
+        Set<ServiceTaxonomy> serviceTaxonomies = new HashSet<>();
+
+        if (program.getTaxonomy() != null) {
+            Arrays.stream(program.getTaxonomy())
+                .forEach(id -> {
+                    Taxonomy taxonomy = new Taxonomy().externalDbId(id).taxonomyId(id).providerName(providerName);
+                    serviceTaxonomies.add(new ServiceTaxonomy()
+                        .taxonomy(taxonomy)
+                        .providerName(providerName)
+                        .externalDbId(program.getId() + id));
+                });
+        }
+
+        return serviceTaxonomies;
     }
 }

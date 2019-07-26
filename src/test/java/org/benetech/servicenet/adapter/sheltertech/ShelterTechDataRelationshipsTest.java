@@ -1,5 +1,10 @@
 package org.benetech.servicenet.adapter.sheltertech;
 
+import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.util.List;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -28,17 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class ShelterTechDataRelationshipsTest {
 
     private static final String COMPLETE_JSON = "sheltertech/complete.json";
-    private static final String PROVIDER_NAME = "ShelterTech";
 
     @Autowired
     private ShelterTechDataAdapter adapter;
@@ -72,7 +71,7 @@ public class ShelterTechDataRelationshipsTest {
     @BeforeClass
     public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
-        importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true, null);
     }
 
     @Before

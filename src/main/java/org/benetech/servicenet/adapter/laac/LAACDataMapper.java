@@ -1,5 +1,7 @@
 package org.benetech.servicenet.adapter.laac;
 
+import static org.benetech.servicenet.config.Constants.LAAC_PROVIDER;
+
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.laac.model.LAACData;
 import org.benetech.servicenet.adapter.laac.utils.PhysicalAddressFormatUtil;
@@ -37,7 +39,6 @@ public interface LAACDataMapper {
     String LANGUAGES_DELIMITER = ",";
     String SERVICE_POSTFIX = " - Service";
     String LOCATION_POSTFIX = " - Location";
-    String PROVIDER_NAME = "LAAC";
 
     default Optional<Phone> extractPhone(LAACData data) {
         if (StringUtils.isBlank(data.getPhone())) {
@@ -64,7 +65,7 @@ public interface LAACDataMapper {
         if (StringUtils.isBlank(contactName)) {
             return Optional.empty();
         }
-        return Optional.of(new Contact().name(contactName).externalDbId(data.getId()).providerName(PROVIDER_NAME));
+        return Optional.of(new Contact().name(contactName).externalDbId(data.getId()).providerName(LAAC_PROVIDER));
     }
 
     default Organization extractOrganization(LAACData data) {
@@ -114,7 +115,7 @@ public interface LAACDataMapper {
         service.setType(data.getServiceTypes());
         service.setDescription(data.getDescriptionOfServiceTypes());
         service.setExternalDbId(data.getId());
-        service.setProviderName(PROVIDER_NAME);
+        service.setProviderName(LAAC_PROVIDER);
 
         return service;
     }
@@ -130,7 +131,7 @@ public interface LAACDataMapper {
 
         location.setDescription(data.getAreasServed());
         location.setExternalDbId(data.getId());
-        location.setProviderName(PROVIDER_NAME);
+        location.setProviderName(LAAC_PROVIDER);
 
         return location;
     }

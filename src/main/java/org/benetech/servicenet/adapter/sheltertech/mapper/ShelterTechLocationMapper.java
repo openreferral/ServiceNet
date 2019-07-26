@@ -1,5 +1,11 @@
 package org.benetech.servicenet.adapter.sheltertech.mapper;
 
+import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
 import org.benetech.servicenet.adapter.sheltertech.model.AddressRaw;
 import org.benetech.servicenet.domain.Location;
@@ -9,13 +15,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.benetech.servicenet.adapter.sheltertech.ShelterTechConstants.PROVIDER_NAME;
 
 @Mapper
 public interface ShelterTechLocationMapper {
@@ -61,7 +60,7 @@ public interface ShelterTechLocationMapper {
     @Mapping(source = "raw.latitude", target = "latitude")
     @Mapping(source = "raw.longitude", target = "longitude")
     @Mapping(source = "raw.id", target = "externalDbId")
-    @Mapping(constant = PROVIDER_NAME, target = "providerName")
+    @Mapping(constant = SHELTER_TECH_PROVIDER, target = "providerName")
     @Mapping(ignore = true, target = "physicalAddress")
     @Mapping(ignore = true, target = "postalAddress")
     @Mapping(ignore = true, target = "regularSchedule")

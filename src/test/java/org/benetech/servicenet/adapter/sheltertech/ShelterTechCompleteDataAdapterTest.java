@@ -1,5 +1,13 @@
 package org.benetech.servicenet.adapter.sheltertech;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -37,20 +45,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EntityManager;
-import java.io.IOException;
-import java.util.List;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class ShelterTechCompleteDataAdapterTest {
 
     private static final String COMPLETE_JSON = "sheltertech/complete.json";
-    private static final String PROVIDER_NAME = "ShelterTech";
 
     @Autowired
     private ShelterTechDataAdapter adapter;
@@ -108,7 +107,7 @@ public class ShelterTechCompleteDataAdapterTest {
     @BeforeClass
     public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
-        importData = new SingleImportData(json, new DataImportReport(), PROVIDER_NAME, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true, null);
     }
 
     @Before

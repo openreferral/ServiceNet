@@ -155,6 +155,12 @@ scheduler:
         api-key: ${UWBA_API_KEY:default_key}
     shelter-tech-data:
         interval: 604800 #one week
+    smc-connect-taxonomies:
+        interval: 2592000 #one month
+    eden-taxonomies:
+        interval: 2592000 #one month
+    uwba-taxonomies:
+        interval: 2592000 #one month
 
 # ===================================================================
 # Application specific properties

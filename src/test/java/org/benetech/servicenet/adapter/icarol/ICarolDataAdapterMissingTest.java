@@ -1,14 +1,21 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.benetech.servicenet.config.Constants.EDEN_PROVIDER;
+import static org.junit.Assert.assertTrue;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
-import org.benetech.servicenet.adapter.icarol.model.ICarolContactDetails;
 import org.benetech.servicenet.adapter.icarol.model.ICarolDataToPersist;
-import org.benetech.servicenet.adapter.icarol.model.ICarolDay;
 import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
 import org.benetech.servicenet.adapter.icarol.model.ICarolServiceSite;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
@@ -21,21 +28,9 @@ import org.benetech.servicenet.domain.PostalAddress;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class ICarolDataAdapterMissingTest {
 
     private static final String MINIMAL_JSON = "icarol/minimal.json";
-
-    private static final String PROVIDER_NAME = "Eden";
 
     private final ICarolDataMapper mapper = ICarolDataMapper.INSTANCE;
 
@@ -68,7 +63,7 @@ public class ICarolDataAdapterMissingTest {
     @Test
     public void shouldNotThrowExceptionForMinimalDataForAgency() {
         ICarolAgency agency = data.getAgencies().get(0);
-        Organization result = mapper.extractOrganization(agency, PROVIDER_NAME);
+        Organization result = mapper.extractOrganization(agency, EDEN_PROVIDER);
 
         assertEquals("HOUSING AUTHORITY OF THE COUNTY OF Commoncounty (ABCD)", result.getName());
     }
@@ -89,7 +84,7 @@ public class ICarolDataAdapterMissingTest {
     @Test
     public void shouldNotThrowExceptionForAgencyStatus() {
         ICarolAgency agency = data.getAgencies().get(0);
-        Organization organization = mapper.extractOrganization(agency, PROVIDER_NAME);
+        Organization organization = mapper.extractOrganization(agency, EDEN_PROVIDER);
         assertTrue(organization.getActive());
     }
 

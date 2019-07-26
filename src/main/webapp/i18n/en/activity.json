@@ -12,6 +12,7 @@
           "city": "City",
           "county": "County",
           "zip": "ZIP",
+          "taxonomy": "Taxonomy",
           "partner": "Partner Sources",
           "applyFilter": "Apply",
           "resetFilter": "Reset",

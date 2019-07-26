@@ -1,7 +1,17 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import static org.benetech.servicenet.adapter.AdapterTestsUtils.mockEndpointWithBatch;
+import static org.benetech.servicenet.config.Constants.EDEN_PROVIDER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockserver.integration.ClientAndServer.startClientAndServer;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.time.ZonedDateTime;
+import java.util.Collection;
 import org.apache.http.client.HttpClient;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
@@ -28,21 +38,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-
-import static org.benetech.servicenet.adapter.AdapterTestsUtils.mockEndpointWithBatch;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockserver.integration.ClientAndServer.startClientAndServer;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class AbstractDataAdapterDocumentUploadTest {
 
-    private static final String EDEN_PROVIDER = "Eden";
     private static final String ICAROL_CATALOG = "icarol/";
     private static final String IDS_FILE = "ids.json";
     private static final String PROGRAMS_FILE = "programs.json";

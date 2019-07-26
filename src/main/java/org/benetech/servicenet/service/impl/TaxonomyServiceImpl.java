@@ -45,7 +45,7 @@ public class TaxonomyServiceImpl implements TaxonomyService {
         log.debug("Request to save Taxonomy : {}", taxonomyDTO);
 
         Taxonomy taxonomy = taxonomyMapper.toEntity(taxonomyDTO);
-        taxonomy = taxonomyRepository.save(taxonomy);
+        taxonomy = save(taxonomy);
         return taxonomyMapper.toDto(taxonomy);
     }
 
@@ -81,6 +81,16 @@ public class TaxonomyServiceImpl implements TaxonomyService {
     @Override
     public Optional<Taxonomy> findForExternalDb(String externalDbId, String providerName) {
         return taxonomyRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
+    @Override
+    public Optional<Taxonomy> findForTaxonomyId(String taxonomyId, String providerName) {
+        return taxonomyRepository.findOneByTaxonomyIdAndProviderName(taxonomyId, providerName);
+    }
+
+    @Override
+    public Taxonomy save(Taxonomy taxonomy) {
+        return taxonomyRepository.save(taxonomy);
     }
 
     /**

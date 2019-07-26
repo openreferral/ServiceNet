@@ -1,13 +1,21 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.benetech.servicenet.TestConstants.EXISTING_EXTERNAL_ID;
+import static org.benetech.servicenet.TestConstants.NEW_STRING;
+import static org.benetech.servicenet.TestConstants.PROVIDER;
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.TestPersistanceHelper;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.TaxonomyImportService;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static org.benetech.servicenet.TestConstants.EXISTING_EXTERNAL_ID;
-import static org.benetech.servicenet.TestConstants.NEW_STRING;
-import static org.benetech.servicenet.TestConstants.PROVIDER;
-import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
@@ -35,6 +36,14 @@ public class TaxonomyImportServiceTest {
 
     @Autowired
     private TaxonomyService taxonomyService;
+
+    @Autowired
+    private TestDatabaseManagement testDatabaseManagement;
+
+    @Before
+    public void clearDb() {
+        testDatabaseManagement.clearDb();
+    }
 
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)

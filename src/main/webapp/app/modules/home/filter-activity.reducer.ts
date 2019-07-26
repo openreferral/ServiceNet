@@ -7,6 +7,7 @@ export const ACTION_TYPES = {
   FETCH_REGION_LIST: 'filterActivity/FETCH_REGION_LIST',
   FETCH_CITY_LIST: 'filterActivity/FETCH_CITY_LIST',
   FETCH_PARTNER_LIST: 'filterActivity/FETCH_PARTNER_LIST',
+  FETCH_TAXONOMY_LIST: 'filterActivity/FETCH_TAXONOMY_LIST',
   UPDATE_ACTIVITY_FILTER: 'filterActivity/UPDATE_ACTIVITY_FILTER'
 };
 
@@ -17,7 +18,8 @@ const initialState = {
   regionList: [],
   cityList: [],
   partnerList: [],
-  activityFilter: { citiesFilterList: [], regionFilterList: [], postalCodesFilterList: [], partnerFilterList: [], searchOn: '' }
+  taxonomyList: [],
+  activityFilter: { citiesFilterList: [], regionFilterList: [], postalCodesFilterList: [], partnerFilterList: [], taxonomiesFilterList: [], searchOn: '' }
 };
 
 export type FilterActivityState = Readonly<typeof initialState>;
@@ -28,6 +30,7 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
     case REQUEST(ACTION_TYPES.FETCH_REGION_LIST):
     case REQUEST(ACTION_TYPES.FETCH_CITY_LIST):
     case REQUEST(ACTION_TYPES.FETCH_PARTNER_LIST):
+    case REQUEST(ACTION_TYPES.FETCH_TAXONOMY_LIST):
       return {
         ...state,
         errorMessage: null,
@@ -37,6 +40,7 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
     case FAILURE(ACTION_TYPES.FETCH_REGION_LIST):
     case FAILURE(ACTION_TYPES.FETCH_CITY_LIST):
     case FAILURE(ACTION_TYPES.FETCH_PARTNER_LIST):
+    case FAILURE(ACTION_TYPES.FETCH_TAXONOMY_LIST):
       return {
         ...state,
         loading: false,
@@ -64,6 +68,12 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
       return {
         ...state,
         partnerList: action.payload.data,
+        loading: false
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_TAXONOMY_LIST):
+      return {
+        ...state,
+        taxonomyList: action.payload.data,
         loading: false
       };
     case ACTION_TYPES.UPDATE_ACTIVITY_FILTER:
@@ -107,6 +117,14 @@ export const getPartnerList = () => {
   const requestUrl = `api/system-accounts`;
   return {
     type: ACTION_TYPES.FETCH_PARTNER_LIST,
+    payload: axios.get<any>(requestUrl)
+  };
+};
+
+export const getTaxonomyList = () => {
+  const requestUrl = `api/activity-filter/get-taxonomies`;
+  return {
+    type: ACTION_TYPES.FETCH_TAXONOMY_LIST,
     payload: axios.get<any>(requestUrl)
   };
 };

@@ -1,6 +1,32 @@
 package org.benetech.servicenet.adapter.smcconnect;
 
+import static org.benetech.servicenet.adapter.AdapterTestsUtils.readResourceAsString;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.ADDRESSES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.CLOSES_AT;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.COMPLETE;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.CONTACTS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.DAYS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.HOLIDAY_SCHEDULE;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.JSON;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.LOCATIONS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.MAIL_ADDRESSES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.OPENS_AT;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.ORGANIZATIONS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PHONES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PROGRAMS;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.REGULAR_SCHEDULES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SERVICES;
+import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SMCCONNECT;
+import static org.benetech.servicenet.config.Constants.SMC_CONNECT_PROVIDER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -44,33 +70,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.benetech.servicenet.adapter.AdapterTestsUtils.readResourceAsString;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.CLOSES_AT;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.COMPLETE;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.DAYS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.OPENS_AT;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SMCCONNECT;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.JSON;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PROVIDER;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.ADDRESSES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.CONTACTS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.HOLIDAY_SCHEDULE;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.LOCATIONS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.MAIL_ADDRESSES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.ORGANIZATIONS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PHONES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.PROGRAMS;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.REGULAR_SCHEDULES;
-import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SERVICES;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
@@ -141,7 +140,7 @@ public class SMCConnectDataAdapterCompleteTest {
         }
 
         MultipleImportData importData = new MultipleImportData(data, uploads,
-            new DataImportReport(), PROVIDER, true, null);
+            new DataImportReport(), SMC_CONNECT_PROVIDER, true, null);
         adapter.importData(importData);
     }
 
@@ -187,7 +186,7 @@ public class SMCConnectDataAdapterCompleteTest {
         List<EligibilityDTO> results = eligibilityService.findAll();
 
         List<ServiceDTO> services = serviceService.findAll();
-        
+
         assertEquals(services.get(0).getId(), results.get(0).getSrvcId());
     }
 
@@ -197,7 +196,7 @@ public class SMCConnectDataAdapterCompleteTest {
         List<PhoneDTO> results = phoneService.findAll();
 
         List<ServiceDTO> services = serviceService.findAll();
-        
+
         assertEquals(services.get(0).getId(), results.get(0).getSrvcId());
     }
 
@@ -207,7 +206,7 @@ public class SMCConnectDataAdapterCompleteTest {
         List<PhysicalAddressDTO> results = physicalAddressService.findAll();
 
         List<LocationDTO> locations = locationService.findAll();
-        
+
         assertEquals(locations.get(0).getId(), results.get(0).getLocationId());
     }
 
@@ -217,7 +216,7 @@ public class SMCConnectDataAdapterCompleteTest {
         List<PostalAddressDTO> results = postalAddressService.findAll();
 
         List<LocationDTO> locations = locationService.findAll();
-        
+
         assertEquals(locations.get(0).getId(), results.get(0).getLocationId());
     }
 
@@ -227,7 +226,7 @@ public class SMCConnectDataAdapterCompleteTest {
         List<ServiceDTO> results = serviceService.findAll();
 
         List<OrganizationDTO> organizations = organizationService.findAllDTOs();
-        
+
         assertEquals(organizations.get(0).getId(), results.get(0).getOrganizationId());
     }
 

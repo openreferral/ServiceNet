@@ -1,5 +1,12 @@
 package org.benetech.servicenet.adapter.icarol;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAccessibility;
@@ -10,6 +17,7 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolDay;
 import org.benetech.servicenet.adapter.icarol.model.ICarolHours;
 import org.benetech.servicenet.adapter.icarol.model.ICarolProgram;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
+import org.benetech.servicenet.adapter.icarol.model.ICarolTaxonomy;
 import org.benetech.servicenet.adapter.shared.MapperUtils;
 import org.benetech.servicenet.adapter.shared.util.LocationUtils;
 import org.benetech.servicenet.adapter.shared.util.OpeningHoursUtils;
@@ -23,20 +31,13 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mapstruct.ReportingPolicy.IGNORE;
 
 /**
  * Mapper for ICarolData objects
@@ -130,6 +131,12 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(target = "id", ignore = true)
     OpeningHours mapOpeningHours(ICarolDay day);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "taxonomyId", source = "code")
+    @Mapping(target = "externalDbId", source = "code")
+    @Mapping(target = "details", source = "definition")
+    Taxonomy mapTaxonomy(ICarolTaxonomy taxonomy);
+
     @Named("mapTime")
     default String mapTime(String time) {
         return OpeningHoursUtils.normalizeTime(time);
@@ -140,6 +147,23 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
         result.setExternalDbId(dbId);
         result.setProviderName(providerName);
         return result;
+    }
+
+    default Taxonomy extractTaxonomy(ICarolTaxonomy iCarolTaxonomy, String providerName) {
+        if (iCarolTaxonomy == null) {
+            return null;
+        }
+
+        Taxonomy taxonomy = mapTaxonomy(iCarolTaxonomy);
+
+        if (StringUtils.isNotBlank(iCarolTaxonomy.getParentCode())) {
+            taxonomy.setParent(new Taxonomy()
+                .taxonomyId(iCarolTaxonomy.getParentCode())
+                .externalDbId(iCarolTaxonomy.getParentCode())
+                .providerName(providerName));
+        }
+
+        return taxonomy.providerName(providerName);
     }
 
     @Named("locationName")

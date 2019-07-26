@@ -35,6 +35,18 @@ export class TaxonomyDetail extends React.Component<ITaxonomyDetailProps> {
             </dt>
             <dd>{taxonomyEntity.name}</dd>
             <dt>
+              <span id="taxonomyId">
+                <Translate contentKey="serviceNetApp.taxonomy.taxonomyId">Taxonomy Id</Translate>
+              </span>
+            </dt>
+            <dd>{taxonomyEntity.taxonomyId}</dd>
+            <dt>
+              <span id="details">
+                <Translate contentKey="serviceNetApp.taxonomy.details">Details</Translate>
+              </span>
+            </dt>
+            <dd>{taxonomyEntity.details}</dd>
+            <dt>
               <span id="vocabulary">
                 <Translate contentKey="serviceNetApp.taxonomy.vocabulary">Vocabulary</Translate>
               </span>

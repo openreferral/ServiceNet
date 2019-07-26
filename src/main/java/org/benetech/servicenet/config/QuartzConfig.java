@@ -1,10 +1,19 @@
 package org.benetech.servicenet.config;
 
+import static io.github.jhipster.config.JHipsterConstants.SPRING_PROFILE_DEVELOPMENT;
+import static io.github.jhipster.config.JHipsterConstants.SPRING_PROFILE_PRODUCTION;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.scheduler.AutowiringBeanJobFactory;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
+import org.benetech.servicenet.scheduler.EdenTaxonomyUpdateJob;
+import org.benetech.servicenet.scheduler.SMCConnectTaxonomyUpdateJob;
 import org.benetech.servicenet.scheduler.ShelterTechDataUpdateJob;
 import org.benetech.servicenet.scheduler.UWBADataUpdateJob;
+import org.benetech.servicenet.scheduler.UWBATaxonomyUpdateJob;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static io.github.jhipster.config.JHipsterConstants.SPRING_PROFILE_DEVELOPMENT;
-import static io.github.jhipster.config.JHipsterConstants.SPRING_PROFILE_PRODUCTION;
 
 @Configuration
 public class QuartzConfig {
@@ -32,6 +34,15 @@ public class QuartzConfig {
 
     @Autowired
     private ShelterTechDataUpdateJob shelterTechDataUpdateJob;
+
+    @Autowired
+    private SMCConnectTaxonomyUpdateJob smcConnectTaxonomyUpdateJob;
+
+    @Autowired
+    private EdenTaxonomyUpdateJob edenTaxonomyUpdateJob;
+
+    @Autowired
+    private UWBATaxonomyUpdateJob uwbaTaxonomyUpdateJob;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -49,6 +60,9 @@ public class QuartzConfig {
         jobs.add(edenDataUpdateJob);
         jobs.add(uwbaDataUpdateJob);
         jobs.add(shelterTechDataUpdateJob);
+        jobs.add(smcConnectTaxonomyUpdateJob);
+        jobs.add(edenTaxonomyUpdateJob);
+        jobs.add(uwbaTaxonomyUpdateJob);
 
         scheduler.setTriggers(mapToTriggers(jobs));
         scheduler.setJobDetails(mapToJobDetails(jobs));
