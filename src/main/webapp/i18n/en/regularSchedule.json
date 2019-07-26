@@ -17,7 +17,8 @@
       },
       "srvc": "Srvc",
       "location": "Location",
-      "openingHours": "Opening Hours"
+      "openingHours": "Opening Hours",
+      "notes": "Notes"
     }
   }
 }

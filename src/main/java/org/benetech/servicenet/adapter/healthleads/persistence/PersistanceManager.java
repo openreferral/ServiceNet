@@ -23,6 +23,7 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
@@ -142,6 +143,7 @@ public class PersistanceManager {
         Set<Location> result = new HashSet<>();
         for (HealthleadsLocation healthleadsLocation : locations) {
             String externalLocationId = healthleadsLocation.getId();
+            String schedule = healthleadsLocation.getSchedule();
 
             Location location = mapper.extractLocation(healthleadsLocation);
 
@@ -149,6 +151,9 @@ public class PersistanceManager {
             getPhysicalAddressesToPersist(externalLocationId).ifPresent(location::setPhysicalAddress);
             location.setPhones(getPhonesForLocationToPersist(externalLocationId));
             location.setLangs(getLanguagesForLocationToPersist(externalLocationId));
+            if (StringUtils.isNotBlank(schedule)) {
+                location.setRegularSchedule(new RegularSchedule().notes(schedule));
+            }
             result.add(location);
         }
         return result;

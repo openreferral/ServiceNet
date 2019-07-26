@@ -131,7 +131,10 @@ public class SharedImportServiceImpl implements SharedImportService {
             () -> {
                 openingHours.forEach(o -> em.persist(o));
                 RegularSchedule regularSchedule = new RegularSchedule()
-                    .openingHours(new HashSet<>(openingHours)).location(location).srvc(service);
+                    .openingHours(new HashSet<>(openingHours))
+                    .location(location)
+                    .srvc(service)
+                    .notes(scheduleToSave.getNotes());
                 em.persist(regularSchedule);
                 setSchedule(regularSchedule, location, service);
                 openingHours.forEach(o -> o.setRegularSchedule(regularSchedule));

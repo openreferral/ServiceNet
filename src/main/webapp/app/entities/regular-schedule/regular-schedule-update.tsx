@@ -130,6 +130,12 @@ export class RegularScheduleUpdate extends React.Component<IRegularScheduleUpdat
                       : null}
                   </AvInput>
                 </AvGroup>
+                <AvGroup>
+                  <Label id="notesLabel" for="notes">
+                    <Translate contentKey="serviceNetApp.regularSchedule.notes">Notes</Translate>
+                  </Label>
+                  <AvField id="regular-schedule-notes" type="text" name="notes" />
+                </AvGroup>
                 <Button tag={Link} id="cancel-save" to="/entity/regular-schedule" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;

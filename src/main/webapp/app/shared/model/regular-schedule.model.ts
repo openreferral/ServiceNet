@@ -7,6 +7,7 @@ export interface IRegularSchedule {
   locationName?: string;
   locationId?: number;
   openingHours?: IOpeningHours[];
+  notes?: string;
 }
 
 export const defaultValue: Readonly<IRegularSchedule> = {};

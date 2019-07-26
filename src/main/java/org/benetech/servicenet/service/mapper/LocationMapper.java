@@ -31,6 +31,7 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
 
     @Mapping(target = "location", source = "location")
     @Mapping(target = "regularScheduleOpeningHours", source = "regularSchedule.openingHours")
+    @Mapping(target = "regularScheduleNotes", source = "regularSchedule.notes")
     LocationRecordDTO toRecord(Location location);
 
     default Location fromId(UUID id) {

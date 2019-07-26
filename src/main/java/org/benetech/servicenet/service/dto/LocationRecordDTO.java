@@ -24,4 +24,6 @@ public class LocationRecordDTO {
     private Set<LanguageDTO> langs;
 
     private Set<AccessibilityForDisabilitiesDTO> accessibilities;
+
+    private String regularScheduleNotes;
 }

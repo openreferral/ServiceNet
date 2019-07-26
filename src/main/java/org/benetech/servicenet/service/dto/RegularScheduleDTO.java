@@ -19,6 +19,8 @@ public class RegularScheduleDTO implements Serializable {
 
     private String locationName;
 
+    private String notes;
+
     public UUID getId() {
         return id;
     }
@@ -59,6 +61,14 @@ public class RegularScheduleDTO implements Serializable {
         this.locationName = locationName;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -88,6 +98,7 @@ public class RegularScheduleDTO implements Serializable {
             ", srvc='" + getSrvcName() + "'" +
             ", location=" + getLocationId() +
             ", location='" + getLocationName() + "'" +
+            ", notes='" + getNotes() + "'" +
             "}";
     }
 }
