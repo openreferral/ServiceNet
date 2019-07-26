@@ -6,7 +6,10 @@ import { IRootState } from 'app/shared/reducers';
 import { getPostalCodeList, getRegionList, getCityList, getPartnerList, updateActivityFilter } from './filter-activity.reducer';
 import ReactGA from 'react-ga';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+
+export const ORGANIZATION = 'organization';
+export const SERVICES = 'services';
+export const LOCATIONS = 'locations';
 
 export interface IFilterActivityState {
   selectedCity: any;
@@ -14,6 +17,7 @@ export interface IFilterActivityState {
   selectedZip: any;
   selectedPartner: any;
   filtersChanged: boolean;
+  searchOn: string;
 }
 
 export interface IFilterActivityProps extends StateProps, DispatchProps {
@@ -28,7 +32,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     selectedCounty: this.props.activityFilter.regionFilterList.map(city => ({ label: city, value: city })),
     selectedZip: this.props.activityFilter.postalCodesFilterList.map(city => ({ label: city, value: city })),
     selectedPartner: this.props.activityFilter.partnerFilterList.map(city => ({ label: city.label, value: city.value })),
-    filtersChanged: false
+    filtersChanged: false,
+    searchOn: this.props.activityFilter.searchOn
   };
 
   componentDidMount() {
@@ -67,7 +72,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       selectedCounty: [],
       selectedZip: [],
       selectedPartner: [],
-      filtersChanged: true
+      filtersChanged: true,
+      searchOn: ORGANIZATION
     });
 
     this.props.updateActivityFilter({
@@ -75,7 +81,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       citiesFilterList: [],
       regionFilterList: [],
       postalCodesFilterList: [],
-      partnerFilterList: []
+      partnerFilterList: [],
+      searchOn: ORGANIZATION
     });
 
     this.props.resetActivityFilter();
@@ -114,6 +121,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.updateActivityFilter({ ...this.props.activityFilter, partnerFilterList });
   };
 
+  handleSearchOnChange = changeEvent => {
+    const searchOn = changeEvent.target.value;
+
+    this.setState({ searchOn, filtersChanged: true });
+
+    this.props.updateActivityFilter({ ...this.props.activityFilter, searchOn });
+  };
+
   render() {
     const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList } = this.props;
     return (
@@ -123,6 +138,53 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
             <CardBody>
               <Container>
                 <Row>
+                  <Col md="12">
+                    <div className="form-check form-check-inline">
+                      <Translate contentKey="serviceNetApp.activity.home.filter.searchOn" />:
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="radio"
+                        id="orgRadio"
+                        name="search-on"
+                        value={ORGANIZATION}
+                        className="form-check-input"
+                        onChange={this.handleSearchOnChange}
+                        checked={this.state.searchOn === ORGANIZATION}
+                      />
+                      <label className="form-check-label" htmlFor="orgRadio">
+                        <Translate contentKey="serviceNetApp.activity.home.filter.organization" />
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="radio"
+                        id="svcRadio"
+                        name="search-on"
+                        value={SERVICES}
+                        className="form-check-input"
+                        onChange={this.handleSearchOnChange}
+                        checked={this.state.searchOn === SERVICES}
+                      />
+                      <label className="form-check-label" htmlFor="svcRadio">
+                        <Translate contentKey="serviceNetApp.activity.home.filter.services" />
+                      </label>
+                    </div>
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="radio"
+                        id="locRadio"
+                        name="search-on"
+                        value={LOCATIONS}
+                        className="form-check-input"
+                        onChange={this.handleSearchOnChange}
+                        checked={this.state.searchOn === LOCATIONS}
+                      />
+                      <label className="form-check-label" htmlFor="locRadio">
+                        <Translate contentKey="serviceNetApp.activity.home.filter.locations" />
+                      </label>
+                    </div>
+                  </Col>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.city" />
                     <Select value={this.state.selectedCity} onChange={this.handleCityChange} options={cityList} isMulti />
