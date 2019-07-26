@@ -1,6 +1,12 @@
 package org.benetech.servicenet.matching.counter;
 
+import static java.util.Collections.singletonList;
+
 import com.google.maps.model.LatLng;
+import com.google.maps.model.LocationType;
+import java.util.List;
+import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.matching.model.MatchingContext;
@@ -8,10 +14,6 @@ import org.benetech.servicenet.service.GeocodingResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-
-import static java.util.Collections.singletonList;
 
 @Component
 public class LocationSimilarityCounter extends AbstractSimilarityCounter<Location> {
@@ -33,51 +35,87 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
     @Value("${similarity-ratio.weight.location.in-level-3-distance}")
     private float level3distanceRatio;
 
+    @Value("${similarity-ratio.weight.location.in-same-city-zipcode}")
+    private float sameCityOrZipCodeRatio;
+
     @Autowired
     private GeocodingResultService geocodingResultService;
 
     @Override
     public float countSimilarityRatio(Location location1, Location location2, MatchingContext context) {
-        if (anyPhysicalAddressIsNull(location1, location2)) {
+        if (anyPhysicalAddressIsNull(location1, location2) || areLocations255AddressTextBlank(location1, location2)) {
             return NO_MATCH_RATIO;
         }
 
-        if (allCoordinatesArePresent(location1, location2)) {
-            return countRatioIfCoordinatesArePresent(location1, location2);
-        } else {
-            return countRatioIfCoordinatesAreMissing(location1, location2, context);
+        List<GeocodingResult> baseGeocoding = location1.getGeocodingResults();
+        List<GeocodingResult> partnerGeocoding = location2.getGeocodingResults();
+
+        if (!areCoordsComparable(baseGeocoding, partnerGeocoding, location1, location2)) {
+            if (areLocationsInSameCityOrZipcode(location1, location2)) {
+                return sameCityOrZipCodeRatio;
+            }
+            return NO_MATCH_RATIO;
         }
+
+        if (!areGeocodingResultsReliable(baseGeocoding)) {
+            baseGeocoding = mockGeocodingResultsWithProviderData(location1);
+        }
+        if (!areGeocodingResultsReliable(partnerGeocoding)) {
+            partnerGeocoding = mockGeocodingResultsWithProviderData(location2);
+        }
+
+        return countRatioBetweenGeocodingResults(baseGeocoding, partnerGeocoding);
     }
 
-    private float countRatioIfCoordinatesAreMissing(Location location1, Location location2, MatchingContext context) {
+    private boolean areLocations255AddressTextBlank(Location location1, Location location2) {
+        return StringUtils.isBlank(location1.getPhysicalAddress().extract255AddressChars()) ||
+            StringUtils.isBlank(location2.getPhysicalAddress().extract255AddressChars());
+    }
+
+    private boolean areLocationsInSameCityOrZipcode(Location location1, Location location2) {
+        if (location1.getPhysicalAddress().getPostalCode() == null && location2.getPhysicalAddress().getPostalCode() == null
+            || location1.getPhysicalAddress().getCity() == null && location2.getPhysicalAddress().getCity() == null) {
+            return false;
+        }
+        return location1.getPhysicalAddress().getPostalCode()
+            .equalsIgnoreCase(location2.getPhysicalAddress().getPostalCode()) ||
+            location1.getPhysicalAddress().getCity()
+            .equalsIgnoreCase(location2.getPhysicalAddress().getCity());
+    }
+
+    private float countRatioBetweenGeocodingResults(List<GeocodingResult> baseGeocoding,
+        List<GeocodingResult> partnerGeocoding) {
         float max = NO_MATCH_RATIO;
 
-        List<GeocodingResult> baseGeocoding = getGeoCodingResult(location1);
-        List<GeocodingResult> partnerGeocoding = getGeoCodingResult(location2);
         for (GeocodingResult result1 : baseGeocoding) {
             for (GeocodingResult result2 : partnerGeocoding) {
-                max = Math.max(max, countSimilarityRatio(result1, result2));
+                max = Math.max(max, countSimilarityRatio(result1.getGoogleCoords(), result2.getGoogleCoords()));
             }
         }
 
         return max;
     }
 
-    private List<GeocodingResult> getGeoCodingResult(Location location) {
-        if (coordinatesAreMissing(location)) {
-            return location.getGeocodingResults();
-        } else {
-            return singletonList(new GeocodingResult(location.getName(), location.getLatitude(), location.getLongitude()));
-        }
+    private List<GeocodingResult> mockGeocodingResultsWithProviderData(Location location) {
+        return singletonList(new GeocodingResult(location.getName(), location.getLatitude(), location.getLongitude()));
     }
 
-    private boolean coordinatesAreMissing(Location location1) {
-        return location1.getLongitude() == null || location1.getLongitude().equals(0.0);
+    private boolean areCoordsComparable(List<GeocodingResult> baseGeocoding,
+        List<GeocodingResult> partnerGeocoding, Location baseLocation, Location partnerLocation) {
+
+        return (areGeocodingResultsReliable(baseGeocoding) || !areProviderCoordsEmpty(baseLocation))
+                && (areGeocodingResultsReliable(partnerGeocoding) || !areProviderCoordsEmpty(partnerLocation));
     }
 
-    private float countRatioIfCoordinatesArePresent(Location location1, Location location2) {
-        return countSimilarityRatio(
-            getStraightLineDistanceInMeters(location1.getCoordinates(), location2.getCoordinates()));
+    private boolean areProviderCoordsEmpty(Location location) {
+        return location.getLongitude() == null || location.getLatitude() == null
+            || location.getLongitude().equals(0.0) || location.getLatitude().equals(0.0);
+    }
+
+    private boolean areGeocodingResultsReliable(List<GeocodingResult> geocodingResults) {
+        return geocodingResults.stream()
+            .anyMatch(result -> result != null && result.getPartialMatch() != null && !result.getPartialMatch()
+                && Objects.equals(result.getLocationType(), LocationType.ROOFTOP));
     }
 
     private boolean anyPhysicalAddressIsNull(Location location1, Location location2) {
@@ -85,16 +123,8 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
             || location2 == null || location2.getPhysicalAddress() == null;
     }
 
-    private boolean allCoordinatesArePresent(Location location1, Location location2) {
-        return !coordinatesAreMissing(location1) && !coordinatesAreMissing(location2);
-    }
-
-    private float countSimilarityRatio(GeocodingResult result1, GeocodingResult result2) {
-        return countSimilarityRatio(result1.getGoogleCoords(), result2.getGoogleCoords());
-    }
-
     private float countSimilarityRatio(LatLng coordinates1, LatLng coordinates2) {
-        return countSimilarityRatio(getStraightLineDistanceInMeters(coordinates1, coordinates2));
+        return countSimilarityRatio(GeocodeUtils.getStraightLineDistanceInMeters(coordinates1, coordinates2));
     }
 
     private float countSimilarityRatio(double distance) {
@@ -111,9 +141,5 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
         }
 
         return COMPLETE_MATCH_RATIO;
-    }
-
-    private double getStraightLineDistanceInMeters(LatLng coordinates1, LatLng coordinates2) {
-        return GeocodeUtils.getStraightLineDistanceInMeters(coordinates1, coordinates2);
     }
 }
