@@ -77,7 +77,7 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
             return new ArrayList<>();
         }
 
-        String addressString = context.getGeoApi().extract255AddressChars(address);
+        String addressString = address.extract255AddressChars();
         if (StringUtils.isBlank(addressString)) {
             return new ArrayList<>();
         }

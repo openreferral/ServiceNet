@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.BooleanUtils;
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
@@ -76,7 +77,6 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
             .map(MatchSimilarityDTO::getSimilarity)
             .reduce(0f, Float::sum);
         if (BooleanUtils.isTrue(alwaysCompareLocations) || currentResult > 0) {
-            //TODO Compare multiple locations
             if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
                 similarityDtos.add(getFieldMatchSimilarityDTO(
                     getLocationSimilarity(org1, org2, context),
@@ -119,10 +119,15 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
     }
 
     private float getLocationSimilarity(Organization org1, Organization org2, MatchingContext context) {
-        return locationSimilarityCounter.countSimilarityRatio(
-            org1.getLocations().iterator().next(),
-            org2.getLocations().iterator().next(), context)
-            * weightProvider.getLocationWeight();
+        float max = NO_MATCH_RATIO;
+
+        for (Location location1 : org1.getLocations()) {
+            for (Location location2 : org2.getLocations()) {
+                max = Math.max(max, locationSimilarityCounter.countSimilarityRatio(location1, location2, context)
+                    * weightProvider.getLocationWeight());
+            }
+        }
+        return max;
     }
 
     private MatchSimilarityDTO getFieldMatchSimilarityDTO(float similarityValue, String fieldName) {

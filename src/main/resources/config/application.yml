@@ -124,6 +124,7 @@ similarity-ratio:
             base: 0.9
             in-level-2-distance: 0.8
             in-level-3-distance: 0.4
+            in-same-city-zipcode: 0.1
         email:
             base: 0.1
             same-domain: 0.01
