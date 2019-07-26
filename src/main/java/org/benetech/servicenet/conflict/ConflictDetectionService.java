@@ -8,12 +8,20 @@ import java.util.List;
 public interface ConflictDetectionService {
 
     /**
-     * Detect and persist conflicts for entities asynchronously.
+     * Detect and persist conflicts for entities.
      *
      * @param organization the organization
      * @param matches a list of organization matches
      */
     void detect(Organization organization, List<OrganizationMatch> matches);
+
+    /**
+     * Detect and persist conflicts for entities asynchronously.
+     *
+     * @param organization the organization
+     * @param matches a list of organization matches
+     */
+    void detectAsynchronously(Organization organization, List<OrganizationMatch> matches);
 
     /**
      * Remove conflicts for organization match.

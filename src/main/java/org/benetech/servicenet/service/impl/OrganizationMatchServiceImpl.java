@@ -200,7 +200,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
             organizationMatchRepository.save(match);
 
-            conflictDetectionService.detect(match.getOrganizationRecord(), Collections.singletonList(match));
+            conflictDetectionService.detectAsynchronously(match.getOrganizationRecord(), Collections.singletonList(match));
         });
     }
 
