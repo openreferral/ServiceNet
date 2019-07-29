@@ -1,5 +1,14 @@
 package org.benetech.servicenet.service.factory.records.builder;
 
+import static org.benetech.servicenet.service.factory.records.builder.FilteredEntityBuilder.buildCollection;
+import static org.benetech.servicenet.service.factory.records.builder.FilteredEntityBuilder.buildObject;
+
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.FieldExclusion;
@@ -21,16 +30,6 @@ import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.benetech.servicenet.service.factory.records.builder.FilteredEntityBuilder.buildCollection;
-import static org.benetech.servicenet.service.factory.records.builder.FilteredEntityBuilder.buildObject;
 
 @Component
 public class RecordBuilder {
@@ -88,8 +87,10 @@ public class RecordBuilder {
 
     private boolean isExcluded(Location location, LocationExclusion exclusion) {
         return Optional.ofNullable(location.getPhysicalAddress())
-            .map(address -> StringUtils.containsIgnoreCase(address.getRegion(), exclusion.getRegion())
-                || StringUtils.containsIgnoreCase(address.getCity(), exclusion.getCity()))
+            .map(address -> (StringUtils.isNotBlank(exclusion.getRegion())
+                && StringUtils.containsIgnoreCase(address.getRegion(), exclusion.getRegion()))
+                || (StringUtils.isNotBlank(exclusion.getCity())
+                && StringUtils.containsIgnoreCase(address.getCity(), exclusion.getCity())))
             .orElse(false);
     }
 
