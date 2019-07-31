@@ -19,7 +19,15 @@
           "searchOn": "Search On",
           "organization": "Organization",
           "services": "Services",
-          "locations": "Locations"
+          "locations": "Locations",
+          "dateFilter": "Update date",
+          "from": "From",
+          "to": "To",
+          "date": {
+            "last7Days": "Last 7 Days",
+            "last30Days": "Last 30 Days",
+            "dateRange": "Date Range"
+          }
         },
         "sort": {
           "toggle": "Sort",

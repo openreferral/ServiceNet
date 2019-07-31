@@ -70,12 +70,12 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     }
   }
 
-  sort = prop => () => {
-    setSort(this.props.account.login, prop);
+  sort = (sort, order) => {
+    setSort(this.props.account.login, sort, order);
 
     ReactGA.event({ category: 'UserActions', action: 'Sorting Records' });
 
-    this.setState({ sort: prop }, () => {
+    this.setState({ sort, order }, () => {
       this.reset();
     });
   };
@@ -263,6 +263,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                       dropdownOpen={this.state.dropdownOpen}
                       toggleSort={this.toggleSort}
                       sort={this.state.sort}
+                      order={this.state.order}
                       sortFunc={this.sort}
                       values={SORT_ARRAY}
                     />
