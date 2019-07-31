@@ -1,6 +1,5 @@
 package org.benetech.servicenet.domain;
 
-import org.benetech.servicenet.util.CompareUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
