@@ -4,6 +4,8 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.adapter.shared.model.FileInfo;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -80,6 +82,14 @@ public interface DocumentUploadService {
      */
     List<DocumentUploadDTO> findAll();
 
+    /**
+     * Get all the conflicts on page.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<DocumentUploadDTO> findAll(Pageable pageable);
+    
     /**
      * Get the "id" documentUpload.
      *

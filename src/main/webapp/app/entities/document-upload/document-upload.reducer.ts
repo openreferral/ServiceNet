@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IDocumentUpload>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: DocumentUploadState = initialState, action): DocumentUplo
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_DOCUMENTUPLOAD):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/document-uploads';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IDocumentUpload> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_DOCUMENTUPLOAD_LIST,
-  payload: axios.get<IDocumentUpload>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IDocumentUpload> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_DOCUMENTUPLOAD_LIST,
+    payload: axios.get<IDocumentUpload>(requestUrl)
+  };
+};
 
 export const getEntity: ICrudGetAction<IDocumentUpload> = id => {
   const requestUrl = `${apiUrl}/${id}`;

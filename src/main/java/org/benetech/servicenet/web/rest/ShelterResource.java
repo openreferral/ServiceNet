@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
@@ -91,12 +92,15 @@ public class ShelterResource {
     /**
      * GET  /shelters : get all the shelters.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of shelters in body
      */
     @GetMapping("/shelters")
-    public List<ShelterDTO> getAllShelters() {
+    public ResponseEntity<List<ShelterDTO>> getAllShelters(Pageable pageable) {
         log.debug("REST request to get all Shelters");
-        return shelterService.findAll();
+        Page<ShelterDTO> page = shelterService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/shelters");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

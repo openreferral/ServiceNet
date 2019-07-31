@@ -50,7 +50,7 @@
     "changelogDate": "20181119125404",
     "entityTableName": "holiday_schedule",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

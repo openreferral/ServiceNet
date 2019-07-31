@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IRequiredDocument>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: RequiredDocumentState = initialState, action): RequiredDo
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_REQUIREDDOCUMENT):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/required-documents';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IRequiredDocument> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_REQUIREDDOCUMENT_LIST,
-  payload: axios.get<IRequiredDocument>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IRequiredDocument> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_REQUIREDDOCUMENT_LIST,
+    payload: axios.get<IRequiredDocument>(requestUrl)
+  };
+};
 
 export const getEntity: ICrudGetAction<IRequiredDocument> = id => {
   const requestUrl = `${apiUrl}/${id}`;

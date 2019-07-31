@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Phone;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +22,5 @@ public interface PhoneRepository extends JpaRepository<Phone, UUID> {
     @Query("select phone from Phone phone where phone.organization.id =:orgId")
     Set<Phone> findAllByOrganization(@Param("orgId") UUID orgId);
 
+    Page<Phone> findAll(Pageable pageable);
 }

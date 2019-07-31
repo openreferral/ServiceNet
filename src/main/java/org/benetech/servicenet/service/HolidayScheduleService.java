@@ -1,6 +1,8 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.HolidaySchedule;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
 
 import java.util.List;
@@ -27,6 +29,13 @@ public interface HolidayScheduleService {
      */
     List<HolidayScheduleDTO> findAll();
 
+    /**
+     * Get all the holidaySchedules.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<HolidayScheduleDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" holidaySchedule.

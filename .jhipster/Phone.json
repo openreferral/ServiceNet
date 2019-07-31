@@ -55,7 +55,7 @@
     "changelogDate": "20181119125401",
     "entityTableName": "phone",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

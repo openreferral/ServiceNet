@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.DocumentUpload;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +27,5 @@ public interface DocumentUploadRepository extends JpaRepository<DocumentUpload, 
     @Query("select document_upload from DocumentUpload document_upload where document_upload.uploader.id = :id")
     List<DocumentUpload> findAllByUploaderId(@Param("id") UUID id);
 
+    Page<DocumentUpload> findAll(Pageable pageable);
 }

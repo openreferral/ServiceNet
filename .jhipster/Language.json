@@ -26,7 +26,7 @@
     "changelogDate": "20181119125410",
     "entityTableName": "language",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

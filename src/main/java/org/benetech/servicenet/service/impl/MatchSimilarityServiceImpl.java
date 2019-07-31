@@ -7,7 +7,8 @@ import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.benetech.servicenet.service.mapper.MatchSimilarityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +65,19 @@ public class MatchSimilarityServiceImpl implements MatchSimilarityService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the matchSimilarities.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MatchSimilarityDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all MatchSimilarities");
+        return matchSimilarityRepository.findAll(pageable)
+            .map(matchSimilarityMapper::toDto);
+    }
 
     /**
      * Get one matchSimilarity by id.

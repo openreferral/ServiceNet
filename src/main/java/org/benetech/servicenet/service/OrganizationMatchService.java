@@ -5,6 +5,8 @@ import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.DismissMatchDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +39,14 @@ public interface OrganizationMatchService {
     List<OrganizationMatchDTO> findAllDismissedForOrganization(UUID orgId);
 
     List<OrganizationMatchDTO> findAllNotDismissedForOrganization(UUID orgId);
+
+    /**
+     * Get all the organizationMatches.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<OrganizationMatchDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" organizationMatch.

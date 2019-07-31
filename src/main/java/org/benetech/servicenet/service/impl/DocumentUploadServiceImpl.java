@@ -19,6 +19,8 @@ import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -162,6 +164,14 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         return documentUploadRepository.findAll().stream()
             .map(documentUploadMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<DocumentUploadDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all DocumentUploads");
+        return documentUploadRepository.findAll(pageable)
+            .map(documentUploadMapper::toDto);
     }
 
     @Override

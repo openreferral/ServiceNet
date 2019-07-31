@@ -1,6 +1,8 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,13 @@ public interface OpeningHoursService {
      */
     List<OpeningHoursDTO> findAll();
 
+    /**
+     * Get all the openingHours.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<OpeningHoursDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" openingHours.

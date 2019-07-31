@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IAccessibilityForDisabilities>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: AccessibilityForDisabilitiesState = initialState, action)
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_ACCESSIBILITYFORDISABILITIES):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/accessibility-for-disabilities';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IAccessibilityForDisabilities> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_ACCESSIBILITYFORDISABILITIES_LIST,
-  payload: axios.get<IAccessibilityForDisabilities>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IAccessibilityForDisabilities> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_ACCESSIBILITYFORDISABILITIES_LIST,
+    payload: axios.get<IAccessibilityForDisabilities>(requestUrl)
+  };
+};
 
 export const getEntity: ICrudGetAction<IAccessibilityForDisabilities> = id => {
   const requestUrl = `${apiUrl}/${id}`;

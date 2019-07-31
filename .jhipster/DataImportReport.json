@@ -72,7 +72,7 @@
   "changelogDate": "20181231125401",
   "entityTableName": "data_import_report",
   "dto": "mapstruct",
-  "pagination": "no",
+  "pagination": true,
   "service": "serviceImpl",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,

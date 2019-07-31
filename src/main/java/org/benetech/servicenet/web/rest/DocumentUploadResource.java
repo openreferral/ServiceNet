@@ -10,9 +10,13 @@ import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -151,13 +155,16 @@ public class DocumentUploadResource {
     /**
      * GET  /document-uploads : get all the documentUploads.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of documentUploads in body
      */
     @GetMapping("/document-uploads")
     @Timed
-    public List<DocumentUploadDTO> getAllDocumentUploads() {
+    public ResponseEntity<List<DocumentUploadDTO>> getAllDocumentUploads(Pageable pageable) {
         log.debug("REST request to get all DocumentUploads");
-        return documentUploadService.findAll();
+        Page<DocumentUploadDTO> page = documentUploadService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/document-uploads");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

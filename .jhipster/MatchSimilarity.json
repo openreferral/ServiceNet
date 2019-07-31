@@ -35,5 +35,5 @@
     "entityTableName": "match_similarity",
     "databaseType": "sql",
     "jpaMetamodelFiltering": false,
-    "pagination": "no"
+    "pagination": true
 }

@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -104,6 +106,20 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         return organizationMatchRepository.findAll().stream()
             .map(organizationMatchMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Get all the organizationMatches.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrganizationMatchDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all OrganizationMatches");
+        return organizationMatchRepository.findAll(pageable)
+            .map(organizationMatchMapper::toDto);
     }
 
     @Override

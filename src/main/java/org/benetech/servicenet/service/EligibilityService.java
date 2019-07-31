@@ -1,6 +1,8 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.service.dto.EligibilityDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,13 @@ public interface EligibilityService {
      */
     List<EligibilityDTO> findAll();
 
+    /**
+     * Get all the eligibilities.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<EligibilityDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" eligibility.

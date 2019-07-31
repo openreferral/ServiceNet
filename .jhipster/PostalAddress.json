@@ -58,7 +58,7 @@
     "changelogDate": "20181119125400",
     "entityTableName": "postal_address",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

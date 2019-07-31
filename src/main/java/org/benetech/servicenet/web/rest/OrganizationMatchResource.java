@@ -7,8 +7,13 @@ import org.benetech.servicenet.service.dto.DismissMatchDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,13 +93,16 @@ public class OrganizationMatchResource {
     /**
      * GET  /organization-matches : get all the organizationMatches.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of organizationMatches in body
      */
     @GetMapping("/organization-matches")
     @Timed
-    public List<OrganizationMatchDTO> getAllOrganizationMatches() {
+    public ResponseEntity<List<OrganizationMatchDTO>> getAllOrganizationMatches(Pageable pageable) {
         log.debug("REST request to get all OrganizationMatches");
-        return organizationMatchService.findAll();
+        Page<OrganizationMatchDTO> page = organizationMatchService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organization-matches");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

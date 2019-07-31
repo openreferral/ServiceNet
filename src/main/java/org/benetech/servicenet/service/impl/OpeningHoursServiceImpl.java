@@ -7,6 +7,8 @@ import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.mapper.OpeningHoursMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +65,18 @@ public class OpeningHoursServiceImpl implements OpeningHoursService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the openingHours.
+     *
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OpeningHoursDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all OpeningHours");
+        return openingHoursRepository.findAll(pageable)
+            .map(openingHoursMapper::toDto);
+    }
 
     /**
      * Get one openingHours by id.

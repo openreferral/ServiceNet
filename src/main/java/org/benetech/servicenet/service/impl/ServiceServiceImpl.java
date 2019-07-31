@@ -7,6 +7,8 @@ import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
@@ -64,6 +66,20 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     /**
+     * Get all the services on page.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ServiceDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all Services");
+        return serviceRepository.findAll(pageable)
+            .map(serviceMapper::toDto);
+    }
+
+    /**
      * get all the services where RegularSchedule is null.
      *
      * @return the list of entities
@@ -77,7 +93,6 @@ public class ServiceServiceImpl implements ServiceService {
             .map(serviceMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }
-
 
     /**
      * get all the services where Funding is null.
@@ -93,7 +108,6 @@ public class ServiceServiceImpl implements ServiceService {
             .map(serviceMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }
-
 
     /**
      * get all the services where Eligibility is null.

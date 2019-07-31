@@ -25,4 +25,6 @@ public interface ShelterRepository extends JpaRepository<Shelter, UUID>, Shelter
 
     @Query("select shelter from Shelter shelter left join fetch shelter.tags where shelter.id =:id")
     Optional<Shelter> findOneWithEagerRelationships(@Param("id") Long id);
+
+    Page<Shelter> findAll(Pageable pageable);
 }

@@ -33,6 +33,7 @@ describe('Entities reducer tests', () => {
     entities: [] as ReadonlyArray<IServiceTaxonomy>,
     entity: defaultValue,
     updating: false,
+    totalItems: 0,
     updateSuccess: false
   };
 
@@ -126,7 +127,8 @@ describe('Entities reducer tests', () => {
 
   describe('Successes', () => {
     it('should fetch all entities', () => {
-      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }] };
+      const headers = { 'x-total-count': 2 };
+      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }], headers };
       expect(
         reducer(undefined, {
           type: SUCCESS(ACTION_TYPES.FETCH_SERVICETAXONOMY_LIST),
@@ -135,7 +137,8 @@ describe('Entities reducer tests', () => {
       ).toEqual({
         ...initialState,
         loading: false,
-        entities: payload.data
+        entities: payload.data,
+        totalItems: headers['x-total-count']
       });
     });
 

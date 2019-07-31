@@ -1,6 +1,8 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Taxonomy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
 
 import java.util.List;
@@ -27,6 +29,13 @@ public interface TaxonomyService {
      */
     List<TaxonomyDTO> findAll();
 
+    /**
+     * Get all the taxonomies.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<TaxonomyDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" taxonomy.

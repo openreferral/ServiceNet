@@ -22,6 +22,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IPhone>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -64,7 +65,8 @@ export default (state: PhoneState = initialState, action): PhoneState => {
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_PHONE):
       return {
@@ -110,10 +112,13 @@ const apiUrl = 'api/phones';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IPhone> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_PHONE_LIST,
-  payload: axios.get<IPhone>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IPhone> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_PHONE_LIST,
+    payload: axios.get<IPhone>(requestUrl)
+  };
+};
 
 export const getEntity: ICrudGetAction<IPhone> = id => {
   const requestUrl = `${apiUrl}/${id}`;
