@@ -39,17 +39,18 @@ import static org.benetech.servicenet.TestConstants.OTHER_STRING;
 import static org.benetech.servicenet.TestConstants.PROVIDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class OrganizationImportServiceTest {
-    
+
     @Autowired
     private OrganizationImportService importService;
-    
+
     @Autowired
     private TestPersistanceHelper helper;
-    
+
     @Autowired
     private OrganizationService organizationService;
 
@@ -217,5 +218,20 @@ public class OrganizationImportServiceTest {
         assertEquals(1, all.size());
         assertEquals(NEW_STRING, all.get(0).getName());
         assertEquals(organization.getId(), all.get(0).getOrganizationId());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void shouldReturnNullIfOrganizationHasntChanged() {
+        SystemAccount account = helper.generateExistingAccount();
+        Organization existingOrg = helper.generateExistingOrganization(account);
+        Organization newOrg = new Organization(existingOrg);
+        DataImportReport report = new DataImportReport();
+
+        assertEquals(1, organizationService.findAllDTOs().size());
+
+        Organization org = importService.createOrUpdateOrganization(newOrg,
+            EXISTING_EXTERNAL_ID, PROVIDER, report);
+        assertNull(org);
     }
 }

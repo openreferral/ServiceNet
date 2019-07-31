@@ -19,7 +19,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "opening_hours")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class OpeningHours extends AbstractEntity implements Serializable {
+public class OpeningHours extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -122,5 +122,16 @@ public class OpeningHours extends AbstractEntity implements Serializable {
             ", opensAt='" + getOpensAt() + "'" +
             ", closesAt='" + getClosesAt() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OpeningHours oh = (OpeningHours) o;
+        return Objects.equals(weekday, oh.weekday) &&
+            Objects.equals(opensAt, oh.opensAt) &&
+            Objects.equals(closesAt, oh.closesAt);
     }
 }

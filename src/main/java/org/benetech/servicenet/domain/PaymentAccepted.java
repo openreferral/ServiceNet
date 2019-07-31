@@ -18,7 +18,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "payment_accepted")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PaymentAccepted extends AbstractEntity implements Serializable {
+public class PaymentAccepted extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -85,5 +85,14 @@ public class PaymentAccepted extends AbstractEntity implements Serializable {
             "id=" + getId() +
             ", payment='" + getPayment() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PaymentAccepted pa = (PaymentAccepted) o;
+        return Objects.equals(payment, pa.payment);
     }
 }

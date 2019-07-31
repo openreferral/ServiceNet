@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Lob;
+import org.benetech.servicenet.util.CompareUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -22,7 +23,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "regular_schedule")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RegularSchedule extends AbstractEntity implements Serializable {
+public class RegularSchedule extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -137,5 +138,15 @@ public class RegularSchedule extends AbstractEntity implements Serializable {
             "id=" + getId() +
             "notes=" + getNotes() +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RegularSchedule rs = (RegularSchedule) o;
+        return Objects.equals(notes, rs.notes) &&
+            CompareUtils.deepEquals(openingHours, rs.openingHours);
     }
 }

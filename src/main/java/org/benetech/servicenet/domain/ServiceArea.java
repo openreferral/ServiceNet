@@ -19,7 +19,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "service_area")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ServiceArea extends AbstractEntity implements Serializable {
+public class ServiceArea extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -87,5 +87,14 @@ public class ServiceArea extends AbstractEntity implements Serializable {
             "id=" + getId() +
             ", description='" + getDescription() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ServiceArea sa = (ServiceArea) o;
+        return Objects.equals(description, sa.description);
     }
 }

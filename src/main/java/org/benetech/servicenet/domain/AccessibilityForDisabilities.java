@@ -23,7 +23,7 @@ import java.util.Objects;
 @Data
 @Table(name = "accessibility_for_disabilities")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AccessibilityForDisabilities extends AbstractEntity implements Serializable {
+public class AccessibilityForDisabilities extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -86,5 +86,15 @@ public class AccessibilityForDisabilities extends AbstractEntity implements Seri
             ", accessibility='" + getAccessibility() + "'" +
             ", details='" + getDetails() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AccessibilityForDisabilities afd = (AccessibilityForDisabilities) o;
+        return Objects.equals(accessibility, afd.accessibility) &&
+            Objects.equals(details, afd.details);
     }
 }

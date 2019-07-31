@@ -26,7 +26,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "phone")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Phone extends AbstractEntity implements Serializable {
+public class Phone extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -138,4 +138,17 @@ public class Phone extends AbstractEntity implements Serializable {
         return Objects.hashCode(getId());
     }
 
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Phone phone = (Phone) o;
+        return Objects.equals(number, phone.number) &&
+            Objects.equals(extension, phone.extension) &&
+            Objects.equals(type, phone.type) &&
+            Objects.equals(language, phone.language) &&
+            Objects.equals(description, phone.description);
+    }
 }

@@ -23,7 +23,7 @@ import java.util.Objects;
 @Data
 @Table(name = "service_at_location")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ServiceAtLocation extends AbstractEntity implements Serializable {
+public class ServiceAtLocation extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -122,5 +122,16 @@ public class ServiceAtLocation extends AbstractEntity implements Serializable {
             "id=" + getId() +
             ", description='" + getDescription() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ServiceAtLocation sal = (ServiceAtLocation) o;
+        return Objects.equals(description, sal.description) &&
+            Objects.equals(externalDbId, sal.externalDbId) &&
+            Objects.equals(providerName, sal.providerName);
     }
 }
