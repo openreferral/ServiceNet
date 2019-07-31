@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Col, Container, Row, Collapse, Card, CardBody } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { Button, Col, Container, Row, Collapse, Card, CardBody, Input } from 'reactstrap';
+import { Translate, translate } from 'react-jhipster';
 import Select from 'react-select';
 import { IRootState } from 'app/shared/reducers';
 import {
@@ -26,6 +26,9 @@ export interface IFilterActivityState {
   selectedTaxonomy: any;
   filtersChanged: boolean;
   searchOn: string;
+  dateFilter: any;
+  fromDate: any;
+  toDate: any;
 }
 
 export interface IFilterActivityProps extends StateProps, DispatchProps {
@@ -42,7 +45,10 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     selectedPartner: this.props.activityFilter.partnerFilterList.map(city => ({ label: city.label, value: city.value })),
     selectedTaxonomy: this.props.activityFilter.taxonomiesFilterList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
     filtersChanged: false,
-    searchOn: this.props.activityFilter.searchOn
+    searchOn: this.props.activityFilter.searchOn,
+    dateFilter: this.props.activityFilter.dateFilter,
+    fromDate: this.props.activityFilter.fromDate,
+    toDate: this.props.activityFilter.toDate
   };
 
   componentDidMount() {
@@ -74,6 +80,12 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.getTaxonomyList();
   };
 
+  getDateFilterList = () => [
+    { value: 'LAST_7_DAYS', label: translate('serviceNetApp.activity.home.filter.date.last7Days') },
+    { value: 'LAST_30_DAYS', label: translate('serviceNetApp.activity.home.filter.date.last30Days') },
+    { value: 'DATE_RANGE', label: translate('serviceNetApp.activity.home.filter.date.dateRange') }
+  ];
+
   applyFilter = () => {
     ReactGA.event({ category: 'UserActions', action: 'Applied Filter' });
     this.props.getActivityEntities().then(() => this.setState({ filtersChanged: false }));
@@ -87,7 +99,10 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       selectedPartner: [],
       selectedTaxonomy: [],
       filtersChanged: true,
-      searchOn: ORGANIZATION
+      searchOn: ORGANIZATION,
+      dateFilter: null,
+      fromDate: '',
+      toDate: ''
     });
 
     this.props.updateActivityFilter({
@@ -97,7 +112,10 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       postalCodesFilterList: [],
       partnerFilterList: [],
       taxonomiesFilterList: [],
-      searchOn: ORGANIZATION
+      searchOn: ORGANIZATION,
+      dateFilter: null,
+      fromDate: '',
+      toDate: ''
     });
 
     this.props.resetActivityFilter();
@@ -150,6 +168,28 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.setState({ searchOn, filtersChanged: true });
 
     this.props.updateActivityFilter({ ...this.props.activityFilter, searchOn });
+  };
+
+  handleDateFilterChange = dateFilter => {
+    this.setState({ dateFilter, filtersChanged: true });
+
+    this.props.updateActivityFilter({ ...this.props.activityFilter, dateFilter: dateFilter.value });
+  };
+
+  handleFromDateChange = changeEvent => {
+    const fromDate = changeEvent.target.value;
+
+    this.setState({ fromDate, filtersChanged: true });
+
+    this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
+  };
+
+  handleToDateChange = changeEvent => {
+    const toDate = changeEvent.target.value;
+
+    this.setState({ toDate, filtersChanged: true });
+
+    this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
   };
 
   render() {
@@ -230,6 +270,30 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                     <Translate contentKey="serviceNetApp.activity.home.filter.taxonomy" />
                     <Select value={this.state.selectedTaxonomy} onChange={this.handleTaxonomyChange} options={taxonomyList} isMulti />
                   </Col>
+                </Row>
+                <Row>
+                  <Col md="3">
+                    <Translate contentKey="serviceNetApp.activity.home.filter.dateFilter" />
+                    <Select value={this.state.dateFilter} onChange={this.handleDateFilterChange} options={this.getDateFilterList()} />
+                  </Col>
+                  {!this.state.dateFilter || this.state.dateFilter.value !== 'DATE_RANGE'
+                    ? null
+                    : [
+                        <Col key="fromDate" md="3">
+                          <Translate contentKey="serviceNetApp.activity.home.filter.from" />
+                          <Input
+                            type="date"
+                            value={this.state.fromDate}
+                            onChange={this.handleFromDateChange}
+                            name="fromDate"
+                            id="fromDate"
+                          />
+                        </Col>,
+                        <Col key="toDate" md="3">
+                          <Translate contentKey="serviceNetApp.activity.home.filter.to" />
+                          <Input type="date" value={this.state.toDate} onChange={this.handleToDateChange} name="toDate" id="toDate" />
+                        </Col>
+                      ]}
                 </Row>
                 <Row>
                   <Col md={{ size: 2, offset: 10 }}>
