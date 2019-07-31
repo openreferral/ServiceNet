@@ -131,12 +131,15 @@ describe('Entities reducer tests', () => {
 
   describe('Successes', () => {
     it('should fetch all entities', () => {
-      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }], headers: { 'x-total-count': 123, link: ';' } };
+      const headers = { 'x-total-count': 2, link: ';' };
+      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }], headers };
       const links = parseHeaderForLinks(payload.headers.link);
       expect(
         reducer(undefined, {
           type: SUCCESS(ACTION_TYPES.FETCH_ORGANIZATIONERROR_LIST),
-          payload
+          payload,
+          entities: payload.data,
+          totalItems: headers['x-total-count']
         })
       ).toEqual({
         ...initialState,

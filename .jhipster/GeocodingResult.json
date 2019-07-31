@@ -27,7 +27,7 @@
   "changelogDate": "20190222165806",
   "entityTableName": "geocoding_result",
   "dto": "mapstruct",
-  "pagination": "pagination",
+  "pagination": true,
   "service": "serviceImpl",
   "jpaMetamodelFiltering": false,
   "fluentMethods": true,

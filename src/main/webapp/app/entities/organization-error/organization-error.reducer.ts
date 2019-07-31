@@ -76,7 +76,7 @@ export default (state: OrganizationErrorState = initialState, action): Organizat
         loading: false,
         links,
         entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links),
-        totalItems: parseInt(action.payload.headers['x-total-count'], 10)
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_ORGANIZATIONERROR):
       return {
@@ -116,7 +116,7 @@ export const getEntities: ICrudGetAllAction<IOrganizationError> = (page, size, s
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_ORGANIZATIONERROR_LIST,
-    payload: axios.get<IOrganizationError>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+    payload: axios.get<IOrganizationError>(requestUrl)
   };
 };
 

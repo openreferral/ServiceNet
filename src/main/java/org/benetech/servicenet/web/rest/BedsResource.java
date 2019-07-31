@@ -5,10 +5,15 @@ import org.benetech.servicenet.domain.Beds;
 import org.benetech.servicenet.repository.BedsRepository;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -85,12 +90,15 @@ public class BedsResource {
     /**
      * GET  /beds : get all the beds.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of beds in body
      */
     @GetMapping("/beds")
-    public List<Beds> getAllBeds() {
+    public ResponseEntity<List<Beds>> getAllBeds(Pageable pageable) {
         log.debug("REST request to get all Beds");
-        return bedsRepository.findAll();
+        Page<Beds> page = bedsRepository.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/beds");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

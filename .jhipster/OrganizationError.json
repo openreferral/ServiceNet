@@ -38,5 +38,5 @@
     "entityTableName": "organization_error",
     "databaseType": "sql",
     "jpaMetamodelFiltering": false,
-    "pagination": "infinite-scroll"
+    "pagination": true
 }

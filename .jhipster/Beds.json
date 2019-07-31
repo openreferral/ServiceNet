@@ -30,5 +30,5 @@
     "entityTableName": "beds",
     "databaseType": "sql",
     "jpaMetamodelFiltering": false,
-    "pagination": "no"
+    "pagination": true
 }

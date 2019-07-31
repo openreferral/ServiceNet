@@ -2,6 +2,8 @@ package org.benetech.servicenet.repository;
 
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beds;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BedsRepository extends JpaRepository<Beds, UUID> {
 
+    Page<Beds> findAll(Pageable pageable);
 }
