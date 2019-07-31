@@ -20,7 +20,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "language")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Language extends AbstractEntity implements Serializable {
+public class Language extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -106,5 +106,14 @@ public class Language extends AbstractEntity implements Serializable {
             "id=" + getId() +
             ", language='" + getLanguage() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Language lang = (Language) o;
+        return Objects.equals(language, lang.language);
     }
 }

@@ -48,11 +48,13 @@ public class ImportServiceImpl implements ImportService {
         Organization organization = organizationImportService.createOrUpdateOrganization(
             filledOrganization, externalDbId, importData.getProviderName(), importData.getReport());
 
-        importLocations(filledOrganization.getLocations(), organization, importData);
-        importServices(filledOrganization.getServices(), organization, importData.getProviderName(), importData.getReport());
+        if (organization != null) {
+            importLocations(filledOrganization.getLocations(), organization, importData);
+            importServices(filledOrganization.getServices(), organization,
+                importData.getProviderName(), importData.getReport());
 
-        registerSynchronizationOfMatchingOrganizations(organization, importData.getContext());
-
+            registerSynchronizationOfMatchingOrganizations(organization, importData.getContext());
+        }
         return organization;
     }
 

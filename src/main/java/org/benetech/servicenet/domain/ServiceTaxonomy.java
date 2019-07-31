@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.benetech.servicenet.util.CompareUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -22,7 +23,7 @@ import java.util.Objects;
 @Data
 @Table(name = "service_taxonomy")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ServiceTaxonomy extends AbstractEntity implements Serializable {
+public class ServiceTaxonomy extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -125,5 +126,17 @@ public class ServiceTaxonomy extends AbstractEntity implements Serializable {
             "id=" + getId() +
             ", taxonomyDetails='" + getTaxonomyDetails() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ServiceTaxonomy st = (ServiceTaxonomy) o;
+        return Objects.equals(taxonomyDetails, st.taxonomyDetails) &&
+            Objects.equals(externalDbId, st.externalDbId) &&
+            Objects.equals(providerName, st.providerName) &&
+            CompareUtils.deepEquals(taxonomy, st.taxonomy);
     }
 }

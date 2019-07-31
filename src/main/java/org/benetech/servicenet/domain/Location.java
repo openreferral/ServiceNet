@@ -10,6 +10,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.benetech.servicenet.util.CompareUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -36,7 +37,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "location")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Location extends AbstractEntity implements Serializable {
+public class Location extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -282,5 +283,30 @@ public class Location extends AbstractEntity implements Serializable {
             ", latitude=" + getLatitude() +
             ", longitude=" + getLongitude() +
             "}";
+    }
+
+    @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Location loc = (Location) o;
+
+        return (Objects.equals(this.name, loc.name) &&
+            Objects.equals(this.alternateName, loc.alternateName) &&
+            Objects.equals(this.description, loc.description) &&
+            Objects.equals(this.transportation, loc.transportation) &&
+            Objects.equals(this.latitude, loc.latitude) &&
+            Objects.equals(this.longitude, loc.longitude) &&
+            Objects.equals(this.externalDbId, loc.externalDbId) &&
+            Objects.equals(this.providerName, loc.providerName) &&
+            CompareUtils.deepEquals(physicalAddress, loc.physicalAddress) &&
+            CompareUtils.deepEquals(postalAddress, loc.postalAddress) &&
+            CompareUtils.deepEquals(regularSchedule, loc.regularSchedule) &&
+            CompareUtils.deepEquals(holidaySchedules, loc.holidaySchedules) &&
+            CompareUtils.deepEquals(langs, loc.langs) &&
+            CompareUtils.deepEquals(phones, loc.phones) &&
+            CompareUtils.deepEquals(accessibilities, loc.accessibilities));
     }
 }

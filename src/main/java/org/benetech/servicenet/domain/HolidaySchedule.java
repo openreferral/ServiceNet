@@ -20,7 +20,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "holiday_schedule")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class HolidaySchedule extends AbstractEntity implements Serializable {
+public class HolidaySchedule extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -210,5 +210,21 @@ public class HolidaySchedule extends AbstractEntity implements Serializable {
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
             "}";
+    }
+
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        HolidaySchedule hs = (HolidaySchedule) o;
+        return Objects.equals(closed, hs.closed) &&
+            Objects.equals(opensAt, hs.opensAt) &&
+            Objects.equals(closesAt, hs.closesAt) &&
+            Objects.equals(startDate, hs.startDate) &&
+            Objects.equals(endDate, hs.endDate) &&
+            Objects.equals(externalDbId, hs.externalDbId) &&
+            Objects.equals(providerName, hs.providerName);
     }
 }

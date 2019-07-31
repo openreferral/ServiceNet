@@ -19,7 +19,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "postal_address")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PostalAddress extends AbstractEntity implements Serializable {
+public class PostalAddress extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -214,5 +214,22 @@ public class PostalAddress extends AbstractEntity implements Serializable {
             ", postalCode='" + getPostalCode() + "'" +
             ", country='" + getCountry() + "'" +
             "}";
+    }
+
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PostalAddress pa = (PostalAddress) o;
+        return Objects.equals(attention, pa.attention) &&
+            Objects.equals(address1, pa.address1) &&
+            Objects.equals(address2, pa.address2) &&
+            Objects.equals(city, pa.city) &&
+            Objects.equals(region, pa.region) &&
+            Objects.equals(stateProvince, pa.stateProvince) &&
+            Objects.equals(postalCode, pa.postalCode) &&
+            Objects.equals(country, pa.country);
     }
 }

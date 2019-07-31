@@ -22,7 +22,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "physical_address")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PhysicalAddress extends AbstractEntity implements Serializable, Address {
+public class PhysicalAddress extends AbstractEntity implements Serializable, Address, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -223,5 +223,22 @@ public class PhysicalAddress extends AbstractEntity implements Serializable, Add
     public String getAddress() {
         return Stream.of(getAddress1(), getCity(), getCountry(), getPostalCode(), getRegion(), getStateProvince())
             .filter(StringUtils::isNotBlank).collect(Collectors.joining(DELIMITER));
+    }
+
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PhysicalAddress pa = (PhysicalAddress) o;
+        return Objects.equals(attention, pa.attention) &&
+            Objects.equals(address1, pa.address1) &&
+            Objects.equals(address2, pa.address2) &&
+            Objects.equals(city, pa.city) &&
+            Objects.equals(region, pa.region) &&
+            Objects.equals(stateProvince, pa.stateProvince) &&
+            Objects.equals(postalCode, pa.postalCode) &&
+            Objects.equals(country, pa.country);
     }
 }

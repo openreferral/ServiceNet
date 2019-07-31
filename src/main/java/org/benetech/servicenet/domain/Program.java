@@ -22,7 +22,7 @@ import java.util.Set;
 @Entity
 @Table(name = "program")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends AbstractEntity implements Serializable {
+public class Program extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -137,5 +137,15 @@ public class Program extends AbstractEntity implements Serializable {
             ", name='" + getName() + "'" +
             ", alternateName='" + getAlternateName() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Program program = (Program) o;
+        return Objects.equals(name, program.getName()) &&
+            Objects.equals(alternateName, program.getAlternateName());
     }
 }

@@ -29,7 +29,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "required_document")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RequiredDocument extends AbstractEntity implements Serializable {
+public class RequiredDocument extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -93,4 +93,14 @@ public class RequiredDocument extends AbstractEntity implements Serializable {
         return Objects.hashCode(getId());
     }
 
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RequiredDocument rd = (RequiredDocument) o;
+        return Objects.equals(document, rd.document) &&
+            Objects.equals(externalDbId, rd.externalDbId) &&
+            Objects.equals(providerName, rd.providerName);
+    }
 }

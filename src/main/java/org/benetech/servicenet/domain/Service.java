@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.benetech.servicenet.util.CompareUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -31,7 +32,7 @@ import java.util.Set;
 @Table(name = "service")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NoArgsConstructor
-public class Service extends AbstractEntity implements Serializable {
+public class Service extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -431,5 +432,42 @@ public class Service extends AbstractEntity implements Serializable {
             ", type='" + getType() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";
+    }
+
+    @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Service srvc = (Service) o;
+        return (Objects.equals(this.name, srvc.name) &&
+            Objects.equals(this.alternateName, srvc.alternateName) &&
+            Objects.equals(this.description, srvc.description) &&
+            Objects.equals(this.url, srvc.url) &&
+            Objects.equals(this.email, srvc.email) &&
+            Objects.equals(this.status, srvc.status) &&
+            Objects.equals(this.interpretationServices, srvc.interpretationServices) &&
+            Objects.equals(this.applicationProcess, srvc.applicationProcess) &&
+            Objects.equals(this.waitTime, srvc.waitTime) &&
+            Objects.equals(this.fees, srvc.fees) &&
+            Objects.equals(this.accreditations, srvc.accreditations) &&
+            Objects.equals(this.licenses, srvc.licenses) &&
+            Objects.equals(this.type, srvc.type) &&
+            Objects.equals(this.updatedAt, srvc.updatedAt) &&
+            Objects.equals(this.externalDbId, srvc.externalDbId) &&
+            Objects.equals(this.providerName, srvc.providerName) &&
+            CompareUtils.deepEquals(locations, srvc.locations) &&
+            CompareUtils.deepEquals(regularSchedule, srvc.regularSchedule) &&
+            CompareUtils.deepEquals(holidaySchedules, srvc.holidaySchedules) &&
+            CompareUtils.deepEquals(funding, srvc.funding) &&
+            CompareUtils.deepEquals(eligibility, srvc.eligibility) &&
+            CompareUtils.deepEquals(areas, srvc.areas) &&
+            CompareUtils.deepEquals(docs, srvc.docs) &&
+            CompareUtils.deepEquals(paymentsAccepteds, srvc.paymentsAccepteds) &&
+            CompareUtils.deepEquals(langs, srvc.langs) &&
+            CompareUtils.deepEquals(taxonomies, srvc.taxonomies) &&
+            CompareUtils.deepEquals(phones, srvc.phones) &&
+            CompareUtils.deepEquals(contacts, srvc.contacts));
     }
 }
