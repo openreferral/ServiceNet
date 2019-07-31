@@ -22,6 +22,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IService>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -64,7 +65,8 @@ export default (state: ServiceState = initialState, action): ServiceState => {
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_SERVICE):
       return {
@@ -110,10 +112,13 @@ const apiUrl = 'api/services';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IService> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_SERVICE_LIST,
-  payload: axios.get<IService>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IService> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_SERVICE_LIST,
+    payload: axios.get<IService>(requestUrl)
+  };
+};
 
 export const getEntity: ICrudGetAction<IService> = id => {
   const requestUrl = `${apiUrl}/${id}`;

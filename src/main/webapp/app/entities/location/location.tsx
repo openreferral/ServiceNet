@@ -3,24 +3,98 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
-import { byteSize, Translate, ICrudGetAllAction } from 'react-jhipster';
+import {
+  Translate,
+  translate,
+  ICrudGetAllAction,
+  TextFormat,
+  JhiPagination,
+  getPaginationItemsNumber,
+  getSortState,
+  IPaginationBaseState
+} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import PageSizeSelector from '../page-size-selector';
 import { IRootState } from 'app/shared/reducers';
-import { getEntities } from './location.reducer';
+import { getEntities, updateEntity } from './location.reducer';
+import { ITEMS_PER_PAGE_ENTITY } from 'app/shared/util/pagination.constants';
 import { ILocation } from 'app/shared/model/location.model';
 // tslint:disable-next-line:no-unused-variable
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 export interface ILocationProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
-export class Location extends React.Component<ILocationProps> {
-  componentDidMount() {
-    this.props.getEntities();
+export interface ILocationState extends IPaginationBaseState {
+  dropdownOpenTop: boolean;
+  dropdownOpenBottom: boolean;
+  itemsPerPage: number;
+}
+
+export class Location extends React.Component<ILocationProps, ILocationState> {
+  constructor(props) {
+    super(props);
+
+    this.toggleTop = this.toggleTop.bind(this);
+    this.toggleBottom = this.toggleBottom.bind(this);
+    this.select = this.select.bind(this);
+    this.state = {
+      dropdownOpenTop: false,
+      dropdownOpenBottom: false,
+      itemsPerPage: ITEMS_PER_PAGE_ENTITY,
+      ...getSortState(this.props.location, ITEMS_PER_PAGE_ENTITY)
+    };
   }
 
+  componentDidMount() {
+    this.getEntities();
+  }
+
+  sort = prop => () => {
+    this.setState(
+      {
+        order: this.state.order === 'asc' ? 'desc' : 'asc',
+        sort: prop
+      },
+      () => this.sortEntities()
+    );
+  };
+
+  sortEntities() {
+    this.getEntities();
+    this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
+    window.scrollTo(0, 0);
+  }
+
+  handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
+
+  getEntities = () => {
+    const { activePage, itemsPerPage, sort, order } = this.state;
+    this.props.getEntities(activePage - 1, itemsPerPage, `${sort},${order}`);
+  };
+
+  toggleTop() {
+    this.setState(prevState => ({
+      dropdownOpenTop: !prevState.dropdownOpenTop
+    }));
+  }
+
+  toggleBottom() {
+    this.setState(prevState => ({
+      dropdownOpenBottom: !prevState.dropdownOpenBottom
+    }));
+  }
+
+  select = prop => () => {
+    this.setState(
+      {
+        itemsPerPage: prop
+      },
+      () => this.sortEntities()
+    );
+  };
+
   render() {
-    const { locationList, match } = this.props;
+    const { locationList, match, totalItems } = this.props;
     return (
       <div>
         <h2 id="location-heading">
@@ -31,6 +105,20 @@ export class Location extends React.Component<ILocationProps> {
             <Translate contentKey="serviceNetApp.location.home.createLabel">Create new Location</Translate>
           </Link>
         </h2>
+        <Row className="justify-content-center">
+          <PageSizeSelector
+            dropdownOpen={this.state.dropdownOpenTop}
+            toggleSelect={this.toggleTop}
+            itemsPerPage={this.state.itemsPerPage}
+            selectFunc={this.select}
+          />
+          <JhiPagination
+            items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
+            activePage={this.state.activePage}
+            onSelect={this.handlePagination}
+            maxButtons={5}
+          />
+        </Row>
         <div className="table-responsive">
           {locationList && locationList.length > 0 ? (
             <Table responsive>
@@ -137,17 +225,33 @@ export class Location extends React.Component<ILocationProps> {
             </div>
           )}
         </div>
+        <Row className="justify-content-center">
+          <PageSizeSelector
+            dropdownOpen={this.state.dropdownOpenBottom}
+            toggleSelect={this.toggleBottom}
+            itemsPerPage={this.state.itemsPerPage}
+            selectFunc={this.select}
+          />
+          <JhiPagination
+            items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
+            activePage={this.state.activePage}
+            onSelect={this.handlePagination}
+            maxButtons={5}
+          />
+        </Row>
       </div>
     );
   }
 }
 
 const mapStateToProps = ({ location }: IRootState) => ({
-  locationList: location.entities
+  locationList: location.entities,
+  totalItems: location.totalItems
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
+  updateEntity
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

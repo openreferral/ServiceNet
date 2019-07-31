@@ -6,8 +6,13 @@ import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -92,21 +97,12 @@ public class ServiceResource {
      */
     @GetMapping("/services")
     @Timed
-    public List<ServiceDTO> getAllServices(@RequestParam(required = false) String filter) {
-        if ("regularschedule-is-null".equals(filter)) {
-            log.debug("REST request to get all Services where regularSchedule is null");
-            return serviceService.findAllWhereRegularScheduleIsNull();
-        }
-        if ("funding-is-null".equals(filter)) {
-            log.debug("REST request to get all Services where funding is null");
-            return serviceService.findAllWhereFundingIsNull();
-        }
-        if ("eligibility-is-null".equals(filter)) {
-            log.debug("REST request to get all Services where eligibility is null");
-            return serviceService.findAllWhereEligibilityIsNull();
-        }
+    public ResponseEntity<List<ServiceDTO>> getAllServicesPage(@RequestParam(required = false) String filter,
+    Pageable pageable) {
         log.debug("REST request to get all Services");
-        return serviceService.findAll();
+        Page<ServiceDTO> page = serviceService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/services");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
