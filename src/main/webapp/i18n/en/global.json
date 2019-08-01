@@ -71,7 +71,8 @@
         "audits": "Audits",
         "apidocs": "API",
         "database": "Database",
-        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
+        "hiddenRecords": "View Hidden Records"
       },
       "language": "Language"
     },

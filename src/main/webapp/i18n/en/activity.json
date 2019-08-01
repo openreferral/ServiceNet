@@ -57,7 +57,8 @@
         "title": "Recent Service Net Activity",
         "conflictPlusZero": " has a conflicting {{ fieldName }}"
       },
-      "lastPartnerUpdate": "Last Partner Update "
+      "lastPartnerUpdate": "Last Partner Update ",
+      "hideRecord": "Done with this record"
     }
   }
 }

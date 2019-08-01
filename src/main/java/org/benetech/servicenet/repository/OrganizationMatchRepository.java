@@ -25,4 +25,8 @@ public interface OrganizationMatchRepository extends JpaRepository<OrganizationM
     List<OrganizationMatch> findAllByOrganizationRecordIdAndDismissed(UUID uuid, Boolean dismissed);
 
     List<OrganizationMatch> findAllByPartnerVersionIdAndDismissed(UUID uuid, Boolean dismissed);
+
+    List<OrganizationMatch> findAllByHidden(Boolean hidden);
+
+    List<OrganizationMatch> findAllByOrganizationRecordIdAndHidden(UUID uuid, Boolean hidden);
 }

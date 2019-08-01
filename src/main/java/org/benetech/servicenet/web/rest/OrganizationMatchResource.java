@@ -98,6 +98,30 @@ public class OrganizationMatchResource {
     }
 
     /**
+     * GET  /organization-matches/hidden : get all the hidden organizationMatches.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of organizationMatches in body
+     */
+    @GetMapping("/organization-matches/hidden")
+    @Timed
+    public List<OrganizationMatchDTO> getHiddenOrganizationMatches() {
+        log.debug("REST request to get all hidden OrganizationMatches");
+        return organizationMatchService.findAllHiddenOrganizationMatches();
+    }
+
+    /**
+     * GET  /organization-matches/hidden : get all the not hidden organizationMatches.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of organizationMatches in body
+     */
+    @GetMapping("/organization-matches/notHidden")
+    @Timed
+    public List<OrganizationMatchDTO> getNotHiddenOrganizationMatches() {
+        log.debug("REST request to get all hidden OrganizationMatches");
+        return organizationMatchService.findAllNotHiddenOrganizationMatches();
+    }
+
+    /**
      * GET  /organization-matches/:id : get the "id" organizationMatch.
      *
      * @param id the id of the organizationMatchDTO to retrieve
@@ -115,6 +139,12 @@ public class OrganizationMatchResource {
     @Timed
     public List<OrganizationMatchDTO> getOrganizationMatchesForOrganization(@PathVariable UUID id) {
         return organizationMatchService.findAllForOrganization(id);
+    }
+
+    @GetMapping("/organization-matches/organization/{id}/notHidden")
+    @Timed
+    public List<OrganizationMatchDTO> getNotHiddenOrganizationMatchesForOrganization(@PathVariable UUID id) {
+        return organizationMatchService.findAllNotHiddenForOrganization(id);
     }
 
     /**
@@ -158,6 +188,42 @@ public class OrganizationMatchResource {
     public ResponseEntity<Void> revertDismissOrganizationMatch(@PathVariable UUID id) {
         log.debug("REST request to revert dismiss of OrganizationMatch : {}", id);
         organizationMatchService.revertDismissOrganizationMatch(id);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * POST  /organization-matches/:id/hide : Hide organizationMatch.
+     *
+     * @param id the id of the organizationMatchDTO to hide
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @PostMapping("/organization-matches/{id}/hide")
+    @Timed
+    public ResponseEntity<Void> hideOrganizationMatch(@PathVariable UUID id) {
+        log.debug("REST request to hide OrganizationMatch : {}", id);
+        organizationMatchService.hideOrganizationMatch(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/organization-matches/hideList")
+    @Timed
+    public ResponseEntity<Void> hideListOfOrganizationMatches(@RequestBody List<UUID> matchIds) {
+        log.debug("REST request to hide OrganizationMatch list");
+        organizationMatchService.hideOrganizationMatches(matchIds);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * POST  /organization-matches/:id/revertHide : Revert hide organizationMatch.
+     *
+     * @param id the id of the organizationMatchDTO to revert the hide
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @PostMapping("/organization-matches/{id}/revertHide")
+    @Timed
+    public ResponseEntity<Void> revertHidesOrganizationMatch(@PathVariable UUID id) {
+        log.debug("REST request to revert hide of OrganizationMatch : {}", id);
+        organizationMatchService.revertHideOrganizationMatch(id);
         return ResponseEntity.ok().build();
     }
 }
