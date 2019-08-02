@@ -102,10 +102,10 @@ const apiUrl = 'api/contacts';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IContact> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
   return {
     type: ACTION_TYPES.FETCH_CONTACT_LIST,
-    payload: axios.get<IContact>(requestUrl)
+    payload: axios.get<IContact>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 

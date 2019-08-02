@@ -113,10 +113,10 @@ const apiUrl = 'api/service-taxonomies';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IServiceTaxonomy> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
   return {
     type: ACTION_TYPES.FETCH_SERVICETAXONOMY_LIST,
-    payload: axios.get<IServiceTaxonomy>(requestUrl)
+    payload: axios.get<IServiceTaxonomy>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 

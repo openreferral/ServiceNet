@@ -116,7 +116,7 @@ export const getEntities: ICrudGetAllAction<IOrganization> = (page, size, sort) 
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_ORGANIZATION_LIST,
-    payload: axios.get<IOrganization>(requestUrl)
+    payload: axios.get<IOrganization>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 

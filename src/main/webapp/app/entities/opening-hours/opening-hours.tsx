@@ -61,11 +61,11 @@ export class OpeningHours extends React.Component<IOpeningHoursProps, IOpeningHo
 
   sortEntities() {
     this.getEntities();
-    this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
-    window.scrollTo(0, 0);
+    const { activePage, sort, order } = this.state;
+    this.props.history.push(`${this.props.location.pathname}?page=${activePage}&sort=${sort},${order}`);
   }
 
-  handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
+  handlePagination = activePage => this.setState({ activePage }, () => this.updatePage());
 
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
@@ -73,15 +73,11 @@ export class OpeningHours extends React.Component<IOpeningHoursProps, IOpeningHo
   };
 
   toggleTop() {
-    this.setState(prevState => ({
-      dropdownOpenTop: !prevState.dropdownOpenTop
-    }));
+    this.setState({ dropdownOpenTop: !this.state.dropdownOpenTop });
   }
 
   toggleBottom() {
-    this.setState(prevState => ({
-      dropdownOpenBottom: !prevState.dropdownOpenBottom
-    }));
+    this.setState({ dropdownOpenBottom: !this.state.dropdownOpenBottom });
   }
 
   select = prop => () => {
@@ -89,9 +85,14 @@ export class OpeningHours extends React.Component<IOpeningHoursProps, IOpeningHo
       {
         itemsPerPage: prop
       },
-      () => this.sortEntities()
+      () => this.updatePage()
     );
   };
+
+  updatePage() {
+    window.scrollTo(0, 0);
+    this.sortEntities();
+  }
 
   render() {
     const { openingHoursList, match, totalItems } = this.props;

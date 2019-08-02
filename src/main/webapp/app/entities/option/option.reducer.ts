@@ -132,10 +132,10 @@ const apiUrl = 'api/options';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IOption> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
   return {
     type: ACTION_TYPES.FETCH_OPTION_LIST,
-    payload: axios.get<IOption>(requestUrl)
+    payload: axios.get<IOption>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 

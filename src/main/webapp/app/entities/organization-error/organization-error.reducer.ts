@@ -116,7 +116,7 @@ export const getEntities: ICrudGetAllAction<IOrganizationError> = (page, size, s
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_ORGANIZATIONERROR_LIST,
-    payload: axios.get<IOrganizationError>(requestUrl)
+    payload: axios.get<IOrganizationError>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 

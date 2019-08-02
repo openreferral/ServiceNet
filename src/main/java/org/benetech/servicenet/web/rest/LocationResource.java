@@ -102,26 +102,20 @@ public class LocationResource {
     @Timed
     public ResponseEntity<List<LocationDTO>> getAllLocations(@RequestParam(required = false) String filter,
     Pageable pageable) {
+        Page<LocationDTO> page;
         if ("physicaladdress-is-null".equals(filter)) {
-            Page<LocationDTO> page = locationService.findAllWherePhysicalAddressIsNull(pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/locations");
+            page = locationService.findAllWherePhysicalAddressIsNull(pageable);
             log.debug("REST request to get all Locations where physicalAddress is null");
-            return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-        }
-        if ("postaladdress-is-null".equals(filter)) {
-            Page<LocationDTO> page = locationService.findAllWherePostalAddressIsNull(pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/locations");
+        } else if ("postaladdress-is-null".equals(filter)) {
+            page = locationService.findAllWherePostalAddressIsNull(pageable);
             log.debug("REST request to get all Locations where postalAddress is null");
-            return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-        }
-        if ("regularschedule-is-null".equals(filter)) {
-            Page<LocationDTO> page = locationService.findAllWhereRegularScheduleIsNull(pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/locations");
+        } else if ("regularschedule-is-null".equals(filter)) {
+            page = locationService.findAllWhereRegularScheduleIsNull(pageable);
             log.debug("REST request to get all Locations where regularSchedule is null");
-            return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        } else {
+            log.debug("REST request to get all Locations");
+            page = locationService.findAll(pageable);
         }
-        log.debug("REST request to get all Locations");
-        Page<LocationDTO> page = locationService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/locations");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

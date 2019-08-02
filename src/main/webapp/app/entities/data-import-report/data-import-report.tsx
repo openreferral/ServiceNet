@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PageSizeSelector from '../page-size-selector';
 import { IRootState } from 'app/shared/reducers';
 import { getEntities, updateEntity } from './data-import-report.reducer';
-import { ITEMS_PER_PAGE_ENTITY } from 'app/shared/util/pagination.constants';
+import { ITEMS_PER_PAGE_ENTITY, MAX_BUTTONS } from 'app/shared/util/pagination.constants';
 import { IDataImportReport } from 'app/shared/model/data-import-report.model';
 // tslint:disable-next-line:no-unused-variable
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -61,11 +61,11 @@ export class DataImportReport extends React.Component<IDataImportReportProps, ID
 
   sortEntities() {
     this.getEntities();
-    this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
-    window.scrollTo(0, 0);
+    const { activePage, sort, order } = this.state;
+    this.props.history.push(`${this.props.location.pathname}?page=${activePage}&sort=${sort},${order}`);
   }
 
-  handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
+  handlePagination = activePage => this.setState({ activePage }, () => this.updatePage());
 
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
@@ -73,15 +73,11 @@ export class DataImportReport extends React.Component<IDataImportReportProps, ID
   };
 
   toggleTop() {
-    this.setState(prevState => ({
-      dropdownOpenTop: !prevState.dropdownOpenTop
-    }));
+    this.setState({ dropdownOpenTop: !this.state.dropdownOpenTop });
   }
 
   toggleBottom() {
-    this.setState(prevState => ({
-      dropdownOpenBottom: !prevState.dropdownOpenBottom
-    }));
+    this.setState({ dropdownOpenBottom: !this.state.dropdownOpenBottom });
   }
 
   select = prop => () => {
@@ -89,9 +85,14 @@ export class DataImportReport extends React.Component<IDataImportReportProps, ID
       {
         itemsPerPage: prop
       },
-      () => this.sortEntities()
+      () => this.updatePage()
     );
   };
+
+  updatePage() {
+    window.scrollTo(0, 0);
+    this.sortEntities();
+  }
 
   render() {
     const { dataImportReportList, match, totalItems } = this.props;
@@ -116,7 +117,7 @@ export class DataImportReport extends React.Component<IDataImportReportProps, ID
             items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
             activePage={this.state.activePage}
             onSelect={this.handlePagination}
-            maxButtons={5}
+            maxButtons={MAX_BUTTONS}
           />
         </Row>
         <div className="table-responsive">
@@ -225,7 +226,7 @@ export class DataImportReport extends React.Component<IDataImportReportProps, ID
             items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
             activePage={this.state.activePage}
             onSelect={this.handlePagination}
-            maxButtons={5}
+            maxButtons={MAX_BUTTONS}
           />
         </Row>
       </div>

@@ -102,10 +102,10 @@ const apiUrl = 'api/languages';
 // Actions
 
 export const getEntities: ICrudGetAllAction<ILanguage> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
   return {
     type: ACTION_TYPES.FETCH_LANGUAGE_LIST,
-    payload: axios.get<ILanguage>(requestUrl)
+    payload: axios.get<ILanguage>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 

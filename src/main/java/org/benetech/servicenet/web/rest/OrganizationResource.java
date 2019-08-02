@@ -102,14 +102,14 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(@RequestParam(required = false) String filter,
     Pageable pageable) {
+        Page<OrganizationDTO> page;
         if ("funding-is-null".equals(filter)) {
             log.debug("REST request to get all Organizations where funding is null");
-            Page<OrganizationDTO> page = organizationService.findAllWhereFundingIsNull(pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
-            return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+            page = organizationService.findAllWhereFundingIsNull(pageable);
+        } else {
+            log.debug("REST request to get all Organizations");
+            page = organizationService.findAll(pageable);
         }
-        log.debug("REST request to get all Organizations");
-        Page<OrganizationDTO> page = organizationService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
