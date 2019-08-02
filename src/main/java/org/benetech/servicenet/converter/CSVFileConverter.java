@@ -1,6 +1,7 @@
 package org.benetech.servicenet.converter;
 
 import com.google.gson.Gson;
+import java.io.InputStream;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +21,9 @@ public class CSVFileConverter extends AbstractFileConverter {
         }
     }
 
-    @Override
-    public String convert(MultipartFile file) throws IOException {
+    public String convert(InputStream is) throws IOException {
         List<CSVRecord> originalRecords = CSVFormat.DEFAULT.withHeader().withDelimiter(delimiter).parse(
-            new InputStreamReader(file.getInputStream())).getRecords();
+            new InputStreamReader(is)).getRecords();
 
         List<Object> convertedRecords = new ArrayList<>();
         Gson gson = new Gson();
@@ -33,5 +33,10 @@ public class CSVFileConverter extends AbstractFileConverter {
         }
 
         return gson.toJson(convertedRecords);
+    }
+
+    @Override
+    public String convert(MultipartFile file) throws IOException {
+        return convert(file.getInputStream());
     }
 }

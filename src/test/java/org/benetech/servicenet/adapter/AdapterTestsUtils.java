@@ -20,10 +20,14 @@ public final class AdapterTestsUtils {
     private static final String RESOURCE_PACKAGE = "adapters/";
 
     public static String readResourceAsString(String resourceName) throws IOException {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        try (InputStream is = classloader.getResourceAsStream(RESOURCE_PACKAGE + resourceName)) {
+        try (InputStream is = readResourceAsSteam(resourceName)) {
             return IOUtils.toString(is, StandardCharsets.UTF_8);
         }
+    }
+
+    public static InputStream readResourceAsSteam(String resourceName) {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        return classloader.getResourceAsStream(RESOURCE_PACKAGE + resourceName);
     }
 
     public static <T extends AbstractElement> void mockEndpointWithBatch(List<T> batch,
