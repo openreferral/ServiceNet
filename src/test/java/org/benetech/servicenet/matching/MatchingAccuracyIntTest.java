@@ -1,7 +1,6 @@
 package org.benetech.servicenet.matching;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.benetech.servicenet.adapter.AdapterTestsUtils.readResourceAsSteam;
 import static org.benetech.servicenet.config.Constants.HEALTHLEADS_PROVIDER;
 import static org.benetech.servicenet.config.Constants.LAAC_PROVIDER;
 import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
@@ -30,9 +29,9 @@ import static org.benetech.servicenet.matching.MatchingTestConstants.SERVICES_TA
 import static org.benetech.servicenet.matching.MatchingTestConstants.SHELTER_TECH_DIR;
 import static org.benetech.servicenet.matching.MatchingTestConstants.SMC_DIR;
 import static org.benetech.servicenet.matching.MatchingTestConstants.TAXONOMY;
+import static org.benetech.servicenet.matching.MatchingTestUtils.loadCsv;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +46,6 @@ import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.adapter.sheltertech.ShelterTechDataAdapter;
 import org.benetech.servicenet.adapter.smcconnect.SMCConnectDataAdapter;
-import org.benetech.servicenet.converter.CSVFileConverter;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Organization;
@@ -174,13 +172,5 @@ public class MatchingAccuracyIntTest {
         }
         MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), SMC_CONNECT_PROVIDER, true, null);
         smcConnectDataAdapter.importData(importData);
-    }
-
-    private String loadCsv(String fileName) throws IOException {
-        CSVFileConverter csvFileConverter = new CSVFileConverter(",");
-        InputStream csvIs = readResourceAsSteam(fileName);
-        String res = csvFileConverter.convert(csvIs);
-        csvIs.close();
-        return res;
     }
 }
