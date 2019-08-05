@@ -1,0 +1,17 @@
+{
+  "hiddenMatches": {
+    "header": "Hidden Organization Matches",
+    "recordId": "Record ID",
+    "recordName": "Record Name",
+    "dateHidden": "Date Hidden",
+    "user": "User",
+    "reinstate": "Reinstate",
+    "reinstateError": "Error occurred when reinstating record!",
+    "reinstatedSuccessfully": "Record was reinstated successfully!",
+    "yourData": "Your Data",
+    "lastUpdated": "Last Updated",
+    "from": "From {{ name }}",
+    "hidingError": "There was an error during hiding this record",
+    "hiddenSuccessfully": "Record hidden successfully"
+  }
+}

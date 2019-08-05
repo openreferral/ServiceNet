@@ -26,4 +26,7 @@ public class FiltersActivityDTO implements Serializable {
     private LocalDate fromDate;
 
     private LocalDate toDate;
+
+    private Boolean hiddenFilter = false;
 }
+

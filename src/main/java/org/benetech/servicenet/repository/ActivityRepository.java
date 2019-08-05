@@ -66,6 +66,8 @@ public class ActivityRepository {
     private static final Integer WEEK = 7;
     private static final Integer MONTH = 30;
 
+    private static final String HIDDEN = "hidden";
+
     private final EntityManager em;
     private final CriteriaBuilder cb;
 
@@ -211,9 +213,10 @@ public class ActivityRepository {
         }
 
         predicate = addDateFilter(filtersActivityDTO, predicate, root);
+        Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
+        predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), filtersActivityDTO.getHiddenFilter()));
 
         if (CollectionUtils.isNotEmpty(filtersActivityDTO.getPartnerFilterList())) {
-            Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
             Join<OrganizationMatch, Organization> matchOrgJoin = matchJoin.join(PARTNER_VERSION, JoinType.LEFT);
             Join<Organization, SystemAccount> accountJoin = matchOrgJoin.join(ACCOUNT, JoinType.LEFT);
 

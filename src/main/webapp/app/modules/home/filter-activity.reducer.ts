@@ -28,7 +28,8 @@ const initialState = {
     searchOn: '',
     dateFilter: null,
     fromDate: '',
-    toDate: ''
+    toDate: '',
+    hidden: false
   }
 };
 

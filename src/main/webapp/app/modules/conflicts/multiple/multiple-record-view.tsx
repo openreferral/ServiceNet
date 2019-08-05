@@ -5,11 +5,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Jumbotron, Button } from 'reactstrap';
 import Details from './components/details';
-import { getBaseRecord, getPartnerRecord, getMatches } from '../shared/shared-record-view.reducer';
+import { getBaseRecord, getPartnerRecord, getNotHiddenMatchesByOrg } from '../shared/shared-record-view.reducer';
 import { RouteComponentProps, Link } from 'react-router-dom';
-import { Translate, TextFormat } from 'react-jhipster';
+import { Translate, TextFormat, translate } from 'react-jhipster';
 import ReactGA from 'react-ga';
 import axios from 'axios';
+import HideRecordButton from 'app/shared/layout/hide-record-button';
+import { toast } from 'react-toastify';
+import _ from 'lodash';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import DismissModal from './components/dismiss-modal';
@@ -36,7 +39,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
   componentDidMount() {
     this.props.getBaseRecord(this.props.orgId);
-    Promise.all([this.props.getMatches(this.props.orgId)]).then(() => {
+    Promise.all([this.props.getNotHiddenMatchesByOrg(this.props.orgId)]).then(() => {
       if (this.props.matches.length >= this.state.matchNumber + 1) {
         this.props.getPartnerRecord(this.props.matches[this.state.matchNumber].partnerVersionId);
       }
@@ -58,7 +61,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
       .post(`/api/organization-matches/${matchId}/dismiss`, dismissParams)
       .then(() => {
         this.setState({ showDismissModal: false, showSuccessModal: true, matchNumber: 0 });
-        Promise.all([this.props.getMatches(this.props.orgId)]).then(() => {
+        Promise.all([this.props.getNotHiddenMatchesByOrg(this.props.orgId)]).then(() => {
           if (this.props.matches.length > 0) {
             this.props.getPartnerRecord(this.props.matches[0].partnerVersionId);
           } else {
@@ -93,6 +96,29 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     ReactGA.event({ category: 'UserActions', action: 'Deny Match Button' });
   };
 
+  hideActivity = event => {
+    const { matches, partnerRecord, orgId } = this.props;
+
+    const match = _.find(matches, m => m.partnerVersionId === partnerRecord.organization.id);
+    const matchId = match && match.id ? match.id : '';
+    event.preventDefault();
+    axios
+      .post(`/api/organization-matches/${matchId}/hide`)
+      .then(() => {
+        toast.success(translate('hiddenMatches.hiddenSuccessfully'));
+        if (matches.length === 1) {
+          this.props.history.replace(`/single-record-view/${orgId}`);
+        } else if (matches.length > 1) {
+          this.props.history.push(`/multi-record-view/${orgId}`);
+        } else {
+          this.props.history.push(`/`);
+        }
+      })
+      .catch(() => {
+        toast.error(translate('hiddenMatches.hidingError'));
+      });
+  };
+
   render() {
     const { baseRecord, partnerRecord } = this.props;
     const loading = (
@@ -103,7 +129,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
     const seeAnotherMatch =
       this.props.matches.length > 1 ? (
-        <Col>
+        <div className="see-another-match">
           <h4>
             <span role="button" onClick={this.changeRecord(-1)} className="text-blue">
               〈
@@ -113,7 +139,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
               <span className="text-blue">{` (${this.state.matchNumber + 1}/${this.props.matches.length}) 〉`}</span>
             </span>
           </h4>
-        </Col>
+        </div>
       ) : null;
 
     return (
@@ -145,7 +171,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
             <Col sm="6">
               <Row>
                 <Col>
-                  <h2>{partnerRecord.organization.name}</h2>
+                  <h2 className="mr-4">{partnerRecord.organization.name}</h2>
                   <h4 className="from">
                     <Translate contentKey="multiRecordView.from" />
                     {partnerRecord.organization.accountName}
@@ -155,6 +181,9 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                     <TextFormat value={partnerRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
                   </h5>
                 </Col>
+                <div style={{ top: '-10px', right: '5px', position: 'absolute' }}>
+                  <HideRecordButton handleHide={this.hideActivity} />
+                </div>
                 {seeAnotherMatch}
               </Row>
               <Details activity={partnerRecord} {...this.props} exclusions={[]} isBaseRecord={false} showClipboard />
@@ -195,7 +224,7 @@ const mapStateToProps = (storeState, { match }: IMultipleRecordViewState) => ({
   dismissedMatches: storeState.sharedRecordView.dismissedMatches
 });
 
-const mapDispatchToProps = { getBaseRecord, getPartnerRecord, getMatches };
+const mapDispatchToProps = { getBaseRecord, getPartnerRecord, getNotHiddenMatchesByOrg };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
