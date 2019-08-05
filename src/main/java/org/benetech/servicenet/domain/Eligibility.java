@@ -29,7 +29,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "eligibility")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Eligibility extends AbstractEntity implements Serializable {
+public class Eligibility extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
     @NotNull
@@ -72,4 +72,12 @@ public class Eligibility extends AbstractEntity implements Serializable {
         return Objects.hashCode(getId());
     }
 
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Eligibility e = (Eligibility) o;
+        return Objects.equals(eligibility, e.eligibility);
+    }
 }

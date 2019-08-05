@@ -30,8 +30,14 @@ public class ActivityDTO implements Serializable {
 
     private List<ConflictDTO> conflicts;
 
+    private List<UUID> organizationMatches;
+
     public List<ConflictDTO> getConflicts() {
         conflicts.sort(new ConflictsComparator());
         return conflicts;
+    }
+
+    public List<UUID> getOrganizationMatches() {
+        return organizationMatches;
     }
 }

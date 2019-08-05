@@ -6,6 +6,7 @@ export interface IActivity {
   organizationName?: String;
   lastUpdated?: Moment;
   conflicts?: IConflict[];
+  organizationMatches?: String[];
 }
 
 export const defaultValue: Readonly<IActivity> = {};

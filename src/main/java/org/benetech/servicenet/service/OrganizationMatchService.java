@@ -40,6 +40,14 @@ public interface OrganizationMatchService {
 
     List<OrganizationMatchDTO> findAllNotDismissedForOrganization(UUID orgId);
 
+    List<OrganizationMatchDTO> findAllHiddenForOrganization(UUID orgId);
+
+    List<OrganizationMatchDTO> findAllNotHiddenForOrganization(UUID orgId);
+
+    List<OrganizationMatchDTO> findAllHiddenOrganizationMatches();
+
+    List<OrganizationMatchDTO> findAllNotHiddenOrganizationMatches();
+
     /**
      * Get all the organizationMatches.
      *
@@ -68,4 +76,10 @@ public interface OrganizationMatchService {
     void dismissOrganizationMatch(UUID id, DismissMatchDTO dismissMatchDTO);
 
     void revertDismissOrganizationMatch(UUID id);
+
+    void hideOrganizationMatch(UUID id);
+
+    void hideOrganizationMatches(List<UUID> ids);
+
+    void revertHideOrganizationMatch(UUID id);
 }

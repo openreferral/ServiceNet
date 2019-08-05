@@ -20,7 +20,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "funding")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Funding extends AbstractEntity implements Serializable {
+public class Funding extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -105,5 +105,14 @@ public class Funding extends AbstractEntity implements Serializable {
             "id=" + getId() +
             ", source='" + getSource() + "'" +
             "}";
+    }
+
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Funding funding = (Funding) o;
+        return source.equals(funding.getSource());
     }
 }

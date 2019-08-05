@@ -13,7 +13,8 @@ const initialState = {
   baseRecord: null,
   partnerRecord: null,
   matches: [],
-  dismissedMatches: []
+  dismissedMatches: [],
+  hiddenMatches: []
 };
 
 export type SharedRecordViewState = Readonly<typeof initialState>;
@@ -47,9 +48,12 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
     case SUCCESS(ACTION_TYPES.FETCH_MATCHES):
       const matches = [];
       const dismissedMatches = [];
+      const hiddenMatches = [];
 
       action.payload.data.forEach(item => {
-        if (item.dismissed) {
+        if (item.hidden) {
+          hiddenMatches.push(item);
+        } else if (item.dismissed) {
           dismissedMatches.push(item);
         } else {
           matches.push(item);
@@ -59,7 +63,8 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
       return {
         ...state,
         matches,
-        dismissedMatches
+        dismissedMatches,
+        hiddenMatches
       };
     default:
       return state;
@@ -70,6 +75,7 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
 const url = 'api/';
 const activityUrl = url + 'activities/';
 const matchesUrl = url + 'organization-matches/organization/';
+const hiddenMatchesUrl = url + '/organization-matches/hidden';
 
 export const getBaseRecord = orgId => ({
   type: ACTION_TYPES.FETCH_BASE_ORGANIZATION,
@@ -84,4 +90,14 @@ export const getPartnerRecord = orgId => ({
 export const getMatches = orgId => ({
   type: ACTION_TYPES.FETCH_MATCHES,
   payload: axios.get(`${matchesUrl + orgId}`)
+});
+
+export const getHiddenMatches = () => ({
+  type: ACTION_TYPES.FETCH_MATCHES,
+  payload: axios.get(hiddenMatchesUrl)
+});
+
+export const getNotHiddenMatchesByOrg = orgId => ({
+  type: ACTION_TYPES.FETCH_MATCHES,
+  payload: axios.get(matchesUrl + orgId + '/notHidden')
 });

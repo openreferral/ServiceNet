@@ -19,7 +19,18 @@ const initialState = {
   cityList: [],
   partnerList: [],
   taxonomyList: [],
-  activityFilter: { citiesFilterList: [], regionFilterList: [], postalCodesFilterList: [], partnerFilterList: [], taxonomiesFilterList: [], searchOn: '' }
+  activityFilter: {
+    citiesFilterList: [],
+    regionFilterList: [],
+    postalCodesFilterList: [],
+    partnerFilterList: [],
+    taxonomiesFilterList: [],
+    searchOn: '',
+    dateFilter: null,
+    fromDate: '',
+    toDate: '',
+    hidden: false
+  }
 };
 
 export type FilterActivityState = Readonly<typeof initialState>;

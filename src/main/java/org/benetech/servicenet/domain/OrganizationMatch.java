@@ -39,6 +39,15 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
     @Column(name = "dismiss_date")
     private ZonedDateTime dismissDate;
 
+    @Column(name = "hidden")
+    private Boolean hidden = false;
+
+    @ManyToOne
+    private User hiddenBy;
+
+    @Column(name = "hidden_date")
+    private ZonedDateTime hiddenDate;
+
     @ManyToOne
     @JsonIgnoreProperties("")
     private Organization organizationRecord;
@@ -60,6 +69,15 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
 
     public OrganizationMatch dismissed(Boolean dismissed) {
         this.dismissed = dismissed;
+        return this;
+    }
+
+    public Boolean isHidden() {
+        return hidden;
+    }
+
+    public OrganizationMatch hidden(Boolean hidden) {
+        this.hidden = hidden;
         return this;
     }
 

@@ -25,7 +25,15 @@ public class OrganizationMatchDTO implements Serializable {
 
     private String dismissedByName;
 
-    private ZonedDateTime dismissDate;
+    private ZonedDateTime dismissedDate;
+
+    private Boolean hidden;
+
+    private UUID hiddenById;
+
+    private String hiddenByName;
+
+    private ZonedDateTime hiddenDate;
 
     private UUID organizationRecordId;
 
@@ -37,6 +45,10 @@ public class OrganizationMatchDTO implements Serializable {
 
     public Boolean isDismissed() {
         return dismissed;
+    }
+
+    public Boolean isHidden() {
+        return hidden;
     }
 
     @Override

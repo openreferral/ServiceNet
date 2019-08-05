@@ -1,18 +1,34 @@
 import './activity-element.scss';
 
 import React from 'react';
+import axios from 'axios';
 import { Row, Col, Card, CardText, CardBody, CardTitle, CardGroup } from 'reactstrap';
-import { Translate, TextFormat } from 'react-jhipster';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Translate, translate, TextFormat } from 'react-jhipster';
 import { APP_DATE_FORMAT } from 'app/config/constants';
+import HideRecordButton from 'app/shared/layout/hide-record-button';
+import { toast } from 'react-toastify';
 
 const ActivityElement = props => {
   const maxConflicts = 3;
   const conflictsToDisplay = props.activity.conflicts.slice(0, maxConflicts);
   const areAllDisplayed = props.activity.conflicts.length <= maxConflicts;
 
+  const hideActivity = event => {
+    const matchIds = props.activity.organizationMatches;
+    event.preventDefault();
+    axios
+      .post(`/api/organization-matches/hideList`, matchIds)
+      .then(() => {
+        toast.success(translate('hiddenMatches.hiddenSuccessfully'));
+        document.getElementById(props.activity.organizationId).style.display = 'none';
+      })
+      .catch(() => {
+        toast.error(translate('hiddenMatches.hidingError'));
+      });
+  };
+
   return (
-    <Row className="activity-row">
+    <Row className="activity-row" id={props.activity.organizationId}>
       <Col>
         <CardGroup>
           <Card className="activity-card">
@@ -21,6 +37,7 @@ const ActivityElement = props => {
             </CardBody>
           </Card>
           <Card className="activity-right-card">
+            <HideRecordButton handleHide={hideActivity} />
             <CardBody>
               {conflictsToDisplay.map((conflict, i) => (
                 <CardTitle className="activity-right-card-title" key={`activityCard${i}`}>

@@ -21,7 +21,7 @@ import org.hibernate.annotations.Type;
 @Data
 @Table(name = "taxonomy")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Taxonomy extends AbstractEntity implements Serializable {
+public class Taxonomy extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -138,5 +138,20 @@ public class Taxonomy extends AbstractEntity implements Serializable {
             ", name='" + getName() + "'" +
             ", vocabulary='" + getVocabulary() + "'" +
             "}";
+    }
+
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Taxonomy taxonomy = (Taxonomy) o;
+        return Objects.equals(name, taxonomy.name) &&
+            Objects.equals(taxonomyId, taxonomy.taxonomyId) &&
+            Objects.equals(details, taxonomy.details) &&
+            Objects.equals(vocabulary, taxonomy.vocabulary) &&
+            Objects.equals(externalDbId, taxonomy.externalDbId) &&
+            Objects.equals(providerName, taxonomy.providerName);
     }
 }

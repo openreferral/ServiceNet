@@ -38,8 +38,6 @@ public class LocationImportServiceImpl implements LocationImportService {
     @Override
     @ConfidentialFilter
     public Location createOrUpdateLocation(Location filledLocation, String externalDbId, ImportData importData) {
-        long startTime = System.currentTimeMillis();
-
         EntityValidator.validateAndFix(
             filledLocation, filledLocation.getOrganization(), importData.getReport(), externalDbId);
 
@@ -52,12 +50,6 @@ public class LocationImportServiceImpl implements LocationImportService {
 
         persistRelatedEntities(filledLocation, importData, location);
         fetchGeocodeIfNeeded(importData, location);
-
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        //TODO: Remove time counting logic (#264)
-        log.debug(importData.getProviderName() + "'s location '" + location.getName() + "' was imported in "
-            + elapsedTime + "ms.");
 
         return location;
     }

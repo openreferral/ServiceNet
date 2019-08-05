@@ -20,7 +20,7 @@ import java.util.Objects;
 @Data
 @Table(name = "contact")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Contact extends AbstractEntity implements Serializable {
+public class Contact extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -128,5 +128,20 @@ public class Contact extends AbstractEntity implements Serializable {
             ", department='" + getDepartment() + "'" +
             ", email='" + getEmail() + "'" +
             "}";
+    }
+
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Contact contact = (Contact) o;
+        return (Objects.equals(this.name, contact.name) &&
+            Objects.equals(this.title, contact.title) &&
+            Objects.equals(this.department, contact.department) &&
+            Objects.equals(this.email, contact.email) &&
+            Objects.equals(this.externalDbId, contact.externalDbId) &&
+            Objects.equals(this.providerName, contact.providerName));
     }
 }

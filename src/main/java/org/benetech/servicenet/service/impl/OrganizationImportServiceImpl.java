@@ -65,6 +65,10 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         Optional<Organization> organizationFromDb =
             organizationService.findWithEagerAssociations(externalDbId, providerName);
         if (organizationFromDb.isPresent()) {
+            if (organizationFromDb.get().deepEquals(filledOrganization)) {
+                log.info("Organization " + organization.getName() + " didn't change, skipping");
+                return null;
+            }
             fillDataFromDb(organization, organizationFromDb.get());
             em.merge(organization);
             report.incrementNumberOfUpdatedOrgs();

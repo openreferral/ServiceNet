@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.mother.ConflictMother;
@@ -66,6 +67,8 @@ public class ActivityServiceImplTest {
 
     private Organization organization;
 
+    private Organization organizationOther;
+
     private User user;
 
     private Conflict conflict;
@@ -82,7 +85,15 @@ public class ActivityServiceImplTest {
     @Before
     public void initTest() {
         organization = OrganizationMother.createDefaultAndPersist(em);
+        organizationOther = OrganizationMother.createDifferentAndPersist(em);
         SystemAccount systemAccount = organization.getAccount();
+
+        OrganizationMatch orgMatch = new OrganizationMatch()
+            .organizationRecord(organization)
+            .partnerVersion(organizationOther)
+            .hidden(false);
+        em.persist(orgMatch);
+        em.flush();
 
         conflict = ConflictMother.createDefaultAndPersist(em);
         conflict.setResourceId(organization.getId());
@@ -100,7 +111,7 @@ public class ActivityServiceImplTest {
 
     @Test
     @Transactional
-    public void getAllActivities() {
+    public void getAllNotHiddenActivities() {
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
             pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, new FiltersActivityDTO());
@@ -130,6 +141,19 @@ public class ActivityServiceImplTest {
         assertEquals(conflict.getOwner().getName(), actualConflict.getOwnerName());
         assertEquals(conflict.getPartner().getId(), actualConflict.getPartnerId());
         assertEquals(conflict.getPartner().getName(), actualConflict.getPartnerName());
+    }
+
+    @Test
+    @Transactional
+    public void getAllHiddenActivities() {
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        FiltersActivityDTO filtersActivityDTO = new FiltersActivityDTO();
+        filtersActivityDTO.setHiddenFilter(true);
+
+        Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
+            pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, filtersActivityDTO);
+
+        assertEquals(0, activities.getTotalElements());
     }
 
     @Test

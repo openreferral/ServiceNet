@@ -18,6 +18,7 @@ import SingleRecordView from './modules/conflicts/single/single-record-view';
 import MultipleRecordView from './modules/conflicts/multiple/multiple-record-view';
 import DismissedMatches from './modules/conflicts/dismissed/dismissed-matches';
 import DismissedMatchView from './modules/conflicts/dismissed/dismissed-match-view';
+import HiddenMatches from './modules/conflicts/hidden/hidden-matches';
 import { AboutUs } from 'app/modules/about-us/about-us';
 import Shelters from 'app/modules/shelter/shelters';
 import ShelterDetails from 'app/modules/shelter/shelter-details';
@@ -73,6 +74,7 @@ const Routes = ({ isAdmin, isSacramento }) => (
         component={DismissedMatchView}
         hasAnyAuthorities={[AUTHORITIES.USER]}
       />
+      <PrivateRoute path="/hidden-matches/" isAdmin={isAdmin} component={HiddenMatches} hasAnyAuthorities={[AUTHORITIES.USER]} />
       <ErrorBoundaryRoute path="/about-us" component={AboutUs} />
       <ErrorBoundaryRoute path="/" component={Home} />
     </Switch>

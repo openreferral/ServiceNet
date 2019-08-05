@@ -1,6 +1,8 @@
 import { Storage } from 'react-jhipster';
 
-const DEFAULT_SORT_ORDER = 'desc';
+export const ORDER_DESC = 'desc';
+export const ORDER_ASC = 'asc';
+export const DEFAULT_SORT_ORDER = ORDER_DESC;
 const SORT_RECENTLY_UPDATED = 'recent';
 const SORT_RECOMMENDED = 'recommended';
 export const SORT_ARRAY = [SORT_RECENTLY_UPDATED, SORT_RECOMMENDED];
@@ -35,9 +37,9 @@ export const resetSearchPreferences = username => {
   Storage.local.set(username, defaultSearchPreferences);
 };
 
-export const setSort = (username, sort) => {
+export const setSort = (username, sort, order) => {
   const searchPreferences = Storage.local.get(username, defaultSearchPreferences);
-  Storage.local.set(username, { ...searchPreferences, sort });
+  Storage.local.set(username, { ...searchPreferences, sort, order });
 };
 
 export const setSearchPhrase = (username, searchPhrase) => {

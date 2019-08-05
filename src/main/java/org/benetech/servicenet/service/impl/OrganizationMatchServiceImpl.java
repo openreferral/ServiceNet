@@ -143,6 +143,34 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    public List<OrganizationMatchDTO> findAllHiddenForOrganization(UUID orgId) {
+        return organizationMatchRepository.findAllByOrganizationRecordIdAndHidden(orgId, true).stream()
+            .map(organizationMatchMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public List<OrganizationMatchDTO> findAllNotHiddenForOrganization(UUID orgId) {
+        return organizationMatchRepository.findAllByOrganizationRecordIdAndHidden(orgId, false).stream()
+            .map(organizationMatchMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public List<OrganizationMatchDTO> findAllHiddenOrganizationMatches() {
+        return organizationMatchRepository.findAllByHidden(true).stream()
+            .map(organizationMatchMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public List<OrganizationMatchDTO> findAllNotHiddenOrganizationMatches() {
+        return organizationMatchRepository.findAllByHidden(false).stream()
+            .map(organizationMatchMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
     /**
      * Get one organizationMatch by id.
      *
@@ -220,6 +248,39 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         });
     }
 
+    @Override
+    public void hideOrganizationMatch(UUID id) {
+        organizationMatchRepository.findById(id).ifPresent(match -> {
+            match.setHidden(true);
+            match.setHiddenDate(ZonedDateTime.now(ZoneId.systemDefault()));
+
+            userService.getUserWithAuthoritiesAndAccount().ifPresentOrElse(
+                match::setHiddenBy,
+                () -> { throw new IllegalStateException("No current user found"); }
+            );
+
+            organizationMatchRepository.save(match);
+        });
+    }
+
+    @Override
+    public void hideOrganizationMatches(List<UUID> ids) {
+        for (UUID id : ids) {
+            hideOrganizationMatch(id);
+        }
+    }
+
+    @Override
+    public void revertHideOrganizationMatch(UUID id) {
+        organizationMatchRepository.findById(id).ifPresent(match -> {
+            match.setHidden(false);
+            match.setHiddenBy(null);
+            match.setHiddenDate(null);
+
+            organizationMatchRepository.save(match);
+        });
+    }
+
     private void detectConflictsForCurrentMatches(Organization organization) {
         List<OrganizationMatch> matches = findNotDismissedMatches(organization);
         matches.addAll(findNotDismissedPartnersMatches(organization));
@@ -248,6 +309,16 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private List<Organization> findNotMatchedOrgs(List<UUID> currentMatchesIds, String providerName) {
         return organizationService.findAllOthersExcept(providerName, currentMatchesIds);
+    }
+
+    private List<OrganizationMatch> findNotHiddenMatches(Organization organization) {
+        return organizationMatchRepository
+            .findAllByOrganizationRecordIdAndHidden(organization.getId(), false);
+    }
+
+    private List<OrganizationMatch> findHiddenMatches(Organization organization) {
+        return organizationMatchRepository
+            .findAllByOrganizationRecordIdAndHidden(organization.getId(), true);
     }
 
     private List<OrganizationMatch> findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs,

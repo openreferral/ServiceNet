@@ -40,6 +40,7 @@ import { faClipboard } from '@fortawesome/free-solid-svg-icons/faClipboard';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons/faAngleLeft';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -86,6 +87,7 @@ export const loadIcons = () => {
     faClipboard,
     faAngleLeft,
     faChevronLeft,
-    faChevronRight
+    faChevronRight,
+    faTimes
   );
 };

@@ -1,5 +1,9 @@
 package org.benetech.servicenet.repository;
 
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManager;
@@ -58,6 +62,11 @@ public class ActivityRepository {
     private static final String SERVICES = "services";
     private static final String TAXONOMIES = "taxonomies";
     private static final String TAXONOMY = "taxonomy";
+
+    private static final Integer WEEK = 7;
+    private static final Integer MONTH = 30;
+
+    private static final String HIDDEN = "hidden";
 
     private final EntityManager em;
     private final CriteriaBuilder cb;
@@ -142,6 +151,43 @@ public class ActivityRepository {
         return updatedPredicate;
     }
 
+    private Predicate addDateFilter(FiltersActivityDTO filtersActivityDTO, Predicate predicate, Root<ActivityInfo> root) {
+        if (filtersActivityDTO.getDateFilter() == null) {
+            return predicate;
+        }
+
+        Predicate updatedPredicate = predicate;
+        ZonedDateTime now = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        ZonedDateTime fromDate = null;
+        ZonedDateTime toDate = null;
+
+        switch (filtersActivityDTO.getDateFilter()) {
+            case LAST_7_DAYS:
+                fromDate = now.minusDays(WEEK);
+                break;
+            case LAST_30_DAYS:
+                fromDate = now.minusDays(MONTH);
+                break;
+            default:
+                if (filtersActivityDTO.getFromDate() != null) {
+                    fromDate = filtersActivityDTO.getFromDate().atStartOfDay(ZoneId.systemDefault());
+                }
+                if (filtersActivityDTO.getToDate() != null) {
+                    toDate = filtersActivityDTO.getToDate().atTime(LocalTime.MAX).atZone(ZoneId.systemDefault());
+                }
+        }
+
+        if (fromDate != null) {
+            updatedPredicate = cb.and(updatedPredicate, cb.greaterThanOrEqualTo(root.get(RECENT), fromDate));
+        }
+
+        if (toDate != null) {
+            updatedPredicate = cb.and(updatedPredicate, cb.lessThanOrEqualTo(root.get(RECENT), toDate));
+        }
+
+        return updatedPredicate;
+    }
+
     @SuppressWarnings("checkstyle:cyclomaticComplexity")
     private <T> void addFilters(CriteriaQuery<T> query, Root<ActivityInfo> root, UUID ownerId,
         String searchName, SearchOn searchOn, FiltersActivityDTO filtersActivityDTO) {
@@ -166,8 +212,11 @@ public class ActivityRepository {
             }
         }
 
+        predicate = addDateFilter(filtersActivityDTO, predicate, root);
+        Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
+        predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), filtersActivityDTO.getHiddenFilter()));
+
         if (CollectionUtils.isNotEmpty(filtersActivityDTO.getPartnerFilterList())) {
-            Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
             Join<OrganizationMatch, Organization> matchOrgJoin = matchJoin.join(PARTNER_VERSION, JoinType.LEFT);
             Join<Organization, SystemAccount> accountJoin = matchOrgJoin.join(ACCOUNT, JoinType.LEFT);
 

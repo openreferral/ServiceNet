@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.benetech.servicenet.util.CompareUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -34,7 +35,7 @@ import java.util.Set;
 @Table(name = "organization")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NoArgsConstructor
-public class Organization extends AbstractEntity implements Serializable {
+public class Organization extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -278,6 +279,35 @@ public class Organization extends AbstractEntity implements Serializable {
     public Organization externalDbId(String externalDbId) {
         this.externalDbId = externalDbId;
         return this;
+    }
+
+    @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
+    @Override
+    public boolean deepEquals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Organization org = (Organization) o;
+        if (!(Objects.equals(org.name, this.name) &&
+            Objects.equals(org.alternateName, this.alternateName) &&
+            Objects.equals(org.description, this.description) &&
+            Objects.equals(org.email, this.email) &&
+            Objects.equals(org.url, this.url) &&
+            Objects.equals(org.taxStatus, this.taxStatus) &&
+            Objects.equals(org.taxId, this.taxId) &&
+            Objects.equals(org.yearIncorporated, this.yearIncorporated) &&
+            Objects.equals(org.legalStatus, this.legalStatus) &&
+            Objects.equals(org.active, this.active) &&
+            Objects.equals(org.updatedAt, this.updatedAt) &&
+            Objects.equals(org.externalDbId, this.externalDbId)
+        )) {
+            return false;
+        }
+        return CompareUtils.deepEquals(funding, org.funding) &&
+            CompareUtils.deepEquals(locations, org.locations) &&
+            CompareUtils.deepEquals(programs, org.programs) &&
+            CompareUtils.deepEquals(services, org.services) &&
+            CompareUtils.deepEquals(contacts, org.contacts);
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
