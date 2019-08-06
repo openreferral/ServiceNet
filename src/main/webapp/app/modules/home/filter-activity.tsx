@@ -13,10 +13,7 @@ import {
 } from './filter-activity.reducer';
 import ReactGA from 'react-ga';
 import { connect } from 'react-redux';
-
-export const ORGANIZATION = 'organization';
-export const SERVICES = 'services';
-export const LOCATIONS = 'locations';
+import { ORGANIZATION, SERVICES, LOCATIONS, getSearchFieldOptions, getDefaultSearchFieldOptions } from 'app/modules/home/filter.constants';
 
 export interface IFilterActivityState {
   selectedCity: any;
@@ -24,6 +21,7 @@ export interface IFilterActivityState {
   selectedZip: any;
   selectedPartner: any;
   selectedTaxonomy: any;
+  selectedSearchFields: any;
   filtersChanged: boolean;
   searchOn: string;
   dateFilter: any;
@@ -44,6 +42,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     selectedZip: this.props.activityFilter.postalCodesFilterList.map(city => ({ label: city, value: city })),
     selectedPartner: this.props.activityFilter.partnerFilterList.map(city => ({ label: city.label, value: city.value })),
     selectedTaxonomy: this.props.activityFilter.taxonomiesFilterList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
+    selectedSearchFields: this.props.activityFilter.searchFields.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
     filtersChanged: false,
     searchOn: this.props.activityFilter.searchOn,
     dateFilter: this.props.activityFilter.dateFilter,
@@ -92,12 +91,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   resetFilter = () => {
+    const searchFieldOptions = getDefaultSearchFieldOptions();
     this.setState({
       selectedCity: [],
       selectedCounty: [],
       selectedZip: [],
       selectedPartner: [],
       selectedTaxonomy: [],
+      selectedSearchFields: searchFieldOptions,
       filtersChanged: true,
       searchOn: ORGANIZATION,
       dateFilter: null,
@@ -112,6 +113,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       postalCodesFilterList: [],
       partnerFilterList: [],
       taxonomiesFilterList: [],
+      searchFields: searchFieldOptions.map(o => o.value),
       searchOn: ORGANIZATION,
       dateFilter: null,
       fromDate: '',
@@ -154,6 +156,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.updateActivityFilter({ ...this.props.activityFilter, taxonomiesFilterList });
   };
 
+  handleSearchFieldsChange = selectedSearchFields => {
+    this.setState({ selectedSearchFields, filtersChanged: true });
+
+    const searchFields = selectedSearchFields.map(f => f.value);
+
+    this.props.updateActivityFilter({ ...this.props.activityFilter, searchFields });
+  };
+
   handlePartnerChange = selectedPartner => {
     this.setState({ selectedPartner, filtersChanged: true });
 
@@ -164,10 +174,12 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
   handleSearchOnChange = changeEvent => {
     const searchOn = changeEvent.target.value;
+    const selectedSearchFields = getDefaultSearchFieldOptions();
 
-    this.setState({ searchOn, filtersChanged: true });
+    this.setState({ searchOn, selectedSearchFields, filtersChanged: true });
 
-    this.props.updateActivityFilter({ ...this.props.activityFilter, searchOn });
+    const searchFields = selectedSearchFields.map(f => f.value);
+    this.props.updateActivityFilter({ ...this.props.activityFilter, searchOn, searchFields });
   };
 
   handleDateFilterChange = dateFilter => {
@@ -194,6 +206,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
   render() {
     const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList, taxonomyList } = this.props;
+    const searchFieldList = getSearchFieldOptions(this.state.searchOn);
     return (
       <div>
         <Collapse isOpen={filterCollapseExpanded} style={{ marginBottom: '1rem' }}>
@@ -246,6 +259,15 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                       <label className="form-check-label" htmlFor="locRadio">
                         <Translate contentKey="serviceNetApp.activity.home.filter.locations" />
                       </label>
+                    </div>
+                    <div>
+                      <Translate contentKey="serviceNetApp.activity.home.filter.searchFields" />
+                      <Select
+                        value={this.state.selectedSearchFields}
+                        onChange={this.handleSearchFieldsChange}
+                        options={searchFieldList}
+                        isMulti
+                      />
                     </div>
                   </Col>
                   <Col md="3">

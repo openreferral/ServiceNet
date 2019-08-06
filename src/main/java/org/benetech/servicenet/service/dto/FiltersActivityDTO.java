@@ -19,6 +19,8 @@ public class FiltersActivityDTO implements Serializable {
 
     private List<String> taxonomiesFilterList = new ArrayList<>();
 
+    private List<String> searchFields = new ArrayList<>();
+
     private List<UUID> partnerFilterList = new ArrayList<>();
 
     private DateFilter dateFilter;

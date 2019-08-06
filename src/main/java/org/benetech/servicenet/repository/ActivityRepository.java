@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManager;
@@ -28,6 +29,7 @@ import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.service.dto.FiltersActivityDTO;
+import org.benetech.servicenet.web.rest.SearchField;
 import org.benetech.servicenet.web.rest.SearchOn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -115,11 +117,15 @@ public class ActivityRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
-    private Predicate searchNames(Predicate predicate, From from, String searchName) {
-        return cb.and(predicate, cb.or(
-            cb.like(cb.upper(from.get(NAME)), '%' + searchName.trim().toUpperCase() + '%'),
-            cb.like(cb.upper(from.get(ALTERNATE_NAME)), '%' + searchName.trim().toUpperCase() + '%')
-        ));
+    private Predicate searchFields(Predicate predicate, From from, String searchName, List<String> searchFieldValues) {
+        List<Predicate> likePredicates = new ArrayList<>();
+        for (String value : searchFieldValues) {
+            SearchField searchField = SearchField.fromValue(value);
+            likePredicates.add(
+                cb.like(cb.upper(from.get(searchField.getValue())), '%' + searchName.trim().toUpperCase() + '%')
+            );
+        }
+        return cb.and(predicate, cb.or(likePredicates.toArray(new Predicate[0])));
     }
 
     private Predicate addLocationFilters(FiltersActivityDTO filtersActivityDTO, Predicate predicate,
@@ -199,16 +205,15 @@ public class ActivityRepository {
         Join<Organization, Service> serviceJoin = null;
 
         if (StringUtils.isNotBlank(searchName)) {
+            orgJoin = root.join(ORGANIZATIONS, JoinType.LEFT);
             if (searchOn.equals(SearchOn.ORGANIZATION)) {
-                predicate = searchNames(predicate, root, searchName);
+                predicate = searchFields(predicate, orgJoin, searchName, filtersActivityDTO.getSearchFields());
             } else if (searchOn.equals(SearchOn.LOCATIONS)) {
-                orgJoin = root.join(ORGANIZATIONS, JoinType.LEFT);
                 locationJoin = orgJoin.join(LOCATIONS, JoinType.LEFT);
-                predicate = searchNames(predicate, locationJoin, searchName);
+                predicate = searchFields(predicate, locationJoin, searchName, filtersActivityDTO.getSearchFields());
             } else {
-                orgJoin = root.join(ORGANIZATIONS, JoinType.LEFT);
                 serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
-                predicate = searchNames(predicate, serviceJoin, searchName);
+                predicate = searchFields(predicate, serviceJoin, searchName, filtersActivityDTO.getSearchFields());
             }
         }
 

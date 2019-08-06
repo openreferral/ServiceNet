@@ -25,6 +25,7 @@ const initialState = {
     postalCodesFilterList: [],
     partnerFilterList: [],
     taxonomiesFilterList: [],
+    searchFields: [],
     searchOn: '',
     dateFilter: null,
     fromDate: '',
