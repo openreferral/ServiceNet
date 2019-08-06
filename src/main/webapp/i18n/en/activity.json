@@ -21,12 +21,34 @@
           "services": "Services",
           "locations": "Locations",
           "dateFilter": "Update date",
+          "searchFields": "Search fields",
           "from": "From",
           "to": "To",
           "date": {
             "last7Days": "Last 7 Days",
             "last30Days": "Last 30 Days",
             "dateRange": "Date Range"
+          },
+          "fields": {
+            "name": "Name",
+            "alternateName": "Alternate name",
+            "description": "Description",
+            "email": "E-mail",
+            "url": "Website",
+            "taxStatus": "Tax status",
+            "taxId": "Tax ID",
+            "legalStatus": "Legal status",
+            "externalDbId": "External database ID",
+            "status": "Status",
+            "interpretationServices": "Interpretation Services",
+            "applicationProcess": "Application Process",
+            "waitTime": "Wait time",
+            "fees": "Fees",
+            "accreditations": "Accreditations",
+            "licenses": "Licenses",
+            "type": "Type",
+            "providerName": "Provider Name",
+            "transportation": "Transportation"
           }
         },
         "sort": {
