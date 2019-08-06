@@ -1,6 +1,8 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.service.dto.FundingDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,13 @@ public interface FundingService {
      */
     List<FundingDTO> findAll();
 
+    /**
+     * Get all the fundings.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<FundingDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" funding.

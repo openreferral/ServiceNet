@@ -2,6 +2,8 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,14 @@ public interface ServiceAtLocationService {
      * @return the list of entities
      */
     List<ServiceAtLocationDTO> findAll();
+
+    /**
+     * Get all the serviceAtLocations on page
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<ServiceAtLocationDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" serviceAtLocation.

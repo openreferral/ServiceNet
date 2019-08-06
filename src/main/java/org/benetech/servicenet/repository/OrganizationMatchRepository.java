@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.OrganizationMatch;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +31,6 @@ public interface OrganizationMatchRepository extends JpaRepository<OrganizationM
     List<OrganizationMatch> findAllByHidden(Boolean hidden);
 
     List<OrganizationMatch> findAllByOrganizationRecordIdAndHidden(UUID uuid, Boolean hidden);
+
+    Page<OrganizationMatch> findAll(Pageable pageable);
 }

@@ -3,24 +3,47 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
-import { Translate, ICrudGetAllAction, getSortState, IPaginationBaseState, getPaginationItemsNumber, JhiPagination } from 'react-jhipster';
+import {
+  Translate,
+  translate,
+  ICrudGetAllAction,
+  TextFormat,
+  JhiPagination,
+  getPaginationItemsNumber,
+  getSortState,
+  IPaginationBaseState
+} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import PageSizeSelector from '../page-size-selector';
 import { IRootState } from 'app/shared/reducers';
-import { getEntities } from './geocoding-result.reducer';
+import { getEntities, updateEntity } from './geocoding-result.reducer';
+import { ITEMS_PER_PAGE_ENTITY, MAX_BUTTONS } from 'app/shared/util/pagination.constants';
 import { IGeocodingResult } from 'app/shared/model/geocoding-result.model';
 // tslint:disable-next-line:no-unused-variable
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
-import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 
 export interface IGeocodingResultProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
-export type IGeocodingResultState = IPaginationBaseState;
+export interface IGeocodingResultState extends IPaginationBaseState {
+  dropdownOpenTop: boolean;
+  dropdownOpenBottom: boolean;
+  itemsPerPage: number;
+}
 
 export class GeocodingResult extends React.Component<IGeocodingResultProps, IGeocodingResultState> {
-  state: IGeocodingResultState = {
-    ...getSortState(this.props.location, ITEMS_PER_PAGE)
-  };
+  constructor(props) {
+    super(props);
+
+    this.toggleTop = this.toggleTop.bind(this);
+    this.toggleBottom = this.toggleBottom.bind(this);
+    this.select = this.select.bind(this);
+    this.state = {
+      dropdownOpenTop: false,
+      dropdownOpenBottom: false,
+      itemsPerPage: ITEMS_PER_PAGE_ENTITY,
+      ...getSortState(this.props.location, ITEMS_PER_PAGE_ENTITY)
+    };
+  }
 
   componentDidMount() {
     this.getEntities();
@@ -38,15 +61,38 @@ export class GeocodingResult extends React.Component<IGeocodingResultProps, IGeo
 
   sortEntities() {
     this.getEntities();
-    this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
+    const { activePage, sort, order } = this.state;
+    this.props.history.push(`${this.props.location.pathname}?page=${activePage}&sort=${sort},${order}`);
   }
 
-  handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
+  handlePagination = activePage => this.setState({ activePage }, () => this.updatePage());
 
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
     this.props.getEntities(activePage - 1, itemsPerPage, `${sort},${order}`);
   };
+
+  toggleTop() {
+    this.setState({ dropdownOpenTop: !this.state.dropdownOpenTop });
+  }
+
+  toggleBottom() {
+    this.setState({ dropdownOpenBottom: !this.state.dropdownOpenBottom });
+  }
+
+  select = prop => () => {
+    this.setState(
+      {
+        itemsPerPage: prop
+      },
+      () => this.updatePage()
+    );
+  };
+
+  updatePage() {
+    window.scrollTo(0, 0);
+    this.sortEntities();
+  }
 
   render() {
     const { geocodingResultList, match, totalItems } = this.props;
@@ -60,6 +106,20 @@ export class GeocodingResult extends React.Component<IGeocodingResultProps, IGeo
             <Translate contentKey="serviceNetApp.geocodingResult.home.createLabel" />
           </Link>
         </h2>
+        <Row className="justify-content-center">
+          <PageSizeSelector
+            dropdownOpen={this.state.dropdownOpenTop}
+            toggleSelect={this.toggleTop}
+            itemsPerPage={this.state.itemsPerPage}
+            selectFunc={this.select}
+          />
+          <JhiPagination
+            items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
+            activePage={this.state.activePage}
+            onSelect={this.handlePagination}
+            maxButtons={MAX_BUTTONS}
+          />
+        </Row>
         <div className="table-responsive">
           <Table responsive>
             <thead>
@@ -122,11 +182,17 @@ export class GeocodingResult extends React.Component<IGeocodingResultProps, IGeo
           </Table>
         </div>
         <Row className="justify-content-center">
+          <PageSizeSelector
+            dropdownOpen={this.state.dropdownOpenBottom}
+            toggleSelect={this.toggleBottom}
+            itemsPerPage={this.state.itemsPerPage}
+            selectFunc={this.select}
+          />
           <JhiPagination
             items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
             activePage={this.state.activePage}
             onSelect={this.handlePagination}
-            maxButtons={5}
+            maxButtons={MAX_BUTTONS}
           />
         </Row>
       </div>
@@ -140,7 +206,8 @@ const mapStateToProps = ({ geocodingResult }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
+  updateEntity
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

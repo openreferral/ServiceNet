@@ -37,7 +37,7 @@
     "changelogDate": "20181119125413",
     "entityTableName": "taxonomy",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

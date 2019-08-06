@@ -89,6 +89,20 @@ public class ShelterServiceImpl implements ShelterService {
     /**
      * Get all the shelters.
      *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ShelterDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all Shelters");
+        return shelterRepository.findAll(pageable)
+            .map(shelterMapper::toDto);
+    }
+
+    /**
+     * Get all the shelters.
+     *
      * @return the list of entities
      */
     @Override

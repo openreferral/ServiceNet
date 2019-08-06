@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Col, Row, Table, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Button, Col, Row, Table } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
 import {
   Translate,
@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PageSizeSelector from '../page-size-selector';
 import { IRootState } from 'app/shared/reducers';
 import { getEntities, updateEntity } from './conflict.reducer';
-import { ITEMS_PER_PAGE_ENTITY } from 'app/shared/util/pagination.constants';
+import { ITEMS_PER_PAGE_ENTITY, MAX_BUTTONS } from 'app/shared/util/pagination.constants';
 import { IConflict } from 'app/shared/model/conflict.model';
 // tslint:disable-next-line:no-unused-variable
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -61,11 +61,11 @@ export class Conflict extends React.Component<IConflictProps, IConflictState> {
 
   sortEntities() {
     this.getEntities();
-    this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
-    window.scrollTo(0, 0);
+    const { activePage, sort, order } = this.state;
+    this.props.history.push(`${this.props.location.pathname}?page=${activePage}&sort=${sort},${order}`);
   }
 
-  handlePagination = activePage => this.setState({ activePage }, () => this.sortEntities());
+  handlePagination = activePage => this.setState({ activePage }, () => this.updatePage());
 
   getEntities = () => {
     const { activePage, itemsPerPage, sort, order } = this.state;
@@ -73,15 +73,11 @@ export class Conflict extends React.Component<IConflictProps, IConflictState> {
   };
 
   toggleTop() {
-    this.setState(prevState => ({
-      dropdownOpenTop: !prevState.dropdownOpenTop
-    }));
+    this.setState({ dropdownOpenTop: !this.state.dropdownOpenTop });
   }
 
   toggleBottom() {
-    this.setState(prevState => ({
-      dropdownOpenBottom: !prevState.dropdownOpenBottom
-    }));
+    this.setState({ dropdownOpenBottom: !this.state.dropdownOpenBottom });
   }
 
   select = prop => () => {
@@ -89,9 +85,14 @@ export class Conflict extends React.Component<IConflictProps, IConflictState> {
       {
         itemsPerPage: prop
       },
-      () => this.sortEntities()
+      () => this.updatePage()
     );
   };
+
+  updatePage() {
+    window.scrollTo(0, 0);
+    this.sortEntities();
+  }
 
   render() {
     const { conflictList, match, totalItems } = this.props;
@@ -117,7 +118,7 @@ export class Conflict extends React.Component<IConflictProps, IConflictState> {
             items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
             activePage={this.state.activePage}
             onSelect={this.handlePagination}
-            maxButtons={5}
+            maxButtons={MAX_BUTTONS}
           />
         </Row>
         <div className="table-responsive">
@@ -238,7 +239,7 @@ export class Conflict extends React.Component<IConflictProps, IConflictState> {
             items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
             activePage={this.state.activePage}
             onSelect={this.handlePagination}
-            maxButtons={5}
+            maxButtons={MAX_BUTTONS}
           />
         </Row>
       </div>

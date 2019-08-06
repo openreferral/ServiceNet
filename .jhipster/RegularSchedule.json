@@ -31,7 +31,7 @@
     "changelogDate": "20181119125403",
     "entityTableName": "regular_schedule",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

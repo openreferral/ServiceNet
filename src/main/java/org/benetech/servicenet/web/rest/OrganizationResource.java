@@ -6,8 +6,13 @@ import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,17 +95,23 @@ public class OrganizationResource {
      * GET  /organizations : get all the organizations.
      *
      * @param filter the filter of the request
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of organizations in body
      */
     @GetMapping("/organizations")
     @Timed
-    public List<OrganizationDTO> getAllOrganizations(@RequestParam(required = false) String filter) {
+    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(@RequestParam(required = false) String filter,
+    Pageable pageable) {
+        Page<OrganizationDTO> page;
         if ("funding-is-null".equals(filter)) {
             log.debug("REST request to get all Organizations where funding is null");
-            return organizationService.findAllWhereFundingIsNull();
+            page = organizationService.findAllWhereFundingIsNull(pageable);
+        } else {
+            log.debug("REST request to get all Organizations");
+            page = organizationService.findAll(pageable);
         }
-        log.debug("REST request to get all Organizations");
-        return organizationService.findAllDTOs();
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

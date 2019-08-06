@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IMatchSimilarity>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: MatchSimilarityState = initialState, action): MatchSimila
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_MATCHSIMILARITY):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/match-similarities';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IMatchSimilarity> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_MATCHSIMILARITY_LIST,
-  payload: axios.get<IMatchSimilarity>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IMatchSimilarity> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_MATCHSIMILARITY_LIST,
+    payload: axios.get<IMatchSimilarity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IMatchSimilarity> = id => {
   const requestUrl = `${apiUrl}/${id}`;

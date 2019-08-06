@@ -6,8 +6,13 @@ import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -90,13 +95,16 @@ public class OpeningHoursResource {
     /**
      * GET  /opening-hours : get all the openingHours.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of openingHours in body
      */
     @GetMapping("/opening-hours")
     @Timed
-    public List<OpeningHoursDTO> getAllOpeningHours() {
+    public ResponseEntity<List<OpeningHoursDTO>> getAllOpeningHours(Pageable pageable) {
         log.debug("REST request to get all OpeningHours");
-        return openingHoursService.findAll();
+        Page<OpeningHoursDTO> page = openingHoursService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/opening-hours");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

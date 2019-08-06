@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.GeocodingResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,4 +39,6 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
     @Override
     @CacheEvict(value = "addressCache", allEntries = true)
     void deleteAllInBatch();
+
+    Page<GeocodingResult> findAll(Pageable pageable);
 }

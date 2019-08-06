@@ -76,7 +76,7 @@ export default (state: OrganizationErrorState = initialState, action): Organizat
         loading: false,
         links,
         entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links),
-        totalItems: parseInt(action.payload.headers['x-total-count'], 10)
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_ORGANIZATIONERROR):
       return {

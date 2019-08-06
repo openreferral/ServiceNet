@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Location;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +28,6 @@ public interface LocationRepository extends JpaRepository<Location, UUID> {
         "WHERE loc.externalDbId = :extId AND loc.providerName = :providerName")
     Optional<Location> findOneWithEagerAssociationsByExternalDbIdAndProviderName(@Param("extId") String externalDbId,
                                                                                  @Param("providerName") String providerName);
+
+    Page<Location> findAll(Pageable pageable);
 }

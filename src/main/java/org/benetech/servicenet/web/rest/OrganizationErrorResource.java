@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.MultiValueMap;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
@@ -96,19 +94,15 @@ public class OrganizationErrorResource {
     /**
      * {@code GET  /organization-errors} : get all the organizationErrors.
      *
-     * @param pageable the pagination information.
-     * @param queryParams a {@link MultiValueMap} query parameters.
-     * @param uriBuilder a {@link UriComponentsBuilder} URI builder.
+     * @param pageable the pagination information
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of organizationErrors in body.
      */
     @GetMapping("/organization-errors")
-    public ResponseEntity<List<OrganizationError>> getAllOrganizationErrors(
-        Pageable pageable, @RequestParam MultiValueMap<String, String> queryParams, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<List<OrganizationError>> getAllOrganizationErrors(Pageable pageable) {
         log.debug("REST request to get a page of OrganizationErrors");
         Page<OrganizationError> page = organizationErrorRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil
-            .generatePaginationHttpHeaders(page, "/api/organization-errors");
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organization-errors");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

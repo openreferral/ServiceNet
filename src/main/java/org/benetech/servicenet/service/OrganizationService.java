@@ -2,6 +2,8 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +44,14 @@ public interface OrganizationService {
     List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds);
 
     /**
+     * Get all the organizations on page.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<OrganizationDTO> findAll(Pageable pageable);
+
+    /**
      * Get all the OrganizationDTO where Funding is null.
      *
      * @return the list of entities
@@ -49,6 +59,14 @@ public interface OrganizationService {
     List<OrganizationDTO> findAllWhereFundingIsNull();
 
     Optional<Organization> findWithEagerAssociations(String externalDbId, String providerName);
+
+    /**
+     * Get all the OrganizationDTO where Funding is null on page.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<OrganizationDTO> findAllWhereFundingIsNull(Pageable pageable);
 
     /**
      * Get the "id" organization.

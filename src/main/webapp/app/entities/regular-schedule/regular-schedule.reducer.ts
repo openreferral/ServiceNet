@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IRegularSchedule>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: RegularScheduleState = initialState, action): RegularSche
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_REGULARSCHEDULE):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/regular-schedules';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IRegularSchedule> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_REGULARSCHEDULE_LIST,
-  payload: axios.get<IRegularSchedule>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IRegularSchedule> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_REGULARSCHEDULE_LIST,
+    payload: axios.get<IRegularSchedule>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IRegularSchedule> = id => {
   const requestUrl = `${apiUrl}/${id}`;

@@ -22,6 +22,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IOrganizationMatch>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -64,7 +65,8 @@ export default (state: OrganizationMatchState = initialState, action): Organizat
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_ORGANIZATIONMATCH):
       return {
@@ -110,10 +112,13 @@ const apiUrl = 'api/organization-matches';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IOrganizationMatch> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_ORGANIZATIONMATCH_LIST,
-  payload: axios.get<IOrganizationMatch>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IOrganizationMatch> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_ORGANIZATIONMATCH_LIST,
+    payload: axios.get<IOrganizationMatch>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IOrganizationMatch> = id => {
   const requestUrl = `${apiUrl}/${id}`;

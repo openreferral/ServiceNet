@@ -22,6 +22,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IServiceTaxonomy>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -64,7 +65,8 @@ export default (state: ServiceTaxonomyState = initialState, action): ServiceTaxo
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_SERVICETAXONOMY):
       return {
@@ -110,10 +112,13 @@ const apiUrl = 'api/service-taxonomies';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IServiceTaxonomy> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_SERVICETAXONOMY_LIST,
-  payload: axios.get<IServiceTaxonomy>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IServiceTaxonomy> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_SERVICETAXONOMY_LIST,
+    payload: axios.get<IServiceTaxonomy>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IServiceTaxonomy> = id => {
   const requestUrl = `${apiUrl}/${id}`;

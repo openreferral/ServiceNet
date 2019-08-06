@@ -33,5 +33,5 @@
     "service": "serviceImpl",
     "entityTableName": "opening_hours",
     "jpaMetamodelFiltering": false,
-    "pagination": "no"
+    "pagination": true
 }

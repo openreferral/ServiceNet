@@ -1,6 +1,8 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Eligibility;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,5 @@ import java.util.UUID;
 @Repository
 public interface EligibilityRepository extends JpaRepository<Eligibility, UUID> {
 
+    Page<Eligibility> findAll(Pageable pageable);
 }

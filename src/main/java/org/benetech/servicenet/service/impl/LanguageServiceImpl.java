@@ -7,6 +7,8 @@ import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.mapper.LanguageMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +65,19 @@ public class LanguageServiceImpl implements LanguageService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the languages.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<LanguageDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all Languages");
+        return languageRepository.findAll(pageable)
+            .map(languageMapper::toDto);
+    }
 
     /**
      * Get one language by id.

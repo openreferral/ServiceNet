@@ -28,7 +28,7 @@
     "changelogDate": "20181119125408",
     "entityTableName": "required_document",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

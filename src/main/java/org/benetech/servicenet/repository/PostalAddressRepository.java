@@ -4,6 +4,8 @@ import java.util.SortedSet;
 import java.util.UUID;
 
 import org.benetech.servicenet.domain.PostalAddress;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +31,6 @@ public interface PostalAddressRepository extends JpaRepository<PostalAddress, UU
       + "LEFT JOIN Organization o ON l.organization = o " + "WHERE pa.city != '' AND o.account.id = :systemAccountId "
       + "ORDER BY pa.city")
   SortedSet<String> getCitiesForSystemAccount(@Param("systemAccountId") UUID systemAccountId);
+
+    Page<PostalAddress> findAll(Pageable pageable);
 }

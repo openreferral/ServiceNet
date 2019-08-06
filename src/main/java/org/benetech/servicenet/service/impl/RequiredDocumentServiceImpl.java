@@ -7,6 +7,8 @@ import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 import org.benetech.servicenet.service.mapper.RequiredDocumentMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +66,19 @@ public class RequiredDocumentServiceImpl implements RequiredDocumentService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the requiredDocuments.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RequiredDocumentDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all RequiredDocuments");
+        return requiredDocumentRepository.findAll(pageable)
+            .map(requiredDocumentMapper::toDto);
+    }
 
     /**
      * Get one requiredDocument by id.

@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IFunding>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: FundingState = initialState, action): FundingState => {
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_FUNDING):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/fundings';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IFunding> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_FUNDING_LIST,
-  payload: axios.get<IFunding>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IFunding> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_FUNDING_LIST,
+    payload: axios.get<IFunding>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IFunding> = id => {
   const requestUrl = `${apiUrl}/${id}`;

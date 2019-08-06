@@ -1,6 +1,8 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.DataImportReport;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.benetech.servicenet.service.dto.DataImportReportDTO;
 
 import java.util.List;
@@ -36,6 +38,14 @@ public interface DataImportReportService {
      * @return the list of entities
      */
     List<DataImportReportDTO> findAll();
+
+        /**
+     * Get all the dataImportReports.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<DataImportReportDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" dataImportReport.

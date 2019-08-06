@@ -102,7 +102,7 @@ const apiUrl = 'api/geocoding-results';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IGeocodingResult> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
   return {
     type: ACTION_TYPES.FETCH_GEOCODINGRESULT_LIST,
     payload: axios.get<IGeocodingResult>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

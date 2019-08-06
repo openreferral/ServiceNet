@@ -7,8 +7,13 @@ import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.dto.DataImportReportDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -93,13 +98,16 @@ public class DataImportReportResource {
     /**
      * GET  /data-import-reports : get all the dataImportReports.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of dataImportReports in body
      */
     @GetMapping("/data-import-reports")
     @Timed
-    public List<DataImportReportDTO> getAllDataImportReports() {
+    public ResponseEntity<List<DataImportReportDTO>> getAllDataImportReports(Pageable pageable) {
         log.debug("REST request to get all DataImportReports");
-        return dataImportReportService.findAll();
+        Page<DataImportReportDTO> page = dataImportReportService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/data-import-reports");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

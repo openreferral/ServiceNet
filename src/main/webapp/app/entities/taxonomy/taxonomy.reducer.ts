@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<ITaxonomy>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: TaxonomyState = initialState, action): TaxonomyState => {
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_TAXONOMY):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/taxonomies';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<ITaxonomy> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_TAXONOMY_LIST,
-  payload: axios.get<ITaxonomy>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<ITaxonomy> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_TAXONOMY_LIST,
+    payload: axios.get<ITaxonomy>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<ITaxonomy> = id => {
   const requestUrl = `${apiUrl}/${id}`;

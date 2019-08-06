@@ -2,6 +2,8 @@ package org.benetech.servicenet.repository;
 
 import java.util.UUID;
 import org.benetech.servicenet.domain.OrganizationError;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrganizationErrorRepository extends JpaRepository<OrganizationError, UUID> {
 
+    Page<OrganizationError> findAll(Pageable pageable);
 }

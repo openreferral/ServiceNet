@@ -24,7 +24,7 @@
     "changelogDate": "20181119125411",
     "entityTableName": "accessibility_for_disabilities",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

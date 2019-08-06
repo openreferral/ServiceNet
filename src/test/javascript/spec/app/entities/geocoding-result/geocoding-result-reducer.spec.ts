@@ -127,7 +127,8 @@ describe('Entities reducer tests', () => {
 
   describe('Successes', () => {
     it('should fetch all entities', () => {
-      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }], headers: { 'x-total-count': 123 } };
+      const headers = { 'x-total-count': 2 };
+      const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }], headers };
       expect(
         reducer(undefined, {
           type: SUCCESS(ACTION_TYPES.FETCH_GEOCODINGRESULT_LIST),
@@ -136,7 +137,7 @@ describe('Entities reducer tests', () => {
       ).toEqual({
         ...initialState,
         loading: false,
-        totalItems: payload.headers['x-total-count'],
+        totalItems: headers['x-total-count'],
         entities: payload.data
       });
     });

@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IBeds>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: BedsState = initialState, action): BedsState => {
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_BEDS):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/beds';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IBeds> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_BEDS_LIST,
-  payload: axios.get<IBeds>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IBeds> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_BEDS_LIST,
+    payload: axios.get<IBeds>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IBeds> = id => {
   const requestUrl = `${apiUrl}/${id}`;

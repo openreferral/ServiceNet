@@ -7,6 +7,8 @@ import org.benetech.servicenet.service.dto.ServiceTaxonomyDTO;
 import org.benetech.servicenet.service.mapper.ServiceTaxonomyMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +66,19 @@ public class ServiceTaxonomyServiceImpl implements ServiceTaxonomyService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the serviceTaxonomies.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ServiceTaxonomyDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all ServiceTaxonomies");
+        return serviceTaxonomyRepository.findAll(pageable)
+            .map(serviceTaxonomyMapper::toDto);
+    }
 
     /**
      * Get one serviceTaxonomy by id.

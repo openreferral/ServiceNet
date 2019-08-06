@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IPostalAddress>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: PostalAddressState = initialState, action): PostalAddress
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_POSTALADDRESS):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/postal-addresses';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IPostalAddress> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_POSTALADDRESS_LIST,
-  payload: axios.get<IPostalAddress>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IPostalAddress> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_POSTALADDRESS_LIST,
+    payload: axios.get<IPostalAddress>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IPostalAddress> = id => {
   const requestUrl = `${apiUrl}/${id}`;

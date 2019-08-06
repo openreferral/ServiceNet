@@ -9,6 +9,8 @@ import org.benetech.servicenet.service.dto.DataImportReportDTO;
 import org.benetech.servicenet.service.mapper.DataImportReportMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,6 +92,19 @@ public class DataImportReportServiceImpl implements DataImportReportService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the dataImportReports.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<DataImportReportDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all DataImportReports");
+        return dataImportReportRepository.findAll(pageable)
+            .map(dataImportReportMapper::toDto);
+    }
 
     /**
      * Get one dataImportReport by id.

@@ -2,6 +2,8 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,13 @@ public interface RequiredDocumentService {
      */
     List<RequiredDocumentDTO> findAll();
 
+    /**
+     * Get all the requiredDocuments.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<RequiredDocumentDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" requiredDocument.

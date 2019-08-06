@@ -3,24 +3,99 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
-import { Translate, ICrudGetAllAction } from 'react-jhipster';
+import {
+  Translate,
+  translate,
+  ICrudGetAllAction,
+  TextFormat,
+  JhiPagination,
+  getPaginationItemsNumber,
+  getSortState,
+  IPaginationBaseState
+} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import PageSizeSelector from '../page-size-selector';
 import { IRootState } from 'app/shared/reducers';
-import { getEntities } from './opening-hours.reducer';
+import { getEntities, updateEntity } from './opening-hours.reducer';
+import { ITEMS_PER_PAGE_ENTITY } from 'app/shared/util/pagination.constants';
 import { IOpeningHours } from 'app/shared/model/opening-hours.model';
 // tslint:disable-next-line:no-unused-variable
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 export interface IOpeningHoursProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
-export class OpeningHours extends React.Component<IOpeningHoursProps> {
+export interface IOpeningHoursState extends IPaginationBaseState {
+  dropdownOpenTop: boolean;
+  dropdownOpenBottom: boolean;
+  itemsPerPage: number;
+}
+
+export class OpeningHours extends React.Component<IOpeningHoursProps, IOpeningHoursState> {
+  constructor(props) {
+    super(props);
+
+    this.toggleTop = this.toggleTop.bind(this);
+    this.toggleBottom = this.toggleBottom.bind(this);
+    this.select = this.select.bind(this);
+    this.state = {
+      dropdownOpenTop: false,
+      dropdownOpenBottom: false,
+      itemsPerPage: ITEMS_PER_PAGE_ENTITY,
+      ...getSortState(this.props.location, ITEMS_PER_PAGE_ENTITY)
+    };
+  }
+
   componentDidMount() {
-    this.props.getEntities();
+    this.getEntities();
+  }
+
+  sort = prop => () => {
+    this.setState(
+      {
+        order: this.state.order === 'asc' ? 'desc' : 'asc',
+        sort: prop
+      },
+      () => this.sortEntities()
+    );
+  };
+
+  sortEntities() {
+    this.getEntities();
+    const { activePage, sort, order } = this.state;
+    this.props.history.push(`${this.props.location.pathname}?page=${activePage}&sort=${sort},${order}`);
+  }
+
+  handlePagination = activePage => this.setState({ activePage }, () => this.updatePage());
+
+  getEntities = () => {
+    const { activePage, itemsPerPage, sort, order } = this.state;
+    this.props.getEntities(activePage - 1, itemsPerPage, `${sort},${order}`);
+  };
+
+  toggleTop() {
+    this.setState({ dropdownOpenTop: !this.state.dropdownOpenTop });
+  }
+
+  toggleBottom() {
+    this.setState({ dropdownOpenBottom: !this.state.dropdownOpenBottom });
+  }
+
+  select = prop => () => {
+    this.setState(
+      {
+        itemsPerPage: prop
+      },
+      () => this.updatePage()
+    );
+  };
+
+  updatePage() {
+    window.scrollTo(0, 0);
+    this.sortEntities();
   }
 
   render() {
-    const { openingHoursList, match } = this.props;
+    const { openingHoursList, match, totalItems } = this.props;
     return (
       <div>
         <h2 id="opening-hours-heading">
@@ -31,6 +106,20 @@ export class OpeningHours extends React.Component<IOpeningHoursProps> {
             <Translate contentKey="serviceNetApp.openingHours.home.createLabel">Create new Opening Hours</Translate>
           </Link>
         </h2>
+        <Row className="justify-content-center">
+          <PageSizeSelector
+            dropdownOpen={this.state.dropdownOpenTop}
+            toggleSelect={this.toggleTop}
+            itemsPerPage={this.state.itemsPerPage}
+            selectFunc={this.select}
+          />
+          <JhiPagination
+            items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
+            activePage={this.state.activePage}
+            onSelect={this.handlePagination}
+            maxButtons={5}
+          />
+        </Row>
         <div className="table-responsive">
           <Table responsive>
             <thead>
@@ -98,17 +187,33 @@ export class OpeningHours extends React.Component<IOpeningHoursProps> {
             </tbody>
           </Table>
         </div>
+        <Row className="justify-content-center">
+          <PageSizeSelector
+            dropdownOpen={this.state.dropdownOpenBottom}
+            toggleSelect={this.toggleBottom}
+            itemsPerPage={this.state.itemsPerPage}
+            selectFunc={this.select}
+          />
+          <JhiPagination
+            items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
+            activePage={this.state.activePage}
+            onSelect={this.handlePagination}
+            maxButtons={5}
+          />
+        </Row>
       </div>
     );
   }
 }
 
 const mapStateToProps = ({ openingHours }: IRootState) => ({
-  openingHoursList: openingHours.entities
+  openingHoursList: openingHours.entities,
+  totalItems: openingHours.totalItems
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
+  updateEntity
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

@@ -29,6 +29,14 @@ public interface ShelterService {
     List<ShelterDTO> findAll();
 
     /**
+     * Get all the shelters.
+     *
+     * @param pageable pagination properties
+     * @return the list of entities
+     */
+    Page<ShelterDTO> findAll(Pageable pageable);
+
+    /**
      * Search shelters.
      *
      * @param shelterFilters search filters

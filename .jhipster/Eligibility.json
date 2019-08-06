@@ -22,7 +22,7 @@
     "changelogDate": "20181119125406",
     "entityTableName": "eligibility",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

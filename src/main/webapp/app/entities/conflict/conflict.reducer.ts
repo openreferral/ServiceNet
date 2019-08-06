@@ -102,10 +102,10 @@ const apiUrl = 'api/conflicts';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IConflict> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
   return {
     type: ACTION_TYPES.FETCH_CONFLICT_LIST,
-    payload: axios.get<IConflict>(requestUrl)
+    payload: axios.get<IConflict>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 

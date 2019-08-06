@@ -40,4 +40,6 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         + "AND org.account.name != :providerName AND org.active = True")
     List<Organization> findAllByProviderNameNotAnAndIdNotIn(@Param("providerName") String providerName,
         @Param("ids") List<UUID> ids);
+
+    Page<Organization> findAll(Pageable pageable);
 }

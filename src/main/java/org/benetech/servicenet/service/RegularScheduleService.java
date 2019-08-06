@@ -1,7 +1,8 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +27,13 @@ public interface RegularScheduleService {
      */
     List<RegularScheduleDTO> findAll();
 
+    /**
+     * Get all the regularSchedules.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<RegularScheduleDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" regularSchedule.

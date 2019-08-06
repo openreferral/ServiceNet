@@ -30,7 +30,7 @@
     "changelogDate": "20181119125405",
     "entityTableName": "funding",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

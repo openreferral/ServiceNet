@@ -9,6 +9,8 @@ import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +82,19 @@ public class LocationServiceImpl implements LocationService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the locations on page
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<LocationDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all Locations");
+        return locationRepository.findAll(pageable)
+            .map(locationMapper::toDto);
+    }
 
     /**
      * get all the locations where PhysicalAddress is null.
@@ -96,6 +111,18 @@ public class LocationServiceImpl implements LocationService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * get all the locations where PhysicalAddress is null on page
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Transactional(readOnly = true)
+    public Page<LocationDTO> findAllWherePhysicalAddressIsNull(Pageable pageable) {
+        log.debug("Request to get all locations where PhysicalAddress is null");
+        return locationRepository.findAll(pageable)
+            .map(locationMapper::toDto);
+    }
 
     /**
      * get all the locations where PostalAddress is null.
@@ -112,6 +139,18 @@ public class LocationServiceImpl implements LocationService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * get all the locations where PostalAddress is null.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Transactional(readOnly = true)
+    public Page<LocationDTO> findAllWherePostalAddressIsNull(Pageable pageable) {
+        log.debug("Request to get all locations where PostalAddress is null");
+        return locationRepository.findAll(pageable)
+            .map(locationMapper::toDto);
+    }
 
     /**
      * get all the locations where RegularSchedule is null.
@@ -126,6 +165,19 @@ public class LocationServiceImpl implements LocationService {
             .filter(location -> location.getRegularSchedule() == null)
             .map(locationMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * get all the locations where RegularSchedule is null.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Transactional(readOnly = true)
+    public Page<LocationDTO> findAllWhereRegularScheduleIsNull(Pageable pageable) {
+        log.debug("Request to get all locations where RegularSchedule is null");
+        return locationRepository.findAll(pageable)
+            .map(locationMapper::toDto);
     }
 
     @Override

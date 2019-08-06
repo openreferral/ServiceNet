@@ -21,6 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IDataImportReport>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -63,7 +64,8 @@ export default (state: DataImportReportState = initialState, action): DataImport
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_DATAIMPORTREPORT):
       return {
@@ -99,10 +101,13 @@ const apiUrl = 'api/data-import-reports';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IDataImportReport> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_DATAIMPORTREPORT_LIST,
-  payload: axios.get<IDataImportReport>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IDataImportReport> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_DATAIMPORTREPORT_LIST,
+    payload: axios.get<IDataImportReport>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IDataImportReport> = id => {
   const requestUrl = `${apiUrl}/${id}`;

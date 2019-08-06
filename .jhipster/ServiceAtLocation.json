@@ -34,7 +34,7 @@
     "changelogDate": "20181119125357",
     "entityTableName": "service_at_location",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

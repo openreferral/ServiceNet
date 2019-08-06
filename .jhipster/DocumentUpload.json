@@ -44,5 +44,5 @@
     "service": "serviceImpl",
     "entityTableName": "document_upload",
     "jpaMetamodelFiltering": false,
-    "pagination": "no"
+    "pagination": true
 }

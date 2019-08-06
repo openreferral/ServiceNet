@@ -117,7 +117,7 @@
     "changelogDate": "20181119125354",
     "entityTableName": "organization",
     "dto": "mapstruct",
-    "pagination": "no",
+    "pagination": true,
     "service": "serviceImpl",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,

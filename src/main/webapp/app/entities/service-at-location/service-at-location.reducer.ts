@@ -22,6 +22,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IServiceAtLocation>,
   entity: defaultValue,
   updating: false,
+  totalItems: 0,
   updateSuccess: false
 };
 
@@ -64,7 +65,8 @@ export default (state: ServiceAtLocationState = initialState, action): ServiceAt
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
+        totalItems: action.payload.headers['x-total-count']
       };
     case SUCCESS(ACTION_TYPES.FETCH_SERVICEATLOCATION):
       return {
@@ -110,10 +112,13 @@ const apiUrl = 'api/service-at-locations';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IServiceAtLocation> = (page, size, sort) => ({
-  type: ACTION_TYPES.FETCH_SERVICEATLOCATION_LIST,
-  payload: axios.get<IServiceAtLocation>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
-});
+export const getEntities: ICrudGetAllAction<IServiceAtLocation> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  return {
+    type: ACTION_TYPES.FETCH_SERVICEATLOCATION_LIST,
+    payload: axios.get<IServiceAtLocation>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+  };
+};
 
 export const getEntity: ICrudGetAction<IServiceAtLocation> = id => {
   const requestUrl = `${apiUrl}/${id}`;
