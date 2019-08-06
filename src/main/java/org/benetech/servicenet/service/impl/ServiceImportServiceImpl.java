@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ServiceBasedImportService;
@@ -10,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
-import java.util.Optional;
 
+@Slf4j
 @Component
 public class ServiceImportServiceImpl implements ServiceImportService {
 
@@ -30,14 +32,18 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         EntityValidator.validateAndFix(filledService, filledService.getOrganization(), report, externalDbId);
 
         Service service = new Service(filledService);
-        Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
-        if (serviceFromDb.isPresent()) {
-            fillDataFromDb(service, serviceFromDb.get());
-            em.merge(service);
-            report.incrementNumberOfUpdatedServices();
-        } else {
+        List<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
+        if (serviceFromDb.isEmpty()) {
             em.persist(service);
             report.incrementNumberOfCreatedServices();
+        } else {
+            if (serviceFromDb.size() > 1) {
+                log.warn(String.format("There are multiple services with the same "
+                    + "externalDbId: %s and providerName: %s", externalDbId, providerName));
+            }
+            fillDataFromDb(service, serviceFromDb.get(0));
+            em.merge(service);
+            report.incrementNumberOfUpdatedServices();
         }
 
         serviceBasedImportService.createOrUpdateEligibility(filledService.getEligibility(), service, report);

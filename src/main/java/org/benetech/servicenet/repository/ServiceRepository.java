@@ -1,5 +1,6 @@
 package org.benetech.servicenet.repository;
 
+import java.util.List;
 import org.benetech.servicenet.domain.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -25,7 +25,7 @@ public interface ServiceRepository extends JpaRepository<Service, UUID> {
         "LEFT JOIN FETCH srvc.regularSchedule schedule " +
         "LEFT JOIN FETCH schedule.openingHours " +
         "WHERE srvc.externalDbId = :extId AND srvc.providerName = :providerName")
-    Optional<Service> findOneWithEagerAssociationsByExternalDbIdAndProviderName(@Param("extId") String externalDbId,
+    List<Service> findAllWithEagerAssociationsByExternalDbIdAndProviderName(@Param("extId") String externalDbId,
                                                                                 @Param("providerName") String providerName);
 
     Page<Service> findAll(Pageable pageable);

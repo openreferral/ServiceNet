@@ -125,8 +125,8 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public Optional<Service> findWithEagerAssociations(String externalDbId, String providerName) {
-        return serviceRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, providerName);
+    public List<Service> findWithEagerAssociations(String externalDbId, String providerName) {
+        return serviceRepository.findAllWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, providerName);
     }
 
     /**

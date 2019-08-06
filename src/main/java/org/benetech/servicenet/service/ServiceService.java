@@ -58,7 +58,7 @@ public interface ServiceService {
      */
     List<ServiceDTO> findAllWhereEligibilityIsNull();
 
-    Optional<Service> findWithEagerAssociations(String externalDbId, String providerName);
+    List<Service> findWithEagerAssociations(String externalDbId, String providerName);
 
     /**
      * Get the "id" service.
