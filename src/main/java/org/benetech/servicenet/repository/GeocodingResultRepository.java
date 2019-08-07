@@ -1,15 +1,17 @@
 package org.benetech.servicenet.repository;
 
+import java.util.List;
+import java.util.SortedSet;
+import java.util.UUID;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -41,4 +43,23 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
     void deleteAllInBatch();
 
     Page<GeocodingResult> findAll(Pageable pageable);
+
+    @Query("SELECT DISTINCT gr.postalCode FROM Location l "
+        + "JOIN l.geocodingResults gr "
+        + "WHERE gr.postalCode != '' AND l.providerName = :systemAccountName "
+        + "ORDER BY gr.postalCode")
+    SortedSet<String> getDistinctPostalCodesFromGeoResultsForSystemAccount(
+        @Param("systemAccountName") String systemAccountName);
+
+    @Query("SELECT DISTINCT gr.administrativeAreaLevel2 FROM Location l "
+        + "JOIN l.geocodingResults gr "
+        + "WHERE gr.administrativeAreaLevel2 != '' AND l.providerName = :systemAccountName "
+        + "ORDER BY gr.administrativeAreaLevel2")
+    SortedSet<String> getDistinctRegionsFromGeoResultsForSystemAccount(@Param("systemAccountName") String systemAccountName);
+
+    @Query("SELECT DISTINCT gr.locality FROM Location l "
+        + "JOIN l.geocodingResults gr "
+        + "WHERE gr.locality != '' AND l.providerName = :systemAccountName "
+        + "ORDER BY gr.locality")
+    SortedSet<String> getDistinctCityFromGeoResultsForSystemAccount(@Param("systemAccountName") String systemAccountName);
 }
