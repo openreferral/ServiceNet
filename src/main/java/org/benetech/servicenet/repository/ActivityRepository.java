@@ -17,11 +17,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
-import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
@@ -51,10 +50,10 @@ public class ActivityRepository {
     private static final String ALTERNATE_NAME = "alternateName";
 
     private static final String LOCATIONS = "locations";
-    private static final String POSTAL_ADDRESS = "postalAddress";
-    private static final String PHYSICAL_ADDRESS = "physicalAddress";
-    private static final String CITY = "city";
-    private static final String REGION = "region";
+    private static final String GEOCODING_RESULTS = "geocodingResults";
+
+    private static final String CITY = "locality";
+    private static final String REGION = "administrativeAreaLevel2";
     private static final String POSTAL_CODE = "postalCode";
 
     private static final String ORGANIZATION_MATCHES = "organizationMatches";
@@ -130,29 +129,25 @@ public class ActivityRepository {
 
     private Predicate addLocationFilters(FiltersActivityDTO filtersActivityDTO, Predicate predicate,
         Join<Organization, Location> locationJoin) {
-        Join<Location, PostalAddress> postalAddressJoin = locationJoin.join(POSTAL_ADDRESS, JoinType.LEFT);
-        Join<Location, PhysicalAddress> physicalAddressJoin = locationJoin.join(PHYSICAL_ADDRESS, JoinType.LEFT);
+        Join<Location, GeocodingResult> geocodingResultJoin = locationJoin.join(GEOCODING_RESULTS, JoinType.LEFT);
 
         Predicate updatedPredicate = predicate;
         if (CollectionUtils.isNotEmpty(filtersActivityDTO.getCitiesFilterList())) {
-            updatedPredicate = cb.and(updatedPredicate, cb.or(
-                postalAddressJoin.get(CITY).in(filtersActivityDTO.getCitiesFilterList()),
-                physicalAddressJoin.get(CITY).in(filtersActivityDTO.getCitiesFilterList())
-            ));
+            updatedPredicate = cb.and(updatedPredicate,
+                geocodingResultJoin.get(CITY).in(filtersActivityDTO.getCitiesFilterList())
+            );
         }
 
         if (CollectionUtils.isNotEmpty(filtersActivityDTO.getRegionFilterList())) {
-            updatedPredicate = cb.and(updatedPredicate, cb.or(
-                postalAddressJoin.get(REGION).in(filtersActivityDTO.getRegionFilterList()),
-                physicalAddressJoin.get(REGION).in(filtersActivityDTO.getRegionFilterList())
-            ));
+            updatedPredicate = cb.and(updatedPredicate,
+                geocodingResultJoin.get(REGION).in(filtersActivityDTO.getRegionFilterList())
+            );
         }
 
         if (CollectionUtils.isNotEmpty(filtersActivityDTO.getPostalCodesFilterList())) {
-            updatedPredicate = cb.and(updatedPredicate, cb.or(
-                postalAddressJoin.get(POSTAL_CODE).in(filtersActivityDTO.getPostalCodesFilterList()),
-                physicalAddressJoin.get(POSTAL_CODE).in(filtersActivityDTO.getPostalCodesFilterList())
-            ));
+            updatedPredicate = cb.and(updatedPredicate,
+                geocodingResultJoin.get(POSTAL_CODE).in(filtersActivityDTO.getPostalCodesFilterList())
+            );
         }
         return updatedPredicate;
     }

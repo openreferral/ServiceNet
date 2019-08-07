@@ -3,17 +3,11 @@ package org.benetech.servicenet.service.impl;
 import static org.benetech.servicenet.config.Constants.EDEN_PROVIDER;
 import static org.benetech.servicenet.config.Constants.UWBA_PROVIDER;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.benetech.servicenet.domain.SystemAccount;
-import org.benetech.servicenet.repository.PhysicalAddressRepository;
-import org.benetech.servicenet.repository.PostalAddressRepository;
+import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
 import org.benetech.servicenet.service.ActivityFilterService;
 import org.benetech.servicenet.service.UserService;
@@ -24,19 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ActivityFilterServiceImpl implements ActivityFilterService {
 
-    private final PostalAddressRepository postalAddressRepository;
-
-    private final PhysicalAddressRepository physicalAddressRepository;
+    private final GeocodingResultRepository geocodingResultRepository;
 
     private final UserService userService;
 
     private final TaxonomyRepository taxonomyRepository;
 
-    public ActivityFilterServiceImpl(PostalAddressRepository postalAddressRepository,
-        PhysicalAddressRepository physicalAddressRepository, UserService userService,
+    public ActivityFilterServiceImpl(GeocodingResultRepository geocodingResultRepository,
+        UserService userService,
         TaxonomyRepository taxonomyRepository) {
-        this.postalAddressRepository = postalAddressRepository;
-        this.physicalAddressRepository = physicalAddressRepository;
+        this.geocodingResultRepository = geocodingResultRepository;
         this.userService = userService;
         this.taxonomyRepository = taxonomyRepository;
     }
@@ -45,37 +36,42 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     public Set<String> getPostalCodesForUserSystemAccount() {
 
         Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
-        UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
 
-        return Stream
-            .of(postalAddressRepository.getDistinctPostalCodesForSystemAccount(systemAccountId),
-                physicalAddressRepository.getDistinctPostalCodesForSystemAccount(systemAccountId))
-            .flatMap(Collection::stream)
-            .collect(Collectors.toCollection(TreeSet::new));
+        if (accountOpt.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        String systemAccountName = accountOpt.get().getName();
+
+        return geocodingResultRepository.getDistinctPostalCodesFromGeoResultsForSystemAccount(systemAccountName);
     }
 
     @Override
     public Set<String> getRegionsForUserSystemAccount() {
 
         Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
-        UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
 
-        return Stream
-            .of(postalAddressRepository.getRegionsForSystemAccount(systemAccountId),
-                physicalAddressRepository.getRegionsForSystemAccount(systemAccountId))
-            .flatMap(Collection::stream).collect(Collectors.toCollection(TreeSet::new));
+        if (accountOpt.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        String systemAccountName = accountOpt.get().getName();
+
+        return geocodingResultRepository.getDistinctRegionsFromGeoResultsForSystemAccount(systemAccountName);
     }
 
     @Override
     public Set<String> getCitiesForUserSystemAccount() {
 
         Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
-        UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
 
-        return Stream
-            .of(postalAddressRepository.getCitiesForSystemAccount(systemAccountId),
-                physicalAddressRepository.getCitiesForSystemAccount(systemAccountId))
-            .flatMap(Collection::stream).collect(Collectors.toCollection(TreeSet::new));
+        if (accountOpt.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        String systemAccountName = accountOpt.get().getName();
+
+        return geocodingResultRepository.getDistinctCityFromGeoResultsForSystemAccount(systemAccountName);
     }
 
     @Override
