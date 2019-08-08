@@ -75,7 +75,7 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
 const url = 'api/';
 const activityUrl = url + 'activities/';
 const matchesUrl = url + 'organization-matches/organization/';
-const hiddenMatchesUrl = url + '/organization-matches/hidden';
+const hiddenMatchesUrl = url + 'organization-matches/hidden';
 
 export const getBaseRecord = orgId => ({
   type: ACTION_TYPES.FETCH_BASE_ORGANIZATION,
