@@ -102,7 +102,7 @@ const apiUrl = 'api/holiday-schedules';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IHolidaySchedule> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_HOLIDAYSCHEDULE_LIST,
     payload: axios.get<IHolidaySchedule>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

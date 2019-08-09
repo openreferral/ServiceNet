@@ -102,7 +102,7 @@ const apiUrl = 'api/match-similarities';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IMatchSimilarity> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_MATCHSIMILARITY_LIST,
     payload: axios.get<IMatchSimilarity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

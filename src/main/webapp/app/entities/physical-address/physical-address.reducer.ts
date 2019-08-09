@@ -102,7 +102,7 @@ const apiUrl = 'api/physical-addresses';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IPhysicalAddress> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_PHYSICALADDRESS_LIST,
     payload: axios.get<IPhysicalAddress>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

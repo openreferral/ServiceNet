@@ -102,7 +102,7 @@ const apiUrl = 'api/required-documents';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IRequiredDocument> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_REQUIREDDOCUMENT_LIST,
     payload: axios.get<IRequiredDocument>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

@@ -102,7 +102,7 @@ const apiUrl = 'api/regular-schedules';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IRegularSchedule> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_REGULARSCHEDULE_LIST,
     payload: axios.get<IRegularSchedule>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
