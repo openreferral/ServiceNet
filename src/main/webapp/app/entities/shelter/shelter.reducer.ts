@@ -135,7 +135,7 @@ export const searchEntities = (search, page, size, sort, filter) => {
 };
 
 export const getEntities: ICrudGetAllAction<IShelter> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_SHELTER_LIST,
     payload: axios.get<IShelter>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

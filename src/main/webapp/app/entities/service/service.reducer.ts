@@ -113,7 +113,7 @@ const apiUrl = 'api/services';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IService> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_SERVICE_LIST,
     payload: axios.get<IService>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

@@ -102,7 +102,7 @@ const apiUrl = 'api/opening-hours';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IOpeningHours> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_OPENINGHOURS_LIST,
     payload: axios.get<IOpeningHours>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

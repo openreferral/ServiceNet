@@ -102,7 +102,7 @@ const apiUrl = 'api/data-import-reports';
 // Actions
 
 export const getEntities: ICrudGetAllAction<IDataImportReport> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${`?page=${page}&size=${size}&sort=${sort}`}`;
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_DATAIMPORTREPORT_LIST,
     payload: axios.get<IDataImportReport>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
