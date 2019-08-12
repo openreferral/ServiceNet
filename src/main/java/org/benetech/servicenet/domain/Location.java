@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.benetech.servicenet.util.CompareUtils;
@@ -35,7 +36,9 @@ import java.util.Set;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "location")
+@Table(name = "location", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"external_db_id", "provider_name"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Location extends AbstractEntity implements Serializable, DeepComparable {
 

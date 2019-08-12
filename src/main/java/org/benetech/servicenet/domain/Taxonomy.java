@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
@@ -19,7 +20,9 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Data
-@Table(name = "taxonomy")
+@Table(name = "taxonomy", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"external_db_id", "provider_name"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Taxonomy extends AbstractEntity implements Serializable, DeepComparable {
 

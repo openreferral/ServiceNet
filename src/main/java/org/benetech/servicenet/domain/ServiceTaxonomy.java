@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.UniqueConstraint;
 import lombok.Data;
 import org.benetech.servicenet.util.CompareUtils;
 import org.hibernate.annotations.Cache;
@@ -21,7 +22,9 @@ import java.util.Objects;
  */
 @Entity
 @Data
-@Table(name = "service_taxonomy")
+@Table(name = "service_taxonomy", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"external_db_id", "provider_name"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ServiceTaxonomy extends AbstractEntity implements Serializable, DeepComparable {
 

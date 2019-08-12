@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain;
 
+import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -18,7 +19,9 @@ import java.util.Objects;
  * A HolidaySchedule.
  */
 @Entity
-@Table(name = "holiday_schedule")
+@Table(name = "holiday_schedule", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"external_db_id", "provider_name"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class HolidaySchedule extends AbstractEntity implements Serializable, DeepComparable {
 
