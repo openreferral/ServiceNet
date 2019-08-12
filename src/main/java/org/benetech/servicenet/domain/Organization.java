@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,9 @@ import java.util.Set;
  */
 @Data
 @Entity
-@Table(name = "organization")
+@Table(name = "organization", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"external_db_id", "account_id"})
+})
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NoArgsConstructor
 public class Organization extends AbstractEntity implements Serializable, DeepComparable {

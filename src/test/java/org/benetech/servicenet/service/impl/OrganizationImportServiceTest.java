@@ -92,19 +92,27 @@ public class OrganizationImportServiceTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateOrganization() {
         SystemAccount account = helper.generateExistingAccount();
-        Organization newOrganization = helper.generateNewOrganization(account);
-        helper.generateExistingOrganization(account);
+        Organization org = helper.generateNewOrganization(account);
+        helper.persist(org);
         DataImportReport report = new DataImportReport();
-
-        assertEquals(1, organizationService.findAllDTOs().size());
-
-        importService.createOrUpdateOrganization(newOrganization,
-            EXISTING_EXTERNAL_ID, PROVIDER, report);
 
         List<OrganizationDTO> all = organizationService.findAllDTOs();
         assertEquals(1, all.size());
         assertEquals(NEW_STRING, all.get(0).getName());
         assertEquals(NEW_BOOLEAN, all.get(0).getActive());
+
+        org = helper.generateNewOrganization(account);
+        String updatedName = "test";
+        Boolean updatedActive = !NEW_BOOLEAN;
+        org.setName(updatedName);
+        org.setActive(updatedActive);
+        importService.createOrUpdateOrganization(org,
+            NEW_EXTERNAL_ID, PROVIDER, report);
+
+        all = organizationService.findAllDTOs();
+        assertEquals(1, all.size());
+        assertEquals(updatedName, all.get(0).getName());
+        assertEquals(updatedActive, all.get(0).getActive());
         assertEquals(Integer.valueOf(1), report.getNumberOfUpdatedOrgs());
     }
 
@@ -127,18 +135,19 @@ public class OrganizationImportServiceTest {
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateFundingForOrganization() {
-        Organization organization = helper.generateExistingOrganization(helper.generateExistingAccount());
+        Organization organization = helper.generateNewOrganization(helper.generateExistingAccount());
+        helper.persist(organization);
         Funding funding = new Funding().source(EXISTING_STRING).organization(organization);
         helper.persist(funding);
         helper.flushAndRefresh(organization);
 
-        Organization organizationToUpdate = helper.generateExistingOrganizationDoNotPersist();
+        Organization organizationToUpdate = helper.generateNewOrganization(helper.generateExistingAccount());
         Funding newFunding = new Funding().source(NEW_STRING);
         organizationToUpdate.setFunding(newFunding);
 
         assertEquals(1, fundingService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+            NEW_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         List<FundingDTO> all = fundingService.findAll();
         assertEquals(1, all.size());
@@ -165,17 +174,19 @@ public class OrganizationImportServiceTest {
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceProgramsIfOrganizationHasFewButNotThisOne() {
-        Organization organization = helper.generateExistingOrganization(helper.generateExistingAccount());
+        Organization organization = helper.generateNewOrganization(helper.generateExistingAccount());
+        helper.persist(organization);
         Program program = new Program().name(OTHER_STRING).organization(organization);
         helper.persist(program);
         helper.flushAndRefresh(organization);
 
         Program newProgram = new Program().name(NEW_STRING);
-        Organization organizationToUpdate = helper.generateExistingOrganizationDoNotPersist().programs(helper.mutableSet(newProgram));
+        Organization organizationToUpdate = helper.generateNewOrganization(helper.generateExistingAccount())
+            .programs(helper.mutableSet(newProgram));
 
         assertEquals(1, programService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+            NEW_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         List<ProgramDTO> all = programService.findAll();
         assertEquals(1, all.size());
@@ -202,17 +213,19 @@ public class OrganizationImportServiceTest {
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReplaceContactsIfOrganizationHasFewButNotThisOne() {
-        Organization organization = helper.generateExistingOrganization(helper.generateExistingAccount());
+        Organization organization = helper.generateNewOrganization(helper.generateExistingAccount());
+        helper.persist(organization);
         Contact contact = new Contact().name(OTHER_STRING).organization(organization);
         helper.persist(contact);
         helper.flushAndRefresh(organization);
 
         Contact newContact = new Contact().name(NEW_STRING);
-        Organization organizationToUpdate = helper.generateExistingOrganizationDoNotPersist().contacts(helper.mutableSet(newContact));
+        Organization organizationToUpdate = helper.generateNewOrganization(helper.generateExistingAccount())
+            .contacts(helper.mutableSet(newContact));
 
         assertEquals(1, contactsService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            EXISTING_EXTERNAL_ID, PROVIDER, new DataImportReport());
+            NEW_EXTERNAL_ID, PROVIDER, new DataImportReport());
 
         List<ContactDTO> all = contactsService.findAll();
         assertEquals(1, all.size());
@@ -224,14 +237,15 @@ public class OrganizationImportServiceTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldReturnNullIfOrganizationHasntChanged() {
         SystemAccount account = helper.generateExistingAccount();
-        Organization existingOrg = helper.generateExistingOrganization(account);
-        Organization newOrg = new Organization(existingOrg);
+        Organization org = helper.generateNewOrganization(account);
+        helper.persist(org);
+        Organization newOrg = new Organization(org);
         DataImportReport report = new DataImportReport();
 
         assertEquals(1, organizationService.findAllDTOs().size());
 
-        Organization org = importService.createOrUpdateOrganization(newOrg,
-            EXISTING_EXTERNAL_ID, PROVIDER, report);
+        org = importService.createOrUpdateOrganization(newOrg,
+            NEW_EXTERNAL_ID, PROVIDER, report);
         assertNull(org);
     }
 }
