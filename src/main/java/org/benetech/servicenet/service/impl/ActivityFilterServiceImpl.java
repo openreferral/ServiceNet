@@ -1,12 +1,8 @@
 package org.benetech.servicenet.service.impl;
 
-import static org.benetech.servicenet.config.Constants.EDEN_PROVIDER;
-import static org.benetech.servicenet.config.Constants.UWBA_PROVIDER;
-
-import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
-import org.benetech.servicenet.domain.SystemAccount;
+import java.util.stream.Collectors;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
 import org.benetech.servicenet.service.ActivityFilterService;
@@ -33,61 +29,22 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     }
 
     @Override
-    public Set<String> getPostalCodesForUserSystemAccount() {
-
-        Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
-
-        if (accountOpt.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        String systemAccountName = accountOpt.get().getName();
-
-        return geocodingResultRepository.getDistinctPostalCodesFromGeoResultsForSystemAccount(systemAccountName);
+    public Set<String> getPostalCodes() {
+        return geocodingResultRepository.getDistinctPostalCodesFromGeoResults();
     }
 
     @Override
-    public Set<String> getRegionsForUserSystemAccount() {
-
-        Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
-
-        if (accountOpt.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        String systemAccountName = accountOpt.get().getName();
-
-        return geocodingResultRepository.getDistinctRegionsFromGeoResultsForSystemAccount(systemAccountName);
+    public Set<String> getRegions() {
+        return geocodingResultRepository.getDistinctRegionsFromGeoResults();
     }
 
     @Override
-    public Set<String> getCitiesForUserSystemAccount() {
-
-        Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
-
-        if (accountOpt.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        String systemAccountName = accountOpt.get().getName();
-
-        return geocodingResultRepository.getDistinctCityFromGeoResultsForSystemAccount(systemAccountName);
+    public Set<String> getCities() {
+        return geocodingResultRepository.getDistinctCityFromGeoResults();
     }
 
     @Override
-    public Set<String> getTaxonomiesForUserSystemAccount() {
-        Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
-
-        if (accountOpt.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        String providerName = accountOpt.get().getName();
-
-        if (UWBA_PROVIDER.equals(providerName) || EDEN_PROVIDER.equals(providerName)) {
-            return taxonomyRepository.getICarolTaxonomyNamesForProviderName(providerName);
-        }
-
-        return taxonomyRepository.getTaxonomyNamesForProviderName(providerName);
+    public Set<String> getTaxonomies() {
+        return taxonomyRepository.findAll().stream().map(Taxonomy::getName).collect(Collectors.toSet());
     }
 }

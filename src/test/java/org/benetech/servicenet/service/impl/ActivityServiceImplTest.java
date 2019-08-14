@@ -114,7 +114,7 @@ public class ActivityServiceImplTest {
     public void getAllNotHiddenActivities() {
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, new FiltersActivityDTO());
+            pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, new FiltersActivityDTO(), false);
 
         assertEquals(1, activities.getTotalElements());
         ActivityDTO actualAct = activities.stream().collect(Collectors.toList()).get(0);
@@ -151,7 +151,7 @@ public class ActivityServiceImplTest {
         filtersActivityDTO.setHiddenFilter(true);
 
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, filtersActivityDTO);
+            pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, filtersActivityDTO, false);
 
         assertEquals(0, activities.getTotalElements());
     }

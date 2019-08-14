@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface ActivityService {
 
     Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId,
-    String search, SearchOn searchOn, FiltersActivityDTO filtersForActivity);
+    String search, SearchOn searchOn, FiltersActivityDTO filtersForActivity, Boolean showPartner);
 
     Optional<ActivityRecordDTO> getOneByOrganizationId(UUID orgId);
 }

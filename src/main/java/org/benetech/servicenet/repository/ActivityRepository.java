@@ -10,9 +10,11 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,6 +46,8 @@ public class ActivityRepository {
 
     private static final String ACCOUNT_ID = "accountId";
     private static final String ID = "id";
+
+    private static final String LAST_UPDATED = "lastUpdated";
 
     private static final String ORGANIZATIONS = "organizations";
     private static final String NAME = "name";
@@ -89,22 +93,30 @@ public class ActivityRepository {
     }
 
     public Page<ActivityInfo> findAllWithFilters(UUID ownerId, String searchName, SearchOn searchOn,
-        FiltersActivityDTO filtersActivityDTO, Pageable pageable) {
+        FiltersActivityDTO filtersActivityDTO, Pageable pageable, Boolean showPartner) {
 
         CriteriaQuery<ActivityInfo> queryCriteria = cb.createQuery(ActivityInfo.class);
         Root<ActivityInfo> selectRoot = queryCriteria.from(ActivityInfo.class);
 
-        queryCriteria.select(selectRoot).distinct(true);
+        queryCriteria.select(selectRoot);
 
-        addFilters(queryCriteria, selectRoot, ownerId, searchName, searchOn, filtersActivityDTO);
-        addSorting(queryCriteria, pageable.getSort(), selectRoot);
+        addFilters(queryCriteria, selectRoot, ownerId, searchName, searchOn,
+            filtersActivityDTO, showPartner);
+        Expression accountMatchExpression = cb.selectCase()
+            .when(cb.equal(selectRoot.get(ACCOUNT_ID), ownerId), 1)
+            .otherwise(0);
+        queryCriteria.groupBy(selectRoot.get(ID), selectRoot.get(ACCOUNT_ID), selectRoot.get(ALTERNATE_NAME),
+            selectRoot.get(NAME), selectRoot.get(RECENT), selectRoot.get(RECOMMENDED),
+            selectRoot.get(LAST_UPDATED), accountMatchExpression);
+
+        addSorting(queryCriteria, pageable.getSort(), selectRoot, accountMatchExpression);
 
         CriteriaQuery<Long> countCriteria = cb.createQuery(Long.class);
         Root<ActivityInfo> selectRootCount = countCriteria.from(ActivityInfo.class);
 
         countCriteria.select(cb.countDistinct(selectRootCount));
 
-        addFilters(countCriteria, selectRootCount, ownerId, searchName, searchOn, filtersActivityDTO);
+        addFilters(countCriteria, selectRootCount, ownerId, searchName, searchOn, filtersActivityDTO, showPartner);
 
         List<ActivityInfo> results = em.createQuery(queryCriteria)
             .setFirstResult((int) pageable.getOffset())
@@ -191,16 +203,19 @@ public class ActivityRepository {
 
     @SuppressWarnings("checkstyle:cyclomaticComplexity")
     private <T> void addFilters(CriteriaQuery<T> query, Root<ActivityInfo> root, UUID ownerId,
-        String searchName, SearchOn searchOn, FiltersActivityDTO filtersActivityDTO) {
+        String searchName, SearchOn searchOn, FiltersActivityDTO filtersActivityDTO, Boolean partnerRecords) {
 
-        Predicate predicate = cb.equal(root.get(ACCOUNT_ID), ownerId);
+        Predicate predicate = cb.conjunction();
+        Predicate isCurrentAccount = cb.equal(root.get(ACCOUNT_ID), ownerId);
+        if (!partnerRecords) {
+            predicate = isCurrentAccount;
+        }
 
-        Join<ActivityInfo, Organization> orgJoin = null;
+        Join<ActivityInfo, Organization> orgJoin = root.join(ORGANIZATIONS, JoinType.LEFT);
         Join<Organization, Location> locationJoin = null;
         Join<Organization, Service> serviceJoin = null;
 
         if (StringUtils.isNotBlank(searchName)) {
-            orgJoin = root.join(ORGANIZATIONS, JoinType.LEFT);
             if (searchOn.equals(SearchOn.ORGANIZATION)) {
                 predicate = searchFields(predicate, orgJoin, searchName, filtersActivityDTO.getSearchFields());
             } else if (searchOn.equals(SearchOn.LOCATIONS)) {
@@ -216,11 +231,22 @@ public class ActivityRepository {
         Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
         predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), filtersActivityDTO.getHiddenFilter()));
 
-        if (CollectionUtils.isNotEmpty(filtersActivityDTO.getPartnerFilterList())) {
+        boolean hasPartnerFilters = (CollectionUtils.isNotEmpty(filtersActivityDTO.getPartnerFilterList()));
+        if (partnerRecords || hasPartnerFilters) {
             Join<OrganizationMatch, Organization> matchOrgJoin = matchJoin.join(PARTNER_VERSION, JoinType.LEFT);
-            Join<Organization, SystemAccount> accountJoin = matchOrgJoin.join(ACCOUNT, JoinType.LEFT);
-
-            predicate = cb.and(predicate, accountJoin.get(ID).in(filtersActivityDTO.getPartnerFilterList()));
+            Join<Organization, SystemAccount> matchAccountJoin = matchOrgJoin.join(ACCOUNT, JoinType.LEFT);
+            if (partnerRecords) {
+                predicate = cb.and(predicate, cb.notEqual(matchAccountJoin.get(ID), ownerId));
+                if (hasPartnerFilters) {
+                    Join<Organization, SystemAccount> accountJoin = orgJoin.join(ACCOUNT);
+                    predicate = cb.and(predicate, cb.or(
+                        cb.and(cb.not(isCurrentAccount), accountJoin.get(ID).in(filtersActivityDTO.getPartnerFilterList())),
+                        matchAccountJoin.get(ID).in(filtersActivityDTO.getPartnerFilterList())
+                    ));
+                }
+            } else {
+                predicate = cb.and(predicate, matchAccountJoin.get(ID).in(filtersActivityDTO.getPartnerFilterList()));
+            }
         }
 
         if (CollectionUtils.isNotEmpty(filtersActivityDTO.getCitiesFilterList())
@@ -245,21 +271,24 @@ public class ActivityRepository {
         query.where(predicate);
     }
 
-    private void addSorting(CriteriaQuery<ActivityInfo> queryCriteria, Sort sort, Root<ActivityInfo> root) {
-        setOrder(queryCriteria, root, sort, RECENT);
-        setOrder(queryCriteria, root, sort, RECOMMENDED);
+    private void addSorting(CriteriaQuery<ActivityInfo> queryCriteria, Sort sort,
+        Root<ActivityInfo> root, Expression accountMatchExpression) {
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(cb.desc(accountMatchExpression));
+        addOrder(root, orderList, sort, RECENT);
+        addOrder(root, orderList, sort, RECOMMENDED);
+        queryCriteria.orderBy(orderList);
     }
 
-    private void setOrder(CriteriaQuery<ActivityInfo> queryCriteria, Root<ActivityInfo> root,
-        final Sort sort, final String field) {
+    private void addOrder(Root<ActivityInfo> root, List<Order> orderList, final Sort sort, final String field) {
 
         Sort.Order order = sort.getOrderFor(field);
 
         if (order != null) {
             if (order.isAscending()) {
-                queryCriteria.orderBy(cb.asc(root.get(field)));
+                orderList.add(cb.asc(root.get(field)));
             } else {
-                queryCriteria.orderBy(cb.desc(root.get(field)));
+                orderList.add(cb.desc(root.get(field)));
             }
         }
     }

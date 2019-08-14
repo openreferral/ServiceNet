@@ -27,6 +27,7 @@ export interface IFilterActivityState {
   dateFilter: any;
   fromDate: any;
   toDate: any;
+  onlyShowMatching: boolean;
 }
 
 export interface IFilterActivityProps extends StateProps, DispatchProps {
@@ -47,7 +48,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     searchOn: this.props.activityFilter.searchOn,
     dateFilter: this.props.activityFilter.dateFilter,
     fromDate: this.props.activityFilter.fromDate,
-    toDate: this.props.activityFilter.toDate
+    toDate: this.props.activityFilter.toDate,
+    onlyShowMatching: this.props.activityFilter.onlyShowMatching
   };
 
   componentDidMount() {
@@ -103,7 +105,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       searchOn: ORGANIZATION,
       dateFilter: null,
       fromDate: '',
-      toDate: ''
+      toDate: '',
+      onlyShowMatching: true
     });
 
     this.props.updateActivityFilter({
@@ -117,7 +120,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       searchOn: ORGANIZATION,
       dateFilter: null,
       fromDate: '',
-      toDate: ''
+      toDate: '',
+      onlyShowMatching: true
     });
 
     this.props.resetActivityFilter();
@@ -204,6 +208,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
   };
 
+  handleOnlyShowMatchingChange = changeEvent => {
+    const onlyShowMatching = changeEvent.target.checked;
+
+    this.setState({ onlyShowMatching, filtersChanged: true });
+
+    this.props.updateActivityFilter({ ...this.props.activityFilter, onlyShowMatching });
+  };
+
   render() {
     const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList, taxonomyList } = this.props;
     const searchFieldList = getSearchFieldOptions(this.state.searchOn);
@@ -285,6 +297,18 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.partner" />
                     <Select value={this.state.selectedPartner} onChange={this.handlePartnerChange} options={partnerList} isMulti />
+                    <div className="form-check form-check-inline">
+                      <input
+                        type="checkbox"
+                        id="onlyShowMatchingCheckbox"
+                        className="form-check-input"
+                        onChange={this.handleOnlyShowMatchingChange}
+                        checked={this.state.onlyShowMatching}
+                      />
+                      <label className="form-check-label" htmlFor="onlyShowMatchingCheckbox">
+                        <Translate contentKey="serviceNetApp.activity.home.filter.onlyShowMatching" />
+                      </label>
+                    </div>
                   </Col>
                 </Row>
                 <Row>

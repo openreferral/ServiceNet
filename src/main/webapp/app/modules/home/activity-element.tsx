@@ -34,6 +34,7 @@ const ActivityElement = props => {
           <Card className="activity-card">
             <CardBody className="activity-card-body">
               <CardTitle className="activity-left-card-title">{props.activity.organizationName}</CardTitle>
+              <CardText>{props.activity.accountName}</CardText>
             </CardBody>
           </Card>
           <Card className="activity-right-card">

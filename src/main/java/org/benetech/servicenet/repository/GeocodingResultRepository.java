@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
@@ -46,20 +45,19 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
 
     @Query("SELECT DISTINCT gr.postalCode FROM Location l "
         + "JOIN l.geocodingResults gr "
-        + "WHERE gr.postalCode != '' AND l.providerName = :systemAccountName "
+        + "WHERE gr.postalCode != ''"
         + "ORDER BY gr.postalCode")
-    SortedSet<String> getDistinctPostalCodesFromGeoResultsForSystemAccount(
-        @Param("systemAccountName") String systemAccountName);
+    SortedSet<String> getDistinctPostalCodesFromGeoResults();
 
     @Query("SELECT DISTINCT gr.administrativeAreaLevel2 FROM Location l "
         + "JOIN l.geocodingResults gr "
-        + "WHERE gr.administrativeAreaLevel2 != '' AND l.providerName = :systemAccountName "
+        + "WHERE gr.administrativeAreaLevel2 != ''"
         + "ORDER BY gr.administrativeAreaLevel2")
-    SortedSet<String> getDistinctRegionsFromGeoResultsForSystemAccount(@Param("systemAccountName") String systemAccountName);
+    SortedSet<String> getDistinctRegionsFromGeoResults();
 
     @Query("SELECT DISTINCT gr.locality FROM Location l "
         + "JOIN l.geocodingResults gr "
-        + "WHERE gr.locality != '' AND l.providerName = :systemAccountName "
+        + "WHERE gr.locality != ''"
         + "ORDER BY gr.locality")
-    SortedSet<String> getDistinctCityFromGeoResultsForSystemAccount(@Param("systemAccountName") String systemAccountName);
+    SortedSet<String> getDistinctCityFromGeoResults();
 }
