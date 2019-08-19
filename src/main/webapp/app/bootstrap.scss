@@ -346,6 +346,7 @@ $web-font-path: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400
   > li > span {
     position: relative;
     top: 0;
+    height: 34px;
     @include shadow();
     color: $pagination-color;
     font-size: 12px;

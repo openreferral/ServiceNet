@@ -8,7 +8,7 @@ const PageSizeSelector = props => {
 
   return (
     <Dropdown isOpen={dropdownOpen} toggle={toggleSelect}>
-      <DropdownToggle caret>
+      <DropdownToggle classname="dropdown-menu" caret>
         <Translate contentKey={'entity.pagination.itemsPerPage'}>Items per page</Translate>
         {itemsPerPage}
       </DropdownToggle>
