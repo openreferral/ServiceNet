@@ -15,9 +15,11 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
-import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import { ITEMS_PER_PAGE, MAX_BUTTONS, FIRST_PAGE } from 'app/shared/util/pagination.constants';
 import { getUsers, updateUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
+import _ from 'lodash';
+import queryString from 'query-string';
 
 export interface IUserManagementProps extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -27,7 +29,31 @@ export class UserManagement extends React.Component<IUserManagementProps, IPagin
   };
 
   componentDidMount() {
-    this.getUsers();
+    if (!_.isEqual(this.props.location.search, '')) {
+      const parsed = queryString.parse(this.props.location.search);
+      this.setCustomState(parsed.page, parsed.itemsPerPage, parsed.sort);
+    } else {
+      this.getUsers();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!(this.props.location === prevProps.location) && !(this.props.location.search === '')) {
+      const parsed = queryString.parse(this.props.location.search);
+      this.setCustomState(parsed.page, parsed.itemsPerPage, parsed.sort);
+    }
+    if (!(this.props.location === prevProps.location) && this.props.location.search === '') {
+      this.setCustomState(FIRST_PAGE, ITEMS_PER_PAGE, this.state.sort);
+    }
+  }
+
+  setCustomState(page, items, sort) {
+    this.setState({
+      activePage: Number(page),
+      itemsPerPage: Number(items),
+      ...getSortState(this.props.location, items)
+    });
+    this.props.getUsers(Number(page) - 1, Number(items), `${sort}`);
   }
 
   sort = prop => () => {
@@ -42,7 +68,12 @@ export class UserManagement extends React.Component<IUserManagementProps, IPagin
 
   sortUsers() {
     this.getUsers();
-    this.props.history.push(`${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${this.state.order}`);
+    const { itemsPerPage } = this.state;
+    this.props.history.push(
+      `${this.props.location.pathname}?page=${this.state.activePage}&sort=${this.state.sort},${
+        this.state.order
+      }&itemsPerPage=${itemsPerPage}`
+    );
   }
 
   handlePagination = activePage => this.setState({ activePage }, () => this.sortUsers());
@@ -187,7 +218,7 @@ export class UserManagement extends React.Component<IUserManagementProps, IPagin
             items={getPaginationItemsNumber(totalItems, this.state.itemsPerPage)}
             activePage={this.state.activePage}
             onSelect={this.handlePagination}
-            maxButtons={5}
+            maxButtons={MAX_BUTTONS}
           />
         </Row>
       </div>
