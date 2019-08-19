@@ -144,4 +144,5 @@
     <include file="config/liquibase/changelog/20190724161026_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190729094825_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190812105706_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/liquibase.quartz.init.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
