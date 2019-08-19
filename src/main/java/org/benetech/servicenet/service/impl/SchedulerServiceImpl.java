@@ -1,5 +1,11 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
@@ -20,11 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+@Slf4j
 @Component
 public class SchedulerServiceImpl implements SchedulerService {
 
@@ -51,6 +53,31 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Autowired
     private DataImportReportService dataImportReportService;
+
+    @PostConstruct
+    private void loadJobsAndTriggersOnStartupIfNeeded() {
+
+        Scheduler scheduler = schedulerFactoryBean.getScheduler();
+
+        List<BaseJob> jobs = new ArrayList<>();
+        jobs.add(edenDataUpdateJob);
+        jobs.add(uwbaDataUpdateJob);
+        jobs.add(shelterTechDataUpdateJob);
+        jobs.add(smcConnectTaxonomyUpdateJob);
+        jobs.add(edenTaxonomyUpdateJob);
+        jobs.add(uwbaTaxonomyUpdateJob);
+
+        jobs
+            .forEach(job -> {
+                try {
+                    if (scheduler.getTrigger(job.getInitTrigger().getKey()) == null) {
+                        scheduler.scheduleJob(job.getJobDetail(), job.getInitTrigger());
+                    }
+                } catch (SchedulerException e) {
+                    log.error(e.getMessage(), e);
+                }
+            });
+    }
 
     @Override
     public List<JobDTO> getAllJobsDetails() throws SchedulerException {
