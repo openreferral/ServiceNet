@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
@@ -201,7 +202,18 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     public void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context) {
         log.info(organization.getName() + ": Updating organization matches");
         if (organization.getActive()) {
-            List<UUID> currentMatchesIds = findCurrentMatches(organization).stream()
+            List<OrganizationMatch> currentMatches = findCurrentMatches(organization);
+
+            List<UUID> hiddenMatchesIds = currentMatches.stream()
+                .filter(m -> BooleanUtils.isTrue((m.getHidden())))
+                .map(OrganizationMatch::getId)
+                .collect(Collectors.toList());
+
+            for (UUID matchId : hiddenMatchesIds) {
+                revertHideOrganizationMatch(matchId);
+            }
+
+            List<UUID> currentMatchesIds = currentMatches.stream()
                 .map(m -> m.getPartnerVersion().getId())
                 .collect(Collectors.toList());
 

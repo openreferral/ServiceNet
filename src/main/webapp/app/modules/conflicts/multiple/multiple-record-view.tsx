@@ -109,7 +109,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
         if (matches.length === 1) {
           this.props.history.replace(`/single-record-view/${orgId}`);
         } else if (matches.length > 1) {
-          this.props.history.push(`/multi-record-view/${orgId}`);
+          window.location.reload();
         } else {
           this.props.history.push(`/`);
         }
@@ -182,7 +182,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                   </h5>
                 </Col>
                 <div style={{ top: '-10px', right: '5px', position: 'absolute' }}>
-                  <HideRecordButton handleHide={this.hideActivity} />
+                  <HideRecordButton id={`hide-${partnerRecord.organization.id}`} handleHide={this.hideActivity} />
                 </div>
                 {seeAnotherMatch}
               </Row>

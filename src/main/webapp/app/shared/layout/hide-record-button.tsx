@@ -11,6 +11,7 @@ interface IHideRecordButtonState {
 
 interface IHideRecordButtonProps {
   handleHide: Function;
+  id: string;
 }
 
 class HideRecordButton extends React.Component<IHideRecordButtonProps, IHideRecordButtonState> {
@@ -31,7 +32,7 @@ class HideRecordButton extends React.Component<IHideRecordButtonProps, IHideReco
   render() {
     return (
       <div>
-        <div onClick={this.handleClick} className="close-icon" id="hide-record-button">
+        <div onClick={this.handleClick} className="close-icon" id={this.props.id}>
           <FontAwesomeIcon icon="times" />
         </div>
         <Tooltip
@@ -39,7 +40,7 @@ class HideRecordButton extends React.Component<IHideRecordButtonProps, IHideReco
           innerClassName="tooltip-clip-inner"
           className="tooltip-clip"
           isOpen={this.state.tooltipOpen}
-          target="hide-record-button"
+          target={this.props.id}
           toggle={this.toggle}
           autohide
         >
