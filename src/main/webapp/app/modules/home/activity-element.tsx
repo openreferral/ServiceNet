@@ -37,7 +37,7 @@ const ActivityElement = props => {
             </CardBody>
           </Card>
           <Card className="activity-right-card">
-            <HideRecordButton handleHide={hideActivity} />
+            <HideRecordButton id={`hide-${props.activity.organizationId}`} handleHide={hideActivity} />
             <CardBody>
               {conflictsToDisplay.map((conflict, i) => (
                 <CardTitle className="activity-right-card-title" key={`activityCard${i}`}>

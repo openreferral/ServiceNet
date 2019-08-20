@@ -21,6 +21,8 @@ public interface OrganizationMatchMapper extends EntityMapper<OrganizationMatchD
     @Mapping(source = "partnerVersion.name", target = "partnerVersionName")
     @Mapping(source = "dismissedBy.id", target = "dismissedById")
     @Mapping(source = "dismissedBy.login", target = "dismissedByName")
+    @Mapping(source = "hiddenBy.id", target = "hiddenById")
+    @Mapping(source = "hiddenBy.login", target = "hiddenByName")
     OrganizationMatchDTO toDto(OrganizationMatch organizationMatch);
 
     @Mapping(source = "organizationRecordId", target = "organizationRecord")
