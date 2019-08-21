@@ -1,8 +1,8 @@
 import { translate } from 'react-jhipster';
 
-export const ORGANIZATION = 'organization';
-export const SERVICES = 'services';
-export const LOCATIONS = 'locations';
+export const ORGANIZATION = 'ORGANIZATION';
+export const SERVICES = 'SERVICES';
+export const LOCATIONS = 'LOCATIONS';
 
 const NAME = 'name';
 const ALTERNATE_NAME = 'alternateName';

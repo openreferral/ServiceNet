@@ -1,0 +1,77 @@
+{
+  "name": "ActivityFilter",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "citiesFilterList",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "regionFilterList",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "postalCodesFilterList",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "taxonomiesFilterList",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "searchOn",
+      "fieldType": "SearchOn",
+      "fieldValues": "ORGANIZATION,SERVICES,LOCATIONS"
+    },
+    {
+      "fieldName": "searchFields",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "partnerFilterList",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "dateFilter",
+      "fieldType": "DateFilter",
+      "fieldValues": "LAST_7_DAYS,LAST_30_DAYS,DATE_RANGE"
+    },
+    {
+      "fieldName": "fromDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "toDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "hiddenFilter",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "showPartner",
+      "fieldType": "Boolean"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipName": "user",
+      "otherEntityName": "user",
+      "relationshipType": "many-to-one",
+      "otherEntityField": "login",
+      "otherEntityRelationshipName": "filters"
+    }
+  ],
+  "changelogDate": "20190731185358",
+  "entityTableName": "activity_filter",
+  "dto": "mapstruct",
+  "pagination": true,
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "applications": "*"
+}

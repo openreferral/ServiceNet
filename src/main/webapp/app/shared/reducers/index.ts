@@ -170,6 +170,10 @@ import organizationError, {
   OrganizationErrorState
 } from 'app/entities/organization-error/organization-error.reducer';
 import matchSimilarity, { MatchSimilarityState } from 'app/entities/match-similarity/match-similarity.reducer';
+// prettier-ignore
+import activityFilter, {
+  ActivityFilterState
+} from 'app/entities/activity-filter/activity-filter.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -225,6 +229,7 @@ export interface IRootState {
   readonly locationExclusion: LocationExclusionState;
   readonly organizationError: OrganizationErrorState;
   readonly matchSimilarity: MatchSimilarityState;
+  readonly activityFilter: ActivityFilterState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
   readonly filterShelter: FilterShelterState;
@@ -282,6 +287,7 @@ const rootReducer = combineReducers<IRootState>({
   locationExclusion,
   organizationError,
   matchSimilarity,
+  activityFilter,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
   filterActivity,

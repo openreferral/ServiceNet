@@ -6,6 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Translate, translate, getSortState, IPaginationBaseState } from 'react-jhipster';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
+import axios from 'axios';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Row, Col, Container, Progress, Spinner, Input, Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
@@ -18,7 +19,9 @@ import ActivityElement from './activity-element';
 import SortActivity from './sort-activity';
 import { SORT_ARRAY, getSearchPreferences, setSort, setSearchPhrase } from 'app/shared/util/search-utils';
 import FilterActivity from './filter-activity';
+import SaveActivityFilter from './save-activity-filter';
 import _ from 'lodash';
+import { updateActivityFilter } from 'app/modules/home/filter-activity.reducer';
 
 const SEARCH_TIMEOUT = 1000;
 
@@ -27,6 +30,7 @@ export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProp
 export interface IHomeState extends IPaginationBaseState {
   dropdownOpen: boolean;
   filterCollapseExpanded: boolean;
+  saveFilterExpanded: boolean;
   loggingOut: boolean;
   searchPhrase: string;
   typingTimeout: number;
@@ -46,6 +50,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       order,
       dropdownOpen: false,
       filterCollapseExpanded: _.some(this.props.activityFilter, filter => !_.isEmpty(filter)),
+      saveFilterExpanded: false,
       loggingOut: this.props.location.state ? this.props.location.state.loggingOut : false,
       searchPhrase,
       typingTimeout: 0,
@@ -56,7 +61,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   }
 
   componentDidMount() {
-    this.reset();
+    this.fetchUserFilterAndSearch();
   }
 
   componentDidUpdate(prevProps) {
@@ -66,7 +71,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     }
 
     if (this.props.updateSuccess || (this.props.loginSuccess === true && prevProps.loginSuccess === false)) {
-      this.reset();
+      this.fetchUserFilterAndSearch();
     }
   }
 
@@ -93,37 +98,63 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     }));
   };
 
+  toggleSaveFilter = () => {
+    this.setState(prevState => ({
+      saveFilterExpanded: !prevState.saveFilterExpanded
+    }));
+  };
+
   reset = () => {
     this.props.reset();
     if (!this.state.loggingOut) {
       this.setState({ activePage: 1 }, () => {
-        this.getEntities();
+        this.getEntities(null);
       });
     } else {
       this.setState({ activePage: 1, loggingOut: false });
     }
   };
 
-  setActivePage = activePage => {
-    this.setState({ activePage });
+  fetchUserFilterAndSearch = () => {
+    axios
+      .get('/api/activity-filter/current-user-filter')
+      .then(response => {
+        if (response && response.data) {
+          this.props.updateActivityFilter(response.data);
+          this.searchEntities(response.data);
+        } else {
+          this.reset();
+        }
+      })
+      .catch(() => {
+        this.reset();
+      });
   };
 
   handleLoadMore = () => {
     if (window.pageYOffset > 0 && this.props.totalItems > this.props.activityList.length) {
-      this.setState({ activePage: this.state.activePage + 1 }, () => this.getEntities());
+      this.setState({ activePage: this.state.activePage + 1 }, () => this.getEntities(null));
     }
   };
 
-  getEntities = () => {
+  getEntities = activityFilter => {
     const { activePage, itemsPerPage, sort, order } = this.state;
     if (this.props.isAuthenticated) {
-      return this.props.getEntities(this.state.searchPhrase, activePage - 1, itemsPerPage, `${sort},${order}`, this.props.activityFilter);
+      return this.props.getEntities(
+        this.state.searchPhrase,
+        activePage - 1,
+        itemsPerPage,
+        `${sort},${order}`,
+        activityFilter || this.props.activityFilter
+      );
     }
   };
 
-  searchEntities = () => {
+  searchEntities = activityFilter => {
     this.props.reset();
-    this.getEntities();
+    this.setState({ activePage: 1 }, () => {
+      this.getEntities(activityFilter);
+    });
   };
 
   changeSearchPhrase = event => {
@@ -140,7 +171,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       activePage: 1,
       searchPhrase,
       typingTimeout: setTimeout(() => {
-        this.searchEntities();
+        this.searchEntities(null);
       }, SEARCH_TIMEOUT)
     });
   };
@@ -153,7 +184,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
         activePage: 1,
         searchPhrase: '',
         typingTimeout: setTimeout(() => {
-          this.searchEntities();
+          this.searchEntities(null);
         }, SEARCH_TIMEOUT)
       });
     }
@@ -229,7 +260,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
               pageStart={this.state.activePage}
               loadMore={this.handleLoadMore}
               hasMore={this.state.activePage - 1 < this.props.links.next}
-              loader={<Spinner color="primary" />}
+              loader={<Spinner key={0} color="primary" />}
               threshold={0}
               initialLoad={false}
             >
@@ -279,6 +310,16 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                       <Translate contentKey="serviceNetApp.activity.home.filter.toggle" />
                     </Button>
                   </Col>
+                  <Col className="col-auto">
+                    <Button color="primary" onClick={this.toggleSaveFilter} style={{ marginBottom: '1rem' }}>
+                      <Translate contentKey="serviceNetApp.activity.home.filter.savedFilters" />
+                    </Button>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md="12">
+                    <SaveActivityFilter saveFilterExpanded={this.state.saveFilterExpanded} getActivityEntities={this.searchEntities} />
+                  </Col>
                 </Row>
                 <Row>
                   <Col md="12">
@@ -286,7 +327,6 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                       filterCollapseExpanded={this.state.filterCollapseExpanded}
                       getActivityEntities={this.searchEntities}
                       resetActivityFilter={this.reset}
-                      setActivePage={this.setActivePage}
                     />
                   </Col>
                 </Row>
@@ -340,7 +380,8 @@ const mapStateToProps = (storeState: IRootState) => ({
 const mapDispatchToProps = {
   getSession,
   getEntities,
-  reset
+  reset,
+  updateActivityFilter
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

@@ -8,7 +8,8 @@ export const ACTION_TYPES = {
   FETCH_CITY_LIST: 'filterActivity/FETCH_CITY_LIST',
   FETCH_PARTNER_LIST: 'filterActivity/FETCH_PARTNER_LIST',
   FETCH_TAXONOMY_LIST: 'filterActivity/FETCH_TAXONOMY_LIST',
-  UPDATE_ACTIVITY_FILTER: 'filterActivity/UPDATE_ACTIVITY_FILTER'
+  UPDATE_ACTIVITY_FILTER: 'filterActivity/UPDATE_ACTIVITY_FILTER',
+  FETCH_SAVED_FILTERS: 'filterActivity/FETCH_SAVED_FILTERS'
 };
 
 const initialState = {
@@ -19,6 +20,7 @@ const initialState = {
   cityList: [],
   partnerList: [],
   taxonomyList: [],
+  savedFilters: [],
   activityFilter: {
     citiesFilterList: [],
     regionFilterList: [],
@@ -30,8 +32,8 @@ const initialState = {
     dateFilter: null,
     fromDate: '',
     toDate: '',
-    hidden: false,
-    onlyShowMatching: true
+    hiddenFilter: false,
+    showPartner: false
   }
 };
 
@@ -44,6 +46,7 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
     case REQUEST(ACTION_TYPES.FETCH_CITY_LIST):
     case REQUEST(ACTION_TYPES.FETCH_PARTNER_LIST):
     case REQUEST(ACTION_TYPES.FETCH_TAXONOMY_LIST):
+    case REQUEST(ACTION_TYPES.FETCH_SAVED_FILTERS):
       return {
         ...state,
         errorMessage: null,
@@ -54,6 +57,7 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
     case FAILURE(ACTION_TYPES.FETCH_CITY_LIST):
     case FAILURE(ACTION_TYPES.FETCH_PARTNER_LIST):
     case FAILURE(ACTION_TYPES.FETCH_TAXONOMY_LIST):
+    case FAILURE(ACTION_TYPES.FETCH_SAVED_FILTERS):
       return {
         ...state,
         loading: false,
@@ -87,6 +91,12 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
       return {
         ...state,
         taxonomyList: action.payload.data,
+        loading: false
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_SAVED_FILTERS):
+      return {
+        ...state,
+        savedFilters: action.payload.data,
         loading: false
       };
     case ACTION_TYPES.UPDATE_ACTIVITY_FILTER:
@@ -142,10 +152,15 @@ export const getTaxonomyList = () => {
   };
 };
 
-// tslint:disable-next-line:ter-arrow-body-style
-export const updateActivityFilter = activityFilter => {
+export const updateActivityFilter = activityFilter => ({
+  type: ACTION_TYPES.UPDATE_ACTIVITY_FILTER,
+  payload: activityFilter
+});
+
+export const getSavedFilters = () => {
+  const requestUrl = `api/activity-filter/get-user-filters`;
   return {
-    type: ACTION_TYPES.UPDATE_ACTIVITY_FILTER,
-    payload: activityFilter
+    type: ACTION_TYPES.FETCH_SAVED_FILTERS,
+    payload: axios.get<any>(requestUrl)
   };
 };
