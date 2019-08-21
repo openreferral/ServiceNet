@@ -1,0 +1,10 @@
+{
+  "serviceNetApp": {
+    "SearchOn": {
+      "null": "",
+      "ORGANIZATION": "ORGANIZATION",
+      "SERVICES": "SERVICES",
+      "LOCATIONS": "LOCATIONS"
+    }
+  }
+}

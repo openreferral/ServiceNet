@@ -48,6 +48,7 @@
         "locationExclusion": "Location Exclusion",
         "organizationError": "Organization Error",
         "matchSimilarity": "Match Similarity",
+        "activityFilter": "Activity Filter",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
@@ -181,7 +182,8 @@
     "emailexists": "Email is already in use!",
     "idexists": "A new {{ entityName }} cannot already have an ID",
     "idnull": "Invalid ID",
-    "badrequest": "Bad Request"
+    "badrequest": "Bad Request",
+    "nameunique": "Name must be unique"
   },
   "footerLeft": "Copyright {{ year }} | Benetech | Software for Social Good",
   "footerRight": "<a href=\"/#/about-us\">About us</a> | <a href=\"mailto:servicenet@benetech.org\">Contact</a>",

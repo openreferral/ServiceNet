@@ -384,6 +384,15 @@ public class UserService {
             Optional.empty();
     }
 
+    public User getCurrentUser() {
+        Optional<User> current = SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
+        return current.orElseThrow(() -> new IllegalStateException("No current user found"));
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
     private void clearUserCaches(User user) {
         Cache login = cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE);
         Cache email = cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE);

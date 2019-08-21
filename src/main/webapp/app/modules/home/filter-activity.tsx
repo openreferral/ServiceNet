@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Col, Container, Row, Collapse, Card, CardBody, Input } from 'reactstrap';
 import { Translate, translate } from 'react-jhipster';
 import Select from 'react-select';
+import axios from 'axios';
 import { IRootState } from 'app/shared/reducers';
 import {
   getPostalCodeList,
@@ -16,41 +17,18 @@ import { connect } from 'react-redux';
 import { ORGANIZATION, SERVICES, LOCATIONS, getSearchFieldOptions, getDefaultSearchFieldOptions } from 'app/modules/home/filter.constants';
 
 export interface IFilterActivityState {
-  selectedCity: any;
-  selectedCounty: any;
-  selectedZip: any;
-  selectedPartner: any;
-  selectedTaxonomy: any;
-  selectedSearchFields: any;
   filtersChanged: boolean;
-  searchOn: string;
-  dateFilter: any;
-  fromDate: any;
-  toDate: any;
-  onlyShowMatching: boolean;
 }
 
 export interface IFilterActivityProps extends StateProps, DispatchProps {
   filterCollapseExpanded: boolean;
-  getActivityEntities(): any;
+  getActivityEntities(any): any;
   resetActivityFilter();
-  setActivePage(): any;
 }
 
 export class FilterActivity extends React.Component<IFilterActivityProps, IFilterActivityState> {
   state: IFilterActivityState = {
-    selectedCity: this.props.activityFilter.citiesFilterList.map(city => ({ label: city, value: city })),
-    selectedCounty: this.props.activityFilter.regionFilterList.map(city => ({ label: city, value: city })),
-    selectedZip: this.props.activityFilter.postalCodesFilterList.map(city => ({ label: city, value: city })),
-    selectedPartner: this.props.activityFilter.partnerFilterList.map(city => ({ label: city.label, value: city.value })),
-    selectedTaxonomy: this.props.activityFilter.taxonomiesFilterList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
-    selectedSearchFields: this.props.activityFilter.searchFields.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
-    filtersChanged: false,
-    searchOn: this.props.activityFilter.searchOn,
-    dateFilter: this.props.activityFilter.dateFilter,
-    fromDate: this.props.activityFilter.fromDate,
-    toDate: this.props.activityFilter.toDate,
-    onlyShowMatching: this.props.activityFilter.onlyShowMatching
+    filtersChanged: false
   };
 
   componentDidMount() {
@@ -60,9 +38,6 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       this.getCityList();
       this.getPartnerList();
       this.getTaxonomyList();
-    }
-    if (this.props.isLoggingOut || this.props.hasSessionBeenFetched) {
-      this.resetFilter();
     }
   }
 
@@ -88,30 +63,31 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     { value: 'DATE_RANGE', label: translate('serviceNetApp.activity.home.filter.date.dateRange') }
   ];
 
+  getDateFilterValue = value => {
+    const labels = {
+      LAST_7_DAYS: translate('serviceNetApp.activity.home.filter.date.last7Days'),
+      LAST_30_DAYS: translate('serviceNetApp.activity.home.filter.date.last30Days'),
+      DATE_RANGE: translate('serviceNetApp.activity.home.filter.date.dateRange')
+    };
+
+    if (!value) {
+      return null;
+    }
+
+    return { value, label: labels[value] };
+  };
+
   applyFilter = () => {
-    this.props.setActivePage(1);
     ReactGA.event({ category: 'UserActions', action: 'Applied Filter' });
-    this.props.getActivityEntities().then(() => this.setState({ filtersChanged: false }));
+    this.props.getActivityEntities(null);
+    this.setState({ filtersChanged: false });
+
+    this.saveCurrentFilter({ ...this.props.activityFilter, hiddenFilter: false });
   };
 
   resetFilter = () => {
     const searchFieldOptions = getDefaultSearchFieldOptions();
-    this.setState({
-      selectedCity: [],
-      selectedCounty: [],
-      selectedZip: [],
-      selectedPartner: [],
-      selectedTaxonomy: [],
-      selectedSearchFields: searchFieldOptions,
-      filtersChanged: true,
-      searchOn: ORGANIZATION,
-      dateFilter: null,
-      fromDate: '',
-      toDate: '',
-      onlyShowMatching: true
-    });
-
-    this.props.updateActivityFilter({
+    const filter = {
       ...this.props.activityFilter,
       citiesFilterList: [],
       regionFilterList: [],
@@ -123,15 +99,24 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       dateFilter: null,
       fromDate: '',
       toDate: '',
-      onlyShowMatching: true
-    });
+      showPartner: false
+    };
+
+    this.props.updateActivityFilter(filter);
 
     this.props.resetActivityFilter();
     ReactGA.event({ category: 'UserActions', action: 'Filter Reset' });
+    this.saveCurrentFilter(filter);
+  };
+
+  saveCurrentFilter = filter => {
+    const url = 'api/activity-filter/current-user-filter';
+
+    axios.post(url, filter);
   };
 
   handleCityChange = selectedCity => {
-    this.setState({ selectedCity, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     const citiesFilterList = selectedCity.map(city => city.value);
 
@@ -139,7 +124,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   handleCountyChange = selectedCounty => {
-    this.setState({ selectedCounty, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     const regionFilterList = selectedCounty.map(county => county.value);
 
@@ -147,7 +132,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   handleZipChange = selectedZip => {
-    this.setState({ selectedZip, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     const postalCodesFilterList = selectedZip.map(zip => zip.value);
 
@@ -155,7 +140,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   handleTaxonomyChange = selectedTaxonomy => {
-    this.setState({ selectedTaxonomy, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     const taxonomiesFilterList = selectedTaxonomy.map(taxonomy => taxonomy.value);
 
@@ -163,7 +148,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   handleSearchFieldsChange = selectedSearchFields => {
-    this.setState({ selectedSearchFields, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     const searchFields = selectedSearchFields.map(f => f.value);
 
@@ -171,7 +156,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   handlePartnerChange = selectedPartner => {
-    this.setState({ selectedPartner, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     const partnerFilterList = selectedPartner;
 
@@ -182,14 +167,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     const searchOn = changeEvent.target.value;
     const selectedSearchFields = getDefaultSearchFieldOptions();
 
-    this.setState({ searchOn, selectedSearchFields, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     const searchFields = selectedSearchFields.map(f => f.value);
     this.props.updateActivityFilter({ ...this.props.activityFilter, searchOn, searchFields });
   };
 
   handleDateFilterChange = dateFilter => {
-    this.setState({ dateFilter, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     this.props.updateActivityFilter({ ...this.props.activityFilter, dateFilter: dateFilter.value });
   };
@@ -197,7 +182,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   handleFromDateChange = changeEvent => {
     const fromDate = changeEvent.target.value;
 
-    this.setState({ fromDate, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
   };
@@ -205,7 +190,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   handleToDateChange = changeEvent => {
     const toDate = changeEvent.target.value;
 
-    this.setState({ toDate, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
     this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
   };
@@ -213,14 +198,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   handleOnlyShowMatchingChange = changeEvent => {
     const onlyShowMatching = changeEvent.target.checked;
 
-    this.setState({ onlyShowMatching, filtersChanged: true });
+    this.setState({ filtersChanged: true });
 
-    this.props.updateActivityFilter({ ...this.props.activityFilter, onlyShowMatching });
+    this.props.updateActivityFilter({ ...this.props.activityFilter, showPartner: !onlyShowMatching });
   };
 
   render() {
     const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList, taxonomyList } = this.props;
-    const searchFieldList = getSearchFieldOptions(this.state.searchOn);
+    const searchFieldList = getSearchFieldOptions(this.props.searchOn);
     return (
       <div>
         <Collapse isOpen={filterCollapseExpanded} style={{ marginBottom: '1rem' }}>
@@ -240,7 +225,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                         value={ORGANIZATION}
                         className="form-check-input"
                         onChange={this.handleSearchOnChange}
-                        checked={this.state.searchOn === ORGANIZATION}
+                        checked={this.props.searchOn === ORGANIZATION}
                       />
                       <label className="form-check-label" htmlFor="orgRadio">
                         <Translate contentKey="serviceNetApp.activity.home.filter.organization" />
@@ -254,7 +239,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                         value={SERVICES}
                         className="form-check-input"
                         onChange={this.handleSearchOnChange}
-                        checked={this.state.searchOn === SERVICES}
+                        checked={this.props.searchOn === SERVICES}
                       />
                       <label className="form-check-label" htmlFor="svcRadio">
                         <Translate contentKey="serviceNetApp.activity.home.filter.services" />
@@ -268,7 +253,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                         value={LOCATIONS}
                         className="form-check-input"
                         onChange={this.handleSearchOnChange}
-                        checked={this.state.searchOn === LOCATIONS}
+                        checked={this.props.searchOn === LOCATIONS}
                       />
                       <label className="form-check-label" htmlFor="locRadio">
                         <Translate contentKey="serviceNetApp.activity.home.filter.locations" />
@@ -277,7 +262,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                     <div>
                       <Translate contentKey="serviceNetApp.activity.home.filter.searchFields" />
                       <Select
-                        value={this.state.selectedSearchFields}
+                        value={this.props.selectedSearchFields}
                         onChange={this.handleSearchFieldsChange}
                         options={searchFieldList}
                         isMulti
@@ -286,26 +271,26 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                   </Col>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.city" />
-                    <Select value={this.state.selectedCity} onChange={this.handleCityChange} options={cityList} isMulti />
+                    <Select value={this.props.selectedCity} onChange={this.handleCityChange} options={cityList} isMulti />
                   </Col>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.county" />
-                    <Select value={this.state.selectedCounty} onChange={this.handleCountyChange} options={regionList} isMulti />
+                    <Select value={this.props.selectedCounty} onChange={this.handleCountyChange} options={regionList} isMulti />
                   </Col>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.zip" />
-                    <Select value={this.state.selectedZip} onChange={this.handleZipChange} options={postalCodeList} isMulti />
+                    <Select value={this.props.selectedZip} onChange={this.handleZipChange} options={postalCodeList} isMulti />
                   </Col>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.partner" />
-                    <Select value={this.state.selectedPartner} onChange={this.handlePartnerChange} options={partnerList} isMulti />
+                    <Select value={this.props.selectedPartner} onChange={this.handlePartnerChange} options={partnerList} isMulti />
                     <div className="form-check form-check-inline">
                       <input
                         type="checkbox"
                         id="onlyShowMatchingCheckbox"
                         className="form-check-input"
                         onChange={this.handleOnlyShowMatchingChange}
-                        checked={this.state.onlyShowMatching}
+                        checked={this.props.onlyShowMatching}
                       />
                       <label className="form-check-label" htmlFor="onlyShowMatchingCheckbox">
                         <Translate contentKey="serviceNetApp.activity.home.filter.onlyShowMatching" />
@@ -316,22 +301,26 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                 <Row>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.taxonomy" />
-                    <Select value={this.state.selectedTaxonomy} onChange={this.handleTaxonomyChange} options={taxonomyList} isMulti />
+                    <Select value={this.props.selectedTaxonomy} onChange={this.handleTaxonomyChange} options={taxonomyList} isMulti />
                   </Col>
                 </Row>
                 <Row>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.dateFilter" />
-                    <Select value={this.state.dateFilter} onChange={this.handleDateFilterChange} options={this.getDateFilterList()} />
+                    <Select
+                      value={this.getDateFilterValue(this.props.dateFilter)}
+                      onChange={this.handleDateFilterChange}
+                      options={this.getDateFilterList()}
+                    />
                   </Col>
-                  {!this.state.dateFilter || this.state.dateFilter.value !== 'DATE_RANGE'
+                  {this.props.dateFilter !== 'DATE_RANGE'
                     ? null
                     : [
                         <Col key="fromDate" md="3">
                           <Translate contentKey="serviceNetApp.activity.home.filter.from" />
                           <Input
                             type="date"
-                            value={this.state.fromDate}
+                            value={this.props.fromDate}
                             onChange={this.handleFromDateChange}
                             name="fromDate"
                             id="fromDate"
@@ -339,7 +328,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                         </Col>,
                         <Col key="toDate" md="3">
                           <Translate contentKey="serviceNetApp.activity.home.filter.to" />
-                          <Input type="date" value={this.state.toDate} onChange={this.handleToDateChange} name="toDate" id="toDate" />
+                          <Input type="date" value={this.props.toDate} onChange={this.handleToDateChange} name="toDate" id="toDate" />
                         </Col>
                       ]}
                 </Row>
@@ -356,13 +345,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                     </Button>
                   </Col>
                   <Col md={{ size: 2, offset: 10 }}>
-                    <Button
-                      color="primary"
-                      onClick={this.resetFilter}
-                      disabled={!this.state.filtersChanged}
-                      style={{ marginTop: '1rem' }}
-                      block
-                    >
+                    <Button color="primary" onClick={this.resetFilter} style={{ marginTop: '1rem' }} block>
                       <Translate contentKey="serviceNetApp.activity.home.filter.resetFilter" />
                     </Button>
                   </Col>
@@ -379,12 +362,25 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 const mapStateToProps = (storeState: IRootState) => ({
   postalCodeList: storeState.filterActivity.postalCodeList.map(code => ({ label: code, value: code })),
   isLoggingOut: storeState.authentication.loggingOut,
-  hasSessionBeenFetched: storeState.authentication.sessionHasBeenFetched,
   regionList: storeState.filterActivity.regionList.map(region => ({ label: region, value: region })),
   cityList: storeState.filterActivity.cityList.map(city => ({ label: city, value: city })),
   taxonomyList: storeState.filterActivity.taxonomyList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
   partnerList: storeState.filterActivity.partnerList.map(partner => ({ label: partner.name, value: partner.id })),
-  activityFilter: storeState.filterActivity.activityFilter
+  activityFilter: storeState.filterActivity.activityFilter,
+  selectedCity: storeState.filterActivity.activityFilter.citiesFilterList.map(city => ({ label: city, value: city })),
+  selectedCounty: storeState.filterActivity.activityFilter.regionFilterList.map(county => ({ label: county, value: county })),
+  selectedZip: storeState.filterActivity.activityFilter.postalCodesFilterList.map(code => ({ label: code, value: code })),
+  selectedPartner: storeState.filterActivity.activityFilter.partnerFilterList.map(partner => ({
+    label: partner.label,
+    value: partner.value
+  })),
+  selectedTaxonomy: storeState.filterActivity.activityFilter.taxonomiesFilterList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
+  selectedSearchFields: storeState.filterActivity.activityFilter.searchFields.map(field => ({ label: field, value: field })),
+  searchOn: storeState.filterActivity.activityFilter.searchOn,
+  dateFilter: storeState.filterActivity.activityFilter.dateFilter,
+  fromDate: storeState.filterActivity.activityFilter.fromDate,
+  toDate: storeState.filterActivity.activityFilter.toDate,
+  onlyShowMatching: !storeState.filterActivity.activityFilter.showPartner
 });
 
 const mapDispatchToProps = { getPostalCodeList, getRegionList, getCityList, getPartnerList, getTaxonomyList, updateActivityFilter };

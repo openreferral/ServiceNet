@@ -1,12 +1,17 @@
 package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
+import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.FiltersActivityDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import javax.websocket.server.PathParam;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * REST controller for managing Activity.
@@ -53,14 +52,13 @@ public class ActivityResource {
      */
     @PostMapping("/activities")
     @Timed
-    public ResponseEntity<List<ActivityDTO>> getAllActivities(@Valid @RequestBody FiltersActivityDTO filtersForActivity,
-        @PathParam("search") String search, @PathParam("searchOn") String searchOn,
-        @PathParam("showPartner") boolean showPartner, Pageable pageable) {
+    public ResponseEntity<List<ActivityDTO>> getAllActivities(@Valid @RequestBody ActivityFilterDTO activityFilterDTO,
+        @PathParam("search") String search, Pageable pageable) {
         Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
         UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
 
         Page<ActivityDTO> page = activityService.getAllOrganizationActivities(pageable, systemAccountId,
-            search, SearchOn.fromValue(searchOn), filtersForActivity, showPartner);
+            search, activityFilterDTO);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/activities");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

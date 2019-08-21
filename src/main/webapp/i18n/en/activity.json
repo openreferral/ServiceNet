@@ -9,6 +9,11 @@
         "rightColumnTitle": "Matches found",
         "filter": {
           "toggle": "Filter",
+          "savedFilters": "Saved Filters",
+          "saveFilter": "Save Filter",
+          "filterName": "Filter Name",
+          "saveSuccess": "Filter was saved successfully",
+          "saveError": "Error occurred while saving filter",
           "city": "City",
           "county": "County",
           "zip": "ZIP",
@@ -58,9 +63,9 @@
           "recent": "Recently Updated"
         },
         "search": {
-          "placeholder-organization": "Search by Organization Name or Alternate Name",
-          "placeholder-services": "Search by Service Name or Alternate Name",
-          "placeholder-locations": "Search by Location Name or Alternate Name"
+          "placeholder-ORGANIZATION": "Search by Organization Name or Alternate Name",
+          "placeholder-SERVICES": "Search by Service Name or Alternate Name",
+          "placeholder-LOCATIONS": "Search by Location Name or Alternate Name"
         }
       },
       "created": "A new Activity is created with identifier {{ param }}",
