@@ -54,12 +54,13 @@ public class ActivityResource {
     @PostMapping("/activities")
     @Timed
     public ResponseEntity<List<ActivityDTO>> getAllActivities(@Valid @RequestBody FiltersActivityDTO filtersForActivity,
-    @PathParam("search") String search, @PathParam("searchOn") String searchOn, Pageable pageable) {
+        @PathParam("search") String search, @PathParam("searchOn") String searchOn,
+        @PathParam("showPartner") boolean showPartner, Pageable pageable) {
         Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
         UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
 
         Page<ActivityDTO> page = activityService.getAllOrganizationActivities(pageable, systemAccountId,
-            search, SearchOn.fromValue(searchOn), filtersForActivity);
+            search, SearchOn.fromValue(searchOn), filtersForActivity, showPartner);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/activities");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

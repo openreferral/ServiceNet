@@ -9,26 +9,26 @@ public interface ActivityFilterService {
      *
      * @return the list of Postal Codes
      */
-    Set<String> getPostalCodesForUserSystemAccount();
+    Set<String> getPostalCodes();
 
     /**
      * Get all the Regions
      *
      * @return the list of Regions
      */
-    Set<String> getRegionsForUserSystemAccount();
+    Set<String> getRegions();
 
     /**
      * Get all the Cities
      *
      * @return the list of Cities
      */
-    Set<String> getCitiesForUserSystemAccount();
+    Set<String> getCities();
 
     /**
      * Get all the Taxonomies
      *
      * @return the list of Taxonomies
      */
-    Set<String> getTaxonomiesForUserSystemAccount();
+    Set<String> getTaxonomies();
 }

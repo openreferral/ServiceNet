@@ -6,6 +6,7 @@ import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.domain.LocationExclusion;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.service.ConflictService;
@@ -69,8 +70,10 @@ public class RecordFactory {
         List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, baseExclusions, exclusionsMap);
         List<UUID> matches = info.getOrganizationMatches().stream().map(OrganizationMatch::getId)
             .collect(Collectors.toList());
+        SystemAccount systemAccount = info.getOrganization().getAccount();
 
         return ActivityDTO.builder()
+            .accountName(systemAccount.getName())
             .organizationId(info.getId())
             .organizationName(info.getName())
             .organizationMatches(matches)

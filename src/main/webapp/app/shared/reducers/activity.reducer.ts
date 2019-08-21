@@ -66,7 +66,11 @@ const apiUrl = 'api/activities';
 // Actions
 
 export const getEntities = (search, page, size, sort, filter) => {
-  const requestUrl = `${apiUrl}${sort ? `?search=${search}&searchOn=${filter.searchOn}&page=${page}&size=${size}&sort=${sort}` : ''}`;
+  const requestUrl = `${apiUrl}${
+    sort
+      ? `?search=${search}&searchOn=${filter.searchOn}&page=${page}&size=${size}&sort=${sort}&showPartner=${!filter.onlyShowMatching}`
+      : ''
+  }`;
 
   const filterDataToSend = {
     ...filter,

@@ -24,7 +24,7 @@ public class ActivityFilterResource {
      */
     @GetMapping("/get-postal-codes")
     public Set<String> getPostalCodes() {
-        return activityFilterService.getPostalCodesForUserSystemAccount();
+        return activityFilterService.getPostalCodes();
     }
 
     /**
@@ -32,7 +32,7 @@ public class ActivityFilterResource {
      */
     @GetMapping("/get-regions")
     public Set<String> getRegions() {
-        return activityFilterService.getRegionsForUserSystemAccount();
+        return activityFilterService.getRegions();
     }
 
     /**
@@ -40,7 +40,7 @@ public class ActivityFilterResource {
      */
     @GetMapping("/get-cities")
     public Set<String> getCities() {
-        return activityFilterService.getCitiesForUserSystemAccount();
+        return activityFilterService.getCities();
     }
 
     /**
@@ -48,6 +48,6 @@ public class ActivityFilterResource {
      */
     @GetMapping("/get-taxonomies")
     public Set<String> getTaxonomies() {
-        return activityFilterService.getTaxonomiesForUserSystemAccount();
+        return activityFilterService.getTaxonomies();
     }
 }

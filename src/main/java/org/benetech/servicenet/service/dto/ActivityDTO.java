@@ -24,6 +24,8 @@ public class ActivityDTO implements Serializable {
 
     private UUID organizationId;
 
+    private String accountName;
+
     private String organizationName;
 
     private ZonedDateTime lastUpdated;

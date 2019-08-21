@@ -29,6 +29,7 @@
             "last30Days": "Last 30 Days",
             "dateRange": "Date Range"
           },
+          "onlyShowMatching": "Only show matching",
           "fields": {
             "name": "Name",
             "alternateName": "Alternate name",

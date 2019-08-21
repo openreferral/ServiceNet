@@ -54,14 +54,14 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     @Transactional(readOnly = true)
     public Page<ActivityDTO> getAllOrganizationActivities(Pageable pageable, UUID systemAccountId,
-        String search, SearchOn searchOn, FiltersActivityDTO filtersForActivity) {
-
-        List<ActivityDTO> activities = new ArrayList<>();
-        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, searchOn, pageable,
-            filtersForActivity);
+        String search, SearchOn searchOn, FiltersActivityDTO filtersForActivity, Boolean showPartner) {
 
         Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
 
+        List<ActivityDTO> activities = new ArrayList<>();
+        Page<ActivityInfo> activitiesInfo = findAllActivitiesInfoWithOwnerId(systemAccountId, search, searchOn, pageable,
+            filtersForActivity, showPartner);
+        long totalElements = activitiesInfo.getTotalElements();
         for (ActivityInfo info : activitiesInfo) {
             try {
                 activities.add(getEntityActivity(info, exclusionsMap));
@@ -73,7 +73,7 @@ public class ActivityServiceImpl implements ActivityService {
         return new PageImpl<>(
             activities,
             PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
-            activitiesInfo.getTotalElements()
+            totalElements
         );
     }
 
@@ -100,9 +100,10 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     private Page<ActivityInfo> findAllActivitiesInfoWithOwnerId(UUID ownerId, String search, SearchOn searchOn,
-        Pageable pageable, FiltersActivityDTO filtersActivityDTO) {
+        Pageable pageable, FiltersActivityDTO filtersActivityDTO, Boolean showPartner) {
         if (ownerId != null) {
-            return activityRepository.findAllWithFilters(ownerId, search, searchOn, filtersActivityDTO, pageable);
+            return activityRepository.findAllWithFilters(ownerId, search, searchOn, filtersActivityDTO, pageable,
+                showPartner);
         } else {
             return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
         }

@@ -30,7 +30,8 @@ const initialState = {
     dateFilter: null,
     fromDate: '',
     toDate: '',
-    hidden: false
+    hidden: false,
+    onlyShowMatching: true
   }
 };
 
