@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
@@ -54,7 +55,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private final MatchSimilarityService matchSimilarityService;
 
-    private final float orgMatchThreshold;
+    private final BigDecimal orgMatchThreshold;
 
     public OrganizationMatchServiceImpl(OrganizationMatchRepository organizationMatchRepository,
                                         OrganizationMatchMapper organizationMatchMapper,
@@ -64,7 +65,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
                                         UserService userService,
                                         MatchSimilarityService matchSimilarityService,
                                         @Value("${similarity-ratio.config.organization-match-threshold}")
-                                            float orgMatchThreshold) {
+                                            BigDecimal orgMatchThreshold) {
         this.organizationMatchRepository = organizationMatchRepository;
         this.organizationMatchMapper = organizationMatchMapper;
         this.organizationService = organizationService;
@@ -391,6 +392,6 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     private boolean isSimilar(List<MatchSimilarityDTO> similarityDTOS) {
         return similarityDTOS.stream()
             .map(MatchSimilarityDTO::getSimilarity)
-            .reduce(0f, Float::sum) >= orgMatchThreshold;
+            .reduce(BigDecimal.ZERO, BigDecimal::add).compareTo(orgMatchThreshold) >= 0;
     }
 }

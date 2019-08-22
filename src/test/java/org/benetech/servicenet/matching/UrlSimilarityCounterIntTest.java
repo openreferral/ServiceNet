@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching;
 
+import java.math.BigDecimal;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.matching.counter.UrlSimilarityCounter;
 import org.junit.Test;
@@ -14,27 +15,25 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(classes = ServiceNetApp.class)
 public class UrlSimilarityCounterIntTest {
 
-    private static final float PRECISION = 0.001f;
-
     @Autowired
     private UrlSimilarityCounter urlSimilarityCounter;
 
     @Test
     public void shouldReturnMinRatioForDifferentNormalizedAndUpperCased() {
-        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("one.com", "two.com", null), PRECISION);
-        assertEquals(0, urlSimilarityCounter.countSimilarityRatio(null, "two.com", null), PRECISION);
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("one.com", "two.com", null).compareTo(BigDecimal.valueOf(0)));
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio(null, "two.com", null).compareTo(BigDecimal.valueOf(0)));
     }
 
     @Test
     public void shouldReturnMinRatioForDifferentNormalized() {
-        assertEquals(0.95, urlSimilarityCounter.countSimilarityRatio("one.com", "http://ONE.com", null), PRECISION);
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("one.com", "http://ONE.com", null).compareTo(BigDecimal.valueOf(0.95)));
     }
 
     @Test
     public void shouldReturnMaxRatioForSameNormalized() {
-        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("www.one.com", "https://one.com", null), PRECISION);
-        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("http://www.one.com/ ", "https://one.com", null), PRECISION);
-        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("https:// zuckerbergsanfranciscogeneral.org/", "http://zuckerbergsanfranciscogeneral. org/", null), PRECISION);
-        assertEquals(1.0, urlSimilarityCounter.countSimilarityRatio("http://rotacarebayarea.org/index.html ", "http://www.rotacarebayarea.org/index.html", null), PRECISION);
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("www.one.com", "https://one.com", null).compareTo(BigDecimal.valueOf(1)));
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("http://www.one.com/ ", "https://one.com", null).compareTo(BigDecimal.valueOf(1)));
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("https:// zuckerbergsanfranciscogeneral.org/", "http://zuckerbergsanfranciscogeneral. org/", null).compareTo(BigDecimal.valueOf(1)));
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("http://rotacarebayarea.org/index.html ", "http://www.rotacarebayarea.org/index.html", null).compareTo(BigDecimal.valueOf(1)));
     }
 }

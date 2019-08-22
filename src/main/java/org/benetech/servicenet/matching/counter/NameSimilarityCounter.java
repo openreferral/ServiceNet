@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching.counter;
 
+import java.math.BigDecimal;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.matching.model.MatchingContext;
@@ -14,22 +15,22 @@ import static org.benetech.servicenet.matching.counter.StringMatchingUtils.sort;
 public class NameSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Value("${similarity-ratio.weight.name.similar-initials-sorted}")
-    private float sortedInitialsWeight;
+    private BigDecimal sortedInitialsWeight;
 
     @Value("${similarity-ratio.weight.name.similar-initials}")
-    private float initialsWeight;
+    private BigDecimal initialsWeight;
 
     @Value("${similarity-ratio.weight.name.similar-words-sorted}")
-    private float similarSortedWordsWeight;
+    private BigDecimal similarSortedWordsWeight;
 
     @Value("${similarity-ratio.weight.name.fuzzy-similarity-threshold}")
-    private float fuzzySimilarityThreshold;
+    private BigDecimal fuzzySimilarityThreshold;
 
     @Value("${similarity-ratio.weight.name.fuzzy-partial-similarity-threshold}")
-    private float fuzzyPartialSimilarityThreshold;
+    private BigDecimal fuzzyPartialSimilarityThreshold;
 
     @Override
-    public float countSimilarityRatio(String name1, String name2, MatchingContext context) {
+    public BigDecimal countSimilarityRatio(String name1, String name2, MatchingContext context) {
         if (StringUtils.isBlank(name1) || StringUtils.isBlank(name2)) {
             return NO_MATCH_RATIO;
         }
@@ -88,7 +89,8 @@ public class NameSimilarityCounter extends AbstractSimilarityCounter<String> {
         return isRatioBelowThreshold(fuzzyRatio, fuzzyPartialSimilarityThreshold);
     }
 
-    private boolean isRatioBelowThreshold(int fuzzyRatio, float threshold) {
-        return fuzzyRatio < threshold * 100;
+    private boolean isRatioBelowThreshold(int fuzzyRatio, BigDecimal threshold) {
+        return BigDecimal.valueOf(fuzzyRatio).compareTo(
+            threshold.multiply(BigDecimal.valueOf(100))) < 0;
     }
 }

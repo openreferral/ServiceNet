@@ -1,5 +1,7 @@
 package org.benetech.servicenet.matching.counter;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.stereotype.Component;
@@ -10,7 +12,7 @@ import java.util.Locale;
 public class DescriptionSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Override
-    public float countSimilarityRatio(String description1, String description2, MatchingContext context) {
+    public BigDecimal countSimilarityRatio(String description1, String description2, MatchingContext context) {
         if (StringUtils.isBlank(description1) || StringUtils.isBlank(description2)) {
             return NO_MATCH_RATIO;
         }
@@ -18,8 +20,9 @@ public class DescriptionSimilarityCounter extends AbstractSimilarityCounter<Stri
         String normalized2 = normalize(description2);
 
         int longerDescriptionSize = Math.max(normalized1.length(), normalized2.length());
-        float longestCommonSubsequence = LCSUtils.getLongestCommonSubsequence(normalized1, normalized2);
-        return longestCommonSubsequence / longerDescriptionSize;
+        int longestCommonSubsequence = LCSUtils.getLongestCommonSubsequence(normalized1, normalized2);
+        return BigDecimal.valueOf(longestCommonSubsequence).divide(BigDecimal.valueOf(longerDescriptionSize),
+            MathContext.DECIMAL128);
     }
 
     //TODO: use StringMatchingUtils when it will be approved

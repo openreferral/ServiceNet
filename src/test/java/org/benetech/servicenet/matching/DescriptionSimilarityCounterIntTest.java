@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching;
 
+import java.math.BigDecimal;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.matching.counter.DescriptionSimilarityCounter;
 import org.junit.Test;
@@ -14,8 +15,6 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(classes = ServiceNetApp.class)
 public class DescriptionSimilarityCounterIntTest {
 
-    private static final float PRECISION = 0.001f;
-
     @Autowired
     private DescriptionSimilarityCounter descriptionSimilarityCounter;
 
@@ -24,8 +23,8 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "   %@$#Aaa! Aa";
         String string2 = "%@$#a.aA aa  ";
 
-        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
-        assertEquals(1, result, PRECISION);
+        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
+        assertEquals(0, result.compareTo(BigDecimal.ONE));
     }
 
     @Test
@@ -33,8 +32,8 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "AAAA";
         String string2 = "BBBB";
 
-        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
-        assertEquals(0, result, PRECISION);
+        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
+        assertEquals(0, result.compareTo(BigDecimal.ZERO));
     }
 
     @Test
@@ -42,7 +41,7 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "AAAA";
         String string2 = "AA";
 
-        float result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
-        assertEquals(0.5, result, PRECISION);
+        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
+        assertEquals(0, result.compareTo(BigDecimal.valueOf(0.5)));
     }
 }

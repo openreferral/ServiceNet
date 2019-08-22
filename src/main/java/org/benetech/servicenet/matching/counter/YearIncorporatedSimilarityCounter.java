@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching.counter;
 
+import java.math.BigDecimal;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -10,13 +11,13 @@ import java.time.LocalDate;
 public class YearIncorporatedSimilarityCounter extends AbstractSimilarityCounter<LocalDate> {
 
     @Value("${similarity-ratio.weight.year-incorporated.same-year}")
-    private float sameYearWeight;
+    private BigDecimal sameYearWeight;
 
     @Value("${similarity-ratio.weight.year-incorporated.same-month}")
-    private float sameMontWeight;
+    private BigDecimal sameMontWeight;
 
     @Override
-    public float countSimilarityRatio(LocalDate date1, LocalDate date2, MatchingContext context) {
+    public BigDecimal countSimilarityRatio(LocalDate date1, LocalDate date2, MatchingContext context) {
         if (date1 == null || date2 == null) {
             return NO_MATCH_RATIO;
         }
