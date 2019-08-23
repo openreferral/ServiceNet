@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching.counter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,10 +41,10 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
     private Boolean alwaysCompareLocations;
 
     @Override
-    public float countSimilarityRatio(Organization org1, Organization org2, MatchingContext context) {
+    public BigDecimal countSimilarityRatio(Organization org1, Organization org2, MatchingContext context) {
         return getMatchSimilarityDTOs(org1, org2, context).stream()
             .map(MatchSimilarityDTO::getSimilarity)
-            .reduce(0f, Float::sum);
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
@@ -73,10 +74,10 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
             getYearIncorporatedSimilarity(org1, org2, context),
             "YearIncorporated"
         ));
-        float currentResult = similarityDtos.stream()
+        BigDecimal currentResult = similarityDtos.stream()
             .map(MatchSimilarityDTO::getSimilarity)
-            .reduce(0f, Float::sum);
-        if (BooleanUtils.isTrue(alwaysCompareLocations) || currentResult > 0) {
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (BooleanUtils.isTrue(alwaysCompareLocations) || currentResult.compareTo(BigDecimal.ZERO) > 0) {
             if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
                 similarityDtos.add(getFieldMatchSimilarityDTO(
                     getLocationSimilarity(org1, org2, context),
@@ -84,53 +85,57 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
                 ));
             }
         }
-        return similarityDtos.stream().filter((ms) -> ms.getSimilarity() > 0).collect(Collectors.toList());
+        return similarityDtos.stream().filter((ms) -> ms.getSimilarity().compareTo(BigDecimal.ZERO) > 0)
+            .collect(Collectors.toList());
     }
 
-    private float getNameSimilarity(Organization org1, Organization org2, MatchingContext context) {
+    private BigDecimal getNameSimilarity(Organization org1, Organization org2, MatchingContext context) {
         return nameSimilarityCounter.countSimilarityRatio(org1.getName(), org2.getName(), context)
-            * weightProvider.getNameWeight();
+            .multiply(weightProvider.getNameWeight());
     }
 
-    private float getAlternateNameSimilarity(Organization org1, Organization org2, MatchingContext context) {
+    private BigDecimal getAlternateNameSimilarity(Organization org1, Organization org2, MatchingContext context) {
         return nameSimilarityCounter.countSimilarityRatio(org1.getAlternateName(), org2.getAlternateName(), context)
-            * weightProvider.getAlternateNameWeight();
+            .multiply(weightProvider.getAlternateNameWeight());
     }
 
-    private float getDescriptionSimilarity(Organization org1, Organization org2, MatchingContext context) {
+    private BigDecimal getDescriptionSimilarity(Organization org1, Organization org2, MatchingContext context) {
         return descriptionSimilarityCounter.countSimilarityRatio(org1.getDescription(), org2.getDescription(), context)
-            * weightProvider.getDescriptionWeight();
+            .multiply(weightProvider.getDescriptionWeight());
     }
 
-    private float getEmailSimilarity(Organization org1, Organization org2, MatchingContext context) {
+    private BigDecimal getEmailSimilarity(Organization org1, Organization org2, MatchingContext context) {
         return emailSimilarityCounter.countSimilarityRatio(org1.getEmail(), org2.getEmail(), context)
-            * weightProvider.getEmailWeight();
+            .multiply(weightProvider.getEmailWeight());
     }
 
-    private float getUrlSimilarity(Organization org1, Organization org2, MatchingContext context) {
+    private BigDecimal getUrlSimilarity(Organization org1, Organization org2, MatchingContext context) {
         return urlSimilarityCounter.countSimilarityRatio(org1.getUrl(), org2.getUrl(), context)
-            * weightProvider.getUrlWeight();
+            .multiply(weightProvider.getUrlWeight());
     }
 
-    private float getYearIncorporatedSimilarity(Organization org1, Organization org2, MatchingContext context) {
+    private BigDecimal getYearIncorporatedSimilarity(Organization org1, Organization org2, MatchingContext context) {
         return yearIncorporatedSimilarityCounter.countSimilarityRatio(org1.getYearIncorporated(),
             org2.getYearIncorporated(), context)
-            * weightProvider.getYearsIncorporatedWeight();
+            .multiply(weightProvider.getYearsIncorporatedWeight());
     }
 
-    private float getLocationSimilarity(Organization org1, Organization org2, MatchingContext context) {
-        float max = NO_MATCH_RATIO;
+    private BigDecimal getLocationSimilarity(Organization org1, Organization org2, MatchingContext context) {
+        BigDecimal max = NO_MATCH_RATIO;
 
         for (Location location1 : org1.getLocations()) {
             for (Location location2 : org2.getLocations()) {
-                max = Math.max(max, locationSimilarityCounter.countSimilarityRatio(location1, location2, context)
-                    * weightProvider.getLocationWeight());
+                BigDecimal similarity = locationSimilarityCounter.countSimilarityRatio(location1, location2, context)
+                    .multiply(weightProvider.getLocationWeight());
+                if (similarity.compareTo(max) > 0) {
+                    max = similarity;
+                }
             }
         }
         return max;
     }
 
-    private MatchSimilarityDTO getFieldMatchSimilarityDTO(float similarityValue, String fieldName) {
+    private MatchSimilarityDTO getFieldMatchSimilarityDTO(BigDecimal similarityValue, String fieldName) {
         MatchSimilarityDTO similarityMatchDto = new MatchSimilarityDTO();
         similarityMatchDto.setSimilarity(similarityValue);
         similarityMatchDto.setResourceClass("Organization");

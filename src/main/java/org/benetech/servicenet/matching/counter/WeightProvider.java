@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching.counter;
 
+import java.math.BigDecimal;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,23 +10,23 @@ import org.springframework.stereotype.Component;
 public class WeightProvider {
 
     @Value("${similarity-ratio.weight.alternate-name}")
-    private float alternateNameWeight;
+    private BigDecimal alternateNameWeight;
 
     @Value("${similarity-ratio.weight.description}")
-    private float descriptionWeight;
+    private BigDecimal descriptionWeight;
 
     @Value("${similarity-ratio.weight.email.base}")
-    private float emailWeight;
+    private BigDecimal emailWeight;
 
     @Value("${similarity-ratio.weight.location.base}")
-    private float locationWeight;
+    private BigDecimal locationWeight;
 
     @Value("${similarity-ratio.weight.name.base}")
-    private float nameWeight;
+    private BigDecimal nameWeight;
 
     @Value("${similarity-ratio.weight.url.base}")
-    private float urlWeight;
+    private BigDecimal urlWeight;
 
     @Value("${similarity-ratio.weight.year-incorporated.base}")
-    private float yearsIncorporatedWeight;
+    private BigDecimal yearsIncorporatedWeight;
 }

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.matching.counter;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import org.benetech.servicenet.matching.model.MatchingContext;
@@ -16,12 +17,12 @@ public abstract class AbstractSimilarityCounter<V> {
      *
      * @return similarity ratio
      */
-    public abstract float countSimilarityRatio(V obj1, V obj2, MatchingContext context);
+    public abstract BigDecimal countSimilarityRatio(V obj1, V obj2, MatchingContext context);
 
     public List<MatchSimilarityDTO> getMatchSimilarityDTOs(V obj1, V obj2, MatchingContext context) {
         return Collections.emptyList();
     }
 
-    protected static final float NO_MATCH_RATIO = 0;
-    protected static final float COMPLETE_MATCH_RATIO = 1;
+    protected static final BigDecimal NO_MATCH_RATIO = BigDecimal.ZERO;
+    protected static final BigDecimal COMPLETE_MATCH_RATIO = BigDecimal.ONE;
 }

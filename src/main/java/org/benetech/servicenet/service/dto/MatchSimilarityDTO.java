@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public class MatchSimilarityDTO implements Serializable {
 
     private UUID id;
 
-    private Float similarity;
+    private BigDecimal similarity;
 
     private String resourceClass;
 
@@ -27,11 +28,11 @@ public class MatchSimilarityDTO implements Serializable {
         this.id = id;
     }
 
-    public Float getSimilarity() {
+    public BigDecimal getSimilarity() {
         return similarity;
     }
 
-    public void setSimilarity(Float similarity) {
+    public void setSimilarity(BigDecimal similarity) {
         this.similarity = similarity;
     }
 

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
@@ -45,7 +46,7 @@ public class OrganizationMatchServiceImplTest {
 
     private static final String ORG_1 = "org 1";
     private static final String ORG_2 = "org 2";
-    private static final float COMPLETE_MATCH_RATIO = 1.0f;
+    private static final BigDecimal COMPLETE_MATCH_RATIO = BigDecimal.valueOf(1.0f);
 
     @Mock
     private OrganizationSimilarityCounter organizationSimilarityCounter;
@@ -88,7 +89,7 @@ public class OrganizationMatchServiceImplTest {
 
         organizationMatchService = new OrganizationMatchServiceImpl(organizationMatchRepository,
             organizationMatchMapper, organizationService, organizationSimilarityCounter,
-            conflictDetectionService, userService, matchSimilarityService,0.4f);
+            conflictDetectionService, userService, matchSimilarityService,BigDecimal.valueOf(0.4f));
     }
 
     @Test
@@ -104,10 +105,10 @@ public class OrganizationMatchServiceImplTest {
 
         List<MatchSimilarityDTO> similarities = new ArrayList<>();
         MatchSimilarityDTO similarity = new MatchSimilarityDTO();
-        similarity.setSimilarity(1.0f);
+        similarity.setSimilarity(BigDecimal.valueOf(1.0f));
         similarities.add(similarity);
 
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(1.0f);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(BigDecimal.valueOf(1.0f));
         when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2, null)).thenReturn(similarities);
 
         int dbSize = organizationMatchService.findAll().size();
@@ -157,7 +158,7 @@ public class OrganizationMatchServiceImplTest {
         em.persist(org2);
         em.flush();
 
-        float ratioBelowThreshold = 0.2f;
+        BigDecimal ratioBelowThreshold = BigDecimal.valueOf(0.2f);
         when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(ratioBelowThreshold);
 
         organizationMatchService.createOrUpdateOrganizationMatches(org1, null);

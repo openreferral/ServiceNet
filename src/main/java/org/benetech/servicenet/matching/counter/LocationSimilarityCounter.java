@@ -4,21 +4,18 @@ import static java.util.Collections.singletonList;
 
 import com.google.maps.model.LatLng;
 import com.google.maps.model.LocationType;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.matching.model.MatchingContext;
-import org.benetech.servicenet.service.GeocodingResultService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LocationSimilarityCounter extends AbstractSimilarityCounter<Location> {
-
-    private static final String DELIMITER = ", ";
 
     @Value("${similarity-ratio.config.location.level-1-distance}")
     private long level1meters;
@@ -30,19 +27,16 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
     private long level3meters;
 
     @Value("${similarity-ratio.weight.location.in-level-2-distance}")
-    private float level2distanceRatio;
+    private BigDecimal level2distanceRatio;
 
     @Value("${similarity-ratio.weight.location.in-level-3-distance}")
-    private float level3distanceRatio;
+    private BigDecimal level3distanceRatio;
 
     @Value("${similarity-ratio.weight.location.in-same-city-zipcode}")
-    private float sameCityOrZipCodeRatio;
-
-    @Autowired
-    private GeocodingResultService geocodingResultService;
+    private BigDecimal sameCityOrZipCodeRatio;
 
     @Override
-    public float countSimilarityRatio(Location location1, Location location2, MatchingContext context) {
+    public BigDecimal countSimilarityRatio(Location location1, Location location2, MatchingContext context) {
         if (anyPhysicalAddressIsNull(location1, location2) || areLocations255AddressTextBlank(location1, location2)) {
             return NO_MATCH_RATIO;
         }
@@ -83,13 +77,16 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
             .equalsIgnoreCase(location2.getPhysicalAddress().getCity());
     }
 
-    private float countRatioBetweenGeocodingResults(List<GeocodingResult> baseGeocoding,
+    private BigDecimal countRatioBetweenGeocodingResults(List<GeocodingResult> baseGeocoding,
         List<GeocodingResult> partnerGeocoding) {
-        float max = NO_MATCH_RATIO;
+        BigDecimal max = NO_MATCH_RATIO;
 
         for (GeocodingResult result1 : baseGeocoding) {
             for (GeocodingResult result2 : partnerGeocoding) {
-                max = Math.max(max, countSimilarityRatio(result1.getGoogleCoords(), result2.getGoogleCoords()));
+                BigDecimal similarityRatio = countSimilarityRatio(result1.getGoogleCoords(), result2.getGoogleCoords());
+                if (similarityRatio.compareTo(max) > 0) {
+                    max = similarityRatio;
+                }
             }
         }
 
@@ -123,11 +120,11 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
             || location2 == null || location2.getPhysicalAddress() == null;
     }
 
-    private float countSimilarityRatio(LatLng coordinates1, LatLng coordinates2) {
+    private BigDecimal countSimilarityRatio(LatLng coordinates1, LatLng coordinates2) {
         return countSimilarityRatio(GeocodeUtils.getStraightLineDistanceInMeters(coordinates1, coordinates2));
     }
 
-    private float countSimilarityRatio(double distance) {
+    private BigDecimal countSimilarityRatio(double distance) {
         if (distance > level3meters) {
             return NO_MATCH_RATIO;
         }

@@ -1,5 +1,7 @@
 package org.benetech.servicenet.matching;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.matching.counter.DescriptionSimilarityCounter;
@@ -28,14 +30,13 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = ServiceNetApp.class)
 public class OrganizationSimilarityCounterIntTest {
 
-    private static final float PRECISION = 0.01f;
-    private static final float BASE_WEIGHT = 1.0f;
-    private static float NAME_RATIO = 0.1f;
-    private static float DESCRIPTION_RATION = 0.3f;
-    private static float EMAIL_RATIO = 0.4f;
-    private static float LOCATION_RATIO = 0.5f;
-    private static float URL_RATIO = 0.6f;
-    private static float YEARS_INCORPORATED_RATIO = 0.7f;
+    private static final BigDecimal BASE_WEIGHT = BigDecimal.valueOf(1);
+    private static BigDecimal NAME_RATIO = BigDecimal.valueOf(0.1f);
+    private static BigDecimal DESCRIPTION_RATION = BigDecimal.valueOf(0.3f);
+    private static BigDecimal EMAIL_RATIO = BigDecimal.valueOf(0.4f);
+    private static BigDecimal LOCATION_RATIO = BigDecimal.valueOf(0.5f);
+    private static BigDecimal URL_RATIO = BigDecimal.valueOf(0.6f);
+    private static BigDecimal YEARS_INCORPORATED_RATIO = BigDecimal.valueOf(0.7f);
 
     @Mock
     private NameSimilarityCounter nameSimilarityCounter;
@@ -82,9 +83,9 @@ public class OrganizationSimilarityCounterIntTest {
 
     @Test
     public void shouldReturnSumOfAllFieldsSimilarityRatio() {
-        float result = organizationSimilarityCounter.countSimilarityRatio(
+        BigDecimal result = organizationSimilarityCounter.countSimilarityRatio(
             new Organization().locations(new HashSet<>()),
             new Organization().locations(new HashSet<>()), null);
-        assertEquals(2.2f, result, PRECISION);
+        assertEquals(0, BigDecimal.valueOf(2.2).compareTo(result.setScale(2, RoundingMode.HALF_UP)));
     }
 }
