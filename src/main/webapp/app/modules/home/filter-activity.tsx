@@ -34,6 +34,7 @@ export interface IFilterActivityProps extends StateProps, DispatchProps {
   filterCollapseExpanded: boolean;
   getActivityEntities(): any;
   resetActivityFilter();
+  setActivePage(): any;
 }
 
 export class FilterActivity extends React.Component<IFilterActivityProps, IFilterActivityState> {
@@ -88,6 +89,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   ];
 
   applyFilter = () => {
+    this.props.setActivePage(1);
     ReactGA.event({ category: 'UserActions', action: 'Applied Filter' });
     this.props.getActivityEntities().then(() => this.setState({ filtersChanged: false }));
   };
