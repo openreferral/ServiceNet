@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.math.BigDecimal;
 import java.util.Objects;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -22,7 +23,7 @@ public class MatchSimilarity extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "similarity")
-    private Float similarity;
+    private BigDecimal similarity;
 
     @Column(name = "resource_class")
     private String resourceClass;
@@ -34,16 +35,16 @@ public class MatchSimilarity extends AbstractEntity implements Serializable {
     @JsonIgnoreProperties("matchSimilarities")
     private OrganizationMatch organizationMatch;
 
-    public Float getSimilarity() {
+    public BigDecimal getSimilarity() {
         return similarity;
     }
 
-    public MatchSimilarity similarity(Float similarity) {
+    public MatchSimilarity similarity(BigDecimal similarity) {
         this.similarity = similarity;
         return this;
     }
 
-    public void setSimilarity(Float similarity) {
+    public void setSimilarity(BigDecimal similarity) {
         this.similarity = similarity;
     }
 

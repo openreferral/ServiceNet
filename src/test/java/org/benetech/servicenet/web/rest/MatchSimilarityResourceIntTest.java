@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import java.math.BigDecimal;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.MatchSimilarity;
@@ -40,8 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ServiceNetApp.class)
 public class MatchSimilarityResourceIntTest {
 
-    private static final float DEFAULT_SIMILARITY = 1;
-    private static final float UPDATED_SIMILARITY = 2;
+    private static final BigDecimal DEFAULT_SIMILARITY = BigDecimal.ONE;
+    private static final BigDecimal UPDATED_SIMILARITY = BigDecimal.valueOf(2);
 
     private static final String DEFAULT_RESOURCE_CLASS = "AAAAAAAAAA";
     private static final String UPDATED_RESOURCE_CLASS = "BBBBBBBBBB";
@@ -167,14 +168,12 @@ public class MatchSimilarityResourceIntTest {
         // Initialize the database
         matchSimilarityRepository.saveAndFlush(matchSimilarity);
 
-        double defaultSimilarity = DEFAULT_SIMILARITY;
-
         // Get all the matchSimilarityList
         restMatchSimilarityMockMvc.perform(get("/api/match-similarities?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(matchSimilarity.getId().toString())))
-            .andExpect(jsonPath("$.[*].similarity").value(hasItem(defaultSimilarity)))
+            .andExpect(jsonPath("$.[*].similarity").value(hasItem(DEFAULT_SIMILARITY.intValue())))
             .andExpect(jsonPath("$.[*].resourceClass").value(hasItem(DEFAULT_RESOURCE_CLASS.toString())));
     }
 
