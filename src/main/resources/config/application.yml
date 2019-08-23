@@ -83,6 +83,7 @@ server:
         session:
             cookie:
                 http-only: true
+            timeout: 7200
 
 # Properties to be exposed on the /info management endpoint
 info:
