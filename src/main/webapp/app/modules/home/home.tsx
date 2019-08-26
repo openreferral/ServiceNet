@@ -104,6 +104,10 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     }
   };
 
+  setActivePage = activePage => {
+    this.setState({ activePage });
+  };
+
   handleLoadMore = () => {
     if (window.pageYOffset > 0 && this.props.totalItems > this.props.activityList.length) {
       this.setState({ activePage: this.state.activePage + 1 }, () => this.getEntities());
@@ -133,6 +137,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     ReactGA.event({ category: 'UserActions', action: 'Searching Records' });
 
     this.setState({
+      activePage: 1,
       searchPhrase,
       typingTimeout: setTimeout(() => {
         this.searchEntities();
@@ -145,6 +150,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       setSearchPhrase(this.props.account.login, '');
 
       this.setState({
+        activePage: 1,
         searchPhrase: '',
         typingTimeout: setTimeout(() => {
           this.searchEntities();
@@ -280,6 +286,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                       filterCollapseExpanded={this.state.filterCollapseExpanded}
                       getActivityEntities={this.searchEntities}
                       resetActivityFilter={this.reset}
+                      setActivePage={this.setActivePage}
                     />
                   </Col>
                 </Row>
