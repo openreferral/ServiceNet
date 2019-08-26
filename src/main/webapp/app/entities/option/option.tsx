@@ -18,10 +18,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PageSizeSelector from '../page-size-selector';
 import { IRootState } from 'app/shared/reducers';
 import { getEntities, updateEntity } from './option.reducer';
-import { ITEMS_PER_PAGE_ENTITY, MAX_BUTTONS } from 'app/shared/util/pagination.constants';
+import { ITEMS_PER_PAGE_ENTITY, MAX_BUTTONS, FIRST_PAGE } from 'app/shared/util/pagination.constants';
 import { IOption } from 'app/shared/model/option.model';
 // tslint:disable-next-line:no-unused-variable
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import _ from 'lodash';
+import queryString from 'query-string';
 
 export interface IOptionProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -38,6 +40,8 @@ export class Option extends React.Component<IOptionProps, IOptionState> {
     this.toggleTop = this.toggleTop.bind(this);
     this.toggleBottom = this.toggleBottom.bind(this);
     this.select = this.select.bind(this);
+    JhiPagination.bind(this);
+    PageSizeSelector.bind(this);
     this.state = {
       dropdownOpenTop: false,
       dropdownOpenBottom: false,
@@ -47,7 +51,31 @@ export class Option extends React.Component<IOptionProps, IOptionState> {
   }
 
   componentDidMount() {
-    this.getEntities();
+    if (!_.isEqual(this.props.location.search, '')) {
+      const fetchPageData = queryString.parse(this.props.location.search);
+      this.setCustomState(fetchPageData.page, fetchPageData.itemsPerPage, fetchPageData.sort);
+    } else {
+      this.getEntities();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!(this.props.location === prevProps.location) && !(this.props.location.search === '')) {
+      const fetchPageData = queryString.parse(this.props.location.search);
+      this.setCustomState(fetchPageData.page, fetchPageData.itemsPerPage, fetchPageData.sort);
+    }
+    if (!(this.props.location === prevProps.location) && this.props.location.search === '') {
+      this.setCustomState(FIRST_PAGE, ITEMS_PER_PAGE_ENTITY, this.state.sort);
+    }
+  }
+
+  setCustomState(page, items, sort) {
+    this.setState({
+      activePage: Number(page),
+      itemsPerPage: Number(items),
+      ...getSortState(this.props.location, items)
+    });
+    this.props.getEntities(Number(page) - 1, Number(items), `${sort}`);
   }
 
   sort = prop => () => {
@@ -56,15 +84,9 @@ export class Option extends React.Component<IOptionProps, IOptionState> {
         order: this.state.order === 'asc' ? 'desc' : 'asc',
         sort: prop
       },
-      () => this.sortEntities()
+      () => this.updatePage()
     );
   };
-
-  sortEntities() {
-    this.getEntities();
-    const { activePage, sort, order } = this.state;
-    this.props.history.push(`${this.props.location.pathname}?page=${activePage}&sort=${sort},${order}`);
-  }
 
   handlePagination = activePage => this.setState({ activePage }, () => this.updatePage());
 
@@ -84,15 +106,21 @@ export class Option extends React.Component<IOptionProps, IOptionState> {
   select = prop => () => {
     this.setState(
       {
-        itemsPerPage: prop
+        itemsPerPage: prop,
+        activePage: FIRST_PAGE
       },
       () => this.updatePage()
     );
   };
 
   updatePage() {
+    this.getEntities();
     window.scrollTo(0, 0);
-    this.sortEntities();
+    const { activePage, sort, order, itemsPerPage } = this.state;
+    this.props.history.push({
+      pathname: `${this.props.location.pathname}`,
+      search: `?page=${activePage}&sort=${sort},${order}&itemsPerPage=${itemsPerPage}`
+    });
   }
 
   render() {
