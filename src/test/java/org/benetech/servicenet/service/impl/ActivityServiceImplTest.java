@@ -1,5 +1,12 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
@@ -15,12 +22,11 @@ import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
+import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
-import org.benetech.servicenet.service.dto.FiltersActivityDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.web.rest.ActivityResource;
-import org.benetech.servicenet.web.rest.SearchOn;
 import org.benetech.servicenet.web.rest.errors.InternalServerErrorException;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,14 +38,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test class for the ActivityResource REST controller.
@@ -114,7 +112,7 @@ public class ActivityServiceImplTest {
     public void getAllNotHiddenActivities() {
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, new FiltersActivityDTO(), false);
+            pageRequest, user.getSystemAccount().getId(), "", new ActivityFilterDTO());
 
         assertEquals(1, activities.getTotalElements());
         ActivityDTO actualAct = activities.stream().collect(Collectors.toList()).get(0);
@@ -147,11 +145,11 @@ public class ActivityServiceImplTest {
     @Transactional
     public void getAllHiddenActivities() {
         PageRequest pageRequest = PageRequest.of(0, 1);
-        FiltersActivityDTO filtersActivityDTO = new FiltersActivityDTO();
-        filtersActivityDTO.setHiddenFilter(true);
+        ActivityFilterDTO activityFilterDTO = new ActivityFilterDTO();
+        activityFilterDTO.setHiddenFilter(true);
 
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId(), "", SearchOn.ORGANIZATION, filtersActivityDTO, false);
+            pageRequest, user.getSystemAccount().getId(), "", activityFilterDTO);
 
         assertEquals(0, activities.getTotalElements());
     }

@@ -27,11 +27,11 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.domain.enumeration.SearchOn;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.domain.view.ActivityRecord;
-import org.benetech.servicenet.service.dto.FiltersActivityDTO;
+import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.web.rest.SearchField;
-import org.benetech.servicenet.web.rest.SearchOn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -92,16 +92,16 @@ public class ActivityRepository {
         return em.createQuery(queryCriteria).getSingleResult();
     }
 
-    public Page<ActivityInfo> findAllWithFilters(UUID ownerId, String searchName, SearchOn searchOn,
-        FiltersActivityDTO filtersActivityDTO, Pageable pageable, Boolean showPartner) {
+    public Page<ActivityInfo> findAllWithFilters(UUID ownerId, String searchName,
+        ActivityFilterDTO activityFilterDTO, Pageable pageable) {
 
         CriteriaQuery<ActivityInfo> queryCriteria = cb.createQuery(ActivityInfo.class);
         Root<ActivityInfo> selectRoot = queryCriteria.from(ActivityInfo.class);
 
         queryCriteria.select(selectRoot);
 
-        addFilters(queryCriteria, selectRoot, ownerId, searchName, searchOn,
-            filtersActivityDTO, showPartner);
+        addFilters(queryCriteria, selectRoot, ownerId, searchName,
+            activityFilterDTO);
         Expression accountMatchExpression = cb.selectCase()
             .when(cb.equal(selectRoot.get(ACCOUNT_ID), ownerId), 1)
             .otherwise(0);
@@ -116,7 +116,7 @@ public class ActivityRepository {
 
         countCriteria.select(cb.countDistinct(selectRootCount));
 
-        addFilters(countCriteria, selectRootCount, ownerId, searchName, searchOn, filtersActivityDTO, showPartner);
+        addFilters(countCriteria, selectRootCount, ownerId, searchName, activityFilterDTO);
 
         List<ActivityInfo> results = em.createQuery(queryCriteria)
             .setFirstResult((int) pageable.getOffset())
@@ -139,33 +139,33 @@ public class ActivityRepository {
         return cb.and(predicate, cb.or(likePredicates.toArray(new Predicate[0])));
     }
 
-    private Predicate addLocationFilters(FiltersActivityDTO filtersActivityDTO, Predicate predicate,
+    private Predicate addLocationFilters(ActivityFilterDTO activityFilterDTO, Predicate predicate,
         Join<Organization, Location> locationJoin) {
         Join<Location, GeocodingResult> geocodingResultJoin = locationJoin.join(GEOCODING_RESULTS, JoinType.LEFT);
 
         Predicate updatedPredicate = predicate;
-        if (CollectionUtils.isNotEmpty(filtersActivityDTO.getCitiesFilterList())) {
+        if (CollectionUtils.isNotEmpty(activityFilterDTO.getCitiesFilterList())) {
             updatedPredicate = cb.and(updatedPredicate,
-                geocodingResultJoin.get(CITY).in(filtersActivityDTO.getCitiesFilterList())
+                geocodingResultJoin.get(CITY).in(activityFilterDTO.getCitiesFilterList())
             );
         }
 
-        if (CollectionUtils.isNotEmpty(filtersActivityDTO.getRegionFilterList())) {
+        if (CollectionUtils.isNotEmpty(activityFilterDTO.getRegionFilterList())) {
             updatedPredicate = cb.and(updatedPredicate,
-                geocodingResultJoin.get(REGION).in(filtersActivityDTO.getRegionFilterList())
+                geocodingResultJoin.get(REGION).in(activityFilterDTO.getRegionFilterList())
             );
         }
 
-        if (CollectionUtils.isNotEmpty(filtersActivityDTO.getPostalCodesFilterList())) {
+        if (CollectionUtils.isNotEmpty(activityFilterDTO.getPostalCodesFilterList())) {
             updatedPredicate = cb.and(updatedPredicate,
-                geocodingResultJoin.get(POSTAL_CODE).in(filtersActivityDTO.getPostalCodesFilterList())
+                geocodingResultJoin.get(POSTAL_CODE).in(activityFilterDTO.getPostalCodesFilterList())
             );
         }
         return updatedPredicate;
     }
 
-    private Predicate addDateFilter(FiltersActivityDTO filtersActivityDTO, Predicate predicate, Root<ActivityInfo> root) {
-        if (filtersActivityDTO.getDateFilter() == null) {
+    private Predicate addDateFilter(ActivityFilterDTO activityFilterDTO, Predicate predicate, Root<ActivityInfo> root) {
+        if (activityFilterDTO.getDateFilter() == null) {
             return predicate;
         }
 
@@ -174,7 +174,7 @@ public class ActivityRepository {
         ZonedDateTime fromDate = null;
         ZonedDateTime toDate = null;
 
-        switch (filtersActivityDTO.getDateFilter()) {
+        switch (activityFilterDTO.getDateFilter()) {
             case LAST_7_DAYS:
                 fromDate = now.minusDays(WEEK);
                 break;
@@ -182,11 +182,11 @@ public class ActivityRepository {
                 fromDate = now.minusDays(MONTH);
                 break;
             default:
-                if (filtersActivityDTO.getFromDate() != null) {
-                    fromDate = filtersActivityDTO.getFromDate().atStartOfDay(ZoneId.systemDefault());
+                if (activityFilterDTO.getFromDate() != null) {
+                    fromDate = activityFilterDTO.getFromDate().atStartOfDay(ZoneId.systemDefault());
                 }
-                if (filtersActivityDTO.getToDate() != null) {
-                    toDate = filtersActivityDTO.getToDate().atTime(LocalTime.MAX).atZone(ZoneId.systemDefault());
+                if (activityFilterDTO.getToDate() != null) {
+                    toDate = activityFilterDTO.getToDate().atTime(LocalTime.MAX).atZone(ZoneId.systemDefault());
                 }
         }
 
@@ -203,11 +203,11 @@ public class ActivityRepository {
 
     @SuppressWarnings("checkstyle:cyclomaticComplexity")
     private <T> void addFilters(CriteriaQuery<T> query, Root<ActivityInfo> root, UUID ownerId,
-        String searchName, SearchOn searchOn, FiltersActivityDTO filtersActivityDTO, Boolean partnerRecords) {
+        String searchName, ActivityFilterDTO activityFilterDTO) {
 
         Predicate predicate = cb.conjunction();
         Predicate isCurrentAccount = cb.equal(root.get(ACCOUNT_ID), ownerId);
-        if (!partnerRecords) {
+        if (!activityFilterDTO.getShowPartner()) {
             predicate = isCurrentAccount;
         }
 
@@ -216,56 +216,56 @@ public class ActivityRepository {
         Join<Organization, Service> serviceJoin = null;
 
         if (StringUtils.isNotBlank(searchName)) {
-            if (searchOn.equals(SearchOn.ORGANIZATION)) {
-                predicate = searchFields(predicate, orgJoin, searchName, filtersActivityDTO.getSearchFields());
-            } else if (searchOn.equals(SearchOn.LOCATIONS)) {
-                locationJoin = orgJoin.join(LOCATIONS, JoinType.LEFT);
-                predicate = searchFields(predicate, locationJoin, searchName, filtersActivityDTO.getSearchFields());
-            } else {
+            if (SearchOn.SERVICES.equals(activityFilterDTO.getSearchOn())) {
                 serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
-                predicate = searchFields(predicate, serviceJoin, searchName, filtersActivityDTO.getSearchFields());
+                predicate = searchFields(predicate, serviceJoin, searchName, activityFilterDTO.getSearchFields());
+            } else if (SearchOn.LOCATIONS.equals(activityFilterDTO.getSearchOn())) {
+                locationJoin = orgJoin.join(LOCATIONS, JoinType.LEFT);
+                predicate = searchFields(predicate, locationJoin, searchName, activityFilterDTO.getSearchFields());
+            } else {
+                predicate = searchFields(predicate, orgJoin, searchName, activityFilterDTO.getSearchFields());
             }
         }
 
-        predicate = addDateFilter(filtersActivityDTO, predicate, root);
+        predicate = addDateFilter(activityFilterDTO, predicate, root);
         Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
-        predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), filtersActivityDTO.getHiddenFilter()));
+        predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), activityFilterDTO.getHiddenFilter()));
 
-        boolean hasPartnerFilters = (CollectionUtils.isNotEmpty(filtersActivityDTO.getPartnerFilterList()));
-        if (partnerRecords || hasPartnerFilters) {
+        boolean hasPartnerFilters = (CollectionUtils.isNotEmpty(activityFilterDTO.getPartnerFilterList()));
+        if (activityFilterDTO.getShowPartner() || hasPartnerFilters) {
             Join<OrganizationMatch, Organization> matchOrgJoin = matchJoin.join(PARTNER_VERSION, JoinType.LEFT);
             Join<Organization, SystemAccount> matchAccountJoin = matchOrgJoin.join(ACCOUNT, JoinType.LEFT);
-            if (partnerRecords) {
+            if (activityFilterDTO.getShowPartner()) {
                 predicate = cb.and(predicate, cb.notEqual(matchAccountJoin.get(ID), ownerId));
                 if (hasPartnerFilters) {
                     Join<Organization, SystemAccount> accountJoin = orgJoin.join(ACCOUNT);
                     predicate = cb.and(predicate, cb.or(
-                        cb.and(cb.not(isCurrentAccount), accountJoin.get(ID).in(filtersActivityDTO.getPartnerFilterList())),
-                        matchAccountJoin.get(ID).in(filtersActivityDTO.getPartnerFilterList())
+                        cb.and(cb.not(isCurrentAccount), accountJoin.get(ID).in(activityFilterDTO.getPartnerFilterList())),
+                        matchAccountJoin.get(ID).in(activityFilterDTO.getPartnerFilterList())
                     ));
                 }
             } else {
-                predicate = cb.and(predicate, matchAccountJoin.get(ID).in(filtersActivityDTO.getPartnerFilterList()));
+                predicate = cb.and(predicate, matchAccountJoin.get(ID).in(activityFilterDTO.getPartnerFilterList()));
             }
         }
 
-        if (CollectionUtils.isNotEmpty(filtersActivityDTO.getCitiesFilterList())
-            || CollectionUtils.isNotEmpty(filtersActivityDTO.getRegionFilterList())
-            || CollectionUtils.isNotEmpty(filtersActivityDTO.getPostalCodesFilterList())) {
+        if (CollectionUtils.isNotEmpty(activityFilterDTO.getCitiesFilterList())
+            || CollectionUtils.isNotEmpty(activityFilterDTO.getRegionFilterList())
+            || CollectionUtils.isNotEmpty(activityFilterDTO.getPostalCodesFilterList())) {
 
             orgJoin = (orgJoin != null) ? orgJoin : root.join(ORGANIZATIONS, JoinType.LEFT);
             locationJoin = (locationJoin != null) ? locationJoin : orgJoin.join(LOCATIONS, JoinType.LEFT);
 
-            predicate = addLocationFilters(filtersActivityDTO, predicate, locationJoin);
+            predicate = addLocationFilters(activityFilterDTO, predicate, locationJoin);
         }
 
-        if (CollectionUtils.isNotEmpty(filtersActivityDTO.getTaxonomiesFilterList())) {
+        if (CollectionUtils.isNotEmpty(activityFilterDTO.getTaxonomiesFilterList())) {
             orgJoin = (orgJoin != null) ? orgJoin : root.join(ORGANIZATIONS, JoinType.LEFT);
             serviceJoin = (serviceJoin != null) ? serviceJoin : orgJoin.join(SERVICES, JoinType.LEFT);
             Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(TAXONOMIES, JoinType.LEFT);
             Join<ServiceTaxonomy, Taxonomy> taxonomyJoin = taxonomiesJoin.join(TAXONOMY, JoinType.LEFT);
 
-            predicate = cb.and(predicate, taxonomyJoin.get(NAME).in(filtersActivityDTO.getTaxonomiesFilterList()));
+            predicate = cb.and(predicate, taxonomyJoin.get(NAME).in(activityFilterDTO.getTaxonomiesFilterList()));
         }
 
         query.where(predicate);

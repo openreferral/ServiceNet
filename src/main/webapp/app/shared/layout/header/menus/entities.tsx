@@ -193,6 +193,11 @@ export const EntitiesMenu = props => (
       &nbsp;
       <Translate contentKey="global.menu.entities.matchSimilarity" />
     </DropdownItem>
+    <DropdownItem tag={Link} to="/entity/activity-filter">
+      <FontAwesomeIcon icon="asterisk" />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.activityFilter" />
+    </DropdownItem>
     {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
   </NavDropdown>
 );
