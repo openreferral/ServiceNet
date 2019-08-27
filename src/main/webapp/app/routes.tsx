@@ -76,7 +76,7 @@ const Routes = ({ isAdmin, isSacramento }) => (
       />
       <PrivateRoute path="/hidden-matches/" isAdmin={isAdmin} component={HiddenMatches} hasAnyAuthorities={[AUTHORITIES.USER]} />
       <ErrorBoundaryRoute path="/about-us" component={AboutUs} />
-      <ErrorBoundaryRoute path="/" component={Home} />
+      {!isSacramento && <ErrorBoundaryRoute path="/" component={Home} />}
     </Switch>
   </div>
 );
