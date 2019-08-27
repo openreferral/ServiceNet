@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { ORGANIZATION } from 'app/modules/home/filter.constants';
 
 export const ACTION_TYPES = {
   FETCH_POSTAL_CODE_LIST: 'filterActivity/FETCH_POSTAL_CODE_LIST',
@@ -28,7 +29,7 @@ const initialState = {
     partnerFilterList: [],
     taxonomiesFilterList: [],
     searchFields: [],
-    searchOn: '',
+    searchOn: ORGANIZATION,
     dateFilter: null,
     fromDate: '',
     toDate: '',
