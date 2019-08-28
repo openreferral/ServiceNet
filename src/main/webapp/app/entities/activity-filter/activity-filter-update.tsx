@@ -150,7 +150,7 @@ export class ActivityFilterUpdate extends React.Component<IActivityFilterUpdateP
                 </AvGroup>
                 <AvGroup>
                   <Label id="searchOnLabel" for="activity-filter-searchOn">
-                    <Translate contentKey="serviceNetApp.activityFilter.searchOn">Search On</Translate>
+                    <Translate contentKey="serviceNetApp.activityFilter.searchFor">Search For</Translate>
                   </Label>
                   <AvInput
                     id="activity-filter-searchOn"

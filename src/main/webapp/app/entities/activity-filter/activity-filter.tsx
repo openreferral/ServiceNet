@@ -148,7 +148,7 @@ export class ActivityFilter extends React.Component<IActivityFilterProps, IActiv
                     <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={this.sort('searchOn')}>
-                    <Translate contentKey="serviceNetApp.activityFilter.searchOn">Search On</Translate> <FontAwesomeIcon icon="sort" />
+                    <Translate contentKey="serviceNetApp.activityFilter.searchFor">Search For</Translate> <FontAwesomeIcon icon="sort" />
                   </th>
                   <th className="hand" onClick={this.sort('searchFields')}>
                     <Translate contentKey="serviceNetApp.activityFilter.searchFields">Search Fields</Translate>{' '}
