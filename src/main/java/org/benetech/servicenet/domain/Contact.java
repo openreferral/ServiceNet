@@ -1,6 +1,10 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.UniqueConstraint;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
@@ -58,6 +62,10 @@ public class Contact extends AbstractEntity implements Serializable, DeepCompara
     @ManyToOne
     @JsonIgnoreProperties("")
     private Service srvc;
+
+    @OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Phone> phones = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
