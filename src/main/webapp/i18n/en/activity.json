@@ -54,7 +54,16 @@
             "licenses": "Licenses",
             "type": "Type",
             "providerName": "Provider Name",
-            "transportation": "Transportation"
+            "transportation": "Transportation",
+            "phone": "Phone",
+            "contactName": "Contact Name",
+            "contactPhone": "Contact Phone",
+            "eligibility": "Eligibility",
+            "requiredDocument": "Required Document",
+            "language": "Language",
+            "physicalAddress": "Physical Address",
+            "postalAddress": "Postal Address",
+            "accessibility": "Accessibility"
           }
         },
         "sort": {

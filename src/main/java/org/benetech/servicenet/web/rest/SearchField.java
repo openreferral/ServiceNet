@@ -6,7 +6,6 @@ public enum SearchField {
     DESCRIPTION("description"),
     EMAIL("email"),
     URL("url"),
-    TAX_STATUS("taxStatus"),
     TAX_ID("taxId"),
     LEGAL_STATUS("legalStatus"),
     EXTERNAL_DB_ID("externalDbId"),
@@ -19,7 +18,17 @@ public enum SearchField {
     LICENSES("licenses"),
     TYPE("type"),
     PROVIDER_NAME("providerName"),
-    TRANSPORTATION("transportation");
+    TRANSPORTATION("transportation"),
+    // nested relations
+    PHONE("phone"),
+    CONTACT_NAME("contactName"),
+    CONTACT_PHONE("contactPhone"),
+    ELIGIBILITY("eligibility"),
+    REQUIRED_DOCUMENT("requiredDocument"),
+    LANGUAGE("language"),
+    PHYSICAL_ADDRESS("physicalAddress"),
+    POSTAL_ADDRESS("postalAddress"),
+    ACCESSIBILITY("accessibility");
 
     private String value;
 
