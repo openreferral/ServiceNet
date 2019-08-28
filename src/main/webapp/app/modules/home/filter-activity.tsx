@@ -215,7 +215,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                 <Row>
                   <Col md="12">
                     <div className="form-check form-check-inline">
-                      <Translate contentKey="serviceNetApp.activity.home.filter.searchOn" />:
+                      <Translate contentKey="serviceNetApp.activity.home.filter.searchFor" />:
                     </div>
                     <div className="form-check form-check-inline">
                       <input

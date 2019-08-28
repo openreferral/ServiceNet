@@ -60,7 +60,7 @@ export class ActivityFilterDetail extends React.Component<IActivityFilterDetailP
             <dd>{activityFilterEntity.taxonomiesFilterList ? activityFilterEntity.taxonomiesFilterList.join(', ') : ''}</dd>
             <dt>
               <span id="searchOn">
-                <Translate contentKey="serviceNetApp.activityFilter.searchOn">Search On</Translate>
+                <Translate contentKey="serviceNetApp.activityFilter.searchFor">Search For</Translate>
               </span>
             </dt>
             <dd>{activityFilterEntity.searchOn}</dd>
