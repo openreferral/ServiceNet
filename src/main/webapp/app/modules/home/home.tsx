@@ -37,6 +37,7 @@ export interface IHomeState extends IPaginationBaseState {
   activityList: [];
   activityFilter: [];
   isOpen: boolean;
+  error: string;
 }
 
 export class Home extends React.Component<IHomeProp, IHomeState> {
@@ -56,7 +57,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       typingTimeout: 0,
       activityList: [],
       activityFilter: [],
-      isOpen: false
+      isOpen: false,
+      error: ''
     };
   }
 
@@ -108,7 +110,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     this.props.reset();
     if (!this.state.loggingOut) {
       this.setState({ activePage: 1 }, () => {
-        this.getEntities(null);
+        this.searchEntities(null);
       });
     } else {
       this.setState({ activePage: 1, loggingOut: false });
@@ -150,11 +152,29 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     }
   };
 
+  isFilterSufficient = activityFilter => {
+    const filtersPresent = [
+      !_.isEmpty(activityFilter.citiesFilterList) ||
+        !_.isEmpty(activityFilter.regionFilterList) ||
+        !_.isEmpty(activityFilter.postalCodesFilterList),
+      !_.isEmpty(activityFilter.taxonomiesFilterList),
+      !_.isEmpty(activityFilter.partnerFilterList),
+      !!activityFilter.dateFilter
+    ];
+    return filtersPresent.filter(Boolean).length >= 2;
+  };
+
   searchEntities = activityFilter => {
-    this.props.reset();
-    this.setState({ activePage: 1 }, () => {
-      this.getEntities(activityFilter);
-    });
+    if (this.state.searchPhrase || this.isFilterSufficient(activityFilter || this.props.activityFilter)) {
+      this.props.reset();
+      this.setState({ activePage: 1, error: '' }, () => {
+        this.getEntities(activityFilter);
+      });
+    } else {
+      this.setState({
+        error: translate('serviceNetApp.activity.home.search.noFilters')
+      });
+    }
   };
 
   changeSearchPhrase = event => {
@@ -278,6 +298,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                       value={this.state.searchPhrase}
                       onChange={this.changeSearchPhrase}
                     />
+                    {this.state.error && <span className="error">{this.state.error}</span>}
                   </Col>
                   <div className="searchClearIconContainer" onClick={this.clearSearchBar}>
                     <FontAwesomeIcon icon="times-circle" size="lg" className="searchClearIcon" />
@@ -338,7 +359,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                     <Translate contentKey="serviceNetApp.activity.home.rightColumnTitle" />
                   </Col>
                 </Row>
-                {!_.isEmpty(activityList) ? (
+                {this.state.error ? null : !_.isEmpty(activityList) ? (
                   activityList.map((activity, i) => (
                     <Link
                       key={`linkToActivity${i + 1}`}
