@@ -181,18 +181,24 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
   handleFromDateChange = changeEvent => {
     const fromDate = changeEvent.target.value;
+    const toDate = this.props.activityFilter.toDate;
 
-    this.setState({ filtersChanged: true });
+    if (!toDate || !fromDate || new Date(toDate) >= new Date(fromDate)) {
+      this.setState({ filtersChanged: true });
 
-    this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
+      this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
+    }
   };
 
   handleToDateChange = changeEvent => {
     const toDate = changeEvent.target.value;
+    const fromDate = this.props.activityFilter.fromDate;
 
-    this.setState({ filtersChanged: true });
+    if (!toDate || !fromDate || new Date(toDate) >= new Date(fromDate)) {
+      this.setState({ filtersChanged: true });
 
-    this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
+      this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
+    }
   };
 
   handleOnlyShowMatchingChange = changeEvent => {
@@ -320,7 +326,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                           <Translate contentKey="serviceNetApp.activity.home.filter.from" />
                           <Input
                             type="date"
-                            value={this.props.fromDate}
+                            value={this.props.fromDate || ''}
                             onChange={this.handleFromDateChange}
                             name="fromDate"
                             id="fromDate"
@@ -328,7 +334,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                         </Col>,
                         <Col key="toDate" md="3">
                           <Translate contentKey="serviceNetApp.activity.home.filter.to" />
-                          <Input type="date" value={this.props.toDate} onChange={this.handleToDateChange} name="toDate" id="toDate" />
+                          <Input type="date" value={this.props.toDate || ''} onChange={this.handleToDateChange} name="toDate" id="toDate" />
                         </Col>
                       ]}
                 </Row>
