@@ -17,12 +17,12 @@ export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps
 export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomiesDetailsProp> {
   render() {
     const { taxonomies } = this.props;
-    const fields = taxonomies.map(taxonomy => getTextField(taxonomy, 'taxonomyDetails'));
+    const fields = taxonomies.map(taxonomy => [getTextField(taxonomy, 'taxonomyName'), getTextField(taxonomy, 'taxonomyDetails')]);
 
     return fields.length > 0 ? (
       <AdditionalDetails
         {...this.props}
-        fields={fields}
+        fields={fields[0]}
         entityClass={'ServiceTaxonomy'}
         customHeader={false}
         additionalFields={false}

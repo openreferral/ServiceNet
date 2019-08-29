@@ -13,7 +13,8 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 /**
  * Mapper for the entity Service and its DTO ServiceDTO.
  */
-@Mapper(componentModel = "spring", uses = {OrganizationMapper.class, ProgramMapper.class}, unmappedTargetPolicy = IGNORE)
+@Mapper(componentModel = "spring", uses = {OrganizationMapper.class, ProgramMapper.class, ServiceTaxonomyMapper.class},
+    unmappedTargetPolicy = IGNORE)
 public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
 
     @Mapping(source = "organization.id", target = "organizationId")
