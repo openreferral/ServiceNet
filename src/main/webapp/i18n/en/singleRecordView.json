@@ -103,6 +103,7 @@
       "holidayScheduleStartDate": "Start date",
       "holidayScheduleEndDate": "End date",
       "languageLanguage": "Language",
+      "serviceTaxonomyTaxonomyName": "Name",
       "serviceTaxonomyTaxonomyDetails": "Details",
       "imported": " updated on ",
       "conflictingDataOnePartner": " partner has conflicting data:",
