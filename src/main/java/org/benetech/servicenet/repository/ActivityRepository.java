@@ -15,6 +15,7 @@ import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
@@ -67,6 +68,20 @@ public class ActivityRepository {
     private static final String SERVICES = "services";
     private static final String TAXONOMIES = "taxonomies";
     private static final String TAXONOMY = "taxonomy";
+
+    private static final String PHONES = "phones";
+    private static final String NUMBER = "number";
+    private static final String CONTACTS = "contacts";
+    private static final String ELIGIBILITY = "eligibility";
+    private static final String DOCS = "docs";
+    private static final String DOCUMENT = "document";
+    private static final String LANGS = "langs";
+    private static final String LANGUAGE = "language";
+    private static final String PHYSICAL_ADDRESS = "physicalAddress";
+    private static final String POSTAL_ADDRESS = "postalAddress";
+    private static final String ADDRESS_1 = "address1";
+    private static final String ACCESSIBILITIES = "accessibilities";
+    private static final String ACCESSIBILITY = "accessibility";
 
     private static final Integer WEEK = 7;
     private static final Integer MONTH = 30;
@@ -128,12 +143,35 @@ public class ActivityRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
-    private Predicate searchFields(Predicate predicate, From from, String searchName, List<String> searchFieldValues) {
+    private Path getFieldPath(From from, SearchField searchField) {
+        if (searchField.equals(SearchField.PHONE)) {
+            return from.join(PHONES, JoinType.LEFT).get(NUMBER);
+        } else if (searchField.equals(SearchField.CONTACT_NAME)) {
+            return from.join(CONTACTS).get(NAME);
+        } else if (searchField.equals(SearchField.CONTACT_PHONE)) {
+            return from.join(CONTACTS).join(PHONES).get(NUMBER);
+        } else if (searchField.equals(SearchField.ELIGIBILITY)) {
+            return from.join(ELIGIBILITY).get(ELIGIBILITY);
+        } else if (searchField.equals(SearchField.REQUIRED_DOCUMENT)) {
+            return from.join(DOCS).get(DOCUMENT);
+        } else if (searchField.equals(SearchField.LANGUAGE)) {
+            return from.join(LANGS).get(LANGUAGE);
+        } else if (searchField.equals(SearchField.PHYSICAL_ADDRESS)) {
+            return from.join(PHYSICAL_ADDRESS).get(ADDRESS_1);
+        } else if (searchField.equals(SearchField.POSTAL_ADDRESS)) {
+            return from.join(POSTAL_ADDRESS).get(ADDRESS_1);
+        } else if (searchField.equals(SearchField.ACCESSIBILITY)) {
+            return from.join(ACCESSIBILITIES).get(ACCESSIBILITY);
+        }
+        return from.get(searchField.getValue());
+    }
+
+    private Predicate searchFields(Predicate predicate, From from, String searchName, ActivityFilterDTO filterDTO) {
         List<Predicate> likePredicates = new ArrayList<>();
-        for (String value : searchFieldValues) {
+        for (String value : filterDTO.getSearchFields()) {
             SearchField searchField = SearchField.fromValue(value);
             likePredicates.add(
-                cb.like(cb.upper(from.get(searchField.getValue())), '%' + searchName.trim().toUpperCase() + '%')
+                cb.like(cb.upper(getFieldPath(from, searchField)), '%' + searchName.trim().toUpperCase() + '%')
             );
         }
         return cb.and(predicate, cb.or(likePredicates.toArray(new Predicate[0])));
@@ -218,12 +256,12 @@ public class ActivityRepository {
         if (StringUtils.isNotBlank(searchName)) {
             if (SearchOn.SERVICES.equals(activityFilterDTO.getSearchOn())) {
                 serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
-                predicate = searchFields(predicate, serviceJoin, searchName, activityFilterDTO.getSearchFields());
+                predicate = searchFields(predicate, serviceJoin, searchName, activityFilterDTO);
             } else if (SearchOn.LOCATIONS.equals(activityFilterDTO.getSearchOn())) {
                 locationJoin = orgJoin.join(LOCATIONS, JoinType.LEFT);
-                predicate = searchFields(predicate, locationJoin, searchName, activityFilterDTO.getSearchFields());
+                predicate = searchFields(predicate, locationJoin, searchName, activityFilterDTO);
             } else {
-                predicate = searchFields(predicate, orgJoin, searchName, activityFilterDTO.getSearchFields());
+                predicate = searchFields(predicate, orgJoin, searchName, activityFilterDTO);
             }
         }
 
