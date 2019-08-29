@@ -37,6 +37,7 @@ export class SaveActivityFilter extends React.Component<ISaveActivityFilterProps
     axios
       .post(url, filter)
       .then(() => {
+        this.setState({ filterName: '' });
         toast.success(translate('serviceNetApp.activity.home.filter.saveSuccess'));
         this.props.getSavedFilters();
       })
