@@ -37,6 +37,9 @@
     <logger name="liquibase" level="WARN"/>
     <logger name="LiquibaseSchemaResolver" level="INFO"/>
     <logger name="sun.rmi.transport" level="WARN"/>
+    <logger name="org.benetech.servicenet.conflict.ConflictDetectionServiceImpl" level="WARN"/>
+    <logger name="org.benetech.servicenet.service.impl.OrganizationMatchServiceImpl" level="WARN"/>
+    <logger name="org.benetech.servicenet.validator.EntityValidator" level="WARN"/>
 
     <root level="WARN">
         <appender-ref ref="CONSOLE"/>
