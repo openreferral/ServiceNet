@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 public interface ActivityFilterRepository extends JpaRepository<ActivityFilter, UUID> {
 
     @Query("select activityFilter from ActivityFilter activityFilter"
-        + " where activityFilter.user.login = ?#{principal.username}")
+        + " where activityFilter.user.login = ?#{principal.username} order by name")
     List<ActivityFilter> findByUserIsCurrentUser();
 
     @Query("select activityFilter from ActivityFilter activityFilter"

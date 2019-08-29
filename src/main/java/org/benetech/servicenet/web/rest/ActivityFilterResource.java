@@ -167,8 +167,8 @@ public class ActivityFilterResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of activityFilters in body.
      */
     @GetMapping("/activity-filter/get-user-filters")
-    public ResponseEntity<Set<ActivityFilterDTO>> getAllActivityFilters() {
-        Set<ActivityFilterDTO> activityFilterDTOS = activityFilterService.getAllForCurrentUser();
+    public ResponseEntity<List<ActivityFilterDTO>> getAllActivityFilters() {
+        List<ActivityFilterDTO> activityFilterDTOS = activityFilterService.getAllForCurrentUser();
         return ResponseEntity.ok().body(activityFilterDTOS);
     }
 

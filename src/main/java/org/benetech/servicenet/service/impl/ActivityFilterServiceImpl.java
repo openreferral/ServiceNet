@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -134,10 +135,10 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<ActivityFilterDTO> getAllForCurrentUser() {
+    public List<ActivityFilterDTO> getAllForCurrentUser() {
         return activityFilterRepository.findByUserIsCurrentUser().stream()
             .map(activityFilterMapper::toDto)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
     }
 
     @Override
