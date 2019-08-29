@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -84,7 +85,7 @@ public interface ActivityFilterService {
      *
      * @return the list of entities.
      */
-    Set<ActivityFilterDTO> getAllForCurrentUser();
+    List<ActivityFilterDTO> getAllForCurrentUser();
 
     /**
      * Get the activityFilter by name and current user.
