@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import { Button, Col, Container, Row, Collapse, Card, CardBody, Input } from 'reactstrap';
 import { Translate, translate } from 'react-jhipster';
@@ -158,7 +159,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   handlePartnerChange = selectedPartner => {
     this.setState({ filtersChanged: true });
 
-    const partnerFilterList = selectedPartner;
+    const partnerFilterList = selectedPartner.map(partner => partner.value);
 
     this.props.updateActivityFilter({ ...this.props.activityFilter, partnerFilterList });
   };
@@ -201,6 +202,17 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.setState({ filtersChanged: true });
 
     this.props.updateActivityFilter({ ...this.props.activityFilter, showPartner: !onlyShowMatching });
+  };
+
+  getPartnerListValues = () => {
+    const partnerList = [];
+
+    _.forEach(this.props.selectedPartner, partnerId => {
+      const selectedPartner = _.find(this.props.partnerList, partner => partner.value === partnerId);
+      partnerList.push(selectedPartner);
+    });
+
+    return partnerList;
   };
 
   render() {
@@ -283,7 +295,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                   </Col>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.partner" />
-                    <Select value={this.props.selectedPartner} onChange={this.handlePartnerChange} options={partnerList} isMulti />
+                    <Select value={this.getPartnerListValues()} onChange={this.handlePartnerChange} options={partnerList} isMulti />
                     <div className="form-check form-check-inline">
                       <input
                         type="checkbox"
@@ -370,10 +382,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   selectedCity: storeState.filterActivity.activityFilter.citiesFilterList.map(city => ({ label: city, value: city })),
   selectedCounty: storeState.filterActivity.activityFilter.regionFilterList.map(county => ({ label: county, value: county })),
   selectedZip: storeState.filterActivity.activityFilter.postalCodesFilterList.map(code => ({ label: code, value: code })),
-  selectedPartner: storeState.filterActivity.activityFilter.partnerFilterList.map(partner => ({
-    label: partner.label,
-    value: partner.value
-  })),
+  selectedPartner: storeState.filterActivity.activityFilter.partnerFilterList,
   selectedTaxonomy: storeState.filterActivity.activityFilter.taxonomiesFilterList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
   selectedSearchFields: storeState.filterActivity.activityFilter.searchFields.map(field => ({ label: field, value: field })),
   searchOn: storeState.filterActivity.activityFilter.searchOn,
