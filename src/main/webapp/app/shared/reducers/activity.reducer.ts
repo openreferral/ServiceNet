@@ -68,14 +68,9 @@ const apiUrl = 'api/activities';
 export const getEntities = (search, page, size, sort, filter) => {
   const requestUrl = `${apiUrl}${sort ? `?search=${search}&page=${page}&size=${size}&sort=${sort}` : ''}`;
 
-  const filterDataToSend = {
-    ...filter,
-    partnerFilterList: _.map(filter.partnerFilterList, partner => partner.value)
-  };
-
   return {
     type: ACTION_TYPES.FETCH_ACTIVITY_LIST,
-    payload: axios.post<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`, filterDataToSend)
+    payload: axios.post<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`, filter)
   };
 };
 
