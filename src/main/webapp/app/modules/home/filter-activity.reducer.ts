@@ -10,6 +10,7 @@ export const ACTION_TYPES = {
   FETCH_PARTNER_LIST: 'filterActivity/FETCH_PARTNER_LIST',
   FETCH_TAXONOMY_LIST: 'filterActivity/FETCH_TAXONOMY_LIST',
   UPDATE_ACTIVITY_FILTER: 'filterActivity/UPDATE_ACTIVITY_FILTER',
+  DELETE_ACTIVITY_FILTER: 'filterActivity/DELETE_ACTIVITY_FILTER',
   FETCH_SAVED_FILTERS: 'filterActivity/FETCH_SAVED_FILTERS'
 };
 
@@ -42,6 +43,7 @@ export type FilterActivityState = Readonly<typeof initialState>;
 
 export default (state: FilterActivityState = initialState, action): FilterActivityState => {
   switch (action.type) {
+    case REQUEST(ACTION_TYPES.DELETE_ACTIVITY_FILTER):
     case REQUEST(ACTION_TYPES.FETCH_POSTAL_CODE_LIST):
     case REQUEST(ACTION_TYPES.FETCH_REGION_LIST):
     case REQUEST(ACTION_TYPES.FETCH_CITY_LIST):
