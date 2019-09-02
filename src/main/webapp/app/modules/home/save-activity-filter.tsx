@@ -7,10 +7,12 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { IRootState } from 'app/shared/reducers';
 import { updateActivityFilter, getSavedFilters } from './filter-activity.reducer';
+import ActivityFilterDeleteConfirmation from 'app/modules/home/activity-filter-delete-confirmation';
 
 export interface ISaveActivityFilterState {
   selectedFilter: any;
   filterName: string;
+  deleteDialogOpen: boolean;
 }
 
 export interface ISaveActivityFilterProps extends StateProps, DispatchProps {
@@ -21,7 +23,8 @@ export interface ISaveActivityFilterProps extends StateProps, DispatchProps {
 export class SaveActivityFilter extends React.Component<ISaveActivityFilterProps, ISaveActivityFilterState> {
   state: ISaveActivityFilterState = {
     selectedFilter: null,
-    filterName: ''
+    filterName: '',
+    deleteDialogOpen: false
   };
 
   componentDidMount() {
@@ -47,6 +50,43 @@ export class SaveActivityFilter extends React.Component<ISaveActivityFilterProps
         } else {
           toast.error(translate('serviceNetApp.activity.home.filter.saveError'));
         }
+      });
+  };
+
+  deleteFilter = () => {
+    this.setState({
+      deleteDialogOpen: true
+    });
+  };
+
+  handleDeleteDialogClose = () => {
+    this.setState({
+      deleteDialogOpen: false
+    });
+  };
+
+  handleConfirmDelete = activityFilterId => {
+    const url = `api/activity-filters/${activityFilterId}`;
+
+    axios
+      .delete(url)
+      .then(() => {
+        toast.success(translate('serviceNetApp.activity.home.filter.deleteSuccess'));
+        this.props.getSavedFilters();
+        this.setState({
+          selectedFilter: null,
+          deleteDialogOpen: false
+        });
+      })
+      .catch(error => {
+        if (error && error.response && error.response.data) {
+          toast.error(translate(error.response.data.message));
+        } else {
+          toast.error(translate('serviceNetApp.activity.home.filter.deleteError'));
+        }
+        this.setState({
+          deleteDialogOpen: false
+        });
       });
   };
 
@@ -88,7 +128,25 @@ export class SaveActivityFilter extends React.Component<ISaveActivityFilterProps
                   </Col>
                 </Row>
                 <Row>
-                  <Col md={{ size: 2, offset: 10 }}>
+                  <Col md={{ size: 2 }}>
+                    <Button
+                      color="danger"
+                      onClick={this.deleteFilter}
+                      disabled={!this.state.selectedFilter}
+                      style={{ marginTop: '1rem' }}
+                      block
+                    >
+                      <Translate contentKey="serviceNetApp.activity.home.filter.deleteFilter" />
+                      {this.state.deleteDialogOpen && (
+                        <ActivityFilterDeleteConfirmation
+                          selectedFilter={this.state.selectedFilter.value}
+                          handleClose={this.handleDeleteDialogClose}
+                          handleConfirmDelete={this.handleConfirmDelete}
+                        />
+                      )}
+                    </Button>
+                  </Col>
+                  <Col md={{ size: 2, offset: 8 }}>
                     <Button color="primary" onClick={this.saveFilter} disabled={!this.state.filterName} style={{ marginTop: '1rem' }} block>
                       <Translate contentKey="serviceNetApp.activity.home.filter.saveFilter" />
                     </Button>
