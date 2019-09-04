@@ -19,7 +19,7 @@ public interface MatchSimilarityService {
      * @param matchSimilarityDTO the entity to save.
      * @return the persisted entity.
      */
-    MatchSimilarityDTO save(MatchSimilarityDTO matchSimilarityDTO);
+    MatchSimilarityDTO saveOrUpdate(MatchSimilarityDTO matchSimilarityDTO);
 
     /**
      * Get all the matchSimilarities.
