@@ -8,6 +8,7 @@ public final class UrlNormalizationUtils {
     private static final String HTTPS = "HTTPS://";
     private static final String HTTP = "HTTP://";
     private static final String TRAILING = "/";
+    private static final String[] DOMENS = new String[] {"WIKIPEDIA", "GOOGLE", "WIX", "YAHOO", "GUIDESTAR", "YELP"};
 
     public static String normalize(String url) {
         if (url == null) {
@@ -27,7 +28,16 @@ public final class UrlNormalizationUtils {
         if (result.toUpperCase(Locale.ROOT).endsWith(TRAILING)) {
             result = result.substring(0, result.length() - 1);
         }
+        for (String domen:DOMENS) {
+            if ((result.toUpperCase(Locale.ROOT).contains(domen))) {
+                return result;
+            }
+        }
+        if (result.toUpperCase(Locale.ROOT).contains(TRAILING)) {
+            result = result.split(TRAILING)[0];
+        }
         return result;
+
     }
     
     private UrlNormalizationUtils() {
