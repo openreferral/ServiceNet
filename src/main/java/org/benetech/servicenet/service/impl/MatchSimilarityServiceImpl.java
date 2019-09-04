@@ -44,11 +44,23 @@ public class MatchSimilarityServiceImpl implements MatchSimilarityService {
      * @return the persisted entity.
      */
     @Override
-    public MatchSimilarityDTO save(MatchSimilarityDTO matchSimilarityDTO) {
+    public MatchSimilarityDTO saveOrUpdate(MatchSimilarityDTO matchSimilarityDTO) {
         log.debug("Request to save MatchSimilarity : {}", matchSimilarityDTO);
-        MatchSimilarity matchSimilarity = matchSimilarityMapper.toEntity(matchSimilarityDTO);
-        matchSimilarity = matchSimilarityRepository.save(matchSimilarity);
-        return matchSimilarityMapper.toDto(matchSimilarity);
+        Optional<MatchSimilarity> existingSimilarityOptional =
+            matchSimilarityRepository.findByResourceClassAndFieldNameAndOrganizationMatchId(
+                matchSimilarityDTO.getResourceClass(), matchSimilarityDTO.getFieldName(),
+                matchSimilarityDTO.getOrganizationMatchId()
+        );
+        if (existingSimilarityOptional.isPresent()) {
+            MatchSimilarity existingSimilarity = existingSimilarityOptional.get();
+            existingSimilarity.setSimilarity(matchSimilarityDTO.getSimilarity());
+            existingSimilarity = matchSimilarityRepository.save(existingSimilarity);
+            return matchSimilarityMapper.toDto(existingSimilarity);
+        } else {
+            MatchSimilarity matchSimilarity = matchSimilarityMapper.toEntity(matchSimilarityDTO);
+            matchSimilarity = matchSimilarityRepository.save(matchSimilarity);
+            return matchSimilarityMapper.toDto(matchSimilarity);
+        }
     }
 
     /**

@@ -62,7 +62,7 @@ public class MatchSimilarityResource {
         if (matchSimilarityDTO.getId() != null) {
             throw new BadRequestAlertException("A new matchSimilarity cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        MatchSimilarityDTO result = matchSimilarityService.save(matchSimilarityDTO);
+        MatchSimilarityDTO result = matchSimilarityService.saveOrUpdate(matchSimilarityDTO);
         return ResponseEntity.created(new URI("/api/match-similarities/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -84,7 +84,7 @@ public class MatchSimilarityResource {
         if (matchSimilarityDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        MatchSimilarityDTO result = matchSimilarityService.save(matchSimilarityDTO);
+        MatchSimilarityDTO result = matchSimilarityService.saveOrUpdate(matchSimilarityDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, matchSimilarityDTO.getId().toString()))
             .body(result);

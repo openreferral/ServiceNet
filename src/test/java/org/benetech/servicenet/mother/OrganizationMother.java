@@ -88,6 +88,14 @@ public class OrganizationMother {
         return org;
     }
 
+    public static Organization createSimiliarAndPersist(EntityManager em) {
+        Organization org = createDefault(DEFAULT_ACTIVE);
+        org.setAccount(SystemAccountMother.createDifferentAndPersist(em));
+        em.persist(org);
+        em.flush();
+        return org;
+    }
+
     public static Organization createDifferentAndPersist(EntityManager em) {
         Organization org = createDifferent();
         org.setAccount(SystemAccountMother.createDifferentAndPersist(em));

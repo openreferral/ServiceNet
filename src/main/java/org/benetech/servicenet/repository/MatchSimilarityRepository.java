@@ -1,5 +1,7 @@
 package org.benetech.servicenet.repository;
 
+import java.util.Optional;
+import java.util.Set;
 import org.benetech.servicenet.domain.MatchSimilarity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +19,9 @@ import java.util.UUID;
 public interface MatchSimilarityRepository extends JpaRepository<MatchSimilarity, UUID> {
 
     Page<MatchSimilarity> findAll(Pageable pageable);
+
+    Optional<MatchSimilarity> findByResourceClassAndFieldNameAndOrganizationMatchId(
+        String resourceClass, String fieldName, UUID organizationMatchId);
+
+    Set<MatchSimilarity> findByOrganizationMatchId(UUID organizationMatchId);
 }
