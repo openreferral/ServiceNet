@@ -3,6 +3,7 @@ os:
 language: java
 jdk:
   - oraclejdk11
+if: type = pull_request
 sudo: false
 cache:
   directories:
