@@ -126,6 +126,19 @@
   padding: 0 5px;
 }
 
+.url-link {
+  position: absolute;
+  left: 25px;
+  margin-top: 6px;
+  cursor: pointer;
+  visibility: visible;
+  color: $blue-card-text;
+}
+
+.url-icon {
+  margin-right: 10px;
+}
+
 .input-field-container {
   &:hover {
     .copy-to-clipboard-icon {
