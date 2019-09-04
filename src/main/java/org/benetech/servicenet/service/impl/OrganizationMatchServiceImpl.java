@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
@@ -8,6 +9,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.matching.model.MatchingContext;
+import org.benetech.servicenet.repository.MatchSimilarityRepository;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.MatchSimilarityService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -55,8 +57,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private final MatchSimilarityService matchSimilarityService;
 
+    private final MatchSimilarityRepository matchSimilarityRepository;
+
     private final BigDecimal orgMatchThreshold;
 
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public OrganizationMatchServiceImpl(OrganizationMatchRepository organizationMatchRepository,
                                         OrganizationMatchMapper organizationMatchMapper,
                                         OrganizationService organizationService,
@@ -64,6 +69,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
                                         ConflictDetectionService conflictDetectionService,
                                         UserService userService,
                                         MatchSimilarityService matchSimilarityService,
+                                        MatchSimilarityRepository matchSimilarityRepository,
                                         @Value("${similarity-ratio.config.organization-match-threshold}")
                                             BigDecimal orgMatchThreshold) {
         this.organizationMatchRepository = organizationMatchRepository;
@@ -74,6 +80,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         this.userService = userService;
         this.orgMatchThreshold = orgMatchThreshold;
         this.matchSimilarityService = matchSimilarityService;
+        this.matchSimilarityRepository = matchSimilarityRepository;
     }
 
     /**
@@ -87,13 +94,28 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         log.debug("Request to save OrganizationMatch : {}", organizationMatchDTO);
 
         OrganizationMatch organizationMatch = organizationMatchMapper.toEntity(organizationMatchDTO);
-        organizationMatch = save(organizationMatch);
+        organizationMatch = saveOrUpdate(organizationMatch);
         return organizationMatchMapper.toDto(organizationMatch);
     }
 
-    @Override
-    public OrganizationMatch save(OrganizationMatch organizationMatch) {
-        return organizationMatchRepository.save(organizationMatch);
+    public OrganizationMatch saveOrUpdate(OrganizationMatch organizationMatch) {
+        Optional<OrganizationMatch> existingMatchOptional =
+            organizationMatchRepository.findByOrganizationRecordAndPartnerVersion(
+            organizationMatch.getOrganizationRecord(), organizationMatch.getPartnerVersion());
+        if (existingMatchOptional.isPresent()) {
+            OrganizationMatch existingMatch = existingMatchOptional.get();
+            existingMatch.setTimestamp(organizationMatch.getTimestamp());
+            existingMatch.setDismissed(organizationMatch.getDismissed());
+            existingMatch.setDismissComment(organizationMatch.getDismissComment());
+            existingMatch.setDismissDate(organizationMatch.getDismissDate());
+            existingMatch.setDismissedBy(organizationMatch.getDismissedBy());
+            existingMatch.setHidden(organizationMatch.getHidden());
+            existingMatch.setHiddenBy(organizationMatch.getHiddenBy());
+            existingMatch.setHiddenDate(organizationMatch.getHiddenDate());
+            return organizationMatchRepository.save(existingMatch);
+        } else {
+            return organizationMatchRepository.save(organizationMatch);
+        }
     }
 
     /**
@@ -202,10 +224,10 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     @Override
     public void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context) {
         log.info(organization.getName() + ": Updating organization matches");
+        List<OrganizationMatch> matches = findCurrentMatches(organization);
+        List<OrganizationMatch> partnerMatches = findCurrentPartnersMatches(organization);
         if (organization.getActive()) {
-            List<OrganizationMatch> currentMatches = findCurrentMatches(organization);
-
-            List<UUID> hiddenMatchesIds = currentMatches.stream()
+            List<UUID> hiddenMatchesIds = matches.stream()
                 .filter(m -> BooleanUtils.isTrue((m.getHidden())))
                 .map(OrganizationMatch::getId)
                 .collect(Collectors.toList());
@@ -213,20 +235,27 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             for (UUID matchId : hiddenMatchesIds) {
                 revertHideOrganizationMatch(matchId);
             }
+            List<Organization> partnerOrganizations = findOrganizationsExcept(organization.getAccount().getName());
 
-            List<UUID> currentMatchesIds = currentMatches.stream()
-                .map(m -> m.getPartnerVersion().getId())
-                .collect(Collectors.toList());
-
-            List<Organization> notMatchedOrgs = findNotMatchedOrgs(currentMatchesIds, organization.getAccount().getName());
-
-            findAndPersistMatches(organization, notMatchedOrgs, context);
+            List<OrganizationMatch> currentMatches = findAndPersistMatches(organization, partnerOrganizations, context);
+            removeObsoleteMatches(currentMatches, matches);
+            removeObsoleteMatches(currentMatches, partnerMatches);
 
             detectConflictsForCurrentMatches(organization);
         } else {
-            removeMatches(findCurrentMatches(organization));
-            removeMatches(findCurrentPartnersMatches(organization));
+            removeMatches(matches);
+            removeMatches(partnerMatches);
         }
+    }
+
+    private void removeObsoleteMatches(List<OrganizationMatch> matches, List<OrganizationMatch> previousMatches) {
+        List<OrganizationMatch> matchesToRemove = new ArrayList<>();
+        for (OrganizationMatch match : previousMatches) {
+            if (!matches.contains(match)) {
+                matchesToRemove.add(match);
+            }
+        }
+        removeMatches(matchesToRemove);
     }
 
     @Override
@@ -324,6 +353,10 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         return organizationService.findAllOthersExcept(providerName, currentMatchesIds);
     }
 
+    private List<Organization> findOrganizationsExcept(String providerName) {
+        return organizationService.findAllOthersExcept(providerName, new ArrayList<>());
+    }
+
     private List<OrganizationMatch> findNotHiddenMatches(Organization organization) {
         return organizationMatchRepository
             .findAllByOrganizationRecordIdAndHidden(organization.getId(), false);
@@ -334,14 +367,15 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .findAllByOrganizationRecordIdAndHidden(organization.getId(), true);
     }
 
-    private List<OrganizationMatch> findAndPersistMatches(Organization organization, List<Organization> notMatchedOrgs,
-        MatchingContext context) {
+    private List<OrganizationMatch> findAndPersistMatches(Organization organization,
+        List<Organization> partnerOrganizations, MatchingContext context) {
         List<OrganizationMatch> matches = new LinkedList<>();
         long startTime = System.currentTimeMillis();
         //TODO: Remove time counting logic (#264)
         log.debug("Searching for matches for " + organization.getAccount().getName() + "'s organization '" +
-            organization.getName() + "' has started. There are " + notMatchedOrgs.size() + " organizations to compare with");
-        for (Organization partner : notMatchedOrgs) {
+            organization.getName() + "' has started. There are "
+            + partnerOrganizations.size() + " organizations to compare with");
+        for (Organization partner : partnerOrganizations) {
             List<MatchSimilarityDTO> similarityDTOs = organizationSimilarityCounter
                 .getMatchSimilarityDTOs(organization, partner, context);
             if (isSimilar(similarityDTOs)) {
@@ -357,8 +391,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         return matches;
     }
 
-    private void removeMatches(List<OrganizationMatch>  matches) {
+    private void removeMatches(List<OrganizationMatch> matches) {
         for (OrganizationMatch match : matches) {
+            matchSimilarityRepository.deleteAll(
+                matchSimilarityRepository.findByOrganizationMatchId(match.getId())
+            );
             conflictDetectionService.remove(match);
             organizationMatchRepository.delete(match);
         }
@@ -377,14 +414,14 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .partnerVersion(organization)
             .timestamp(ZonedDateTime.now());
 
-        matches.add(save(match));
-        matches.add(save(mirrorMatch));
+        matches.add(saveOrUpdate(match));
+        matches.add(saveOrUpdate(mirrorMatch));
 
         for (MatchSimilarityDTO similarityDTO : similarityDTOS) {
             similarityDTO.setOrganizationMatchId(match.getId());
-            matchSimilarityService.save(similarityDTO);
+            matchSimilarityService.saveOrUpdate(similarityDTO);
             similarityDTO.setOrganizationMatchId(mirrorMatch.getId());
-            matchSimilarityService.save(similarityDTO);
+            matchSimilarityService.saveOrUpdate(similarityDTO);
         }
         return matches;
     }

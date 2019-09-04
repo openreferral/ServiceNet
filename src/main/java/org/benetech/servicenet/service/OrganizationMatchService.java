@@ -25,7 +25,7 @@ public interface OrganizationMatchService {
      */
     OrganizationMatchDTO save(OrganizationMatchDTO organizationMatchDTO);
 
-    OrganizationMatch save(OrganizationMatch organizationMatch);
+    OrganizationMatch saveOrUpdate(OrganizationMatch organizationMatch);
 
     /**
      * Get all the organizationMatches.
