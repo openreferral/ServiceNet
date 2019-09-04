@@ -1,13 +1,12 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import { Translate, ICrudGetAction, ICrudDeleteAction } from 'react-jhipster';
+import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IActivityFilter } from 'app/shared/model/activity-filter.model';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity, deleteEntity } from './activity-filter.reducer';
+import { connect } from 'react-redux';
 
 export interface IActivityFilterDeleteDialogProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
