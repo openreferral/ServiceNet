@@ -22,6 +22,7 @@ public class UrlSimilarityCounterIntTest {
     public void shouldReturnMinRatioForDifferentNormalizedAndUpperCased() {
         assertEquals(0, urlSimilarityCounter.countSimilarityRatio("one.com", "two.com", null).compareTo(BigDecimal.valueOf(0)));
         assertEquals(0, urlSimilarityCounter.countSimilarityRatio(null, "two.com", null).compareTo(BigDecimal.valueOf(0)));
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("http://google.com/rotacarebayarea.org/index.html ", "http://google.com/zuckerbergsanfranciscogeneral.org", null).compareTo(BigDecimal.valueOf(0)));
     }
 
     @Test
@@ -34,6 +35,6 @@ public class UrlSimilarityCounterIntTest {
         assertEquals(0, urlSimilarityCounter.countSimilarityRatio("www.one.com", "https://one.com", null).compareTo(BigDecimal.valueOf(1)));
         assertEquals(0, urlSimilarityCounter.countSimilarityRatio("http://www.one.com/ ", "https://one.com", null).compareTo(BigDecimal.valueOf(1)));
         assertEquals(0, urlSimilarityCounter.countSimilarityRatio("https:// zuckerbergsanfranciscogeneral.org/", "http://zuckerbergsanfranciscogeneral. org/", null).compareTo(BigDecimal.valueOf(1)));
-        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("http://rotacarebayarea.org/index.html ", "http://www.rotacarebayarea.org/index.html", null).compareTo(BigDecimal.valueOf(1)));
+        assertEquals(0, urlSimilarityCounter.countSimilarityRatio("http://rotacarebayarea.org/index.html ", "http://www.rotacarebayarea.org", null).compareTo(BigDecimal.valueOf(1)));
     }
 }

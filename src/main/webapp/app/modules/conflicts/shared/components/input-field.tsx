@@ -120,7 +120,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
         type={type}
         name={identifier}
         id={identifier}
-        value={defaultValue != null ? defaultValue : ''}
+        value={fieldName === 'url' ? '' : defaultValue != null ? defaultValue : ''}
       />
     );
     const label = (
@@ -225,6 +225,20 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
       );
     }
 
+    let urlButton = null;
+    if (fieldName === 'url' && defaultValue) {
+      urlButton = (
+        <a className="url-link" style={{ color: 'rgba(0, 0, 0, 0.7)' }} href={this.props.activity.organization.url}>
+          <FontAwesomeIcon icon="external-link-alt" className="url-icon" />
+          {this.props.activity.organization.url.length < 100 ? (
+            `${this.props.activity.organization.url}`
+          ) : (
+            <Translate contentKey="multiRecordView.goToWebsite" />
+          )}
+        </a>
+      );
+    }
+
     const content =
       type === 'checkbox' ? (
         <FormGroup check>
@@ -238,6 +252,7 @@ export class InputField extends React.Component<IInputFieldProp, IInputFieldStat
           {label}
           <Row className="input-field-container">
             <Col>{input}</Col>
+            {urlButton}
             {icon}
             {tooltip}
             {clipboardButton}
