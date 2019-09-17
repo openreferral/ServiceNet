@@ -4,7 +4,7 @@ RUN mkdir /build
 COPY / /build
 
 WORKDIR /build
-RUN ./mvnw clean package -Pprod
+RUN ./mvnw clean package -Pprod --no-transfer-progress
 
 FROM openjdk:11
 
