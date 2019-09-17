@@ -68,6 +68,13 @@
             "physicalAddress": "Physical Address",
             "postalAddress": "Postal Address",
             "accessibility": "Accessibility"
+          },
+          "error": {
+            "specifyDates": "Please specify a From and an Until date.",
+            "specifyFromDate": "Please specify a From date.",
+            "specifyToDate": "Please specify a Until date.",
+            "untilDateEarlierThanFromDate": "Please specify a From date that is on or before the Until date.",
+            "invalidDates": "Please specify valid From and Until dates."
           }
         },
         "sort": {
