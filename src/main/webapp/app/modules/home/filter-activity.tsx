@@ -16,9 +16,12 @@ import {
 import ReactGA from 'react-ga';
 import { connect } from 'react-redux';
 import { ORGANIZATION, SERVICES, LOCATIONS, getSearchFieldOptions, getDefaultSearchFieldOptions } from 'app/modules/home/filter.constants';
+import { toast } from 'react-toastify';
 
 export interface IFilterActivityState {
   filtersChanged: boolean;
+  fromDateValid: boolean;
+  toDateValid: boolean;
 }
 
 export interface IFilterActivityProps extends StateProps, DispatchProps {
@@ -27,10 +30,14 @@ export interface IFilterActivityProps extends StateProps, DispatchProps {
   resetActivityFilter();
 }
 
+const INITIAL_STATE = {
+  filtersChanged: false,
+  fromDateValid: true,
+  toDateValid: true
+};
+
 export class FilterActivity extends React.Component<IFilterActivityProps, IFilterActivityState> {
-  state: IFilterActivityState = {
-    filtersChanged: false
-  };
+  state: IFilterActivityState = INITIAL_STATE;
 
   componentDidMount() {
     if (!this.props.isLoggingOut) {
@@ -80,10 +87,48 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
   applyFilter = () => {
     ReactGA.event({ category: 'UserActions', action: 'Applied Filter' });
-    this.props.getActivityEntities(null);
-    this.setState({ filtersChanged: false });
+    if (this.validateFilters()) {
+      this.props.getActivityEntities(null);
+      this.setState({ filtersChanged: false });
 
-    this.saveCurrentFilter({ ...this.props.activityFilter, hiddenFilter: false });
+      this.saveCurrentFilter({ ...this.props.activityFilter, hiddenFilter: false });
+    }
+  };
+
+  validateFilters = () => {
+    if (this.props.dateFilter === 'DATE_RANGE') {
+      const { fromDate, toDate } = this.props.activityFilter;
+      let fromDateValid = true;
+      let toDateValid = true;
+
+      if (!fromDate && !toDate) {
+        fromDateValid = false;
+        toDateValid = false;
+        toast.error(translate('serviceNetApp.activity.home.filter.error.specifyDates'));
+      } else if (!fromDate) {
+        fromDateValid = false;
+        toast.error(translate('serviceNetApp.activity.home.filter.error.specifyFromDate'));
+      } else if (!toDate) {
+        toDateValid = false;
+        toast.error(translate('serviceNetApp.activity.home.filter.error.specifyToDate'));
+      } else if (new Date(toDate) < new Date(fromDate)) {
+        fromDateValid = false;
+        toDateValid = false;
+        toast.error(translate('serviceNetApp.activity.home.filter.error.untilDateEarlierThanFromDate'));
+      } else if (new Date().getFullYear() - new Date(fromDate).getFullYear() > 20) {
+        fromDateValid = false;
+        toast.error(translate('serviceNetApp.activity.home.filter.error.invalidDates'));
+      } else if (new Date().getFullYear() - new Date(toDate).getFullYear() > 20) {
+        toDateValid = false;
+        toast.error(translate('serviceNetApp.activity.home.filter.error.invalidDates'));
+      }
+      this.setState({
+        fromDateValid,
+        toDateValid
+      });
+      return fromDateValid && toDateValid;
+    }
+    return true;
   };
 
   resetFilter = () => {
@@ -108,6 +153,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.resetActivityFilter();
     ReactGA.event({ category: 'UserActions', action: 'Filter Reset' });
     this.saveCurrentFilter(filter);
+    this.setState(INITIAL_STATE);
   };
 
   saveCurrentFilter = filter => {
@@ -182,24 +228,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
   handleFromDateChange = changeEvent => {
     const fromDate = changeEvent.target.value;
-    const toDate = this.props.activityFilter.toDate;
-
-    if (!toDate || !fromDate || new Date(toDate) >= new Date(fromDate)) {
-      this.setState({ filtersChanged: true });
-
-      this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
-    }
+    this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
+    this.setState({ filtersChanged: true });
   };
 
   handleToDateChange = changeEvent => {
     const toDate = changeEvent.target.value;
-    const fromDate = this.props.activityFilter.fromDate;
-
-    if (!toDate || !fromDate || new Date(toDate) >= new Date(fromDate)) {
-      this.setState({ filtersChanged: true });
-
-      this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
-    }
+    this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
+    this.setState({ filtersChanged: true });
   };
 
   handleOnlyShowMatchingChange = changeEvent => {
@@ -340,13 +376,21 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                             type="date"
                             value={this.props.fromDate || ''}
                             onChange={this.handleFromDateChange}
+                            className={this.state.fromDateValid ? '' : 'invalid'}
                             name="fromDate"
                             id="fromDate"
                           />
                         </Col>,
                         <Col key="toDate" md="3">
                           <Translate contentKey="serviceNetApp.activity.home.filter.to" />
-                          <Input type="date" value={this.props.toDate || ''} onChange={this.handleToDateChange} name="toDate" id="toDate" />
+                          <Input
+                            type="date"
+                            value={this.props.toDate || ''}
+                            onChange={this.handleToDateChange}
+                            className={this.state.toDateValid ? '' : 'invalid'}
+                            name="toDate"
+                            id="toDate"
+                          />
                         </Col>
                       ]}
                 </Row>
