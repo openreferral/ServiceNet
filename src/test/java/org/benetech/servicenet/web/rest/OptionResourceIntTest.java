@@ -147,14 +147,14 @@ public class OptionResourceIntTest {
         optionRepository.saveAndFlush(option);
 
         // Get all the optionList
-        restOptionMockMvc.perform(get("/api/options?sort=id,desc"))
+        restOptionMockMvc.perform(get("/api/options?sort=id,desc&size=2000"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(option.getId().toString())))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].value").value(hasItem(DEFAULT_VALUE)));
     }
-    
+
     @Test
     @Transactional
     public void getOption() throws Exception {
