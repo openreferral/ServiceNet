@@ -76,10 +76,9 @@
           "recent": "Recently Updated"
         },
         "search": {
-          "placeholder-ORGANIZATION": "Search by Organization. Leave blank to search all resource subject to the filters below.",
-          "placeholder-SERVICES": "Search by Service. Leave blank to search all resource subject to the filters below.",
-          "placeholder-LOCATIONS": "Search by Location. Leave blank to search all resource subject to the filters below.",
-          "noFilters": "To ensure your search returns a manageable quantity of results, please set at least 2 of the filters below"
+          "placeholder-ORGANIZATION": "Search for organizations, leave blank to search all records",
+          "placeholder-SERVICES": "Search for services, leave blank to search all records",
+          "placeholder-LOCATIONS": "Search for locations, leave blank to search all records"
         }
       },
       "created": "A new Activity is created with identifier {{ param }}",
