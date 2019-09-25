@@ -1,6 +1,8 @@
+import 'react-datepicker/dist/react-datepicker.css';
+
 import _ from 'lodash';
 import React from 'react';
-import { Button, Col, Container, Row, Collapse, Card, CardBody, Input } from 'reactstrap';
+import { Button, Col, Container, Row, Collapse, Card, CardBody } from 'reactstrap';
 import { Translate, translate } from 'react-jhipster';
 import Select from 'react-select';
 import axios from 'axios';
@@ -17,6 +19,7 @@ import ReactGA from 'react-ga';
 import { connect } from 'react-redux';
 import { ORGANIZATION, SERVICES, LOCATIONS, getSearchFieldOptions, getDefaultSearchFieldOptions } from 'app/modules/home/filter.constants';
 import { toast } from 'react-toastify';
+import DatePicker from 'react-datepicker';
 
 export interface IFilterActivityState {
   filtersChanged: boolean;
@@ -149,8 +152,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       searchFields: searchFieldOptions.map(o => o.value),
       searchOn: ORGANIZATION,
       dateFilter: null,
-      fromDate: '',
-      toDate: '',
+      fromDate: null,
+      toDate: null,
       showPartner: false
     };
 
@@ -232,14 +235,12 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.updateActivityFilter({ ...this.props.activityFilter, dateFilter: dateFilter.value });
   };
 
-  handleFromDateChange = changeEvent => {
-    const fromDate = changeEvent.target.value;
+  handleFromDateChange = fromDate => {
     this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
     this.setState({ filtersChanged: true });
   };
 
-  handleToDateChange = changeEvent => {
-    const toDate = changeEvent.target.value;
+  handleToDateChange = toDate => {
     this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
     this.setState({ filtersChanged: true });
   };
@@ -262,6 +263,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
     return partnerList;
   };
+
+  getDateOrNull = date => (date ? new Date(date) : null);
 
   render() {
     const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList, taxonomyList } = this.props;
@@ -378,22 +381,20 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                     : [
                         <Col key="fromDate" md="3">
                           <Translate contentKey="serviceNetApp.activity.home.filter.from" />
-                          <Input
-                            type="date"
-                            value={this.props.fromDate || ''}
+                          <DatePicker
+                            selected={this.getDateOrNull(this.props.activityFilter.fromDate)}
                             onChange={this.handleFromDateChange}
-                            className={this.state.fromDateValid ? '' : 'invalid'}
+                            className={this.state.fromDateValid ? 'form-control' : 'form-control invalid'}
                             name="fromDate"
                             id="fromDate"
                           />
                         </Col>,
                         <Col key="toDate" md="3">
                           <Translate contentKey="serviceNetApp.activity.home.filter.to" />
-                          <Input
-                            type="date"
-                            value={this.props.toDate || ''}
+                          <DatePicker
+                            selected={this.getDateOrNull(this.props.activityFilter.toDate)}
                             onChange={this.handleToDateChange}
-                            className={this.state.toDateValid ? '' : 'invalid'}
+                            className={this.state.toDateValid ? 'form-control' : 'form-control invalid'}
                             name="toDate"
                             id="toDate"
                           />
