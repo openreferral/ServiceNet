@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Col, Container, Row, Collapse, Card, CardBody, Input } from 'reactstrap';
+import { Button, Col, Container, Row, Collapse, Card, CardBody } from 'reactstrap';
 import { Translate, translate } from 'react-jhipster';
 import Select from 'react-select';
 import { IRootState } from 'app/shared/reducers';
@@ -14,6 +14,8 @@ import {
 import ReactGA from 'react-ga';
 import { connect } from 'react-redux';
 import { ORGANIZATION, SERVICES, LOCATIONS, getSearchFieldOptions, getDefaultSearchFieldOptions } from 'app/modules/home/filter.constants';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export interface IFilterActivityState {
   selectedCity: any;
@@ -194,17 +196,13 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.updateActivityFilter({ ...this.props.activityFilter, dateFilter: dateFilter.value });
   };
 
-  handleFromDateChange = changeEvent => {
-    const fromDate = changeEvent.target.value;
-
+  handleFromDateChange = fromDate => {
     this.setState({ fromDate, filtersChanged: true });
 
     this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
   };
 
-  handleToDateChange = changeEvent => {
-    const toDate = changeEvent.target.value;
-
+  handleToDateChange = toDate => {
     this.setState({ toDate, filtersChanged: true });
 
     this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
@@ -329,17 +327,25 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                     : [
                         <Col key="fromDate" md="3">
                           <Translate contentKey="serviceNetApp.activity.home.filter.from" />
-                          <Input
-                            type="date"
-                            value={this.state.fromDate}
+                          <DatePicker
+                            selected={this.state.fromDate}
                             onChange={this.handleFromDateChange}
+                            type="date"
                             name="fromDate"
                             id="fromDate"
+                            className="form-control"
                           />
                         </Col>,
                         <Col key="toDate" md="3">
                           <Translate contentKey="serviceNetApp.activity.home.filter.to" />
-                          <Input type="date" value={this.state.toDate} onChange={this.handleToDateChange} name="toDate" id="toDate" />
+                          <DatePicker
+                            selected={this.state.toDate}
+                            onChange={this.handleToDateChange}
+                            type="date"
+                            name="toDate"
+                            id="toDate"
+                            className="form-control"
+                          />
                         </Col>
                       ]}
                 </Row>

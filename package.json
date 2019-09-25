@@ -44,7 +44,8 @@
     "redux-thunk": "2.3.0",
     "tslib": "1.9.3",
     "uuid": "3.3.2",
-    "react-google-maps": "^9.4.5"
+    "react-google-maps": "^9.4.5",
+    "react-datepicker": "^2.9.6"
   },
   "devDependencies": {
     "@types/enzyme": "3.1.13",

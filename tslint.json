@@ -38,6 +38,7 @@
     "no-shadowed-variable": true,
     "no-string-literal": false,
     "no-switch-case-fall-through": true,
+    "no-submodule-imports": [false, "react-datepicker/dist/react-datepicker.css"],
     "no-trailing-whitespace": true,
     "no-unused-expression": [true, "allow-fast-null-checks"],
     "no-var-keyword": true,
