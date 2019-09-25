@@ -115,10 +115,16 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
         fromDateValid = false;
         toDateValid = false;
         toast.error(translate('serviceNetApp.activity.home.filter.error.untilDateEarlierThanFromDate'));
-      } else if (new Date().getFullYear() - new Date(fromDate).getFullYear() > 20) {
+      } else if (
+        new Date().getFullYear() - new Date(fromDate).getFullYear() > 20 ||
+        new Date(fromDate).getFullYear() - new Date().getFullYear() > 20
+      ) {
         fromDateValid = false;
         toast.error(translate('serviceNetApp.activity.home.filter.error.invalidDates'));
-      } else if (new Date().getFullYear() - new Date(toDate).getFullYear() > 20) {
+      } else if (
+        new Date().getFullYear() - new Date(toDate).getFullYear() > 20 ||
+        new Date(toDate).getFullYear() - new Date().getFullYear() > 20
+      ) {
         toDateValid = false;
         toast.error(translate('serviceNetApp.activity.home.filter.error.invalidDates'));
       }
