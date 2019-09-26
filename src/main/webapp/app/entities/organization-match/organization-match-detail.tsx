@@ -53,7 +53,9 @@ export class OrganizationMatchDetail extends React.Component<IOrganizationMatchD
               </span>
             </dt>
             <dd>
-              <TextFormat value={organizationMatchEntity.dismissDate} type="date" format={APP_DATE_FORMAT} />
+              {organizationMatchEntity.dismissed ? (
+                <TextFormat value={organizationMatchEntity.dismissDate} type="date" format={APP_DATE_FORMAT} />
+              ) : null}
             </dd>
             <dt>
               <Translate contentKey="serviceNetApp.organizationMatch.dismissedBy">Dismissed By</Translate>
