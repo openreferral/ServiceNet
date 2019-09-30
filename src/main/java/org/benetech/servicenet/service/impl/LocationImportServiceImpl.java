@@ -49,7 +49,6 @@ public class LocationImportServiceImpl implements LocationImportService {
         locationService.save(location);
 
         persistRelatedEntities(filledLocation, importData, location);
-        fetchGeocodeIfNeeded(importData, location);
 
         return location;
     }
@@ -57,6 +56,8 @@ public class LocationImportServiceImpl implements LocationImportService {
     private void persistRelatedEntities(Location filledLocation, ImportData importData, Location location) {
         locationBasedImportService.createOrUpdatePhysicalAddress(
             filledLocation.getPhysicalAddress(), location, importData.getReport());
+        // update geocoding results
+        locationService.save(location);
         locationBasedImportService.createOrUpdatePostalAddress(
             filledLocation.getPostalAddress(), location, importData.getReport());
         locationBasedImportService.createOrUpdateLangsForLocation(
@@ -69,11 +70,6 @@ public class LocationImportServiceImpl implements LocationImportService {
             filledLocation.getHolidaySchedules(), location, importData.getReport());
         locationBasedImportService.createOrUpdateAccessibilities(filledLocation.getAccessibilities(),
             location, importData.getReport());
-    }
-
-    private void fetchGeocodeIfNeeded(ImportData importData, Location location) {
-        geocodingResultService.findAllForAddressOrFetchIfEmpty(location.getPhysicalAddress(),
-            importData.getContext());
     }
 
     private void fillDataFromDb(Location newLocation, Location locationFromDb) {
