@@ -390,7 +390,9 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                           />
                         </Col>,
                         <Col key="toDate" md="3">
-                          <Translate contentKey="serviceNetApp.activity.home.filter.to" />
+                          <div>
+                            <Translate contentKey="serviceNetApp.activity.home.filter.to" />
+                          </div>
                           <DatePicker
                             selected={this.getDateOrNull(this.props.activityFilter.toDate)}
                             onChange={this.handleToDateChange}
