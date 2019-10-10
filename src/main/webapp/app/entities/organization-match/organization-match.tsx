@@ -193,7 +193,9 @@ export class OrganizationMatch extends React.Component<IOrganizationMatchProps, 
                   <td>{organizationMatch.dismissed ? 'true' : 'false'}</td>
                   <td>{organizationMatch.dismissComment}</td>
                   <td>
-                    <TextFormat type="date" value={organizationMatch.dismissDate} format={APP_DATE_FORMAT} />
+                    {organizationMatch.dismissDate ? (
+                      <TextFormat value={organizationMatch.dismissDate} type="date" format={APP_DATE_FORMAT} />
+                    ) : null}
                   </td>
                   <td>{organizationMatch.dismissedByName ? organizationMatch.dismissedByName : ''}</td>
                   <td>

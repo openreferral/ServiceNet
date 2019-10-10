@@ -53,7 +53,7 @@ export class OrganizationMatchDetail extends React.Component<IOrganizationMatchD
               </span>
             </dt>
             <dd>
-              {organizationMatchEntity.dismissed ? (
+              {organizationMatchEntity.dismissDate ? (
                 <TextFormat value={organizationMatchEntity.dismissDate} type="date" format={APP_DATE_FORMAT} />
               ) : null}
             </dd>
