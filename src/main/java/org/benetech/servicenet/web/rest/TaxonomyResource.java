@@ -103,6 +103,21 @@ public class TaxonomyResource {
     }
 
     /**
+     * GET  /associated-taxonomies : get all the associated taxonomies.
+     *
+     * @param pageable the pagination information
+     * @return the ResponseEntity with status 200 (OK) and the list of taxonomies in body
+     */
+    @GetMapping("/associated-taxonomies")
+    @Timed
+    public ResponseEntity<List<TaxonomyDTO>> getAssociatedTaxonomies(Pageable pageable) {
+        log.debug("REST request to get associated Taxonomies");
+        Page<TaxonomyDTO> page = taxonomyService.findAssociatedTaxonomies(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/taxonomies");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
      * GET  /taxonomies/:id : get the "id" taxonomy.
      *
      * @param id the id of the taxonomyDTO to retrieve

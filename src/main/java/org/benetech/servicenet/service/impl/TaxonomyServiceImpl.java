@@ -80,6 +80,20 @@ public class TaxonomyServiceImpl implements TaxonomyService {
     }
 
     /**
+     * Get the associated taxonomies.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TaxonomyDTO> findAssociatedTaxonomies(Pageable pageable) {
+        log.debug("Request to get associated Taxonomies");
+        return taxonomyRepository.findAssociatedTaxonomies(pageable)
+            .map(taxonomyMapper::toDto);
+    }
+
+    /**
      * Get one taxonomy by id.
      *
      * @param id the id of the entity

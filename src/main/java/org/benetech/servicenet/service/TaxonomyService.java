@@ -38,6 +38,14 @@ public interface TaxonomyService {
     Page<TaxonomyDTO> findAll(Pageable pageable);
 
     /**
+     * Get associated taxonomies.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<TaxonomyDTO> findAssociatedTaxonomies(Pageable pageable);
+
+    /**
      * Get the "id" taxonomy.
      *
      * @param id the id of the entity

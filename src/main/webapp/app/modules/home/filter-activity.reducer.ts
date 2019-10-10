@@ -21,7 +21,7 @@ const initialState = {
   regionList: [],
   cityList: [],
   partnerList: [],
-  taxonomyList: [],
+  taxonomyMap: [],
   savedFilters: [],
   activityFilter: {
     citiesFilterList: [],
@@ -93,7 +93,7 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
     case SUCCESS(ACTION_TYPES.FETCH_TAXONOMY_LIST):
       return {
         ...state,
-        taxonomyList: action.payload.data,
+        taxonomyMap: action.payload.data,
         loading: false
       };
     case SUCCESS(ACTION_TYPES.FETCH_SAVED_FILTERS):
@@ -147,7 +147,7 @@ export const getPartnerList = () => {
   };
 };
 
-export const getTaxonomyList = () => {
+export const getTaxonomyMap = () => {
   const requestUrl = `api/activity-filter/get-taxonomies`;
   return {
     type: ACTION_TYPES.FETCH_TAXONOMY_LIST,

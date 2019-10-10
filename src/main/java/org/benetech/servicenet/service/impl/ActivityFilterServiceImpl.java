@@ -1,6 +1,9 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -67,8 +70,15 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     }
 
     @Override
-    public Set<String> getTaxonomies() {
-        return taxonomyRepository.findAll().stream().map(Taxonomy::getName).collect(Collectors.toSet());
+    public Map<String, Set<String>> getTaxonomies() {
+        List<Taxonomy> taxonomies = taxonomyRepository.findAssociatedTaxonomies();
+        Map<String, Set<String>> taxonomiesByProvider = new HashMap<>();
+        for (Taxonomy taxonomy : taxonomies) {
+            Set<String> providersTaxonomies = taxonomiesByProvider.getOrDefault(taxonomy.getProviderName(), new HashSet<>());
+            providersTaxonomies.add(taxonomy.getName());
+            taxonomiesByProvider.put(taxonomy.getProviderName(), providersTaxonomies);
+        }
+        return taxonomiesByProvider;
     }
 
     /**
