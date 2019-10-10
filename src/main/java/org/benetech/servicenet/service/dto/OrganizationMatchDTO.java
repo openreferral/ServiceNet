@@ -25,7 +25,7 @@ public class OrganizationMatchDTO implements Serializable {
 
     private String dismissedByName;
 
-    private ZonedDateTime dismissedDate;
+    private ZonedDateTime dismissDate;
 
     private Boolean hidden;
 
