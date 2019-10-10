@@ -62,6 +62,9 @@ export class OrganizationMatchUpdate extends React.Component<IOrganizationMatchU
 
   saveEntity = (event, errors, values) => {
     values.timestamp = new Date(values.timestamp);
+    if (!!values.dismissDate) {
+      values.dismissDate = new Date(values.dismissDate);
+    }
 
     if (errors.length === 0) {
       const { organizationMatchEntity } = this.props;
