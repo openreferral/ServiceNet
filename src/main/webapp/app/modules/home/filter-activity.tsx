@@ -13,7 +13,7 @@ import {
   getCityList,
   getPartnerList,
   updateActivityFilter,
-  getTaxonomyList
+  getTaxonomyMap
 } from './filter-activity.reducer';
 import ReactGA from 'react-ga';
 import { connect } from 'react-redux';
@@ -48,7 +48,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       this.getRegionList();
       this.getCityList();
       this.getPartnerList();
-      this.getTaxonomyList();
+      this.getTaxonomyMap();
     }
   }
 
@@ -64,8 +64,8 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   getCityList = () => {
     this.props.getCityList();
   };
-  getTaxonomyList = () => {
-    this.props.getTaxonomyList();
+  getTaxonomyMap = () => {
+    this.props.getTaxonomyMap();
   };
 
   getDateFilterList = () => [
@@ -264,10 +264,24 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     return partnerList;
   };
 
+  mergeTaxonomyOptions = (lists, selectedPartners) => {
+    let merged = [];
+    for (const key in selectedPartners) {
+      if (selectedPartners.hasOwnProperty(key)) {
+        const partner = selectedPartners[key];
+        if (partner.label === 'Anonymous') {
+          return lists['all'];
+        }
+        merged = merged.concat(lists[partner.label]);
+      }
+    }
+    return merged;
+  };
+
   getDateOrNull = date => (date ? new Date(date) : null);
 
   render() {
-    const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList, taxonomyList } = this.props;
+    const { filterCollapseExpanded, postalCodeList, cityList, regionList, partnerList, taxonomyOptions } = this.props;
     const searchFieldList = getSearchFieldOptions(this.props.searchOn);
     return (
       <div>
@@ -364,7 +378,21 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                 <Row>
                   <Col md="3">
                     <Translate contentKey="serviceNetApp.activity.home.filter.taxonomy" />
-                    <Select value={this.props.selectedTaxonomy} onChange={this.handleTaxonomyChange} options={taxonomyList} isMulti />
+                    {this.props.onlyShowMatching ? (
+                      <Select
+                        value={this.props.selectedTaxonomy}
+                        onChange={this.handleTaxonomyChange}
+                        options={this.mergeTaxonomyOptions(taxonomyOptions, this.getPartnerListValues())}
+                        isMulti
+                      />
+                    ) : (
+                      <Select
+                        value={this.props.selectedTaxonomy}
+                        onChange={this.handleTaxonomyChange}
+                        options={taxonomyOptions['all']}
+                        isMulti
+                      />
+                    )}
                   </Col>
                 </Row>
                 <Row>
@@ -430,12 +458,21 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   }
 }
 
+function getTaxonomyOptions(taxonomyMap) {
+  const taxonomyOptions = {};
+  _.forOwn(taxonomyMap, (value, key) => {
+    taxonomyOptions[key] = value.map(taxonomy => ({ label: taxonomy, value: taxonomy }));
+  });
+  taxonomyOptions['all'] = [].concat.apply([], Object.values(taxonomyOptions));
+  return taxonomyOptions;
+}
+
 const mapStateToProps = (storeState: IRootState) => ({
   postalCodeList: storeState.filterActivity.postalCodeList.map(code => ({ label: code, value: code })),
   isLoggingOut: storeState.authentication.loggingOut,
   regionList: storeState.filterActivity.regionList.map(region => ({ label: region, value: region })),
   cityList: storeState.filterActivity.cityList.map(city => ({ label: city, value: city })),
-  taxonomyList: storeState.filterActivity.taxonomyList.map(taxonomy => ({ label: taxonomy, value: taxonomy })),
+  taxonomyOptions: getTaxonomyOptions(storeState.filterActivity.taxonomyMap),
   partnerList: storeState.filterActivity.partnerList.map(partner => ({ label: partner.name, value: partner.id })),
   activityFilter: storeState.filterActivity.activityFilter,
   selectedCity: storeState.filterActivity.activityFilter.citiesFilterList.map(city => ({ label: city, value: city })),
@@ -451,7 +488,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   onlyShowMatching: !storeState.filterActivity.activityFilter.showPartner
 });
 
-const mapDispatchToProps = { getPostalCodeList, getRegionList, getCityList, getPartnerList, getTaxonomyList, updateActivityFilter };
+const mapDispatchToProps = { getPostalCodeList, getRegionList, getCityList, getPartnerList, getTaxonomyMap, updateActivityFilter };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

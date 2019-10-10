@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -39,7 +40,7 @@ public interface ActivityFilterService {
      *
      * @return the list of Taxonomies
      */
-    Set<String> getTaxonomies();
+    Map<String, Set<String>> getTaxonomies();
 
     /**
      * Save a activityFilter.

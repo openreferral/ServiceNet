@@ -4,6 +4,7 @@ import io.github.jhipster.web.util.ResponseUtil;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -74,7 +75,7 @@ public class ActivityFilterResource {
      * GET getTaxonomies
      */
     @GetMapping("/activity-filter/get-taxonomies")
-    public Set<String> getTaxonomies() {
+    public Map<String, Set<String>> getTaxonomies() {
         return activityFilterService.getTaxonomies();
     }
 

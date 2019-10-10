@@ -17,7 +17,7 @@ import java.util.UUID;
  * Spring Data  repository for the Taxonomy entity.
  */
 @Repository
-public interface TaxonomyRepository extends JpaRepository<Taxonomy, UUID> {
+public interface TaxonomyRepository extends JpaRepository<Taxonomy, UUID>, TaxonomyRepositoryCustom {
 
     Optional<Taxonomy> findOneByExternalDbIdAndProviderName(String externalDbId, String providerName);
 
@@ -29,6 +29,6 @@ public interface TaxonomyRepository extends JpaRepository<Taxonomy, UUID> {
     @Query("SELECT DISTINCT tax.name FROM Taxonomy tax "
         + "WHERE length(tax.taxonomyId) < 3 AND tax.providerName = :providerName ORDER BY tax.name")
     SortedSet<String> getICarolTaxonomyNamesForProviderName(@Param("providerName") String providerName);
-    
+
     Page<Taxonomy> findAll(Pageable pageable);
 }
