@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Row, Button } from 'reactstrap';
 import '../../shared-record-view.scss';
-import { Translate } from 'react-jhipster';
+import { TextFormat, Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { PhysicalAddressDetails } from './physical-address-details';
@@ -13,6 +13,7 @@ import { ILocationRecord } from 'app/shared/model/location-record.model';
 import { LanguagesDetails } from '../languages-details';
 import { HolidaySchedulesDetails } from '../holiday-schedules-details';
 import { getTextField, getTextAreaField } from 'app/shared/util/single-record-view-utils';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -67,6 +68,20 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
         )}
       </h4>
     );
+
+    const itemHeader = (
+      <div>
+        <h5>
+          <Translate contentKey="multiRecordView.lastCompleteReview" />
+          <TextFormat value={record.location.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+        </h5>
+        <h5>
+          <Translate contentKey="multiRecordView.lastUpdated" />
+          <TextFormat value={record.location.updatedAt} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+        </h5>
+      </div>
+    );
+
     const additionalFields = [
       <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />,
       <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />,
@@ -94,6 +109,7 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
             entityClass={'Location'}
             customHeader={customHeader}
             additionalFields={additionalFields}
+            itemHeader={itemHeader}
             toggleAvailable
             isCustomToggle
             customToggleValue={this.state.isAreaOpen}

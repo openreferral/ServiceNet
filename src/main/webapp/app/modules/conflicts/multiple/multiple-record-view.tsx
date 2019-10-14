@@ -159,6 +159,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 <Translate contentKey="multiRecordView.yourData" />
               </h4>
               <h5>
+                <Translate contentKey="multiRecordView.lastCompleteReview" />
+                <TextFormat value={baseRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+              </h5>
+              <h5>
                 <Translate contentKey="multiRecordView.lastUpdated" />
                 <TextFormat value={baseRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
               </h5>
@@ -176,6 +180,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                     <Translate contentKey="multiRecordView.from" />
                     {partnerRecord.organization.accountName}
                   </h4>
+                  <h5>
+                    <Translate contentKey="multiRecordView.lastCompleteReview" />
+                    <TextFormat value={partnerRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                  </h5>
                   <h5>
                     <Translate contentKey="multiRecordView.lastUpdated" />
                     <TextFormat value={partnerRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />

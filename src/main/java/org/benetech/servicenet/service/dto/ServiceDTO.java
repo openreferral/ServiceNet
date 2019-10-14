@@ -53,6 +53,8 @@ public class ServiceDTO implements Serializable {
 
     private ZonedDateTime updatedAt;
 
+    private ZonedDateTime lastVerifiedOn;
+
     private UUID organizationId;
 
     private String organizationName;

@@ -17,7 +17,8 @@
     "yourData": "Your data",
     "goToWebsite": "Go to website",
     "from": "From ",
-    "lastUpdated": "Last updated  ",
+    "lastUpdated": "Last partial update ",
+    "lastCompleteReview": "Last complete review ",
     "copyToClipboard": "Copy to Clipboard",
     "copied": "Copied!",
     "backToTop": "Back to Top"

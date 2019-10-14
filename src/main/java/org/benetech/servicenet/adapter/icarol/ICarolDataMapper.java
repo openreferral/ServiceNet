@@ -2,6 +2,7 @@ package org.benetech.servicenet.adapter.icarol;
 
 import static org.mapstruct.ReportingPolicy.IGNORE;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -109,6 +110,7 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(target = "url", source = "contactDetails", qualifiedByName = "url")
     @Mapping(target = "description", source = "descriptionText")
     @Mapping(target = "externalDbId", source = "id")
+    @Mapping(target = "lastVerifiedOn", source = "lastVerifiedOn")
     @Mapping(target = "id", ignore = true)
     Organization mapOrganization(ICarolAgency agency);
 
@@ -119,6 +121,7 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
     @Mapping(target = "externalDbId", source = "id")
     @Mapping(target = "description", source = "descriptionText")
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lastVerifiedOn", source = "lastVerifiedOn")
     @Mapping(target = "eligibility", ignore = true)
     Service mapService(ICarolProgram program);
 
@@ -142,10 +145,12 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
         return OpeningHoursUtils.normalizeTime(time);
     }
 
-    default Location mapToLocation(ICarolContactDetails details, String dbId, String providerName) {
+    default Location mapToLocation(ICarolContactDetails details, ZonedDateTime lastVerifiedOn, String dbId,
+        String providerName) {
         Location result = mapToLocation(details);
         result.setExternalDbId(dbId);
         result.setProviderName(providerName);
+        result.setLastVerifiedOn(lastVerifiedOn);
         return result;
     }
 
@@ -229,10 +234,10 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
             .collect(Collectors.toSet());
     }
 
-    default Optional<Location> extractLocation(ICarolContactDetails[] contactDetails, String dbId, String providerName) {
-        return Arrays.stream(contactDetails)
+    default Optional<Location> extractLocation(ICarolSite site, String providerName) {
+        return Arrays.stream(site.getContactDetails())
             .filter(entry -> entry.getContact().getType().equals(PHYSICAL_LOCATION))
-            .findFirst().map(entry -> mapToLocation(entry, dbId, providerName));
+            .findFirst().map(entry -> mapToLocation(entry, site.getLastVerifiedOn(), site.getId(), providerName));
     }
 
     default Set<Language> extractLangs(ICarolProgram program) {

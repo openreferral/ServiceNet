@@ -7,6 +7,8 @@ import { Row, Col } from 'reactstrap';
 import Tabs from './tabs';
 import { getBaseRecord, getMatches } from '../shared/shared-record-view.reducer';
 import { RouteComponentProps } from 'react-router-dom';
+import { TextFormat, Translate } from 'react-jhipster';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   showClipboard: boolean;
@@ -32,6 +34,14 @@ export class SingleRecordView extends React.Component<ISingleRecordViewProp, ISi
       <Row>
         <Col>
           <h2>{activityRecord.organization.name}</h2>
+          <h5>
+            <Translate contentKey="singleRecordView.lastCompleteReview" />
+            <TextFormat value={activityRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          </h5>
+          <h5>
+            <Translate contentKey="singleRecordView.lastUpdated" />
+            <TextFormat value={activityRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          </h5>
           <Tabs activity={activityRecord} {...this.props} />
         </Col>
       </Row>

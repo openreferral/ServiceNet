@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 // tslint:disable-next-line:no-unused-variable
-import { Translate, ICrudGetAction, byteSize } from 'react-jhipster';
+import { Translate, ICrudGetAction, byteSize, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
@@ -68,6 +68,14 @@ export class LocationDetail extends React.Component<ILocationDetailProps> {
               </span>
             </dt>
             <dd>{locationEntity.longitude}</dd>
+            <dt>
+              <span id="updatedAt">
+                <Translate contentKey="serviceNetApp.location.updatedAt">Updated At</Translate>
+              </span>
+            </dt>
+            <dd>
+              <TextFormat value={locationEntity.updatedAt} type="date" format={APP_DATE_FORMAT} />
+            </dd>
             <dt>
               <span id="externalDbId">
                 <Translate contentKey="serviceNetApp.location.externalDbId">External Db Id</Translate>

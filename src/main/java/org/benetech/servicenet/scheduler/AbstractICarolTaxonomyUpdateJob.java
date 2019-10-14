@@ -66,4 +66,5 @@ public abstract class AbstractICarolTaxonomyUpdateJob extends BaseJob {
     private List<ICarolTaxonomy> getTaxonomiesFromJson(String json) {
         return new Gson().fromJson(json, new ListType<>(ICarolTaxonomy.class));
     }
+
 }
