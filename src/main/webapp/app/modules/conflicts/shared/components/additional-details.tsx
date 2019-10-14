@@ -13,6 +13,7 @@ export interface IAdditionalDetailsProp extends StateProps, DispatchProps {
   fields: any[];
   entityClass: string;
   customHeader: any;
+  itemHeader?: any;
   additionalFields: any;
   toggleAvailable: boolean;
   isCustomToggle: boolean;
@@ -36,7 +37,16 @@ export class AdditionalDetails extends React.Component<IAdditionalDetailsProp, I
   };
 
   render() {
-    const { fields, entityClass, customHeader, additionalFields, isCustomToggle, customToggleValue, toggleAvailable } = this.props;
+    const {
+      fields,
+      entityClass,
+      customHeader,
+      itemHeader,
+      additionalFields,
+      isCustomToggle,
+      customToggleValue,
+      toggleAvailable
+    } = this.props;
 
     return (
       <div>
@@ -55,6 +65,7 @@ export class AdditionalDetails extends React.Component<IAdditionalDetailsProp, I
           </h4>
         )}
         <Collapse isOpen={isCustomToggle ? customToggleValue : this.state.isAreaOpen}>
+          {itemHeader ? itemHeader : null}
           {fields.map((field, i) => (
             <InputField key={i} {...this.props} {...field} />
           ))}

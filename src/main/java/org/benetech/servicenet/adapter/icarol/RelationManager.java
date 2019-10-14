@@ -98,7 +98,7 @@ class RelationManager {
 
     private Optional<Location> getLocationToPersist(ImportData importData, ICarolSite site) {
         return mapper.extractLocation(
-            site.getContactDetails(), site.getId(), importData.getProviderName())
+            site, importData.getProviderName())
             .flatMap(extractedLocation -> {
                 extractedLocation.setPhysicalAddress(
                     mapper.extractPhysicalAddress(site.getContactDetails()).orElse(null));

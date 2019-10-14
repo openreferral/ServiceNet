@@ -23,8 +23,6 @@ public class ICarolBaseData extends ICarolElement {
 
     private String modified;
 
-    private String lastVerifiedOn;
-
     private Boolean isFeatured;
 
     private String languagesOffered;

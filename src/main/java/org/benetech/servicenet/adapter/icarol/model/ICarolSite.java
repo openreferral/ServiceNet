@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.icarol.model;
 
+import java.time.ZonedDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,4 +15,6 @@ public class ICarolSite extends ICarolBaseData {
     private ICarolName[] names;
 
     private ICarolAccessibility accessibility;
+
+    private ZonedDateTime lastVerifiedOn;
 }

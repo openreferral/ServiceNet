@@ -31,7 +31,8 @@
       "holidaySchedule": "Holiday Schedule",
       "langs": "Langs",
       "accessibilities": "Accessibilities",
-      "geocodingResults": "Geocoding Results"
+      "geocodingResults": "Geocoding Results",
+      "updatedAt": "Updated at"
     }
   }
 }

@@ -45,6 +45,8 @@ public class OrganizationDTO implements Serializable {
 
     private ZonedDateTime updatedAt;
 
+    private ZonedDateTime lastVerifiedOn;
+
     private UUID replacedById;
 
     private UUID sourceDocumentId;
@@ -97,6 +99,7 @@ public class OrganizationDTO implements Serializable {
             ", legalStatus='" + getLegalStatus() + "'" +
             ", active='" + isActive() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
+            ", lastVerifiedOn='" + getLastVerifiedOn() + "'" +
             ", replacedBy=" + getReplacedById() +
             ", sourceDocument=" + getSourceDocumentId() +
             ", sourceDocument='" + getSourceDocumentDateUploaded() + "'" +

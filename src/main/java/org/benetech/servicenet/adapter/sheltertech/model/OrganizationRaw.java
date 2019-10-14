@@ -1,6 +1,7 @@
 package org.benetech.servicenet.adapter.sheltertech.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.time.ZonedDateTime;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -43,7 +44,7 @@ public class OrganizationRaw {
     private String website;
 
     @SerializedName("certified_at")
-    private LocalDateTime certifiedAt;
+    private ZonedDateTime certifiedAt;
 
     @SerializedName("services")
     private List<ServiceRaw> services;

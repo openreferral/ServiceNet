@@ -1,7 +1,7 @@
 import React from 'react';
-import { Col, Row, Button } from 'reactstrap';
+import { Col, Row } from 'reactstrap';
 import '../../shared-record-view.scss';
-import { Translate } from 'react-jhipster';
+import { TextFormat, Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { OpeningHoursDetails } from '../opening-hours-details';
@@ -18,6 +18,7 @@ import { HolidaySchedulesDetails } from '../holiday-schedules-details';
 import { ContactsDetails } from '../contact/contacts-details';
 import { PhonesDetails } from '../phone/phones-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -72,6 +73,20 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
         )}
       </h4>
     );
+
+    const itemHeader = (
+      <div>
+        <h5>
+          <Translate contentKey="multiRecordView.lastCompleteReview" />
+          <TextFormat value={record.service.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+        </h5>
+        <h5>
+          <Translate contentKey="multiRecordView.lastUpdated" />
+          <TextFormat value={record.service.updatedAt} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+        </h5>
+      </div>
+    );
+
     const additionalFields = [
       <EligibilityDetails key="eligibility-details" {...this.props} eligibility={record.eligibility} />,
       <FundingDetails key="funding-details" {...this.props} funding={record.funding} />,
@@ -138,6 +153,7 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
             entityClass={'Service'}
             customHeader={customHeader}
             additionalFields={additionalFields}
+            itemHeader={itemHeader}
             toggleAvailable
             isCustomToggle
             customToggleValue={this.state.isAreaOpen}

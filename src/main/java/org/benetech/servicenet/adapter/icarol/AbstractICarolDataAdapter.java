@@ -1,10 +1,12 @@
 package org.benetech.servicenet.adapter.icarol;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import java.time.ZonedDateTime;
 import org.apache.http.Header;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
@@ -18,6 +20,7 @@ import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.manager.ImportManager;
 import org.benetech.servicenet.util.HttpUtils;
+import org.benetech.servicenet.util.ZonedDateTimeDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
@@ -31,6 +34,8 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
     private static final String SITE = "Site";
     private static final String SERVICE_SITE = "ServiceSite";
     private static final String TYPE = "type";
+
+    private static final Gson GSON = getICarolGson();
 
     @Autowired
     private EntityManager em;
@@ -60,7 +65,7 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
         }
         Type collectionType = new TypeToken<Collection<ICarolSimpleResponseElement>>() {
         }.getType();
-        Collection<ICarolSimpleResponseElement> responseElements = new Gson()
+        Collection<ICarolSimpleResponseElement> responseElements = GSON
             .fromJson(importData.getSingleObjectData(), collectionType);
         ICarolComplexResponseElement data = new ICarolComplexResponseElement(responseElements);
         return collectDataDetailsFromTheApi(data, headers, uri);
@@ -81,16 +86,16 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
 
     private void updateData(ICarolDataToPersist dataToPersist, JsonObject jsonObject, String type) {
         if (type.equals(AGENCY)) {
-            dataToPersist.addAgency(new Gson().fromJson(jsonObject, ICarolAgency.class));
+            dataToPersist.addAgency(GSON.fromJson(jsonObject, ICarolAgency.class));
         }
         if (type.equals(PROGRAM)) {
-            dataToPersist.addProgram(new Gson().fromJson(jsonObject, ICarolProgram.class));
+            dataToPersist.addProgram(GSON.fromJson(jsonObject, ICarolProgram.class));
         }
         if (type.equals(SERVICE_SITE)) {
-            dataToPersist.addServiceSite(new Gson().fromJson(jsonObject, ICarolServiceSite.class));
+            dataToPersist.addServiceSite(GSON.fromJson(jsonObject, ICarolServiceSite.class));
         }
         if (type.equals(SITE)) {
-            dataToPersist.addSite(new Gson().fromJson(jsonObject, ICarolSite.class));
+            dataToPersist.addSite(GSON.fromJson(jsonObject, ICarolSite.class));
         }
     }
 
@@ -109,5 +114,11 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
             ICarolDataCollector.collectData(data.getServiceSiteBatches(), headers, ICarolServiceSite.class, uri));
 
         return dataToPersist;
+    }
+
+    private static Gson getICarolGson() {
+        return new GsonBuilder()
+            .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeDeserializer())
+            .create();
     }
 }
