@@ -80,6 +80,8 @@ export class LocationUpdate extends React.Component<ILocationUpdateProps, ILocat
   };
 
   saveEntity = (event, errors, values) => {
+    values.updatedAt = new Date(values.updatedAt);
+
     if (errors.length === 0) {
       const { locationEntity } = this.props;
       const entity = {
@@ -208,6 +210,18 @@ export class LocationUpdate extends React.Component<ILocationUpdateProps, ILocat
                     <Translate contentKey="serviceNetApp.location.providerName">Provider Name</Translate>
                   </Label>
                   <AvField id="location-providerName" type="text" name="providerName" />
+                </AvGroup>
+                <AvGroup>
+                  <Label id="updatedAtLabel" for="updatedAt">
+                    <Translate contentKey="serviceNetApp.location.updatedAt">Updated At</Translate>
+                  </Label>
+                  <AvInput
+                    id="location-updatedAt"
+                    type="datetime-local"
+                    className="form-control"
+                    name="updatedAt"
+                    value={isNew ? null : convertDateTimeFromServer(this.props.locationEntity.updatedAt)}
+                  />
                 </AvGroup>
                 <AvGroup>
                   <Label for="location-geocodingResults">

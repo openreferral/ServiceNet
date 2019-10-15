@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.dto;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +61,14 @@ public class LocationDTO implements Serializable {
     @Getter
     @Setter
     private String organizationName;
+
+    @Getter
+    @Setter
+    private ZonedDateTime updatedAt;
+
+    @Getter
+    @Setter
+    private ZonedDateTime lastVerifiedOn;
 
     @Getter
     @Setter

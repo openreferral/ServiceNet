@@ -111,6 +111,9 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
+    @Column(name = "last_verified_on")
+    private ZonedDateTime lastVerifiedOn;
+
     @ManyToOne
     @JsonIgnoreProperties("services")
     private Organization organization;
@@ -187,6 +190,8 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
         this.externalDbId = srvc.externalDbId;
         this.providerName = srvc.providerName;
         this.organization = srvc.organization;
+        this.lastVerifiedOn = srvc.lastVerifiedOn;
+        this.updatedAt = srvc.updatedAt;
     }
 
     public Service name(String name) {
@@ -394,6 +399,11 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
         return this;
     }
 
+    public Service lastVerifiedOn(ZonedDateTime lastVerifiedOn) {
+        this.lastVerifiedOn = lastVerifiedOn;
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -434,6 +444,7 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
             ", licenses='" + getLicenses() + "'" +
             ", type='" + getType() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
+            ", lastVerifiedOn='" + getLastVerifiedOn() + "'" +
             "}";
     }
 

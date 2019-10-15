@@ -3,8 +3,10 @@ package org.benetech.servicenet.adapter.sheltertech;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
+import java.time.ZonedDateTime;
 import org.benetech.servicenet.adapter.sheltertech.model.ShelterTechRawData;
 import org.benetech.servicenet.adapter.sheltertech.type.adapter.LocalDateTimeAdapter;
+import org.benetech.servicenet.util.ZonedDateTimeDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,7 @@ public final class ShelterTechParser {
 
         return new GsonBuilder()
             .setDateFormat(LocalDateTimeAdapter.DATE_FORMAT)
+            .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeDeserializer())
             .registerTypeAdapter(LocalDateTime.class, safeDateTypeAdapter)
             .create();
     }

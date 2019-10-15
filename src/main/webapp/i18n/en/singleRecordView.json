@@ -1,5 +1,7 @@
 {
   "singleRecordView": {
+    "lastUpdated": "Last partial update ",
+    "lastCompleteReview": "Last complete review ",
     "tabs": {
       "details": "Details"
     },

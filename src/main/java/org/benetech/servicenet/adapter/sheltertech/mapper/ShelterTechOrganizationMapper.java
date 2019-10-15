@@ -74,6 +74,7 @@ public interface ShelterTechOrganizationMapper {
     @Mapping(source = "orgRaw.longDescription", target = "description")
     @Mapping(source = "orgRaw.email", target = "email", qualifiedByName = "emailFromString")
     @Mapping(source = "orgRaw.website", target = "url")
+    @Mapping(source = "orgRaw.certifiedAt", target = "lastVerifiedOn")
     @Mapping(ignore = true, target = "taxStatus")
     @Mapping(ignore = true, target = "taxId")
     @Mapping(ignore = true, target = "yearIncorporated")

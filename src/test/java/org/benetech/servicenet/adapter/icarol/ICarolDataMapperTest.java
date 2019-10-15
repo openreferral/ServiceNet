@@ -134,7 +134,10 @@ public class ICarolDataMapperTest {
         contact.setType(PHYSICAL_LOCATION);
         input.setContact(contact);
 
-        Optional<Location> extracted = mapper.extractLocation(new ICarolContactDetails[] { input }, ID, PROVIDER_NAME);
+        ICarolSite iCarolSite = new ICarolSite();
+        iCarolSite.setContactDetails(new ICarolContactDetails[] { input });
+        iCarolSite.setId(ID);
+        Optional<Location> extracted = mapper.extractLocation(iCarolSite, PROVIDER_NAME);
 
         assertTrue(extracted.isPresent());
         assertTrue(extracted.get().getIsConfidential());
@@ -192,7 +195,7 @@ public class ICarolDataMapperTest {
         assertTrue(extracted.isPresent());
         assertTrue(extracted.get().getIsConfidential());
     }
-    
+
     @Test
     public void shouldExtractNonConfidentialOrganization() {
         ICarolAgency input = new ICarolAgency();
@@ -273,7 +276,10 @@ public class ICarolDataMapperTest {
         contact.setType(PHYSICAL_LOCATION);
         input.setContact(contact);
 
-        Optional<Location> extracted = mapper.extractLocation(new ICarolContactDetails[] { input }, ID, PROVIDER_NAME);
+        ICarolSite iCarolSite = new ICarolSite();
+        iCarolSite.setContactDetails(new ICarolContactDetails[] { input });
+        iCarolSite.setId(ID);
+        Optional<Location> extracted = mapper.extractLocation(iCarolSite, PROVIDER_NAME);
 
         assertTrue(extracted.isPresent());
         assertNull(extracted.get().getIsConfidential());

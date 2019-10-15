@@ -37,6 +37,7 @@ export interface IService {
   paymentsAccepteds?: IPaymentAccepted[];
   langs?: ILanguage[];
   taxonomies?: IServiceTaxonomy[];
+  lastVerifiedOn?: Moment;
 }
 
 export const defaultValue: Readonly<IService> = {};
