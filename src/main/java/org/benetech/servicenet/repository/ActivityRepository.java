@@ -253,18 +253,6 @@ public class ActivityRepository {
         Join<Organization, Location> locationJoin = null;
         Join<Organization, Service> serviceJoin = null;
 
-        if (StringUtils.isNotBlank(searchName)) {
-            if (SearchOn.SERVICES.equals(activityFilterDTO.getSearchOn())) {
-                serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
-                predicate = searchFields(predicate, serviceJoin, searchName, activityFilterDTO);
-            } else if (SearchOn.LOCATIONS.equals(activityFilterDTO.getSearchOn())) {
-                locationJoin = orgJoin.join(LOCATIONS, JoinType.LEFT);
-                predicate = searchFields(predicate, locationJoin, searchName, activityFilterDTO);
-            } else {
-                predicate = searchFields(predicate, orgJoin, searchName, activityFilterDTO);
-            }
-        }
-
         predicate = addDateFilter(activityFilterDTO, predicate, root);
         Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
         predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), activityFilterDTO.getHiddenFilter()));
@@ -274,7 +262,7 @@ public class ActivityRepository {
             Join<OrganizationMatch, Organization> matchOrgJoin = matchJoin.join(PARTNER_VERSION, JoinType.LEFT);
             Join<Organization, SystemAccount> matchAccountJoin = matchOrgJoin.join(ACCOUNT, JoinType.LEFT);
             if (activityFilterDTO.getShowPartner()) {
-                predicate = cb.and(predicate, cb.notEqual(matchAccountJoin.get(ID), ownerId));
+                predicate = cb.or(predicate, cb.notEqual(matchAccountJoin.get(ID), ownerId));
                 if (hasPartnerFilters) {
                     Join<Organization, SystemAccount> accountJoin = orgJoin.join(ACCOUNT);
                     predicate = cb.and(predicate, cb.or(
@@ -284,6 +272,18 @@ public class ActivityRepository {
                 }
             } else {
                 predicate = cb.and(predicate, matchAccountJoin.get(ID).in(activityFilterDTO.getPartnerFilterList()));
+            }
+        }
+
+        if (StringUtils.isNotBlank(searchName)) {
+            if (SearchOn.SERVICES.equals(activityFilterDTO.getSearchOn())) {
+                serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
+                predicate = searchFields(predicate, serviceJoin, searchName, activityFilterDTO);
+            } else if (SearchOn.LOCATIONS.equals(activityFilterDTO.getSearchOn())) {
+                locationJoin = orgJoin.join(LOCATIONS, JoinType.LEFT);
+                predicate = searchFields(predicate, locationJoin, searchName, activityFilterDTO);
+            } else {
+                predicate = searchFields(predicate, orgJoin, searchName, activityFilterDTO);
             }
         }
 
