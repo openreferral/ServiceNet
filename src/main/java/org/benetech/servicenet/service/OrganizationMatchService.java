@@ -44,7 +44,7 @@ public interface OrganizationMatchService {
 
     List<OrganizationMatchDTO> findAllNotHiddenForOrganization(UUID orgId);
 
-    List<OrganizationMatchDTO> findAllHiddenOrganizationMatches();
+    List<OrganizationMatchDTO> findCurrentUsersHiddenOrganizationMatches();
 
     List<OrganizationMatchDTO> findAllNotHiddenOrganizationMatches();
 

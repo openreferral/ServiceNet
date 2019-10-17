@@ -114,7 +114,7 @@ public class OrganizationMatchResource {
     @Timed
     public List<OrganizationMatchDTO> getHiddenOrganizationMatches() {
         log.debug("REST request to get all hidden OrganizationMatches");
-        return organizationMatchService.findAllHiddenOrganizationMatches();
+        return organizationMatchService.findCurrentUsersHiddenOrganizationMatches();
     }
 
     /**

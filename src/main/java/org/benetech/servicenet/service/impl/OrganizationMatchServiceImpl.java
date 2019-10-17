@@ -7,6 +7,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
+import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.MatchSimilarityRepository;
@@ -21,6 +22,7 @@ import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMatchMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -182,10 +184,21 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     }
 
     @Override
-    public List<OrganizationMatchDTO> findAllHiddenOrganizationMatches() {
-        return organizationMatchRepository.findAllByHidden(true).stream()
-            .map(organizationMatchMapper::toDto)
-            .collect(Collectors.toCollection(LinkedList::new));
+    public List<OrganizationMatchDTO> findCurrentUsersHiddenOrganizationMatches() {
+        Optional<User> currentUser = userService.getUserWithAuthoritiesAndAccount();
+        if (currentUser.isPresent()) {
+            List<OrganizationMatch> matches;
+            if (currentUser.get().isAdmin()) {
+                matches = organizationMatchRepository.findAllByHidden(true);
+            } else {
+                matches = organizationMatchRepository.findAllByHiddenAndHiddenBy(true, currentUser.get());
+            }
+            return matches.stream()
+                .map(organizationMatchMapper::toDto)
+                .collect(Collectors.toCollection(LinkedList::new));
+        } else {
+            throw new IllegalStateException("No current user found");
+        }
     }
 
     @Override
@@ -314,13 +327,22 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Override
     public void revertHideOrganizationMatch(UUID id) {
-        organizationMatchRepository.findById(id).ifPresent(match -> {
-            match.setHidden(false);
-            match.setHiddenBy(null);
-            match.setHiddenDate(null);
+        Optional<User> currentUser = userService.getUserWithAuthoritiesAndAccount();
+        if (currentUser.isPresent()) {
+            organizationMatchRepository.findById(id).ifPresent(match -> {
+                if (currentUser.get().isAdmin() || match.getHiddenBy().equals(currentUser.get())) {
+                    match.setHidden(false);
+                    match.setHiddenBy(null);
+                    match.setHiddenDate(null);
 
-            organizationMatchRepository.save(match);
-        });
+                    organizationMatchRepository.save(match);
+                } else {
+                    throw new AccessDeniedException("Cannot reinstate matches hidden by another user");
+                }
+            });
+        } else {
+            throw new IllegalStateException("No current user found");
+        }
     }
 
     private void detectConflictsForCurrentMatches(Organization organization) {
