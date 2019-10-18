@@ -471,6 +471,7 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
             Objects.equals(this.updatedAt, srvc.updatedAt) &&
             Objects.equals(this.externalDbId, srvc.externalDbId) &&
             Objects.equals(this.providerName, srvc.providerName) &&
+            Objects.equals(this.lastVerifiedOn, srvc.lastVerifiedOn) &&
             CompareUtils.deepEquals(locations, srvc.locations) &&
             CompareUtils.deepEquals(regularSchedule, srvc.regularSchedule) &&
             CompareUtils.deepEquals(holidaySchedules, srvc.holidaySchedules) &&

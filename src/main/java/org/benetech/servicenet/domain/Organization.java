@@ -315,7 +315,8 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
             Objects.equals(org.legalStatus, this.legalStatus) &&
             Objects.equals(org.active, this.active) &&
             Objects.equals(org.updatedAt, this.updatedAt) &&
-            Objects.equals(org.externalDbId, this.externalDbId)
+            Objects.equals(org.externalDbId, this.externalDbId) &&
+            Objects.equals(org.lastVerifiedOn, this.lastVerifiedOn)
         )) {
             return false;
         }

@@ -323,6 +323,8 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
             Objects.equals(this.longitude, loc.longitude) &&
             Objects.equals(this.externalDbId, loc.externalDbId) &&
             Objects.equals(this.providerName, loc.providerName) &&
+            Objects.equals(this.updatedAt, loc.updatedAt) &&
+            Objects.equals(this.lastVerifiedOn, loc.lastVerifiedOn) &&
             CompareUtils.deepEquals(physicalAddress, loc.physicalAddress) &&
             CompareUtils.deepEquals(postalAddress, loc.postalAddress) &&
             CompareUtils.deepEquals(regularSchedule, loc.regularSchedule) &&
