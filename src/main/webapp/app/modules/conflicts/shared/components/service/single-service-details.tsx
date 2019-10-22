@@ -19,6 +19,7 @@ import { ContactsDetails } from '../contact/contacts-details';
 import { PhonesDetails } from '../phone/phones-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 import { APP_DATE_FORMAT } from 'app/config/constants';
+import Select from 'react-select';
 
 export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -29,6 +30,7 @@ export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   columnSize: number;
   showClipboard: boolean;
   isAreaOpen: boolean;
+  selectOptions: any;
 }
 
 export interface ISingleServiceDetailsState {
@@ -46,32 +48,27 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     });
   };
 
-  changeRecord = offset => () => {
+  changeRecord = record => {
     this.setState({ isAreaOpen: true });
-    this.props.changeRecord(offset);
+    this.props.changeRecord(record.value);
   };
 
   render() {
-    const { record, isOnlyOne, columnSize } = this.props;
+    const { record, isOnlyOne, columnSize, selectOptions, servicesCount } = this.props;
     const customHeader = (
-      <h4 className="title">
-        <div className="collapseBtn" onClick={this.toggleAreaOpen}>
+      <div className="title d-flex justify-content-start align-items-center mb-1">
+        <div className="col-3 collapseBtn d-flex justify-content-start align-items-center pr-1 h4 mb-0 pl-0" onClick={this.toggleAreaOpen}>
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleServices" /> <span className="text-blue">{this.props.servicesCount}</span>
+          <Translate contentKey="singleRecordView.details.titleServices" /> <span className="text-blue">{servicesCount}</span>
         </div>
         {isOnlyOne ? null : (
-          <span>
-            <span role="button" onClick={this.changeRecord(-1)}>
-              <FontAwesomeIcon className="text-blue" icon="chevron-left" /> <Translate contentKey="singleRecordView.details.prev" />
-            </span>
-            <span role="button" onClick={this.changeRecord(1)}>
-              <Translate contentKey="singleRecordView.details.next" /> <FontAwesomeIcon className="text-blue" icon="chevron-right" />
-            </span>
-          </span>
+          <div className="w-100">
+            <Select onChange={this.changeRecord} options={selectOptions} />
+          </div>
         )}
-      </h4>
+      </div>
     );
 
     const itemHeader = (

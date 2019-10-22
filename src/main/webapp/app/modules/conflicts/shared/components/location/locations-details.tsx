@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { SingleLocationDetails } from './single-location-details';
 import { ILocationRecord } from 'app/shared/model/location-record.model';
+import _ from 'lodash';
 
 export interface ILocationsDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -24,14 +25,7 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
     isAreaOpen: this.props.isAreaOpen
   };
 
-  changeRecord = offset => {
-    let locationNumber = 0;
-    const offsetServiceNumber = this.state.locationNumber + offset;
-    if (offsetServiceNumber < 0) {
-      locationNumber = this.props.locations.length - 1;
-    } else if (offsetServiceNumber < this.props.locations.length) {
-      locationNumber = offsetServiceNumber;
-    }
+  changeRecord = locationNumber => {
     this.setState({ locationNumber });
   };
 
@@ -43,6 +37,10 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
       locations.length > locationNumber ? (
         <SingleLocationDetails
           {...this.props}
+          selectOptions={_.map(locations, (l, idx) => ({
+            value: idx,
+            label: l.location.name || `${l.physicalAddress.address1} ${l.physicalAddress.city}`
+          }))}
           changeRecord={this.changeRecord}
           isOnlyOne={locations.length <= 1}
           record={record}

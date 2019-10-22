@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IServiceRecord } from 'app/shared/model/service-record.model';
 import { SingleServiceDetails } from './single-service-details';
+import _ from 'lodash';
 
 export interface IServicesDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -24,14 +25,7 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
     isAreaOpen: this.props.isAreaOpen
   };
 
-  changeRecord = offset => {
-    let serviceNumber = 0;
-    const offsetServiceNumber = this.state.serviceNumber + offset;
-    if (offsetServiceNumber < 0) {
-      serviceNumber = this.props.services.length - 1;
-    } else if (offsetServiceNumber < this.props.services.length) {
-      serviceNumber = offsetServiceNumber;
-    }
+  changeRecord = serviceNumber => {
     this.setState({ serviceNumber });
   };
 
@@ -44,6 +38,7 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
         <SingleServiceDetails
           {...this.props}
           changeRecord={this.changeRecord}
+          selectOptions={_.map(services, (s, idx) => ({ value: idx, label: s.service.name }))}
           isOnlyOne={services.length <= 1}
           record={record}
           servicesCount={`(${serviceNumber + 1}/${services.length}) `}
