@@ -61,7 +61,7 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleServices" /> <span className="text-blue">{servicesCount}</span>
+          <Translate contentKey="singleRecordView.details.titleServices" /> <span className="text-blue ml-1">{servicesCount}</span>
         </div>
         {isOnlyOne ? null : (
           <div className="w-100">

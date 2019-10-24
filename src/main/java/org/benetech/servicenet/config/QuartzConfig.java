@@ -2,6 +2,7 @@ package org.benetech.servicenet.config;
 
 import static io.github.jhipster.config.JHipsterConstants.SPRING_PROFILE_DEVELOPMENT;
 import static io.github.jhipster.config.JHipsterConstants.SPRING_PROFILE_PRODUCTION;
+import static org.benetech.servicenet.config.Constants.SPRING_PROFILE_STAGING;
 
 import java.util.Properties;
 import org.benetech.servicenet.scheduler.AutowiringBeanJobFactory;
@@ -23,7 +24,7 @@ public class QuartzConfig {
     private QuartzProperties quartzProperties;
 
     @Bean
-    @Profile({ SPRING_PROFILE_PRODUCTION, SPRING_PROFILE_DEVELOPMENT} )
+    @Profile({ SPRING_PROFILE_PRODUCTION, SPRING_PROFILE_DEVELOPMENT, SPRING_PROFILE_STAGING} )
     public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
 
