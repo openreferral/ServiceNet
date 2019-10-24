@@ -46,6 +46,14 @@ java -jar target/*.war
 
 Refer to [Using JHipster in production][] for more details.
 
+## Building for staging
+
+To run the ServiceNet application with staging profile (this profile is similar to production, but for testing purposes), run:
+
+```bash
+./mvnw -Pstaging clean package
+```
+
 ## UI Development
 To enable live reloading of your client-side code, run:
 ```bash
@@ -95,17 +103,22 @@ docker-compose -f src/main/docker/postgresql.yml down
 ```
 
 You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-```bash
-./mvnw package -Pprod jib:dockerBuild
-```
-
-Then run:
-
-```bash
-docker-compose -f src/main/docker/app.yml up -d
-```
+To achieve this, first build and run a docker image of your app by running one of these command options:
+- Production spring profile:
+    ```bash
+    ./mvnw package -Pprod jib:dockerBuild
+    ```
+    ```bash
+    docker-compose -f src/main/docker/app.yml up -d
+    ```
+- Staging spring profile (this profile is similar to production, but for testing purposes):
+    ```bash
+    ./mvnw package -Pstaging jib:dockerBuild
+    ```
+    
+    ```bash
+    docker-compose -f src/main/docker/app-staging.yml up -d
+    ```
 
 For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
 
