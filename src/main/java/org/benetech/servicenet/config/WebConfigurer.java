@@ -39,6 +39,7 @@ import java.util.EnumSet;
 import java.util.Locale;
 
 import static java.net.URLDecoder.decode;
+import static org.benetech.servicenet.config.Constants.SPRING_PROFILE_STAGING;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.
@@ -67,7 +68,8 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         }
         EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
         initMetrics(servletContext, disps);
-        if (env.acceptsProfiles(JHipsterConstants.SPRING_PROFILE_PRODUCTION)) {
+        if (env.acceptsProfiles(JHipsterConstants.SPRING_PROFILE_PRODUCTION) ||
+            env.acceptsProfiles(SPRING_PROFILE_STAGING)) {
             initCachingHttpHeadersFilter(servletContext, disps);
         }
         if (env.acceptsProfiles(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)) {

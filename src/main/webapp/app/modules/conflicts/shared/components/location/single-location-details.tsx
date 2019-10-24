@@ -56,7 +56,7 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
-          <Translate contentKey="singleRecordView.details.titleLocations" /> <span className="text-blue">{locationsCount}</span>
+          <Translate contentKey="singleRecordView.details.titleLocations" /> <span className="text-blue ml-1">{locationsCount}</span>
         </div>
         {isOnlyOne ? null : (
           <div className="w-100">
