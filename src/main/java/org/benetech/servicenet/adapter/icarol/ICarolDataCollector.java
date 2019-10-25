@@ -1,8 +1,10 @@
 package org.benetech.servicenet.adapter.icarol;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import java.time.ZonedDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.benetech.servicenet.adapter.icarol.model.ICarolBaseData;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.benetech.servicenet.util.ZonedDateTimeDeserializer;
 
 @Slf4j
 final class ICarolDataCollector {
@@ -34,7 +37,7 @@ final class ICarolDataCollector {
         } catch (IOException e) {
             throw new IllegalStateException("Cannot connect with iCarol API");
         }
-        return new Gson().fromJson(response, JsonArray.class);
+        return getICarolGson().fromJson(response, JsonArray.class);
     }
 
     static <T extends ICarolBaseData> List<T> collectData(List<List<ICarolSimpleResponseElement>> batches,
@@ -47,7 +50,7 @@ final class ICarolDataCollector {
             jsonArray.addAll(getData(headers, batch, uri));
         }
 
-        Gson gson = new Gson();
+        Gson gson = getICarolGson();
         for (JsonElement object : jsonArray) {
             result.add(gson.fromJson(object, clazz));
         }
@@ -112,5 +115,11 @@ final class ICarolDataCollector {
     }
 
     private ICarolDataCollector() {
+    }
+
+    private static Gson getICarolGson() {
+        return new GsonBuilder()
+            .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeDeserializer())
+            .create();
     }
 }
