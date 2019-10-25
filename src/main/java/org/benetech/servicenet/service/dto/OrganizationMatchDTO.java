@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.dto;
 
+import java.util.Map;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -42,6 +43,8 @@ public class OrganizationMatchDTO implements Serializable {
     private UUID partnerVersionId;
 
     private String partnerVersionName;
+
+    private Map<UUID, UUID> locationMatches;
 
     public Boolean isDismissed() {
         return dismissed;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Row, Button } from 'reactstrap';
 import '../../shared-record-view.scss';
-import { TextFormat, Translate } from 'react-jhipster';
+import { TextFormat, translate, Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { PhysicalAddressDetails } from './physical-address-details';
@@ -26,6 +26,9 @@ export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   showClipboard: boolean;
   isAreaOpen: boolean;
   selectOptions: any;
+  matchLocations?: boolean;
+  toggleMatchLocations?: any;
+  isBaseRecord: boolean;
 }
 
 export interface ISingleLocationDetailsState {
@@ -49,7 +52,7 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
   };
 
   render() {
-    const { record, isOnlyOne, columnSize, locationsCount, selectOptions } = this.props;
+    const { record, isOnlyOne, columnSize, locationsCount, selectOptions, isBaseRecord, matchLocations, toggleMatchLocations } = this.props;
     const customHeader = (
       <div className="title d-flex justify-content-start align-items-center mb-1">
         <div className="col-3 collapseBtn d-flex justify-content-start align-items-center pr-1 h4 mb-0 pl-0" onClick={this.toggleAreaOpen}>
@@ -59,10 +62,23 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
           <Translate contentKey="singleRecordView.details.titleLocations" /> <span className="text-blue ml-1">{locationsCount}</span>
         </div>
         {isOnlyOne ? null : (
-          <div className="w-100">
+          <div className={isBaseRecord ? 'col-8 changeRecordSelect' : 'w-100'}>
             <Select onChange={this.changeRecord} options={selectOptions} />
           </div>
         )}
+        {isBaseRecord ? (
+          <div className={isOnlyOne ? 'col-1 offset-8' : 'col-1'}>
+            <input
+              checked={matchLocations}
+              onChange={toggleMatchLocations}
+              type="checkbox"
+              title={translate('multiRecordView.locationCheckboxTooltip')}
+            />
+            <div className="chainIcon">
+              <FontAwesomeIcon size="sm" icon="link" />
+            </div>
+          </div>
+        ) : null}
       </div>
     );
 
