@@ -196,11 +196,19 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
               </h4>
               <h5>
                 <Translate contentKey="multiRecordView.lastCompleteReview" />
-                <TextFormat value={baseRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                {baseRecord.organization.lastVerifiedOn ? (
+                  <TextFormat value={baseRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                ) : (
+                  <Translate contentKey="multiRecordView.unknown" />
+                )}
               </h5>
               <h5>
                 <Translate contentKey="multiRecordView.lastUpdated" />
-                <TextFormat value={baseRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                {baseRecord.lastUpdated ? (
+                  <TextFormat value={baseRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                ) : (
+                  <Translate contentKey="multiRecordView.unknown" />
+                )}
               </h5>
               <Details
                 activity={baseRecord}
@@ -227,11 +235,19 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                   </h4>
                   <h5>
                     <Translate contentKey="multiRecordView.lastCompleteReview" />
-                    <TextFormat value={partnerRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                    {partnerRecord.organization.lastVerifiedOn ? (
+                      <TextFormat value={partnerRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                    ) : (
+                      <Translate contentKey="multiRecordView.unknown" />
+                    )}
                   </h5>
                   <h5>
                     <Translate contentKey="multiRecordView.lastUpdated" />
-                    <TextFormat value={partnerRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                    {partnerRecord.lastUpdated ? (
+                      <TextFormat value={partnerRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+                    ) : (
+                      <Translate contentKey="multiRecordView.unknown" />
+                    )}
                   </h5>
                 </Col>
                 <div style={{ top: '-10px', right: '5px', position: 'absolute' }}>
