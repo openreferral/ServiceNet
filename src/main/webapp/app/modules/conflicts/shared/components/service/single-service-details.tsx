@@ -75,11 +75,19 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
       <div>
         <h5>
           <Translate contentKey="multiRecordView.lastCompleteReview" />
-          <TextFormat value={record.service.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          {record.service.lastVerifiedOn ? (
+            <TextFormat value={record.service.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          ) : (
+            <Translate contentKey="multiRecordView.unknown" />
+          )}
         </h5>
         <h5>
           <Translate contentKey="multiRecordView.lastUpdated" />
-          <TextFormat value={record.service.updatedAt} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          {record.service.updatedAt ? (
+            <TextFormat value={record.service.updatedAt} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          ) : (
+            <Translate contentKey="multiRecordView.unknown" />
+          )}
         </h5>
       </div>
     );

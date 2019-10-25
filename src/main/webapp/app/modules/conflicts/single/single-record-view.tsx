@@ -35,12 +35,20 @@ export class SingleRecordView extends React.Component<ISingleRecordViewProp, ISi
         <Col>
           <h2>{activityRecord.organization.name}</h2>
           <h5>
-            <Translate contentKey="singleRecordView.lastCompleteReview" />
-            <TextFormat value={activityRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+            <Translate contentKey="multiRecordView.lastCompleteReview" />
+            {activityRecord.organization.lastVerifiedOn ? (
+              <TextFormat value={activityRecord.organization.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+            ) : (
+              <Translate contentKey="multiRecordView.unknown" />
+            )}
           </h5>
           <h5>
-            <Translate contentKey="singleRecordView.lastUpdated" />
-            <TextFormat value={activityRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+            <Translate contentKey="multiRecordView.lastUpdated" />
+            {activityRecord.lastUpdated ? (
+              <TextFormat value={activityRecord.lastUpdated} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+            ) : (
+              <Translate contentKey="multiRecordView.unknown" />
+            )}
           </h5>
           <Tabs activity={activityRecord} {...this.props} />
         </Col>
