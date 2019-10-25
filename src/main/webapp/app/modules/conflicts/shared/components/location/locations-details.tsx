@@ -12,6 +12,11 @@ export interface ILocationsDetailsProp extends StateProps, DispatchProps {
   locations: ILocationRecord[];
   showClipboard: boolean;
   isAreaOpen: boolean;
+  selectLocation?: any;
+  matchingLocation?: any;
+  matchLocations?: boolean;
+  toggleMatchLocations?: any;
+  isBaseRecord: boolean;
 }
 
 export interface ILocationsDetailsState {
@@ -25,13 +30,32 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
     isAreaOpen: this.props.isAreaOpen
   };
 
+  componentDidMount() {
+    if (this.props.selectLocation) {
+      this.props.selectLocation(this.props.locations[this.state.locationNumber]);
+    }
+  }
+
   changeRecord = locationNumber => {
     this.setState({ locationNumber });
+    if (this.props.selectLocation) {
+      this.props.selectLocation(this.props.locations[locationNumber]);
+    }
+  };
+
+  getLocationNumber = () => {
+    const { matchLocations, matchingLocation, locations } = this.props;
+    if (matchLocations && matchingLocation) {
+      const idx = _.findIndex(locations, l => l.location.id === matchingLocation);
+      return idx >= 0 ? idx : this.state.locationNumber;
+    } else {
+      return this.state.locationNumber;
+    }
   };
 
   render() {
     const { locations, isAreaOpen } = this.props;
-    const { locationNumber } = this.state;
+    const locationNumber = this.getLocationNumber();
     const record = locations[locationNumber];
     const locationDetails =
       locations.length > locationNumber ? (

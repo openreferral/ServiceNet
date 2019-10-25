@@ -127,7 +127,8 @@
     <include file="config/liquibase/changelog/20190521171012_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190522132906_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190605133534_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190605133534_changelog.xml" relativeToChangelogFile="false"/>    <include file="config/liquibase/changelog/20190522132906_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190605133534_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190522132906_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190530112158_alter_entity_Phone.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190530112159_insert_initial_Options.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190606153145_changelog.xml" relativeToChangelogFile="false"/>
@@ -148,4 +149,5 @@
     <include file="config/liquibase/liquibase.quartz.init.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190823120904_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190808171712_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20191022125054_changelog.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

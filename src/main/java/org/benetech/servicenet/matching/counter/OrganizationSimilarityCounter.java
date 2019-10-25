@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.LocationMatch;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.matching.model.MatchingContext;
+import org.benetech.servicenet.service.LocationMatchService;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,8 +39,14 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
     @Autowired
     private WeightProvider weightProvider;
 
+    @Autowired
+    private LocationMatchService locationMatchService;
+
     @Value("${similarity-ratio.config.location.always-compare}")
     private Boolean alwaysCompareLocations;
+
+    @Value("${similarity-ratio.config.location.match-threshold}")
+    private BigDecimal locationMatchThreshold;
 
     @Override
     public BigDecimal countSimilarityRatio(Organization org1, Organization org2, MatchingContext context) {
@@ -129,6 +137,19 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
                     .multiply(weightProvider.getLocationWeight());
                 if (similarity.compareTo(max) > 0) {
                     max = similarity;
+                }
+                if (similarity.compareTo(locationMatchThreshold) >= 0) {
+                    LocationMatch locationMatch = new LocationMatch();
+                    locationMatch.setLocation(location1);
+                    locationMatch.setMatchingLocation(location2);
+                    locationMatchService.saveOrUpdate(locationMatch);
+                    LocationMatch mirrorMatch = new LocationMatch();
+                    mirrorMatch.setLocation(location2);
+                    mirrorMatch.setMatchingLocation(location1);
+                    locationMatchService.saveOrUpdate(mirrorMatch);
+                } else if (location1 != null && location2 != null) {
+                    locationMatchService.delete(location1.getId(), location2.getId());
+                    locationMatchService.delete(location2.getId(), location1.getId());
                 }
             }
         }

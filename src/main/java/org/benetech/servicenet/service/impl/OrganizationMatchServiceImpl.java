@@ -179,7 +179,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     @Override
     public List<OrganizationMatchDTO> findAllNotHiddenForOrganization(UUID orgId) {
         return organizationMatchRepository.findAllByOrganizationRecordIdAndHidden(orgId, false).stream()
-            .map(organizationMatchMapper::toDto)
+            .map(organizationMatchMapper::toDtoWithLocationMatches)
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
