@@ -19,6 +19,7 @@
     "from": "From ",
     "lastUpdated": "Last partial update ",
     "lastCompleteReview": "Last complete review ",
+    "unknown": "unknown",
     "copyToClipboard": "Copy to Clipboard",
     "copied": "Copied!",
     "backToTop": "Back to Top"

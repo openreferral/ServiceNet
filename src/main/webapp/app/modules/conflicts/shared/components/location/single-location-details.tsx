@@ -70,11 +70,19 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       <div>
         <h5>
           <Translate contentKey="multiRecordView.lastCompleteReview" />
-          <TextFormat value={record.location.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          {record.location.lastVerifiedOn ? (
+            <TextFormat value={record.location.lastVerifiedOn} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          ) : (
+            <Translate contentKey="multiRecordView.unknown" />
+          )}
         </h5>
         <h5>
           <Translate contentKey="multiRecordView.lastUpdated" />
-          <TextFormat value={record.location.updatedAt} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          {record.location.updatedAt ? (
+            <TextFormat value={record.location.updatedAt} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
+          ) : (
+            <Translate contentKey="multiRecordView.unknown" />
+          )}
         </h5>
       </div>
     );
