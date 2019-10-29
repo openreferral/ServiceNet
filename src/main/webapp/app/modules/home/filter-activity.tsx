@@ -265,6 +265,9 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   mergeTaxonomyOptions = (lists, selectedPartners) => {
+    if (selectedPartners.length === 0) {
+      return lists[this.props.provider];
+    }
     let merged = [];
     for (const key in selectedPartners) {
       if (selectedPartners.hasOwnProperty(key)) {
@@ -461,7 +464,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 function getTaxonomyOptions(taxonomyMap) {
   const taxonomyOptions = {};
   _.forOwn(taxonomyMap, (value, key) => {
-    taxonomyOptions[key] = value.map(taxonomy => ({ label: taxonomy, value: taxonomy }));
+    taxonomyOptions[key] = value.filter(taxonomy => taxonomy != null).map(taxonomy => ({ label: taxonomy, value: taxonomy }));
   });
   taxonomyOptions['all'] = [].concat.apply([], Object.values(taxonomyOptions));
   return taxonomyOptions;
@@ -485,7 +488,8 @@ const mapStateToProps = (storeState: IRootState) => ({
   dateFilter: storeState.filterActivity.activityFilter.dateFilter,
   fromDate: storeState.filterActivity.activityFilter.fromDate,
   toDate: storeState.filterActivity.activityFilter.toDate,
-  onlyShowMatching: !storeState.filterActivity.activityFilter.showPartner
+  onlyShowMatching: !storeState.filterActivity.activityFilter.showPartner,
+  provider: storeState.authentication.account.systemAccountName
 });
 
 const mapDispatchToProps = { getPostalCodeList, getRegionList, getCityList, getPartnerList, getTaxonomyMap, updateActivityFilter };
