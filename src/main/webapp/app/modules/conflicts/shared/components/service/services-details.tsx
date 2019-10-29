@@ -32,16 +32,17 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
   render() {
     const { services, isAreaOpen } = this.props;
     const { serviceNumber } = this.state;
-    const record = services[serviceNumber];
+    const sortedServices = _.sortBy(services, ['service.name']);
+    const record = sortedServices[serviceNumber];
     const serviceDetails =
-      services.length > serviceNumber ? (
+      sortedServices.length > serviceNumber ? (
         <SingleServiceDetails
           {...this.props}
           changeRecord={this.changeRecord}
-          selectOptions={_.map(services, (s, idx) => ({ value: idx, label: s.service.name }))}
-          isOnlyOne={services.length <= 1}
+          selectOptions={_.map(sortedServices, (s, idx) => ({ value: idx, label: s.service.name }))}
+          isOnlyOne={sortedServices.length <= 1}
           record={record}
-          servicesCount={`(${serviceNumber + 1}/${services.length}) `}
+          servicesCount={`(${serviceNumber + 1}/${sortedServices.length}) `}
           isAreaOpen={isAreaOpen}
         />
       ) : null;
