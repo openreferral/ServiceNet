@@ -26,6 +26,9 @@ export interface IMultipleRecordViewState {
   showDismissModal: boolean;
   showSuccessModal: boolean;
   dismissError: boolean;
+  locationMatches: any;
+  selectedLocation: any;
+  matchLocations: boolean;
 }
 
 export class MultipleRecordView extends React.Component<IMultipleRecordViewProp, IMultipleRecordViewState> {
@@ -34,7 +37,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     matchNumber: 0,
     showDismissModal: false,
     showSuccessModal: false,
-    dismissError: false
+    dismissError: false,
+    locationMatches: [],
+    selectedLocation: null,
+    matchLocations: true
   };
 
   componentDidMount() {
@@ -119,6 +125,36 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
       });
   };
 
+  selectLocation = location => {
+    const selectedLocation = location.location.id;
+    if (!this.findMatchingLocation(selectedLocation)) {
+      this.setState({
+        selectedLocation,
+        matchLocations: false
+      });
+    } else {
+      this.setState({
+        selectedLocation
+      });
+    }
+  };
+
+  findMatchingLocation = selectedLocation => {
+    const { matches, baseRecord } = this.props;
+    const match = _.find(matches, m => m.organizationRecordId === baseRecord.organization.id);
+    if (match && match.locationMatches) {
+      if (selectedLocation in match.locationMatches) {
+        return match.locationMatches[selectedLocation];
+      }
+    }
+  };
+
+  toggleMatchLocations = () => {
+    this.setState({
+      matchLocations: !this.state.matchLocations
+    });
+  };
+
   render() {
     const { baseRecord, partnerRecord } = this.props;
     const loading = (
@@ -174,7 +210,16 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                   <Translate contentKey="multiRecordView.unknown" />
                 )}
               </h5>
-              <Details activity={baseRecord} {...this.props} exclusions={baseRecord.exclusions} isBaseRecord showClipboard={false} />
+              <Details
+                activity={baseRecord}
+                {...this.props}
+                exclusions={baseRecord.exclusions}
+                isBaseRecord
+                showClipboard={false}
+                selectLocation={this.selectLocation}
+                matchLocations={this.state.matchLocations}
+                toggleMatchLocations={this.toggleMatchLocations}
+              />
             </Col>
           ) : (
             loading
@@ -210,7 +255,15 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 </div>
                 {seeAnotherMatch}
               </Row>
-              <Details activity={partnerRecord} {...this.props} exclusions={[]} isBaseRecord={false} showClipboard />
+              <Details
+                activity={partnerRecord}
+                {...this.props}
+                exclusions={[]}
+                isBaseRecord={false}
+                showClipboard
+                matchLocations={this.state.matchLocations}
+                matchingLocation={this.findMatchingLocation(this.state.selectedLocation)}
+              />
               <Jumbotron className="same-record-question-container">
                 <div className="same-record-question">
                   <h4>

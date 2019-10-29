@@ -131,6 +131,7 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.OrganizationError.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.MatchSimilarity.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.ActivityFilter.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.LocationMatch.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

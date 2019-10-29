@@ -1,11 +1,17 @@
 package org.benetech.servicenet.service.mapper;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.LocationMatch;
 import org.benetech.servicenet.domain.OrganizationMatch;
+import org.benetech.servicenet.service.LocationMatchService;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.mapstruct.ReportingPolicy.IGNORE;
 
@@ -13,7 +19,10 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
  * Mapper for the entity OrganizationMatch and its DTO OrganizationMatchDTO.
  */
 @Mapper(componentModel = "spring", uses = {OrganizationMapper.class}, unmappedTargetPolicy = IGNORE)
-public interface OrganizationMatchMapper extends EntityMapper<OrganizationMatchDTO, OrganizationMatch> {
+public abstract class OrganizationMatchMapper {
+
+    @Autowired
+    private LocationMatchService locationMatchService;
 
     @Mapping(source = "organizationRecord.id", target = "organizationRecordId")
     @Mapping(source = "organizationRecord.name", target = "organizationRecordName")
@@ -23,13 +32,25 @@ public interface OrganizationMatchMapper extends EntityMapper<OrganizationMatchD
     @Mapping(source = "dismissedBy.login", target = "dismissedByName")
     @Mapping(source = "hiddenBy.id", target = "hiddenById")
     @Mapping(source = "hiddenBy.login", target = "hiddenByName")
-    OrganizationMatchDTO toDto(OrganizationMatch organizationMatch);
+    public abstract OrganizationMatchDTO toDto(OrganizationMatch organizationMatch);
 
     @Mapping(source = "organizationRecordId", target = "organizationRecord")
     @Mapping(source = "partnerVersionId", target = "partnerVersion")
-    OrganizationMatch toEntity(OrganizationMatchDTO organizationMatchDTO);
+    public abstract OrganizationMatch toEntity(OrganizationMatchDTO organizationMatchDTO);
 
-    default OrganizationMatch fromId(UUID id) {
+    public OrganizationMatchDTO toDtoWithLocationMatches(OrganizationMatch organizationMatch) {
+        OrganizationMatchDTO dto = toDto(organizationMatch);
+        Map<UUID, UUID> locationMatches = new HashMap<>();
+        for (Location location : organizationMatch.getOrganizationRecord().getLocations()) {
+            for (LocationMatch match : locationMatchService.findAllForLocation(location.getId())) {
+                locationMatches.put(match.getLocation().getId(), match.getMatchingLocation().getId());
+            }
+        }
+        dto.setLocationMatches(locationMatches);
+        return dto;
+    }
+
+    public OrganizationMatch fromId(UUID id) {
         if (id == null) {
             return null;
         }

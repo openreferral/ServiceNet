@@ -15,6 +15,10 @@ export interface IMultipleRecordViewProp extends StateProps, DispatchProps, Rout
   exclusions: any[];
   isBaseRecord: boolean;
   showClipboard: boolean;
+  selectLocation?: any;
+  matchingLocation?: any;
+  matchLocations?: boolean;
+  toggleMatchLocations?: any;
 }
 
 export interface IMultiRecordViewState {

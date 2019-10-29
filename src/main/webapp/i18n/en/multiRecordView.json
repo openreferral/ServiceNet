@@ -22,6 +22,7 @@
     "unknown": "unknown",
     "copyToClipboard": "Copy to Clipboard",
     "copied": "Copied!",
-    "backToTop": "Back to Top"
+    "backToTop": "Back to Top",
+    "locationCheckboxTooltip": "Whenever I select a Location record, show me this partner's matching Location record, if available."
   }
 }
