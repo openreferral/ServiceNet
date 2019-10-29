@@ -120,7 +120,8 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
   };
 
   render() {
-    const { baseRecord, partnerRecord } = this.props;
+    const { baseRecord, partnerRecord, systemAccountName } = this.props;
+    const baseProviderName = baseRecord ? baseRecord.organization.accountName : null;
     const loading = (
       <Col>
         <h2>Loading...</h2>
@@ -156,7 +157,14 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
             <Col sm="6">
               <h2>{baseRecord.organization.name}</h2>
               <h4 className="from">
-                <Translate contentKey="multiRecordView.yourData" />
+                {systemAccountName === baseProviderName ? (
+                  <Translate contentKey="multiRecordView.yourData" />
+                ) : (
+                  <div>
+                    <Translate contentKey="multiRecordView.from" />
+                    {baseProviderName}
+                  </div>
+                )}
               </h4>
               <h5>
                 <Translate contentKey="multiRecordView.lastCompleteReview" />
@@ -245,7 +253,8 @@ const mapStateToProps = (storeState, { match }: IMultipleRecordViewState) => ({
   baseRecord: storeState.sharedRecordView.baseRecord,
   partnerRecord: storeState.sharedRecordView.partnerRecord,
   matches: storeState.sharedRecordView.matches,
-  dismissedMatches: storeState.sharedRecordView.dismissedMatches
+  dismissedMatches: storeState.sharedRecordView.dismissedMatches,
+  systemAccountName: storeState.authentication.account.systemAccountName
 });
 
 const mapDispatchToProps = { getBaseRecord, getPartnerRecord, getNotHiddenMatchesByOrg };
