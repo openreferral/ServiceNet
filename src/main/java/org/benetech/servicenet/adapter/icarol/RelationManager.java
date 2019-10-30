@@ -133,8 +133,9 @@ class RelationManager {
         Set<ServiceTaxonomy> serviceTaxonomies = new HashSet<>();
 
         if (program.getTaxonomy() != null) {
-            Arrays.stream(program.getTaxonomy())
-                .forEach(id -> {
+            Arrays.stream(program.getTaxonomy()).flatMap(taxonomy -> Arrays.stream(taxonomy.split("\\*")))
+                .forEach(t -> {
+                    String id = t.trim();
                     Taxonomy taxonomy = new Taxonomy().externalDbId(id).taxonomyId(id).providerName(providerName);
                     serviceTaxonomies.add(new ServiceTaxonomy()
                         .taxonomy(taxonomy)
