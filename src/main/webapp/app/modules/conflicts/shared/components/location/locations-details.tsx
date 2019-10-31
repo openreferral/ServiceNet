@@ -56,19 +56,20 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
   render() {
     const { locations, isAreaOpen } = this.props;
     const locationNumber = this.getLocationNumber();
-    const record = locations[locationNumber];
+    const sortedLocations = _.sortBy(locations, ['physicalAddress.address1', 'physicalAddress.city']);
+    const record = sortedLocations[locationNumber];
     const locationDetails =
-      locations.length > locationNumber ? (
+      sortedLocations.length > locationNumber ? (
         <SingleLocationDetails
           {...this.props}
-          selectOptions={_.map(locations, (l, idx) => ({
+          selectOptions={_.map(sortedLocations, (l, idx) => ({
             value: idx,
-            label: l.location.name || `${l.physicalAddress.address1} ${l.physicalAddress.city}`
+            label: `${l.physicalAddress.address1} ${l.physicalAddress.city}`
           }))}
           changeRecord={this.changeRecord}
-          isOnlyOne={locations.length <= 1}
+          isOnlyOne={sortedLocations.length <= 1}
           record={record}
-          locationsCount={`(${locationNumber + 1}/${locations.length}) `}
+          locationsCount={`(${locationNumber + 1}/${sortedLocations.length}) `}
           isAreaOpen={isAreaOpen}
         />
       ) : null;
