@@ -1,7 +1,10 @@
 package org.benetech.servicenet.service.mapper;
 
+import java.util.Collections;
 import org.benetech.servicenet.domain.Authority;
+import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,9 @@ public class UserMapper {
 
     @Autowired
     private SystemAccountMapper systemAccountMapper;
+
+    @Autowired
+    private ShelterRepository shelterRepository;
 
     public UserDTO userToUserDTO(User user) {
         return new UserDTO(user);
@@ -47,6 +53,7 @@ public class UserMapper {
             user.setImageUrl(userDTO.getImageUrl());
             user.setActivated(userDTO.isActivated());
             user.setLangKey(userDTO.getLangKey());
+            user.setShelters(this.sheltersFromUUIDs(userDTO.getShelters()));
             Set<Authority> authorities = this.authoritiesFromStrings(userDTO.getAuthorities());
             if (authorities != null) {
                 user.setAuthorities(authorities);
@@ -72,11 +79,21 @@ public class UserMapper {
         return user;
     }
 
-    public Set<Authority> authoritiesFromStrings(Set<String> strings) {
+    private Set<Authority> authoritiesFromStrings(Set<String> strings) {
         return strings.stream().map(string -> {
             Authority auth = new Authority();
             auth.setName(string);
             return auth;
         }).collect(Collectors.toSet());
+    }
+
+    private Set<Shelter> sheltersFromUUIDs(List<UUID> uuids) {
+        if (uuids != null) {
+            return uuids.stream()
+                .map(uuid -> shelterRepository.getOne(uuid))
+                .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
+        }
     }
 }

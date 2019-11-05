@@ -127,6 +127,10 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".languages", jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".definedCoverageAreas",
                 jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".users",
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".shelters",
+                jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.LocationExclusion.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.OrganizationError.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.MatchSimilarity.class.getName(), jcacheConfiguration);
