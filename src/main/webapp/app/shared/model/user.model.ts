@@ -14,6 +14,7 @@ export interface IUser {
   password?: string;
   systemAccountName?: string;
   systemAccountId?: number;
+  shelters?: any[];
 }
 
 export const defaultValue: Readonly<IUser> = {
@@ -31,5 +32,6 @@ export const defaultValue: Readonly<IUser> = {
   lastModifiedDate: null,
   password: '',
   systemAccountName: '',
-  systemAccountId: null
+  systemAccountId: null,
+  shelters: []
 };

@@ -151,4 +151,5 @@
     <include file="config/liquibase/changelog/20190808171712_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191022125054_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191030162926_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20191105133657_add_User_Shelter_relation.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

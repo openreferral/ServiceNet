@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,6 +163,14 @@ public class Shelter extends AbstractEntity implements Serializable, Address {
         joinColumns = @JoinColumn(name = "shelter_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "defined_coverage_area_id", referencedColumnName = "id"))
     private Set<Option> definedCoverageAreas;
+
+    @JsonIgnore
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "user_shelters",
+        joinColumns = @JoinColumn(name = "shelter_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    private Set<User> users;
 
     public String getAgencyName() {
         return agencyName;
