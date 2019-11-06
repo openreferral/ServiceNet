@@ -5,6 +5,7 @@ import { Button, Label, Row, Col } from 'reactstrap';
 import { AvForm, AvGroup, AvInput, AvField, AvFeedback } from 'availity-reactstrap-validation';
 import { Translate, translate, ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getEntities as getShelters } from 'app/entities/shelter/shelter.reducer';
 
 import { locales, languages } from 'app/config/translation';
 import { getUser, getRoles, getSystemAccounts, updateUser, createUser, reset } from './user-management.reducer';
@@ -29,6 +30,7 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
     }
     this.props.getRoles();
     this.props.getSystemAccounts();
+    this.props.getShelters();
   }
 
   componentWillUnmount() {
@@ -50,7 +52,7 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
 
   render() {
     const isInvalid = false;
-    const { user, loading, updating, roles, systemAccounts } = this.props;
+    const { user, loading, updating, roles, systemAccounts, shelters } = this.props;
     return (
       <div>
         <Row className="justify-content-center">
@@ -184,7 +186,7 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
                 </AvGroup>
                 <AvGroup>
                   <Label for="authorities">
-                    <Translate contentKey="userManagement.profiles">Language Key</Translate>
+                    <Translate contentKey="userManagement.profiles">Profiles</Translate>
                   </Label>
                   <AvInput type="select" className="form-control" name="authorities" value={user.authorities} multiple>
                     {roles.map(role => (
@@ -207,6 +209,20 @@ export class UserManagementUpdate extends React.Component<IUserManagementUpdateP
                     ))}
                   </AvInput>
                 </AvGroup>
+                {user.authorities.includes('ROLE_SACRAMENTO') ? (
+                  <AvGroup>
+                    <Label for="shelters">
+                      <Translate contentKey="userManagement.shelters">Shelters</Translate>
+                    </Label>
+                    <AvInput type="select" className="form-control" name="shelters" value={user.shelters} multiple>
+                      {shelters.map(shelter => (
+                        <option value={shelter.id} key={shelter.id}>
+                          {shelter.agencyName} {shelter.alternateName}
+                        </option>
+                      ))}
+                    </AvInput>
+                  </AvGroup>
+                ) : null}
                 <Button tag={Link} to="/admin/user-management" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
@@ -234,10 +250,11 @@ const mapStateToProps = (storeState: IRootState) => ({
   roles: storeState.userManagement.authorities,
   systemAccounts: storeState.userManagement.systemAccounts,
   loading: storeState.userManagement.loading,
-  updating: storeState.userManagement.updating
+  updating: storeState.userManagement.updating,
+  shelters: storeState.shelter.entities
 });
 
-const mapDispatchToProps = { getUser, getRoles, getSystemAccounts, updateUser, createUser, reset };
+const mapDispatchToProps = { getUser, getRoles, getSystemAccounts, getShelters, updateUser, createUser, reset };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

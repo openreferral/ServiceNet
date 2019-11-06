@@ -26,6 +26,7 @@
     "createdDate": "Created date",
     "lastModifiedBy": "Modified by",
     "lastModifiedDate": "Modified date",
-    "systemAccount": "System Account"
+    "systemAccount": "System Account",
+    "shelters": "Shelters"
   }
 }

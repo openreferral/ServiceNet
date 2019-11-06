@@ -1,13 +1,16 @@
 package org.benetech.servicenet.service;
 
+import java.util.Collections;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Authority;
+import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.AuthorityRepository;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.repository.PersistentTokenRepository;
+import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
@@ -71,6 +74,9 @@ public class UserService {
 
     @Autowired
     private MetadataRepository metadataRepository;
+
+    @Autowired
+    private ShelterRepository shelterRepository;
 
     @Autowired
     private CacheManager cacheManager;
@@ -246,6 +252,7 @@ public class UserService {
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
                 user.setSystemAccount(getSystemAccount(userDTO));
+                user.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
                 return user;
@@ -410,5 +417,15 @@ public class UserService {
             return systemAccountRepository.findById(systemAccountId).orElse(null);
         }
         return null;
+    }
+
+    private Set<Shelter> sheltersFromUUIDs(List<UUID> uuids) {
+        if (uuids != null) {
+            return uuids.stream()
+                .map(uuid -> shelterRepository.getOne(uuid))
+                .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
+        }
     }
 }

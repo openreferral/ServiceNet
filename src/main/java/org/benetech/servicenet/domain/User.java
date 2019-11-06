@@ -132,6 +132,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private Set<PersistentToken> persistentTokens = new HashSet<>();
 
     @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "user_shelters",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "shelter_id", referencedColumnName = "id"))
+    private Set<Shelter> shelters;
+
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "filter_id")
     private ActivityFilter filter;

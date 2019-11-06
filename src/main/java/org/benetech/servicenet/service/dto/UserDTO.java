@@ -1,8 +1,10 @@
 package org.benetech.servicenet.service.dto;
 
+import java.util.List;
 import lombok.Data;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Authority;
+import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.User;
 
 import javax.validation.constraints.Email;
@@ -59,6 +61,8 @@ public class UserDTO {
 
     private String systemAccountName;
 
+    private List<UUID> shelters;
+
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -82,6 +86,11 @@ public class UserDTO {
         if (user.getSystemAccount() != null) {
             this.systemAccountId = user.getSystemAccount().getId();
             this.systemAccountName = user.getSystemAccount().getName();
+        }
+        if (user.getShelters() != null) {
+            this.shelters = user.getShelters().stream()
+                .map(Shelter::getId)
+                .collect(Collectors.toList());
         }
     }
 }
