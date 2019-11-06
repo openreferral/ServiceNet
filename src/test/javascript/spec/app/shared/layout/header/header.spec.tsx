@@ -24,7 +24,8 @@ describe('Header', () => {
     isInProduction: false,
     isSwaggerEnabled: true,
     userLogin: 'user',
-    isSacramento: false
+    isSacramento: false,
+    isShelterOwner: false
   };
   const prodProps = {
     ...devProps,

@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 
 export interface IShelterElementProps {
   shelter: IShelter;
+  editable: boolean;
 }
 
 export interface IShelterElementState {
@@ -25,7 +26,7 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
   };
 
   render() {
-    const { shelter } = this.props;
+    const { shelter, editable } = this.props;
     return (
       <Row className="shelter-row">
         <Col>
@@ -52,7 +53,7 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
                         ? shelter.beds.waitlist
                         : translate('serviceNetApp.shelter.home.card.notAvailable')}
                     </div>
-                    <div className="shelter-expand-label">
+                    <div className="shelter-expand-label d-flex align-items-center">
                       {this.state.open ? (
                         <span>
                           <Translate contentKey="serviceNetApp.shelter.home.card.lessInfo" /> ▲
@@ -62,6 +63,13 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
                           <Translate contentKey="serviceNetApp.shelter.home.card.moreInfo" /> ▼
                         </span>
                       )}
+                      {editable ? (
+                        <Button tag={Link} to={`shelter/${shelter.id}/edit`} color="primary" className="ml-2 float-right">
+                          <span className="d-none d-md-inline">
+                            <Translate contentKey="serviceNetApp.shelter.home.card.edit">Edit</Translate>
+                          </span>
+                        </Button>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -113,6 +121,13 @@ export class ShelterElement extends React.Component<IShelterElementProps, IShelt
                         <Translate contentKey="serviceNetApp.shelter.home.card.moreInfo">More info</Translate>
                       </span>
                     </Button>
+                    {editable ? (
+                      <Button tag={Link} to={`shelter/${shelter.id}/edit`} color="primary" className="ml-1">
+                        <span className="d-none d-md-inline">
+                          <Translate contentKey="serviceNetApp.shelter.home.card.edit">Edit</Translate>
+                        </span>
+                      </Button>
+                    ) : null}
                   </div>
                 </div>
               </CardBody>

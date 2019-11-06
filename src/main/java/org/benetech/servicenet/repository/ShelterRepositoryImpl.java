@@ -3,6 +3,7 @@ package org.benetech.servicenet.repository;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -104,7 +105,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
         }
         if (filters.getUserId() != null) {
             Join<Shelter, Option> join = root.join(USERS, JoinType.LEFT);
-            predicates.add(cb.equal(join.get(ID), filters.getUserId()));
+            predicates.add(cb.equal(join.get(ID), UUID.fromString(filters.getUserId())));
         }
         query.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
     }

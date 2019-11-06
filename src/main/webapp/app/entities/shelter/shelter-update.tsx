@@ -56,7 +56,7 @@ export class ShelterUpdate extends React.Component<IShelterUpdateProps, IShelter
       });
     }
     if (nextProps.updateSuccess !== this.props.updateSuccess && nextProps.updateSuccess) {
-      this.handleClose();
+      this.goBack();
     }
   }
 
@@ -100,10 +100,6 @@ export class ShelterUpdate extends React.Component<IShelterUpdateProps, IShelter
     }
   };
 
-  handleClose = () => {
-    this.props.history.push('/entity/shelter');
-  };
-
   onPhoneChange = (index, property) => event => {
     const newValue = event.target.value;
     const phones = this.state.phones;
@@ -134,6 +130,10 @@ export class ShelterUpdate extends React.Component<IShelterUpdateProps, IShelter
     const emails = this.state.emails;
     emails.splice(index, 1);
     this.setState({ emails });
+  };
+
+  goBack = () => {
+    this.props.history.goBack();
   };
 
   render() {
@@ -430,7 +430,7 @@ export class ShelterUpdate extends React.Component<IShelterUpdateProps, IShelter
                     ))}
                   </tbody>
                 </table>
-                <Button tag={Link} id="cancel-save" to="/entity/shelter" replace color="info">
+                <Button onClick={this.goBack} id="cancel-save" replace color="info">
                   <FontAwesomeIcon icon="arrow-left" />
                   &nbsp;
                   <span className="d-none d-md-inline">

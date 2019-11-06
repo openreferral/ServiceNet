@@ -21,6 +21,8 @@ import DismissedMatchView from './modules/conflicts/dismissed/dismissed-match-vi
 import HiddenMatches from './modules/conflicts/hidden/hidden-matches';
 import { AboutUs } from 'app/modules/about-us/about-us';
 import Shelters from 'app/modules/shelter/shelters';
+import MyShelters from 'app/modules/shelter/my-shelters';
+import ShelterUpdate from 'app/entities/shelter/shelter-update';
 import ShelterDetails from 'app/modules/shelter/shelter-details';
 
 // tslint:disable:space-in-parens
@@ -45,6 +47,8 @@ const Routes = ({ isAdmin, isSacramento }) => (
       <ErrorBoundaryRoute path="/reset/request" component={PasswordResetInit} />
       <ErrorBoundaryRoute path="/reset/finish/:key?" component={PasswordResetFinish} />
       <PrivateRoute path="/shelters" component={Shelters} hasAnyAuthorities={[AUTHORITIES.SACRAMENTO]} isAdmin={isAdmin} />
+      <PrivateRoute path="/my-shelters" component={MyShelters} hasAnyAuthorities={[AUTHORITIES.SACRAMENTO]} isAdmin={isAdmin} />
+      <PrivateRoute path="/shelter/:id/edit" component={ShelterUpdate} hasAnyAuthorities={[AUTHORITIES.SACRAMENTO]} isAdmin={isAdmin} />
       <PrivateRoute path="/shelter/:id" component={ShelterDetails} hasAnyAuthorities={[AUTHORITIES.SACRAMENTO]} isAdmin={isAdmin} />
       <PrivateRoute path="/admin" isAdmin={isAdmin} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <PrivateRoute path="/account" isAdmin={isAdmin} component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]} />
