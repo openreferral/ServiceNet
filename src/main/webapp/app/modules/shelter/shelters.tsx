@@ -213,7 +213,7 @@ export class Shelters extends React.Component<ISheltersProp, ISheltersState> {
                 </Col>
               </Row>
               {!_.isEmpty(shelterList) ? (
-                shelterList.map((shelter, i) => <ShelterElement shelter={shelter} key={i} />)
+                shelterList.map((shelter, i) => <ShelterElement shelter={shelter} key={i} editable={false} />)
               ) : (
                 <Row>
                   <Col md="8">

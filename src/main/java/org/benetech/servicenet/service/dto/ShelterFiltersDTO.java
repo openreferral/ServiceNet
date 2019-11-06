@@ -3,7 +3,6 @@ package org.benetech.servicenet.service.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import lombok.Data;
 
 @Data
@@ -15,7 +14,7 @@ public class ShelterFiltersDTO implements Serializable {
 
   private String searchQuery;
 
-  private UUID userId;
+  private String userId;
 
   private boolean showOnlyAvailableBeds;
 }

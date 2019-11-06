@@ -32,6 +32,10 @@ export class ShelterDetails extends React.Component<IShelterDetailsProps> {
     this.props.getEntity(this.props.match.params.id);
   }
 
+  goBack = () => {
+    this.props.history.goBack();
+  };
+
   render() {
     const { shelterEntity } = this.props;
     const results = shelterEntity.geocodingResults;
@@ -180,7 +184,7 @@ export class ShelterDetails extends React.Component<IShelterDetailsProps> {
               </div>
             </CardBody>
           </Card>
-          <Button tag={Link} to="/shelters" replace color="info">
+          <Button onClick={this.goBack} replace color="info">
             <FontAwesomeIcon icon="arrow-left" />{' '}
             <span className="d-none d-md-inline">
               <Translate contentKey="entity.action.back">Back</Translate>
