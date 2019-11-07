@@ -493,6 +493,19 @@ public class Shelter extends AbstractEntity implements Serializable, Address {
         this.languages = option;
     }
 
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public Shelter users(Set<User> users) {
+        this.users = users;
+        return this;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
     public Set<Option> getDefinedCoverageAreas() {
         return definedCoverageAreas;
     }
@@ -557,6 +570,7 @@ public class Shelter extends AbstractEntity implements Serializable, Address {
             ", transportation='" + getTransportation() + "'" +
             ", disabilityAccess='" + getDisabilityAccess() + "'" +
             ", languages='" + getLanguages() + "'" +
+            ", users='" + getUsers() + "'" +
             "}";
     }
 }

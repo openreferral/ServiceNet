@@ -19,6 +19,7 @@ export interface IHeaderProps {
   currentLocale: string;
   onLocaleChange: Function;
   userLogin: string;
+  isShelterOwner: boolean;
 }
 
 export interface IHeaderState {
@@ -50,7 +51,16 @@ export default class Header extends React.Component<IHeaderProps, IHeaderState> 
   };
 
   render() {
-    const { currentLocale, isAuthenticated, isAdmin, isSwaggerEnabled, isInProduction, userLogin, isSacramento } = this.props;
+    const {
+      currentLocale,
+      isAuthenticated,
+      isAdmin,
+      isSwaggerEnabled,
+      isInProduction,
+      userLogin,
+      isSacramento,
+      isShelterOwner
+    } = this.props;
 
     /* jhipster-needle-add-element-to-menu - JHipster will add new menu items here */
 
@@ -64,7 +74,7 @@ export default class Header extends React.Component<IHeaderProps, IHeaderState> 
           <Collapse isOpen={this.state.menuOpen} navbar>
             <Nav id="header-tabs" className="ml-auto" navbar>
               {(!isAuthenticated || !isSacramento) && <Home />}
-              {isAuthenticated && isSacramento && <SacramentoMenu />}
+              {isAuthenticated && isSacramento && <SacramentoMenu isShelterOwner={isShelterOwner} />}
               {isAuthenticated && isAdmin && <EntitiesMenu />}
               {isAuthenticated && isAdmin && <Upload />}
               {isAuthenticated && isAdmin && <AdminMenu showSwagger={isSwaggerEnabled} showDatabase={!isInProduction} />}

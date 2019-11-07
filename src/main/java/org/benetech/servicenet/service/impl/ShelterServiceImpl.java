@@ -13,6 +13,7 @@ import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.repository.BedsRepository;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
+import org.benetech.servicenet.repository.UserRepository;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
 import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
@@ -43,12 +44,15 @@ public class ShelterServiceImpl implements ShelterService {
 
     private final PhoneRepository phoneRepository;
 
+    private final UserRepository userRepository;
+
     public ShelterServiceImpl(ShelterRepository shelterRepository, ShelterMapper shelterMapper,
-        BedsRepository bedsRepository, PhoneRepository phoneRepository) {
+        BedsRepository bedsRepository, PhoneRepository phoneRepository, UserRepository userRepository) {
         this.shelterRepository = shelterRepository;
         this.shelterMapper = shelterMapper;
         this.bedsRepository = bedsRepository;
         this.phoneRepository = phoneRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -81,6 +85,10 @@ public class ShelterServiceImpl implements ShelterService {
             .filter(StringUtils::isNotBlank)
             .collect(Collectors.toList());
         shelter.setEmails(emails);
+
+        if (shelter.getId() != null) {
+            shelter.setUsers(shelterRepository.findById(shelter.getId()).orElse(shelter).getUsers());
+        }
 
         shelter = shelterRepository.save(shelter);
         return shelterMapper.toGeocodedDto(shelter);

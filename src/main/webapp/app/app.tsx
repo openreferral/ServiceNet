@@ -57,6 +57,7 @@ export class App extends React.Component<IAppProps> {
               isSwaggerEnabled={this.props.isSwaggerEnabled}
               userLogin={this.props.userLogin}
               isSacramento={this.props.isSacramento}
+              isShelterOwner={this.props.isShelterOwner}
             />
           </ErrorBoundary>
           <div className="container-fluid view-container" id="app-view-container">
@@ -81,7 +82,8 @@ const mapStateToProps = ({ authentication, applicationProfile, locale }: IRootSt
   ribbonEnv: applicationProfile.ribbonEnv,
   isInProduction: applicationProfile.inProduction,
   isSwaggerEnabled: applicationProfile.isSwaggerEnabled,
-  userLogin: authentication.account.login
+  userLogin: authentication.account.login,
+  isShelterOwner: authentication.account.shelters && authentication.account.shelters.length > 0
 });
 
 const mapDispatchToProps = { setLocale, getSession, getProfile };
