@@ -79,6 +79,7 @@
         },
         "sort": {
           "toggle": "Sort",
+          "similarity": "Match Similarity",
           "recommended": "Recommended",
           "recent": "Recently Updated"
         },

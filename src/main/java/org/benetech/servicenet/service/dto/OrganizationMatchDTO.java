@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.dto;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import lombok.Data;
 
@@ -45,6 +46,8 @@ public class OrganizationMatchDTO implements Serializable {
     private String partnerVersionName;
 
     private Map<UUID, UUID> locationMatches;
+
+    private BigDecimal similarity;
 
     public Boolean isDismissed() {
         return dismissed;

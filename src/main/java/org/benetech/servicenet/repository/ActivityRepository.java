@@ -42,6 +42,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ActivityRepository {
 
+    private static final String SIMILARITY = "similarity";
     private static final String RECENT = "recent";
     private static final String RECOMMENDED = "recommended";
 
@@ -121,7 +122,7 @@ public class ActivityRepository {
             .when(cb.equal(selectRoot.get(ACCOUNT_ID), ownerId), 1)
             .otherwise(0);
         queryCriteria.groupBy(selectRoot.get(ID), selectRoot.get(ACCOUNT_ID), selectRoot.get(ALTERNATE_NAME),
-            selectRoot.get(NAME), selectRoot.get(RECENT), selectRoot.get(RECOMMENDED),
+            selectRoot.get(NAME), selectRoot.get(RECENT), selectRoot.get(RECOMMENDED), selectRoot.get(SIMILARITY),
             selectRoot.get(LAST_UPDATED), accountMatchExpression);
 
         addSorting(queryCriteria, pageable.getSort(), selectRoot, accountMatchExpression);
@@ -313,6 +314,7 @@ public class ActivityRepository {
         Root<ActivityInfo> root, Expression accountMatchExpression) {
         List<Order> orderList = new ArrayList<>();
         orderList.add(cb.desc(accountMatchExpression));
+        addOrder(root, orderList, sort, SIMILARITY);
         addOrder(root, orderList, sort, RECENT);
         addOrder(root, orderList, sort, RECOMMENDED);
         queryCriteria.orderBy(orderList);

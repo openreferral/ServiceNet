@@ -12,6 +12,7 @@ export interface IOrganizationMatch {
   organizationRecordId?: number;
   partnerVersionName?: string;
   partnerVersionId?: number;
+  similarity?: number;
 }
 
 export const defaultValue: Readonly<IOrganizationMatch> = {

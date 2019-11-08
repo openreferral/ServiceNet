@@ -438,13 +438,16 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
         matches.add(saveOrUpdate(match));
         matches.add(saveOrUpdate(mirrorMatch));
-
+        BigDecimal similaritySum = BigDecimal.ZERO;
         for (MatchSimilarityDTO similarityDTO : similarityDTOS) {
+            similaritySum.add(similarityDTO.getSimilarity());
             similarityDTO.setOrganizationMatchId(match.getId());
             matchSimilarityService.saveOrUpdate(similarityDTO);
             similarityDTO.setOrganizationMatchId(mirrorMatch.getId());
             matchSimilarityService.saveOrUpdate(similarityDTO);
         }
+        match.setSimilarity(similaritySum);
+        mirrorMatch.setSimilarity(similaritySum);
         return matches;
     }
 
