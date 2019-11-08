@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.math.BigDecimal;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -55,6 +56,9 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties("")
     private Organization partnerVersion;
+
+    @Column(name = "similarity")
+    private BigDecimal similarity;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

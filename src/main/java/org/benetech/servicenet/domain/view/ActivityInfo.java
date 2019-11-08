@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain.view;
 
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 import org.benetech.servicenet.domain.Organization;
@@ -55,6 +56,9 @@ public class ActivityInfo {
 
     @Column(name = "account_id")
     private UUID accountId;
+
+    @Column(name = "similarity")
+    private BigDecimal similarity;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")

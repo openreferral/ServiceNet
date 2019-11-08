@@ -3,15 +3,16 @@ import { Storage } from 'react-jhipster';
 export const ORDER_DESC = 'desc';
 export const ORDER_ASC = 'asc';
 export const DEFAULT_SORT_ORDER = ORDER_DESC;
+const SORT_SIMILARITY = 'similarity';
 const SORT_RECENTLY_UPDATED = 'recent';
 const SORT_RECOMMENDED = 'recommended';
-export const SORT_ARRAY = [SORT_RECENTLY_UPDATED, SORT_RECOMMENDED];
+export const SORT_ARRAY = [SORT_SIMILARITY, SORT_RECENTLY_UPDATED, SORT_RECOMMENDED];
 const SORT_BEDS = 'beds';
 const SORT_DISTANCE = 'distance';
 export const SHELTER_SORT_ARRAY = [SORT_BEDS, SORT_DISTANCE];
 
 const defaultSearchPreferences = {
-  sort: SORT_RECENTLY_UPDATED,
+  sort: SORT_SIMILARITY,
   order: DEFAULT_SORT_ORDER,
   searchPhrase: '',
   shelterSearchPreferences: {
