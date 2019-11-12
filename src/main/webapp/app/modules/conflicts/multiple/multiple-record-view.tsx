@@ -156,8 +156,9 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
   };
 
   render() {
-    const { baseRecord, partnerRecord, systemAccountName } = this.props;
+    const { baseRecord, partnerRecord, systemAccountName, matches } = this.props;
     const baseProviderName = baseRecord ? baseRecord.organization.accountName : null;
+    const match = matches[this.state.matchNumber];
     const loading = (
       <Col>
         <h2>Loading...</h2>
@@ -165,7 +166,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     );
 
     const seeAnotherMatch =
-      this.props.matches.length > 1 ? (
+      matches.length > 1 ? (
         <div className="see-another-match">
           <h4>
             <span role="button" onClick={this.changeRecord(-1)} className="text-blue">
@@ -173,7 +174,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
             </span>
             <span role="button" onClick={this.changeRecord(1)}>
               <Translate contentKey="multiRecordView.seeAnotherMatch" />
-              <span className="text-blue">{` (${this.state.matchNumber + 1}/${this.props.matches.length}) 〉`}</span>
+              <span className="text-blue">{` (${this.state.matchNumber + 1}/${matches.length}) 〉`}</span>
             </span>
           </h4>
         </div>
@@ -260,6 +261,12 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 </Col>
                 <div style={{ top: '-10px', right: '5px', position: 'absolute' }}>
                   <HideRecordButton id={`hide-${partnerRecord.organization.id}`} handleHide={this.hideActivity} />
+                </div>
+                <div style={{ top: '-45px', right: '5px', position: 'absolute' }}>
+                  <h5>
+                    <Translate contentKey="multiRecordView.matchSimilarity" />
+                    {match.similarity * 100}%
+                  </h5>
                 </div>
                 {seeAnotherMatch}
               </Row>

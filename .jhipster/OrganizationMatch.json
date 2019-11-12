@@ -8,6 +8,10 @@
         {
             "fieldName": "deleted",
             "fieldType": "Boolean"
+        },
+        {
+          "fieldName": "similarity",
+          "fieldType": "BigDecimal"
         }
     ],
     "relationships": [

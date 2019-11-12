@@ -1,6 +1,7 @@
 package org.benetech.servicenet.matching.counter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,7 +85,8 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
         ));
         BigDecimal currentResult = similarityDtos.stream()
             .map(MatchSimilarityDTO::getSimilarity)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            .divide(getTotalWeight(), 2, RoundingMode.CEILING);
         if (BooleanUtils.isTrue(alwaysCompareLocations) || currentResult.compareTo(BigDecimal.ZERO) > 0) {
             if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
                 similarityDtos.add(getFieldMatchSimilarityDTO(
@@ -126,6 +128,13 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
         return yearIncorporatedSimilarityCounter.countSimilarityRatio(org1.getYearIncorporated(),
             org2.getYearIncorporated(), context)
             .multiply(weightProvider.getYearsIncorporatedWeight());
+    }
+
+    private BigDecimal getTotalWeight() {
+        return weightProvider.getNameWeight().add(weightProvider.getAlternateNameWeight())
+            .add(weightProvider.getDescriptionWeight()).add(weightProvider.getEmailWeight())
+            .add(weightProvider.getUrlWeight()).add(weightProvider.getYearsIncorporatedWeight())
+            .add(weightProvider.getLocationWeight());
     }
 
     private BigDecimal getLocationSimilarity(Organization org1, Organization org2, MatchingContext context) {
