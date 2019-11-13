@@ -27,4 +27,5 @@ class MatchingTestConstants {
     static final String MAIL_ADDRESSES = "mail_addresses";
     static final String PROGRAMS = "programs";
     static final String REGULAR_SCHEDULES = "regular_schedules";
+    static final String METADATA = "metadata";
 }

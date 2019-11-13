@@ -114,6 +114,12 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @Column(name = "last_verified_on")
     private ZonedDateTime lastVerifiedOn;
 
+    @Column(name = "total_referrals")
+    private Integer totalReferrals;
+
+    @Column(name = "successful_referrals")
+    private Integer successfulReferrals;
+
     @ManyToOne
     @JsonIgnoreProperties("services")
     private Organization organization;
@@ -145,6 +151,10 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @OneToMany(mappedBy = "srvc")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceArea> areas = new HashSet<>();
+
+    @OneToMany(mappedBy = "srvc")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<ServiceMetadata> metadata = new HashSet<>();
 
     @OneToMany(mappedBy = "srvc")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -191,6 +201,8 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
         this.providerName = srvc.providerName;
         this.organization = srvc.organization;
         this.lastVerifiedOn = srvc.lastVerifiedOn;
+        this.successfulReferrals = srvc.successfulReferrals;
+        this.totalReferrals = srvc.totalReferrals;
         this.updatedAt = srvc.updatedAt;
     }
 
@@ -264,6 +276,16 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
         return this;
     }
 
+    public Service totalReferrals(Integer totalReferrals) {
+        this.totalReferrals = totalReferrals;
+        return this;
+    }
+
+    public Service successfulReferrals(Integer successfulReferrals) {
+        this.successfulReferrals = successfulReferrals;
+        return this;
+    }
+
     public Service organization(Organization organization) {
         this.organization = organization;
         return this;
@@ -308,6 +330,23 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     public Service removeAreas(ServiceArea serviceArea) {
         this.areas.remove(serviceArea);
         serviceArea.setSrvc(null);
+        return this;
+    }
+
+    public Service metadata(Set<ServiceMetadata> serviceMetadata) {
+        this.metadata = serviceMetadata;
+        return this;
+    }
+
+    public Service addMetadata(ServiceMetadata serviceMetadata) {
+        this.metadata.add(serviceMetadata);
+        serviceMetadata.setSrvc(this);
+        return this;
+    }
+
+    public Service removeMetadata(ServiceMetadata serviceMetadata) {
+        this.metadata.remove(serviceMetadata);
+        serviceMetadata.setSrvc(null);
         return this;
     }
 
@@ -472,12 +511,15 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
             Objects.equals(this.externalDbId, srvc.externalDbId) &&
             Objects.equals(this.providerName, srvc.providerName) &&
             Objects.equals(this.lastVerifiedOn, srvc.lastVerifiedOn) &&
+            Objects.equals(this.totalReferrals, srvc.totalReferrals) &&
+            Objects.equals(this.successfulReferrals, srvc.successfulReferrals) &&
             CompareUtils.deepEquals(locations, srvc.locations) &&
             CompareUtils.deepEquals(regularSchedule, srvc.regularSchedule) &&
             CompareUtils.deepEquals(holidaySchedules, srvc.holidaySchedules) &&
             CompareUtils.deepEquals(funding, srvc.funding) &&
             CompareUtils.deepEquals(eligibility, srvc.eligibility) &&
             CompareUtils.deepEquals(areas, srvc.areas) &&
+            CompareUtils.deepEquals(metadata, srvc.metadata) &&
             CompareUtils.deepEquals(docs, srvc.docs) &&
             CompareUtils.deepEquals(paymentsAccepteds, srvc.paymentsAccepteds) &&
             CompareUtils.deepEquals(langs, srvc.langs) &&

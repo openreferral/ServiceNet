@@ -28,7 +28,7 @@ public final class CompareUtils {
         return true;
     }
 
-    private static <V extends DeepComparable> boolean hasElement(V e1, Collection<V> col) {
+    public static <V extends DeepComparable> boolean hasElement(V e1, Collection<V> col) {
         for (DeepComparable e2 : col) {
             if (e1 == null || e2 == null) {
                 continue;

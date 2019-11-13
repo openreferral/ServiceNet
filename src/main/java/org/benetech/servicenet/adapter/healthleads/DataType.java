@@ -10,6 +10,7 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhysicalAddr
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsRequiredDocument;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsService;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLocation;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceMetadata;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
 
@@ -24,7 +25,8 @@ enum DataType {
     SERVICES(HealthleadsService.class),
     SERVICES_AT_LOCATION(HealthleadsServiceAtLocation.class),
     SERVICES_TAXONOMY(HealthleadsServiceTaxonomy.class),
-    TAXONOMY(HealthleadsTaxonomy.class);
+    TAXONOMY(HealthleadsTaxonomy.class),
+    METADATA(HealthleadsServiceMetadata.class);
 
     private Class<? extends HealthleadsBaseData> clazz;
 

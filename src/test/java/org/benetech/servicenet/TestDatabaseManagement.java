@@ -16,6 +16,7 @@ import org.benetech.servicenet.repository.ProgramRepository;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.repository.RequiredDocumentRepository;
 import org.benetech.servicenet.repository.ServiceAtLocationRepository;
+import org.benetech.servicenet.repository.ServiceMetadataRepository;
 import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.repository.ServiceTaxonomyRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
@@ -82,7 +83,11 @@ public class TestDatabaseManagement {
     @Autowired
     private ProgramRepository programRepository;
 
+    @Autowired
+    private ServiceMetadataRepository serviceMetadataRepository;
+
     public void clearDb() {
+        serviceMetadataRepository.deleteAll();;
         contactRepository.deleteAll();
         requiredDocumentRepository.deleteAll();
         openingHoursRepository.deleteAll();

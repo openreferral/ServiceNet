@@ -10,6 +10,7 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhysicalAddr
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsRequiredDocument;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsService;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLocation;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceMetadata;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
 import org.benetech.servicenet.domain.Eligibility;
@@ -21,6 +22,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceMetadata;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.service.mapper.IntegerMapper;
@@ -120,6 +122,12 @@ public abstract class HealthLeadsDataMapper {
             .collect(Collectors.toSet());
     }
 
+    public Set<ServiceMetadata> extractMetadata(Set<HealthleadsServiceMetadata> healthleadsServiceMetadata) {
+        return healthleadsServiceMetadata.stream()
+            .map(this::toMetadata)
+            .collect(Collectors.toSet());
+    }
+
     public Set<Phone> extractPhones(Set<HealthleadsPhone> phones) {
         return phones.stream()
             .filter(phone -> StringUtils.isNotBlank(phone.getNumber()))
@@ -156,4 +164,7 @@ public abstract class HealthLeadsDataMapper {
 
     @Mapping(target = "id", ignore = true)
     protected abstract Phone toPhone(HealthleadsPhone phone);
+
+    @Mapping(target = "id", ignore = true)
+    protected abstract ServiceMetadata toMetadata(HealthleadsServiceMetadata metadata);
 }

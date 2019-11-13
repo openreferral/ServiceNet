@@ -6,6 +6,7 @@ import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResourc
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.JSON;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LANGUAGES;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LOCATIONS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.METADATA;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.ORGANIZATIONS;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHONES;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHYSICAL_ADDRESSES;
@@ -61,7 +62,6 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
     @Autowired
     private ImportManager importManager;
 
-
     @Autowired
     private OrganizationService organizationService;
 
@@ -91,7 +91,7 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
             ELIGIBILITY, LANGUAGES, LOCATIONS,
             ORGANIZATIONS, PHONES, PHYSICAL_ADDRESSES,
             SERVICES_TAXONOMY, TAXONOMY, REQUIRED_DOCUMENTS,
-            SERVICES, SERVICES_AT_LOCATION
+            SERVICES, SERVICES_AT_LOCATION, METADATA
         );
 
         List<DocumentUpload> uploads = new ArrayList<>();

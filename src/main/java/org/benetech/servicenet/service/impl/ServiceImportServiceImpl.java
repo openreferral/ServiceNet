@@ -54,6 +54,7 @@ public class ServiceImportServiceImpl implements ServiceImportService {
             filledService.getHolidaySchedules(), service, report);
         serviceBasedImportService.createOrUpdateServiceAtLocationsForService(
             filledService.getLocations(), providerName, service, report);
+        serviceBasedImportService.createOrUpdateMetadataForService(filledService.getMetadata(), service, report);
 
         return service;
     }
@@ -67,5 +68,6 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         newService.setHolidaySchedules(serviceFromDb.getHolidaySchedules());
         newService.setContacts(serviceFromDb.getContacts());
         newService.setLangs(serviceFromDb.getLangs());
+        newService.setMetadata(serviceFromDb.getMetadata());
     }
 }
