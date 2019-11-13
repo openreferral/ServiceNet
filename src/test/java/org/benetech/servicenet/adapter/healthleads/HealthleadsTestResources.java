@@ -15,4 +15,5 @@ final class HealthleadsTestResources {
     static final String SERVICES_AT_LOCATION = "services_at_location";
     static final String SERVICES_TAXONOMY = "services_taxonomy";
     static final String TAXONOMY = "taxonomy";
+    static final String METADATA = "metadata";
 }

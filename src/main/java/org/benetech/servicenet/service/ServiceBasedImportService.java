@@ -11,6 +11,7 @@ import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceMetadata;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 
 import java.util.Set;
@@ -45,4 +46,6 @@ public interface ServiceBasedImportService {
 
     void createOrUpdateServiceAtLocationsForService(Set<ServiceAtLocation> serviceAtLocations, String providerName,
         Service service, DataImportReport report);
+
+    void createOrUpdateMetadataForService(Set<ServiceMetadata> metadata, Service service, DataImportReport report);
 }

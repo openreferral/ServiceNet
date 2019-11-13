@@ -14,6 +14,7 @@ import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhysicalAddr
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsRequiredDocument;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsService;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLocation;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceMetadata;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
 import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
@@ -29,6 +30,7 @@ import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceMetadata;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.manager.ImportManager;
 import org.slf4j.Logger;
@@ -104,6 +106,7 @@ public class PersistanceManager {
             service.setTaxonomies(getTaxonomiesToPersist(externalServiceId));
             service.setPhones(getPhonesForServiceToPersist(externalServiceId));
             service.setLangs(getLanguagesForServiceToPersist(externalServiceId));
+            service.setMetadata(getMetadataForServiceToPersist(externalServiceId));
             getEligibilityToPersist(externalServiceId).ifPresent(service::setEligibility);
             service.setDocs(getRequiredDocumentsToPersist(externalServiceId));
             service.setLocations(getServiceAtLocationsToPersist(externalServiceId, locations));
@@ -130,6 +133,11 @@ public class PersistanceManager {
             .filter(Optional::isPresent)
             .map(requiredDocument -> requiredDocument.get().providerName(HEALTHLEADS_PROVIDER))
             .collect(Collectors.toSet());
+    }
+
+    private Set<ServiceMetadata> getMetadataForServiceToPersist(String externalServiceId) {
+        return mapper.extractMetadata(dictionary.getRelatedEntities(
+            HealthleadsServiceMetadata.class, externalServiceId, HealthleadsService.class));
     }
 
     private Set<Language> getLanguagesForServiceToPersist(String externalServiceId) {
