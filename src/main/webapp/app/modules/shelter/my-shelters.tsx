@@ -100,7 +100,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   account: storeState.authentication.account,
   links: storeState.shelter.links,
   totalItems: storeState.shelter.totalItems,
-  shelterList: storeState.shelter.entities,
+  shelterList: storeState.shelter.myShelters,
   isAuthenticated: storeState.authentication.isAuthenticated,
   shelterFilter: storeState.filterShelter.shelterFilter
 });

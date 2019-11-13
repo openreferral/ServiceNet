@@ -17,6 +17,7 @@ import { IShelter } from 'app/shared/model/shelter.model';
 // tslint:disable-next-line:no-unused-variable
 import { convertDateTimeFromServer, convertDateTimeToServer } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
+import { AUTHORITIES } from '../../config/constants';
 
 export interface IShelterUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -63,8 +64,13 @@ export class ShelterUpdate extends React.Component<IShelterUpdateProps, IShelter
   componentDidMount() {
     if (this.state.isNew) {
       this.props.reset();
-    } else {
+    } else if (
+      this.props.account.authorities.indexOf(AUTHORITIES.ADMIN) > -1 ||
+      this.props.account.shelters.indexOf(this.props.match.params.id) > -1
+    ) {
       this.props.getEntity(this.props.match.params.id);
+    } else {
+      this.props.history.replace('/shelters');
     }
 
     this.props.getBeds();
@@ -460,7 +466,8 @@ const mapStateToProps = (storeState: IRootState) => ({
   shelterEntity: storeState.shelter.entity,
   loading: storeState.shelter.loading,
   updating: storeState.shelter.updating,
-  updateSuccess: storeState.shelter.updateSuccess
+  updateSuccess: storeState.shelter.updateSuccess,
+  account: storeState.authentication.account
 });
 
 const mapDispatchToProps = {
