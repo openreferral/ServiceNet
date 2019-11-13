@@ -184,7 +184,8 @@
     "idexists": "A new {{ entityName }} cannot already have an ID",
     "idnull": "Invalid ID",
     "badrequest": "Bad Request",
-    "nameunique": "Name must be unique"
+    "nameunique": "Name must be unique",
+    "cantedit": "You are not allowed to edit this shelter"
   },
   "footerLeft": "Copyright {{ year }} | Benetech | Software for Social Good",
   "footerRight": "<a href=\"/#/about-us\">About us</a> | <a href=\"mailto:servicenet@benetech.org\">Contact</a>",

@@ -1,8 +1,11 @@
 package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
+import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.service.ShelterService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
 import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -44,8 +47,11 @@ public class ShelterResource {
 
     private final ShelterService shelterService;
 
-    public ShelterResource(ShelterService shelterService) {
+    private final UserService userService;
+
+    public ShelterResource(ShelterService shelterService, UserService userService) {
         this.shelterService = shelterService;
+        this.userService = userService;
     }
 
     /**
@@ -82,6 +88,10 @@ public class ShelterResource {
         log.debug("REST request to update Shelter : {}", shelter);
         if (shelter.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUser().getShelters().stream().map(Shelter::getId)
+            .collect(Collectors.toList()).contains(shelter.getId()))) {
+            throw new BadRequestAlertException("You are not allowed to edit this shelter", ENTITY_NAME, "cantedit");
         }
         ShelterDTO result = shelterService.save(shelter);
         return ResponseEntity.ok()

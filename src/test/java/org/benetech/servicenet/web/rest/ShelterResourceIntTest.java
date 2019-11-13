@@ -5,8 +5,10 @@ import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.domain.Shelter;
+import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.service.ShelterService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -20,6 +22,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -119,6 +124,15 @@ public class ShelterResourceIntTest {
     private ShelterService shelterService;
 
     @Autowired
+    private UserService userService;
+
+    @Mock
+    private UserService userServiceMock;
+
+    @Autowired
+    private PersistentTokenRepository persistentTokenRepository;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -140,7 +154,7 @@ public class ShelterResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ShelterResource shelterResource = new ShelterResource(shelterService);
+        final ShelterResource shelterResource = new ShelterResource(shelterService, userService);
         this.restShelterMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -181,6 +195,10 @@ public class ShelterResourceIntTest {
 
     @Before
     public void initTest() {
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(new UsernamePasswordAuthenticationToken("admin", "admin"));
+        SecurityContextHolder.setContext(securityContext);
+
         shelter = createEntity(em);
     }
 
@@ -272,7 +290,7 @@ public class ShelterResourceIntTest {
     
     @SuppressWarnings({"unchecked"})
     public void getAllSheltersWithEagerRelationshipsIsEnabled() throws Exception {
-        ShelterResource shelterResource = new ShelterResource(shelterServiceMock);
+        ShelterResource shelterResource = new ShelterResource(shelterServiceMock, userServiceMock);
         when(shelterRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restShelterMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
@@ -289,7 +307,7 @@ public class ShelterResourceIntTest {
 
     @SuppressWarnings({"unchecked"})
     public void getAllSheltersWithEagerRelationshipsIsNotEnabled() throws Exception {
-        ShelterResource shelterResource = new ShelterResource(shelterServiceMock);
+        ShelterResource shelterResource = new ShelterResource(shelterServiceMock, userServiceMock);
             when(shelterRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restShelterMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
