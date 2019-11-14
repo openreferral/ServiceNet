@@ -44,4 +44,11 @@ public class HealthleadsService extends HealthleadsBaseData {
 
     @SerializedName("x_other_notes")
     private String otherNotes;
+
+    @SerializedName("sn_num_total_referrals")
+    private Integer totalReferrals;
+
+    @SerializedName("sn_num_successful_referrals")
+    private Integer successfulReferrals;
+
 }

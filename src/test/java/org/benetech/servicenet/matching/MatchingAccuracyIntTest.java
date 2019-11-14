@@ -29,6 +29,7 @@ import static org.benetech.servicenet.matching.MatchingTestConstants.SERVICES_TA
 import static org.benetech.servicenet.matching.MatchingTestConstants.SHELTER_TECH_DIR;
 import static org.benetech.servicenet.matching.MatchingTestConstants.SMC_DIR;
 import static org.benetech.servicenet.matching.MatchingTestConstants.TAXONOMY;
+import static org.benetech.servicenet.matching.MatchingTestConstants.METADATA;
 import static org.benetech.servicenet.matching.MatchingTestUtils.loadCsv;
 
 import java.io.IOException;
@@ -126,7 +127,7 @@ public class MatchingAccuracyIntTest {
             ELIGIBILITY, LANGUAGES, LOCATIONS,
             ORGANIZATIONS, PHONES, PHYSICAL_ADDRESSES,
             SERVICES_TAXONOMY, TAXONOMY, REQUIRED_DOCUMENTS,
-            SERVICES, SERVICES_AT_LOCATION
+            SERVICES, SERVICES_AT_LOCATION, METADATA
         );
 
         List<DocumentUpload> uploads = new ArrayList<>();

@@ -6,6 +6,7 @@ import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResourc
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.JSON;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LANGUAGES;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.LOCATIONS;
+import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.METADATA;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.ORGANIZATIONS;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHONES;
 import static org.benetech.servicenet.adapter.healthleads.HealthleadsTestResources.PHYSICAL_ADDRESSES;
@@ -19,6 +20,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +35,9 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.RegularSchedule;
+import org.benetech.servicenet.domain.ServiceMetadata;
 import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.repository.ServiceMetadataRepository;
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.EligibilityService;
@@ -132,6 +137,9 @@ public class HealthleadsCompleteDataAdapterTest {
     @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
+    @Autowired
+    private ServiceMetadataRepository serviceMetadataRepository;
+
     @Before
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setUp() throws IOException {
@@ -140,7 +148,7 @@ public class HealthleadsCompleteDataAdapterTest {
             ELIGIBILITY, LANGUAGES, LOCATIONS,
             ORGANIZATIONS, PHONES, PHYSICAL_ADDRESSES,
             SERVICES_TAXONOMY, TAXONOMY, REQUIRED_DOCUMENTS,
-            SERVICES, SERVICES_AT_LOCATION
+            SERVICES, SERVICES_AT_LOCATION, METADATA
         );
 
         List<DocumentUpload> uploads = new ArrayList<>();
@@ -312,5 +320,17 @@ public class HealthleadsCompleteDataAdapterTest {
 
         assertEquals("Taxonomy Name", result.getName());
         assertEquals("The Taxonomy Vocabulary", result.getVocabulary());
+    }
+
+    @Test
+    public void shouldImportServiceMetadata() {
+        assertEquals(1, serviceMetadataRepository.findAll().size());
+
+        ServiceMetadata result = serviceMetadataRepository.findAll().get(0);
+
+        assertEquals("Jakub Kondrat <jkondrat@soldevelo.com>", result.getUpdatedBy());
+        assertEquals("Partial Update", result.getLastActionType());
+        assertEquals(ZonedDateTime.parse("2019-02-25T18:58:26.000+00:00").withZoneSameInstant(ZoneId.of("UTC")),
+            result.getLastActionDate().withZoneSameInstant(ZoneId.of("UTC")));
     }
 }

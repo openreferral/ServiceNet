@@ -12,6 +12,7 @@ import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceMetadata;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceAtLocationImportService;
@@ -20,6 +21,7 @@ import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
+import org.benetech.servicenet.util.CompareUtils;
 import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -62,7 +64,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
             return;
         }
         EntityValidator.validateAndFix(eligibility, service.getOrganization(), report, service.getExternalDbId());
-        
+
         eligibility.setSrvc(service);
         if (service.getEligibility() != null) {
             eligibility.setId(service.getEligibility().getId());
@@ -96,7 +98,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
             return;
         }
         EntityValidator.validateAndFix(funding, service.getOrganization(), report, service.getExternalDbId());
-        
+
         funding.setSrvc(service);
         if (service.getFunding() != null) {
             funding.setId(service.getFunding().getId());
@@ -135,7 +137,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
             return null;
         }
         EntityValidator.validateAndFix(serviceTaxonomy, service.getOrganization(), report, service.getExternalDbId());
-        
+
         serviceTaxonomy.setSrvc(service);
 
         if (serviceTaxonomy.getTaxonomy() != null) {
@@ -174,7 +176,7 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
             return null;
         }
         EntityValidator.validateAndFix(document, service.getOrganization(), report, externalDbId);
-        
+
         document.setSrvc(service);
         Optional<RequiredDocument> requiredDocumentFromDb
             = requiredDocumentService.findForExternalDb(externalDbId, providerName);
@@ -220,6 +222,32 @@ public class ServiceBasedImportServiceImpl implements ServiceBasedImportService 
             });
 
             service.setLocations(serviceAtLocations);
+        }
+    }
+
+    @Override
+    public void createOrUpdateMetadataForService(
+        Set<ServiceMetadata> metadata,
+        Service service, DataImportReport report) {
+        Set<ServiceMetadata> existingMetadata = service.getMetadata();
+        Set<ServiceMetadata> newMetadata = new HashSet<>();
+        if (metadata != null) {
+            metadata.forEach(m -> {
+                m.setSrvc(service);
+                if (!CompareUtils.hasElement(m, existingMetadata)) {
+                    em.persist(m);
+                    newMetadata.add(m);
+                }
+            });
+            existingMetadata.forEach(m -> {
+                if (!CompareUtils.hasElement(m, metadata)) {
+                    em.remove(m);
+                } else {
+                    newMetadata.add(m);
+                }
+            });
+
+            service.setMetadata(newMetadata);
         }
     }
 
