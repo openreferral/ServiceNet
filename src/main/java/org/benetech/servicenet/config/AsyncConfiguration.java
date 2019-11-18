@@ -2,6 +2,7 @@ package org.benetech.servicenet.config;
 
 import io.github.jhipster.async.ExceptionHandlingAsyncTaskExecutor;
 import io.github.jhipster.config.JHipsterProperties;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -39,6 +40,7 @@ public class AsyncConfiguration implements AsyncConfigurer, SchedulingConfigurer
         executor.setCorePoolSize(jHipsterProperties.getAsync().getCorePoolSize());
         executor.setMaxPoolSize(jHipsterProperties.getAsync().getMaxPoolSize());
         executor.setQueueCapacity(jHipsterProperties.getAsync().getQueueCapacity());
+        executor.setRejectedExecutionHandler(new CallerRunsPolicy());
         executor.setThreadNamePrefix("service-net-Executor-");
         return new ExceptionHandlingAsyncTaskExecutor(executor);
     }
