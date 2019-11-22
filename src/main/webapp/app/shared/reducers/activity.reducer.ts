@@ -8,6 +8,7 @@ import _ from 'lodash';
 
 export const ACTION_TYPES = {
   FETCH_ACTIVITY_LIST: 'activity/FETCH_ACTIVITY_LIST',
+  FETCH_PREVIEW_ACTIVITY_LIST: 'activity/FETCH_PREVIEW_ACTIVITY_LIST',
   RESET: 'activity/RESET'
 };
 
@@ -15,6 +16,7 @@ const initialState = {
   loading: false,
   errorMessage: null,
   entities: [] as ReadonlyArray<IActivity>,
+  suggestions: { organizations: [], services: [] },
   entity: defaultValue,
   links: { next: 0 },
   updating: false,
@@ -52,9 +54,15 @@ export default (state: ActivityState = initialState, action): ActivityState => {
         totalItems: action.payload.headers['x-total-count'],
         entities: loadMoreDataWhenScrolled(state.entities, action.payload.data, links)
       };
+    case SUCCESS(ACTION_TYPES.FETCH_PREVIEW_ACTIVITY_LIST):
+      return {
+        ...state,
+        suggestions: action.payload.data
+      };
     case ACTION_TYPES.RESET:
       return {
-        ...initialState
+        ...initialState,
+        suggestions: state.suggestions
       };
     default:
       return state;
@@ -71,6 +79,15 @@ export const getEntities = (search, page, size, sort, filter) => {
   return {
     type: ACTION_TYPES.FETCH_ACTIVITY_LIST,
     payload: axios.post<IActivity>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`, filter)
+  };
+};
+
+export const getSuggestions = (search, filter) => {
+  const requestUrl = `${`api/activity-suggestions?search=${search}`}`;
+
+  return {
+    type: ACTION_TYPES.FETCH_PREVIEW_ACTIVITY_LIST,
+    payload: axios.post<IActivity>(`${requestUrl}${'&'}cacheBuster=${new Date().getTime()}`, filter)
   };
 };
 
