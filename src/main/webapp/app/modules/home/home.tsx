@@ -9,11 +9,11 @@ import ReactGA from 'react-ga';
 import axios from 'axios';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Row, Col, Container, Progress, Spinner, Input, Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { Row, Col, Container, Progress, Spinner, Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
-import { getEntities, reset } from 'app/shared/reducers/activity.reducer';
+import { getEntities, getSuggestions, reset } from 'app/shared/reducers/activity.reducer';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import ActivityElement from './activity-element';
 import SortActivity from './sort-activity';
@@ -22,6 +22,8 @@ import FilterActivity from './filter-activity';
 import SaveActivityFilter from './save-activity-filter';
 import _ from 'lodash';
 import { updateActivityFilter } from 'app/modules/home/filter-activity.reducer';
+import Select from 'react-select';
+import { getDefaultSearchFieldOptions, ORGANIZATION, SERVICES } from 'app/modules/home/filter.constants';
 
 const SEARCH_TIMEOUT = 1000;
 
@@ -40,6 +42,21 @@ export interface IHomeState extends IPaginationBaseState {
 }
 
 export class Home extends React.Component<IHomeProp, IHomeState> {
+  static getAutosuggestOptions = suggestions => {
+    const organizationOptions = _.map(suggestions.organizations, o => ({ value: o, label: o, type: ORGANIZATION }));
+    const serviceOptions = _.map(suggestions.services, o => ({ value: o, label: o, type: SERVICES }));
+    return [
+      {
+        label: translate('serviceNetApp.activity.home.organizations'),
+        options: organizationOptions
+      },
+      {
+        label: translate('serviceNetApp.activity.home.services'),
+        options: serviceOptions
+      }
+    ];
+  };
+
   constructor(props) {
     super(props);
 
@@ -68,6 +85,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     if (this.props.account.login && !(prevProps.account && prevProps.account.login)) {
       const { searchPhrase, sort, order } = getSearchPreferences(this.props.account.login);
       this.setState({ searchPhrase, sort, order });
+      this.getSuggestions(searchPhrase);
     }
 
     if (this.props.updateSuccess || (this.props.loginSuccess === true && prevProps.loginSuccess === false)) {
@@ -138,15 +156,22 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   };
 
   getEntities = activityFilter => {
-    const { activePage, itemsPerPage, sort, order } = this.state;
+    const { activePage, itemsPerPage, sort, order, searchPhrase } = this.state;
     if (this.props.isAuthenticated) {
       return this.props.getEntities(
-        this.state.searchPhrase,
+        searchPhrase,
         activePage - 1,
         itemsPerPage,
         `${sort},${order}`,
         activityFilter || this.props.activityFilter
       );
+    }
+  };
+
+  getSuggestions = searchPhrase => {
+    searchPhrase = searchPhrase || this.state.searchPhrase;
+    if (this.props.isAuthenticated && searchPhrase.length > 1) {
+      return this.props.getSuggestions(searchPhrase, this.props.activityFilter);
     }
   };
 
@@ -157,12 +182,11 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     });
   };
 
-  changeSearchPhrase = event => {
+  updateSearch = (searchPhrase, shouldGetSuggestions = true) => {
     if (this.state.typingTimeout) {
       clearTimeout(this.state.typingTimeout);
     }
 
-    const searchPhrase = event.target.value;
     setSearchPhrase(this.props.account.login, searchPhrase);
 
     ReactGA.event({ category: 'UserActions', action: 'Searching Records' });
@@ -171,7 +195,9 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       activePage: 1,
       searchPhrase,
       typingTimeout: setTimeout(() => {
-        this.searchEntities(null);
+        if (shouldGetSuggestions) {
+          this.getSuggestions(searchPhrase);
+        }
       }, SEARCH_TIMEOUT)
     });
   };
@@ -182,10 +208,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
 
       this.setState({
         activePage: 1,
-        searchPhrase: '',
-        typingTimeout: setTimeout(() => {
-          this.searchEntities(null);
-        }, SEARCH_TIMEOUT)
+        searchPhrase: ''
       });
     }
   };
@@ -199,8 +222,24 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     ReactGA.event({ category: 'UserActions', action: 'Clicking On A Record' });
   };
 
+  onInputChange = (inputValue, { action }) => {
+    if (action === 'input-change') {
+      this.updateSearch(inputValue);
+    }
+  };
+  onOptionSelect = option => {
+    const searchOn = option.type;
+    if (searchOn !== this.props.activityFilter.searchOn) {
+      const selectedSearchFields = getDefaultSearchFieldOptions();
+      const searchFields = selectedSearchFields.map(f => f.value);
+      this.props.updateActivityFilter({ ...this.props.activityFilter, searchOn, searchFields });
+    }
+    this.updateSearch(option.value, false);
+    this.searchEntities(null);
+  };
+
   render() {
-    const { account, activityList } = this.props;
+    const { account, activityList, autosuggestOptions } = this.props;
     return (
       <div>
         {account && account.login ? null : (
@@ -268,15 +307,17 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                 <Row>
                   <Col sm="12" className="searchBar">
                     <FontAwesomeIcon icon="search" size="lg" className="searchIcon" />
-                    <Input
-                      bsSize="lg"
-                      className="searchInput"
-                      type="search"
+                    <Select
                       name="search"
                       id="searchBar"
+                      className="searchInput"
+                      cacheOptions
+                      inputValue={this.state.searchPhrase}
                       placeholder={translate('serviceNetApp.activity.home.search.placeholder-' + this.props.activityFilter.searchOn)}
-                      value={this.state.searchPhrase}
-                      onChange={this.changeSearchPhrase}
+                      options={autosuggestOptions}
+                      onInputChange={this.onInputChange}
+                      onChange={this.onOptionSelect}
+                      styles={autosuggestStyles}
                     />
                   </Col>
                   <div className="searchClearIconContainer" onClick={this.clearSearchBar}>
@@ -370,6 +411,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   isAuthenticated: storeState.authentication.isAuthenticated,
   loginSuccess: storeState.authentication.loginSuccess,
   activityList: storeState.activity.entities,
+  autosuggestOptions: Home.getAutosuggestOptions(storeState.activity.suggestions),
   totalItems: storeState.activity.totalItems,
   links: storeState.activity.links,
   entity: storeState.activity.entity,
@@ -380,6 +422,7 @@ const mapStateToProps = (storeState: IRootState) => ({
 const mapDispatchToProps = {
   getSession,
   getEntities,
+  getSuggestions,
   reset,
   updateActivityFilter
 };
@@ -391,3 +434,24 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Home);
+
+const autosuggestStyles = {
+  control: styles => ({ ...styles, backgroundColor: 'white' }),
+  option: (styles, { data, isDisabled, isFocused, isSelected }) => ({
+    ...styles,
+    color: 'black',
+    backgroundColor: isDisabled
+      ? null
+      : isSelected
+        ? data.type === ORGANIZATION
+          ? 'rgba(232,250,252,0.7)'
+          : 'rgba(255,249,230,0.7)'
+        : isFocused
+          ? data.type === ORGANIZATION
+            ? 'rgba(232,250,252,0.7)'
+            : 'rgba(255,249,230,0.7)'
+          : data.type === ORGANIZATION
+            ? 'rgba(232,250,252,0.2)'
+            : 'rgba(255,249,230,0.2)'
+  })
+};

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -134,10 +135,13 @@ public class ActivityRepository {
 
         addFilters(countCriteria, selectRootCount, ownerId, searchName, activityFilterDTO);
 
-        List<ActivityInfo> results = em.createQuery(queryCriteria)
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+        Query query = em.createQuery(queryCriteria);
+        if (pageable.isPaged()) {
+            query
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+        }
+        List<ActivityInfo> results = query.getResultList();
 
         Long total = em.createQuery(countCriteria).getSingleResult();
 

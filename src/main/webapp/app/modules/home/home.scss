@@ -11,7 +11,7 @@
 
 .searchBar {
   margin-bottom: 15px;
-  margin-right: -50px;
+  margin-right: -80px;
 }
 
 .searchIcon {
@@ -27,7 +27,7 @@
 
 .searchClearIconContainer {
   cursor: pointer;
-  margin-top: 12px;
+  margin-top: 10px;
   z-index: 1;
 }
 
@@ -195,4 +195,8 @@
       height: auto;
     }
   }
+}
+
+input[id^='react-select-'] {
+  opacity: 1 !important;
 }
