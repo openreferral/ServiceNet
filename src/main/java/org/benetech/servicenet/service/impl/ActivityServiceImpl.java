@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.domain.view.ActivityRecord;
@@ -17,6 +18,7 @@ import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
+import org.benetech.servicenet.web.rest.Suggestions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -89,6 +91,23 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (IllegalAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Suggestions getNameSuggestions(
+        ActivityFilterDTO activityFilterDTO, UUID systemAccountId, String search) {
+
+        Page<ActivityInfo> activities = (systemAccountId != null) ?
+            activityRepository.findAllWithFilters(systemAccountId, search, activityFilterDTO, Pageable.unpaged())
+            : Page.empty();
+        List<String> orgNames = activities.stream()
+            .map(ActivityInfo::getName)
+            .distinct().collect(Collectors.toList());
+        List<String> serviceNames = activities.stream()
+            .map(ActivityInfo::getOrganization).flatMap(o -> o.getServices().stream())
+            .map(org.benetech.servicenet.domain.Service::getName)
+            .distinct().collect(Collectors.toList());
+        return new Suggestions(orgNames, serviceNames);
     }
 
     private ActivityDTO getEntityActivity(ActivityInfo info, Map<UUID, ExclusionsConfig> exclusionsMap) {

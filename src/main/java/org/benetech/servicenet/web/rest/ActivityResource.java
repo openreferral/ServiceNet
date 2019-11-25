@@ -7,7 +7,10 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
+import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
@@ -15,6 +18,7 @@ import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -38,6 +42,15 @@ public class ActivityResource {
     private final ActivityService activityService;
 
     private final UserService userService;
+
+    @Autowired
+    private OrganizationService organizationService;
+
+    @Autowired
+    private ServiceService serviceService;
+
+    @Autowired
+    private ActivityRepository activityRepository;
 
     public ActivityResource(ActivityService activityService, UserService userService) {
         this.activityService = activityService;
@@ -70,5 +83,16 @@ public class ActivityResource {
             .map(r -> ResponseEntity.ok().body(r))
             .orElse(ResponseEntity.badRequest()
                 .build());
+    }
+
+    @PostMapping("/activity-suggestions")
+    @Timed
+    public ResponseEntity<Suggestions> getSuggestions(@Valid @RequestBody ActivityFilterDTO activityFilterDTO,
+        @PathParam("search") String search) {
+        Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
+        UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
+
+        Suggestions suggestions = activityService.getNameSuggestions(activityFilterDTO, systemAccountId, search);
+        return ResponseEntity.ok().body(suggestions);
     }
 }

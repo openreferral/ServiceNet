@@ -2,6 +2,8 @@
   "serviceNetApp": {
     "activity": {
       "home": {
+        "organizations": "Organizations",
+        "services": "Services",
         "title": "Activities",
         "createLabel": "Create a new Activity",
         "createOrEditLabel": "Create or edit a Activity",
