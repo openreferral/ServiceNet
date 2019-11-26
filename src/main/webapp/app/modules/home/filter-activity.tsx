@@ -334,7 +334,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
 
   mergeTaxonomyOptions = (lists, selectedPartners) => {
     if (selectedPartners.length === 0) {
-      return lists[this.props.provider];
+      return lists[this.props.currentProvider];
     }
     let merged = [];
     for (const key in selectedPartners) {
@@ -635,6 +635,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   cityList: storeState.filterActivity.cityList.map(city => ({ label: city, value: city })),
   taxonomyOptions: getTaxonomyOptions(storeState.filterActivity.taxonomyMap),
   partnerList: storeState.filterActivity.partnerList.map(partner => ({ label: partner.name, value: partner.id })),
+  currentProvider: storeState.filterActivity.currentProvider,
   activityFilter: storeState.filterActivity.activityFilter,
   selectedCity: storeState.filterActivity.activityFilter.citiesFilterList.map(city => ({ label: city, value: city })),
   selectedCounty: storeState.filterActivity.activityFilter.regionFilterList.map(county => ({ label: county, value: county })),
@@ -650,8 +651,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   applyLocationSearch: storeState.filterActivity.activityFilter.applyLocationSearch,
   latitude: storeState.filterActivity.activityFilter.latitude,
   longitude: storeState.filterActivity.activityFilter.longitude,
-  radius: storeState.filterActivity.activityFilter.radius,
-  provider: storeState.authentication.account.systemAccountName
+  radius: storeState.filterActivity.activityFilter.radius
 });
 
 const mapDispatchToProps = { getPostalCodeList, getRegionList, getCityList, getPartnerList, getTaxonomyMap, updateActivityFilter };

@@ -23,6 +23,7 @@ import org.benetech.servicenet.domain.ActivityFilter;
 import org.benetech.servicenet.domain.enumeration.DateFilter;
 import org.benetech.servicenet.repository.ActivityFilterRepository;
 import org.benetech.servicenet.service.ActivityFilterService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.mapper.ActivityFilterMapper;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
@@ -107,6 +108,9 @@ public class ActivityFilterResourceIntTest {
     @Autowired
     private Validator validator;
 
+    @Autowired
+    private UserService userService;
+
     private MockMvc restActivityFilterMockMvc;
 
     private ActivityFilter activityFilter;
@@ -114,7 +118,7 @@ public class ActivityFilterResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ActivityFilterResource activityFilterResource = new ActivityFilterResource(activityFilterService);
+        final ActivityFilterResource activityFilterResource = new ActivityFilterResource(activityFilterService, userService);
         this.restActivityFilterMockMvc = MockMvcBuilders.standaloneSetup(activityFilterResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
