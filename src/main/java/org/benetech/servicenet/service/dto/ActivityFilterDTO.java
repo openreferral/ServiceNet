@@ -50,6 +50,14 @@ public class ActivityFilterDTO implements Serializable {
 
     private String userLogin;
 
+    private Boolean applyLocationSearch = false;
+
+    private Double latitude;
+
+    private Double longitude;
+
+    private Double radius;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -90,6 +98,10 @@ public class ActivityFilterDTO implements Serializable {
             ", showPartner='" + getShowPartner() + "'" +
             ", user=" + getUserId() +
             ", user='" + getUserLogin() + "'" +
+            ", applyLocationSearch='" + getApplyLocationSearch() + "'" +
+            ", latitude='" + getLatitude() + "'" +
+            ", longitude='" + getLongitude() + "'" +
+            ", radius='" + getRadius() + "'" +
             "}";
     }
 }

@@ -90,6 +90,9 @@ public class ActivityRepository {
 
     private static final String HIDDEN = "hidden";
 
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
+
     private final EntityManager em;
     private final CriteriaBuilder cb;
 
@@ -135,15 +138,31 @@ public class ActivityRepository {
 
         addFilters(countCriteria, selectRootCount, ownerId, searchName, activityFilterDTO);
 
+        List<ActivityInfo> results = null;
+        Long total = null;
+
         Query query = em.createQuery(queryCriteria);
         if (pageable.isPaged()) {
             query
                 .setFirstResult((int) pageable.getOffset())
                 .setMaxResults(pageable.getPageSize());
         }
-        List<ActivityInfo> results = query.getResultList();
 
-        Long total = em.createQuery(countCriteria).getSingleResult();
+        if (applyPositionFiltering(activityFilterDTO)) {
+            results = query
+                .setParameter("lat", activityFilterDTO.getLatitude())
+                .setParameter("lon", activityFilterDTO.getLongitude())
+                .getResultList();
+
+            total = em.createQuery(countCriteria)
+                .setParameter("lat", activityFilterDTO.getLatitude())
+                .setParameter("lon", activityFilterDTO.getLongitude())
+                .getSingleResult();
+        } else {
+            results = query.getResultList();
+
+            total = em.createQuery(countCriteria).getSingleResult();
+        }
 
         return new PageImpl<>(results, pageable, total.intValue());
     }
@@ -204,6 +223,21 @@ public class ActivityRepository {
                 geocodingResultJoin.get(POSTAL_CODE).in(activityFilterDTO.getPostalCodesFilterList())
             );
         }
+
+        if (applyPositionFiltering(activityFilterDTO)) {
+            Expression<Double> distance = cb.function(
+                "calculate_distance",
+                Double.class,
+                cb.parameter(Double.class, "lat"),
+                cb.parameter(Double.class, "lon"),
+                geocodingResultJoin.get(LATITUDE),
+                geocodingResultJoin.get(LONGITUDE)
+            );
+
+            updatedPredicate = cb.and(updatedPredicate, cb.lessThanOrEqualTo(distance, activityFilterDTO.getRadius()));
+            cb.asc(distance);
+        }
+
         return updatedPredicate;
     }
 
@@ -294,7 +328,8 @@ public class ActivityRepository {
 
         if (CollectionUtils.isNotEmpty(activityFilterDTO.getCitiesFilterList())
             || CollectionUtils.isNotEmpty(activityFilterDTO.getRegionFilterList())
-            || CollectionUtils.isNotEmpty(activityFilterDTO.getPostalCodesFilterList())) {
+            || CollectionUtils.isNotEmpty(activityFilterDTO.getPostalCodesFilterList())
+            || applyPositionFiltering(activityFilterDTO)) {
 
             orgJoin = (orgJoin != null) ? orgJoin : root.join(ORGANIZATIONS, JoinType.LEFT);
             locationJoin = (locationJoin != null) ? locationJoin : orgJoin.join(LOCATIONS, JoinType.LEFT);
@@ -335,5 +370,12 @@ public class ActivityRepository {
                 orderList.add(cb.desc(root.get(field)));
             }
         }
+    }
+
+    private Boolean applyPositionFiltering(ActivityFilterDTO activityFilterDTO) {
+        return activityFilterDTO.getApplyLocationSearch() &&
+            activityFilterDTO.getRadius() != null &&
+            activityFilterDTO.getLatitude() != null &&
+            activityFilterDTO.getLongitude() != null;
     }
 }
