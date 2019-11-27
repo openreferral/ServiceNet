@@ -29,6 +29,7 @@ export interface IMultipleRecordViewState {
   locationMatches: any;
   selectedLocation: any;
   matchLocations: boolean;
+  matchingLocation: any;
 }
 
 export class MultipleRecordView extends React.Component<IMultipleRecordViewProp, IMultipleRecordViewState> {
@@ -40,7 +41,8 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     dismissError: false,
     locationMatches: [],
     selectedLocation: null,
-    matchLocations: true
+    matchLocations: true,
+    matchingLocation: null
   };
 
   componentDidMount() {
@@ -127,16 +129,11 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
   selectLocation = location => {
     const selectedLocation = location.location.id;
-    if (!this.findMatchingLocation(selectedLocation)) {
-      this.setState({
-        selectedLocation,
-        matchLocations: false
-      });
-    } else {
-      this.setState({
-        selectedLocation
-      });
-    }
+    const matchingLocation = this.findMatchingLocation(selectedLocation);
+    this.setState({
+      selectedLocation,
+      matchingLocation
+    });
   };
 
   findMatchingLocation = selectedLocation => {
@@ -145,6 +142,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     if (match && match.locationMatches) {
       if (selectedLocation in match.locationMatches) {
         return match.locationMatches[selectedLocation];
+      }
+      const invertedMatches = _.invert(match.locationMatches);
+      if (selectedLocation in invertedMatches) {
+        return invertedMatches[selectedLocation];
       }
     }
   };
@@ -227,6 +228,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 showClipboard={false}
                 selectLocation={this.selectLocation}
                 matchLocations={this.state.matchLocations}
+                matchingLocation={this.state.matchingLocation}
                 toggleMatchLocations={this.toggleMatchLocations}
               />
             </Col>
@@ -276,8 +278,9 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 exclusions={[]}
                 isBaseRecord={false}
                 showClipboard
+                selectLocation={this.selectLocation}
                 matchLocations={this.state.matchLocations}
-                matchingLocation={this.findMatchingLocation(this.state.selectedLocation)}
+                matchingLocation={this.state.matchingLocation}
               />
               <Jumbotron className="same-record-question-container">
                 <div className="same-record-question">
