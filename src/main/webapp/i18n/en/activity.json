@@ -79,7 +79,10 @@
             "untilDateEarlierThanFromDate": "Please specify a From date that is on or before the Until date.",
             "invalidDates": "Please specify valid From and Until dates."
           },
-          "radius": "Search in radius"
+          "radius": "Search in radius",
+          "locationChooser": "Location chooser",
+          "filterOptions": "Filter options",
+          "setMyCurrentLocation": "Set my current location"
         },
         "sort": {
           "toggle": "Sort",

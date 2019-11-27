@@ -389,7 +389,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                 <Nav tabs>
                   <NavItem>
                     <NavLink className={`filters-tab ${activeTab === 'optionsTab' ? 'active' : ''}`} onClick={this.optionsTab}>
-                      Filter options
+                      <Translate contentKey="serviceNetApp.activity.home.filter.filterOptions" />
                     </NavLink>
                   </NavItem>
                   <NavItem>
@@ -399,7 +399,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                       }`}
                       onClick={this.mapTab}
                     >
-                      Location chooser
+                      <Translate contentKey="serviceNetApp.activity.home.filter.locationChooser" />
                     </NavLink>
                   </NavItem>
                 </Nav>
@@ -582,7 +582,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                     <Row className="my-2">
                       <Col>
                         <Button className="btn btn-primary" onClick={this.getMyCurrentLocation}>
-                          Set my current location
+                          <Translate contentKey="serviceNetApp.activity.home.filter.setMyCurrentLocation" />
                         </Button>
                       </Col>
                       <Col md="4" className="d-flex align-items-center">
