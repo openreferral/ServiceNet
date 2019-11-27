@@ -4,11 +4,11 @@ import io.github.jhipster.web.util.ResponseUtil;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.benetech.servicenet.service.ActivityFilterService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
@@ -43,8 +43,11 @@ public class ActivityFilterResource {
 
     private final ActivityFilterService activityFilterService;
 
-    public ActivityFilterResource(ActivityFilterService activityFilterService) {
+    private final UserService userService;
+
+    public ActivityFilterResource(ActivityFilterService activityFilterService, UserService userService) {
         this.activityFilterService = activityFilterService;
+        this.userService = userService;
     }
 
     /**
@@ -75,8 +78,15 @@ public class ActivityFilterResource {
      * GET getTaxonomies
      */
     @GetMapping("/activity-filter/get-taxonomies")
-    public Map<String, Set<String>> getTaxonomies() {
-        return activityFilterService.getTaxonomies();
+    public TaxonomyFilterDTO getTaxonomies() {
+        TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
+        taxonomyFilterDTO.setTaxonomiesByProvider(
+            activityFilterService.getTaxonomies()
+        );
+        taxonomyFilterDTO.setCurrentProvider(
+            userService.getCurrentSystemAccountName()
+        );
+        return taxonomyFilterDTO;
     }
 
     /**

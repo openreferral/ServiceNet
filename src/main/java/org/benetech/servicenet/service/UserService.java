@@ -391,6 +391,11 @@ public class UserService {
             Optional.empty();
     }
 
+    public String getCurrentSystemAccountName() {
+        Optional<SystemAccount> accountOpt = getCurrentSystemAccount();
+        return accountOpt.map(SystemAccount::getName).orElse(null);
+    }
+
     public User getCurrentUser() {
         Optional<User> current = SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
         return current.orElseThrow(() -> new IllegalStateException("No current user found"));

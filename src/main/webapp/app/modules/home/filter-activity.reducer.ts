@@ -17,6 +17,7 @@ export const ACTION_TYPES = {
 const initialState = {
   loading: false,
   errorMessage: null,
+  currentProvider: null,
   postalCodeList: [],
   regionList: [],
   cityList: [],
@@ -97,7 +98,8 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
     case SUCCESS(ACTION_TYPES.FETCH_TAXONOMY_LIST):
       return {
         ...state,
-        taxonomyMap: action.payload.data,
+        taxonomyMap: action.payload.data.taxonomiesByProvider,
+        currentProvider: action.payload.data.currentProvider,
         loading: false
       };
     case SUCCESS(ACTION_TYPES.FETCH_SAVED_FILTERS):
