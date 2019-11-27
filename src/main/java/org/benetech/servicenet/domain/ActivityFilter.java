@@ -86,6 +86,18 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
     @JsonIgnoreProperties("filters")
     private User user;
 
+    @Column(name = "applyLocationSearch")
+    private Boolean applyLocationSearch = false;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "radius")
+    private Double radius;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getName() {
         return name;
@@ -265,6 +277,58 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
         return this;
     }
 
+    public Boolean getApplyLocationSearch() {
+        return applyLocationSearch;
+    }
+
+    public ActivityFilter getApplyLocationSearch(Boolean applyLocationSearch) {
+        this.applyLocationSearch = applyLocationSearch;
+        return this;
+    }
+
+    public void setApplyLocationSearch(Boolean applyLocationSearch) {
+        this.applyLocationSearch = applyLocationSearch;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public ActivityFilter getLatitude(Double latitude) {
+        this.latitude = latitude;
+        return this;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public ActivityFilter getLongitude(Double longitude) {
+        this.longitude = longitude;
+        return this;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getRadius() {
+        return radius;
+    }
+
+    public ActivityFilter getRadius(Double radius) {
+        this.radius = radius;
+        return this;
+    }
+
+    public void setRadius(Double radius) {
+        this.radius = radius;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -303,6 +367,10 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
             ", toDate='" + getToDate() + "'" +
             ", hiddenFilter='" + isHiddenFilter() + "'" +
             ", showPartner='" + isShowPartner() + "'" +
+            ", applyLocationSearch='" + getApplyLocationSearch() + "'" +
+            ", latitude='" + getLatitude() + "'" +
+            ", longitude='" + getLongitude() + "'" +
+            ", radius='" + getRadius() + "'" +
             "}";
     }
 }

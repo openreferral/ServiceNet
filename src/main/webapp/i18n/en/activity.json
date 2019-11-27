@@ -41,6 +41,7 @@
             "dateRange": "Date Range"
           },
           "onlyShowMatching": "Only show matching",
+          "applyLocationSearch": "Search near selected location",
           "fields": {
             "name": "Name",
             "alternateName": "Alternate name",
@@ -77,7 +78,11 @@
             "specifyToDate": "Please specify an Until date.",
             "untilDateEarlierThanFromDate": "Please specify a From date that is on or before the Until date.",
             "invalidDates": "Please specify valid From and Until dates."
-          }
+          },
+          "radius": "Search in radius",
+          "locationChooser": "Location chooser",
+          "filterOptions": "Filter options",
+          "setMyCurrentLocation": "Set my current location"
         },
         "sort": {
           "toggle": "Sort",

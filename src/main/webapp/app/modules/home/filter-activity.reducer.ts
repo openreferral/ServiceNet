@@ -35,7 +35,11 @@ const initialState = {
     fromDate: '',
     toDate: '',
     hiddenFilter: false,
-    showPartner: false
+    showPartner: false,
+    applyLocationSearch: false,
+    latitude: null,
+    longitude: null,
+    radius: 1
   }
 };
 

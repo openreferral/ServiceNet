@@ -200,3 +200,22 @@
 input[id^='react-select-'] {
   opacity: 1 !important;
 }
+
+.nav-link {
+  cursor: pointer;
+}
+
+.nav-tabs .nav-link,
+.nav-tabs .nav-link.disabled,
+.nav-tabs .nav-link.disabled:hover,
+.nav-tabs .nav-link.disabled:focus {
+  margin-top: 5px;
+}
+
+.missing-loc {
+  box-shadow: inset 0 0 5px red;
+}
+
+.nav-link.active.missing-loc {
+  box-shadow: none;
+}
