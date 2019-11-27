@@ -36,6 +36,14 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.matchingLocation !== this.props.matchingLocation) {
+      this.setState({
+        locationNumber: this.getLocationNumber()
+      });
+    }
+  }
+
   changeRecord = locationNumber => {
     this.setState({ locationNumber });
     if (this.props.selectLocation) {
@@ -55,7 +63,7 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
 
   render() {
     const { locations, isAreaOpen } = this.props;
-    const locationNumber = this.getLocationNumber();
+    const locationNumber = this.state.locationNumber;
     const sortedLocations = _.sortBy(locations, ['physicalAddress.address1', 'physicalAddress.city']);
     const record = sortedLocations[locationNumber];
     const locationDetails =
@@ -71,6 +79,7 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
           record={record}
           locationsCount={`(${locationNumber + 1}/${sortedLocations.length}) `}
           isAreaOpen={isAreaOpen}
+          locationNumber={this.state.locationNumber}
         />
       ) : null;
 

@@ -29,15 +29,20 @@ export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   matchLocations?: boolean;
   toggleMatchLocations?: any;
   isBaseRecord: boolean;
+  locationNumber?: number;
 }
 
 export interface ISingleLocationDetailsState {
   isAreaOpen: boolean;
+  id: string;
 }
 
 export class SingleLocationDetails extends React.Component<ISingleLocationDetailsProp, ISingleLocationDetailsState> {
   state: ISingleLocationDetailsState = {
-    isAreaOpen: this.props.isAreaOpen
+    isAreaOpen: this.props.isAreaOpen,
+    id: `location_${Math.random()
+      .toString()
+      .replace(/0\./, '')}`
   };
 
   toggleAreaOpen = () => {
@@ -51,6 +56,11 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     this.props.changeRecord(record.value);
   };
 
+  getSelectOption = record => ({
+    value: this.props.locationNumber,
+    label: `${record.physicalAddress.address1} ${record.physicalAddress.city}`
+  });
+
   render() {
     const { record, isOnlyOne, columnSize, locationsCount, selectOptions, isBaseRecord, matchLocations, toggleMatchLocations } = this.props;
     const customHeader = (
@@ -63,7 +73,7 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
         </div>
         {isOnlyOne ? null : (
           <div className={isBaseRecord ? 'col-8 changeRecordSelect' : 'w-100'}>
-            <Select onChange={this.changeRecord} options={selectOptions} />
+            <Select onChange={this.changeRecord} options={selectOptions} value={this.getSelectOption(record)} />
           </div>
         )}
         {isBaseRecord ? (
@@ -73,10 +83,11 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
               onChange={toggleMatchLocations}
               type="checkbox"
               title={translate('multiRecordView.locationCheckboxTooltip')}
+              id={this.state.id}
             />
-            <div className="chainIcon">
+            <label htmlFor={this.state.id} className="chainIcon">
               <FontAwesomeIcon size="sm" icon="link" />
-            </div>
+            </label>
           </div>
         ) : null}
       </div>
