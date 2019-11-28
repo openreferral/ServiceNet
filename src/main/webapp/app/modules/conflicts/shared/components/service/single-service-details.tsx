@@ -57,14 +57,17 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     const { record, isOnlyOne, columnSize, selectOptions, servicesCount } = this.props;
     const customHeader = (
       <div className="title d-flex justify-content-start align-items-center mb-1">
-        <div className="col-3 collapseBtn d-flex justify-content-start align-items-center pr-1 h4 mb-0 pl-0" onClick={this.toggleAreaOpen}>
+        <div
+          className="col collapseBtn d-flex justify-content-start align-items-center pr-3 h4 mb-0 pl-0 flex-grow-0"
+          onClick={this.toggleAreaOpen}
+        >
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
           <Translate contentKey="singleRecordView.details.titleServices" /> <span className="text-blue ml-1">{servicesCount}</span>
         </div>
         {isOnlyOne ? null : (
-          <div className="w-100">
+          <div className="flex-grow-1">
             <Select onChange={this.changeRecord} options={selectOptions} />
           </div>
         )}
