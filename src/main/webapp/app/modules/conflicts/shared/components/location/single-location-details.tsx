@@ -64,20 +64,23 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
   render() {
     const { record, isOnlyOne, columnSize, locationsCount, selectOptions, isBaseRecord, matchLocations, toggleMatchLocations } = this.props;
     const customHeader = (
-      <div className="title d-flex justify-content-start align-items-center mb-1">
-        <div className="col-3 collapseBtn d-flex justify-content-start align-items-center pr-1 h4 mb-0 pl-0" onClick={this.toggleAreaOpen}>
+      <div className="title d-flex justify-content-between align-items-center mb-1">
+        <div
+          className="col collapseBtn d-flex justify-content-start align-items-center pr-1 h4 mb-0 pl-0 flex-grow-0"
+          onClick={this.toggleAreaOpen}
+        >
           <div className="collapseIcon">
             <FontAwesomeIcon size="xs" icon={this.state.isAreaOpen ? 'angle-up' : 'angle-down'} />
           </div>
           <Translate contentKey="singleRecordView.details.titleLocations" /> <span className="text-blue ml-1">{locationsCount}</span>
         </div>
         {isOnlyOne ? null : (
-          <div className={isBaseRecord ? 'col-8 changeRecordSelect' : 'w-100'}>
+          <div className={isBaseRecord ? 'col-8 changeRecordSelect flex-grow-1' : 'w-100'}>
             <Select onChange={this.changeRecord} options={selectOptions} value={this.getSelectOption(record)} />
           </div>
         )}
         {isBaseRecord ? (
-          <div className={isOnlyOne ? 'col-1 offset-8' : 'col-1'}>
+          <div className="col-1 d-flex justify-content-center align-items-center">
             <input
               checked={matchLocations}
               onChange={toggleMatchLocations}
