@@ -56,6 +56,7 @@ const Map = withScriptjs(
     withLatLong(props => (
       <GoogleMap
         defaultZoom={8}
+        defaultOptions={{ mapTypeControl: false, streetViewControl: false }}
         onClick={props.onClick}
         center={{ lat: props.latitude || 37.8543356, lng: props.longitude || -122.272921 }}
       >
