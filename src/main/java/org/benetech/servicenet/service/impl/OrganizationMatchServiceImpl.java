@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -426,28 +427,33 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     private List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner,
         List<MatchSimilarityDTO> similarityDTOS) {
         List<OrganizationMatch> matches = new LinkedList<>();
+
+        BigDecimal similaritySum = similarityDTOS.stream()
+            .map(MatchSimilarityDTO::getSimilarity)
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            .divide(organizationSimilarityCounter.getTotalWeight(), 2, RoundingMode.FLOOR);
+
         OrganizationMatch match = new OrganizationMatch()
             .organizationRecord(organization)
             .partnerVersion(partner)
-            .timestamp(ZonedDateTime.now());
+            .timestamp(ZonedDateTime.now())
+            .similarity(similaritySum);
 
         OrganizationMatch mirrorMatch = new OrganizationMatch()
             .organizationRecord(partner)
             .partnerVersion(organization)
-            .timestamp(ZonedDateTime.now());
+            .timestamp(ZonedDateTime.now())
+            .similarity(similaritySum);
 
         matches.add(saveOrUpdate(match));
         matches.add(saveOrUpdate(mirrorMatch));
-        BigDecimal similaritySum = BigDecimal.ZERO;
+
         for (MatchSimilarityDTO similarityDTO : similarityDTOS) {
-            similaritySum.add(similarityDTO.getSimilarity());
             similarityDTO.setOrganizationMatchId(match.getId());
             matchSimilarityService.saveOrUpdate(similarityDTO);
             similarityDTO.setOrganizationMatchId(mirrorMatch.getId());
             matchSimilarityService.saveOrUpdate(similarityDTO);
         }
-        match.setSimilarity(similaritySum);
-        mirrorMatch.setSimilarity(similaritySum);
         return matches;
     }
 
