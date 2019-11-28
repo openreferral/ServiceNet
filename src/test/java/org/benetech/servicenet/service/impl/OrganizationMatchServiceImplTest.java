@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
@@ -117,8 +118,11 @@ public class OrganizationMatchServiceImplTest {
         similarity.setSimilarity(BigDecimal.valueOf(1.0f));
         similarities.add(similarity);
 
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(BigDecimal.valueOf(1.0f));
+        BigDecimal similarityRatio = BigDecimal.valueOf(1.0f);
+        BigDecimal totalWeight = BigDecimal.valueOf(3.1f);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(similarityRatio);
         when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2, null)).thenReturn(similarities);
+        when(organizationSimilarityCounter.getTotalWeight()).thenReturn(totalWeight);
 
         int dbSize = organizationMatchService.findAll().size();
         organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
@@ -129,6 +133,7 @@ public class OrganizationMatchServiceImplTest {
             && m.getPartnerVersionName().equals(ORG_2)));
         assertTrue(matches.stream().anyMatch(m -> m.getOrganizationRecordName().equals(ORG_2)
             && m.getPartnerVersionName().equals(ORG_1)));
+        assertTrue(matches.stream().anyMatch(m -> m.getSimilarity().equals(similarityRatio.divide(totalWeight, 2, RoundingMode.FLOOR))));
     }
 
     @Test
@@ -148,6 +153,7 @@ public class OrganizationMatchServiceImplTest {
 
         when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(COMPLETE_MATCH_RATIO);
         when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2, null)).thenReturn(MATCHING_SIMILARITY_DTOS);
+        when(organizationSimilarityCounter.getTotalWeight()).thenReturn(BigDecimal.valueOf(3.1f));
 
         int dbSize = organizationMatchService.findAll().size();
         organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
