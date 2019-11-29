@@ -70,10 +70,7 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
       sortedLocations.length > locationNumber ? (
         <SingleLocationDetails
           {...this.props}
-          selectOptions={_.map(sortedLocations, (l, idx) => ({
-            value: idx,
-            label: `${l.physicalAddress.address1} ${l.physicalAddress.city}`
-          }))}
+          selectOptions={_.map(sortedLocations, (l, idx) => SingleLocationDetails.getSelectOption(l, idx))}
           changeRecord={this.changeRecord}
           isOnlyOne={sortedLocations.length <= 1}
           record={record}
