@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Row, Button } from 'reactstrap';
+import { Col, Row } from 'reactstrap';
 import '../../shared-record-view.scss';
 import { TextFormat, translate, Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
@@ -45,6 +45,16 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       .replace(/0\./, '')}`
   };
 
+  static getSelectOption = (record, locationNumber) => ({
+    value: locationNumber,
+    label:
+      record.physicalAddress !== null
+        ? `${record.physicalAddress.address1} ${record.physicalAddress.city}`
+        : record.postalAddress !== null
+          ? `${record.postalAddress.address1} ${record.postalAddress.city}`
+          : record.location.name
+  });
+
   toggleAreaOpen = () => {
     this.setState({
       isAreaOpen: !this.state.isAreaOpen
@@ -56,13 +66,18 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     this.props.changeRecord(record.value);
   };
 
-  getSelectOption = record => ({
-    value: this.props.locationNumber,
-    label: `${record.physicalAddress.address1} ${record.physicalAddress.city}`
-  });
-
   render() {
-    const { record, isOnlyOne, columnSize, locationsCount, selectOptions, isBaseRecord, matchLocations, toggleMatchLocations } = this.props;
+    const {
+      record,
+      isOnlyOne,
+      columnSize,
+      locationsCount,
+      selectOptions,
+      isBaseRecord,
+      matchLocations,
+      toggleMatchLocations,
+      locationNumber
+    } = this.props;
     const customHeader = (
       <div className="title d-flex justify-content-between align-items-center mb-1">
         <div
@@ -76,7 +91,11 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
         </div>
         {isOnlyOne ? null : (
           <div className={isBaseRecord ? 'col-8 changeRecordSelect flex-grow-1' : 'w-100'}>
-            <Select onChange={this.changeRecord} options={selectOptions} value={this.getSelectOption(record)} />
+            <Select
+              onChange={this.changeRecord}
+              options={selectOptions}
+              value={SingleLocationDetails.getSelectOption(record, locationNumber)}
+            />
           </div>
         )}
         {isBaseRecord ? (
@@ -117,13 +136,20 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       </div>
     );
 
-    const additionalFields = [
-      <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />,
-      <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />,
-      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
-      <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
-      <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />
-    ];
+    const additionalFields = (record.physicalAddress !== null
+      ? [<PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />]
+      : []
+    )
+      .concat(
+        record.postalAddress !== null
+          ? [<PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />]
+          : []
+      )
+      .concat([
+        <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
+        <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
+        <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />
+      ]);
 
     const fields = [
       getTextField(record.location, 'name'),
