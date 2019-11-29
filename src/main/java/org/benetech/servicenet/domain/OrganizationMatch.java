@@ -94,6 +94,11 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
         this.partnerVersion = organization;
         return this;
     }
+
+    public OrganizationMatch similarity(BigDecimal similarity) {
+        this.similarity = similarity;
+        return this;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

@@ -86,7 +86,7 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
         BigDecimal currentResult = similarityDtos.stream()
             .map(MatchSimilarityDTO::getSimilarity)
             .reduce(BigDecimal.ZERO, BigDecimal::add)
-            .divide(getTotalWeight(), 2, RoundingMode.CEILING);
+            .divide(getTotalWeight(), 2, RoundingMode.FLOOR);
         if (BooleanUtils.isTrue(alwaysCompareLocations) || currentResult.compareTo(BigDecimal.ZERO) > 0) {
             if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
                 similarityDtos.add(getFieldMatchSimilarityDTO(
@@ -130,7 +130,7 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
             .multiply(weightProvider.getYearsIncorporatedWeight());
     }
 
-    private BigDecimal getTotalWeight() {
+    public BigDecimal getTotalWeight() {
         return weightProvider.getNameWeight().add(weightProvider.getAlternateNameWeight())
             .add(weightProvider.getDescriptionWeight()).add(weightProvider.getEmailWeight())
             .add(weightProvider.getUrlWeight()).add(weightProvider.getYearsIncorporatedWeight())
