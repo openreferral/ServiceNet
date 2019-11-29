@@ -39,6 +39,7 @@ export interface IHomeState extends IPaginationBaseState {
   activityList: [];
   activityFilter: [];
   isOpen: boolean;
+  clearedAt: number;
 }
 
 export class Home extends React.Component<IHomeProp, IHomeState> {
@@ -73,7 +74,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       typingTimeout: 0,
       activityList: [],
       activityFilter: [],
-      isOpen: false
+      isOpen: false,
+      clearedAt: 0
     };
   }
 
@@ -208,7 +210,8 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
 
       this.setState({
         activePage: 1,
-        searchPhrase: ''
+        searchPhrase: '',
+        clearedAt: Date.now()
       });
     }
   };
@@ -308,11 +311,12 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
                   <Col sm="12" className="searchBar">
                     <FontAwesomeIcon icon="search" size="lg" className="searchIcon" />
                     <Select
+                      key={`autosuggest__${this.state.clearedAt}`}
                       name="search"
                       id="searchBar"
                       className="searchInput"
                       cacheOptions
-                      inputValue={this.state.searchPhrase}
+                      inputValue={this.state.searchPhrase || ''}
                       placeholder={translate('serviceNetApp.activity.home.search.placeholder-' + this.props.activityFilter.searchOn)}
                       options={autosuggestOptions}
                       onInputChange={this.onInputChange}
@@ -453,5 +457,6 @@ const autosuggestStyles = {
           : data.type === ORGANIZATION
             ? 'rgba(232,250,252,0.2)'
             : 'rgba(255,249,230,0.2)'
-  })
+  }),
+  menu: styles => ({ ...styles, width: 'calc(100% - 35px)' })
 };
