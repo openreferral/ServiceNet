@@ -290,13 +290,23 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.updateActivityFilter({ ...this.props.activityFilter, dateFilter: dateFilter.value });
   };
 
+  dateWithoutTz = dateToFormat => {
+    const date = new Date(dateToFormat);
+    return new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  };
+
+  dateWithTz = dateToFormat => {
+    const date = new Date(dateToFormat);
+    return date.setTime(date.getTime() + date.getTimezoneOffset() * 60000);
+  };
+
   handleFromDateChange = fromDate => {
-    this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate });
+    this.props.updateActivityFilter({ ...this.props.activityFilter, fromDate: this.dateWithoutTz(fromDate).toISOString() });
     this.setState({ filtersChanged: true });
   };
 
   handleToDateChange = toDate => {
-    this.props.updateActivityFilter({ ...this.props.activityFilter, toDate });
+    this.props.updateActivityFilter({ ...this.props.activityFilter, toDate: this.dateWithoutTz(toDate).toISOString() });
     this.setState({ filtersChanged: true });
   };
 
@@ -350,7 +360,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     return merged;
   };
 
-  getDateOrNull = date => (date ? new Date(date) : null);
+  getDateOrNull = date => (date ? this.dateWithTz(date) : null);
 
   optionsTab = () => this.changeTab('optionsTab');
 
