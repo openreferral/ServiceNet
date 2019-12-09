@@ -433,20 +433,24 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .reduce(BigDecimal.ZERO, BigDecimal::add)
             .divide(organizationSimilarityCounter.getTotalWeight(), 2, RoundingMode.FLOOR);
 
-        OrganizationMatch match = new OrganizationMatch()
-            .organizationRecord(organization)
-            .partnerVersion(partner)
-            .timestamp(ZonedDateTime.now())
-            .similarity(similaritySum);
+        OrganizationMatch match = saveOrUpdate(
+            new OrganizationMatch()
+                .organizationRecord(organization)
+                .partnerVersion(partner)
+                .timestamp(ZonedDateTime.now())
+                .similarity(similaritySum)
+        );
 
-        OrganizationMatch mirrorMatch = new OrganizationMatch()
-            .organizationRecord(partner)
-            .partnerVersion(organization)
-            .timestamp(ZonedDateTime.now())
-            .similarity(similaritySum);
+        OrganizationMatch mirrorMatch = saveOrUpdate(
+            new OrganizationMatch()
+                .organizationRecord(partner)
+                .partnerVersion(organization)
+                .timestamp(ZonedDateTime.now())
+                .similarity(similaritySum)
+        );
 
-        matches.add(saveOrUpdate(match));
-        matches.add(saveOrUpdate(mirrorMatch));
+        matches.add(match);
+        matches.add(mirrorMatch);
 
         for (MatchSimilarityDTO similarityDTO : similarityDTOS) {
             similarityDTO.setOrganizationMatchId(match.getId());
