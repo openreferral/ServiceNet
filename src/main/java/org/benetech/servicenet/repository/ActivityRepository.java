@@ -345,7 +345,6 @@ public class ActivityRepository {
         return updatedPredicate;
     }
 
-    @SuppressWarnings("checkstyle:cyclomaticComplexity")
     private <T> void addFilters(CriteriaQuery<T> query, Root<ActivityInfo> root, UUID ownerId,
         String searchName, ActivityFilterDTO activityFilterDTO) {
 
