@@ -74,7 +74,7 @@ public class ShelterServiceImpl implements ShelterService {
         }
 
         Set<Phone> phones = shelter.getPhones().stream()
-            .filter(phone -> phone.getNumber() != null)
+            .filter(phone -> StringUtils.isNotBlank(phone.getNumber()))
             .collect(Collectors.toSet());
         for (Phone phone: phones) {
             phone.setShelter(shelter);
