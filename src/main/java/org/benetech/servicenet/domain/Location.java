@@ -9,6 +9,8 @@ import java.util.List;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -123,6 +125,12 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
     private Organization organization;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    @PrePersist
+    @PreUpdate
+    public void addTimestamp() {
+        updatedAt = ZonedDateTime.now();
+    }
 
     public Location(Location loc) {
         this.name = loc.name;

@@ -2,6 +2,8 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -182,6 +184,12 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
+    @PrePersist
+    @PreUpdate
+    public void addTimestamp() {
+        updatedAt = ZonedDateTime.now();
+    }
+
     public Service(Service srvc) {
         this.name = srvc.name;
         this.alternateName = srvc.alternateName;
@@ -203,7 +211,6 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
         this.lastVerifiedOn = srvc.lastVerifiedOn;
         this.successfulReferrals = srvc.successfulReferrals;
         this.totalReferrals = srvc.totalReferrals;
-        this.updatedAt = srvc.updatedAt;
     }
 
     public Service name(String name) {

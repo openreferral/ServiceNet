@@ -90,10 +90,6 @@ public class ServiceResourceIntTest {
     private static final String DEFAULT_TYPE = "AAAAAAAAAA";
     private static final String UPDATED_TYPE = "BBBBBBBBBB";
 
-    private static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
-        ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
     @Autowired
     private ServiceRepository serviceRepository;
 
@@ -139,8 +135,7 @@ public class ServiceResourceIntTest {
             .fees(DEFAULT_FEES)
             .accreditations(DEFAULT_ACCREDITATIONS)
             .licenses(DEFAULT_LICENSES)
-            .type(DEFAULT_TYPE)
-            .updatedAt(DEFAULT_UPDATED_AT);
+            .type(DEFAULT_TYPE);
         return service;
     }
 
@@ -189,7 +184,7 @@ public class ServiceResourceIntTest {
         assertThat(testService.getAccreditations()).isEqualTo(DEFAULT_ACCREDITATIONS);
         assertThat(testService.getLicenses()).isEqualTo(DEFAULT_LICENSES);
         assertThat(testService.getType()).isEqualTo(DEFAULT_TYPE);
-        assertThat(testService.getUpdatedAt()).isEqualTo(DEFAULT_UPDATED_AT);
+        assertThat(testService.getUpdatedAt()).isNotNull();
     }
 
     @Test
@@ -254,8 +249,7 @@ public class ServiceResourceIntTest {
             .andExpect(jsonPath("$.[*].fees").value(hasItem(DEFAULT_FEES.toString())))
             .andExpect(jsonPath("$.[*].accreditations").value(hasItem(DEFAULT_ACCREDITATIONS.toString())))
             .andExpect(jsonPath("$.[*].licenses").value(hasItem(DEFAULT_LICENSES.toString())))
-            .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
-            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(DEFAULT_UPDATED_AT))));
+            .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())));
     }
 
     @Test
@@ -281,8 +275,7 @@ public class ServiceResourceIntTest {
             .andExpect(jsonPath("$.fees").value(DEFAULT_FEES.toString()))
             .andExpect(jsonPath("$.accreditations").value(DEFAULT_ACCREDITATIONS.toString()))
             .andExpect(jsonPath("$.licenses").value(DEFAULT_LICENSES.toString()))
-            .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
-            .andExpect(jsonPath("$.updatedAt").value(sameInstant(DEFAULT_UPDATED_AT)));
+            .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()));
     }
 
     @Test
@@ -318,8 +311,7 @@ public class ServiceResourceIntTest {
             .fees(UPDATED_FEES)
             .accreditations(UPDATED_ACCREDITATIONS)
             .licenses(UPDATED_LICENSES)
-            .type(UPDATED_TYPE)
-            .updatedAt(UPDATED_UPDATED_AT);
+            .type(UPDATED_TYPE);
         ServiceDTO serviceDTO = serviceMapper.toDto(updatedService);
 
         restServiceMockMvc.perform(put("/api/services")
@@ -344,7 +336,7 @@ public class ServiceResourceIntTest {
         assertThat(testService.getAccreditations()).isEqualTo(UPDATED_ACCREDITATIONS);
         assertThat(testService.getLicenses()).isEqualTo(UPDATED_LICENSES);
         assertThat(testService.getType()).isEqualTo(UPDATED_TYPE);
-        assertThat(testService.getUpdatedAt()).isEqualTo(UPDATED_UPDATED_AT);
+        assertThat(testService.getUpdatedAt()).isNotNull();
     }
 
     @Test

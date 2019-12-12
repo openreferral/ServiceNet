@@ -2,6 +2,8 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -131,6 +133,12 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     private Set<Phone> phones = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+
+    @PrePersist
+    @PreUpdate
+    public void addTimestamp() {
+        updatedAt = ZonedDateTime.now();
+    }
 
     public Organization(Organization org) {
         this.name = org.name;
