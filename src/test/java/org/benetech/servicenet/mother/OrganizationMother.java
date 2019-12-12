@@ -42,10 +42,6 @@ public class OrganizationMother {
     public static final Boolean DEFAULT_INACTIVE = false;
     public static final Boolean UPDATED_ACTIVE = true;
 
-    public static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L),
-        ZoneOffset.UTC);
-    public static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
     public static Organization createDefault(Boolean active) {
         Organization org = new Organization()
             .name(DEFAULT_NAME)
@@ -57,8 +53,7 @@ public class OrganizationMother {
             .taxId(DEFAULT_TAX_ID)
             .yearIncorporated(DEFAULT_YEAR_INCORPORATED)
             .legalStatus(DEFAULT_LEGAL_STATUS)
-            .active(active)
-            .updatedAt(DEFAULT_UPDATED_AT);
+            .active(active);
         org.setAccount(SystemAccountMother.createDefault());
         return org;
     }
@@ -74,8 +69,7 @@ public class OrganizationMother {
             .taxId(UPDATED_TAX_ID)
             .yearIncorporated(UPDATED_YEAR_INCORPORATED)
             .legalStatus(UPDATED_LEGAL_STATUS)
-            .active(UPDATED_ACTIVE)
-            .updatedAt(UPDATED_UPDATED_AT);
+            .active(UPDATED_ACTIVE);
         org.setAccount(SystemAccountMother.createDifferent());
         return org;
     }
