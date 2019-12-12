@@ -134,7 +134,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getYearIncorporated()).isEqualTo(OrganizationMother.DEFAULT_YEAR_INCORPORATED);
         assertThat(testOrganization.getLegalStatus()).isEqualTo(OrganizationMother.DEFAULT_LEGAL_STATUS);
         assertThat(testOrganization.isActive()).isEqualTo(OrganizationMother.DEFAULT_ACTIVE);
-        assertThat(testOrganization.getUpdatedAt()).isEqualTo(OrganizationMother.DEFAULT_UPDATED_AT);
+        assertThat(testOrganization.getUpdatedAt()).isNotNull();
     }
 
     @Test
@@ -216,8 +216,7 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].taxId").value(hasItem(OrganizationMother.DEFAULT_TAX_ID.toString())))
             .andExpect(jsonPath("$.[*].yearIncorporated").value(hasItem(OrganizationMother.DEFAULT_YEAR_INCORPORATED.toString())))
             .andExpect(jsonPath("$.[*].legalStatus").value(hasItem(OrganizationMother.DEFAULT_LEGAL_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].active").value(hasItem(OrganizationMother.DEFAULT_ACTIVE.booleanValue())))
-            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(OrganizationMother.DEFAULT_UPDATED_AT))));
+            .andExpect(jsonPath("$.[*].active").value(hasItem(OrganizationMother.DEFAULT_ACTIVE.booleanValue())));
     }
 
     @Test
@@ -241,8 +240,7 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.taxId").value(OrganizationMother.DEFAULT_TAX_ID.toString()))
             .andExpect(jsonPath("$.yearIncorporated").value(OrganizationMother.DEFAULT_YEAR_INCORPORATED.toString()))
             .andExpect(jsonPath("$.legalStatus").value(OrganizationMother.DEFAULT_LEGAL_STATUS.toString()))
-            .andExpect(jsonPath("$.active").value(OrganizationMother.DEFAULT_ACTIVE.booleanValue()))
-            .andExpect(jsonPath("$.updatedAt").value(sameInstant(OrganizationMother.DEFAULT_UPDATED_AT)));
+            .andExpect(jsonPath("$.active").value(OrganizationMother.DEFAULT_ACTIVE.booleanValue()));
     }
 
     @Test
@@ -276,8 +274,7 @@ public class OrganizationResourceIntTest {
             .taxId(OrganizationMother.UPDATED_TAX_ID)
             .yearIncorporated(OrganizationMother.UPDATED_YEAR_INCORPORATED)
             .legalStatus(OrganizationMother.UPDATED_LEGAL_STATUS)
-            .active(OrganizationMother.UPDATED_ACTIVE)
-            .updatedAt(OrganizationMother.UPDATED_UPDATED_AT);
+            .active(OrganizationMother.UPDATED_ACTIVE);
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
 
         restOrganizationMockMvc.perform(put("/api/organizations")
@@ -299,7 +296,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getYearIncorporated()).isEqualTo(OrganizationMother.UPDATED_YEAR_INCORPORATED);
         assertThat(testOrganization.getLegalStatus()).isEqualTo(OrganizationMother.UPDATED_LEGAL_STATUS);
         assertThat(testOrganization.isActive()).isEqualTo(OrganizationMother.UPDATED_ACTIVE);
-        assertThat(testOrganization.getUpdatedAt()).isEqualTo(OrganizationMother.UPDATED_UPDATED_AT);
+        assertThat(testOrganization.getUpdatedAt()).isNotNull();
     }
 
     @Test
