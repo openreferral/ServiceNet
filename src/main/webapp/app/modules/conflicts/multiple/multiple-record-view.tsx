@@ -267,7 +267,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 <div style={{ top: '-45px', right: '5px', position: 'absolute' }}>
                   <h5>
                     <Translate contentKey="multiRecordView.matchSimilarity" />
-                    {match ? match.similarity * 100 : 0}%
+                    {match ? (match.similarity * 100).toFixed(2) : 0}%
                   </h5>
                 </div>
                 {seeAnotherMatch}
