@@ -213,6 +213,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
         searchPhrase: '',
         clearedAt: Date.now()
       });
+      this.searchEntities(null);
     }
   };
 
