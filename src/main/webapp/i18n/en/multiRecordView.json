@@ -24,6 +24,7 @@
     "copied": "Copied!",
     "backToTop": "Back to Top",
     "locationCheckboxTooltip": "Whenever I select a Location record, show me this partner's matching Location record, if available.",
-    "matchSimilarity": "Match similarity: "
+    "matchSimilarity": "Match similarity: ",
+    "noPhysicalAddress": "No physical address provided"
   }
 }

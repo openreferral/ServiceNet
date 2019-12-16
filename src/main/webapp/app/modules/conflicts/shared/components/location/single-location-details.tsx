@@ -50,9 +50,7 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     label:
       record.physicalAddress !== null
         ? `${record.physicalAddress.address1} ${record.physicalAddress.city}`
-        : record.postalAddress !== null
-          ? `${record.postalAddress.address1} ${record.postalAddress.city}`
-          : record.location.name
+        : translate('multiRecordView.noPhysicalAddress')
   });
 
   toggleAreaOpen = () => {
@@ -136,20 +134,13 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       </div>
     );
 
-    const additionalFields = (record.physicalAddress !== null
-      ? [<PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />]
-      : []
-    )
-      .concat(
-        record.postalAddress !== null
-          ? [<PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />]
-          : []
-      )
-      .concat([
-        <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
-        <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
-        <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />
-      ]);
+    const additionalFields = [
+      <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />,
+      <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />,
+      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
+      <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
+      <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />
+    ];
 
     const fields = [
       getTextField(record.location, 'name'),
