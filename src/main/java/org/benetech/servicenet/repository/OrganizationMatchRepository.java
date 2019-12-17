@@ -36,7 +36,8 @@ public interface OrganizationMatchRepository extends JpaRepository<OrganizationM
     List<OrganizationMatch> findAllByHiddenAndHiddenBy(Boolean hidden, User hiddenBy);
 
     @Query("SELECT orgMatch FROM OrganizationMatch orgMatch WHERE orgMatch.organizationRecord.id = :organizationRecordId AND"
-        + " orgMatch.hidden = :hidden ORDER BY orgMatch.partnerVersion.lastVerifiedOn DESC NULLS LAST")
+        + " orgMatch.hidden = :hidden ORDER BY orgMatch.partnerVersion.lastVerifiedOn DESC NULLS LAST, "
+        + "orgMatch.partnerVersion.updatedAt DESC NULLS LAST")
     List<OrganizationMatch> findAllByOrganizationRecordIdAndHidden(
         @Param("organizationRecordId") UUID uuid, @Param("hidden") Boolean hidden);
 
