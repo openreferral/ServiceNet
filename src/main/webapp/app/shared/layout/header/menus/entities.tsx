@@ -133,6 +133,11 @@ export const EntitiesMenu = props => (
       &nbsp;
       <Translate contentKey="global.menu.entities.taxonomy" />
     </DropdownItem>
+    <DropdownItem tag={Link} to="/entity/taxonomy-group">
+      <FontAwesomeIcon icon="asterisk" />
+      &nbsp;
+      <Translate contentKey="global.menu.entities.taxonomyGroup" />
+    </DropdownItem>
     <DropdownItem tag={Link} to="/entity/organization-match">
       <FontAwesomeIcon icon="asterisk" />
       &nbsp;
