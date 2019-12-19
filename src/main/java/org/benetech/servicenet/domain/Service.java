@@ -514,24 +514,23 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
             Objects.equals(this.accreditations, srvc.accreditations) &&
             Objects.equals(this.licenses, srvc.licenses) &&
             Objects.equals(this.type, srvc.type) &&
-            Objects.equals(this.updatedAt, srvc.updatedAt) &&
             Objects.equals(this.externalDbId, srvc.externalDbId) &&
             Objects.equals(this.providerName, srvc.providerName) &&
             Objects.equals(this.lastVerifiedOn, srvc.lastVerifiedOn) &&
             Objects.equals(this.totalReferrals, srvc.totalReferrals) &&
             Objects.equals(this.successfulReferrals, srvc.successfulReferrals) &&
-            CompareUtils.deepEquals(locations, srvc.locations) &&
-            CompareUtils.deepEquals(regularSchedule, srvc.regularSchedule) &&
-            CompareUtils.deepEquals(holidaySchedules, srvc.holidaySchedules) &&
-            CompareUtils.deepEquals(funding, srvc.funding) &&
-            CompareUtils.deepEquals(eligibility, srvc.eligibility) &&
-            CompareUtils.deepEquals(areas, srvc.areas) &&
-            CompareUtils.deepEquals(metadata, srvc.metadata) &&
-            CompareUtils.deepEquals(docs, srvc.docs) &&
-            CompareUtils.deepEquals(paymentsAccepteds, srvc.paymentsAccepteds) &&
-            CompareUtils.deepEquals(langs, srvc.langs) &&
-            CompareUtils.deepEquals(taxonomies, srvc.taxonomies) &&
-            CompareUtils.deepEquals(phones, srvc.phones) &&
-            CompareUtils.deepEquals(contacts, srvc.contacts));
+            CompareUtils.oneSidedDeepEquals(this.locations, srvc.locations) &&
+            CompareUtils.oneSidedDeepEquals(this.regularSchedule, srvc.regularSchedule) &&
+            CompareUtils.oneSidedDeepEquals(this.holidaySchedules, srvc.holidaySchedules) &&
+            CompareUtils.oneSidedDeepEquals(this.funding, srvc.funding) &&
+            CompareUtils.oneSidedDeepEquals(this.eligibility, srvc.eligibility) &&
+            CompareUtils.oneSidedDeepEquals(this.areas, srvc.areas) &&
+            CompareUtils.oneSidedDeepEquals(this.metadata, srvc.metadata) &&
+            CompareUtils.oneSidedDeepEquals(this.docs, srvc.docs) &&
+            CompareUtils.oneSidedDeepEquals(this.paymentsAccepteds, srvc.paymentsAccepteds) &&
+            CompareUtils.oneSidedDeepEquals(this.langs, srvc.langs) &&
+            CompareUtils.oneSidedDeepEquals(this.taxonomies, srvc.taxonomies) &&
+            CompareUtils.oneSidedDeepEquals(this.phones, srvc.phones) &&
+            CompareUtils.oneSidedDeepEquals(this.contacts, srvc.contacts));
     }
 }
