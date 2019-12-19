@@ -12,7 +12,10 @@ export interface IOrganizationMatch {
   organizationRecordId?: number;
   partnerVersionName?: string;
   partnerVersionId?: number;
+  numberOfLocations?: number;
+  providerName?: string;
   similarity?: number;
+  locationMatches?: any;
 }
 
 export const defaultValue: Readonly<IOrganizationMatch> = {

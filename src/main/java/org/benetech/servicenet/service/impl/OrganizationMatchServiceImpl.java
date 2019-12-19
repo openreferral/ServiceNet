@@ -152,7 +152,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     @Override
     public List<OrganizationMatchDTO> findAllForOrganization(UUID orgId) {
         return organizationMatchRepository.findAllByOrganizationRecordId(orgId).stream()
-            .map(organizationMatchMapper::toDto)
+            .map(organizationMatchMapper::toDtoWithLocationMatches)
             .collect(Collectors.toCollection(LinkedList::new));
     }
 

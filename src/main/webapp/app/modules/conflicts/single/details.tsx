@@ -72,22 +72,35 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
             </p>
           </div>
           <div className="jumbotron-content">
-            <p>
-              <Translate contentKey="singleRecordView.details.compare.content1" />
-            </p>
-            <p>
-              <Translate contentKey="singleRecordView.details.compare.content2" />
-            </p>
-            <p className="review-title">
-              <Translate contentKey="singleRecordView.details.compare.review" />
-            </p>
-            <div>
-              <Link to={`/multi-record-view/${firstMatch.organizationRecordId}`} onClick={this.handleMatchClick}>
-                {organizationMatches.length === 1
-                  ? `${firstMatch.partnerVersionName}`
-                  : `${firstMatch.partnerVersionName} +${organizationMatches.length - 1}`}
-              </Link>
-            </div>
+            {organizationMatches
+              ? organizationMatches
+                  .sort((om1, om2) => Object.keys(om2.locationMatches).length - Object.keys(om1.locationMatches).length)
+                  .map(match => (
+                    <Link
+                      to={`/multi-record-view/${match.organizationRecordId}/${match.partnerVersionId}`}
+                      onClick={this.handleMatchClick}
+                      className="match"
+                    >
+                      <h5>{match.partnerVersionName}</h5>
+                      <div className="match-details">
+                        <div>{match.providerName}</div>
+                        <div className="text-right">
+                          {match.numberOfLocations}{' '}
+                          <Translate
+                            contentKey={'singleRecordView.details.compare.' + (match.numberOfLocations > 1 ? 'locations' : 'location')}
+                          />{' '}
+                          {' / '}
+                          {Object.keys(match.locationMatches).length}{' '}
+                          <Translate
+                            contentKey={
+                              'singleRecordView.details.compare.' + (Object.keys(match.locationMatches).length > 1 ? 'matches' : 'match')
+                            }
+                          />
+                        </div>
+                      </div>
+                    </Link>
+                  ))
+              : null}
           </div>
         </Jumbotron>
       </Col>

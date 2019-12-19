@@ -61,7 +61,7 @@ const Routes = ({ isAdmin, isSacramento }) => (
         hasAnyAuthorities={[AUTHORITIES.USER]}
       />
       <PrivateRoute
-        path="/multi-record-view/:orgId?"
+        path="/multi-record-view/:orgId?/:partnerId?"
         isAdmin={isAdmin}
         component={MultipleRecordView}
         hasAnyAuthorities={[AUTHORITIES.USER]}
