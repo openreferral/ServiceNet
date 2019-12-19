@@ -1,0 +1,24 @@
+{
+    "name": "TaxonomyGroup",
+    "fields": [],
+    "relationships": [
+      {
+        "relationshipName": "taxonomies",
+        "otherEntityName": "taxonomy",
+        "relationshipType": "many-to-many",
+        "otherEntityField": "name",
+        "ownerSide": true,
+        "otherEntityRelationshipName": "taxonomyGroup",
+        "otherEntityRelationshipNameUndefined": false
+      }
+    ],
+    "changelogDate": "20191218120000",
+    "entityTableName": "taxonomy_group",
+    "dto": "mapstruct",
+    "pagination": true,
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

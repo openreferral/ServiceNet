@@ -50,6 +50,7 @@
         "organizationError": "Organization Error",
         "matchSimilarity": "Match Similarity",
         "activityFilter": "Activity Filter",
+        "taxonomyGroup": "Taxonomy Group",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
