@@ -43,7 +43,11 @@
         "review": "Review similar partner records:",
         "other": "other",
         "others": "others",
-        "viewDismissedMatches": "View previously removed records"
+        "viewDismissedMatches": "View previously removed records",
+        "location": "Location",
+        "locations": "Locations",
+        "match": "Match",
+        "matches": "Matches"
       }
     },
     "inputField": {

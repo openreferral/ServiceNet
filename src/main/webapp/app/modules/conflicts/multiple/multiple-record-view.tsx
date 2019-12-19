@@ -49,7 +49,13 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     this.props.getBaseRecord(this.props.orgId);
     Promise.all([this.props.getNotHiddenMatchesByOrg(this.props.orgId)]).then(() => {
       if (this.props.matches.length >= this.state.matchNumber + 1) {
-        this.props.getPartnerRecord(this.props.matches[this.state.matchNumber].partnerVersionId);
+        const partnerId = this.props.partnerId;
+        this.props.getPartnerRecord(partnerId ? partnerId : this.props.matches[this.state.matchNumber].partnerVersionId);
+        if (partnerId) {
+          this.setState({
+            matchNumber: this.props.matches.findIndex(match => match.partnerVersionId === partnerId)
+          });
+        }
       }
     });
   }
@@ -313,6 +319,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
 
 const mapStateToProps = (storeState, { match }: IMultipleRecordViewState) => ({
   orgId: match.params.orgId,
+  partnerId: match.params.partnerId,
   baseRecord: storeState.sharedRecordView.baseRecord,
   partnerRecord: storeState.sharedRecordView.partnerRecord,
   matches: storeState.sharedRecordView.matches,
