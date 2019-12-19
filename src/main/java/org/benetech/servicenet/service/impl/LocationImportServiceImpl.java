@@ -45,8 +45,13 @@ public class LocationImportServiceImpl implements LocationImportService {
         Optional<Location> locationFromDb = locationService.findWithEagerAssociations(externalDbId,
             importData.getProviderName());
 
-        locationFromDb.ifPresent(value -> fillDataFromDb(location, value));
-        locationService.save(location);
+        if (locationFromDb.isPresent()) {
+            if (locationFromDb.get().deepEquals(filledLocation)) {
+                return locationFromDb.get();
+            }
+            fillDataFromDb(location, locationFromDb.get());
+            locationService.save(location);
+        }
 
         persistRelatedEntities(filledLocation, importData, location);
 

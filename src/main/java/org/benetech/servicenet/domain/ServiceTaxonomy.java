@@ -140,6 +140,6 @@ public class ServiceTaxonomy extends AbstractEntity implements Serializable, Dee
         return Objects.equals(taxonomyDetails, st.taxonomyDetails) &&
             Objects.equals(externalDbId, st.externalDbId) &&
             Objects.equals(providerName, st.providerName) &&
-            CompareUtils.deepEquals(taxonomy, st.taxonomy);
+            CompareUtils.oneSidedDeepEquals(this.taxonomy, st.taxonomy);
     }
 }
