@@ -32,6 +32,9 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         Service service = new Service(filledService);
         Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
         if (serviceFromDb.isPresent()) {
+            if (serviceFromDb.get().deepEquals(filledService)) {
+                return serviceFromDb.get();
+            }
             fillDataFromDb(service, serviceFromDb.get());
             em.merge(service);
             report.incrementNumberOfUpdatedServices();

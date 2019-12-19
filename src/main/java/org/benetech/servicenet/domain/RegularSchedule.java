@@ -147,6 +147,6 @@ public class RegularSchedule extends AbstractEntity implements Serializable, Dee
         }
         RegularSchedule rs = (RegularSchedule) o;
         return Objects.equals(notes, rs.notes) &&
-            CompareUtils.deepEquals(openingHours, rs.openingHours);
+            CompareUtils.oneSidedDeepEquals(this.openingHours, rs.openingHours);
     }
 }
