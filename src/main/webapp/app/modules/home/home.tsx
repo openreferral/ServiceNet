@@ -196,6 +196,7 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     this.setState({
       activePage: 1,
       searchPhrase,
+      clearedAt: !!searchPhrase ? this.state.clearedAt : Date.now(),
       typingTimeout: setTimeout(() => {
         if (shouldGetSuggestions) {
           this.getSuggestions(searchPhrase);
