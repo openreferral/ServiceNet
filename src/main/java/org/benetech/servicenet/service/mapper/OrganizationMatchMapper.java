@@ -43,9 +43,13 @@ public abstract class OrganizationMatchMapper {
         Map<UUID, UUID> locationMatches = new HashMap<>();
         for (Location location : organizationMatch.getOrganizationRecord().getLocations()) {
             for (LocationMatch match : locationMatchService.findAllForLocation(location.getId())) {
-                locationMatches.put(match.getLocation().getId(), match.getMatchingLocation().getId());
+                if (organizationMatch.getPartnerVersion().getLocations().contains(match.getMatchingLocation())) {
+                    locationMatches.put(match.getLocation().getId(), match.getMatchingLocation().getId());
+                }
             }
         }
+        dto.setNumberOfLocations(organizationMatch.getPartnerVersion().getLocations().size());
+        dto.setProviderName(organizationMatch.getPartnerVersion().getAccount().getName());
         dto.setLocationMatches(locationMatches);
         return dto;
     }

@@ -47,6 +47,10 @@ public class OrganizationMatchDTO implements Serializable {
 
     private Map<UUID, UUID> locationMatches;
 
+    private Integer numberOfLocations;
+
+    private String providerName;
+
     private BigDecimal similarity;
 
     public Boolean isDismissed() {

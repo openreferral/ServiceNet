@@ -81,7 +81,7 @@
 }
 
 .jumbotron-content {
-  padding: 10px;
+  padding: 0 !important;
   margin: 0;
   background-color: $compare-content-bg;
   border: 1px $compare-border solid;
@@ -107,4 +107,31 @@
 .collapseIcon {
   display: inline;
   margin-right: 5px;
+}
+
+.match-details {
+  display: flex;
+  flex-direction: row;
+}
+
+.match-details > * {
+  flex: 1;
+}
+
+.jumbotron-content > a {
+  color: black;
+  text-decoration: none;
+}
+
+.match > h5 {
+  color: #6d6c6c;
+}
+
+.match {
+  display: block;
+  padding: 18px 10px;
+}
+
+.match:not(:last-child) {
+  border-bottom: 1px black solid;
 }
