@@ -351,10 +351,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     for (const key in selectedPartners) {
       if (selectedPartners.hasOwnProperty(key)) {
         const partner = selectedPartners[key];
-        if (partner.label === 'Anonymous') {
-          return lists['all'];
+        if (partner) {
+          if (partner.label === 'Anonymous') {
+            return lists['all'];
+          }
+          if (lists[partner.label]) {
+            merged = merged.concat(lists[partner.label]);
+          }
         }
-        merged = merged.concat(lists[partner.label]);
       }
     }
     return merged;
