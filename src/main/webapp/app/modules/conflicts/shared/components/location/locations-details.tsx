@@ -30,6 +30,10 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
     isAreaOpen: this.props.isAreaOpen
   };
 
+  static sortLocations(locations) {
+    return _.sortBy(locations, ['physicalAddress.address1', 'physicalAddress.city']);
+  }
+
   componentDidMount() {
     if (this.props.selectLocation) {
       this.props.selectLocation(this.props.locations[this.state.locationNumber]);
@@ -47,14 +51,15 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
   changeRecord = locationNumber => {
     this.setState({ locationNumber });
     if (this.props.selectLocation) {
-      this.props.selectLocation(this.props.locations[locationNumber]);
+      const sortedLocations = LocationsDetails.sortLocations(this.props.locations);
+      this.props.selectLocation(sortedLocations[locationNumber]);
     }
   };
 
   getLocationNumber = () => {
     const { matchLocations, matchingLocation, locations } = this.props;
     if (matchLocations && matchingLocation) {
-      const idx = _.findIndex(locations, l => l.location.id === matchingLocation);
+      const idx = _.findIndex(LocationsDetails.sortLocations(locations), l => l.location.id === matchingLocation);
       return idx >= 0 ? idx : this.state.locationNumber;
     } else {
       return this.state.locationNumber;
@@ -64,7 +69,7 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
   render() {
     const { locations, isAreaOpen } = this.props;
     const locationNumber = this.state.locationNumber;
-    const sortedLocations = _.sortBy(locations, ['physicalAddress.address1', 'physicalAddress.city']);
+    const sortedLocations = LocationsDetails.sortLocations(locations);
     const record = sortedLocations[locationNumber];
     const locationDetails =
       sortedLocations.length > locationNumber ? (

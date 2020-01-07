@@ -143,8 +143,8 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
   };
 
   findMatchingLocation = selectedLocation => {
-    const { matches, baseRecord } = this.props;
-    const match = _.find(matches, m => m.organizationRecordId === baseRecord.organization.id);
+    const { matches, partnerRecord } = this.props;
+    const match = partnerRecord && _.find(matches, m => m.partnerVersionId === partnerRecord.organization.id);
     if (match && match.locationMatches) {
       if (selectedLocation in match.locationMatches) {
         return match.locationMatches[selectedLocation];
