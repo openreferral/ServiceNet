@@ -26,6 +26,7 @@ install:
   - ./mvnw com.github.eirslett:frontend-maven-plugin:npm@'npm install'
 script:
   - ./mvnw clean --no-transfer-progress
+  - npm test
   - ./mvnw test --no-transfer-progress
 notifications:
   webhooks:
