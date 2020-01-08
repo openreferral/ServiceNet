@@ -18,7 +18,9 @@
           "county": "Change county",
           "showOnlyAvailableBeds": "Only show beds currently available",
           "onlyShowSheltersThat": "Only show shelters that:",
-          "toggle": "Filter"
+          "toggle": "Filter",
+          "applyLocationSearch": "Search near selected location",
+          "radius": "Search in radius"
         },
         "card": {
           "bedsAvailable": "Beds available",

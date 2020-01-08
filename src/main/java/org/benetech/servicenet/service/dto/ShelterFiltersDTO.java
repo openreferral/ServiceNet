@@ -17,4 +17,12 @@ public class ShelterFiltersDTO implements Serializable {
   private String userId;
 
   private boolean showOnlyAvailableBeds;
+
+  private Boolean applyLocationSearch = false;
+
+  private Double latitude;
+
+  private Double longitude;
+
+  private Double radius;
 }

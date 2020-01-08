@@ -160,4 +160,5 @@
     <include file="config/liquibase/changelog/20191126140017_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191128145044999_update_OrganizationMatch_reset_similarity.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191223150247_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200107161649_changelog.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
