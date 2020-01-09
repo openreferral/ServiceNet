@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
@@ -15,6 +17,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Option;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
@@ -35,7 +38,13 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
     private static final String TAGS = "tags";
     private static final String VALUE = "value";
     private static final String ID = "id";
-    private static final String SHELTER_ID = "shelter_id";
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
+    private static final String ADDRESS = "address";
+    private static final String ADDRESS_1 = "address1";
+    private static final String ADDRESS_2 = "address2";
+    private static final String CITY = "city";
+    private static final String ZIPCODE = "zipcode";
 
     private final EntityManager em;
     private final CriteriaBuilder cb;
@@ -62,12 +71,31 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
 
         addFilters(countCriteria, selectRootCount, filters);
 
-        List<Shelter> results = em.createQuery(queryCriteria)
-            .setFirstResult((int) pageable.getOffset())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+        List<Shelter> results = null;
+        Long total = null;
 
-        Long total = em.createQuery(countCriteria).getSingleResult();
+        Query query = em.createQuery(queryCriteria);
+        if (pageable.isPaged()) {
+            query
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+        }
+
+        if (applyPositionFiltering(filters)) {
+            results = query
+                .setParameter("lat", filters.getLatitude())
+                .setParameter("lon", filters.getLongitude())
+                .getResultList();
+
+            total = em.createQuery(countCriteria)
+                .setParameter("lat", filters.getLatitude())
+                .setParameter("lon", filters.getLongitude())
+                .getSingleResult();
+        } else {
+            results = query.getResultList();
+
+            total = em.createQuery(countCriteria).getSingleResult();
+        }
 
         return new PageImpl<>(results, pageable, total.intValue());
     }
@@ -107,6 +135,30 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
             Join<Shelter, Option> join = root.join(USERS, JoinType.LEFT);
             predicates.add(cb.equal(join.get(ID), UUID.fromString(filters.getUserId())));
         }
+        if (applyPositionFiltering(filters)) {
+            Expression<String> address = cb.function(
+                "get_address",
+                String.class,
+                root.get(ADDRESS_1),
+                root.get(ADDRESS_2),
+                root.get(CITY),
+                root.get(ZIPCODE)
+            );
+            Root<GeocodingResult> geocodingResultRoot = query.from(GeocodingResult.class);
+            predicates.add(cb.equal(geocodingResultRoot.get(ADDRESS), address));
+
+            Expression<Double> distance = cb.function(
+                "calculate_distance",
+                Double.class,
+                cb.parameter(Double.class, "lat"),
+                cb.parameter(Double.class, "lon"),
+                geocodingResultRoot.get(LATITUDE),
+                geocodingResultRoot.get(LONGITUDE)
+            );
+            predicates.add(cb.lessThanOrEqualTo(distance, filters.getRadius()));
+            cb.asc(distance);
+        }
+
         query.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
     }
 
@@ -134,4 +186,10 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
         }
     }
 
+    private Boolean applyPositionFiltering(ShelterFiltersDTO filtersDTO) {
+        return filtersDTO.getApplyLocationSearch() &&
+            filtersDTO.getRadius() != null &&
+            filtersDTO.getLatitude() != null &&
+            filtersDTO.getLongitude() != null;
+    }
 }

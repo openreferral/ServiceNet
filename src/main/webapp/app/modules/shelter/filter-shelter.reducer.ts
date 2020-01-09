@@ -5,7 +5,16 @@ export const ACTION_TYPES = {
 export const initialState = {
   loading: false,
   errorMessage: null,
-  shelterFilter: { definedCoverageAreas: [], tags: [], showOnlyAvailableBeds: false }
+  shelterFilter: {
+    definedCoverageAreas: [],
+    tags: [],
+    showOnlyAvailableBeds: false,
+    showPartner: false,
+    applyLocationSearch: false,
+    latitude: null,
+    longitude: null,
+    radius: 1
+  }
 };
 
 export type FilterShelterState = Readonly<typeof initialState>;
