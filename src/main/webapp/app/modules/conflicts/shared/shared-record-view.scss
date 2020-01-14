@@ -85,6 +85,8 @@
   margin: 0;
   background-color: $compare-content-bg;
   border: 1px $compare-border solid;
+  max-height: 460px;
+  overflow-y: scroll;
 }
 
 .jumbotron-header-title {
