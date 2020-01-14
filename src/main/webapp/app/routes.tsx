@@ -24,6 +24,7 @@ import Shelters from 'app/modules/shelter/shelters';
 import MyShelters from 'app/modules/shelter/my-shelters';
 import ShelterUpdate from 'app/entities/shelter/shelter-update';
 import ShelterDetails from 'app/modules/shelter/shelter-details';
+import AllRecordsView from 'app/modules/conflicts/all/all-records-view';
 
 // tslint:disable:space-in-parens
 const Account = Loadable({
@@ -66,6 +67,7 @@ const Routes = ({ isAdmin, isSacramento }) => (
         component={MultipleRecordView}
         hasAnyAuthorities={[AUTHORITIES.USER]}
       />
+      <PrivateRoute path="/all-records-view/:orgId?" isAdmin={isAdmin} component={AllRecordsView} hasAnyAuthorities={[AUTHORITIES.USER]} />
       <PrivateRoute
         path="/dismissed-matches/:orgId"
         isAdmin={isAdmin}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
+import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
@@ -43,12 +45,14 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ExclusionsConfigService exclusionsConfigService;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
-        ExclusionsConfigService exclusionsConfigService) {
+    private final OrganizationMatchService organizationMatchService;
 
+    public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
+        ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService) {
         this.activityRepository = activityRepository;
         this.recordsService = recordsService;
         this.exclusionsConfigService = exclusionsConfigService;
+        this.organizationMatchService = organizationMatchService;
     }
 
     @Override
@@ -91,6 +95,24 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (IllegalAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ActivityRecordDTO> getPartnerActivitiesByOrganizationId(UUID orgId) {
+        return organizationMatchService.findAllNotHiddenForOrganization(orgId).stream().filter(match -> !match.isDismissed())
+            .map(match -> {
+                try {
+                    return recordsService.getRecordFromActivityInfo(
+                        activityRepository.findOneByOrganizationId(match.getPartnerVersionId())
+                    ).get();
+                } catch (IllegalAccessException | NoSuchElementException e) {
+                    throw new ActivityCreationException(
+                        String.format("Activity record couldn't be created for organization: %s",
+                            match.getPartnerVersionId()));
+                }
+            })
+            .collect(Collectors.toList());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.benetech.servicenet.service.dto.ActivityDTO;
@@ -18,6 +19,8 @@ public interface ActivityService {
     String search, ActivityFilterDTO activityFilterDTO);
 
     Optional<ActivityRecordDTO> getOneByOrganizationId(UUID orgId);
+
+    List<ActivityRecordDTO> getPartnerActivitiesByOrganizationId(UUID orgId);
 
     Suggestions getNameSuggestions(ActivityFilterDTO activityFilterDTO, UUID systemAccountId, String search);
 }

@@ -1,4 +1,4 @@
-import '../multiple-record-view.scss';
+import '../shared-record-view.scss';
 
 import React from 'react';
 import { Translate, translate } from 'react-jhipster';

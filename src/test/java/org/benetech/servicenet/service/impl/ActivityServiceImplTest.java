@@ -19,6 +19,7 @@ import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
+import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
@@ -74,10 +75,13 @@ public class ActivityServiceImplTest {
     @Autowired
     private RecordsService recordsService;
 
+    @Autowired
+    private OrganizationMatchService organizationMatchService;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        activityService = new ActivityServiceImpl(activityRepository, recordsService, exclusionsConfigService);
+        activityService = new ActivityServiceImpl(activityRepository, recordsService, exclusionsConfigService, organizationMatchService);
     }
 
     @Before
