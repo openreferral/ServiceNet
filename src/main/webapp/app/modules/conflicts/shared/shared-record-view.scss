@@ -200,3 +200,30 @@ span[role='button'] {
     }
   }
 }
+
+.dismiss-modal {
+  background-color: $modal-dark;
+  color: $white;
+
+  .close {
+    color: $white;
+  }
+
+  .modal-header {
+    border: none;
+  }
+
+  .modal-footer {
+    border: none;
+  }
+}
+
+.close-button,
+.close-button:hover,
+.close-button:active,
+.close-button:focus {
+  background-color: transparent;
+  color: $white;
+  border: none;
+  box-shadow: none;
+}

@@ -5,6 +5,7 @@ import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util'
 export const ACTION_TYPES = {
   FETCH_BASE_ORGANIZATION: 'recordView/FETCH_BASE_ORGANIZATION',
   FETCH_PARTNER_ORGANIZATION: 'recordView/FETCH_PARTNER_ORGANIZATION',
+  FETCH_PARTNER_ORGANIZATIONS: 'recordView/FETCH_PARTNER_ORGANIZATIONS',
   FETCH_MATCHES: 'recordView/FETCH_MATCHES'
 };
 
@@ -14,7 +15,8 @@ const initialState = {
   partnerRecord: null,
   matches: [],
   dismissedMatches: [],
-  hiddenMatches: []
+  hiddenMatches: [],
+  partnerRecords: []
 };
 
 export type SharedRecordViewState = Readonly<typeof initialState>;
@@ -24,12 +26,14 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
   switch (action.type) {
     case REQUEST(ACTION_TYPES.FETCH_BASE_ORGANIZATION):
     case REQUEST(ACTION_TYPES.FETCH_PARTNER_ORGANIZATION):
+    case REQUEST(ACTION_TYPES.FETCH_PARTNER_ORGANIZATIONS):
     case REQUEST(ACTION_TYPES.FETCH_MATCHES):
       return {
         ...state
       };
     case FAILURE(ACTION_TYPES.FETCH_BASE_ORGANIZATION):
     case FAILURE(ACTION_TYPES.FETCH_PARTNER_ORGANIZATION):
+    case FAILURE(ACTION_TYPES.FETCH_PARTNER_ORGANIZATIONS):
     case FAILURE(ACTION_TYPES.FETCH_MATCHES):
       return {
         ...state,
@@ -44,6 +48,11 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
       return {
         ...state,
         partnerRecord: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_PARTNER_ORGANIZATIONS):
+      return {
+        ...state,
+        partnerRecords: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_MATCHES):
       const matches = [];
@@ -74,6 +83,7 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
 // Actions
 const url = 'api/';
 const activityUrl = url + 'activities/';
+const partnerActivityUrl = url + 'partner-activities/';
 const matchesUrl = url + 'organization-matches/organization/';
 const hiddenMatchesUrl = url + 'organization-matches/hidden';
 
@@ -85,6 +95,11 @@ export const getBaseRecord = orgId => ({
 export const getPartnerRecord = orgId => ({
   type: ACTION_TYPES.FETCH_PARTNER_ORGANIZATION,
   payload: axios.get(`${activityUrl + orgId}`)
+});
+
+export const getPartnerRecords = orgId => ({
+  type: ACTION_TYPES.FETCH_PARTNER_ORGANIZATIONS,
+  payload: axios.get(`${partnerActivityUrl + orgId}`)
 });
 
 export const getMatches = orgId => ({

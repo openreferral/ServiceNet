@@ -1,5 +1,5 @@
 import React from 'react';
-import '../multiple-record-view.scss';
+import '../../all/all-records-view.scss';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { OrganizationDetails } from '../../shared/components/organization-details';
@@ -10,7 +10,7 @@ import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Translate } from 'react-jhipster';
 
-export interface IMultipleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
+export interface IDetailsProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   activity: IActivityRecord;
   exclusions: any[];
   isBaseRecord: boolean;
@@ -21,12 +21,12 @@ export interface IMultipleRecordViewProp extends StateProps, DispatchProps, Rout
   toggleMatchLocations?: any;
 }
 
-export interface IMultiRecordViewState {
+export interface IDetailsState {
   isAreaOpen: boolean;
 }
 
-export class Details extends React.Component<IMultipleRecordViewProp, IMultiRecordViewState> {
-  state: IMultiRecordViewState = {
+export class Details extends React.Component<IDetailsProp, IDetailsState> {
+  state: IDetailsState = {
     isAreaOpen: false
   };
 

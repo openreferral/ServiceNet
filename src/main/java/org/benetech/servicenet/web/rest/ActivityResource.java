@@ -85,6 +85,14 @@ public class ActivityResource {
                 .build());
     }
 
+    @GetMapping("/partner-activities/{orgId}")
+    @Timed
+    public ResponseEntity<List<ActivityRecordDTO>> getPartnerActivities(@PathVariable UUID orgId) {
+        return ResponseEntity.ok().body(
+            activityService.getPartnerActivitiesByOrganizationId(orgId)
+        );
+    }
+
     @PostMapping("/activity-suggestions")
     @Timed
     public ResponseEntity<Suggestions> getSuggestions(@Valid @RequestBody ActivityFilterDTO activityFilterDTO,

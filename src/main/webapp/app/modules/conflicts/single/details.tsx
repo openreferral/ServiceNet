@@ -52,7 +52,7 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
   };
 
   render() {
-    const { activity, organizationMatches, dismissedMatches } = this.props;
+    const { orgId, organizationMatches, dismissedMatches } = this.props;
     const firstMatch = organizationMatches.length !== 0 ? organizationMatches[0] : null;
 
     const sideSection = firstMatch ? (
@@ -101,6 +101,9 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
                     </Link>
                   ))
               : null}
+            <Link to={`/all-records-view/${orgId}`} onClick={this.handleMatchClick} className="match">
+              <h5>Show all matches</h5>
+            </Link>
           </div>
         </Jumbotron>
       </Col>
