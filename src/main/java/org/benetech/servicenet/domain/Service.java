@@ -501,6 +501,10 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
             return false;
         }
         Service srvc = (Service) o;
+        if (srvc.lastVerifiedOn != null && this.lastVerifiedOn != null &&
+            !srvc.lastVerifiedOn.isEqual(this.lastVerifiedOn)) {
+            return false;
+        }
         return (Objects.equals(this.name, srvc.name) &&
             Objects.equals(this.alternateName, srvc.alternateName) &&
             Objects.equals(this.description, srvc.description) &&
@@ -516,7 +520,6 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
             Objects.equals(this.type, srvc.type) &&
             Objects.equals(this.externalDbId, srvc.externalDbId) &&
             Objects.equals(this.providerName, srvc.providerName) &&
-            Objects.equals(this.lastVerifiedOn, srvc.lastVerifiedOn) &&
             Objects.equals(this.totalReferrals, srvc.totalReferrals) &&
             Objects.equals(this.successfulReferrals, srvc.successfulReferrals) &&
             CompareUtils.oneSidedDeepEquals(this.locations, srvc.locations) &&

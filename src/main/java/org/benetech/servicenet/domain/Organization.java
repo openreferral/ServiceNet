@@ -312,6 +312,10 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
             return false;
         }
         Organization org = (Organization) o;
+        if (org.lastVerifiedOn != null && this.lastVerifiedOn != null &&
+            !org.lastVerifiedOn.isEqual(this.lastVerifiedOn)) {
+            return false;
+        }
         if (!(Objects.equals(org.name, this.name) &&
             Objects.equals(org.alternateName, this.alternateName) &&
             Objects.equals(org.description, this.description) &&
@@ -322,8 +326,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
             Objects.equals(org.yearIncorporated, this.yearIncorporated) &&
             Objects.equals(org.legalStatus, this.legalStatus) &&
             Objects.equals(org.active, this.active) &&
-            Objects.equals(org.externalDbId, this.externalDbId) &&
-            Objects.equals(org.lastVerifiedOn, this.lastVerifiedOn)
+            Objects.equals(org.externalDbId, this.externalDbId)
         )) {
             return false;
         }
