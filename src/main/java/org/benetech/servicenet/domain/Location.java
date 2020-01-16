@@ -323,6 +323,10 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
         }
         Location loc = (Location) o;
 
+        if (loc.lastVerifiedOn != null && this.lastVerifiedOn != null &&
+            !loc.lastVerifiedOn.isEqual(this.lastVerifiedOn)) {
+            return false;
+        }
         return (Objects.equals(this.name, loc.name) &&
             Objects.equals(this.alternateName, loc.alternateName) &&
             Objects.equals(this.description, loc.description) &&
@@ -331,7 +335,6 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
             Objects.equals(this.longitude, loc.longitude) &&
             Objects.equals(this.externalDbId, loc.externalDbId) &&
             Objects.equals(this.providerName, loc.providerName) &&
-            Objects.equals(this.lastVerifiedOn, loc.lastVerifiedOn) &&
             CompareUtils.oneSidedDeepEquals(this.physicalAddress, loc.physicalAddress) &&
             CompareUtils.oneSidedDeepEquals(this.postalAddress, loc.postalAddress) &&
             CompareUtils.oneSidedDeepEquals(this.regularSchedule, loc.regularSchedule) &&
