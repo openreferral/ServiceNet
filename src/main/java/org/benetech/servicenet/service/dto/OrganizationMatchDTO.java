@@ -53,6 +53,8 @@ public class OrganizationMatchDTO implements Serializable {
 
     private BigDecimal similarity;
 
+    private Long freshness;
+
     public Boolean isDismissed() {
         return dismissed;
     }

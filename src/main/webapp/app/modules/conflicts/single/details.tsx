@@ -9,7 +9,7 @@ import { LocationsDetails } from '../shared/components/location/locations-detail
 import { ServicesDetails } from '../shared/components/service/services-details';
 import { ContactsDetails } from '../shared/components/contact/contacts-details';
 import { Col, Jumbotron } from 'reactstrap';
-import { Translate } from 'react-jhipster';
+import { translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactGA from 'react-ga';
 
@@ -97,6 +97,9 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
                             }
                           />
                         </div>
+                      </div>
+                      <div className="text-right" title={translate('singleRecordView.details.compare.sinceLastUpdatedTooltip')}>
+                        {match.freshness} <Translate contentKey="singleRecordView.details.compare.sinceLastUpdated" />
                       </div>
                     </Link>
                   ))
