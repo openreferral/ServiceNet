@@ -318,6 +318,14 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
     this.props.updateActivityFilter({ ...this.props.activityFilter, showPartner: !onlyShowMatching });
   };
 
+  handleOnlyHighlyMatchedChange = changeEvent => {
+    const showOnlyHighlyMatched = changeEvent.target.checked;
+
+    this.setState({ filtersChanged: true });
+
+    this.props.updateActivityFilter({ ...this.props.activityFilter, showOnlyHighlyMatched });
+  };
+
   handleLocationChange = ({ lat, lng }) => {
     this.setState({ filtersChanged: true });
 
@@ -500,6 +508,18 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                       <Col md="3">
                         <Translate contentKey="serviceNetApp.activity.home.filter.zip" />
                         <Select value={this.props.selectedZip} onChange={this.handleZipChange} options={postalCodeList} isMulti />
+                        <div className="form-check form-check-inline">
+                          <input
+                            type="checkbox"
+                            id="onlyShowMatchingCheckbox"
+                            className="form-check-input"
+                            onChange={this.handleOnlyHighlyMatchedChange}
+                            checked={this.props.showOnlyHighlyMatched}
+                          />
+                          <label className="form-check-label" htmlFor="onlyShowMatchingCheckbox">
+                            <Translate contentKey="serviceNetApp.activity.home.filter.onlyShowHighlyMatched" />
+                          </label>
+                        </div>
                       </Col>
                       <Col md="3">
                         <Translate contentKey="serviceNetApp.activity.home.filter.partner" />
@@ -663,6 +683,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   fromDate: storeState.filterActivity.activityFilter.fromDate,
   toDate: storeState.filterActivity.activityFilter.toDate,
   onlyShowMatching: !storeState.filterActivity.activityFilter.showPartner,
+  showOnlyHighlyMatched: storeState.filterActivity.activityFilter.showOnlyHighlyMatched,
   applyLocationSearch: storeState.filterActivity.activityFilter.applyLocationSearch,
   latitude: storeState.filterActivity.activityFilter.latitude,
   longitude: storeState.filterActivity.activityFilter.longitude,

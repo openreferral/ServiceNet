@@ -37,6 +37,7 @@ const initialState = {
     toDate: '',
     hiddenFilter: false,
     showPartner: false,
+    showOnlyHighlyMatched: false,
     applyLocationSearch: false,
     latitude: null,
     longitude: null,

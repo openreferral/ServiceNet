@@ -82,6 +82,9 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
     @Column(name = "show_partner")
     private Boolean showPartner;
 
+    @Column(name = "show_highly_matched")
+    private Boolean showOnlyHighlyMatched;
+
     @ManyToOne
     @JsonIgnoreProperties("filters")
     private User user;
@@ -261,6 +264,19 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
 
     public ActivityFilter showPartner(Boolean showPartner) {
         this.showPartner = showPartner;
+        return this;
+    }
+
+    public void setShowOnlyHighlyMatched(Boolean showOnlyHighlyMatched) {
+        this.showOnlyHighlyMatched = showOnlyHighlyMatched;
+    }
+
+    public Boolean isShowOnlyHighlyMatched() {
+        return showOnlyHighlyMatched;
+    }
+
+    public ActivityFilter showOnlyHighlyMatched(Boolean showOnlyHighlyMatched) {
+        this.showOnlyHighlyMatched = showOnlyHighlyMatched;
         return this;
     }
 

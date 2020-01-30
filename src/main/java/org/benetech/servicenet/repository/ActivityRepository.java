@@ -1,5 +1,6 @@
 package org.benetech.servicenet.repository;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -92,6 +93,8 @@ public class ActivityRepository {
 
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
+
+    private static final Double HIGHLY_MATCH_THRESHOLD = 0.75;
 
     private final EntityManager em;
     private final CriteriaBuilder cb;
@@ -220,6 +223,14 @@ public class ActivityRepository {
             }
         }
         return updatePredicate;
+    }
+
+    private Predicate addSimilarityFilter(Predicate predicate, ActivityFilterDTO activityFilterDTO, Join<ActivityInfo,
+        OrganizationMatch> matchJoin) {
+        if (activityFilterDTO.getShowOnlyHighlyMatched()) {
+            return cb.and(predicate, cb.greaterThan(matchJoin.get(SIMILARITY), BigDecimal.valueOf(HIGHLY_MATCH_THRESHOLD)));
+        }
+        return predicate;
     }
 
     private Predicate addLocationFilters(Predicate predicate, ActivityFilterDTO activityFilterDTO,
@@ -370,6 +381,8 @@ public class ActivityRepository {
         predicate = addSearchFilter(predicate, activityFilterDTO, searchName, orgJoin, serviceJoin, locationJoin);
 
         predicate = addDateFilter(predicate, activityFilterDTO, root);
+
+        predicate = addSimilarityFilter(predicate, activityFilterDTO, matchJoin);
 
         query.where(predicate);
     }
