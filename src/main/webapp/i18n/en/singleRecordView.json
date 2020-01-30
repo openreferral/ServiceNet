@@ -47,7 +47,9 @@
         "location": "Location",
         "locations": "Locations",
         "match": "Match",
-        "matches": "Matches"
+        "matches": "Matches",
+        "sinceLastUpdated": "days on average since last updated",
+        "sinceLastUpdatedTooltip": "We take the total number of days it has been since this Organization and all of its Service and Location records have most recently been updated, and divide by the total number of records, to calculate the average number of days since these records have been updated."
       }
     },
     "inputField": {

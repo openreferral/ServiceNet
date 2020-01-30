@@ -16,6 +16,7 @@ export interface IOrganizationMatch {
   providerName?: string;
   similarity?: number;
   locationMatches?: any;
+  freshness?: number;
 }
 
 export const defaultValue: Readonly<IOrganizationMatch> = {
