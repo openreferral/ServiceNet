@@ -41,6 +41,7 @@
             "dateRange": "Date Range"
           },
           "onlyShowMatching": "Only show matching",
+          "onlyShowHighlyMatched": "Only show highly-matched Organizations",
           "applyLocationSearch": "Search near selected location",
           "fields": {
             "name": "Name",

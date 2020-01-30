@@ -46,6 +46,8 @@ public class ActivityFilterDTO implements Serializable {
 
     private Boolean showPartner = false;
 
+    private Boolean showOnlyHighlyMatched = false;
+
     private UUID userId;
 
     private String userLogin;
