@@ -134,12 +134,14 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
   };
 
   selectLocation = location => {
-    const selectedLocation = location.location.id;
-    const matchingLocation = this.findMatchingLocation(selectedLocation);
-    this.setState({
-      selectedLocation,
-      matchingLocation
-    });
+    if (!!location) {
+      const selectedLocation = location.location.id;
+      const matchingLocation = this.findMatchingLocation(selectedLocation);
+      this.setState({
+        selectedLocation,
+        matchingLocation
+      });
+    }
   };
 
   findMatchingLocation = selectedLocation => {
