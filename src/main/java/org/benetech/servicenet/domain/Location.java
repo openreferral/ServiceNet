@@ -113,7 +113,7 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "location_geocoding_results",
                        joinColumns = @JoinColumn(name = "location_id", referencedColumnName = "id"),
