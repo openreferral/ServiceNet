@@ -82,6 +82,9 @@ public class ActivityFilterResourceIntTest {
     private static final Boolean DEFAULT_HIDDEN_FILTER = false;
     private static final Boolean UPDATED_HIDDEN_FILTER = true;
 
+    private static final Boolean DEFAULT_SHOW_HIGHLY_MATCHED_FILTER = true;
+    private static final Boolean UPDATED_SHOW_HIGHLY_MATCHED_FILTER = false;
+
     private static final UUID ID = UUID.randomUUID();
 
     @Autowired
@@ -145,7 +148,8 @@ public class ActivityFilterResourceIntTest {
             .dateFilter(DEFAULT_DATE_FILTER)
             .fromDate(DEFAULT_FROM_DATE)
             .toDate(DEFAULT_TO_DATE)
-            .hiddenFilter(DEFAULT_HIDDEN_FILTER);
+            .hiddenFilter(DEFAULT_HIDDEN_FILTER)
+            .showOnlyHighlyMatched(DEFAULT_SHOW_HIGHLY_MATCHED_FILTER);
         return activityFilter;
     }
     /**
@@ -166,7 +170,8 @@ public class ActivityFilterResourceIntTest {
             .dateFilter(UPDATED_DATE_FILTER)
             .fromDate(UPDATED_FROM_DATE)
             .toDate(UPDATED_TO_DATE)
-            .hiddenFilter(UPDATED_HIDDEN_FILTER);
+            .hiddenFilter(UPDATED_HIDDEN_FILTER).
+            showOnlyHighlyMatched(UPDATED_SHOW_HIGHLY_MATCHED_FILTER);
         return activityFilter;
     }
 
@@ -196,6 +201,7 @@ public class ActivityFilterResourceIntTest {
         assertThat(testActivityFilter.getFromDate()).isEqualTo(DEFAULT_FROM_DATE);
         assertThat(testActivityFilter.getToDate()).isEqualTo(DEFAULT_TO_DATE);
         assertThat(testActivityFilter.isHiddenFilter()).isEqualTo(DEFAULT_HIDDEN_FILTER);
+        assertThat(testActivityFilter.isShowOnlyHighlyMatched()).isEqualTo(DEFAULT_SHOW_HIGHLY_MATCHED_FILTER);
     }
 
     @Test
@@ -241,7 +247,8 @@ public class ActivityFilterResourceIntTest {
             .andExpect(jsonPath("$.[*].dateFilter").value(hasItem(DEFAULT_DATE_FILTER.toString())))
             .andExpect(jsonPath("$.[*].fromDate").value(hasItem(DEFAULT_FROM_DATE.toString())))
             .andExpect(jsonPath("$.[*].toDate").value(hasItem(DEFAULT_TO_DATE.toString())))
-            .andExpect(jsonPath("$.[*].hiddenFilter").value(hasItem(DEFAULT_HIDDEN_FILTER.booleanValue())));
+            .andExpect(jsonPath("$.[*].hiddenFilter").value(hasItem(DEFAULT_HIDDEN_FILTER.booleanValue())))
+            .andExpect(jsonPath("$.[*].showOnlyHighlyMatched").value(hasItem(DEFAULT_SHOW_HIGHLY_MATCHED_FILTER)));
     }
 
     @Test
@@ -259,7 +266,8 @@ public class ActivityFilterResourceIntTest {
             .andExpect(jsonPath("$.dateFilter").value(DEFAULT_DATE_FILTER.toString()))
             .andExpect(jsonPath("$.fromDate").value(DEFAULT_FROM_DATE.toString()))
             .andExpect(jsonPath("$.toDate").value(DEFAULT_TO_DATE.toString()))
-            .andExpect(jsonPath("$.hiddenFilter").value(DEFAULT_HIDDEN_FILTER.booleanValue()));
+            .andExpect(jsonPath("$.hiddenFilter").value(DEFAULT_HIDDEN_FILTER.booleanValue()))
+            .andExpect(jsonPath("$.showOnlyHighlyMatched").value(DEFAULT_SHOW_HIGHLY_MATCHED_FILTER));
     }
 
     @Test
@@ -293,7 +301,9 @@ public class ActivityFilterResourceIntTest {
             .dateFilter(UPDATED_DATE_FILTER)
             .fromDate(UPDATED_FROM_DATE)
             .toDate(UPDATED_TO_DATE)
-            .hiddenFilter(UPDATED_HIDDEN_FILTER);
+            .hiddenFilter(UPDATED_HIDDEN_FILTER)
+            .showOnlyHighlyMatched(UPDATED_SHOW_HIGHLY_MATCHED_FILTER);
+
         ActivityFilterDTO activityFilterDTO = activityFilterMapper.toDto(updatedActivityFilter);
 
         restActivityFilterMockMvc.perform(put("/api/activity-filters")
@@ -310,6 +320,7 @@ public class ActivityFilterResourceIntTest {
         assertThat(testActivityFilter.getFromDate()).isEqualTo(UPDATED_FROM_DATE);
         assertThat(testActivityFilter.getToDate()).isEqualTo(UPDATED_TO_DATE);
         assertThat(testActivityFilter.isHiddenFilter()).isEqualTo(UPDATED_HIDDEN_FILTER);
+        assertThat(testActivityFilter.isShowOnlyHighlyMatched()).isEqualTo(UPDATED_SHOW_HIGHLY_MATCHED_FILTER);
     }
 
     @Test
