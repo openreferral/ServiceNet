@@ -50,8 +50,8 @@ public class LocationImportServiceImpl implements LocationImportService {
                 return locationFromDb.get();
             }
             fillDataFromDb(location, locationFromDb.get());
-            locationService.save(location);
         }
+        locationService.save(location);
 
         persistRelatedEntities(filledLocation, importData, location);
 
