@@ -45,6 +45,10 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
       this.setState({
         locationNumber: this.getLocationNumber()
       });
+    } else if (prevProps.activity !== this.props.activity) {
+      this.setState({
+        locationNumber: 0
+      });
     }
   }
 

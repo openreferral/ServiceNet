@@ -32,6 +32,14 @@ export class ContactsDetails extends React.Component<IContactsDetailsProp, ICont
     this.setState({ contactsNumber });
   };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.activity !== this.props.activity) {
+      this.setState({
+        contactsNumber: 0
+      });
+    }
+  }
+
   render() {
     const { contacts, isAreaOpen } = this.props;
     const { contactsNumber } = this.state;
