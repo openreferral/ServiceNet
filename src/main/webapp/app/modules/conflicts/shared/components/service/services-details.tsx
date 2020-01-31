@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IServiceRecord } from 'app/shared/model/service-record.model';
 import { SingleServiceDetails } from './single-service-details';
+import { translate } from 'react-jhipster';
 import _ from 'lodash';
 
 export interface IServicesDetailsProp extends StateProps, DispatchProps {
@@ -29,6 +30,16 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
     this.setState({ serviceNumber });
   };
 
+  getServiceDisplayLabel = (s, index) => {
+    if (!!s.service && !_.isEmpty(s.service.name)) {
+      return { value: index, label: s.service.name };
+    }
+    return {
+      value: index,
+      label: `${translate('serviceNetApp.service.detail.title')} ${index}`
+    };
+  };
+
   render() {
     const { services, isAreaOpen } = this.props;
     const { serviceNumber } = this.state;
@@ -39,7 +50,7 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
         <SingleServiceDetails
           {...this.props}
           changeRecord={this.changeRecord}
-          selectOptions={_.map(sortedServices, (s, idx) => ({ value: idx, label: s.service.name }))}
+          selectOptions={_.map(sortedServices, this.getServiceDisplayLabel)}
           isOnlyOne={sortedServices.length <= 1}
           record={record}
           servicesCount={`(${serviceNumber + 1}/${sortedServices.length}) `}
