@@ -30,13 +30,14 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
     this.setState({ serviceNumber });
   };
 
-  getServiceDisplayLabel = (s, index) => {
+  getServiceDisplayLabel = missingServiceNameIndex => (s, index) => {
     if (!!s.service && !_.isEmpty(s.service.name)) {
       return { value: index, label: s.service.name };
     }
+    missingServiceNameIndex++;
     return {
       value: index,
-      label: `${translate('serviceNetApp.service.detail.title')} ${index}`
+      label: `${translate('serviceNetApp.service.detail.title')} ${missingServiceNameIndex}`
     };
   };
 
@@ -45,12 +46,13 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
     const { serviceNumber } = this.state;
     const sortedServices = _.sortBy(services, ['service.name']);
     const record = sortedServices[serviceNumber];
+    const missingServiceNameIndex = 0;
     const serviceDetails =
       sortedServices.length > serviceNumber ? (
         <SingleServiceDetails
           {...this.props}
           changeRecord={this.changeRecord}
-          selectOptions={_.map(sortedServices, this.getServiceDisplayLabel)}
+          selectOptions={_.map(sortedServices, this.getServiceDisplayLabel(missingServiceNameIndex))}
           isOnlyOne={sortedServices.length <= 1}
           record={record}
           servicesCount={`(${serviceNumber + 1}/${sortedServices.length}) `}
