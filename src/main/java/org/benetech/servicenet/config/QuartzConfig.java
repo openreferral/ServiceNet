@@ -28,6 +28,8 @@ public class QuartzConfig {
     public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
 
+        schedulerFactoryBean.setApplicationContext(applicationContext);
+
         AutowiringBeanJobFactory jobFactory = new AutowiringBeanJobFactory();
         jobFactory.setApplicationContext(applicationContext);
         schedulerFactoryBean.setJobFactory(jobFactory);
