@@ -17,6 +17,7 @@ export interface ILocationsDetailsProp extends StateProps, DispatchProps {
   matchLocations?: boolean;
   toggleMatchLocations?: any;
   isBaseRecord: boolean;
+  settings?: any;
 }
 
 export interface ILocationsDetailsState {

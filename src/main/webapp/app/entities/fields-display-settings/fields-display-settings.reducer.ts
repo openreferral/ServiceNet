@@ -12,6 +12,7 @@ export const ACTION_TYPES = {
   CREATE_FIELDSDISPLAYSETTINGS: 'fieldsDisplaySettings/CREATE_FIELDSDISPLAYSETTINGS',
   UPDATE_FIELDSDISPLAYSETTINGS: 'fieldsDisplaySettings/UPDATE_FIELDSDISPLAYSETTINGS',
   DELETE_FIELDSDISPLAYSETTINGS: 'fieldsDisplaySettings/DELETE_FIELDSDISPLAYSETTINGS',
+  UPDATE_SELECTED_SETTINGS: 'fieldsDisplaySettings/UPDATE_SELECTED_SETTINGS',
   RESET: 'fieldsDisplaySettings/RESET'
 };
 
@@ -21,7 +22,17 @@ const initialState = {
   entities: [] as ReadonlyArray<IFieldsDisplaySettings>,
   entity: defaultValue,
   updating: false,
-  updateSuccess: false
+  updateSuccess: false,
+  selectedSettings: {
+    id: null,
+    locationFields: [],
+    organizationFields: [],
+    physicalAddressFields: [],
+    postalAddressFields: [],
+    serviceFields: [],
+    serviceTaxonomiesDetailsFields: [],
+    contactDetailsFields: []
+  }
 };
 
 export type FieldsDisplaySettingsState = Readonly<typeof initialState>;
@@ -86,6 +97,12 @@ export default (state: FieldsDisplaySettingsState = initialState, action): Field
         updateSuccess: true,
         entity: {}
       };
+    case ACTION_TYPES.UPDATE_SELECTED_SETTINGS:
+      return {
+        ...state,
+        selectedSettings: action.payload,
+        loading: false
+      };
     case ACTION_TYPES.RESET:
       return {
         ...initialState
@@ -142,4 +159,9 @@ export const deleteEntity: ICrudDeleteAction<IFieldsDisplaySettings> = id => asy
 
 export const reset = () => ({
   type: ACTION_TYPES.RESET
+});
+
+export const updateSelectedSettings = selectedSettings => ({
+  type: ACTION_TYPES.UPDATE_SELECTED_SETTINGS,
+  payload: selectedSettings
 });

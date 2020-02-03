@@ -15,6 +15,7 @@ import { HolidaySchedulesDetails } from '../holiday-schedules-details';
 import { getTextField, getTextAreaField } from 'app/shared/util/single-record-view-utils';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import Select from 'react-select';
+import _ from 'lodash';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -30,6 +31,7 @@ export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   toggleMatchLocations?: any;
   isBaseRecord: boolean;
   locationNumber?: number;
+  settings?: any;
 }
 
 export interface ISingleLocationDetailsState {
@@ -64,6 +66,20 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     this.props.changeRecord(record.value);
   };
 
+  getFields = fieldsMap => {
+    const { settings } = this.props;
+
+    if (settings === undefined || (!!settings && !settings.id)) {
+      return _.values(fieldsMap);
+    }
+
+    const { locationFields } = settings;
+
+    const fieldsMapKeys = _.keys(fieldsMap);
+    const keysFiltered = _.filter(fieldsMapKeys, k => locationFields.indexOf(k) > -1);
+    return _.values(_.pick(fieldsMap, keysFiltered));
+  };
+
   render() {
     const {
       record,
@@ -74,7 +90,8 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       isBaseRecord,
       matchLocations,
       toggleMatchLocations,
-      locationNumber
+      locationNumber,
+      settings
     } = this.props;
     const customHeader = (
       <div className="title d-flex justify-content-between align-items-center mb-1">
@@ -134,33 +151,38 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       </div>
     );
 
-    const additionalFields = [
-      <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} />,
-      <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} />,
-      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
-      <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
-      <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />
-    ];
+    const additionalFields = {
+      PHYSICAL_ADDRESS: (
+        <PhysicalAddressDetails key="physical-address-details" {...this.props} address={record.physicalAddress} settings={settings} />
+      ),
+      POSTAL_ADDRESS: (
+        <PostalAddressDetails key="postal-address-details" {...this.props} address={record.postalAddress} settings={settings} />
+      ),
+      OPENING_HOURS: <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
+      LANGUAGE: <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
+      HOLIDAY_SCHEDULE: <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />
+    };
 
-    const fields = [
-      getTextField(record.location, 'name'),
-      getTextField(record.location, 'alternateName'),
-      getTextAreaField(record.location, 'description'),
-      getTextField(record.location, 'transportation'),
-      getTextField(record.location, 'latitude'),
-      getTextField(record.location, 'longitude'),
-      getTextAreaField(record, 'regularScheduleNotes')
-    ];
+    const fields = {
+      NAME: getTextField(record.location, 'name'),
+      ALTERNATE_NAME: getTextField(record.location, 'alternateName'),
+      DESCRIPTION: getTextAreaField(record.location, 'description'),
+      TRANSPORTATION: getTextField(record.location, 'transportation'),
+      LATITUDE: getTextField(record.location, 'latitude'),
+      LONGITUDE: getTextField(record.location, 'longitude'),
+      REGULAR_SCHEDULE_NOTES: getTextAreaField(record, 'regularScheduleNotes')
+    };
+
     return (
       <Row>
         <Col sm={columnSize}>
           <hr />
           <AdditionalDetails
             {...this.props}
-            fields={fields}
+            fields={this.getFields(fields)}
             entityClass={'Location'}
             customHeader={customHeader}
-            additionalFields={additionalFields}
+            additionalFields={this.getFields(additionalFields)}
             itemHeader={itemHeader}
             toggleAvailable
             isCustomToggle

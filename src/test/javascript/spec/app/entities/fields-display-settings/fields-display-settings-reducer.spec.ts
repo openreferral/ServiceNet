@@ -33,7 +33,17 @@ describe('Entities reducer tests', () => {
     entities: [] as ReadonlyArray<IFieldsDisplaySettings>,
     entity: defaultValue,
     updating: false,
-    updateSuccess: false
+    updateSuccess: false,
+    selectedSettings: {
+      id: null,
+      locationFields: [],
+      organizationFields: [],
+      physicalAddressFields: [],
+      postalAddressFields: [],
+      serviceFields: [],
+      serviceTaxonomiesDetailsFields: [],
+      contactDetailsFields: []
+    }
   };
 
   function testInitialState(state) {
