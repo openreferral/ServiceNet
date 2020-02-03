@@ -1,0 +1,22 @@
+{
+  "serviceNetApp": {
+    "physicalAddressFieldsValue": {
+      "home": {
+        "title": "Physical Address Fields Values",
+        "createLabel": "Create a new Physical Address Fields Value",
+        "createOrEditLabel": "Create or edit a Physical Address Fields Value",
+        "notFound": "No Physical Address Fields Values found"
+      },
+      "created": "A new Physical Address Fields Value is created with identifier {{ param }}",
+      "updated": "A Physical Address Fields Value is updated with identifier {{ param }}",
+      "deleted": "A Physical Address Fields Value is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Physical Address Fields Value {{ id }}?"
+      },
+      "detail": {
+        "title": "Physical Address Fields Value"
+      },
+      "physicalAddressField": "Physical Address Field"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+    "name": "OrganizationFieldsValue",
+    "fields": [
+        {
+            "fieldName": "organizationField",
+            "fieldType": "OrganizationFields",
+            "fieldValues": "NAME,ALTERNATE_NAME,DESCRIPTION,EMAIL,URL,TAX_STATUS,ACTIVE",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200127211931",
+    "entityTableName": "organization_fields_value",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

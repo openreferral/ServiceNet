@@ -178,6 +178,38 @@ import activityFilter, {
 import taxonomyGroup, {
   TaxonomyGroupState
 } from 'app/entities/taxonomy-group/taxonomy-group.reducer';
+// prettier-ignore
+import fieldsDisplaySettings, {
+  FieldsDisplaySettingsState
+} from 'app/entities/fields-display-settings/fields-display-settings.reducer';
+// prettier-ignore
+import locationFieldsValue, {
+  LocationFieldsValueState
+} from 'app/entities/location-fields-value/location-fields-value.reducer';
+// prettier-ignore
+import organizationFieldsValue, {
+  OrganizationFieldsValueState
+} from 'app/entities/organization-fields-value/organization-fields-value.reducer';
+// prettier-ignore
+import physicalAddressFieldsValue, {
+  PhysicalAddressFieldsValueState
+} from 'app/entities/physical-address-fields-value/physical-address-fields-value.reducer';
+// prettier-ignore
+import postalAddressFieldsValue, {
+  PostalAddressFieldsValueState
+} from 'app/entities/postal-address-fields-value/postal-address-fields-value.reducer';
+// prettier-ignore
+import serviceFieldsValue, {
+  ServiceFieldsValueState
+} from 'app/entities/service-fields-value/service-fields-value.reducer';
+// prettier-ignore
+import serviceTaxonomiesDetailsFieldsValue, {
+  ServiceTaxonomiesDetailsFieldsValueState
+} from 'app/entities/service-taxonomies-details-fields-value/service-taxonomies-details-fields-value.reducer';
+// prettier-ignore
+import contactDetailsFieldsValue, {
+  ContactDetailsFieldsValueState
+} from 'app/entities/contact-details-fields-value/contact-details-fields-value.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -235,6 +267,14 @@ export interface IRootState {
   readonly matchSimilarity: MatchSimilarityState;
   readonly activityFilter: ActivityFilterState;
   readonly taxonomyGroup: TaxonomyGroupState;
+  readonly fieldsDisplaySettings: FieldsDisplaySettingsState;
+  readonly locationFieldsValue: LocationFieldsValueState;
+  readonly organizationFieldsValue: OrganizationFieldsValueState;
+  readonly physicalAddressFieldsValue: PhysicalAddressFieldsValueState;
+  readonly postalAddressFieldsValue: PostalAddressFieldsValueState;
+  readonly serviceFieldsValue: ServiceFieldsValueState;
+  readonly serviceTaxonomiesDetailsFieldsValue: ServiceTaxonomiesDetailsFieldsValueState;
+  readonly contactDetailsFieldsValue: ContactDetailsFieldsValueState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
   readonly filterShelter: FilterShelterState;
@@ -294,6 +334,14 @@ const rootReducer = combineReducers<IRootState>({
   matchSimilarity,
   activityFilter,
   taxonomyGroup,
+  fieldsDisplaySettings,
+  locationFieldsValue,
+  organizationFieldsValue,
+  physicalAddressFieldsValue,
+  postalAddressFieldsValue,
+  serviceFieldsValue,
+  serviceTaxonomiesDetailsFieldsValue,
+  contactDetailsFieldsValue,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
   filterActivity,

@@ -1,0 +1,23 @@
+{
+    "name": "LocationFieldsValue",
+    "fields": [
+        {
+            "fieldName": "locationField",
+            "fieldType": "LocationFields",
+            "fieldValues": "NAME,ALTERNATE_NAME,DESCRIPTION,TRANSPORTATION,LATITUDE,LONGITUDE,REGULAR_SCHEDULE_NOTES,PHYSICAL_ADDRESS,POSTAL_ADDRESS,REGULAR_SCHEDULE_OPENING_HOURS,LANGS,HOLIDAY_SCHEDULES",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200127211930",
+    "entityTableName": "location_fields_value",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

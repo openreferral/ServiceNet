@@ -1,0 +1,23 @@
+{
+    "name": "PhysicalAddressFieldsValue",
+    "fields": [
+        {
+            "fieldName": "physicalAddressField",
+            "fieldType": "PhysicalAddressFields",
+            "fieldValues": "ATTENTION,ADDRESS_1,CITY,REGION,STATE_PROVINCE,POSTAL_CODE,COUNTRY",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200127211932",
+    "entityTableName": "physical_address_fields_value",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

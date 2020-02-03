@@ -42,6 +42,14 @@ import OrganizationError from './organization-error';
 import MatchSimilarity from './match-similarity';
 import ActivityFilter from './activity-filter';
 import TaxonomyGroup from './taxonomy-group';
+import FieldsDisplaySettings from './fields-display-settings';
+import LocationFieldsValue from './location-fields-value';
+import OrganizationFieldsValue from './organization-fields-value';
+import PhysicalAddressFieldsValue from './physical-address-fields-value';
+import PostalAddressFieldsValue from './postal-address-fields-value';
+import ServiceFieldsValue from './service-fields-value';
+import ServiceTaxonomiesDetailsFieldsValue from './service-taxonomies-details-fields-value';
+import ContactDetailsFieldsValue from './contact-details-fields-value';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ match }) => (
@@ -86,6 +94,14 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute path={`${match.url}/match-similarity`} component={MatchSimilarity} />
       <ErrorBoundaryRoute path={`${match.url}/activity-filter`} component={ActivityFilter} />
       <ErrorBoundaryRoute path={`${match.url}/taxonomy-group`} component={TaxonomyGroup} />
+      <ErrorBoundaryRoute path={`${match.url}/fields-display-settings`} component={FieldsDisplaySettings} />
+      <ErrorBoundaryRoute path={`${match.url}/location-fields-value`} component={LocationFieldsValue} />
+      <ErrorBoundaryRoute path={`${match.url}/organization-fields-value`} component={OrganizationFieldsValue} />
+      <ErrorBoundaryRoute path={`${match.url}/physical-address-fields-value`} component={PhysicalAddressFieldsValue} />
+      <ErrorBoundaryRoute path={`${match.url}/postal-address-fields-value`} component={PostalAddressFieldsValue} />
+      <ErrorBoundaryRoute path={`${match.url}/service-fields-value`} component={ServiceFieldsValue} />
+      <ErrorBoundaryRoute path={`${match.url}/service-taxonomies-details-fields-value`} component={ServiceTaxonomiesDetailsFieldsValue} />
+      <ErrorBoundaryRoute path={`${match.url}/contact-details-fields-value`} component={ContactDetailsFieldsValue} />
       {/* jhipster-needle-add-route-path - JHipster will routes here */}
     </Switch>
   </div>

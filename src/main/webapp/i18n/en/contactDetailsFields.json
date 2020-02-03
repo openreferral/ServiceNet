@@ -1,0 +1,11 @@
+{
+  "serviceNetApp": {
+    "ContactDetailsFields": {
+      "null": "",
+      "NAME": "NAME",
+      "TITLE": "TITLE",
+      "DEPARTMENT": "DEPARTMENT",
+      "EMAIL": "EMAIL"
+    }
+  }
+}

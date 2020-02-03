@@ -1,0 +1,9 @@
+{
+  "serviceNetApp": {
+    "ServiceTaxonomiesDetailsFields": {
+      "null": "",
+      "TAXONOMY_NAME": "TAXONOMY_NAME",
+      "TAXONOMY_DETAILS": "TAXONOMY_DETAILS"
+    }
+  }
+}

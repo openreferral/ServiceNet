@@ -1,0 +1,23 @@
+{
+    "name": "ServiceTaxonomiesDetailsFieldsValue",
+    "fields": [
+        {
+            "fieldName": "serviceTaxonomiesDetailsField",
+            "fieldType": "ServiceTaxonomiesDetailsFields",
+            "fieldValues": "TAXONOMY_NAME,TAXONOMY_DETAILS",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200127211935",
+    "entityTableName": "service_taxonomies_details_fields_value",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

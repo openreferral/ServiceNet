@@ -1,0 +1,58 @@
+{
+    "name": "FieldsDisplaySettings",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "locationFields",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "organizationFields",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "physicalAddressFields",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "postalAddressFields",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "serviceFields",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "serviceTaxonomiesDetailsFields",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "contactDetailsFields",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "fieldsDisplaySettings",
+            "relationshipName": "user",
+            "otherEntityField": "login"
+        }
+    ],
+    "changelogDate": "20200127211929",
+    "entityTableName": "fields_display_settings",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}
