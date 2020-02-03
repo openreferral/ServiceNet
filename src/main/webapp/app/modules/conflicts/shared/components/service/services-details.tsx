@@ -41,6 +41,14 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
     };
   };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.activity !== this.props.activity) {
+      this.setState({
+        serviceNumber: 0
+      });
+    }
+  }
+
   render() {
     const { services, isAreaOpen } = this.props;
     const { serviceNumber } = this.state;
