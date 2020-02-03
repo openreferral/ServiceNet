@@ -28,31 +28,54 @@ public abstract class BaseJob extends QuartzJobBean {
     }
 
     public Trigger getTrigger() {
-        return TriggerBuilder
+        TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder
             .newTrigger()
             .withDescription(getDescription())
             .forJob(getJobDetail())
-            .withIdentity(getFullName() + TRIGGER)
-            .withSchedule(getSchedule())
-            .startNow()
-            .build();
+            .withIdentity(getFullName() + TRIGGER);
+        if (getIntervalInSeconds() > 0) {
+            return triggerBuilder
+                .withSchedule(getSchedule())
+                .startNow()
+                .build();
+        } else {
+            return triggerBuilder
+                .withSchedule(getMaxIntervalSchedule())
+                .startNow()
+                .build();
+        }
     }
 
     public Trigger getInitTrigger() {
-        return TriggerBuilder
+        TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder
             .newTrigger()
             .withDescription(getDescription())
             .forJob(getJobDetail())
-            .withIdentity(getFullName() + TRIGGER)
-            .withSchedule(getSchedule())
-            .startAt(startAnHourFromNow())
-            .build();
+            .withIdentity(getFullName() + TRIGGER);
+        if (getIntervalInSeconds() > 0) {
+            return triggerBuilder
+                .withSchedule(getSchedule())
+                .startAt(startAnHourFromNow())
+                .build();
+        } else {
+            return triggerBuilder
+                .withSchedule(getMaxIntervalSchedule())
+                .startNow()
+                .build();
+        }
     }
 
     protected SimpleScheduleBuilder getSchedule() {
         return SimpleScheduleBuilder
             .simpleSchedule()
             .withIntervalInSeconds(getIntervalInSeconds())
+            .repeatForever();
+    }
+
+    protected SimpleScheduleBuilder getMaxIntervalSchedule() {
+        return SimpleScheduleBuilder
+            .simpleSchedule()
+            .withIntervalInSeconds(Integer.MAX_VALUE)
             .repeatForever();
     }
 

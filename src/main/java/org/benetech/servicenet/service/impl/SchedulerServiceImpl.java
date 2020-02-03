@@ -2,7 +2,6 @@ package org.benetech.servicenet.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +9,7 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
 import org.benetech.servicenet.scheduler.EdenTaxonomyUpdateJob;
+import org.benetech.servicenet.scheduler.OrganizationMatchUpdateJob;
 import org.benetech.servicenet.scheduler.SMCConnectTaxonomyUpdateJob;
 import org.benetech.servicenet.scheduler.ShelterTechDataUpdateJob;
 import org.benetech.servicenet.scheduler.UWBADataUpdateJob;
@@ -17,6 +17,7 @@ import org.benetech.servicenet.scheduler.UWBATaxonomyUpdateJob;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.SchedulerService;
 import org.benetech.servicenet.service.dto.JobDTO;
+import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -52,6 +53,9 @@ public class SchedulerServiceImpl implements SchedulerService {
     private UWBATaxonomyUpdateJob uwbaTaxonomyUpdateJob;
 
     @Autowired
+    private OrganizationMatchUpdateJob organizationMatchUpdateJob;
+
+    @Autowired
     private DataImportReportService dataImportReportService;
 
     @PostConstruct
@@ -66,11 +70,12 @@ public class SchedulerServiceImpl implements SchedulerService {
         jobs.add(smcConnectTaxonomyUpdateJob);
         jobs.add(edenTaxonomyUpdateJob);
         jobs.add(uwbaTaxonomyUpdateJob);
+        jobs.add(organizationMatchUpdateJob);
 
         jobs
             .forEach(job -> {
                 try {
-                    if (scheduler.getTrigger(job.getInitTrigger().getKey()) == null) {
+                    if (scheduler.getJobDetail(job.getJobDetail().getKey()) == null) {
                         scheduler.scheduleJob(job.getJobDetail(), job.getInitTrigger());
                     }
                 } catch (SchedulerException e) {
@@ -81,7 +86,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     @Override
     public List<JobDTO> getAllJobsDetails() throws SchedulerException {
-        return getAllTriggers().stream().map(this::mapToJobDTO).collect(Collectors.toList());
+        return getAllJobs().stream().map(this::mapToJobDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -129,15 +134,30 @@ public class SchedulerServiceImpl implements SchedulerService {
         return result;
     }
 
-    private JobDTO mapToJobDTO(Trigger trigger) {
+    private List<JobDetail> getAllJobs() throws SchedulerException {
+        List<JobDetail> result = new ArrayList<>();
+        Scheduler scheduler = schedulerFactoryBean.getScheduler();
+        for (String groupName : scheduler.getJobGroupNames()) {
+            for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                result.add(scheduler.getJobDetail(jobKey));
+            }
+        }
+        return result;
+    }
+
+    private JobDTO mapToJobDTO(JobDetail jobDetail) {
         try {
-            Trigger.TriggerState state = schedulerFactoryBean.getScheduler().getTriggerState(trigger.getKey());
-            DataImportReport report = dataImportReportService.findLatestByJobName(trigger.getJobKey().getName());
-            UUID lastReportId = report != null ? report.getId() : null;
-            return new JobDTO(trigger.getJobKey().getName(), trigger.getDescription(),
-                trigger.getNextFireTime(), trigger.getPreviousFireTime(), state.name(), lastReportId);
+            Scheduler scheduler = schedulerFactoryBean.getScheduler();
+            List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobDetail.getKey());
+            Trigger trigger = (triggers.size() > 0) ? triggers.get(0) : null;
+            DataImportReport report = dataImportReportService.findLatestByJobName(jobDetail.getKey().getName());
+            return new JobDTO(jobDetail.getKey().getName(), jobDetail.getDescription(),
+                (trigger != null) ? trigger.getNextFireTime() : null,
+                (trigger != null) ? trigger.getPreviousFireTime() : null,
+                (trigger != null) ? schedulerFactoryBean.getScheduler().getTriggerState(trigger.getKey()).name() : null,
+                (report != null) ? report.getId() : null);
         } catch (SchedulerException e) {
-            throw new IllegalStateException("Cannot get details of " + trigger.getJobKey());
+            throw new IllegalStateException("Cannot get details of " + jobDetail.getKey());
         }
     }
 
@@ -149,6 +169,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         allBeans.add(smcConnectTaxonomyUpdateJob);
         allBeans.add(edenTaxonomyUpdateJob);
         allBeans.add(uwbaTaxonomyUpdateJob);
+        allBeans.add(organizationMatchUpdateJob);
 
         return allBeans.stream()
             .filter(b -> b.getFullName().equals(name))
