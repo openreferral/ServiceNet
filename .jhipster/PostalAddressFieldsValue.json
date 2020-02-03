@@ -1,0 +1,23 @@
+{
+    "name": "PostalAddressFieldsValue",
+    "fields": [
+        {
+            "fieldName": "postalAddressField",
+            "fieldType": "PostalAddressFields",
+            "fieldValues": "ATTENTION,ADDRESS1,CITY,REGION,STATE_PROVINCE,POSTAL_CODE,COUNTRY",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200127211933",
+    "entityTableName": "postal_address_fields_value",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

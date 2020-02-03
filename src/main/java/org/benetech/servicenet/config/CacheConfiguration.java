@@ -142,6 +142,15 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.TaxonomyGroup.class.getName(), jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.TaxonomyGroup.class.getName() + ".taxonomies",
                 jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.FieldsDisplaySettings.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.LocationFieldsValue.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.OrganizationFieldsValue.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.PhysicalAddressFieldsValue.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.PostalAddressFieldsValue.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.ServiceFieldsValue.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.ServiceTaxonomiesDetailsFieldsValue.class.getName(),
+                jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.ContactDetailsFieldsValue.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

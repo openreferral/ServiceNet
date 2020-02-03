@@ -1,0 +1,23 @@
+{
+    "name": "ServiceFieldsValue",
+    "fields": [
+        {
+            "fieldName": "serviceField",
+            "fieldType": "ServiceFields",
+            "fieldValues": "NAME,ALTERNATE_NAME,DESCRIPTION,URL,EMAIL,STATUS,INTERPRETATION_SERVICES,APPLICATION_PROCESS,WAIT_TIME,FEES,ACCREDITATIONS,LICENSES,TYPE,ELIGIBILITY,FUNDING,DOCS,PAYMENTS_ACCEPTEDS,TAXONOMIES,REGULAR_SCHEDULE_OPENING_HOURS,LANGS,HOLIDAY_SCHEDULES,CONTACTS,PHONES",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200127211934",
+    "entityTableName": "service_fields_value",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

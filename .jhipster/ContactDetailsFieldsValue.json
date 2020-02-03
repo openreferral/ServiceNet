@@ -1,0 +1,23 @@
+{
+    "name": "ContactDetailsFieldsValue",
+    "fields": [
+        {
+            "fieldName": "contactDetailsField",
+            "fieldType": "ContactDetailsFields",
+            "fieldValues": "NAME,TITLE,DEPARTMENT,EMAIL",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200127211936",
+    "entityTableName": "contact_details_fields_value",
+    "dto": "mapstruct",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

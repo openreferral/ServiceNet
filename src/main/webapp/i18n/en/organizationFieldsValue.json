@@ -1,0 +1,22 @@
+{
+  "serviceNetApp": {
+    "organizationFieldsValue": {
+      "home": {
+        "title": "Organization Fields Values",
+        "createLabel": "Create a new Organization Fields Value",
+        "createOrEditLabel": "Create or edit a Organization Fields Value",
+        "notFound": "No Organization Fields Values found"
+      },
+      "created": "A new Organization Fields Value is created with identifier {{ param }}",
+      "updated": "A Organization Fields Value is updated with identifier {{ param }}",
+      "deleted": "A Organization Fields Value is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Organization Fields Value {{ id }}?"
+      },
+      "detail": {
+        "title": "Organization Fields Value"
+      },
+      "organizationField": "Organization Field"
+    }
+  }
+}

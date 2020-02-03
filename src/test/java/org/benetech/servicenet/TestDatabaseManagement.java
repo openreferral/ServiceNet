@@ -1,23 +1,31 @@
 package org.benetech.servicenet;
 
 import org.benetech.servicenet.repository.AccessibilityForDisabilitiesRepository;
+import org.benetech.servicenet.repository.ContactDetailsFieldsValueRepository;
 import org.benetech.servicenet.repository.ContactRepository;
 import org.benetech.servicenet.repository.EligibilityRepository;
+import org.benetech.servicenet.repository.FieldsDisplaySettingsRepository;
 import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.repository.HolidayScheduleRepository;
 import org.benetech.servicenet.repository.LanguageRepository;
+import org.benetech.servicenet.repository.LocationFieldsValueRepository;
 import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.repository.OpeningHoursRepository;
+import org.benetech.servicenet.repository.OrganizationFieldsValueRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.PhoneRepository;
+import org.benetech.servicenet.repository.PhysicalAddressFieldsValueRepository;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
+import org.benetech.servicenet.repository.PostalAddressFieldsValueRepository;
 import org.benetech.servicenet.repository.PostalAddressRepository;
 import org.benetech.servicenet.repository.ProgramRepository;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.repository.RequiredDocumentRepository;
 import org.benetech.servicenet.repository.ServiceAtLocationRepository;
+import org.benetech.servicenet.repository.ServiceFieldsValueRepository;
 import org.benetech.servicenet.repository.ServiceMetadataRepository;
 import org.benetech.servicenet.repository.ServiceRepository;
+import org.benetech.servicenet.repository.ServiceTaxonomiesDetailsFieldsValueRepository;
 import org.benetech.servicenet.repository.ServiceTaxonomyRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,8 +94,40 @@ public class TestDatabaseManagement {
     @Autowired
     private ServiceMetadataRepository serviceMetadataRepository;
 
+    @Autowired
+    private FieldsDisplaySettingsRepository fieldsDisplaySettingsRepository;
+
+    @Autowired
+    private ContactDetailsFieldsValueRepository contactDetailsFieldsValueRepository;
+
+    @Autowired
+    private LocationFieldsValueRepository locationFieldsValueRepository;
+
+    @Autowired
+    private OrganizationFieldsValueRepository organizationFieldsValueRepository;
+
+    @Autowired
+    private PhysicalAddressFieldsValueRepository physicalAddressFieldsValueRepository;
+
+    @Autowired
+    private PostalAddressFieldsValueRepository postalAddressFieldsValueRepository;
+
+    @Autowired
+    private ServiceFieldsValueRepository serviceFieldsValueRepository;
+
+    @Autowired
+    private ServiceTaxonomiesDetailsFieldsValueRepository serviceTaxonomiesDetailsFieldsValueRepository;
+
     public void clearDb() {
-        serviceMetadataRepository.deleteAll();;
+        contactDetailsFieldsValueRepository.deleteAll();
+        locationFieldsValueRepository.deleteAll();
+        organizationFieldsValueRepository.deleteAll();
+        physicalAddressFieldsValueRepository.deleteAll();
+        postalAddressFieldsValueRepository.deleteAll();
+        serviceFieldsValueRepository.deleteAll();
+        serviceTaxonomiesDetailsFieldsValueRepository.deleteAll();
+        fieldsDisplaySettingsRepository.deleteAll();
+        serviceMetadataRepository.deleteAll();
         contactRepository.deleteAll();
         requiredDocumentRepository.deleteAll();
         openingHoursRepository.deleteAll();

@@ -51,6 +51,14 @@
         "matchSimilarity": "Match Similarity",
         "activityFilter": "Activity Filter",
         "taxonomyGroup": "Taxonomy Group",
+        "fieldsDisplaySettings": "Fields Display Settings",
+        "locationFieldsValue": "Location Fields Value",
+        "organizationFieldsValue": "Organization Fields Value",
+        "physicalAddressFieldsValue": "Physical Address Fields Value",
+        "postalAddressFieldsValue": "Postal Address Fields Value",
+        "serviceFieldsValue": "Service Fields Value",
+        "serviceTaxonomiesDetailsFieldsValue": "Service Taxonomies Details Fields Value",
+        "contactDetailsFieldsValue": "Contact Details Fields Value",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

@@ -1,0 +1,14 @@
+{
+  "serviceNetApp": {
+    "PhysicalAddressFields": {
+      "null": "",
+      "ATTENTION": "ATTENTION",
+      "ADDRESS_1": "ADDRESS_1",
+      "CITY": "CITY",
+      "REGION": "REGION",
+      "STATE_PROVINCE": "STATE_PROVINCE",
+      "POSTAL_CODE": "POSTAL_CODE",
+      "COUNTRY": "COUNTRY"
+    }
+  }
+}
