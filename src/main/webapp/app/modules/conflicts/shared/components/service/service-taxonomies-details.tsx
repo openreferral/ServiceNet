@@ -7,17 +7,38 @@ import { Translate } from 'react-jhipster';
 import { Badge } from 'reactstrap';
 import { IServiceTaxonomy } from 'app/shared/model/service-taxonomy.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
+import _ from 'lodash';
 
 export interface IServiceTaxonomiesDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
   taxonomies: IServiceTaxonomy[];
   showClipboard: boolean;
+  settings?: any;
 }
 
 export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomiesDetailsProp> {
+  getFields = fieldsMap => {
+    const { settings } = this.props;
+
+    if (settings === undefined || (!!settings && !settings.id)) {
+      return _.values(fieldsMap);
+    }
+
+    const { serviceTaxonomiesDetailsFields } = settings;
+
+    const fieldsMapKeys = _.keys(fieldsMap);
+    const keysFiltered = _.filter(fieldsMapKeys, k => serviceTaxonomiesDetailsFields.indexOf(k) > -1);
+    return _.values(_.pick(fieldsMap, keysFiltered));
+  };
+
   render() {
     const { taxonomies } = this.props;
-    const fields = taxonomies.map(taxonomy => [getTextField(taxonomy, 'taxonomyName'), getTextField(taxonomy, 'taxonomyDetails')]);
+    const fields = taxonomies.map(taxonomy =>
+      this.getFields({
+        TAXONOMY_NAME: getTextField(taxonomy, 'taxonomyName'),
+        TAXONOMY_DETAILS: getTextField(taxonomy, 'taxonomyDetails')
+      })
+    );
 
     return fields.length > 0 ? (
       <AdditionalDetails

@@ -4,12 +4,14 @@ import '../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { AdditionalDetails } from './additional-details';
+import _ from 'lodash';
 
 export interface IOrganizationDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
   sideSection: any;
   columnSize: number;
   showClipboard: boolean;
+  settings?: any;
 }
 
 export class OrganizationDetails extends React.Component<IOrganizationDetailsProp> {
@@ -19,34 +21,48 @@ export class OrganizationDetails extends React.Component<IOrganizationDetailsPro
     defaultValue: organization[fieldName]
   });
 
-  render() {
-    const { columnSize, sideSection, showClipboard } = this.props;
+  getFields = () => {
+    const { settings } = this.props;
     const { organization } = this.props.activity;
 
-    const fields = [
-      this.getTextField(organization, 'name'),
-      this.getTextField(organization, 'alternateName'),
-      {
+    const fieldsMap = {
+      NAME: this.getTextField(organization, 'name'),
+      ALTERNATE_NAME: this.getTextField(organization, 'alternateName'),
+      DESCRIPTION: {
         type: 'textarea',
         fieldName: 'description',
         defaultValue: organization.description
       },
-      this.getTextField(organization, 'email'),
-      this.getTextField(organization, 'url'),
-      this.getTextField(organization, 'taxStatus'),
-      {
+      EMAIL: this.getTextField(organization, 'email'),
+      URL: this.getTextField(organization, 'url'),
+      TAX_STATUS: this.getTextField(organization, 'taxStatus'),
+      ACTIVE: {
         type: 'checkbox',
         fieldName: 'active',
         defaultValue: organization.active
       }
-    ];
+    };
+
+    if (settings === undefined || (!!settings && !settings.id)) {
+      return _.values(fieldsMap);
+    }
+
+    const { organizationFields } = settings;
+
+    const fieldsMapKeys = _.keys(fieldsMap);
+    const keysFiltered = _.filter(fieldsMapKeys, k => organizationFields.indexOf(k) > -1);
+    return _.values(_.pick(fieldsMap, keysFiltered));
+  };
+
+  render() {
+    const { columnSize, sideSection, showClipboard } = this.props;
 
     return (
       <Row>
         <Col sm={columnSize}>
           <AdditionalDetails
             {...this.props}
-            fields={fields}
+            fields={this.getFields()}
             entityClass={'Organization'}
             customHeader={false}
             additionalFields={false}

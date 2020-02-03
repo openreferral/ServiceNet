@@ -1,0 +1,22 @@
+{
+  "serviceNetApp": {
+    "contactDetailsFieldsValue": {
+      "home": {
+        "title": "Contact Details Fields Values",
+        "createLabel": "Create a new Contact Details Fields Value",
+        "createOrEditLabel": "Create or edit a Contact Details Fields Value",
+        "notFound": "No Contact Details Fields Values found"
+      },
+      "created": "A new Contact Details Fields Value is created with identifier {{ param }}",
+      "updated": "A Contact Details Fields Value is updated with identifier {{ param }}",
+      "deleted": "A Contact Details Fields Value is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Contact Details Fields Value {{ id }}?"
+      },
+      "detail": {
+        "title": "Contact Details Fields Value"
+      },
+      "contactDetailsField": "Contact Details Field"
+    }
+  }
+}

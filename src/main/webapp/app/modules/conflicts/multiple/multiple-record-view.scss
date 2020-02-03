@@ -54,6 +54,12 @@
   box-shadow: 2px 2px 2px $tooltip-text-secondary;
 }
 
+.tooltip-inner-top {
+  color: $tooltip-text-secondary;
+  background-color: $tooltip-bg;
+  box-shadow: 2px 2px 2px $tooltip-text-secondary;
+}
+
 .tooltip {
   margin-left: -10px;
 }
@@ -94,4 +100,23 @@
   top: -45px;
   position: absolute;
   left: 0;
+}
+
+.fields-display-settings-btn {
+  padding: 5px 10px;
+  position: absolute;
+  top: -43px;
+  left: 100px;
+  cursor: pointer;
+  color: $gray-600;
+  &:hover {
+    color: $gray-900;
+  }
+}
+
+.fields-display-settings-selector {
+  width: 200px;
+  position: absolute !important;
+  top: -47px;
+  left: 150px;
 }

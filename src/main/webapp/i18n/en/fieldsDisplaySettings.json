@@ -1,0 +1,35 @@
+{
+  "serviceNetApp": {
+    "fieldsDisplaySettings": {
+      "home": {
+        "title": "Fields Display Settings",
+        "createLabel": "Create a new Fields Display Settings",
+        "createOrEditLabel": "Create or edit a Fields Display Settings",
+        "notFound": "No Fields Display Settings found"
+      },
+      "created": "A new Fields Display Settings is created with identifier {{ param }}",
+      "updated": "A Fields Display Settings is updated with identifier {{ param }}",
+      "deleted": "A Fields Display Settings is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Fields Display Settings {{ id }}?"
+      },
+      "detail": {
+        "title": "Fields Display Settings"
+      },
+      "name": "Name",
+      "locationFields": "Location Fields",
+      "organizationFields": "Organization Fields",
+      "physicalAddressFields": "Physical Address Fields",
+      "postalAddressFields": "Postal Address Fields",
+      "serviceFields": "Service Fields",
+      "serviceTaxonomiesDetailsFields": "Service Taxonomies Details Fields",
+      "contactDetailsFields": "Contact Details Fields",
+      "user": "User",
+      "selectAll": "Select All",
+      "saveSettings": "Save Settings",
+      "deleteSettings": "Delete Settings",
+      "savedSettings": "Saved Settings",
+      "settingName": "Setting Name"
+    }
+  }
+}
