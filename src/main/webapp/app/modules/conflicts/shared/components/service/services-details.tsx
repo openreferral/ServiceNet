@@ -13,6 +13,7 @@ export interface IServicesDetailsProp extends StateProps, DispatchProps {
   services: IServiceRecord[];
   showClipboard: boolean;
   isAreaOpen: boolean;
+  settings?: any;
 }
 
 export interface IServicesDetailsState {
@@ -57,6 +58,7 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
           record={record}
           servicesCount={`(${serviceNumber + 1}/${sortedServices.length}) `}
           isAreaOpen={isAreaOpen}
+          settings={this.props.settings}
         />
       ) : null;
 

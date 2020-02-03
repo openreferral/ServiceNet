@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AdditionalDetails } from '../additional-details';
 import { IContact } from 'app/shared/model/contact.model';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
+import _ from 'lodash';
 
 export interface ISingleContactDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -18,6 +19,7 @@ export interface ISingleContactDetailsProp extends StateProps, DispatchProps {
   columnSize: number;
   showClipboard: boolean;
   isAreaOpen: boolean;
+  settings?: any;
 }
 
 export interface ISingleContactDetailsState {
@@ -38,6 +40,20 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
   changeRecord = offset => () => {
     this.setState({ isAreaOpen: true });
     this.props.changeRecord(offset);
+  };
+
+  getFields = fieldsMap => {
+    const { settings } = this.props;
+
+    if (settings === undefined || (!!settings && !settings.id)) {
+      return _.values(fieldsMap);
+    }
+
+    const { contactDetailsFields } = settings;
+
+    const fieldsMapKeys = _.keys(fieldsMap);
+    const keysFiltered = _.filter(fieldsMapKeys, k => contactDetailsFields.indexOf(k) > -1);
+    return _.values(_.pick(fieldsMap, keysFiltered));
   };
 
   render() {
@@ -63,19 +79,19 @@ export class SingleContactDetails extends React.Component<ISingleContactDetailsP
       </h4>
     );
 
-    const fields = [
-      getTextField(contact, 'name'),
-      getTextField(contact, 'title'),
-      getTextField(contact, 'department'),
-      getTextField(contact, 'email')
-    ];
+    const fields = {
+      NAME: getTextField(contact, 'name'),
+      TITLE: getTextField(contact, 'title'),
+      DEPARTMENT: getTextField(contact, 'department'),
+      EMAIL: getTextField(contact, 'email')
+    };
     return (
       <Row>
         <Col sm={columnSize}>
           <hr />
           <AdditionalDetails
             {...this.props}
-            fields={fields}
+            fields={this.getFields(fields)}
             entityClass={'Contact'}
             customHeader={customHeader}
             additionalFields={false}

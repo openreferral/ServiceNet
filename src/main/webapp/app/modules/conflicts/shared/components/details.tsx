@@ -19,6 +19,7 @@ export interface IDetailsProp extends StateProps, DispatchProps, RouteComponentP
   matchingLocation?: any;
   matchLocations?: boolean;
   toggleMatchLocations?: any;
+  settings?: any;
 }
 
 export interface IDetailsState {
@@ -36,12 +37,21 @@ export class Details extends React.Component<IDetailsProp, IDetailsState> {
     });
   };
 
+  displaySection = name => {
+    const { settings } = this.props;
+    if (settings === undefined || (!!settings && !settings.id)) return true;
+    return !!this.props.settings && this.props.settings[name] && this.props.settings[name].length > 0;
+  };
+
   render() {
     const { isAreaOpen } = this.state;
+    const { settings } = this.props;
     const columnSize = 12;
     return (
       <div>
-        <OrganizationDetails {...this.props} sideSection={null} columnSize={columnSize} />
+        {this.displaySection('organizationFields') ? (
+          <OrganizationDetails {...this.props} sideSection={null} columnSize={columnSize} settings={settings} />
+        ) : null}
         <h5 className="expandBtn">
           <div className="collapseBtn" onClick={this.toggleAreaOpen}>
             <div className="collapseIcon">
@@ -52,16 +62,64 @@ export class Details extends React.Component<IDetailsProp, IDetailsState> {
         </h5>
         {isAreaOpen ? (
           <div>
-            <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} isAreaOpen />
-            <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} isAreaOpen />
-            <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} isAreaOpen />
+            {this.displaySection('locationFields') ? (
+              <LocationsDetails
+                {...this.props}
+                locations={this.props.activity.locations}
+                columnSize={columnSize}
+                isAreaOpen
+                settings={settings}
+              />
+            ) : null}
+            {this.displaySection('serviceFields') ? (
+              <ServicesDetails
+                {...this.props}
+                services={this.props.activity.services}
+                columnSize={columnSize}
+                isAreaOpen
+                settings={settings}
+              />
+            ) : null}
+            {this.displaySection('contactDetailsFields') ? (
+              <ContactsDetails
+                {...this.props}
+                contacts={this.props.activity.contacts}
+                columnSize={columnSize}
+                isAreaOpen
+                settings={settings}
+              />
+            ) : null}
           </div>
         ) : null}
         {isAreaOpen ? null : (
           <div>
-            <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} isAreaOpen={false} />
-            <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} isAreaOpen={false} />
-            <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} isAreaOpen={false} />
+            {this.displaySection('locationFields') ? (
+              <LocationsDetails
+                {...this.props}
+                locations={this.props.activity.locations}
+                columnSize={columnSize}
+                isAreaOpen={false}
+                settings={settings}
+              />
+            ) : null}
+            {this.displaySection('serviceFields') ? (
+              <ServicesDetails
+                {...this.props}
+                services={this.props.activity.services}
+                columnSize={columnSize}
+                isAreaOpen={false}
+                settings={settings}
+              />
+            ) : null}
+            {this.displaySection('contactDetailsFields') ? (
+              <ContactsDetails
+                {...this.props}
+                contacts={this.props.activity.contacts}
+                columnSize={columnSize}
+                isAreaOpen={false}
+                settings={settings}
+              />
+            ) : null}
           </div>
         )}
       </div>

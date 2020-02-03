@@ -43,6 +43,8 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons/faExternalLinkAlt';
 import { faLink } from '@fortawesome/free-solid-svg-icons/faLink';
+import { faCogs } from '@fortawesome/free-solid-svg-icons/faCogs';
+import { faUndoAlt } from '@fortawesome/free-solid-svg-icons/faUndoAlt';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -92,6 +94,8 @@ export const loadIcons = () => {
     faChevronRight,
     faTimes,
     faExternalLinkAlt,
-    faLink
+    faLink,
+    faCogs,
+    faUndoAlt
   );
 };

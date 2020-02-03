@@ -11,6 +11,7 @@ export interface IContactsDetailsProp extends StateProps, DispatchProps {
   columnSize: number;
   showClipboard: boolean;
   isAreaOpen: boolean;
+  settings?: any;
 }
 
 export interface IContactsDetailsState {
@@ -45,6 +46,7 @@ export class ContactsDetails extends React.Component<IContactsDetailsProp, ICont
           contact={contact}
           contactsCount={`(${contactsNumber + 1}/${contacts.length}) `}
           isAreaOpen={isAreaOpen}
+          settings={this.props.settings}
         />
       ) : null;
 

@@ -20,6 +20,7 @@ import { PhonesDetails } from '../phone/phones-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import Select from 'react-select';
+import _ from 'lodash';
 
 export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -31,6 +32,7 @@ export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   showClipboard: boolean;
   isAreaOpen: boolean;
   selectOptions: any;
+  settings?: any;
 }
 
 export interface ISingleServiceDetailsState {
@@ -53,8 +55,22 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     this.props.changeRecord(record.value);
   };
 
+  getFields = fieldsMap => {
+    const { settings } = this.props;
+
+    if (settings === undefined || (!!settings && !settings.id)) {
+      return _.values(fieldsMap);
+    }
+
+    const { serviceFields } = settings;
+
+    const fieldsMapKeys = _.keys(fieldsMap);
+    const keysFiltered = _.filter(fieldsMapKeys, k => serviceFields.indexOf(k) > -1);
+    return _.values(_.pick(fieldsMap, keysFiltered));
+  };
+
   render() {
-    const { record, isOnlyOne, columnSize, selectOptions, servicesCount } = this.props;
+    const { record, isOnlyOne, columnSize, selectOptions, servicesCount, settings } = this.props;
     const customHeader = (
       <div className="title d-flex justify-content-start align-items-center mb-1">
         <div
@@ -95,72 +111,76 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
       </div>
     );
 
-    const additionalFields = [
-      <EligibilityDetails key="eligibility-details" {...this.props} eligibility={record.eligibility} />,
-      <FundingDetails key="funding-details" {...this.props} funding={record.funding} />,
-      <RequiredDocumentsDetails key="required-documents-details" {...this.props} docs={record.docs} />,
-      <PaymentsAcceptedDetails key="payments-accepted-details" {...this.props} payments={record.paymentsAccepteds} />,
-      <ServiceTaxonomiesDetails key="service-taxonomies-details" {...this.props} taxonomies={record.taxonomies} />,
-      <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
-      <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
-      <HolidaySchedulesDetails key="holiday-schedules-details" {...this.props} schedules={record.holidaySchedules} />,
-      <ContactsDetails key="contacts-details" {...this.props} contacts={record.contacts} />,
-      <PhonesDetails key="phones-details" {...this.props} phones={record.phones} />
-    ];
+    const additionalFields = {
+      ELIGIBILITY: <EligibilityDetails key="eligibility-details" {...this.props} eligibility={record.eligibility} />,
+      FUNDING: <FundingDetails key="funding-details" {...this.props} funding={record.funding} />,
+      DOCS: <RequiredDocumentsDetails key="required-documents-details" {...this.props} docs={record.docs} />,
+      PAYMENTS_ACCEPTEDS: <PaymentsAcceptedDetails key="payments-accepted-details" {...this.props} payments={record.paymentsAccepteds} />,
+      TAXONOMIES: (
+        <ServiceTaxonomiesDetails key="service-taxonomies-details" {...this.props} taxonomies={record.taxonomies} settings={settings} />
+      ),
+      REGULAR_SCHEDULE_OPENING_HOURS: (
+        <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />
+      ),
+      LANGS: <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
+      HOLIDAY_SCHEDULES: <HolidaySchedulesDetails key="holiday-schedules-details" {...this.props} schedules={record.holidaySchedules} />,
+      CONTACTS: <ContactsDetails key="contacts-details" {...this.props} contacts={record.contacts} settings={settings} />,
+      PHONES: <PhonesDetails key="phones-details" {...this.props} phones={record.phones} />
+    };
 
-    const fields = [
-      getTextField(record.service, 'name'),
-      getTextField(record.service, 'alternateName'),
-      {
+    const fields = {
+      NAME: getTextField(record.service, 'name'),
+      ALTERNATE_NAME: getTextField(record.service, 'alternateName'),
+      DESCRIPTION: {
         type: 'textarea',
         fieldName: 'description',
         defaultValue: record.service.description
       },
-      getTextField(record.service, 'url'),
-      getTextField(record.service, 'email'),
-      getTextField(record.service, 'status'),
-      {
+      URL: getTextField(record.service, 'url'),
+      EMAIL: getTextField(record.service, 'email'),
+      STATUS: getTextField(record.service, 'status'),
+      INTERPRETATION_SERVICES: {
         type: 'textarea',
         fieldName: 'interpretationServices',
         defaultValue: record.service.interpretationServices
       },
-      {
+      APPLICATION_PROCESS: {
         type: 'textarea',
         fieldName: 'applicationProcess',
         defaultValue: record.service.applicationProcess
       },
-      {
+      WAIT_TIME: {
         type: 'textarea',
         fieldName: 'waitTime',
         defaultValue: record.service.waitTime
       },
-      {
+      FEES: {
         type: 'textarea',
         fieldName: 'fees',
         defaultValue: record.service.fees
       },
-      {
+      ACCREDITATIONS: {
         type: 'textarea',
         fieldName: 'accreditations',
         defaultValue: record.service.accreditations
       },
-      {
+      LICENSES: {
         type: 'textarea',
         fieldName: 'licenses',
         defaultValue: record.service.licenses
       },
-      getTextField(record, 'type')
-    ];
+      TYPE: getTextField(record, 'type')
+    };
     return (
       <Row>
         <Col sm={columnSize}>
           <hr />
           <AdditionalDetails
             {...this.props}
-            fields={fields}
+            fields={this.getFields(fields)}
             entityClass={'Service'}
             customHeader={customHeader}
-            additionalFields={additionalFields}
+            additionalFields={this.getFields(additionalFields)}
             itemHeader={itemHeader}
             toggleAvailable
             isCustomToggle

@@ -3,9 +3,10 @@ import './multiple-record-view.scss';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Jumbotron, Button } from 'reactstrap';
+import { Row, Col, Jumbotron, Button, Tooltip } from 'reactstrap';
 import Details from '../shared/components/details';
 import { getBaseRecord, getPartnerRecord, getNotHiddenMatchesByOrg } from '../shared/shared-record-view.reducer';
+import { getEntities as getSettings, updateSelectedSettings } from 'app/entities/fields-display-settings/fields-display-settings.reducer';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import { Translate, TextFormat, translate } from 'react-jhipster';
 import ReactGA from 'react-ga';
@@ -17,6 +18,9 @@ import _ from 'lodash';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import DismissModal from '../shared/components/dismiss-modal';
 import SuccessModal from '../shared/components/success-modal';
+import FieldsDisplaySettingsPanel from './fields-display-settings-panel';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Select from 'react-select';
 
 export interface IMultipleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -30,6 +34,9 @@ export interface IMultipleRecordViewState {
   selectedLocation: any;
   matchLocations: boolean;
   matchingLocation: any;
+  fieldSettingsExpanded: boolean;
+  tooltipOpen: boolean;
+  selectedSettings: any;
 }
 
 export class MultipleRecordView extends React.Component<IMultipleRecordViewProp, IMultipleRecordViewState> {
@@ -42,11 +49,15 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     locationMatches: [],
     selectedLocation: null,
     matchLocations: true,
-    matchingLocation: null
+    matchingLocation: null,
+    fieldSettingsExpanded: false,
+    tooltipOpen: false,
+    selectedSettings: {}
   };
 
   componentDidMount() {
     this.props.getBaseRecord(this.props.orgId);
+    this.props.getSettings();
     Promise.all([this.props.getNotHiddenMatchesByOrg(this.props.orgId)]).then(() => {
       if (this.props.matches.length >= this.state.matchNumber + 1) {
         const partnerId = this.props.partnerId;
@@ -164,6 +175,23 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     });
   };
 
+  toggleFieldSettings = () => {
+    this.setState({
+      fieldSettingsExpanded: !this.state.fieldSettingsExpanded
+    });
+  };
+
+  toggleTooltip = () => {
+    this.setState({
+      tooltipOpen: !this.state.tooltipOpen
+    });
+  };
+
+  handleSettingsChange = selectedSettings => {
+    this.setState({ selectedSettings });
+    this.props.updateSelectedSettings(selectedSettings);
+  };
+
   render() {
     const { baseRecord, partnerRecord, systemAccountName, matches } = this.props;
     const baseProviderName = baseRecord ? baseRecord.organization.accountName : null;
@@ -189,15 +217,17 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
         </div>
       ) : null;
 
-    return (
-      <div>
-        <SuccessModal showModal={this.state.showSuccessModal} handleClose={this.handleSuccessModalClose} />
-        <DismissModal
-          showModal={this.state.showDismissModal}
-          dismissError={this.state.dismissError}
-          handleClose={this.handleDismissModalClose}
-          handleDismiss={this.handleDismiss}
-        />
+    let pageBody = null;
+    if (this.state.fieldSettingsExpanded) {
+      pageBody = (
+        <Row>
+          <Col md="12">
+            <FieldsDisplaySettingsPanel />
+          </Col>
+        </Row>
+      );
+    } else {
+      pageBody = (
         <Row>
           {baseRecord ? (
             <Col sm="6">
@@ -238,6 +268,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 matchLocations={this.state.matchLocations}
                 matchingLocation={this.state.matchingLocation}
                 toggleMatchLocations={this.toggleMatchLocations}
+                settings={this.props.selectedSettings}
               />
             </Col>
           ) : (
@@ -289,6 +320,7 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 selectLocation={this.selectLocation}
                 matchLocations={this.state.matchLocations}
                 matchingLocation={this.state.matchingLocation}
+                settings={this.props.selectedSettings}
               />
               <Jumbotron className="same-record-question-container">
                 <div className="same-record-question">
@@ -314,6 +346,40 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
             loading
           )}
         </Row>
+      );
+    }
+
+    return (
+      <div>
+        <SuccessModal showModal={this.state.showSuccessModal} handleClose={this.handleSuccessModalClose} />
+        <DismissModal
+          showModal={this.state.showDismissModal}
+          dismissError={this.state.dismissError}
+          handleClose={this.handleDismissModalClose}
+          handleDismiss={this.handleDismiss}
+        />
+        <div className="fields-display-settings-btn" onClick={this.toggleFieldSettings} id="fields-display-settings-btn">
+          {this.state.fieldSettingsExpanded ? <FontAwesomeIcon icon="undo-alt" size="lg" /> : <FontAwesomeIcon icon="cogs" size="lg" />}
+        </div>
+        <Select
+          options={this.props.fieldsDisplaySettingsOptions}
+          onChange={this.handleSettingsChange}
+          value={this.props.selectedSettings}
+          className="fields-display-settings-selector"
+          isDisabled={this.state.fieldSettingsExpanded}
+        />
+        <Tooltip
+          placement="bottom"
+          innerClassName="tooltip-clip-inner"
+          className="tooltip-clip"
+          isOpen={this.state.tooltipOpen}
+          target="fields-display-settings-btn"
+          toggle={this.toggleTooltip}
+          autohide
+        >
+          <Translate contentKey="global.menu.entities.fieldsDisplaySettings" />
+        </Tooltip>
+        {pageBody}
       </div>
     );
   }
@@ -326,10 +392,15 @@ const mapStateToProps = (storeState, { match }: IMultipleRecordViewState) => ({
   partnerRecord: storeState.sharedRecordView.partnerRecord,
   matches: storeState.sharedRecordView.matches,
   dismissedMatches: storeState.sharedRecordView.dismissedMatches,
-  systemAccountName: storeState.authentication.account.systemAccountName
+  systemAccountName: storeState.authentication.account.systemAccountName,
+  fieldsDisplaySettingsOptions: _.union(
+    [{ value: null, label: '' }],
+    storeState.fieldsDisplaySettings.entities.map(o => ({ ...o, value: o.id, label: o.name }))
+  ),
+  selectedSettings: storeState.fieldsDisplaySettings.selectedSettings
 });
 
-const mapDispatchToProps = { getBaseRecord, getPartnerRecord, getNotHiddenMatchesByOrg };
+const mapDispatchToProps = { getBaseRecord, getPartnerRecord, getNotHiddenMatchesByOrg, getSettings, updateSelectedSettings };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

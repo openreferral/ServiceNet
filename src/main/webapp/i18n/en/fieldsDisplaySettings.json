@@ -24,7 +24,12 @@
       "serviceFields": "Service Fields",
       "serviceTaxonomiesDetailsFields": "Service Taxonomies Details Fields",
       "contactDetailsFields": "Contact Details Fields",
-      "user": "User"
+      "user": "User",
+      "selectAll": "Select All",
+      "saveSettings": "Save Settings",
+      "deleteSettings": "Delete Settings",
+      "savedSettings": "Saved Settings",
+      "settingName": "Setting Name"
     }
   }
 }
