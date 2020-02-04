@@ -39,6 +39,8 @@ public interface OrganizationService {
 
     List<Organization> findAll();
 
+    List<Organization> findAllWithEagerAssociations();
+
     List<Organization> findAllOthers(String providerName);
 
     List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds);

@@ -25,6 +25,11 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     Page<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
 
+    @Query("SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.account "
+        + "LEFT JOIN FETCH org.locations")
+    List<Organization> findAllWithEagerAssociations();
+
     @Query("SELECT org FROM Organization org " +
         "LEFT JOIN FETCH org.contacts " +
         "WHERE org.externalDbId = :externalDbId AND org.account.name = :providerName")

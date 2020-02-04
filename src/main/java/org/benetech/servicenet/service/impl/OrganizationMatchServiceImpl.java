@@ -237,6 +237,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     @Async
     @Override
     public void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context) {
+        createOrUpdateOrganizationMatchesSynchronously(organization, context);
+    }
+
+    @Override
+    public void createOrUpdateOrganizationMatchesSynchronously(Organization organization, MatchingContext context) {
         log.info(organization.getName() + ": Updating organization matches");
         List<OrganizationMatch> matches = findCurrentMatches(organization);
         List<OrganizationMatch> partnerMatches = findCurrentPartnersMatches(organization);
