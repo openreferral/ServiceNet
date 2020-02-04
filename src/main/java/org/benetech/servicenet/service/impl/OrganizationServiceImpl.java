@@ -87,6 +87,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Organization> findAllWithEagerAssociations() {
+        log.debug("Request to get all Organizations");
+        return organizationRepository.findAllWithEagerAssociations();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Organization> findAllOthers(String providerName) {
         log.debug("Request to get all Organizations which are not associated with provider: {}", providerName);
         return organizationRepository.findAllByProviderNameNot(providerName);

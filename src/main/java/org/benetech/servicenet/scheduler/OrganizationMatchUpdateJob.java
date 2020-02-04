@@ -32,8 +32,9 @@ public class OrganizationMatchUpdateJob extends BaseJob {
         log.info(getFullName() + " is being executed");
 
         try {
-            for (Organization org : organizationService.findAll()) {
-                organizationMatchService.createOrUpdateOrganizationMatches(org, new MatchingContext(googleApiKey));
+            for (Organization org : organizationService.findAllWithEagerAssociations()) {
+                organizationMatchService.createOrUpdateOrganizationMatchesSynchronously(
+                    org, new MatchingContext(googleApiKey));
             }
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);

@@ -48,7 +48,6 @@ spring:
         open-in-view: false
         properties:
             hibernate.jdbc.time_zone: UTC
-            hibernate.enable_lazy_load_no_trans: true
         hibernate:
             ddl-auto: none
             naming:
