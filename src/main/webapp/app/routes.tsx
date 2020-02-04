@@ -53,7 +53,7 @@ const Routes = ({ isAdmin, isSacramento }) => (
       <PrivateRoute path="/shelter/:id" component={ShelterDetails} hasAnyAuthorities={[AUTHORITIES.SACRAMENTO]} isAdmin={isAdmin} />
       <PrivateRoute path="/admin" isAdmin={isAdmin} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <PrivateRoute path="/account" isAdmin={isAdmin} component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]} />
-      <PrivateRoute path="/entity" isAdmin={isAdmin} component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]} />
+      <PrivateRoute path="/entity" isAdmin={isAdmin} component={Entities} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <PrivateRoute path="/upload" isAdmin={isAdmin} component={UploadPage} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <PrivateRoute
         path="/single-record-view/:orgId?"
