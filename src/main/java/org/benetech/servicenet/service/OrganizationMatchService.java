@@ -73,6 +73,8 @@ public interface OrganizationMatchService {
 
     void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context);
 
+    void createOrUpdateOrganizationMatchesSynchronously(Organization organization, MatchingContext context);
+
     void dismissOrganizationMatch(UUID id, DismissMatchDTO dismissMatchDTO);
 
     void revertDismissOrganizationMatch(UUID id);
