@@ -2,6 +2,7 @@ package org.benetech.servicenet.scheduler;
 
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.adapter.smcconnect.SmcConnectDataMapper;
@@ -50,6 +51,11 @@ public class SMCConnectTaxonomyUpdateJob extends BaseJob {
     @Override
     public int getIntervalInSeconds() {
         return intervalInSeconds;
+    }
+
+    @Override
+    public Date getStartTime() {
+        return getOffsetDate(60 * 60);
     }
 
     @Override
