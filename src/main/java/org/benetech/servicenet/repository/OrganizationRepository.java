@@ -30,6 +30,12 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         + "LEFT JOIN FETCH org.locations")
     List<Organization> findAllWithEagerAssociations();
 
+    @Query("SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.account "
+        + "LEFT JOIN FETCH org.locations "
+        + "WHERE org.id = :id")
+    Organization findOneWithEagerAssociations(@Param("id") UUID id);
+
     @Query("SELECT org FROM Organization org " +
         "LEFT JOIN FETCH org.contacts " +
         "WHERE org.externalDbId = :externalDbId AND org.account.name = :providerName")

@@ -9,6 +9,7 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
 import org.benetech.servicenet.scheduler.EdenTaxonomyUpdateJob;
+import org.benetech.servicenet.scheduler.OrganizationMatchDiscoveryJob;
 import org.benetech.servicenet.scheduler.OrganizationMatchUpdateJob;
 import org.benetech.servicenet.scheduler.SMCConnectTaxonomyUpdateJob;
 import org.benetech.servicenet.scheduler.ShelterTechDataUpdateJob;
@@ -53,6 +54,9 @@ public class SchedulerServiceImpl implements SchedulerService {
     private UWBATaxonomyUpdateJob uwbaTaxonomyUpdateJob;
 
     @Autowired
+    private OrganizationMatchDiscoveryJob organizationMatchDiscoveryJob;
+
+    @Autowired
     private OrganizationMatchUpdateJob organizationMatchUpdateJob;
 
     @Autowired
@@ -70,6 +74,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         jobs.add(smcConnectTaxonomyUpdateJob);
         jobs.add(edenTaxonomyUpdateJob);
         jobs.add(uwbaTaxonomyUpdateJob);
+        jobs.add(organizationMatchDiscoveryJob);
         jobs.add(organizationMatchUpdateJob);
 
         jobs
@@ -170,6 +175,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         allBeans.add(smcConnectTaxonomyUpdateJob);
         allBeans.add(edenTaxonomyUpdateJob);
         allBeans.add(uwbaTaxonomyUpdateJob);
+        allBeans.add(organizationMatchDiscoveryJob);
         allBeans.add(organizationMatchUpdateJob);
 
         return allBeans.stream()

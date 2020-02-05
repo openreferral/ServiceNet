@@ -3,6 +3,7 @@ package org.benetech.servicenet.scheduler;
 import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 import org.benetech.servicenet.adapter.sheltertech.ShelterTechCollector;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.DataImportReportService;
@@ -32,6 +33,11 @@ public class ShelterTechDataUpdateJob extends BaseJob {
 
     @Autowired
     private DataImportReportService dataImportReportService;
+
+    @Override
+    public Date getStartTime() {
+        return getOffsetDate(60 * 60);
+    }
 
     @Override
     protected void executeInternal(JobExecutionContext context) {

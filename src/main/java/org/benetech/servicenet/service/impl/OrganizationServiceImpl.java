@@ -180,6 +180,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.findById(id);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Organization findOneWithEagerAssociations(UUID id) {
+        return organizationRepository.findOneWithEagerAssociations(id);
+    }
+
     /**
      * Delete the organization by id.
      *
