@@ -151,7 +151,8 @@ public class SchedulerServiceImpl implements SchedulerService {
             List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobDetail.getKey());
             Trigger trigger = (triggers.size() > 0) ? triggers.get(0) : null;
             DataImportReport report = dataImportReportService.findLatestByJobName(jobDetail.getKey().getName());
-            return new JobDTO(jobDetail.getKey().getName(), jobDetail.getDescription(),
+            return new JobDTO(jobDetail.getKey().getName(),
+                (trigger != null) ? trigger.getDescription() : null,
                 (trigger != null) ? trigger.getNextFireTime() : null,
                 (trigger != null) ? trigger.getPreviousFireTime() : null,
                 (trigger != null) ? schedulerFactoryBean.getScheduler().getTriggerState(trigger.getKey()).name() : null,
