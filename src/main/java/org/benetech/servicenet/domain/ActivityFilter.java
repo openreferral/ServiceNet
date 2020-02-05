@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -83,7 +84,7 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
     private Boolean showPartner;
 
     @Column(name = "show_highly_matched")
-    private Boolean showOnlyHighlyMatched;
+    private Boolean showOnlyHighlyMatched = false;
 
     @ManyToOne
     @JsonIgnoreProperties("filters")
@@ -268,15 +269,15 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
     }
 
     public void setShowOnlyHighlyMatched(Boolean showOnlyHighlyMatched) {
-        this.showOnlyHighlyMatched = showOnlyHighlyMatched;
+        this.showOnlyHighlyMatched = Objects.requireNonNullElse(showOnlyHighlyMatched, false);
     }
 
     public Boolean isShowOnlyHighlyMatched() {
-        return showOnlyHighlyMatched;
+        return Objects.requireNonNullElse(showOnlyHighlyMatched, false);
     }
 
     public ActivityFilter showOnlyHighlyMatched(Boolean showOnlyHighlyMatched) {
-        this.showOnlyHighlyMatched = showOnlyHighlyMatched;
+        this.setShowOnlyHighlyMatched(showOnlyHighlyMatched);
         return this;
     }
 

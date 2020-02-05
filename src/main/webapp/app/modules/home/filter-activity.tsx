@@ -319,7 +319,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   handleOnlyHighlyMatchedChange = changeEvent => {
-    const showOnlyHighlyMatched = changeEvent.target.checked;
+    const showOnlyHighlyMatched = changeEvent.target.checked || false;
 
     this.setState({ filtersChanged: true });
 
