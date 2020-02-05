@@ -85,8 +85,7 @@ public abstract class OrganizationMatchMapper {
 
         for (Location location : organization.getLocations()) {
             ZonedDateTime lastUpdate = (location.getLastVerifiedOn() != null) ? location.getLastVerifiedOn() :
-                metadataRepository.findByLocation(location).stream()
-                    .map(Metadata::getLastActionDate).max(ZonedDateTime::compareTo).get();
+                location.getUpdatedAt();
             freshness += daysSince(lastUpdate);
             updateDates.add(lastUpdate);
             numberOfRecords++;
@@ -94,8 +93,7 @@ public abstract class OrganizationMatchMapper {
 
         for (Service service : organization.getServices()) {
             ZonedDateTime lastUpdate = (service.getLastVerifiedOn() != null) ? service.getLastVerifiedOn() :
-                metadataRepository.findByService(service).stream()
-                    .map(Metadata::getLastActionDate).max(ZonedDateTime::compareTo).get();
+                service.getUpdatedAt();
             freshness += daysSince(lastUpdate);
             updateDates.add(lastUpdate);
             numberOfRecords++;
@@ -112,6 +110,8 @@ public abstract class OrganizationMatchMapper {
             }
             resourceIds.addAll(CollectionUtils.getIds(organization.getPrograms()));
             resourceIds.addAll(CollectionUtils.getIds(organization.getContacts()));
+            resourceIds.addAll(CollectionUtils.getIds(organization.getLocations()));
+            resourceIds.addAll(CollectionUtils.getIds(organization.getServices()));
             updateDates.addAll(metadataRepository.findByResourceIds(resourceIds).stream()
                 .map(Metadata::getLastActionDate).collect(Collectors.toSet()));
             ZonedDateTime lastUpdate = updateDates.stream().max(ZonedDateTime::compareTo).get();
