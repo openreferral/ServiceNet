@@ -80,6 +80,8 @@ public interface OrganizationService {
 
     Optional<Organization> findOne(UUID id);
 
+    Organization findOneWithEagerAssociations(UUID id);
+
     /**
      * Delete the "id" organization.
      *

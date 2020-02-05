@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Iterator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
@@ -102,11 +103,18 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     }
 
     public OrganizationMatch saveOrUpdate(OrganizationMatch organizationMatch) {
-        Optional<OrganizationMatch> existingMatchOptional =
+        List<OrganizationMatch> existingMatches =
             organizationMatchRepository.findByOrganizationRecordAndPartnerVersion(
             organizationMatch.getOrganizationRecord(), organizationMatch.getPartnerVersion());
-        if (existingMatchOptional.isPresent()) {
-            OrganizationMatch existingMatch = existingMatchOptional.get();
+        if (existingMatches.size() > 0) {
+            Iterator<OrganizationMatch> matchIterator = existingMatches.iterator();
+            OrganizationMatch existingMatch = matchIterator.next();
+            while (matchIterator.hasNext()) {
+                OrganizationMatch duplicateMatch = matchIterator.next();
+                matchSimilarityRepository.deleteAll(matchSimilarityRepository
+                    .findByOrganizationMatchId(duplicateMatch.getId()));
+                organizationMatchRepository.delete(duplicateMatch);
+            }
             existingMatch.setTimestamp(organizationMatch.getTimestamp());
             existingMatch.setDismissed(organizationMatch.getDismissed());
             existingMatch.setDismissComment(organizationMatch.getDismissComment());
@@ -115,6 +123,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             existingMatch.setHidden(organizationMatch.getHidden());
             existingMatch.setHiddenBy(organizationMatch.getHiddenBy());
             existingMatch.setHiddenDate(organizationMatch.getHiddenDate());
+            existingMatch.setSimilarity(organizationMatch.getSimilarity());
             return organizationMatchRepository.save(existingMatch);
         } else {
             return organizationMatchRepository.save(organizationMatch);
@@ -429,7 +438,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         }
     }
 
-    private List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner,
+    public List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner,
         List<MatchSimilarityDTO> similarityDTOS) {
         List<OrganizationMatch> matches = new LinkedList<>();
 

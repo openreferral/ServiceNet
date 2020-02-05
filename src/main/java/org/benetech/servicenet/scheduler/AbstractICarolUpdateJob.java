@@ -1,6 +1,7 @@
 package org.benetech.servicenet.scheduler;
 
 import com.google.gson.Gson;
+import java.util.Date;
 import org.apache.http.Header;
 import org.benetech.servicenet.adapter.icarol.model.ICarolTakeAllRequest;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -27,6 +28,11 @@ public abstract class AbstractICarolUpdateJob extends BaseJob {
 
     @Autowired
     private DataImportReportService dataImportReportService;
+
+    @Override
+    public Date getStartTime() {
+        return getOffsetDate(60 * 60);
+    }
 
     @Override
     protected void executeInternal(JobExecutionContext context) {

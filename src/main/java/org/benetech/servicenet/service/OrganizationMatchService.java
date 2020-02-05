@@ -4,6 +4,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.DismissMatchDTO;
+import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,4 +85,7 @@ public interface OrganizationMatchService {
     void hideOrganizationMatches(List<UUID> ids);
 
     void revertHideOrganizationMatch(UUID id);
+
+    List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner,
+        List<MatchSimilarityDTO> similarityDTOS);
 }

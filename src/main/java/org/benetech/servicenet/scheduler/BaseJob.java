@@ -20,6 +20,8 @@ public abstract class BaseJob extends QuartzJobBean {
 
     public abstract int getIntervalInSeconds();
 
+    public abstract Date getStartTime();
+
     public JobDetail getJobDetail() {
         return JobBuilder.newJob(getClass())
             .withIdentity(getFullName())
@@ -28,41 +30,25 @@ public abstract class BaseJob extends QuartzJobBean {
     }
 
     public Trigger getTrigger() {
-        TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder
+        return TriggerBuilder
             .newTrigger()
             .withDescription(getDescription())
             .forJob(getJobDetail())
-            .withIdentity(getFullName() + TRIGGER);
-        if (getIntervalInSeconds() > 0) {
-            return triggerBuilder
-                .withSchedule(getSchedule())
-                .startNow()
-                .build();
-        } else {
-            return triggerBuilder
-                .withSchedule(getMaxIntervalSchedule())
-                .startNow()
-                .build();
-        }
+            .withIdentity(getFullName() + TRIGGER)
+            .withSchedule(getSchedule())
+            .startNow()
+            .build();
     }
 
     public Trigger getInitTrigger() {
-        TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder
+        return TriggerBuilder
             .newTrigger()
             .withDescription(getDescription())
             .forJob(getJobDetail())
-            .withIdentity(getFullName() + TRIGGER);
-        if (getIntervalInSeconds() > 0) {
-            return triggerBuilder
-                .withSchedule(getSchedule())
-                .startAt(startAnHourFromNow())
-                .build();
-        } else {
-            return triggerBuilder
-                .withSchedule(getMaxIntervalSchedule())
-                .startNow()
-                .build();
-        }
+            .withIdentity(getFullName() + TRIGGER)
+            .withSchedule(getSchedule())
+            .startAt(getStartTime())
+            .build();
     }
 
     protected SimpleScheduleBuilder getSchedule() {
@@ -72,17 +58,10 @@ public abstract class BaseJob extends QuartzJobBean {
             .repeatForever();
     }
 
-    protected SimpleScheduleBuilder getMaxIntervalSchedule() {
-        return SimpleScheduleBuilder
-            .simpleSchedule()
-            .withIntervalInSeconds(Integer.MAX_VALUE)
-            .repeatForever();
-    }
-
-    private Date startAnHourFromNow() {
+    protected Date getOffsetDate(int seconds) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.HOUR_OF_DAY, 1);
+        calendar.add(Calendar.SECOND, seconds);
         return calendar.getTime();
     }
 

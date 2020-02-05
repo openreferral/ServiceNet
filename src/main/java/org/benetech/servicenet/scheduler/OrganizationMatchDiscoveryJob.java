@@ -1,14 +1,10 @@
 package org.benetech.servicenet.scheduler;
 
 import java.util.Date;
-import java.util.List;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
-import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
-import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrganizationMatchUpdateJob extends BaseJob {
+public class OrganizationMatchDiscoveryJob extends BaseJob {
 
-    private static final String NAME = "Organization Match Update Job";
-    private static final String DESCRIPTION = "Update existing Organization Matches";
-    private final Logger log = LoggerFactory.getLogger(OrganizationMatchUpdateJob.class);
+    private static final String NAME = "Organization Match Discovery Job";
+    private static final String DESCRIPTION = "Discover and update Matches for all Organizations";
+    private final Logger log = LoggerFactory.getLogger(OrganizationMatchDiscoveryJob.class);
 
     @Value("${similarity-ratio.credentials.google-api}")
     private String googleApiKey;
@@ -32,12 +28,9 @@ public class OrganizationMatchUpdateJob extends BaseJob {
     @Autowired
     private OrganizationMatchService organizationMatchService;
 
-    @Autowired
-    private OrganizationSimilarityCounter organizationSimilarityCounter;
-
     @Override
     public Date getStartTime() {
-        return getOffsetDate(0);
+        return getOffsetDate(Integer.MAX_VALUE);
     }
 
     @Override
@@ -45,15 +38,9 @@ public class OrganizationMatchUpdateJob extends BaseJob {
         log.info(getFullName() + " is being executed");
 
         try {
-            for (OrganizationMatchDTO match : organizationMatchService.findAll()) {
-                Organization organization = organizationService
-                    .findOneWithEagerAssociations(match.getOrganizationRecordId());
-                Organization partner = organizationService
-                    .findOneWithEagerAssociations(match.getPartnerVersionId());
-
-                List<MatchSimilarityDTO> similarityDTOs = organizationSimilarityCounter.getMatchSimilarityDTOs(
-                    organization, partner, new MatchingContext(googleApiKey));
-                organizationMatchService.createOrganizationMatches(organization, partner, similarityDTOs);
+            for (Organization org : organizationService.findAllWithEagerAssociations()) {
+                organizationMatchService.createOrUpdateOrganizationMatchesSynchronously(
+                    org, new MatchingContext(googleApiKey));
             }
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);

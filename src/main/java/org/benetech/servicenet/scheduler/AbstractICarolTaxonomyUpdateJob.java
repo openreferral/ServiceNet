@@ -3,6 +3,7 @@ package org.benetech.servicenet.scheduler;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.http.Header;
@@ -27,6 +28,11 @@ public abstract class AbstractICarolTaxonomyUpdateJob extends BaseJob {
 
     @Autowired
     private TaxonomyImportService taxonomyImportService;
+
+    @Override
+    public Date getStartTime() {
+        return getOffsetDate(60 * 60);
+    }
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
