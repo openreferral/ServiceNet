@@ -324,9 +324,9 @@ public class HealthleadsCompleteDataAdapterTest {
 
     @Test
     public void shouldImportServiceMetadata() {
-        assertEquals(1, serviceMetadataRepository.findAll().size());
+        assertEquals(2, serviceMetadataRepository.findAll().size());
 
-        ServiceMetadata result = serviceMetadataRepository.findAll().get(0);
+        ServiceMetadata result = serviceMetadataRepository.findAll().get(1);
 
         assertEquals("Jakub Kondrat <jkondrat@soldevelo.com>", result.getUpdatedBy());
         assertEquals("Partial Update", result.getLastActionType());
