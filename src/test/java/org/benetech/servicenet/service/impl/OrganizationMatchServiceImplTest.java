@@ -39,6 +39,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -122,7 +123,7 @@ public class OrganizationMatchServiceImplTest {
         BigDecimal totalWeight = BigDecimal.valueOf(3.1f);
         when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(similarityRatio);
         when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2, null)).thenReturn(similarities);
-        when(organizationSimilarityCounter.getTotalWeight()).thenReturn(totalWeight);
+        when(organizationSimilarityCounter.getTotalWeight(similarities)).thenReturn(totalWeight);
 
         int dbSize = organizationMatchService.findAll().size();
         organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
@@ -153,7 +154,7 @@ public class OrganizationMatchServiceImplTest {
 
         when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(COMPLETE_MATCH_RATIO);
         when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2, null)).thenReturn(MATCHING_SIMILARITY_DTOS);
-        when(organizationSimilarityCounter.getTotalWeight()).thenReturn(BigDecimal.valueOf(3.1f));
+        when(organizationSimilarityCounter.getTotalWeight(any())).thenReturn(BigDecimal.valueOf(3.1f));
 
         int dbSize = organizationMatchService.findAll().size();
         organizationMatchService.createOrUpdateOrganizationMatches(org1, null);

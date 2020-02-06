@@ -12,6 +12,7 @@ import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.matching.counter.UrlSimilarityCounter;
 import org.benetech.servicenet.matching.counter.WeightProvider;
 import org.benetech.servicenet.matching.counter.YearIncorporatedSimilarityCounter;
+import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ public class OrganizationSimilarityCounterIntTest {
 
     private static final BigDecimal BASE_WEIGHT = BigDecimal.valueOf(1);
     private static BigDecimal NAME_RATIO = BigDecimal.valueOf(0.1f);
-    private static BigDecimal DESCRIPTION_RATION = BigDecimal.valueOf(0.3f);
+    private static BigDecimal DESCRIPTION_RATIO = BigDecimal.valueOf(0.3f);
     private static BigDecimal EMAIL_RATIO = BigDecimal.valueOf(0.4f);
     private static BigDecimal LOCATION_RATIO = BigDecimal.valueOf(0.5f);
     private static BigDecimal URL_RATIO = BigDecimal.valueOf(0.6f);
@@ -73,12 +74,48 @@ public class OrganizationSimilarityCounterIntTest {
         when(weightProvider.getUrlWeight()).thenReturn(BASE_WEIGHT);
         when(weightProvider.getYearsIncorporatedWeight()).thenReturn(BASE_WEIGHT);
 
-        when(nameSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(NAME_RATIO);
-        when(descriptionSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(DESCRIPTION_RATION);
-        when(emailSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(EMAIL_RATIO);
-        when(locationSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(LOCATION_RATIO);
-        when(urlSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(URL_RATIO);
-        when(yearIncorporatedSimilarityCounter.countSimilarityRatio(null, null, null)).thenReturn(YEARS_INCORPORATED_RATIO);
+        MatchSimilarityDTO nameSimilarity = new MatchSimilarityDTO();
+        nameSimilarity.setSimilarity(NAME_RATIO);
+        nameSimilarity.setWeight(BASE_WEIGHT);
+        when(nameSimilarityCounter.getFieldMatchSimilarityDTO(
+            null, null, null, "Name", "Organization", BASE_WEIGHT))
+            .thenReturn(nameSimilarity);
+        MatchSimilarityDTO alternateNameSimilarity = new MatchSimilarityDTO();
+        alternateNameSimilarity.setSimilarity(NAME_RATIO);
+        alternateNameSimilarity.setWeight(BASE_WEIGHT);
+        when(nameSimilarityCounter.getFieldMatchSimilarityDTO(
+            null, null, null, "AlternateName", "Organization", BASE_WEIGHT))
+            .thenReturn(alternateNameSimilarity);
+        MatchSimilarityDTO descriptionSimilarity = new MatchSimilarityDTO();
+        descriptionSimilarity.setSimilarity(DESCRIPTION_RATIO);
+        descriptionSimilarity.setWeight(BASE_WEIGHT);
+        when(descriptionSimilarityCounter.getFieldMatchSimilarityDTO(
+            null, null, null, "Description", "Organization", BASE_WEIGHT))
+            .thenReturn(descriptionSimilarity);
+        MatchSimilarityDTO emailSimilarity = new MatchSimilarityDTO();
+        emailSimilarity.setSimilarity(EMAIL_RATIO);
+        emailSimilarity.setWeight(BASE_WEIGHT);
+        when(emailSimilarityCounter.getFieldMatchSimilarityDTO(
+            null, null, null, "Email", "Organization", BASE_WEIGHT))
+            .thenReturn(emailSimilarity);
+        MatchSimilarityDTO locationSimilarity = new MatchSimilarityDTO();
+        locationSimilarity.setSimilarity(LOCATION_RATIO);
+        locationSimilarity.setWeight(BASE_WEIGHT);
+        when(locationSimilarityCounter.getFieldMatchSimilarityDTO(
+            null, null, null, "Location", "Organization", BASE_WEIGHT))
+            .thenReturn(locationSimilarity);
+        MatchSimilarityDTO urlSimilarity = new MatchSimilarityDTO();
+        urlSimilarity.setSimilarity(URL_RATIO);
+        urlSimilarity.setWeight(BASE_WEIGHT);
+        when(urlSimilarityCounter.getFieldMatchSimilarityDTO(
+            null, null, null, "Url", "Organization", BASE_WEIGHT))
+            .thenReturn(urlSimilarity);
+        MatchSimilarityDTO yearIncorporatedSimilarity = new MatchSimilarityDTO();
+        yearIncorporatedSimilarity.setSimilarity(YEARS_INCORPORATED_RATIO);
+        yearIncorporatedSimilarity.setWeight(BASE_WEIGHT);
+        when(yearIncorporatedSimilarityCounter.getFieldMatchSimilarityDTO(
+            null, null, null, "YearIncorporated", "Organization", BASE_WEIGHT))
+            .thenReturn(yearIncorporatedSimilarity);
     }
 
     @Test
