@@ -3,9 +3,13 @@ import './all-records-view.scss';
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Jumbotron, Button } from 'reactstrap';
+import { Row, Col, Jumbotron, Button, Tooltip } from 'reactstrap';
 import Details from '../shared/components/details';
 import { getBaseRecord, getPartnerRecords, getNotHiddenMatchesByOrg } from '../shared/shared-record-view.reducer';
+import {
+  getSystemAccountEntities as getSettings,
+  updateSelectedSettings
+} from 'app/entities/fields-display-settings/fields-display-settings.reducer';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import { Translate, TextFormat, translate } from 'react-jhipster';
 import ReactGA from 'react-ga';
@@ -13,10 +17,13 @@ import axios from 'axios';
 import HideRecordButton from 'app/shared/layout/hide-record-button';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
+import Select from 'react-select';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import DismissModal from '../shared/components/dismiss-modal';
 import SuccessModal from '../shared/components/success-modal';
+import FieldsDisplaySettingsPanel from '../multiple/fields-display-settings-panel';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export interface IAllRecordsViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -31,6 +38,9 @@ export interface IAllRecordsViewState {
   matchLocations: boolean;
   matchingLocation: any;
   selectedMatch: any;
+  fieldSettingsExpanded: boolean;
+  tooltipOpen: boolean;
+  selectedSettings: any;
 }
 
 export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRecordsViewState> {
@@ -44,11 +54,15 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
     selectedLocation: null,
     matchLocations: true,
     matchingLocation: null,
-    selectedMatch: null
+    selectedMatch: null,
+    fieldSettingsExpanded: false,
+    tooltipOpen: false,
+    selectedSettings: {}
   };
 
   componentDidMount() {
     this.props.getBaseRecord(this.props.orgId);
+    this.props.getSettings();
     Promise.all([this.props.getNotHiddenMatchesByOrg(this.props.orgId)]).then(() => {
       if (this.props.matches.length >= 0) {
         this.props.getPartnerRecords(this.props.orgId);
@@ -151,6 +165,26 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
     });
   };
 
+  toggleFieldSettings = () => {
+    if (this.state.fieldSettingsExpanded) {
+      this.props.getSettings();
+    }
+    this.setState({
+      fieldSettingsExpanded: !this.state.fieldSettingsExpanded
+    });
+  };
+
+  handleSettingsChange = selectedSettings => {
+    this.setState({ selectedSettings });
+    this.props.updateSelectedSettings(selectedSettings);
+  };
+
+  toggleTooltip = () => {
+    this.setState({
+      tooltipOpen: !this.state.tooltipOpen
+    });
+  };
+
   render() {
     const { baseRecord, partnerRecords, systemAccountName, matches } = this.props;
     const baseProviderName = baseRecord ? baseRecord.organization.accountName : null;
@@ -160,16 +194,17 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
       </Col>
     );
 
-    return (
-      <div>
-        <SuccessModal showModal={this.state.showSuccessModal} handleClose={this.handleSuccessModalClose} />
-        <DismissModal
-          showModal={this.state.showDismissModal}
-          dismissError={this.state.dismissError}
-          handleClose={this.handleDismissModalClose}
-          handleDismiss={this.handleDismiss}
-        />
-        ,
+    let pageBody = null;
+    if (this.state.fieldSettingsExpanded) {
+      pageBody = (
+        <Row>
+          <Col md="12">
+            <FieldsDisplaySettingsPanel />
+          </Col>
+        </Row>
+      );
+    } else {
+      pageBody = (
         <Row className="row flex-row flex-nowrap">
           {baseRecord ? (
             <div className="record">
@@ -210,6 +245,7 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
                 matchLocations={this.state.matchLocations}
                 matchingLocation={this.state.matchingLocation}
                 toggleMatchLocations={this.toggleMatchLocations}
+                settings={this.props.selectedSettings}
               />
             </div>
           ) : (
@@ -264,6 +300,7 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
                   selectLocation={this.selectLocation}
                   matchLocations={this.state.matchLocations}
                   matchingLocation={this.state.matchingLocation}
+                  settings={this.props.selectedSettings}
                 />
                 <Jumbotron className="same-record-question-container">
                   <div className="text-center">
@@ -288,6 +325,40 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
             ))}
           </Col>
         </Row>
+      );
+    }
+
+    return (
+      <div>
+        <SuccessModal showModal={this.state.showSuccessModal} handleClose={this.handleSuccessModalClose} />
+        <DismissModal
+          showModal={this.state.showDismissModal}
+          dismissError={this.state.dismissError}
+          handleClose={this.handleDismissModalClose}
+          handleDismiss={this.handleDismiss}
+        />
+        <div className="fields-display-settings-btn" onClick={this.toggleFieldSettings} id="fields-display-settings-btn">
+          {this.state.fieldSettingsExpanded ? <FontAwesomeIcon icon="undo-alt" size="lg" /> : <FontAwesomeIcon icon="cogs" size="lg" />}
+        </div>
+        <Select
+          options={this.props.fieldsDisplaySettingsOptions}
+          onChange={this.handleSettingsChange}
+          value={this.props.selectedSettings}
+          className="fields-display-settings-selector"
+          isDisabled={this.state.fieldSettingsExpanded}
+        />
+        <Tooltip
+          placement="bottom"
+          innerClassName="tooltip-clip-inner"
+          className="tooltip-clip"
+          isOpen={this.state.tooltipOpen}
+          target="fields-display-settings-btn"
+          toggle={this.toggleTooltip}
+          autohide
+        >
+          <Translate contentKey="global.menu.entities.fieldsDisplaySettings" />
+        </Tooltip>
+        {pageBody}
       </div>
     );
   }
@@ -299,10 +370,15 @@ const mapStateToProps = (storeState, { match }: IAllRecordsViewState) => ({
   partnerRecords: storeState.sharedRecordView.partnerRecords,
   matches: storeState.sharedRecordView.matches,
   dismissedMatches: storeState.sharedRecordView.dismissedMatches,
-  systemAccountName: storeState.authentication.account.systemAccountName
+  systemAccountName: storeState.authentication.account.systemAccountName,
+  selectedSettings: storeState.fieldsDisplaySettings.selectedSettings,
+  fieldsDisplaySettingsOptions: _.union(
+    [{ value: null, label: 'All fields' }],
+    storeState.fieldsDisplaySettings.entities.map(o => ({ ...o, value: o.id, label: o.name }))
+  )
 });
 
-const mapDispatchToProps = { getBaseRecord, getPartnerRecords, getNotHiddenMatchesByOrg };
+const mapDispatchToProps = { getBaseRecord, getPartnerRecords, getNotHiddenMatchesByOrg, getSettings, updateSelectedSettings };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

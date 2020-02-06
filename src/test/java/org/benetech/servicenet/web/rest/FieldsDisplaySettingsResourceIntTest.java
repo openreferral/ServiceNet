@@ -7,6 +7,7 @@ import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.FieldsDisplaySettings;
 import org.benetech.servicenet.repository.FieldsDisplaySettingsRepository;
 import org.benetech.servicenet.service.FieldsDisplaySettingsService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.FieldsDisplaySettingsDTO;
 import org.benetech.servicenet.service.mapper.FieldsDisplaySettingsMapper;
 import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
@@ -14,6 +15,7 @@ import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +34,7 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -65,6 +68,7 @@ public class FieldsDisplaySettingsResourceIntTest {
 
     private static final List<String> DEFAULT_CONTACT_DETAILS_FIELDS = Collections.singletonList("AAAAAAAAAA");
     private static final List<String> UPDATED_CONTACT_DETAILS_FIELDS = Collections.singletonList("BBBBBBBBBB");
+    private static final String SYSTEM_ACCOUNT_NAME = "healthleads";
 
     @Autowired
     private FieldsDisplaySettingsRepository fieldsDisplaySettingsRepository;
@@ -94,10 +98,13 @@ public class FieldsDisplaySettingsResourceIntTest {
 
     private FieldsDisplaySettings fieldsDisplaySettings;
 
+    @Mock
+    private UserService mockUserService;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final FieldsDisplaySettingsResource fieldsDisplaySettingsResource = new FieldsDisplaySettingsResource(fieldsDisplaySettingsService);
+        final FieldsDisplaySettingsResource fieldsDisplaySettingsResource = new FieldsDisplaySettingsResource(fieldsDisplaySettingsService, mockUserService);
         this.restFieldsDisplaySettingsMockMvc = MockMvcBuilders.standaloneSetup(fieldsDisplaySettingsResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -152,7 +159,7 @@ public class FieldsDisplaySettingsResourceIntTest {
     @Transactional
     public void createFieldsDisplaySettings() throws Exception {
         int databaseSizeBeforeCreate = fieldsDisplaySettingsRepository.findAll().size();
-
+        when(mockUserService.getCurrentSystemAccountName()).thenReturn(SYSTEM_ACCOUNT_NAME);
         // Create the FieldsDisplaySettings
         FieldsDisplaySettingsDTO fieldsDisplaySettingsDTO = fieldsDisplaySettingsMapper.toDto(fieldsDisplaySettings);
         restFieldsDisplaySettingsMockMvc.perform(post("/api/fields-display-settings")

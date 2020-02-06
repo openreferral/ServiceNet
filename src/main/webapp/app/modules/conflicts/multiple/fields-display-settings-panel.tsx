@@ -6,7 +6,7 @@ import Select from 'react-select';
 import _ from 'lodash';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntities, createEntity, deleteEntity } from 'app/entities/fields-display-settings/fields-display-settings.reducer';
+import { getUserEntities, createEntity, deleteEntity, reset } from 'app/entities/fields-display-settings/fields-display-settings.reducer';
 import { getEntities as getLocationFieldsValues } from 'app/entities/location-fields-value/location-fields-value.reducer';
 import { getEntities as getOrganizationFieldsValues } from 'app/entities/organization-fields-value/organization-fields-value.reducer';
 import { getEntities as getPhysicalAddressFieldsValues } from 'app/entities/physical-address-fields-value/physical-address-fields-value.reducer';
@@ -49,7 +49,7 @@ export class FieldsDisplaySettingsPanel extends React.Component<IFieldsDisplaySe
 
   componentDidMount() {
     if (!this.props.isLoggingOut) {
-      this.props.getEntities();
+      this.props.getUserEntities();
       this.props.getLocationFieldsValues();
       this.props.getOrganizationFieldsValues();
       this.props.getPhysicalAddressFieldsValues();
@@ -75,6 +75,12 @@ export class FieldsDisplaySettingsPanel extends React.Component<IFieldsDisplaySe
     this.setState({
       deleteDialogOpen: false
     });
+  };
+
+  handleConfirmDelete = id => {
+    this.props.reset();
+    this.props.deleteEntity(id);
+    this.setState({ selectedSetting: INITIAL_SELECTED_SETTING });
   };
 
   handleSettingChange = selectedSetting => {
@@ -182,7 +188,7 @@ export class FieldsDisplaySettingsPanel extends React.Component<IFieldsDisplaySe
                   <FieldsDisplaySettingsDeleteConfirmation
                     selectedSetting={this.state.selectedSetting}
                     handleClose={this.handleDeleteDialogClose}
-                    handleConfirmDelete={this.props.deleteEntity}
+                    handleConfirmDelete={this.handleConfirmDelete}
                   />
                 )}
               </Button>
@@ -336,9 +342,10 @@ const mapStateToProps = (storeState: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntities,
+  getUserEntities,
   createEntity,
   deleteEntity,
+  reset,
   getLocationFieldsValues,
   getOrganizationFieldsValues,
   getPhysicalAddressFieldsValues,

@@ -4,6 +4,7 @@ import java.util.UUID;
 import org.benetech.servicenet.domain.FieldsDisplaySettings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,4 +20,14 @@ public interface FieldsDisplaySettingsRepository extends
         + "fieldsDisplaySettings.user.login = ?#{principal.username}")
     List<FieldsDisplaySettings> findByUserIsCurrentUser();
 
+    @Query("select fds from FieldsDisplaySettings fds "
+        + "where user.systemAccount.id = :systemAccountId")
+    List<FieldsDisplaySettings> findBySystemAccount(@Param("systemAccountId") UUID systemAccountId);
+
+    @Query("select fds from FieldsDisplaySettings fds "
+        + "where user.systemAccount.name = :systemAccountName and fds.name = :settingName")
+    List<FieldsDisplaySettings> findBySystemAccountAndName(
+        @Param("systemAccountName") String systemAccountName,
+        @Param("settingName") String settingName
+    );
 }
