@@ -191,6 +191,7 @@
     "userexists": "Login name already used!",
     "emailexists": "Email is already in use!",
     "idexists": "A new {{ entityName }} cannot already have an ID",
+    "settingNameExists": "Setting with this name already exists in your organization. Please change the name.",
     "idnull": "Invalid ID",
     "badrequest": "Bad Request",
     "nameunique": "Name must be unique",

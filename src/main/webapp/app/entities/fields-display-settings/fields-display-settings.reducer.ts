@@ -121,6 +121,16 @@ export const getEntities: ICrudGetAllAction<IFieldsDisplaySettings> = (page, siz
   payload: axios.get<IFieldsDisplaySettings>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
 });
 
+export const getUserEntities: ICrudGetAllAction<IFieldsDisplaySettings> = (page, size, sort) => ({
+  type: ACTION_TYPES.FETCH_FIELDSDISPLAYSETTINGS_LIST,
+  payload: axios.get<IFieldsDisplaySettings>(`${apiUrl}-by-user?cacheBuster=${new Date().getTime()}`)
+});
+
+export const getSystemAccountEntities: ICrudGetAllAction<IFieldsDisplaySettings> = (page, size, sort) => ({
+  type: ACTION_TYPES.FETCH_FIELDSDISPLAYSETTINGS_LIST,
+  payload: axios.get<IFieldsDisplaySettings>(`${apiUrl}-by-system-account?cacheBuster=${new Date().getTime()}`)
+});
+
 export const getEntity: ICrudGetAction<IFieldsDisplaySettings> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
