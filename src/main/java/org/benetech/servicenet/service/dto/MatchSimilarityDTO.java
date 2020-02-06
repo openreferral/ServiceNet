@@ -20,6 +20,8 @@ public class MatchSimilarityDTO implements Serializable {
 
     private UUID organizationMatchId;
 
+    private BigDecimal weight;
+
     public UUID getId() {
         return id;
     }
@@ -32,8 +34,16 @@ public class MatchSimilarityDTO implements Serializable {
         return similarity;
     }
 
+    public BigDecimal getWeight() {
+        return weight;
+    }
+
     public void setSimilarity(BigDecimal similarity) {
         this.similarity = similarity;
+    }
+
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
     }
 
     public String getResourceClass() {
