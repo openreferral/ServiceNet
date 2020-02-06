@@ -445,7 +445,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         BigDecimal similaritySum = similarityDTOS.stream()
             .map(MatchSimilarityDTO::getSimilarity)
             .reduce(BigDecimal.ZERO, BigDecimal::add)
-            .divide(organizationSimilarityCounter.getTotalWeight(), 2, RoundingMode.FLOOR);
+            .divide(organizationSimilarityCounter.getTotalWeight(similarityDTOS), 2, RoundingMode.FLOOR);
 
         OrganizationMatch match = saveOrUpdate(
             new OrganizationMatch()
@@ -467,10 +467,12 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         matches.add(mirrorMatch);
 
         for (MatchSimilarityDTO similarityDTO : similarityDTOS) {
-            similarityDTO.setOrganizationMatchId(match.getId());
-            matchSimilarityService.saveOrUpdate(similarityDTO);
-            similarityDTO.setOrganizationMatchId(mirrorMatch.getId());
-            matchSimilarityService.saveOrUpdate(similarityDTO);
+            if (similarityDTO.getSimilarity().compareTo(BigDecimal.ZERO) > 0) {
+                similarityDTO.setOrganizationMatchId(match.getId());
+                matchSimilarityService.saveOrUpdate(similarityDTO);
+                similarityDTO.setOrganizationMatchId(mirrorMatch.getId());
+                matchSimilarityService.saveOrUpdate(similarityDTO);
+            }
         }
         return matches;
     }

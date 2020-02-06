@@ -3,6 +3,7 @@ package org.benetech.servicenet.matching.counter;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 
@@ -21,6 +22,23 @@ public abstract class AbstractSimilarityCounter<V> {
 
     public List<MatchSimilarityDTO> getMatchSimilarityDTOs(V obj1, V obj2, MatchingContext context) {
         return Collections.emptyList();
+    }
+
+    public MatchSimilarityDTO getFieldMatchSimilarityDTO(V obj1, V obj2, MatchingContext context,
+        String fieldName, String resourceClass, BigDecimal weight) {
+        MatchSimilarityDTO similarityMatchDto = new MatchSimilarityDTO();
+        similarityMatchDto.setSimilarity(countSimilarityRatio(obj1, obj2, context).multiply(weight));
+        similarityMatchDto.setResourceClass(resourceClass);
+        similarityMatchDto.setFieldName(fieldName);
+        similarityMatchDto.setWeight(hasValue(obj1, obj2) ? weight : BigDecimal.ZERO);
+        return similarityMatchDto;
+    }
+
+    public Boolean hasValue(V obj1, V obj2) {
+        if (obj1 instanceof String) {
+            return StringUtils.isNotBlank((String) obj1) || StringUtils.isNotBlank((String) obj2);
+        }
+        return obj1 != null || obj2 != null;
     }
 
     protected static final BigDecimal NO_MATCH_RATIO = BigDecimal.ZERO;
