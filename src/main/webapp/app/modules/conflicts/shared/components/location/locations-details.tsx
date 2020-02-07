@@ -36,7 +36,7 @@ export class LocationsDetails extends React.Component<ILocationsDetailsProp, ILo
   }
 
   componentDidMount() {
-    if (this.props.selectLocation) {
+    if (this.props.selectLocation && this.props.isBaseRecord) {
       this.props.selectLocation(this.props.locations[this.state.locationNumber]);
     }
   }
