@@ -150,6 +150,17 @@ public class LocationSimilarityCounterIntTest {
         assertEquals(0, result.compareTo(BigDecimal.ONE));
     }
 
+    @Test
+    public void shouldMatchALocationWithDifferentNames() {
+        Location location1 = locationOf("801 Turk Street San Francisco", 37.7814563, -122.4225255);
+        location1.setName("801 Turk Street - San Francisco (CA)");
+        Location location2 = locationOf("801 Turk Street San Francisco", 37.781465, -122.4225301);
+        location2.setName("EDD Workforce Service - San Francisco Civic Center");
+
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        assertEquals(0, result.compareTo(BigDecimal.ONE));
+    }
+
     private Location locationOf(String address, double lat, double lng) {
         PhysicalAddress physicalAddress = new PhysicalAddress().address1(address);
         GeocodingResult geocodingResult = new GeocodingResult().address(address).latitude(lat).longitude(lng);

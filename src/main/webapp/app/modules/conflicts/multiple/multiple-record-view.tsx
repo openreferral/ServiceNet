@@ -163,12 +163,10 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     const match = partnerRecord && _.find(matches, m => m.partnerVersionId === partnerRecord.organization.id);
     if (match && match.locationMatches) {
       if (selectedLocation in match.locationMatches) {
-        return match.locationMatches[selectedLocation];
+        return match.locationMatches[selectedLocation][0];
       }
-      const invertedMatches = _.invert(match.locationMatches);
-      if (selectedLocation in invertedMatches) {
-        return invertedMatches[selectedLocation];
-      }
+      // return inverted match if any
+      return _.findKey(match.locationMatches, matchList => matchList.includes(selectedLocation));
     }
   };
 

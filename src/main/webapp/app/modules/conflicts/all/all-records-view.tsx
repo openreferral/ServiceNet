@@ -150,12 +150,10 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
     const match = partnerRecords.length && _.find(matches, m => m.partnerVersionId === partnerRecords[0].organization.id);
     if (match && match.locationMatches) {
       if (selectedLocation in match.locationMatches) {
-        return match.locationMatches[selectedLocation];
+        return match.locationMatches[selectedLocation][0];
       }
-      const invertedMatches = _.invert(match.locationMatches);
-      if (selectedLocation in invertedMatches) {
-        return invertedMatches[selectedLocation];
-      }
+      // return inverted match if any
+      return _.findKey(match.locationMatches, matchList => matchList.includes(selectedLocation));
     }
   };
 
