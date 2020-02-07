@@ -54,12 +54,16 @@ public abstract class OrganizationMatchMapper {
     public OrganizationMatchDTO toDtoWithLocationMatches(OrganizationMatch organizationMatch) {
         OrganizationMatchDTO dto = toDto(organizationMatch);
         Organization partner = organizationMatch.getPartnerVersion();
-        Map<UUID, UUID> locationMatches = new HashMap<>();
+        Map<UUID, Set<UUID>> locationMatches = new HashMap<>();
         for (Location location : organizationMatch.getOrganizationRecord().getLocations()) {
+            Set<UUID> matches = new HashSet<>();
             for (LocationMatch match : locationMatchService.findAllForLocation(location.getId())) {
                 if (partner.getLocations().contains(match.getMatchingLocation())) {
-                    locationMatches.put(match.getLocation().getId(), match.getMatchingLocation().getId());
+                    matches.add(match.getMatchingLocation().getId());
                 }
+            }
+            if (matches.size() > 0) {
+                locationMatches.put(location.getId(), matches);
             }
         }
         dto.setNumberOfLocations(partner.getLocations().size());
