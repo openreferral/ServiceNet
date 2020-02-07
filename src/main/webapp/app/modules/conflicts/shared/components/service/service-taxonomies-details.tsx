@@ -33,25 +33,28 @@ export class ServiceTaxonomiesDetails extends React.Component<IServiceTaxonomies
 
   render() {
     const { taxonomies } = this.props;
-    const fields = taxonomies.map(taxonomy =>
-      this.getFields({
-        TAXONOMY_NAME: getTextField(taxonomy, 'taxonomyName'),
-        TAXONOMY_DETAILS: getTextField(taxonomy, 'taxonomyDetails')
-      })
+    const taxonomyPills = (
+      <div className="taxonomy-pills">
+        {taxonomies.map(taxonomy => (
+          <span className="badge badge-pill badge-info" title={taxonomy.taxonomyDetails}>
+            {taxonomy.taxonomyName || taxonomy.externalDbId}
+          </span>
+        ))}
+      </div>
     );
 
-    return fields.length > 0 ? (
+    return (
       <AdditionalDetails
         {...this.props}
-        fields={fields[0]}
+        fields={[]}
         entityClass={'ServiceTaxonomy'}
         customHeader={false}
-        additionalFields={false}
+        additionalFields={taxonomyPills}
         toggleAvailable
         isCustomToggle={false}
         customToggleValue={false}
       />
-    ) : null;
+    );
   }
 }
 

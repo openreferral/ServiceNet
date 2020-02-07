@@ -112,13 +112,13 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     );
 
     const additionalFields = {
+      TAXONOMIES: (
+        <ServiceTaxonomiesDetails key="service-taxonomies-details" {...this.props} taxonomies={record.taxonomies} settings={settings} />
+      ),
       ELIGIBILITY: <EligibilityDetails key="eligibility-details" {...this.props} eligibility={record.eligibility} />,
       FUNDING: <FundingDetails key="funding-details" {...this.props} funding={record.funding} />,
       DOCS: <RequiredDocumentsDetails key="required-documents-details" {...this.props} docs={record.docs} />,
       PAYMENTS_ACCEPTEDS: <PaymentsAcceptedDetails key="payments-accepted-details" {...this.props} payments={record.paymentsAccepteds} />,
-      TAXONOMIES: (
-        <ServiceTaxonomiesDetails key="service-taxonomies-details" {...this.props} taxonomies={record.taxonomies} settings={settings} />
-      ),
       REGULAR_SCHEDULE_OPENING_HOURS: (
         <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />
       ),
