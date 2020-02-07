@@ -11,6 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class ZonedDateTimeDeserializer implements JsonDeserializer<ZonedDateTime> {
+    private static final String OLD_HEALTHLEADS_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
 
     public ZonedDateTimeDeserializer() {
@@ -24,10 +26,18 @@ public class ZonedDateTimeDeserializer implements JsonDeserializer<ZonedDateTime
     public ZonedDateTime deserialize(JsonElement jsonElement, Type type,
         JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
+        String dateTimeString = jsonPrimitive.getAsString();
+
         try {
-            return ZonedDateTime.parse(jsonPrimitive.getAsString(), dateTimeFormatter);
+            return ZonedDateTime.parse(dateTimeString, dateTimeFormatter);
         } catch (RuntimeException e) {
-            throw new JsonParseException("Unable to parse ZonedDateTime", e);
+            try {
+                DateTimeFormatter rescueDateTimeFormatter = DateTimeFormatter.ofPattern(
+                    OLD_HEALTHLEADS_DATE_FORMAT, Locale.ENGLISH);
+                return ZonedDateTime.parse(dateTimeString, rescueDateTimeFormatter);
+            } catch (RuntimeException e1) {
+                throw new JsonParseException("Unable to parse ZonedDateTime", e1);
+            }
         }
     }
 }
