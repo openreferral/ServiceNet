@@ -330,7 +330,7 @@ public class HealthleadsCompleteDataAdapterTest {
 
         assertEquals("Jakub Kondrat <jkondrat@soldevelo.com>", result.getUpdatedBy());
         assertEquals("Partial Update", result.getLastActionType());
-        assertEquals(ZonedDateTime.parse("2019-02-25T18:58:26.000+00:00").withZoneSameInstant(ZoneId.of("UTC")),
+        assertEquals(ZonedDateTime.parse("2019-05-05T00:11:02.000+00:00").withZoneSameInstant(ZoneId.of("UTC")),
             result.getLastActionDate().withZoneSameInstant(ZoneId.of("UTC")));
     }
 }

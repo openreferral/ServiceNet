@@ -11,7 +11,6 @@ import java.util.List;
 import org.benetech.servicenet.util.ZonedDateTimeDeserializer;
 
 class DataResolver {
-    public static final String HEALTHLEADS_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     List<HealthleadsBaseData> getDataFromJson(final String json, final String filename) {
         DataType type;
@@ -29,7 +28,7 @@ class DataResolver {
 
     private static Gson getHealthleadsGson() {
         return new GsonBuilder()
-            .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeDeserializer(HEALTHLEADS_DATE_FORMAT))
+            .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeDeserializer())
             .create();
     }
 }

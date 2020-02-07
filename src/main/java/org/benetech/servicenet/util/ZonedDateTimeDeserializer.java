@@ -6,12 +6,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import java.lang.reflect.Type;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class ZonedDateTimeDeserializer implements JsonDeserializer<ZonedDateTime> {
+    private static final String OLD_HEALTHLEADS_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
 
     public ZonedDateTimeDeserializer() {
@@ -31,10 +32,9 @@ public class ZonedDateTimeDeserializer implements JsonDeserializer<ZonedDateTime
             return ZonedDateTime.parse(dateTimeString, dateTimeFormatter);
         } catch (RuntimeException e) {
             try {
-                DateTimeFormatter dateTimeFormatterWithoutZome = DateTimeFormatter
-                    .ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
-                dateTimeFormatterWithoutZome = dateTimeFormatterWithoutZome.withZone(ZoneId.of("UTC"));
-                return ZonedDateTime.parse(dateTimeString, dateTimeFormatterWithoutZome);
+                DateTimeFormatter rescueDateTimeFormatter = DateTimeFormatter.ofPattern(
+                    OLD_HEALTHLEADS_DATE_FORMAT, Locale.ENGLISH);
+                return ZonedDateTime.parse(dateTimeString, rescueDateTimeFormatter);
             } catch (RuntimeException e1) {
                 throw new JsonParseException("Unable to parse ZonedDateTime", e1);
             }
