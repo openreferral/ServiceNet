@@ -55,6 +55,8 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
 
     private MetricRegistry metricRegistry;
 
+    public static final int REQUEST_TIMEOUT = 6000000;
+
     public WebConfigurer(Environment env, JHipsterProperties jHipsterProperties) {
 
         this.env = env;
@@ -188,6 +190,16 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
         metricsAdminServlet.addMapping("/management/metrics/*");
         metricsAdminServlet.setAsyncSupported(true);
         metricsAdminServlet.setLoadOnStartup(2);
+    }
+
+    @Bean
+    public UndertowServletWebServerFactory undertowServletWebServerFactory() {
+        final UndertowServletWebServerFactory factory = new UndertowServletWebServerFactory();
+
+        factory.addBuilderCustomizers(builder -> builder.setServerOption(UndertowOptions.NO_REQUEST_TIMEOUT,
+            REQUEST_TIMEOUT));
+
+        return factory;
     }
 
     @Bean
