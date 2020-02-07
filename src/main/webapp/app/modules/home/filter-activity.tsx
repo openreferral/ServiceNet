@@ -201,6 +201,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
       fromDate: null,
       toDate: null,
       showPartner: false,
+      showOnlyHighlyMatched: false,
       applyLocationSearch: false,
       latitude: null,
       longitude: null
