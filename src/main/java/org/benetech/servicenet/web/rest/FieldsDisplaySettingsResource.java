@@ -1,7 +1,9 @@
 package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.FieldsDisplaySettingsService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.dto.FieldsDisplaySettingsDTO;
 
@@ -39,8 +41,14 @@ public class FieldsDisplaySettingsResource {
 
     private final FieldsDisplaySettingsService fieldsDisplaySettingsService;
 
-    public FieldsDisplaySettingsResource(FieldsDisplaySettingsService fieldsDisplaySettingsService) {
+    private final UserService userService;
+
+    public FieldsDisplaySettingsResource(
+        FieldsDisplaySettingsService fieldsDisplaySettingsService,
+        UserService userService
+    ) {
         this.fieldsDisplaySettingsService = fieldsDisplaySettingsService;
+        this.userService = userService;
     }
 
     /**
@@ -61,6 +69,16 @@ public class FieldsDisplaySettingsResource {
                 "A new fieldsDisplaySettings cannot already have an ID",
                 ENTITY_NAME,
                 "idexists"
+            );
+        }
+        String systemAccountName = userService.getCurrentSystemAccountName();
+        List<FieldsDisplaySettingsDTO> existingSettings = fieldsDisplaySettingsService
+            .findBySystemAccountAndName(systemAccountName, fieldsDisplaySettingsDTO.getName());
+        if (existingSettings.size() > 0) {
+            throw new BadRequestAlertException(
+                "Setting with this name already exists in your organization. Please change the name.",
+                ENTITY_NAME,
+                "settingNameExists"
             );
         }
         FieldsDisplaySettingsDTO result = fieldsDisplaySettingsService.save(fieldsDisplaySettingsDTO);
@@ -102,6 +120,33 @@ public class FieldsDisplaySettingsResource {
     public List<FieldsDisplaySettingsDTO> getAllFieldsDisplaySettings() {
         log.debug("REST request to get all FieldsDisplaySettings");
         return fieldsDisplaySettingsService.findAll();
+    }
+
+    /**
+     * {@code GET  /fields-display-settings-by-user} : get all the fieldsDisplaySettings for current user.
+     *
+
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fieldsDisplaySettings in body.
+     */
+    @GetMapping("/fields-display-settings-by-user")
+    public List<FieldsDisplaySettingsDTO> getAllUserFieldsDisplaySettings() {
+        log.debug("REST request to get all FieldsDisplaySettings by current user");
+        return fieldsDisplaySettingsService.findAllByCurrentUser();
+    }
+
+    /**
+     * {@code GET  /fields-display-settings-by-system-account} : get all the fieldsDisplaySettings from
+     * current users system account.
+     *
+
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fieldsDisplaySettings in body.
+     */
+    @GetMapping("/fields-display-settings-by-system-account")
+    public List<FieldsDisplaySettingsDTO> getAllSystemAccountFieldsDisplaySettings() {
+        log.debug("REST request to get all FieldsDisplaySettings by system accounts");
+        Optional<SystemAccount> accountOpt = userService.getCurrentSystemAccount();
+        UUID systemAccountId = accountOpt.map(SystemAccount::getId).orElse(null);
+        return fieldsDisplaySettingsService.findAllBySystemAccount(systemAccountId);
     }
 
     /**

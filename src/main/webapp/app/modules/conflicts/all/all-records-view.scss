@@ -67,3 +67,22 @@
   margin-left: 15px;
   margin-right: 15px;
 }
+
+.fields-display-settings-btn {
+  padding: 5px 10px;
+  position: absolute;
+  top: -43px;
+  left: 100px;
+  cursor: pointer;
+  color: $gray-600;
+  &:hover {
+    color: $gray-900;
+  }
+}
+
+.fields-display-settings-selector {
+  width: 200px;
+  position: absolute !important;
+  top: -47px;
+  left: 150px;
+}

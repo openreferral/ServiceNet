@@ -6,7 +6,10 @@ import { connect } from 'react-redux';
 import { Row, Col, Jumbotron, Button, Tooltip } from 'reactstrap';
 import Details from '../shared/components/details';
 import { getBaseRecord, getPartnerRecord, getNotHiddenMatchesByOrg } from '../shared/shared-record-view.reducer';
-import { getEntities as getSettings, updateSelectedSettings } from 'app/entities/fields-display-settings/fields-display-settings.reducer';
+import {
+  getSystemAccountEntities as getSettings,
+  updateSelectedSettings
+} from 'app/entities/fields-display-settings/fields-display-settings.reducer';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import { Translate, TextFormat, translate } from 'react-jhipster';
 import ReactGA from 'react-ga';
@@ -176,6 +179,9 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
   };
 
   toggleFieldSettings = () => {
+    if (this.state.fieldSettingsExpanded) {
+      this.props.getSettings();
+    }
     this.setState({
       fieldSettingsExpanded: !this.state.fieldSettingsExpanded
     });
@@ -394,7 +400,7 @@ const mapStateToProps = (storeState, { match }: IMultipleRecordViewState) => ({
   dismissedMatches: storeState.sharedRecordView.dismissedMatches,
   systemAccountName: storeState.authentication.account.systemAccountName,
   fieldsDisplaySettingsOptions: _.union(
-    [{ value: null, label: '' }],
+    [{ value: null, label: 'All fields' }],
     storeState.fieldsDisplaySettings.entities.map(o => ({ ...o, value: o.id, label: o.name }))
   ),
   selectedSettings: storeState.fieldsDisplaySettings.selectedSettings

@@ -66,6 +66,27 @@ public class FieldsDisplaySettingsServiceImpl implements FieldsDisplaySettingsSe
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    @Override
+    public List<FieldsDisplaySettingsDTO> findAllByCurrentUser() {
+        return fieldsDisplaySettingsRepository.findByUserIsCurrentUser().stream()
+            .map(fieldsDisplaySettingsMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public List<FieldsDisplaySettingsDTO> findAllBySystemAccount(UUID id) {
+        return fieldsDisplaySettingsRepository.findBySystemAccount(id).stream()
+            .map(fieldsDisplaySettingsMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public List<FieldsDisplaySettingsDTO> findBySystemAccountAndName(String systemAccountName, String settingName) {
+        return fieldsDisplaySettingsRepository.findBySystemAccountAndName(systemAccountName, settingName).stream()
+            .map(fieldsDisplaySettingsMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
 
     /**
      * Get one fieldsDisplaySettings by id.

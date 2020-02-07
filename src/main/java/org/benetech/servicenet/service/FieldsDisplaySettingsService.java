@@ -27,6 +27,27 @@ public interface FieldsDisplaySettingsService {
     List<FieldsDisplaySettingsDTO> findAll();
 
     /**
+     * Get all the fieldsDisplaySettings for current user.
+     *
+     * @return the list of entities.
+     */
+    List<FieldsDisplaySettingsDTO> findAllByCurrentUser();
+
+    /**
+     * Get all the fieldsDisplaySettings for current users system account.
+     *
+     * @return the list of entities.
+     */
+    List<FieldsDisplaySettingsDTO> findAllBySystemAccount(UUID id);
+
+    /**
+     * Check if fieldsDisplaySettings with given name exists in given system account.
+     *
+     * @return the list of entities.
+     */
+    List<FieldsDisplaySettingsDTO> findBySystemAccountAndName(String systemAccountName, String settingName);
+
+    /**
      * Get the "id" fieldsDisplaySettings.
      *
      * @param id the id of the entity.
