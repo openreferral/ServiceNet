@@ -12,7 +12,7 @@ describe('Axios Interceptor', () => {
     it('onRequestSuccess is called on fulfilled request', () => {
       expect((client.interceptors.request as any).handlers[0].fulfilled({ data: 'foo', url: '/test' })).toMatchObject({
         data: 'foo',
-        timeout: 1000000
+        timeout: 6000000
       });
     });
     it('onResponseSuccess is called on fulfilled response', () => {
