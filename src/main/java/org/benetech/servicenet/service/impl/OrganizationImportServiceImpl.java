@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -81,6 +82,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         createOrUpdateProgramsForOrganization(filledOrganization.getPrograms(), organization);
         createOrUpdateContactsForOrganization(filledOrganization.getContacts(), organization);
 
+        organization.setUpdatedAt(ZonedDateTime.now());
         Organization org = em.merge(organization);
 
         Set<OrganizationError> errors = new HashSet<>();

@@ -2,8 +2,8 @@ package org.benetech.servicenet.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.domain.ExclusionsConfig;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.view.ActivityInfo;
-import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
@@ -23,8 +23,8 @@ public class RecordsServiceImpl implements RecordsService {
     private RecordFactory recordFactory;
 
     @Override
-    public Optional<ActivityRecordDTO> getRecordFromActivityInfo(ActivityRecord activityRecord) {
-        return recordFactory.getFilteredRecord(activityRecord);
+    public Optional<ActivityRecordDTO> getRecordFromOrganization(Organization organization) {
+        return recordFactory.getFilteredRecord(organization);
     }
 
     @Override

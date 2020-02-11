@@ -10,11 +10,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.view.ActivityInfo;
-import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.OrganizationMatchService;
+import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
@@ -47,12 +47,16 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final OrganizationMatchService organizationMatchService;
 
+    private final OrganizationService organizationService;
+
     public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
-        ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService) {
+        ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService,
+        OrganizationService organizationService) {
         this.activityRepository = activityRepository;
         this.recordsService = recordsService;
         this.exclusionsConfigService = exclusionsConfigService;
         this.organizationMatchService = organizationMatchService;
+        this.organizationService = organizationService;
     }
 
     @Override
@@ -86,8 +90,9 @@ public class ActivityServiceImpl implements ActivityService {
     public Optional<ActivityRecordDTO> getOneByOrganizationId(UUID orgId) {
         log.debug("Creating Activity Record for organization: {}", orgId);
         try {
-            ActivityRecord activityInfo = activityRepository.findOneByOrganizationId(orgId);
-            Optional<ActivityRecordDTO> opt = recordsService.getRecordFromActivityInfo(activityInfo);
+            Optional<ActivityRecordDTO> opt = recordsService.getRecordFromOrganization(
+                organizationService.findOne(orgId).get()
+            );
             ActivityRecordDTO record = opt.orElseThrow(() -> new ActivityCreationException(
                 String.format("Activity record couldn't be created for organization: %s", orgId)));
 
@@ -103,8 +108,8 @@ public class ActivityServiceImpl implements ActivityService {
         return organizationMatchService.findAllNotHiddenForOrganization(orgId).stream().filter(match -> !match.isDismissed())
             .map(match -> {
                 try {
-                    return recordsService.getRecordFromActivityInfo(
-                        activityRepository.findOneByOrganizationId(match.getPartnerVersionId())
+                    return recordsService.getRecordFromOrganization(
+                        organizationService.findOne(match.getPartnerVersionId()).get()
                     ).get();
                 } catch (IllegalAccessException | NoSuchElementException e) {
                     throw new ActivityCreationException(
