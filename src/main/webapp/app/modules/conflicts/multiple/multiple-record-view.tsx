@@ -363,7 +363,13 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
           handleDismiss={this.handleDismiss}
         />
         <div className="fields-display-settings-btn" onClick={this.toggleFieldSettings} id="fields-display-settings-btn">
-          {this.state.fieldSettingsExpanded ? <FontAwesomeIcon icon="undo-alt" size="lg" /> : <FontAwesomeIcon icon="cogs" size="lg" />}
+          {this.state.fieldSettingsExpanded ? (
+            <FontAwesomeIcon icon="undo-alt" size="lg" />
+          ) : (
+            <span>
+              <Translate contentKey="multiRecordView.showLessFields" /> <FontAwesomeIcon icon="cogs" size="lg" />
+            </span>
+          )}
         </div>
         <Select
           options={this.props.fieldsDisplaySettingsOptions}
