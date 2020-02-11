@@ -32,7 +32,6 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.enumeration.SearchOn;
 import org.benetech.servicenet.domain.view.ActivityInfo;
-import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.web.rest.SearchField;
 import org.springframework.data.domain.Page;
@@ -102,17 +101,6 @@ public class ActivityRepository {
     public ActivityRepository(EntityManager em) {
         this.em = em;
         this.cb = em.getCriteriaBuilder();
-    }
-
-    public ActivityRecord findOneByOrganizationId(UUID orgId) {
-        CriteriaQuery<ActivityRecord> queryCriteria = cb.createQuery(ActivityRecord.class);
-        Root<ActivityRecord> root = queryCriteria.from(ActivityRecord.class);
-
-        queryCriteria.select(root);
-
-        queryCriteria.where(cb.equal(root.get(ID), orgId));
-
-        return em.createQuery(queryCriteria).getSingleResult();
     }
 
     public Page<ActivityInfo> findAllWithFilters(UUID ownerId, String searchName,

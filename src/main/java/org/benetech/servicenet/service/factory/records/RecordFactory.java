@@ -8,7 +8,6 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.view.ActivityInfo;
-import org.benetech.servicenet.domain.view.ActivityRecord;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.UserService;
@@ -43,12 +42,12 @@ public class RecordFactory {
     @Autowired
     private RecordBuilder recordBuilder;
 
-    public Optional<ActivityRecordDTO> getFilteredRecord(ActivityRecord record) {
-        List<ConflictDTO> conflicts = getBaseConflicts(record.getId());
+    public Optional<ActivityRecordDTO> getFilteredRecord(Organization organization) {
+        List<ConflictDTO> conflicts = getBaseConflicts(organization.getId());
 
         Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
 
-        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(record.getAccountId(), exclusionsMap);
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusionsMap);
         Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
             .flatMap(e -> e.getExclusions().stream())
             .collect(Collectors.toSet());
@@ -59,7 +58,7 @@ public class RecordFactory {
 
         List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, fieldExclusions, exclusionsMap);
 
-        return filterRecord(record, filteredConflicts, fieldExclusions, locationExclusions);
+        return filterRecord(organization, filteredConflicts, fieldExclusions, locationExclusions);
     }
 
     public ActivityDTO getFilteredResult(ActivityInfo info, Map<UUID, ExclusionsConfig> exclusionsMap) {
@@ -115,25 +114,24 @@ public class RecordFactory {
         return exclusions;
     }
 
-    private Optional<ActivityRecordDTO> filterRecord(ActivityRecord record, List<ConflictDTO> conflicts,
+    private Optional<ActivityRecordDTO> filterRecord(Organization organization, List<ConflictDTO> conflicts,
         Set<FieldExclusion> exclusions, Set<LocationExclusion> locationExclusions) {
         try {
-            return Optional.of(buildRecord(record, conflicts, exclusions, locationExclusions));
+            return Optional.of(buildRecord(organization, conflicts, exclusions, locationExclusions));
         } catch (IllegalAccessException e) {
             log.error("Unable to filter record.");
             return Optional.empty();
         }
     }
 
-    private ActivityRecordDTO buildRecord(ActivityRecord record, List<ConflictDTO> conflictDTOS,
+    private ActivityRecordDTO buildRecord(Organization organization, List<ConflictDTO> conflictDTOS,
         Set<FieldExclusion> exclusions, Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
 
-        Organization org = record.getOrganization();
-
         if (exclusions.isEmpty()) {
-            return recordBuilder.buildBasicRecord(org, record.getLastUpdated(), conflictDTOS, locationExclusions);
+            return recordBuilder.buildBasicRecord(
+                organization, organization.getUpdatedAt(), conflictDTOS, locationExclusions);
         } else {
-            return recordBuilder.buildFilteredRecord(org, record.getLastUpdated(),
+            return recordBuilder.buildFilteredRecord(organization, organization.getUpdatedAt(),
                 conflictDTOS, exclusions, locationExclusions);
         }
     }
