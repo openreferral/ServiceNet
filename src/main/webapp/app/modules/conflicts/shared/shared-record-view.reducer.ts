@@ -6,7 +6,8 @@ export const ACTION_TYPES = {
   FETCH_BASE_ORGANIZATION: 'recordView/FETCH_BASE_ORGANIZATION',
   FETCH_PARTNER_ORGANIZATION: 'recordView/FETCH_PARTNER_ORGANIZATION',
   FETCH_PARTNER_ORGANIZATIONS: 'recordView/FETCH_PARTNER_ORGANIZATIONS',
-  FETCH_MATCHES: 'recordView/FETCH_MATCHES'
+  FETCH_MATCHES: 'recordView/FETCH_MATCHES',
+  FETCH_SERVICE_MATCHES: 'recordView/FETCH_SERVICE_MATCHES'
 };
 
 const initialState = {
@@ -28,6 +29,7 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
     case REQUEST(ACTION_TYPES.FETCH_PARTNER_ORGANIZATION):
     case REQUEST(ACTION_TYPES.FETCH_PARTNER_ORGANIZATIONS):
     case REQUEST(ACTION_TYPES.FETCH_MATCHES):
+    case REQUEST(ACTION_TYPES.FETCH_SERVICE_MATCHES):
       return {
         ...state
       };
@@ -35,6 +37,7 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
     case FAILURE(ACTION_TYPES.FETCH_PARTNER_ORGANIZATION):
     case FAILURE(ACTION_TYPES.FETCH_PARTNER_ORGANIZATIONS):
     case FAILURE(ACTION_TYPES.FETCH_MATCHES):
+    case FAILURE(ACTION_TYPES.FETCH_SERVICE_MATCHES):
       return {
         ...state,
         errorMessage: action.payload
@@ -75,6 +78,11 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
         dismissedMatches,
         hiddenMatches
       };
+    case SUCCESS(ACTION_TYPES.FETCH_SERVICE_MATCHES):
+      console.log(action.payload.data);
+      return {
+        ...state
+      };
     default:
       return state;
   }
@@ -86,6 +94,7 @@ const activityUrl = url + 'activities/';
 const partnerActivityUrl = url + 'partner-activities/';
 const matchesUrl = url + 'organization-matches/organization/';
 const hiddenMatchesUrl = url + 'organization-matches/hidden';
+const matchService = url + 'service-matches';
 
 export const getBaseRecord = orgId => ({
   type: ACTION_TYPES.FETCH_BASE_ORGANIZATION,
@@ -115,4 +124,9 @@ export const getHiddenMatches = () => ({
 export const getNotHiddenMatchesByOrg = orgId => ({
   type: ACTION_TYPES.FETCH_MATCHES,
   payload: axios.get(matchesUrl + orgId + '/notHidden')
+});
+
+export const createServiceMatch = (serviceId, matchingServiceId) => ({
+  type: ACTION_TYPES.FETCH_SERVICE_MATCHES,
+  payload: axios.post(matchService, { service: serviceId, matchingService: matchingServiceId })
 });

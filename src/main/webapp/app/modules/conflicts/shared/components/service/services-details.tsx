@@ -3,7 +3,7 @@ import '../../shared-record-view.scss';
 import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IServiceRecord } from 'app/shared/model/service-record.model';
-import { SingleServiceDetails } from './single-service-details';
+import SingleServiceDetails from './single-service-details';
 import { translate } from 'react-jhipster';
 import _ from 'lodash';
 

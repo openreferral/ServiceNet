@@ -48,6 +48,8 @@ public class OrganizationMatchDTO implements Serializable {
 
     private Map<UUID, Set<UUID>> locationMatches;
 
+    private Map<UUID, Set<UUID>> serviceMatches;
+
     private Integer numberOfLocations;
 
     private String providerName;

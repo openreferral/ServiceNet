@@ -151,6 +151,7 @@ public class CacheConfiguration {
             cm.createCache(org.benetech.servicenet.domain.ServiceTaxonomiesDetailsFieldsValue.class.getName(),
                 jcacheConfiguration);
             cm.createCache(org.benetech.servicenet.domain.ContactDetailsFieldsValue.class.getName(), jcacheConfiguration);
+            cm.createCache(org.benetech.servicenet.domain.ServiceMatch.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

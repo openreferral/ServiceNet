@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Row } from 'reactstrap';
+import { Col, Row, Button } from 'reactstrap';
 import '../../shared-record-view.scss';
 import { TextFormat, Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
@@ -21,6 +21,8 @@ import { getTextField } from 'app/shared/util/single-record-view-utils';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import Select from 'react-select';
 import _ from 'lodash';
+import { Link } from 'react-router-dom';
+import { createServiceMatch } from 'app/modules/conflicts/shared/shared-record-view.reducer';
 
 export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -69,8 +71,17 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     return _.values(_.pick(fieldsMap, keysFiltered));
   };
 
+  matchService = () => {
+    console.log('AAAAAAAAAAA23');
+    console.log(this.props);
+    const matchingServiceId = this.props.record.service.id;
+    const serviceId = this.props.baseRecord.organization.id;
+    this.props.createServiceMatch(serviceId, matchingServiceId);
+  };
+
   render() {
     const { record, isOnlyOne, columnSize, selectOptions, servicesCount, settings } = this.props;
+    console.log(record);
     const customHeader = (
       <div className="title d-flex justify-content-start align-items-center mb-1">
         <div
@@ -92,6 +103,14 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
 
     const itemHeader = (
       <div>
+        <h5>
+          <Button onClick={this.matchService} replace color="info">
+            <FontAwesomeIcon icon="arrow-left" />{' '}
+            <span className="d-none d-md-inline">
+              <Translate contentKey="multiRecordView.matchesMyServiceRecord" />
+            </span>
+          </Button>
+        </h5>
         <h5>
           <Translate contentKey="multiRecordView.lastCompleteReview" />
           {record.service.lastVerifiedOn ? (
@@ -192,9 +211,9 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (storeState, { match }) => ({});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { createServiceMatch };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

@@ -26,6 +26,8 @@
     "locationCheckboxTooltip": "Whenever I select a Location record, show me this partner's matching Location record, if available.",
     "matchSimilarity": "Match similarity: ",
     "noPhysicalAddress": "No physical address provided",
-    "showLessFields": "Show less fields"
+    "showLessFields": "Show less fields",
+    "matchesMyServiceRecord": "Matches my Service record",
+    "unmatchThisRecord": "Unmatch this record"
   }
 }
