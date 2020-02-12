@@ -58,8 +58,9 @@
 }
 
 .partner-records {
-  overflow-x: auto;
   margin-right: 0;
+  width: auto;
+  max-width: none;
 }
 
 .record {
@@ -85,4 +86,8 @@
   position: absolute !important;
   top: -47px;
   left: 250px;
+}
+
+#root {
+  width: max-content;
 }
