@@ -64,11 +64,15 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
     Promise.all([this.props.getNotHiddenMatchesByOrg(this.props.orgId)]).then(() => {
       if (this.props.matches.length >= this.state.matchNumber + 1) {
         const partnerId = this.props.partnerId;
-        this.props.getPartnerRecord(partnerId ? partnerId : this.props.matches[this.state.matchNumber].partnerVersionId);
         if (partnerId) {
+          const partnerIdx = this.props.matches.findIndex(match => match.partnerVersionId === partnerId);
+          const matchNumber = partnerIdx > 0 ? partnerIdx : 0;
           this.setState({
-            matchNumber: this.props.matches.findIndex(match => match.partnerVersionId === partnerId)
+            matchNumber
           });
+          this.props.getPartnerRecord(partnerIdx > 0 ? partnerId : this.props.matches[matchNumber].partnerVersionId);
+        } else {
+          this.props.getPartnerRecord(this.props.matches[this.state.matchNumber]);
         }
       }
     });

@@ -7,9 +7,11 @@ import org.benetech.servicenet.service.dto.OrganizationFieldsValueDTO;
 
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -52,6 +54,7 @@ public class OrganizationFieldsValueResource {
      * an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/organization-fields-values")
     public ResponseEntity<OrganizationFieldsValueDTO> createOrganizationFieldsValue(
         @Valid @RequestBody OrganizationFieldsValueDTO organizationFieldsValueDTO
@@ -79,6 +82,7 @@ public class OrganizationFieldsValueResource {
      * or with status {@code 500 (Internal Server Error)} if the organizationFieldsValueDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/organization-fields-values")
     public ResponseEntity<OrganizationFieldsValueDTO> updateOrganizationFieldsValue(
         @Valid @RequestBody OrganizationFieldsValueDTO organizationFieldsValueDTO
@@ -125,6 +129,7 @@ public class OrganizationFieldsValueResource {
      * @param id the id of the organizationFieldsValueDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/organization-fields-values/{id}")
     public ResponseEntity<Void> deleteOrganizationFieldsValue(@PathVariable UUID id) {
         log.debug("REST request to delete OrganizationFieldsValue : {}", id);

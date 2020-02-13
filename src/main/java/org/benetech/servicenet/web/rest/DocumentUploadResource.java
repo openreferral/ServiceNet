@@ -4,8 +4,8 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import io.github.jhipster.web.util.ResponseUtil;
-import org.benetech.servicenet.adapter.shared.model.FileInfo;
 import org.benetech.servicenet.security.AuthoritiesConstants;
+import org.benetech.servicenet.adapter.shared.model.FileInfo;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -62,6 +62,7 @@ public class DocumentUploadResource {
      * or with status 400 (Bad Request) if the documentUpload has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/document-uploads")
     @Timed
     public ResponseEntity<DocumentUploadDTO> createDocumentUpload(
@@ -85,9 +86,9 @@ public class DocumentUploadResource {
      * @throws java.io.IOException if there's problem with reading the file
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/file")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<DocumentUploadDTO> uploadDocument(@RequestParam("filepond") MultipartFile file,
                                                             HttpServletRequest request)
         throws URISyntaxException, IOException {
@@ -110,6 +111,7 @@ public class DocumentUploadResource {
      * or with status 400 (Bad Request) if file is of wrong type
      * @throws JsonSyntaxException if something is wrong with JSON documents
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/map")
     @Timed
     public ResponseEntity<Void> mapDocuments(@RequestBody List<String> files,  HttpServletRequest request)
@@ -138,6 +140,7 @@ public class DocumentUploadResource {
      * or with status 500 (Internal Server Error) if the documentUploadDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/document-uploads")
     @Timed
     public ResponseEntity<DocumentUploadDTO> updateDocumentUpload(
@@ -187,6 +190,7 @@ public class DocumentUploadResource {
      * @param id the id of the documentUploadDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/document-uploads/{id}")
     @Timed
     public ResponseEntity<Void> deleteDocumentUpload(@PathVariable UUID id) {

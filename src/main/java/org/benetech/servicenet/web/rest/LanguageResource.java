@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +55,7 @@ public class LanguageResource {
      * or with status 400 (Bad Request) if the language has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/languages")
     @Timed
     public ResponseEntity<LanguageDTO> createLanguage(
@@ -76,6 +79,7 @@ public class LanguageResource {
      * or with status 500 (Internal Server Error) if the languageDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/languages")
     @Timed
     public ResponseEntity<LanguageDTO> updateLanguage(
@@ -125,6 +129,7 @@ public class LanguageResource {
      * @param id the id of the languageDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/languages/{id}")
     @Timed
     public ResponseEntity<Void> deleteLanguage(@PathVariable UUID id) {

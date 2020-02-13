@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.HolidayScheduleService;
 import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +55,7 @@ public class HolidayScheduleResource {
      * (Bad Request) if the holidaySchedule has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/holiday-schedules")
     @Timed
     public ResponseEntity<HolidayScheduleDTO> createHolidaySchedule(
@@ -76,6 +79,7 @@ public class HolidayScheduleResource {
      * or with status 500 (Internal Server Error) if the holidayScheduleDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/holiday-schedules")
     @Timed
     public ResponseEntity<HolidayScheduleDTO> updateHolidaySchedule(
@@ -125,6 +129,7 @@ public class HolidayScheduleResource {
      * @param id the id of the holidayScheduleDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/holiday-schedules/{id}")
     @Timed
     public ResponseEntity<Void> deleteHolidaySchedule(@PathVariable UUID id) {

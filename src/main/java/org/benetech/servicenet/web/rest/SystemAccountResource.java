@@ -50,9 +50,9 @@ public class SystemAccountResource {
      * or with status 400 (Bad Request) if the systemAccount has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/system-accounts")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SystemAccountDTO> createSystemAccount(
         @Valid @RequestBody SystemAccountDTO systemAccountDTO) throws URISyntaxException {
         log.debug("REST request to save SystemAccount : {}", systemAccountDTO);
@@ -74,9 +74,9 @@ public class SystemAccountResource {
      * or with status 500 (Internal Server Error) if the systemAccountDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/system-accounts")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SystemAccountDTO> updateSystemAccount(
         @Valid @RequestBody SystemAccountDTO systemAccountDTO) throws URISyntaxException {
         log.debug("REST request to update SystemAccount : {}", systemAccountDTO);
@@ -122,9 +122,9 @@ public class SystemAccountResource {
      * @param id the id of the systemAccountDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/system-accounts/{id}")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteSystemAccount(@PathVariable UUID id) {
         log.debug("REST request to delete SystemAccount : {}", id);
         systemAccountService.delete(id);

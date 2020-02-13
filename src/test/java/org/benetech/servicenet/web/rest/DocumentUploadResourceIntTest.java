@@ -6,6 +6,7 @@ import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -122,6 +124,7 @@ public class DocumentUploadResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
     public void createDocumentUpload() throws Exception {
         int databaseSizeBeforeCreate = documentUploadRepository.findAll().size();
 
@@ -143,6 +146,7 @@ public class DocumentUploadResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
     public void createDocumentUploadWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = documentUploadRepository.findAll().size();
 
@@ -241,6 +245,7 @@ public class DocumentUploadResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
     public void updateDocumentUpload() throws Exception {
         // Initialize the database
         documentUploadRepository.saveAndFlush(documentUpload);
@@ -273,6 +278,7 @@ public class DocumentUploadResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
     public void updateNonExistingDocumentUpload() throws Exception {
         int databaseSizeBeforeUpdate = documentUploadRepository.findAll().size();
 
@@ -292,6 +298,7 @@ public class DocumentUploadResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
     public void deleteDocumentUpload() throws Exception {
         // Initialize the database
         documentUploadRepository.saveAndFlush(documentUpload);

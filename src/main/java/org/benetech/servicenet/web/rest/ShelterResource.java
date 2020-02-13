@@ -11,6 +11,7 @@ import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -62,6 +64,7 @@ public class ShelterResource {
      * or with status 400 (Bad Request) if the shelter has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasAnyRole('" + AuthoritiesConstants.SACRAMENTO + "', '" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/shelters")
     public ResponseEntity<ShelterDTO> createShelter(@RequestBody ShelterDTO shelter) throws URISyntaxException {
         log.debug("REST request to save Shelter : {}", shelter);
@@ -83,6 +86,7 @@ public class ShelterResource {
      * or with status 500 (Internal Server Error) if the shelter couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasAnyRole('" + AuthoritiesConstants.SACRAMENTO + "', '" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/shelters")
     public ResponseEntity<ShelterDTO> updateShelter(@RequestBody ShelterDTO shelter) throws URISyntaxException {
         log.debug("REST request to update Shelter : {}", shelter);
@@ -105,6 +109,7 @@ public class ShelterResource {
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of shelters in body
      */
+    @PreAuthorize("hasAnyRole('" + AuthoritiesConstants.SACRAMENTO + "', '" + AuthoritiesConstants.ADMIN + "')")
     @GetMapping("/shelters")
     public ResponseEntity<List<ShelterDTO>> getAllShelters(Pageable pageable) {
         log.debug("REST request to get all Shelters");
@@ -118,6 +123,7 @@ public class ShelterResource {
      *
      * @return the ResponseEntity with status 200 (OK) and the list of shelters in body
      */
+    @PreAuthorize("hasAnyRole('" + AuthoritiesConstants.SACRAMENTO + "', '" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/shelters/search")
     public ResponseEntity<List<ShelterDTO>> searchShelters(
         @Valid @RequestBody ShelterFiltersDTO shelterFilters, Pageable pageable) {
@@ -133,6 +139,7 @@ public class ShelterResource {
      * @param id the id of the shelter to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the shelter, or with status 404 (Not Found)
      */
+    @PreAuthorize("hasAnyRole('" + AuthoritiesConstants.SACRAMENTO + "', '" + AuthoritiesConstants.ADMIN + "')")
     @GetMapping("/shelters/{id}")
     public ResponseEntity<ShelterDTO> getShelter(@PathVariable UUID id) {
         log.debug("REST request to get Shelter : {}", id);
@@ -146,6 +153,7 @@ public class ShelterResource {
      * @param id the id of the shelter to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasAnyRole('" + AuthoritiesConstants.SACRAMENTO + "', '" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/shelters/{id}")
     public ResponseEntity<Void> deleteShelter(@PathVariable UUID id) {
         log.debug("REST request to delete Shelter : {}", id);

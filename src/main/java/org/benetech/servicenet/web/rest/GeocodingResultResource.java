@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +54,7 @@ public class GeocodingResultResource {
      * or with status 400 (Bad Request) if the geocodingResult has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/geocoding-results")
     public ResponseEntity<GeocodingResultDTO> createGeocodingResult(
         @Valid @RequestBody GeocodingResultDTO geocodingResultDTO) throws URISyntaxException {
@@ -74,6 +77,7 @@ public class GeocodingResultResource {
      * or with status 500 (Internal Server Error) if the geocodingResultDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/geocoding-results")
     public ResponseEntity<GeocodingResultDTO> updateGeocodingResult(
         @Valid @RequestBody GeocodingResultDTO geocodingResultDTO) throws URISyntaxException {
@@ -120,6 +124,7 @@ public class GeocodingResultResource {
      * @param id the id of the geocodingResultDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/geocoding-results/{id}")
     public ResponseEntity<Void> deleteGeocodingResult(@PathVariable UUID id) {
         log.debug("REST request to delete GeocodingResult : {}", id);
