@@ -8,12 +8,14 @@ import org.benetech.servicenet.service.dto.TaxonomyGroupDTO;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,6 +57,7 @@ public class TaxonomyGroupResource {
      * or with status {@code 400 (Bad Request)} if the taxonomyGroup has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/taxonomy-groups")
     public ResponseEntity<TaxonomyGroupDTO> createTaxonomyGroup(@RequestBody TaxonomyGroupDTO taxonomyGroupDTO)
         throws URISyntaxException {
@@ -77,6 +80,7 @@ public class TaxonomyGroupResource {
      * or with status {@code 500 (Internal Server Error)} if the taxonomyGroupDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/taxonomy-groups")
     public ResponseEntity<TaxonomyGroupDTO> updateTaxonomyGroup(@RequestBody TaxonomyGroupDTO taxonomyGroupDTO)
         throws URISyntaxException {
@@ -132,6 +136,7 @@ public class TaxonomyGroupResource {
      * @param id the id of the taxonomyGroupDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/taxonomy-groups/{id}")
     public ResponseEntity<Void> deleteTaxonomyGroup(@PathVariable UUID id) {
         log.debug("REST request to delete TaxonomyGroup : {}", id);

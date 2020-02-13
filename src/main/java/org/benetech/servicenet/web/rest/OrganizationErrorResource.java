@@ -6,6 +6,7 @@ import org.benetech.servicenet.repository.OrganizationErrorRepository;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,6 +57,7 @@ public class OrganizationErrorResource {
      * or with status {@code 400 (Bad Request)} if the organizationError has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/organization-errors")
     public ResponseEntity<OrganizationError> createOrganizationError(@RequestBody OrganizationError organizationError)
         throws URISyntaxException {
@@ -78,6 +81,7 @@ public class OrganizationErrorResource {
      * or with status {@code 500 (Internal Server Error)} if the organizationError couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/organization-errors")
     public ResponseEntity<OrganizationError> updateOrganizationError(@RequestBody OrganizationError organizationError)
         throws URISyntaxException {
@@ -125,6 +129,7 @@ public class OrganizationErrorResource {
      * @param id the id of the organizationError to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/organization-errors/{id}")
     public ResponseEntity<Void> deleteOrganizationError(@PathVariable UUID id) {
         log.debug("REST request to delete OrganizationError : {}", id);

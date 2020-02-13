@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.ActivityRepository;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.ServiceService;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -93,6 +95,7 @@ public class ActivityResource {
         );
     }
 
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/activity-suggestions")
     @Timed
     public ResponseEntity<Suggestions> getSuggestions(@Valid @RequestBody ActivityFilterDTO activityFilterDTO,

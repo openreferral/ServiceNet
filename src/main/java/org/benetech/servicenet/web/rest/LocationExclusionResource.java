@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.LocationExclusionService;
 import org.benetech.servicenet.service.dto.LocationExclusionDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -8,6 +9,7 @@ import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +50,7 @@ public class LocationExclusionResource {
      * or with status {@code 400 (Bad Request)} if the locationExclusion has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/location-exclusions")
     public ResponseEntity<LocationExclusionDTO> createLocationExclusion(
         @RequestBody LocationExclusionDTO locationExclusionDTO) throws URISyntaxException {
@@ -70,6 +73,7 @@ public class LocationExclusionResource {
      * or with status {@code 500 (Internal Server Error)} if the locationExclusionDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/location-exclusions")
     public ResponseEntity<LocationExclusionDTO> updateLocationExclusion(
         @RequestBody LocationExclusionDTO locationExclusionDTO) throws URISyntaxException {
@@ -114,6 +118,7 @@ public class LocationExclusionResource {
      * @param id the id of the locationExclusionDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/location-exclusions/{id}")
     public ResponseEntity<Void> deleteLocationExclusion(@PathVariable UUID id) {
         log.debug("REST request to delete LocationExclusion : {}", id);

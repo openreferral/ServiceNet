@@ -7,9 +7,11 @@ import org.benetech.servicenet.service.dto.PhysicalAddressFieldsValueDTO;
 
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +54,7 @@ public class PhysicalAddressFieldsValueResource {
      * has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/physical-address-fields-values")
     public ResponseEntity<PhysicalAddressFieldsValueDTO> createPhysicalAddressFieldsValue(
         @Valid @RequestBody PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO
@@ -80,6 +83,7 @@ public class PhysicalAddressFieldsValueResource {
      * or with status {@code 500 (Internal Server Error)} if the physicalAddressFieldsValueDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/physical-address-fields-values")
     public ResponseEntity<PhysicalAddressFieldsValueDTO> updatePhysicalAddressFieldsValue(
         @Valid @RequestBody PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO
@@ -127,6 +131,7 @@ public class PhysicalAddressFieldsValueResource {
      * @param id the id of the physicalAddressFieldsValueDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/physical-address-fields-values/{id}")
     public ResponseEntity<Void> deletePhysicalAddressFieldsValue(@PathVariable UUID id) {
         log.debug("REST request to delete PhysicalAddressFieldsValue : {}", id);
