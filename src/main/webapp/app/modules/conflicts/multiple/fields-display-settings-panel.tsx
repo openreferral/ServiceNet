@@ -125,35 +125,76 @@ export class FieldsDisplaySettingsPanel extends React.Component<IFieldsDisplaySe
 
   handleLocationFieldsChange = locationFields => {
     const locationFieldsMapped = locationFields.map(l => l.label);
-    this.updateSelectedSettings({ ...this.state.selectedSetting, locationFields: locationFieldsMapped });
+    let { physicalAddressFields, postalAddressFields } = this.state.selectedSetting;
+    if (locationFieldsMapped.indexOf('PHYSICAL_ADDRESS') < 0) {
+      physicalAddressFields = [];
+    }
+    if (locationFieldsMapped.indexOf('POSTAL_ADDRESS') < 0) {
+      postalAddressFields = [];
+    }
+    this.updateSelectedSettings({
+      ...this.state.selectedSetting,
+      locationFields: locationFieldsMapped,
+      physicalAddressFields,
+      postalAddressFields
+    });
   };
 
   handlePhysicalAddressFieldsChange = physicalAddressFields => {
     const physicalAddressFieldsMapped = physicalAddressFields.map(l => l.label);
-    this.updateSelectedSettings({ ...this.state.selectedSetting, physicalAddressFields: physicalAddressFieldsMapped });
+    const { locationFields } = this.state.selectedSetting;
+    if (this.state.selectedSetting.locationFields.indexOf('PHYSICAL_ADDRESS') < 0 && physicalAddressFieldsMapped.length > 0) {
+      locationFields.push('PHYSICAL_ADDRESS');
+    }
+    this.updateSelectedSettings({ ...this.state.selectedSetting, physicalAddressFields: physicalAddressFieldsMapped, locationFields });
   };
 
   handlePostalAddressFieldsChange = postalAddressFields => {
     const postalAddressFieldsMapped = postalAddressFields.map(l => l.label);
-    this.updateSelectedSettings({ ...this.state.selectedSetting, postalAddressFields: postalAddressFieldsMapped });
+    const { locationFields } = this.state.selectedSetting;
+    if (this.state.selectedSetting.locationFields.indexOf('POSTAL_ADDRESS') < 0 && postalAddressFields.length > 0) {
+      locationFields.push('POSTAL_ADDRESS');
+    }
+    this.updateSelectedSettings({ ...this.state.selectedSetting, postalAddressFields: postalAddressFieldsMapped, locationFields });
   };
 
   handleServiceFieldsChange = serviceFields => {
     const serviceFieldsMapped = serviceFields.map(l => l.label);
-    this.updateSelectedSettings({ ...this.state.selectedSetting, serviceFields: serviceFieldsMapped });
+    let { serviceTaxonomiesDetailsFields, contactDetailsFields } = this.state.selectedSetting;
+    if (serviceFieldsMapped.indexOf('TAXONOMIES') < 0) {
+      serviceTaxonomiesDetailsFields = [];
+    }
+    if (serviceFieldsMapped.indexOf('CONTACTS') < 0) {
+      contactDetailsFields = [];
+    }
+    this.updateSelectedSettings({
+      ...this.state.selectedSetting,
+      serviceFields: serviceFieldsMapped,
+      serviceTaxonomiesDetailsFields,
+      contactDetailsFields
+    });
   };
 
   handleServiceTaxonomiesDetailsFieldsChange = serviceTaxonomiesDetailsFields => {
     const serviceTaxonomiesDetailsFieldsMapped = serviceTaxonomiesDetailsFields.map(l => l.label);
+    const { serviceFields } = this.state.selectedSetting;
+    if (this.state.selectedSetting.serviceFields.indexOf('TAXONOMIES') < 0 && serviceTaxonomiesDetailsFieldsMapped.length > 0) {
+      serviceFields.push('TAXONOMIES');
+    }
     this.updateSelectedSettings({
       ...this.state.selectedSetting,
-      serviceTaxonomiesDetailsFields: serviceTaxonomiesDetailsFieldsMapped
+      serviceTaxonomiesDetailsFields: serviceTaxonomiesDetailsFieldsMapped,
+      serviceFields
     });
   };
 
   handleContactDetailsFieldsChange = contactDetailsFields => {
     const contactDetailsFieldsMapped = contactDetailsFields.map(l => l.label);
-    this.updateSelectedSettings({ ...this.state.selectedSetting, contactDetailsFields: contactDetailsFieldsMapped });
+    const { serviceFields } = this.state.selectedSetting;
+    if (this.state.selectedSetting.serviceFields.indexOf('CONTACTS') < 0 && contactDetailsFieldsMapped.length > 0) {
+      serviceFields.push('CONTACTS');
+    }
+    this.updateSelectedSettings({ ...this.state.selectedSetting, contactDetailsFields: contactDetailsFieldsMapped, serviceFields });
   };
 
   render() {
