@@ -512,12 +512,12 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
                         <div className="form-check form-check-inline">
                           <input
                             type="checkbox"
-                            id="onlyShowMatchingCheckbox"
+                            id="onlyHighlyMatchedCheckbox"
                             className="form-check-input"
                             onChange={this.handleOnlyHighlyMatchedChange}
                             checked={this.props.showOnlyHighlyMatched}
                           />
-                          <label className="form-check-label" htmlFor="onlyShowMatchingCheckbox">
+                          <label className="form-check-label" htmlFor="onlyHighlyMatchedCheckbox">
                             <Translate contentKey="serviceNetApp.activity.home.filter.onlyShowHighlyMatched" />
                           </label>
                         </div>
