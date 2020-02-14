@@ -19,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
 public class JobsResource {
 
     @Autowired
@@ -26,14 +27,12 @@ public class JobsResource {
 
     @GetMapping("/jobs")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public List<JobDTO> getAllJobs() throws SchedulerException {
         return schedulerService.getAllJobsDetails();
     }
 
     @PostMapping("/jobs")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity triggerJob(@Valid @RequestBody JobDTO jobDTO) throws SchedulerException {
         try {
             schedulerService.triggerJob(jobDTO.getName());
@@ -45,7 +44,6 @@ public class JobsResource {
 
     @PostMapping("/jobs/pause")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity pauseJob(@Valid @RequestBody JobDTO jobDTO) throws SchedulerException {
         try {
             schedulerService.pauseJob(jobDTO.getName());

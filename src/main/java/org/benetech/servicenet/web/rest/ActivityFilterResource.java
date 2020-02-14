@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -97,6 +99,7 @@ public class ActivityFilterResource {
      * or with status {@code 400 (Bad Request)} if the activityFilter has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/activity-filters")
     public ResponseEntity<ActivityFilterDTO> createActivityFilter(@RequestBody ActivityFilterDTO activityFilterDTO)
         throws URISyntaxException {
@@ -119,6 +122,7 @@ public class ActivityFilterResource {
      * or with status {@code 400 (Bad Request)} if the activityFilterDTO is not valid,
      * or with status {@code 500 (Internal Server Error)} if the activityFilterDTO couldn't be updated.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/activity-filters")
     public ResponseEntity<ActivityFilterDTO> updateActivityFilter(@RequestBody ActivityFilterDTO activityFilterDTO) {
         log.debug("REST request to update ActivityFilter : {}", activityFilterDTO);
@@ -168,8 +172,13 @@ public class ActivityFilterResource {
     @DeleteMapping("/activity-filters/{id}")
     public ResponseEntity<Void> deleteActivityFilter(@PathVariable UUID id) {
         log.debug("REST request to delete ActivityFilter : {}", id);
-        activityFilterService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+        if (activityFilterService.getAllForCurrentUser().stream().anyMatch(filter -> filter.getId().equals(id))) {
+            activityFilterService.delete(id);
+            return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(
+                ENTITY_NAME, id.toString())).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     /**

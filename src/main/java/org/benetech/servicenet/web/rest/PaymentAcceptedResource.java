@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.PaymentAcceptedService;
 import org.benetech.servicenet.service.dto.PaymentAcceptedDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -9,6 +10,7 @@ import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +49,7 @@ public class PaymentAcceptedResource {
      * or with status 400 (Bad Request) if the paymentAccepted has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/payment-accepteds")
     @Timed
     public ResponseEntity<PaymentAcceptedDTO> createPaymentAccepted(
@@ -70,6 +73,7 @@ public class PaymentAcceptedResource {
      * or with status 500 (Internal Server Error) if the paymentAcceptedDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/payment-accepteds")
     @Timed
     public ResponseEntity<PaymentAcceptedDTO> updatePaymentAccepted(
@@ -116,6 +120,7 @@ public class PaymentAcceptedResource {
      * @param id the id of the paymentAcceptedDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/payment-accepteds/{id}")
     @Timed
     public ResponseEntity<Void> deletePaymentAccepted(@PathVariable UUID id) {

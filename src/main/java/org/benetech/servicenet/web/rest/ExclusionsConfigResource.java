@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -9,6 +10,7 @@ import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +52,7 @@ public class ExclusionsConfigResource {
      * or with status {@code 400 (Bad Request)} if the exclusionsConfig has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/exclusions-configs")
     @Timed
     public ResponseEntity<ExclusionsConfigDTO> createExclusionsConfig(
@@ -73,6 +76,7 @@ public class ExclusionsConfigResource {
      * or with status {@code 500 (Internal Server Error)} if the exclusionsConfigDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/exclusions-configs")
     @Timed
     public ResponseEntity<ExclusionsConfigDTO> updateExclusionsConfig(
@@ -120,6 +124,7 @@ public class ExclusionsConfigResource {
      * @param id the id of the exclusionsConfigDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/exclusions-configs/{id}")
     @Timed
     public ResponseEntity<Void> deleteExclusionsConfig(@PathVariable UUID id) {

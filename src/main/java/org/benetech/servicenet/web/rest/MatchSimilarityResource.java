@@ -7,6 +7,7 @@ import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +57,7 @@ public class MatchSimilarityResource {
      * or with status {@code 400 (Bad Request)} if the matchSimilarity has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/match-similarities")
     public ResponseEntity<MatchSimilarityDTO> createMatchSimilarity(@RequestBody MatchSimilarityDTO matchSimilarityDTO)
         throws URISyntaxException {
@@ -77,6 +80,7 @@ public class MatchSimilarityResource {
      * or with status {@code 500 (Internal Server Error)} if the matchSimilarityDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/match-similarities")
     public ResponseEntity<MatchSimilarityDTO> updateMatchSimilarity(@RequestBody MatchSimilarityDTO matchSimilarityDTO)
         throws URISyntaxException {
@@ -123,6 +127,7 @@ public class MatchSimilarityResource {
      * @param id the id of the matchSimilarityDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/match-similarities/{id}")
     public ResponseEntity<Void> deleteMatchSimilarity(@PathVariable UUID id) {
         log.debug("REST request to delete MatchSimilarity : {}", id);

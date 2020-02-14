@@ -2,10 +2,10 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.UserRepository;
-import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.MailService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
@@ -95,9 +95,9 @@ public class UserResource {
      * @throws URISyntaxException       if the Location URI syntax is incorrect
      * @throws BadRequestAlertException 400 (Bad Request) if the login or email is already in use
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/users")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
         log.debug("REST request to save User : {}", userDTO);
 
@@ -125,9 +125,9 @@ public class UserResource {
      * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already in use
      * @throws LoginAlreadyUsedException 400 (Bad Request) if the login is already in use
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/users")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
         log.debug("REST request to update User : {}", userDTO);
         Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
@@ -163,7 +163,6 @@ public class UserResource {
      */
     @GetMapping("/users/authorities")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public List<String> getAuthorities() {
         return userService.getAuthorities();
     }
@@ -190,9 +189,9 @@ public class UserResource {
      * @param login the login of the user to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @Timed
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);

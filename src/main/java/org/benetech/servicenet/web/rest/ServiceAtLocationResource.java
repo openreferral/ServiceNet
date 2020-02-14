@@ -2,6 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +55,7 @@ public class ServiceAtLocationResource {
      * or with status 400 (Bad Request) if the serviceAtLocation has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/service-at-locations")
     @Timed
     public ResponseEntity<ServiceAtLocationDTO> createServiceAtLocation(
@@ -76,6 +79,7 @@ public class ServiceAtLocationResource {
      * or with status 500 (Internal Server Error) if the serviceAtLocationDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/service-at-locations")
     @Timed
     public ResponseEntity<ServiceAtLocationDTO> updateServiceAtLocation(
@@ -127,6 +131,7 @@ public class ServiceAtLocationResource {
      * @param id the id of the serviceAtLocationDTO to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @DeleteMapping("/service-at-locations/{id}")
     @Timed
     public ResponseEntity<Void> deleteServiceAtLocation(@PathVariable UUID id) {
