@@ -5,7 +5,7 @@ import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.domain.Option;
 import org.benetech.servicenet.repository.OptionRepository;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;

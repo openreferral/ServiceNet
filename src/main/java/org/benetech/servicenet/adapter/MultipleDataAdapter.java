@@ -1,7 +1,7 @@
 package org.benetech.servicenet.adapter;
 
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
-import org.benetech.servicenet.web.rest.errors.IncorrectFilesNumberEException;
+import org.benetech.servicenet.errors.IncorrectFilesNumberEException;
 
 public abstract class MultipleDataAdapter extends AbstractDataAdapter<MultipleImportData> {
 

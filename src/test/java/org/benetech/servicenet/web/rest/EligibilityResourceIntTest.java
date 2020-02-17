@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.EligibilityRepository;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.benetech.servicenet.service.mapper.EligibilityMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ContactRepository;
 import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.mapper.ContactMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

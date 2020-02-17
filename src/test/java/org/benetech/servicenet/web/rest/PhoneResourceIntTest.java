@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.mapper.PhoneMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

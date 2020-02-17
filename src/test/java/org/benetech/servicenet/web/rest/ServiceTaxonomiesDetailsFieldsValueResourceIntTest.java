@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.ServiceTaxonomiesDetailsFieldsValueRep
 import org.benetech.servicenet.service.ServiceTaxonomiesDetailsFieldsValueService;
 import org.benetech.servicenet.service.dto.ServiceTaxonomiesDetailsFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.ServiceTaxonomiesDetailsFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -164,7 +164,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(serviceTaxonomiesDetailsFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].serviceTaxonomiesDetailsField").value(hasItem(DEFAULT_SERVICE_TAXONOMIES_DETAILS_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getServiceTaxonomiesDetailsFieldsValue() throws Exception {

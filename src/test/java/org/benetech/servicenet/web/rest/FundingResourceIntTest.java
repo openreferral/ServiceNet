@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.service.FundingService;
 import org.benetech.servicenet.service.dto.FundingDTO;
 import org.benetech.servicenet.service.mapper.FundingMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

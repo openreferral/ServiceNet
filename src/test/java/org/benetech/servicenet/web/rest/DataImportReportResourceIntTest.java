@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.DataImportReportRepository;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.dto.DataImportReportDTO;
 import org.benetech.servicenet.service.mapper.DataImportReportMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -308,7 +308,7 @@ public class DataImportReportResourceIntTest {
             .andExpect(jsonPath("$.[*].endDate").value(hasItem(sameInstant(DEFAULT_END_DATE))))
             .andExpect(jsonPath("$.[*].jobName").value(hasItem(DEFAULT_JOB_NAME.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getDataImportReport() throws Exception {

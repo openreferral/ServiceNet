@@ -4,7 +4,7 @@ import java.util.UUID;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.service.FieldsDisplaySettingsService;
 import org.benetech.servicenet.service.UserService;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.dto.FieldsDisplaySettingsDTO;
 
 import io.github.jhipster.web.util.ResponseUtil;

@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.PostalAddressFieldsValueRepository;
 import org.benetech.servicenet.service.PostalAddressFieldsValueService;
 import org.benetech.servicenet.service.dto.PostalAddressFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.PostalAddressFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -164,7 +164,7 @@ public class PostalAddressFieldsValueResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(postalAddressFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].postalAddressField").value(hasItem(DEFAULT_POSTAL_ADDRESS_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getPostalAddressFieldsValue() throws Exception {

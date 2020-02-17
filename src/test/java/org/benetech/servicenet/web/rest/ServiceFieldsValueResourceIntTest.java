@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.ServiceFieldsValueRepository;
 import org.benetech.servicenet.service.ServiceFieldsValueService;
 import org.benetech.servicenet.service.dto.ServiceFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.ServiceFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -164,7 +164,7 @@ public class ServiceFieldsValueResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(serviceFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].serviceField").value(hasItem(DEFAULT_SERVICE_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getServiceFieldsValue() throws Exception {

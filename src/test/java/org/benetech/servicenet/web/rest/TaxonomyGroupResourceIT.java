@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.TaxonomyGroupRepository;
 import org.benetech.servicenet.service.TaxonomyGroupService;
 import org.benetech.servicenet.service.dto.TaxonomyGroupDTO;
 import org.benetech.servicenet.service.mapper.TaxonomyGroupMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;

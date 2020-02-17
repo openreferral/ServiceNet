@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,15 +24,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
-import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

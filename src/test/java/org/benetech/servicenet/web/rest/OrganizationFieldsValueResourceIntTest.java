@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.OrganizationFieldsValueRepository;
 import org.benetech.servicenet.service.OrganizationFieldsValueService;
 import org.benetech.servicenet.service.dto.OrganizationFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.OrganizationFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -164,7 +164,7 @@ public class OrganizationFieldsValueResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(organizationFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].organizationField").value(hasItem(DEFAULT_ORGANIZATION_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getOrganizationFieldsValue() throws Exception {

@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ServiceAtLocationRepository;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
 import org.benetech.servicenet.service.mapper.ServiceAtLocationMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

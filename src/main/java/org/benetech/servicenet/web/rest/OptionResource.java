@@ -4,7 +4,7 @@ import java.util.UUID;
 import org.benetech.servicenet.domain.Option;
 import org.benetech.servicenet.domain.enumeration.OptionType;
 import org.benetech.servicenet.repository.OptionRepository;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;

@@ -1,92 +1,92 @@
 package org.benetech.servicenet.config;
 
+import org.benetech.servicenet.security.*;
+
 import io.github.jhipster.config.JHipsterProperties;
-import io.github.jhipster.security.AjaxAuthenticationFailureHandler;
-import io.github.jhipster.security.AjaxAuthenticationSuccessHandler;
-import io.github.jhipster.security.AjaxLogoutSuccessHandler;
-import org.benetech.servicenet.security.AuthoritiesConstants;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.benetech.servicenet.security.oauth2.AudienceValidator;
+import org.benetech.servicenet.security.SecurityUtils;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import java.util.*;
+import org.benetech.servicenet.security.oauth2.JwtAuthorityExtractor;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
-import javax.annotation.PostConstruct;
-
-@Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Import(SecurityProblemSupport.class)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
-    private final UserDetailsService userDetailsService;
+    @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
+    private String issuerUri;
 
     private final JHipsterProperties jHipsterProperties;
-
-    private final RememberMeServices rememberMeServices;
-
-    private final CorsFilter corsFilter;
-
     private final SecurityProblemSupport problemSupport;
 
-    public SecurityConfiguration(AuthenticationManagerBuilder authenticationManagerBuilder,
-        UserDetailsService userDetailsService, JHipsterProperties jHipsterProperties,
-        RememberMeServices rememberMeServices, CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.userDetailsService = userDetailsService;
-        this.jHipsterProperties = jHipsterProperties;
-        this.rememberMeServices = rememberMeServices;
-        this.corsFilter = corsFilter;
+    public SecurityConfiguration(JHipsterProperties jHipsterProperties, SecurityProblemSupport problemSupport) {
         this.problemSupport = problemSupport;
-    }
-
-    @PostConstruct
-    public void init() {
-        try {
-            authenticationManagerBuilder
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
-        } catch (Exception e) {
-            throw new BeanInitializationException("Security configuration failed", e);
-        }
+        this.jHipsterProperties = jHipsterProperties;
     }
 
     @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public void configure(HttpSecurity http) throws Exception {
+        // @formatter:off
+        http
+            .csrf()
+            .disable()
+            .exceptionHandling()
+            .authenticationEntryPoint(problemSupport)
+            .accessDeniedHandler(problemSupport)
+            .and()
+            .headers()
+            .contentSecurityPolicy("default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:")
+            .and()
+            .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+            .and()
+            .featurePolicy("geolocation 'none'; midi 'none'; sync-xhr 'none'; microphone 'none'; camera 'none'; magnetometer 'none'; gyroscope 'none'; speaker 'none'; fullscreen 'self'; payment 'none'")
+            .and()
+            .frameOptions()
+            .deny()
+            .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authorizeRequests()
+            .antMatchers("/api/auth-info").permitAll()
+            .antMatchers("/api/**").authenticated()
+            .antMatchers("/management/health").permitAll()
+            .antMatchers("/management/info").permitAll()
+            .antMatchers("/management/prometheus").permitAll()
+            .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
+            .and()
+            .oauth2ResourceServer()
+            .jwt()
+            .jwtAuthenticationConverter(grantedAuthoritiesExtractor())
+            .and()
+            .and()
+            .oauth2Client();
+        // @formatter:on
     }
 
-    @Bean
-    public AjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandler() {
-        return new AjaxAuthenticationSuccessHandler();
-    }
-
-    @Bean
-    public AjaxAuthenticationFailureHandler ajaxAuthenticationFailureHandler() {
-        return new AjaxAuthenticationFailureHandler();
-    }
-
-    @Bean
-    public AjaxLogoutSuccessHandler ajaxLogoutSuccessHandler() {
-        return new AjaxLogoutSuccessHandler();
+    Converter<Jwt, AbstractAuthenticationToken> grantedAuthoritiesExtractor() {
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new JwtAuthorityExtractor());
+        return jwtAuthenticationConverter;
     }
 
     @Bean
@@ -94,61 +94,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
-            .antMatchers(HttpMethod.OPTIONS, "/**")
-            .antMatchers("/app/**/*.{js,html}")
-            .antMatchers("/i18n/**")
-            .antMatchers("/content/**")
-            .antMatchers("/h2-console/**")
-            .antMatchers("/swagger-ui/index.html")
-            .antMatchers("/test/**");
-    }
+    @Bean
+    JwtDecoder jwtDecoder() {
+        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuerUri);
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http
-            .csrf()
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .and()
-            .addFilterBefore(corsFilter, CsrfFilter.class)
-            .exceptionHandling()
-            .authenticationEntryPoint(problemSupport)
-            .accessDeniedHandler(problemSupport)
-            .and()
-            .rememberMe()
-            .rememberMeServices(rememberMeServices)
-            .rememberMeParameter("remember-me")
-            .key(jHipsterProperties.getSecurity().getRememberMe().getKey())
-            .and()
-            .formLogin()
-            .loginProcessingUrl("/api/authentication")
-            .successHandler(ajaxAuthenticationSuccessHandler())
-            .failureHandler(ajaxAuthenticationFailureHandler())
-            .usernameParameter("j_username")
-            .passwordParameter("j_password")
-            .permitAll()
-            .and()
-            .logout()
-            .logoutUrl("/api/logout")
-            .logoutSuccessHandler(ajaxLogoutSuccessHandler())
-            .permitAll()
-            .and()
-            .headers()
-            .frameOptions()
-            .disable()
-            .and()
-            .authorizeRequests()
-            .antMatchers("/api/register").permitAll()
-            .antMatchers("/api/activate").permitAll()
-            .antMatchers("/api/authenticate").permitAll()
-            .antMatchers("/api/account/reset-password/init").permitAll()
-            .antMatchers("/api/account/reset-password/finish").permitAll()
-            .antMatchers("/api/**").authenticated()
-            .antMatchers("/management/health").permitAll()
-            .antMatchers("/management/info").permitAll()
-            .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
+        OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(jHipsterProperties.getSecurity().getOauth2().getAudience());
+        OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
+        OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
 
+        jwtDecoder.setJwtValidator(withAudience);
+
+        return jwtDecoder;
     }
 }

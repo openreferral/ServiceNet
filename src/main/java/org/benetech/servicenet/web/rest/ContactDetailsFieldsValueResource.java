@@ -2,7 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
 import org.benetech.servicenet.service.ContactDetailsFieldsValueService;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.dto.ContactDetailsFieldsValueDTO;
 
 import io.github.jhipster.web.util.ResponseUtil;

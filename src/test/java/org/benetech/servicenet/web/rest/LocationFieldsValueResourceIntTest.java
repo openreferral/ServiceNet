@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.LocationFieldsValueRepository;
 import org.benetech.servicenet.service.LocationFieldsValueService;
 import org.benetech.servicenet.service.dto.LocationFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.LocationFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -164,7 +164,7 @@ public class LocationFieldsValueResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(locationFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].locationField").value(hasItem(DEFAULT_LOCATION_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getLocationFieldsValue() throws Exception {

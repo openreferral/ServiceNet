@@ -5,7 +5,7 @@ import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.domain.Beds;
 import org.benetech.servicenet.repository.BedsRepository;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -159,7 +159,7 @@ public class BedsResourceIntTest {
             .andExpect(jsonPath("$.[*].availableBeds").value(hasItem(DEFAULT_AVAILABLE_BEDS)))
             .andExpect(jsonPath("$.[*].waitlist").value(hasItem(DEFAULT_WAITLIST)));
     }
-    
+
     @Test
     @Transactional
     public void getBeds() throws Exception {

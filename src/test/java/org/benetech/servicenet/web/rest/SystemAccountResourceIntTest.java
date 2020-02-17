@@ -9,7 +9,7 @@ import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.dto.SystemAccountDTO;
 import org.benetech.servicenet.service.mapper.SystemAccountMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

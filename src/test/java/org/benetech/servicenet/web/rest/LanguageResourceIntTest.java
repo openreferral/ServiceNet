@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.LanguageRepository;
 import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.mapper.LanguageMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

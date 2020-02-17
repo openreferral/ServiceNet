@@ -11,7 +11,7 @@ import org.benetech.servicenet.service.MailService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.mapper.UserMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.web.rest.vm.ManagedUserVM;
 import org.junit.Before;
 import org.junit.Test;

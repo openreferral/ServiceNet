@@ -8,7 +8,7 @@ import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.adapter.shared.model.FileInfo;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
