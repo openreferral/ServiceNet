@@ -9,7 +9,7 @@ import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 import org.benetech.servicenet.service.mapper.GeocodingResultMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -218,7 +218,7 @@ public class GeocodingResultResourceIntTest {
             .andExpect(jsonPath("$.[*].latitude").value(hasItem(DEFAULT_LATITUDE.doubleValue())))
             .andExpect(jsonPath("$.[*].longitude").value(hasItem(DEFAULT_LONGITUDE.doubleValue())));
     }
-    
+
     @Test
     @Transactional
     public void getGeocodingResult() throws Exception {

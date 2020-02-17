@@ -8,7 +8,7 @@ import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
 import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.security.AuthoritiesConstants;

@@ -5,7 +5,7 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;

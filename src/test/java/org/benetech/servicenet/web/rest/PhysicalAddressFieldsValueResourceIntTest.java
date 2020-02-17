@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.PhysicalAddressFieldsValueRepository;
 import org.benetech.servicenet.service.PhysicalAddressFieldsValueService;
 import org.benetech.servicenet.service.dto.PhysicalAddressFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.PhysicalAddressFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -164,7 +164,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(physicalAddressFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].physicalAddressField").value(hasItem(DEFAULT_PHYSICAL_ADDRESS_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getPhysicalAddressFieldsValue() throws Exception {

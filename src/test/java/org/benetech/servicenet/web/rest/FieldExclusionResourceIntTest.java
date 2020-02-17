@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.FieldExclusionRepository;
 import org.benetech.servicenet.service.FieldExclusionService;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.mapper.FieldExclusionMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -157,7 +157,7 @@ public class FieldExclusionResourceIntTest {
             .andExpect(jsonPath("$.[*].fields").value(hasItem(DEFAULT_FIELDS.toString())))
             .andExpect(jsonPath("$.[*].entity").value(hasItem(DEFAULT_ENTITY.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getFieldExclusion() throws Exception {

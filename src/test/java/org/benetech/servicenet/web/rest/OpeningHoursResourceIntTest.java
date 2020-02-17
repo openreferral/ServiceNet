@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.OpeningHoursRepository;
 import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.mapper.OpeningHoursMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -182,7 +182,7 @@ public class OpeningHoursResourceIntTest {
             .andExpect(jsonPath("$.[*].opensAt").value(hasItem(DEFAULT_OPENS_AT)))
             .andExpect(jsonPath("$.[*].closesAt").value(hasItem(DEFAULT_CLOSES_AT)));
     }
-    
+
     @Test
     @Transactional
     public void getOpeningHours() throws Exception {

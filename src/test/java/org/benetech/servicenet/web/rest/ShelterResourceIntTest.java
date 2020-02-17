@@ -9,7 +9,7 @@ import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.UserService;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -287,7 +287,7 @@ public class ShelterResourceIntTest {
             .andExpect(jsonPath("$.[*].transportation").value(hasItem(DEFAULT_TRANSPORTATION.toString())))
             .andExpect(jsonPath("$.[*].disabilityAccess").value(hasItem(DEFAULT_DISABILITY_ACCESS.toString())));
     }
-    
+
     @SuppressWarnings({"unchecked"})
     public void getAllSheltersWithEagerRelationshipsIsEnabled() throws Exception {
         ShelterResource shelterResource = new ShelterResource(shelterServiceMock, userServiceMock);

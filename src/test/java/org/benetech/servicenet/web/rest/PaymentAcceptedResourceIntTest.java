@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.PaymentAcceptedRepository;
 import org.benetech.servicenet.service.PaymentAcceptedService;
 import org.benetech.servicenet.service.dto.PaymentAcceptedDTO;
 import org.benetech.servicenet.service.mapper.PaymentAcceptedMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

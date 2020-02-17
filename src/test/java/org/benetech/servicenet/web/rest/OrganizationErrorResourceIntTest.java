@@ -5,7 +5,7 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.repository.OrganizationErrorRepository;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -184,7 +184,7 @@ public class OrganizationErrorResourceIntTest {
             .andExpect(jsonPath("$.[*].invalidValue").value(hasItem(DEFAULT_INVALID_VALUE.toString())))
             .andExpect(jsonPath("$.[*].cause").value(hasItem(DEFAULT_CAUSE.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getOrganizationError() throws Exception {

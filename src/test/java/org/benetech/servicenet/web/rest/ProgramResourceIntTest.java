@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ProgramRepository;
 import org.benetech.servicenet.service.ProgramService;
 import org.benetech.servicenet.service.dto.ProgramDTO;
 import org.benetech.servicenet.service.mapper.ProgramMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

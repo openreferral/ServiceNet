@@ -29,7 +29,7 @@ import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.web.rest.ActivityResource;
-import org.benetech.servicenet.web.rest.errors.InternalServerErrorException;
+import org.benetech.servicenet.errors.InternalServerErrorException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

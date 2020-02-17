@@ -10,7 +10,7 @@ import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.dto.MetadataDTO;
 import org.benetech.servicenet.service.mapper.MetadataMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -297,7 +297,7 @@ public class MetadataResourceIntTest {
             .andExpect(jsonPath("$.[*].replacementValue").value(hasItem(DEFAULT_REPLACEMENT_VALUE)))
             .andExpect(jsonPath("$.[*].resourceClass").value(hasItem(DEFAULT_RESOURCE_CLASS)));
     }
-    
+
     @Test
     @Transactional
     public void getMetadata() throws Exception {

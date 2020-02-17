@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ExclusionsConfigRepository;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
 import org.benetech.servicenet.service.mapper.ExclusionsConfigMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -152,7 +152,7 @@ public class ExclusionsConfigResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(exclusionsConfig.getId().toString()));
     }
-    
+
     @Test
     @Transactional
     public void getExclusionsConfig() throws Exception {

@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.mapper;
 
 import java.util.Collections;
+import java.util.HashSet;
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.User;
@@ -23,11 +24,14 @@ import java.util.stream.Collectors;
 @Service
 public class UserMapper {
 
-    @Autowired
     private SystemAccountMapper systemAccountMapper;
 
-    @Autowired
     private ShelterRepository shelterRepository;
+
+    public UserMapper(SystemAccountMapper systemAccountMapper, ShelterRepository shelterRepository) {
+        this.systemAccountMapper = systemAccountMapper;
+        this.shelterRepository = shelterRepository;
+    }
 
     public UserDTO userToUserDTO(User user) {
         return new UserDTO(user);
@@ -80,11 +84,11 @@ public class UserMapper {
     }
 
     private Set<Authority> authoritiesFromStrings(Set<String> strings) {
-        return strings.stream().map(string -> {
+        return (strings != null) ?strings.stream().map(string -> {
             Authority auth = new Authority();
             auth.setName(string);
             return auth;
-        }).collect(Collectors.toSet());
+        }).collect(Collectors.toSet()) : new HashSet<>();
     }
 
     private Set<Shelter> sheltersFromUUIDs(List<UUID> uuids) {

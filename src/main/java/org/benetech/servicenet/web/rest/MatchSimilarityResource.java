@@ -1,7 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.service.MatchSimilarityService;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;

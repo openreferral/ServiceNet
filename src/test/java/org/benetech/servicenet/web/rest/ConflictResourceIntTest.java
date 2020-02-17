@@ -9,7 +9,7 @@ import org.benetech.servicenet.repository.ConflictRepository;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.mapper.ConflictMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.service.RegularScheduleService;
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.mapper.RegularScheduleMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -148,7 +148,7 @@ public class RegularScheduleResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(regularSchedule.getId().toString())));
     }
-    
+
     @Test
     @Transactional
     public void getRegularSchedule() throws Exception {

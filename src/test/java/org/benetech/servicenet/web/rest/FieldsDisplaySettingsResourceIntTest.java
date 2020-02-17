@@ -10,7 +10,7 @@ import org.benetech.servicenet.service.FieldsDisplaySettingsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.FieldsDisplaySettingsDTO;
 import org.benetech.servicenet.service.mapper.FieldsDisplaySettingsMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -214,7 +214,7 @@ public class FieldsDisplaySettingsResourceIntTest {
             .andExpect(jsonPath("$.[*].serviceTaxonomiesDetailsFields").value(hasItem(DEFAULT_SERVICE_TAXONOMIES_DETAILS_FIELDS)))
             .andExpect(jsonPath("$.[*].contactDetailsFields").value(hasItem(DEFAULT_CONTACT_DETAILS_FIELDS)));
     }
-    
+
     @Test
     @Transactional
     public void getFieldsDisplaySettings() throws Exception {

@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.web.rest.Suggestions;
+import org.benetech.servicenet.service.dto.Suggestions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

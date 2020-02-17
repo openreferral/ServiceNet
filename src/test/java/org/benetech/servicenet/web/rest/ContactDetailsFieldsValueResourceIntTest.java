@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.ContactDetailsFieldsValueRepository;
 import org.benetech.servicenet.service.ContactDetailsFieldsValueService;
 import org.benetech.servicenet.service.dto.ContactDetailsFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.ContactDetailsFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -164,7 +164,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(contactDetailsFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].contactDetailsField").value(hasItem(DEFAULT_CONTACT_DETAILS_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getContactDetailsFieldsValue() throws Exception {

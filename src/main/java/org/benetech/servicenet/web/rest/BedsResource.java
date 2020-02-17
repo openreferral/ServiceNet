@@ -3,7 +3,7 @@ package org.benetech.servicenet.web.rest;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beds;
 import org.benetech.servicenet.repository.BedsRepository;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
