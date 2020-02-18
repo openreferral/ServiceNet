@@ -80,7 +80,9 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
   }
 
   componentDidMount() {
-    this.fetchUserFilterAndSearch();
+    if (!this.props.loggingOut) {
+      this.searchEntities(this.props.activityFilter);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -90,8 +92,12 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
       this.getSuggestions(searchPhrase);
     }
 
-    if (this.props.updateSuccess || (this.props.loginSuccess === true && prevProps.loginSuccess === false)) {
-      this.fetchUserFilterAndSearch();
+    const { loggingOut, updateSuccess, loginSuccess, isAuthenticated } = this.props;
+    const shouldSearchEntities =
+      updateSuccess || (loginSuccess && !prevProps.loginSuccess) || (isAuthenticated && !prevProps.isAuthenticated);
+
+    if (!loggingOut && shouldSearchEntities) {
+      this.searchEntities(this.props.activityFilter);
     }
   }
 
@@ -133,22 +139,6 @@ export class Home extends React.Component<IHomeProp, IHomeState> {
     } else {
       this.setState({ activePage: 1, loggingOut: false });
     }
-  };
-
-  fetchUserFilterAndSearch = () => {
-    axios
-      .get('/api/activity-filter/current-user-filter')
-      .then(response => {
-        if (response && response.data) {
-          this.props.updateActivityFilter(response.data);
-          this.searchEntities(response.data);
-        } else {
-          this.reset();
-        }
-      })
-      .catch(() => {
-        this.reset();
-      });
   };
 
   handleLoadMore = () => {
@@ -416,6 +406,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   account: storeState.authentication.account,
   isAuthenticated: storeState.authentication.isAuthenticated,
   loginSuccess: storeState.authentication.loginSuccess,
+  loggingOut: storeState.authentication.loggingOut,
   activityList: storeState.activity.entities,
   autosuggestOptions: Home.getAutosuggestOptions(storeState.activity.suggestions),
   totalItems: storeState.activity.totalItems,
