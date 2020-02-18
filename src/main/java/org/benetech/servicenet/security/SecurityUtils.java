@@ -2,15 +2,11 @@ package org.benetech.servicenet.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -37,13 +33,6 @@ public final class SecurityUtils {
         } else if (authentication.getPrincipal() instanceof UserDetails) {
             UserDetails springSecurityUser = (UserDetails) authentication.getPrincipal();
             return springSecurityUser.getUsername();
-        } else if (authentication instanceof JwtAuthenticationToken) {
-            return (String) ((JwtAuthenticationToken)authentication).getToken().getClaims().get("preferred_username");
-        } else if (authentication.getPrincipal() instanceof DefaultOidcUser) {
-            Map<String, Object> attributes = ((DefaultOidcUser) authentication.getPrincipal()).getAttributes();
-            if (attributes.containsKey("preferred_username")) {
-                return (String) attributes.get("preferred_username");
-            }
         } else if (authentication.getPrincipal() instanceof String) {
             return (String) authentication.getPrincipal();
         }
@@ -77,27 +66,8 @@ public final class SecurityUtils {
     }
 
     private static Stream<String> getAuthorities(Authentication authentication) {
-        Collection<? extends GrantedAuthority> authorities = authentication instanceof JwtAuthenticationToken ?
-            extractAuthorityFromClaims(((JwtAuthenticationToken) authentication).getToken().getClaims())
-            : authentication.getAuthorities();
-        return authorities.stream()
+        return authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority);
     }
 
-    public static List<GrantedAuthority> extractAuthorityFromClaims(Map<String, Object> claims) {
-        return mapRolesToGrantedAuthorities(getRolesFromClaims(claims));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Collection<String> getRolesFromClaims(Map<String, Object> claims) {
-        return (Collection<String>) claims.getOrDefault("groups",
-            claims.getOrDefault("roles", new ArrayList<>()));
-    }
-
-    private static List<GrantedAuthority> mapRolesToGrantedAuthorities(Collection<String> roles) {
-        return roles.stream()
-            .filter(role -> role.startsWith("ROLE_"))
-            .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
-    }
 }

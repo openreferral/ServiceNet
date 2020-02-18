@@ -2,7 +2,6 @@ package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
-import org.benetech.servicenet.config.TestSecurityConfiguration;
 import org.benetech.servicenet.config.audit.AuditEventConverter;
 import org.benetech.servicenet.domain.PersistentAuditEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,7 @@ import static org.benetech.servicenet.repository.CustomAuditEventRepository.EVEN
 /**
  * Integration tests for {@link CustomAuditEventRepository}.
  */
-@SpringBootTest(classes = {ServiceNetApp.class, TestSecurityConfiguration.class})
+@SpringBootTest(classes = {ServiceNetApp.class})
 @Transactional
 public class CustomAuditEventRepositoryIT {
 

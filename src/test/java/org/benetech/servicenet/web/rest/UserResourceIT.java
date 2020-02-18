@@ -1,7 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.config.TestSecurityConfiguration;
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.User;
 import org.benetech.servicenet.repository.UserRepository;
@@ -36,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @AutoConfigureMockMvc
 @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
-@SpringBootTest(classes = {ServiceNetApp.class, TestSecurityConfiguration.class})
+@SpringBootTest(classes = {ServiceNetApp.class})
 public class UserResourceIT {
 
     private static final String DEFAULT_LOGIN = "johndoe";
