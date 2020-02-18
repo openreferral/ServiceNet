@@ -44,8 +44,8 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://localhost:5432/ServiceNet
-    username: ServiceNet
-    password:
+    username: postgres
+    password: password
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -85,7 +85,7 @@ spring:
         enabled: true
 
 server:
-  port: 8081
+  port: 8080
 
 # ===================================================================
 # JHipster specific properties

@@ -2,28 +2,18 @@ package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.config.TestSecurityConfiguration;
-import io.github.jhipster.config.JHipsterProperties;
-import org.benetech.servicenet.config.audit.AuditEventConverter;
 import org.benetech.servicenet.domain.PersistentAuditEvent;
 import org.benetech.servicenet.repository.PersistenceAuditEventRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 
-import org.benetech.servicenet.service.AuditEventService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -38,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @AutoConfigureMockMvc
 @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
-@SpringBootTest(classes = {ServiceNetApp.class, TestSecurityConfiguration.class})
+@SpringBootTest(classes = {ServiceNetApp.class})
 @Transactional
 public class AuditResourceIT {
 
