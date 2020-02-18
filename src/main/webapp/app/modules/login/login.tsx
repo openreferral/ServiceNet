@@ -7,6 +7,7 @@ import { login } from 'app/shared/reducers/authentication';
 import LoginModal from './login-modal';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { AUTHORITIES } from 'app/config/constants';
+import { resetActivityFilter } from 'app/modules/home/filter-activity.reducer';
 
 export interface ILoginProps extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -26,6 +27,7 @@ export class Login extends React.Component<ILoginProps, ILoginState> {
   }
 
   handleLogin = (username, password, rememberMe = false) => {
+    this.props.resetActivityFilter();
     this.props.login(username, password, rememberMe);
   };
 
@@ -56,7 +58,7 @@ const mapStateToProps = ({ authentication }: IRootState) => ({
   showModal: authentication.showModalLogin
 });
 
-const mapDispatchToProps = { login };
+const mapDispatchToProps = { login, resetActivityFilter };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

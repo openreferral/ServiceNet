@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
-import { ORGANIZATION } from 'app/modules/home/filter.constants';
+import { ORGANIZATION, getDefaultSearchFieldOptions } from 'app/modules/home/filter.constants';
 
 export const ACTION_TYPES = {
   FETCH_POSTAL_CODE_LIST: 'filterActivity/FETCH_POSTAL_CODE_LIST',
@@ -11,7 +11,8 @@ export const ACTION_TYPES = {
   FETCH_TAXONOMY_LIST: 'filterActivity/FETCH_TAXONOMY_LIST',
   UPDATE_ACTIVITY_FILTER: 'filterActivity/UPDATE_ACTIVITY_FILTER',
   DELETE_ACTIVITY_FILTER: 'filterActivity/DELETE_ACTIVITY_FILTER',
-  FETCH_SAVED_FILTERS: 'filterActivity/FETCH_SAVED_FILTERS'
+  FETCH_SAVED_FILTERS: 'filterActivity/FETCH_SAVED_FILTERS',
+  RESET_ACTIVITY_FILTER: 'filterActivity/RESET_ACTIVITY_FILTER'
 };
 
 const initialState = {
@@ -30,7 +31,7 @@ const initialState = {
     postalCodesFilterList: [],
     partnerFilterList: [],
     taxonomiesFilterList: [],
-    searchFields: [],
+    searchFields: getDefaultSearchFieldOptions().map(o => o.value),
     searchOn: ORGANIZATION,
     dateFilter: null,
     fromDate: '',
@@ -115,6 +116,11 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
         activityFilter: action.payload,
         loading: false
       };
+    case ACTION_TYPES.RESET_ACTIVITY_FILTER:
+      return {
+        ...state,
+        activityFilter: initialState.activityFilter
+      };
     default:
       return state;
   }
@@ -174,3 +180,7 @@ export const getSavedFilters = () => {
     payload: axios.get<any>(requestUrl)
   };
 };
+
+export const resetActivityFilter = () => ({
+  type: ACTION_TYPES.RESET_ACTIVITY_FILTER
+});
