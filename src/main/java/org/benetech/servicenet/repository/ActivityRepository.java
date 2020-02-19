@@ -182,7 +182,7 @@ public class ActivityRepository {
     }
 
     private Boolean applyPositionFiltering(ActivityFilterDTO activityFilterDTO) {
-        return activityFilterDTO.getApplyLocationSearch() &&
+        return activityFilterDTO.isApplyLocationSearch() &&
             activityFilterDTO.getRadius() != null &&
             activityFilterDTO.getLatitude() != null &&
             activityFilterDTO.getLongitude() != null;
@@ -194,10 +194,10 @@ public class ActivityRepository {
         boolean hasPartnerFilters = (CollectionUtils.isNotEmpty(activityFilterDTO.getPartnerFilterList()));
 
         Predicate updatePredicate = predicate;
-        if (activityFilterDTO.getShowPartner() || hasPartnerFilters) {
+        if (activityFilterDTO.isShowPartner() || hasPartnerFilters) {
             Join<OrganizationMatch, Organization> matchOrgJoin = matchJoin.join(PARTNER_VERSION, JoinType.LEFT);
             Join<Organization, SystemAccount> matchAccountJoin = matchOrgJoin.join(ACCOUNT, JoinType.LEFT);
-            if (activityFilterDTO.getShowPartner()) {
+            if (activityFilterDTO.isShowPartner()) {
                 updatePredicate = cb.or(predicate, cb.notEqual(matchAccountJoin.get(ID), ownerId));
                 if (hasPartnerFilters) {
                     Join<Organization, SystemAccount> accountJoin = orgJoin.join(ACCOUNT);
@@ -215,7 +215,7 @@ public class ActivityRepository {
 
     private Predicate addSimilarityFilter(Predicate predicate, ActivityFilterDTO activityFilterDTO, Join<ActivityInfo,
         OrganizationMatch> matchJoin) {
-        if (activityFilterDTO.getShowOnlyHighlyMatched()) {
+        if (activityFilterDTO.isShowOnlyHighlyMatched()) {
             return cb.and(predicate, cb.greaterThan(matchJoin.get(SIMILARITY), BigDecimal.valueOf(HIGHLY_MATCH_THRESHOLD)));
         }
         return predicate;
@@ -349,7 +349,7 @@ public class ActivityRepository {
 
         Predicate predicate = cb.conjunction();
         Predicate isCurrentAccount = cb.equal(root.get(ACCOUNT_ID), ownerId);
-        if (!activityFilterDTO.getShowPartner()) {
+        if (!activityFilterDTO.isShowPartner()) {
             predicate = isCurrentAccount;
         }
 
@@ -358,7 +358,7 @@ public class ActivityRepository {
         Join<Organization, Service> serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
         Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
 
-        predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), activityFilterDTO.getHiddenFilter()));
+        predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), activityFilterDTO.isHiddenFilter()));
 
         predicate = addPartnerFilters(predicate, activityFilterDTO, ownerId, isCurrentAccount, matchJoin, orgJoin);
 

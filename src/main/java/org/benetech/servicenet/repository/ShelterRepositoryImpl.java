@@ -187,7 +187,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
     }
 
     private Boolean applyPositionFiltering(ShelterFiltersDTO filtersDTO) {
-        return filtersDTO.getApplyLocationSearch() &&
+        return filtersDTO.isApplyLocationSearch() &&
             filtersDTO.getRadius() != null &&
             filtersDTO.getLatitude() != null &&
             filtersDTO.getLongitude() != null;
