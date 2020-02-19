@@ -61,6 +61,9 @@ spring:
             enabled: false
     thymeleaf:
         mode: HTML
+    main:
+      allow-bean-definition-overriding: true
+
 
 
 server:
@@ -74,29 +77,45 @@ server:
 # ===================================================================
 
 jhipster:
-    async:
-        core-pool-size: 1
-        max-pool-size: 50
-        queue-capacity: 10000
-    # To test logstash appender
-    logging:
-        logstash:
-            enabled: true
-            host: localhost
-            port: 5000
-            queue-size: 512
-    mail:
-        from: test@localhost
-        base-url: http://127.0.0.1:8080
-    security:
-        remember-me:
-            # security key (this key should be unique for your application, and kept secret)
-            key: 472eef473bf94448dac3886fe398d2b92b19098daa3062aaf0b72dc707fe6b60f0ed20a6f42a38cd3480801c10cf7d299159
-    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
-        jmx.enabled: true
-        logs: # Reports Dropwizard metrics in the logs
-            enabled: true
-            report-frequency: 60 # in seconds
+  async:
+    core-pool-size: 2
+    max-pool-size: 4
+    queue-capacity: 250
+  clientApp:
+    name: 'serviceNetApp'
+  # By default CORS is disabled. Uncomment to enable.
+  # cors:
+  #     allowed-origins: "*"
+  #     allowed-methods: "*"
+  #     allowed-headers: "*"
+  #     exposed-headers: "Authorization,Link,X-Total-Count"
+  #     allow-credentials: true
+  #     max-age: 1800
+  mail:
+    from: test@localhost
+    base-url: http://127.0.0.1:8080
+  swagger:
+    default-include-pattern: /api/.*
+    title: ServiceNet API
+    description: ServiceNet API documentation
+    version: 0.0.1
+    terms-of-service-url:
+    contact-name:
+    contact-url:
+    contact-email:
+    license:
+    license-url:
+  security:
+    remember-me:
+      # security key (this key should be unique for your application, and kept secret)
+      key: b24b759de3b5bd38145f39a79eacf410517527736c4d19f48612d890e84442e26a9619f9778956528195a1db5c7cc014403f
+  # To test logstash appender
+  logging:
+    logstash:
+      enabled: true
+      host: localhost
+      port: 5000
+      queue-size: 512
 
 similarity-ratio:
     weight:
