@@ -42,17 +42,17 @@ public class ActivityFilterDTO implements Serializable {
 
     private LocalDate toDate;
 
-    private Boolean hiddenFilter = false;
+    private boolean hiddenFilter;
 
-    private Boolean showPartner = false;
+    private boolean showPartner;
 
-    private Boolean showOnlyHighlyMatched = false;
+    private boolean showOnlyHighlyMatched;
 
     private UUID userId;
 
     private String userLogin;
 
-    private Boolean applyLocationSearch = false;
+    private boolean applyLocationSearch;
 
     private Double latitude;
 
@@ -96,11 +96,11 @@ public class ActivityFilterDTO implements Serializable {
             ", dateFilter='" + getDateFilter() + "'" +
             ", fromDate='" + getFromDate() + "'" +
             ", toDate='" + getToDate() + "'" +
-            ", hiddenFilter='" + getHiddenFilter() + "'" +
-            ", showPartner='" + getShowPartner() + "'" +
+            ", hiddenFilter='" + isHiddenFilter() + "'" +
+            ", showPartner='" + isShowPartner() + "'" +
             ", user=" + getUserId() +
             ", user='" + getUserLogin() + "'" +
-            ", applyLocationSearch='" + getApplyLocationSearch() + "'" +
+            ", applyLocationSearch='" + isApplyLocationSearch() + "'" +
             ", latitude='" + getLatitude() + "'" +
             ", longitude='" + getLongitude() + "'" +
             ", radius='" + getRadius() + "'" +
