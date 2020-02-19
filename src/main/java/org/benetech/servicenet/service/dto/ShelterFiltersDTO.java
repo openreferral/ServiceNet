@@ -18,7 +18,7 @@ public class ShelterFiltersDTO implements Serializable {
 
   private boolean showOnlyAvailableBeds;
 
-  private Boolean applyLocationSearch = false;
+  private boolean applyLocationSearch;
 
   private Double latitude;
 

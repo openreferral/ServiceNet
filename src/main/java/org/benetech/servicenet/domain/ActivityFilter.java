@@ -78,20 +78,20 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
     private LocalDate toDate;
 
     @Column(name = "hidden_filter")
-    private Boolean hiddenFilter;
+    private boolean hiddenFilter;
 
     @Column(name = "show_partner")
-    private Boolean showPartner;
+    private boolean showPartner;
 
     @Column(name = "show_highly_matched")
-    private Boolean showOnlyHighlyMatched = false;
+    private boolean showOnlyHighlyMatched;
 
     @ManyToOne
     @JsonIgnoreProperties("filters")
     private User user;
 
-    @Column(name = "applyLocationSearch")
-    private Boolean applyLocationSearch = false;
+    @Column(name = "apply_location_search")
+    private boolean applyLocationSearch;
 
     @Column(name = "latitude")
     private Double latitude;
@@ -255,7 +255,7 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public void setHiddenFilter(Boolean hiddenFilter) {
+    public void setHiddenFilter(boolean hiddenFilter) {
         this.hiddenFilter = hiddenFilter;
     }
 
@@ -281,7 +281,7 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public void setShowPartner(Boolean showPartner) {
+    public void setShowPartner(boolean showPartner) {
         this.showPartner = showPartner;
     }
 
@@ -294,16 +294,16 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
         return this;
     }
 
-    public Boolean getApplyLocationSearch() {
+    public boolean isApplyLocationSearch() {
         return applyLocationSearch;
     }
 
-    public ActivityFilter getApplyLocationSearch(Boolean applyLocationSearch) {
+    public ActivityFilter isApplyLocationSearch(Boolean applyLocationSearch) {
         this.applyLocationSearch = applyLocationSearch;
         return this;
     }
 
-    public void setApplyLocationSearch(Boolean applyLocationSearch) {
+    public void setApplyLocationSearch(boolean applyLocationSearch) {
         this.applyLocationSearch = applyLocationSearch;
     }
 
@@ -384,7 +384,7 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
             ", toDate='" + getToDate() + "'" +
             ", hiddenFilter='" + isHiddenFilter() + "'" +
             ", showPartner='" + isShowPartner() + "'" +
-            ", applyLocationSearch='" + getApplyLocationSearch() + "'" +
+            ", applyLocationSearch='" + isApplyLocationSearch() + "'" +
             ", latitude='" + getLatitude() + "'" +
             ", longitude='" + getLongitude() + "'" +
             ", radius='" + getRadius() + "'" +
