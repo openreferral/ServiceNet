@@ -122,7 +122,7 @@ public class ContactResourceIntTest {
         // Create the Contact
         ContactDTO contactDTO = contactMapper.toDto(contact);
         restContactMockMvc.perform(post("/api/contacts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDTO)))
             .andExpect(status().isCreated());
 
@@ -147,7 +147,7 @@ public class ContactResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restContactMockMvc.perform(post("/api/contacts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDTO)))
             .andExpect(status().isBadRequest());
 
@@ -167,7 +167,7 @@ public class ContactResourceIntTest {
         ContactDTO contactDTO = contactMapper.toDto(contact);
 
         restContactMockMvc.perform(post("/api/contacts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDTO)))
             .andExpect(status().isBadRequest());
 
@@ -184,7 +184,7 @@ public class ContactResourceIntTest {
         // Get all the contactList
         restContactMockMvc.perform(get("/api/contacts?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(contact.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
@@ -201,7 +201,7 @@ public class ContactResourceIntTest {
         // Get the contact
         restContactMockMvc.perform(get("/api/contacts/{id}", contact.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(contact.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE.toString()))
@@ -237,7 +237,7 @@ public class ContactResourceIntTest {
         ContactDTO contactDTO = contactMapper.toDto(updatedContact);
 
         restContactMockMvc.perform(put("/api/contacts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDTO)))
             .andExpect(status().isOk());
 
@@ -261,7 +261,7 @@ public class ContactResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restContactMockMvc.perform(put("/api/contacts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDTO)))
             .andExpect(status().isBadRequest());
 
@@ -280,7 +280,7 @@ public class ContactResourceIntTest {
 
         // Get the contact
         restContactMockMvc.perform(delete("/api/contacts/{id}", contact.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

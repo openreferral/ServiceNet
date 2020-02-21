@@ -209,7 +209,7 @@ public class ShelterResourceIntTest {
 
         // Create the Shelter
         restShelterMockMvc.perform(post("/api/shelters")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(shelter)))
             .andExpect(status().isCreated());
 
@@ -247,7 +247,7 @@ public class ShelterResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restShelterMockMvc.perform(post("/api/shelters")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(shelter)))
             .andExpect(status().isBadRequest());
 
@@ -265,7 +265,7 @@ public class ShelterResourceIntTest {
         // Get all the shelterList
         restShelterMockMvc.perform(get("/api/shelters?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(shelter.getId().toString())))
             .andExpect(jsonPath("$.[*].agencyName").value(hasItem(DEFAULT_AGENCY_NAME.toString())))
             .andExpect(jsonPath("$.[*].programName").value(hasItem(DEFAULT_PROGRAM_NAME.toString())))
@@ -330,7 +330,7 @@ public class ShelterResourceIntTest {
         // Get the shelter
         restShelterMockMvc.perform(get("/api/shelters/{id}", shelter.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(shelter.getId().toString()))
             .andExpect(jsonPath("$.agencyName").value(DEFAULT_AGENCY_NAME.toString()))
             .andExpect(jsonPath("$.programName").value(DEFAULT_PROGRAM_NAME.toString()))
@@ -393,7 +393,7 @@ public class ShelterResourceIntTest {
             .disabilityAccess(UPDATED_DISABILITY_ACCESS);
 
         restShelterMockMvc.perform(put("/api/shelters")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(updatedShelter)))
             .andExpect(status().isOk());
 
@@ -430,7 +430,7 @@ public class ShelterResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restShelterMockMvc.perform(put("/api/shelters")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(shelter)))
             .andExpect(status().isBadRequest());
 
@@ -449,7 +449,7 @@ public class ShelterResourceIntTest {
 
         // Delete the shelter
         restShelterMockMvc.perform(delete("/api/shelters/{id}", shelter.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

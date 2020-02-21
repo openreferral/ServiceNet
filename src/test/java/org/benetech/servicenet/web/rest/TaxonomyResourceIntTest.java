@@ -114,7 +114,7 @@ public class TaxonomyResourceIntTest {
         // Create the Taxonomy
         TaxonomyDTO taxonomyDTO = taxonomyMapper.toDto(taxonomy);
         restTaxonomyMockMvc.perform(post("/api/taxonomies")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(taxonomyDTO)))
             .andExpect(status().isCreated());
 
@@ -137,7 +137,7 @@ public class TaxonomyResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTaxonomyMockMvc.perform(post("/api/taxonomies")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(taxonomyDTO)))
             .andExpect(status().isBadRequest());
 
@@ -155,7 +155,7 @@ public class TaxonomyResourceIntTest {
         // Get all the taxonomyList
         restTaxonomyMockMvc.perform(get("/api/taxonomies?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(taxonomy.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].vocabulary").value(hasItem(DEFAULT_VOCABULARY.toString())));
@@ -170,7 +170,7 @@ public class TaxonomyResourceIntTest {
         // Get the taxonomy
         restTaxonomyMockMvc.perform(get("/api/taxonomies/{id}", taxonomy.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(taxonomy.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.vocabulary").value(DEFAULT_VOCABULARY.toString()));
@@ -202,7 +202,7 @@ public class TaxonomyResourceIntTest {
         TaxonomyDTO taxonomyDTO = taxonomyMapper.toDto(updatedTaxonomy);
 
         restTaxonomyMockMvc.perform(put("/api/taxonomies")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(taxonomyDTO)))
             .andExpect(status().isOk());
 
@@ -224,7 +224,7 @@ public class TaxonomyResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTaxonomyMockMvc.perform(put("/api/taxonomies")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(taxonomyDTO)))
             .andExpect(status().isBadRequest());
 
@@ -243,7 +243,7 @@ public class TaxonomyResourceIntTest {
 
         // Get the taxonomy
         restTaxonomyMockMvc.perform(delete("/api/taxonomies/{id}", taxonomy.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

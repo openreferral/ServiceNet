@@ -109,7 +109,7 @@ public class ServiceTaxonomyResourceIntTest {
         // Create the ServiceTaxonomy
         ServiceTaxonomyDTO serviceTaxonomyDTO = serviceTaxonomyMapper.toDto(serviceTaxonomy);
         restServiceTaxonomyMockMvc.perform(post("/api/service-taxonomies")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceTaxonomyDTO)))
             .andExpect(status().isCreated());
 
@@ -131,7 +131,7 @@ public class ServiceTaxonomyResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restServiceTaxonomyMockMvc.perform(post("/api/service-taxonomies")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceTaxonomyDTO)))
             .andExpect(status().isBadRequest());
 
@@ -149,7 +149,7 @@ public class ServiceTaxonomyResourceIntTest {
         // Get all the serviceTaxonomyList
         restServiceTaxonomyMockMvc.perform(get("/api/service-taxonomies?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(serviceTaxonomy.getId().toString())))
             .andExpect(jsonPath("$.[*].taxonomyDetails").value(hasItem(DEFAULT_TAXONOMY_DETAILS.toString())));
     }
@@ -163,7 +163,7 @@ public class ServiceTaxonomyResourceIntTest {
         // Get the serviceTaxonomy
         restServiceTaxonomyMockMvc.perform(get("/api/service-taxonomies/{id}", serviceTaxonomy.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(serviceTaxonomy.getId().toString()))
             .andExpect(jsonPath("$.taxonomyDetails").value(DEFAULT_TAXONOMY_DETAILS.toString()));
     }
@@ -193,7 +193,7 @@ public class ServiceTaxonomyResourceIntTest {
         ServiceTaxonomyDTO serviceTaxonomyDTO = serviceTaxonomyMapper.toDto(updatedServiceTaxonomy);
 
         restServiceTaxonomyMockMvc.perform(put("/api/service-taxonomies")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceTaxonomyDTO)))
             .andExpect(status().isOk());
 
@@ -214,7 +214,7 @@ public class ServiceTaxonomyResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restServiceTaxonomyMockMvc.perform(put("/api/service-taxonomies")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceTaxonomyDTO)))
             .andExpect(status().isBadRequest());
 
@@ -233,7 +233,7 @@ public class ServiceTaxonomyResourceIntTest {
 
         // Get the serviceTaxonomy
         restServiceTaxonomyMockMvc.perform(delete("/api/service-taxonomies/{id}", serviceTaxonomy.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

@@ -110,7 +110,7 @@ public class PaymentAcceptedResourceIntTest {
         // Create the PaymentAccepted
         PaymentAcceptedDTO paymentAcceptedDTO = paymentAcceptedMapper.toDto(paymentAccepted);
         restPaymentAcceptedMockMvc.perform(post("/api/payment-accepteds")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(paymentAcceptedDTO)))
             .andExpect(status().isCreated());
 
@@ -132,7 +132,7 @@ public class PaymentAcceptedResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPaymentAcceptedMockMvc.perform(post("/api/payment-accepteds")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(paymentAcceptedDTO)))
             .andExpect(status().isBadRequest());
 
@@ -150,7 +150,7 @@ public class PaymentAcceptedResourceIntTest {
         // Get all the paymentAcceptedList
         restPaymentAcceptedMockMvc.perform(get("/api/payment-accepteds?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(paymentAccepted.getId().toString())))
             .andExpect(jsonPath("$.[*].payment").value(hasItem(DEFAULT_PAYMENT.toString())));
     }
@@ -164,7 +164,7 @@ public class PaymentAcceptedResourceIntTest {
         // Get the paymentAccepted
         restPaymentAcceptedMockMvc.perform(get("/api/payment-accepteds/{id}", paymentAccepted.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(paymentAccepted.getId().toString()))
             .andExpect(jsonPath("$.payment").value(DEFAULT_PAYMENT.toString()));
     }
@@ -194,7 +194,7 @@ public class PaymentAcceptedResourceIntTest {
         PaymentAcceptedDTO paymentAcceptedDTO = paymentAcceptedMapper.toDto(updatedPaymentAccepted);
 
         restPaymentAcceptedMockMvc.perform(put("/api/payment-accepteds")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(paymentAcceptedDTO)))
             .andExpect(status().isOk());
 
@@ -215,7 +215,7 @@ public class PaymentAcceptedResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPaymentAcceptedMockMvc.perform(put("/api/payment-accepteds")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(paymentAcceptedDTO)))
             .andExpect(status().isBadRequest());
 
@@ -234,7 +234,7 @@ public class PaymentAcceptedResourceIntTest {
 
         // Get the paymentAccepted
         restPaymentAcceptedMockMvc.perform(delete("/api/payment-accepteds/{id}", paymentAccepted.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

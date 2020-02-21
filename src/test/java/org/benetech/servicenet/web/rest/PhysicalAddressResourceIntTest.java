@@ -134,7 +134,7 @@ public class PhysicalAddressResourceIntTest {
         // Create the PhysicalAddress
         PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isCreated());
 
@@ -162,7 +162,7 @@ public class PhysicalAddressResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -182,7 +182,7 @@ public class PhysicalAddressResourceIntTest {
         PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -201,7 +201,7 @@ public class PhysicalAddressResourceIntTest {
         PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -220,7 +220,7 @@ public class PhysicalAddressResourceIntTest {
         PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -239,7 +239,7 @@ public class PhysicalAddressResourceIntTest {
         PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -258,7 +258,7 @@ public class PhysicalAddressResourceIntTest {
         PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -275,7 +275,7 @@ public class PhysicalAddressResourceIntTest {
         // Get all the physicalAddressList
         restPhysicalAddressMockMvc.perform(get("/api/physical-addresses?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(physicalAddress.getId().toString())))
             .andExpect(jsonPath("$.[*].attention").value(hasItem(DEFAULT_ATTENTION.toString())))
             .andExpect(jsonPath("$.[*].address1").value(hasItem(DEFAULT_ADDRESS_1.toString())))
@@ -295,7 +295,7 @@ public class PhysicalAddressResourceIntTest {
         // Get the physicalAddress
         restPhysicalAddressMockMvc.perform(get("/api/physical-addresses/{id}", physicalAddress.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(physicalAddress.getId().toString()))
             .andExpect(jsonPath("$.attention").value(DEFAULT_ATTENTION.toString()))
             .andExpect(jsonPath("$.address1").value(DEFAULT_ADDRESS_1.toString()))
@@ -337,7 +337,7 @@ public class PhysicalAddressResourceIntTest {
         PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(updatedPhysicalAddress);
 
         restPhysicalAddressMockMvc.perform(put("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isOk());
 
@@ -364,7 +364,7 @@ public class PhysicalAddressResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPhysicalAddressMockMvc.perform(put("/api/physical-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -383,7 +383,7 @@ public class PhysicalAddressResourceIntTest {
 
         // Get the physicalAddress
         restPhysicalAddressMockMvc.perform(delete("/api/physical-addresses/{id}", physicalAddress.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

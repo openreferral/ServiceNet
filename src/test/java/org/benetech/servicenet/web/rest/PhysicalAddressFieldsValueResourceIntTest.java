@@ -120,7 +120,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         // Create the PhysicalAddressFieldsValue
         PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper.toDto(physicalAddressFieldsValue);
         restPhysicalAddressFieldsValueMockMvc.perform(post("/api/physical-address-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressFieldsValueDTO)))
             .andExpect(status().isCreated());
 
@@ -142,7 +142,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPhysicalAddressFieldsValueMockMvc.perform(post("/api/physical-address-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -160,7 +160,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         // Get all the physicalAddressFieldsValueList
         restPhysicalAddressFieldsValueMockMvc.perform(get("/api/physical-address-fields-values?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(physicalAddressFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].physicalAddressField").value(hasItem(DEFAULT_PHYSICAL_ADDRESS_FIELD.toString())));
     }
@@ -174,7 +174,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         // Get the physicalAddressFieldsValue
         restPhysicalAddressFieldsValueMockMvc.perform(get("/api/physical-address-fields-values/{id}", physicalAddressFieldsValue.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(physicalAddressFieldsValue.getId().toString()))
             .andExpect(jsonPath("$.physicalAddressField").value(DEFAULT_PHYSICAL_ADDRESS_FIELD.toString()));
     }
@@ -204,7 +204,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper.toDto(updatedPhysicalAddressFieldsValue);
 
         restPhysicalAddressFieldsValueMockMvc.perform(put("/api/physical-address-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressFieldsValueDTO)))
             .andExpect(status().isOk());
 
@@ -225,7 +225,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPhysicalAddressFieldsValueMockMvc.perform(put("/api/physical-address-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -244,7 +244,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
 
         // Delete the physicalAddressFieldsValue
         restPhysicalAddressFieldsValueMockMvc.perform(delete("/api/physical-address-fields-values/{id}", physicalAddressFieldsValue.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

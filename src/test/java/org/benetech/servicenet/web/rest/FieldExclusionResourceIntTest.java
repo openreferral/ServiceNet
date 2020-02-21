@@ -111,7 +111,7 @@ public class FieldExclusionResourceIntTest {
         // Create the FieldExclusion
         FieldExclusionDTO fieldExclusionDTO = fieldExclusionMapper.toDto(fieldExclusion);
         restFieldExclusionMockMvc.perform(post("/api/field-exclusions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(fieldExclusionDTO)))
             .andExpect(status().isCreated());
 
@@ -134,7 +134,7 @@ public class FieldExclusionResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restFieldExclusionMockMvc.perform(post("/api/field-exclusions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(fieldExclusionDTO)))
             .andExpect(status().isBadRequest());
 
@@ -152,7 +152,7 @@ public class FieldExclusionResourceIntTest {
         // Get all the fieldExclusionList
         restFieldExclusionMockMvc.perform(get("/api/field-exclusions?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(fieldExclusion.getId().toString())))
             .andExpect(jsonPath("$.[*].fields").value(hasItem(DEFAULT_FIELDS.toString())))
             .andExpect(jsonPath("$.[*].entity").value(hasItem(DEFAULT_ENTITY.toString())));
@@ -167,7 +167,7 @@ public class FieldExclusionResourceIntTest {
         // Get the fieldExclusion
         restFieldExclusionMockMvc.perform(get("/api/field-exclusions/{id}", fieldExclusion.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(fieldExclusion.getId().toString()))
             .andExpect(jsonPath("$.fields").value(DEFAULT_FIELDS.toString()))
             .andExpect(jsonPath("$.entity").value(DEFAULT_ENTITY.toString()));
@@ -199,7 +199,7 @@ public class FieldExclusionResourceIntTest {
         FieldExclusionDTO fieldExclusionDTO = fieldExclusionMapper.toDto(updatedFieldExclusion);
 
         restFieldExclusionMockMvc.perform(put("/api/field-exclusions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(fieldExclusionDTO)))
             .andExpect(status().isOk());
 
@@ -221,7 +221,7 @@ public class FieldExclusionResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restFieldExclusionMockMvc.perform(put("/api/field-exclusions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(fieldExclusionDTO)))
             .andExpect(status().isBadRequest());
 
@@ -240,7 +240,7 @@ public class FieldExclusionResourceIntTest {
 
         // Get the fieldExclusion
         restFieldExclusionMockMvc.perform(delete("/api/field-exclusions/{id}", fieldExclusion.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

@@ -12,6 +12,7 @@ services:
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/auth/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
+      - SPRING_DATA_MONGODB_URI=mongodb://servicenet-mongo:27017/serviceNet
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
   servicenet-postgresql:
     extends:
@@ -21,7 +22,10 @@ services:
     extends:
       file: consul.yml
       service: consul
-
+  servicenet-mongo:
+      extends:
+          file: mongo.yml
+          service: servicenet-mongo
   consul-config-loader:
     extends:
       file: consul.yml

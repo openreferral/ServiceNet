@@ -106,7 +106,7 @@ public class SystemAccountResourceIntTest {
         // Create the SystemAccount
         SystemAccountDTO systemAccountDTO = systemAccountMapper.toDto(systemAccount);
         restSystemAccountMockMvc.perform(post("/api/system-accounts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(systemAccountDTO)))
             .andExpect(status().isCreated());
 
@@ -128,7 +128,7 @@ public class SystemAccountResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restSystemAccountMockMvc.perform(post("/api/system-accounts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(systemAccountDTO)))
             .andExpect(status().isBadRequest());
 
@@ -148,7 +148,7 @@ public class SystemAccountResourceIntTest {
         SystemAccountDTO systemAccountDTO = systemAccountMapper.toDto(systemAccount);
 
         restSystemAccountMockMvc.perform(post("/api/system-accounts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(systemAccountDTO)))
             .andExpect(status().isBadRequest());
 
@@ -165,7 +165,7 @@ public class SystemAccountResourceIntTest {
         // Get all the systemAccountList
         restSystemAccountMockMvc.perform(get("/api/system-accounts?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(systemAccount.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(SystemAccountMother.DEFAULT_NAME)));
     }
@@ -179,7 +179,7 @@ public class SystemAccountResourceIntTest {
         // Get the systemAccount
         restSystemAccountMockMvc.perform(get("/api/system-accounts/{id}", systemAccount.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(systemAccount.getId().toString()))
             .andExpect(jsonPath("$.name").value(SystemAccountMother.DEFAULT_NAME));
     }
@@ -209,7 +209,7 @@ public class SystemAccountResourceIntTest {
         SystemAccountDTO systemAccountDTO = systemAccountMapper.toDto(updatedSystemAccount);
 
         restSystemAccountMockMvc.perform(put("/api/system-accounts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(systemAccountDTO)))
             .andExpect(status().isOk());
 
@@ -230,7 +230,7 @@ public class SystemAccountResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restSystemAccountMockMvc.perform(put("/api/system-accounts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(systemAccountDTO)))
             .andExpect(status().isBadRequest());
 
@@ -249,7 +249,7 @@ public class SystemAccountResourceIntTest {
 
         // Get the systemAccount
         restSystemAccountMockMvc.perform(delete("/api/system-accounts/{id}", systemAccount.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

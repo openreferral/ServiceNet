@@ -8,6 +8,7 @@ import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.mapper.UserMapper;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.benetech.servicenet.service.util.RandomUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +69,9 @@ public class UserResourceIT {
     @Autowired
     private MockMvc restUserMockMvc;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private User user;
 
     @BeforeEach
@@ -99,6 +104,7 @@ public class UserResourceIT {
         user = createEntity(em);
         user.setLogin(DEFAULT_LOGIN);
         user.setEmail(DEFAULT_EMAIL);
+        user.setPassword(passwordEncoder.encode(RandomUtil.generatePassword()));
     }
 
     @Test

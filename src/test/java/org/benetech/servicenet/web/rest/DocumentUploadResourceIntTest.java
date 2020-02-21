@@ -131,7 +131,7 @@ public class DocumentUploadResourceIntTest {
         // Create the DocumentUpload
         DocumentUploadDTO documentUploadDTO = documentUploadMapper.toDto(documentUpload);
         restDocumentUploadMockMvc.perform(post("/api/document-uploads")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(documentUploadDTO)))
             .andExpect(status().isCreated());
 
@@ -156,7 +156,7 @@ public class DocumentUploadResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restDocumentUploadMockMvc.perform(post("/api/document-uploads")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(documentUploadDTO)))
             .andExpect(status().isBadRequest());
 
@@ -176,7 +176,7 @@ public class DocumentUploadResourceIntTest {
         DocumentUploadDTO documentUploadDTO = documentUploadMapper.toDto(documentUpload);
 
         restDocumentUploadMockMvc.perform(post("/api/document-uploads")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(documentUploadDTO)))
             .andExpect(status().isBadRequest());
 
@@ -195,7 +195,7 @@ public class DocumentUploadResourceIntTest {
         DocumentUploadDTO documentUploadDTO = documentUploadMapper.toDto(documentUpload);
 
         restDocumentUploadMockMvc.perform(post("/api/document-uploads")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(documentUploadDTO)))
             .andExpect(status().isBadRequest());
 
@@ -212,7 +212,7 @@ public class DocumentUploadResourceIntTest {
         // Get all the documentUploadList
         restDocumentUploadMockMvc.perform(get("/api/document-uploads?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(documentUpload.getId().toString())))
             .andExpect(jsonPath("$.[*].dateUploaded").value(hasItem(sameInstant(DEFAULT_DATE_UPLOADED))))
             .andExpect(jsonPath("$.[*].originalDocumentId").value(hasItem(DEFAULT_ORIGINAL_DOCUMENT_ID)))
@@ -228,7 +228,7 @@ public class DocumentUploadResourceIntTest {
         // Get the documentUpload
         restDocumentUploadMockMvc.perform(get("/api/document-uploads/{id}", documentUpload.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(documentUpload.getId().toString()))
             .andExpect(jsonPath("$.dateUploaded").value(sameInstant(DEFAULT_DATE_UPLOADED)))
             .andExpect(jsonPath("$.originalDocumentId").value(DEFAULT_ORIGINAL_DOCUMENT_ID))
@@ -263,7 +263,7 @@ public class DocumentUploadResourceIntTest {
         DocumentUploadDTO documentUploadDTO = documentUploadMapper.toDto(updatedDocumentUpload);
 
         restDocumentUploadMockMvc.perform(put("/api/document-uploads")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(documentUploadDTO)))
             .andExpect(status().isOk());
 
@@ -287,7 +287,7 @@ public class DocumentUploadResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDocumentUploadMockMvc.perform(put("/api/document-uploads")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(documentUploadDTO)))
             .andExpect(status().isBadRequest());
 
@@ -307,7 +307,7 @@ public class DocumentUploadResourceIntTest {
 
         // Get the documentUpload
         restDocumentUploadMockMvc.perform(delete("/api/document-uploads/{id}", documentUpload.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

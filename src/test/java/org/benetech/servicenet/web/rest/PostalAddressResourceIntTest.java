@@ -134,7 +134,7 @@ public class PostalAddressResourceIntTest {
         // Create the PostalAddress
         PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isCreated());
 
@@ -162,7 +162,7 @@ public class PostalAddressResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -182,7 +182,7 @@ public class PostalAddressResourceIntTest {
         PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -201,7 +201,7 @@ public class PostalAddressResourceIntTest {
         PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -220,7 +220,7 @@ public class PostalAddressResourceIntTest {
         PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -239,7 +239,7 @@ public class PostalAddressResourceIntTest {
         PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -258,7 +258,7 @@ public class PostalAddressResourceIntTest {
         PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -275,7 +275,7 @@ public class PostalAddressResourceIntTest {
         // Get all the postalAddressList
         restPostalAddressMockMvc.perform(get("/api/postal-addresses?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(postalAddress.getId().toString())))
             .andExpect(jsonPath("$.[*].attention").value(hasItem(DEFAULT_ATTENTION.toString())))
             .andExpect(jsonPath("$.[*].address1").value(hasItem(DEFAULT_ADDRESS_1.toString())))
@@ -295,7 +295,7 @@ public class PostalAddressResourceIntTest {
         // Get the postalAddress
         restPostalAddressMockMvc.perform(get("/api/postal-addresses/{id}", postalAddress.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(postalAddress.getId().toString()))
             .andExpect(jsonPath("$.attention").value(DEFAULT_ATTENTION.toString()))
             .andExpect(jsonPath("$.address1").value(DEFAULT_ADDRESS_1.toString()))
@@ -337,7 +337,7 @@ public class PostalAddressResourceIntTest {
         PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(updatedPostalAddress);
 
         restPostalAddressMockMvc.perform(put("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isOk());
 
@@ -364,7 +364,7 @@ public class PostalAddressResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPostalAddressMockMvc.perform(put("/api/postal-addresses")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
             .andExpect(status().isBadRequest());
 
@@ -383,7 +383,7 @@ public class PostalAddressResourceIntTest {
 
         // Get the postalAddress
         restPostalAddressMockMvc.perform(delete("/api/postal-addresses/{id}", postalAddress.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

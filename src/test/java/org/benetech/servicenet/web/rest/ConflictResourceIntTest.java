@@ -117,7 +117,7 @@ public class ConflictResourceIntTest {
         em.flush();
         ConflictDTO conflictDTO = conflictMapper.toDto(conflict);
         restConflictMockMvc.perform(post("/api/conflicts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(conflictDTO)))
             .andExpect(status().isCreated());
 
@@ -149,7 +149,7 @@ public class ConflictResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restConflictMockMvc.perform(post("/api/conflicts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(conflictDTO)))
             .andExpect(status().isBadRequest());
 
@@ -165,7 +165,7 @@ public class ConflictResourceIntTest {
         // Get all the conflictList
         restConflictMockMvc.perform(get("/api/conflicts?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(conflict.getId().toString())))
             .andExpect(jsonPath("$.[*].currentValue").value(hasItem(ConflictMother.DEFAULT_CURRENT_VALUE)))
             .andExpect(jsonPath("$.[*].currentValueDate").value(
@@ -192,7 +192,7 @@ public class ConflictResourceIntTest {
         // Get the conflict
         restConflictMockMvc.perform(get("/api/conflicts/{id}", conflict.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(conflict.getId().toString()))
             .andExpect(jsonPath("$.currentValue").value(ConflictMother.DEFAULT_CURRENT_VALUE))
             .andExpect(jsonPath("$.currentValueDate").value(sameInstant(ConflictMother.DEFAULT_CURRENT_VALUE_DATE)))
@@ -260,7 +260,7 @@ public class ConflictResourceIntTest {
         ConflictDTO conflictDTO = conflictMapper.toDto(updatedConflict);
 
         restConflictMockMvc.perform(put("/api/conflicts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(conflictDTO)))
             .andExpect(status().isOk());
 
@@ -294,7 +294,7 @@ public class ConflictResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restConflictMockMvc.perform(put("/api/conflicts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(conflictDTO)))
             .andExpect(status().isBadRequest());
 
@@ -313,7 +313,7 @@ public class ConflictResourceIntTest {
 
         // Get the conflict
         restConflictMockMvc.perform(delete("/api/conflicts/{id}", conflict.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

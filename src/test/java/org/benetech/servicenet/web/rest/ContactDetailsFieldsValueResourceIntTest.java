@@ -120,7 +120,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
         // Create the ContactDetailsFieldsValue
         ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper.toDto(contactDetailsFieldsValue);
         restContactDetailsFieldsValueMockMvc.perform(post("/api/contact-details-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDetailsFieldsValueDTO)))
             .andExpect(status().isCreated());
 
@@ -142,7 +142,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restContactDetailsFieldsValueMockMvc.perform(post("/api/contact-details-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDetailsFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -160,7 +160,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
         // Get all the contactDetailsFieldsValueList
         restContactDetailsFieldsValueMockMvc.perform(get("/api/contact-details-fields-values?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(contactDetailsFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].contactDetailsField").value(hasItem(DEFAULT_CONTACT_DETAILS_FIELD.toString())));
     }
@@ -174,7 +174,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
         // Get the contactDetailsFieldsValue
         restContactDetailsFieldsValueMockMvc.perform(get("/api/contact-details-fields-values/{id}", contactDetailsFieldsValue.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(contactDetailsFieldsValue.getId().toString()))
             .andExpect(jsonPath("$.contactDetailsField").value(DEFAULT_CONTACT_DETAILS_FIELD.toString()));
     }
@@ -204,7 +204,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
         ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper.toDto(updatedContactDetailsFieldsValue);
 
         restContactDetailsFieldsValueMockMvc.perform(put("/api/contact-details-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDetailsFieldsValueDTO)))
             .andExpect(status().isOk());
 
@@ -225,7 +225,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restContactDetailsFieldsValueMockMvc.perform(put("/api/contact-details-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDetailsFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -244,7 +244,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
 
         // Delete the contactDetailsFieldsValue
         restContactDetailsFieldsValueMockMvc.perform(delete("/api/contact-details-fields-values/{id}", contactDetailsFieldsValue.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

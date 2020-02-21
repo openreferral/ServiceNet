@@ -106,7 +106,7 @@ public class RegularScheduleResourceIntTest {
         // Create the RegularSchedule
         RegularScheduleDTO regularScheduleDTO = regularScheduleMapper.toDto(regularSchedule);
         restRegularScheduleMockMvc.perform(post("/api/regular-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(regularScheduleDTO)))
             .andExpect(status().isCreated());
 
@@ -127,7 +127,7 @@ public class RegularScheduleResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restRegularScheduleMockMvc.perform(post("/api/regular-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(regularScheduleDTO)))
             .andExpect(status().isBadRequest());
 
@@ -145,7 +145,7 @@ public class RegularScheduleResourceIntTest {
         // Get all the regularScheduleList
         restRegularScheduleMockMvc.perform(get("/api/regular-schedules?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(regularSchedule.getId().toString())));
     }
 
@@ -158,7 +158,7 @@ public class RegularScheduleResourceIntTest {
         // Get the regularSchedule
         restRegularScheduleMockMvc.perform(get("/api/regular-schedules/{id}", regularSchedule.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(regularSchedule.getId().toString()));
     }
 
@@ -185,7 +185,7 @@ public class RegularScheduleResourceIntTest {
         RegularScheduleDTO regularScheduleDTO = regularScheduleMapper.toDto(updatedRegularSchedule);
 
         restRegularScheduleMockMvc.perform(put("/api/regular-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(regularScheduleDTO)))
             .andExpect(status().isOk());
 
@@ -205,7 +205,7 @@ public class RegularScheduleResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRegularScheduleMockMvc.perform(put("/api/regular-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(regularScheduleDTO)))
             .andExpect(status().isBadRequest());
 
@@ -224,7 +224,7 @@ public class RegularScheduleResourceIntTest {
 
         // Get the regularSchedule
         restRegularScheduleMockMvc.perform(delete("/api/regular-schedules/{id}", regularSchedule.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty
