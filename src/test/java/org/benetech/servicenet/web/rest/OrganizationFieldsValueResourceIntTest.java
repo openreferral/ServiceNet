@@ -120,7 +120,7 @@ public class OrganizationFieldsValueResourceIntTest {
         // Create the OrganizationFieldsValue
         OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper.toDto(organizationFieldsValue);
         restOrganizationFieldsValueMockMvc.perform(post("/api/organization-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationFieldsValueDTO)))
             .andExpect(status().isCreated());
 
@@ -142,7 +142,7 @@ public class OrganizationFieldsValueResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrganizationFieldsValueMockMvc.perform(post("/api/organization-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -160,7 +160,7 @@ public class OrganizationFieldsValueResourceIntTest {
         // Get all the organizationFieldsValueList
         restOrganizationFieldsValueMockMvc.perform(get("/api/organization-fields-values?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organizationFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].organizationField").value(hasItem(DEFAULT_ORGANIZATION_FIELD.toString())));
     }
@@ -174,7 +174,7 @@ public class OrganizationFieldsValueResourceIntTest {
         // Get the organizationFieldsValue
         restOrganizationFieldsValueMockMvc.perform(get("/api/organization-fields-values/{id}", organizationFieldsValue.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(organizationFieldsValue.getId().toString()))
             .andExpect(jsonPath("$.organizationField").value(DEFAULT_ORGANIZATION_FIELD.toString()));
     }
@@ -204,7 +204,7 @@ public class OrganizationFieldsValueResourceIntTest {
         OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper.toDto(updatedOrganizationFieldsValue);
 
         restOrganizationFieldsValueMockMvc.perform(put("/api/organization-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationFieldsValueDTO)))
             .andExpect(status().isOk());
 
@@ -225,7 +225,7 @@ public class OrganizationFieldsValueResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOrganizationFieldsValueMockMvc.perform(put("/api/organization-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -244,7 +244,7 @@ public class OrganizationFieldsValueResourceIntTest {
 
         // Delete the organizationFieldsValue
         restOrganizationFieldsValueMockMvc.perform(delete("/api/organization-fields-values/{id}", organizationFieldsValue.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

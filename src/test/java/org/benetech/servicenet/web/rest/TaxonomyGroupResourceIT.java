@@ -11,6 +11,7 @@ import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Integration tests for the {@link TaxonomyGroupResource} REST controller.
  */
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class TaxonomyGroupResourceIT {
 
@@ -125,7 +128,7 @@ public class TaxonomyGroupResourceIT {
         // Create the TaxonomyGroup
         TaxonomyGroupDTO taxonomyGroupDTO = taxonomyGroupMapper.toDto(taxonomyGroup);
         restTaxonomyGroupMockMvc.perform(post("/api/taxonomy-groups")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(taxonomyGroupDTO)))
             .andExpect(status().isCreated());
 
@@ -146,7 +149,7 @@ public class TaxonomyGroupResourceIT {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTaxonomyGroupMockMvc.perform(post("/api/taxonomy-groups")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(taxonomyGroupDTO)))
             .andExpect(status().isBadRequest());
 
@@ -165,7 +168,7 @@ public class TaxonomyGroupResourceIT {
         // Get all the taxonomyGroupList
         restTaxonomyGroupMockMvc.perform(get("/api/taxonomy-groups?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(taxonomyGroup.getId().toString())));
     }
 
@@ -211,7 +214,7 @@ public class TaxonomyGroupResourceIT {
         // Get the taxonomyGroup
         restTaxonomyGroupMockMvc.perform(get("/api/taxonomy-groups/{id}", taxonomyGroup.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(taxonomyGroup.getId().toString()));
     }
 
@@ -219,7 +222,7 @@ public class TaxonomyGroupResourceIT {
     @Transactional
     public void getNonExistingTaxonomyGroup() throws Exception {
         // Get the taxonomyGroup
-        restTaxonomyGroupMockMvc.perform(get("/api/taxonomy-groups/{id}", Long.MAX_VALUE))
+        restTaxonomyGroupMockMvc.perform(get("/api/taxonomy-groups/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 
@@ -238,7 +241,7 @@ public class TaxonomyGroupResourceIT {
         TaxonomyGroupDTO taxonomyGroupDTO = taxonomyGroupMapper.toDto(updatedTaxonomyGroup);
 
         restTaxonomyGroupMockMvc.perform(put("/api/taxonomy-groups")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(taxonomyGroupDTO)))
             .andExpect(status().isOk());
 
@@ -258,7 +261,7 @@ public class TaxonomyGroupResourceIT {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTaxonomyGroupMockMvc.perform(put("/api/taxonomy-groups")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(taxonomyGroupDTO)))
             .andExpect(status().isBadRequest());
 
@@ -277,7 +280,7 @@ public class TaxonomyGroupResourceIT {
 
         // Delete the taxonomyGroup
         restTaxonomyGroupMockMvc.perform(delete("/api/taxonomy-groups/{id}", taxonomyGroup.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

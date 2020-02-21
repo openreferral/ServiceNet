@@ -138,7 +138,7 @@ public class DataImportReportResourceIntTest {
         // Create the DataImportReport
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(dataImportReport);
         restDataImportReportMockMvc.perform(post("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isCreated());
 
@@ -166,7 +166,7 @@ public class DataImportReportResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restDataImportReportMockMvc.perform(post("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isBadRequest());
 
@@ -186,7 +186,7 @@ public class DataImportReportResourceIntTest {
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(dataImportReport);
 
         restDataImportReportMockMvc.perform(post("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isBadRequest());
 
@@ -205,7 +205,7 @@ public class DataImportReportResourceIntTest {
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(dataImportReport);
 
         restDataImportReportMockMvc.perform(post("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isBadRequest());
 
@@ -224,7 +224,7 @@ public class DataImportReportResourceIntTest {
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(dataImportReport);
 
         restDataImportReportMockMvc.perform(post("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isBadRequest());
 
@@ -243,7 +243,7 @@ public class DataImportReportResourceIntTest {
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(dataImportReport);
 
         restDataImportReportMockMvc.perform(post("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isBadRequest());
 
@@ -262,7 +262,7 @@ public class DataImportReportResourceIntTest {
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(dataImportReport);
 
         restDataImportReportMockMvc.perform(post("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isBadRequest());
 
@@ -281,7 +281,7 @@ public class DataImportReportResourceIntTest {
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(dataImportReport);
 
         restDataImportReportMockMvc.perform(post("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isBadRequest());
 
@@ -298,7 +298,7 @@ public class DataImportReportResourceIntTest {
         // Get all the dataImportReportList
         restDataImportReportMockMvc.perform(get("/api/data-import-reports?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(dataImportReport.getId().toString())))
             .andExpect(jsonPath("$.[*].numberOfUpdatedServices").value(hasItem(DEFAULT_NUMBER_OF_UPDATED_SERVICES)))
             .andExpect(jsonPath("$.[*].numberOfCreatedServices").value(hasItem(DEFAULT_NUMBER_OF_CREATED_SERVICES)))
@@ -318,7 +318,7 @@ public class DataImportReportResourceIntTest {
         // Get the dataImportReport
         restDataImportReportMockMvc.perform(get("/api/data-import-reports/{id}", dataImportReport.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(dataImportReport.getId().toString()))
             .andExpect(jsonPath("$.numberOfUpdatedServices").value(DEFAULT_NUMBER_OF_UPDATED_SERVICES))
             .andExpect(jsonPath("$.numberOfCreatedServices").value(DEFAULT_NUMBER_OF_CREATED_SERVICES))
@@ -360,7 +360,7 @@ public class DataImportReportResourceIntTest {
         DataImportReportDTO dataImportReportDTO = dataImportReportMapper.toDto(updatedDataImportReport);
 
         restDataImportReportMockMvc.perform(put("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isOk());
 
@@ -387,7 +387,7 @@ public class DataImportReportResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDataImportReportMockMvc.perform(put("/api/data-import-reports")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(dataImportReportDTO)))
             .andExpect(status().isBadRequest());
 
@@ -406,7 +406,7 @@ public class DataImportReportResourceIntTest {
 
         // Get the dataImportReport
         restDataImportReportMockMvc.perform(delete("/api/data-import-reports/{id}", dataImportReport.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

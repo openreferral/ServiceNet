@@ -113,7 +113,7 @@ public class AuditResourceIT {
     @Test
     public void getNonExistingAudit() throws Exception {
         // Get the audit
-        restAuditMockMvc.perform(get("/management/audits/{id}", Long.MAX_VALUE))
+        restAuditMockMvc.perform(get("/management/audits/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 

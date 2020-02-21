@@ -113,7 +113,7 @@ public class GeocodingResultResourceIntTest {
         // Create the GeocodingResult
         GeocodingResultDTO geocodingResultDTO = geocodingResultMapper.toDto(geocodingResult);
         restGeocodingResultMockMvc.perform(post("/api/geocoding-results")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(geocodingResultDTO)))
             .andExpect(status().isCreated());
 
@@ -137,7 +137,7 @@ public class GeocodingResultResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restGeocodingResultMockMvc.perform(post("/api/geocoding-results")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(geocodingResultDTO)))
             .andExpect(status().isBadRequest());
 
@@ -157,7 +157,7 @@ public class GeocodingResultResourceIntTest {
         GeocodingResultDTO geocodingResultDTO = geocodingResultMapper.toDto(geocodingResult);
 
         restGeocodingResultMockMvc.perform(post("/api/geocoding-results")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(geocodingResultDTO)))
             .andExpect(status().isBadRequest());
 
@@ -176,7 +176,7 @@ public class GeocodingResultResourceIntTest {
         GeocodingResultDTO geocodingResultDTO = geocodingResultMapper.toDto(geocodingResult);
 
         restGeocodingResultMockMvc.perform(post("/api/geocoding-results")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(geocodingResultDTO)))
             .andExpect(status().isBadRequest());
 
@@ -195,7 +195,7 @@ public class GeocodingResultResourceIntTest {
         GeocodingResultDTO geocodingResultDTO = geocodingResultMapper.toDto(geocodingResult);
 
         restGeocodingResultMockMvc.perform(post("/api/geocoding-results")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(geocodingResultDTO)))
             .andExpect(status().isBadRequest());
 
@@ -212,7 +212,7 @@ public class GeocodingResultResourceIntTest {
         // Get all the geocodingResultList
         restGeocodingResultMockMvc.perform(get("/api/geocoding-results?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(geocodingResult.getId().toString())))
             .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS.toString())))
             .andExpect(jsonPath("$.[*].latitude").value(hasItem(DEFAULT_LATITUDE.doubleValue())))
@@ -228,7 +228,7 @@ public class GeocodingResultResourceIntTest {
         // Get the geocodingResult
         restGeocodingResultMockMvc.perform(get("/api/geocoding-results/{id}", geocodingResult.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(geocodingResult.getId().toString()))
             .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS.toString()))
             .andExpect(jsonPath("$.latitude").value(DEFAULT_LATITUDE.doubleValue()))
@@ -262,7 +262,7 @@ public class GeocodingResultResourceIntTest {
         GeocodingResultDTO geocodingResultDTO = geocodingResultMapper.toDto(updatedGeocodingResult);
 
         restGeocodingResultMockMvc.perform(put("/api/geocoding-results")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(geocodingResultDTO)))
             .andExpect(status().isOk());
 
@@ -285,7 +285,7 @@ public class GeocodingResultResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restGeocodingResultMockMvc.perform(put("/api/geocoding-results")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(geocodingResultDTO)))
             .andExpect(status().isBadRequest());
 
@@ -304,7 +304,7 @@ public class GeocodingResultResourceIntTest {
 
         // Delete the geocodingResult
         restGeocodingResultMockMvc.perform(delete("/api/geocoding-results/{id}", geocodingResult.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

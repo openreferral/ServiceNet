@@ -94,6 +94,10 @@ spring:
     jpa:
       repositories:
         bootstrap-mode: deferred
+    mongodb:
+      uri: mongodb://localhost:27017/serviceNet
+      connection:
+        timeout: 500
   jpa:
     open-in-view: false
     properties:

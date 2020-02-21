@@ -120,7 +120,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
         // Create the ServiceTaxonomiesDetailsFieldsValue
         ServiceTaxonomiesDetailsFieldsValueDTO serviceTaxonomiesDetailsFieldsValueDTO = serviceTaxonomiesDetailsFieldsValueMapper.toDto(serviceTaxonomiesDetailsFieldsValue);
         restServiceTaxonomiesDetailsFieldsValueMockMvc.perform(post("/api/service-taxonomies-details-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceTaxonomiesDetailsFieldsValueDTO)))
             .andExpect(status().isCreated());
 
@@ -142,7 +142,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restServiceTaxonomiesDetailsFieldsValueMockMvc.perform(post("/api/service-taxonomies-details-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceTaxonomiesDetailsFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -160,7 +160,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
         // Get all the serviceTaxonomiesDetailsFieldsValueList
         restServiceTaxonomiesDetailsFieldsValueMockMvc.perform(get("/api/service-taxonomies-details-fields-values?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(serviceTaxonomiesDetailsFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].serviceTaxonomiesDetailsField").value(hasItem(DEFAULT_SERVICE_TAXONOMIES_DETAILS_FIELD.toString())));
     }
@@ -174,7 +174,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
         // Get the serviceTaxonomiesDetailsFieldsValue
         restServiceTaxonomiesDetailsFieldsValueMockMvc.perform(get("/api/service-taxonomies-details-fields-values/{id}", serviceTaxonomiesDetailsFieldsValue.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(serviceTaxonomiesDetailsFieldsValue.getId().toString()))
             .andExpect(jsonPath("$.serviceTaxonomiesDetailsField").value(DEFAULT_SERVICE_TAXONOMIES_DETAILS_FIELD.toString()));
     }
@@ -204,7 +204,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
         ServiceTaxonomiesDetailsFieldsValueDTO serviceTaxonomiesDetailsFieldsValueDTO = serviceTaxonomiesDetailsFieldsValueMapper.toDto(updatedServiceTaxonomiesDetailsFieldsValue);
 
         restServiceTaxonomiesDetailsFieldsValueMockMvc.perform(put("/api/service-taxonomies-details-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceTaxonomiesDetailsFieldsValueDTO)))
             .andExpect(status().isOk());
 
@@ -225,7 +225,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restServiceTaxonomiesDetailsFieldsValueMockMvc.perform(put("/api/service-taxonomies-details-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceTaxonomiesDetailsFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -244,7 +244,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
 
         // Delete the serviceTaxonomiesDetailsFieldsValue
         restServiceTaxonomiesDetailsFieldsValueMockMvc.perform(delete("/api/service-taxonomies-details-fields-values/{id}", serviceTaxonomiesDetailsFieldsValue.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

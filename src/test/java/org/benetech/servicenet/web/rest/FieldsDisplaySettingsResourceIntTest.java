@@ -163,7 +163,7 @@ public class FieldsDisplaySettingsResourceIntTest {
         // Create the FieldsDisplaySettings
         FieldsDisplaySettingsDTO fieldsDisplaySettingsDTO = fieldsDisplaySettingsMapper.toDto(fieldsDisplaySettings);
         restFieldsDisplaySettingsMockMvc.perform(post("/api/fields-display-settings")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(fieldsDisplaySettingsDTO)))
             .andExpect(status().isCreated());
 
@@ -185,7 +185,7 @@ public class FieldsDisplaySettingsResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restFieldsDisplaySettingsMockMvc.perform(post("/api/fields-display-settings")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(fieldsDisplaySettingsDTO)))
             .andExpect(status().isBadRequest());
 
@@ -203,7 +203,7 @@ public class FieldsDisplaySettingsResourceIntTest {
         // Get all the fieldsDisplaySettingsList
         restFieldsDisplaySettingsMockMvc.perform(get("/api/fields-display-settings?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(fieldsDisplaySettings.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].locationFields").value(hasItem(DEFAULT_LOCATION_FIELDS)))
@@ -224,7 +224,7 @@ public class FieldsDisplaySettingsResourceIntTest {
         // Get the fieldsDisplaySettings
         restFieldsDisplaySettingsMockMvc.perform(get("/api/fields-display-settings/{id}", fieldsDisplaySettings.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(fieldsDisplaySettings.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
     }
@@ -261,7 +261,7 @@ public class FieldsDisplaySettingsResourceIntTest {
         FieldsDisplaySettingsDTO fieldsDisplaySettingsDTO = fieldsDisplaySettingsMapper.toDto(updatedFieldsDisplaySettings);
 
         restFieldsDisplaySettingsMockMvc.perform(put("/api/fields-display-settings")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(fieldsDisplaySettingsDTO)))
             .andExpect(status().isOk());
 
@@ -282,7 +282,7 @@ public class FieldsDisplaySettingsResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restFieldsDisplaySettingsMockMvc.perform(put("/api/fields-display-settings")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(fieldsDisplaySettingsDTO)))
             .andExpect(status().isBadRequest());
 
@@ -301,7 +301,7 @@ public class FieldsDisplaySettingsResourceIntTest {
 
         // Delete the fieldsDisplaySettings
         restFieldsDisplaySettingsMockMvc.perform(delete("/api/fields-display-settings/{id}", fieldsDisplaySettings.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
