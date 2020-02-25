@@ -14,6 +14,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {ServiceMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface ServiceMatchMapper extends EntityMapper<ServiceMatchDto, ServiceMatch> {
 
+    @Mapping(target = "orgId", source = "matchingService.organization.id")
+    @Mapping(target = "serviceName", source = "matchingService.name")
+    @Mapping(target = "organizationName", source = "matchingService.organization.name")
     @Mapping(source = "service.id", target = "service")
     @Mapping(source = "matchingService.id", target = "matchingService")
     ServiceMatchDto toDto(ServiceMatch serviceMatch);

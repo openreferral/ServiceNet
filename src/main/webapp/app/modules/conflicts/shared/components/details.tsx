@@ -3,8 +3,8 @@ import '../../all/all-records-view.scss';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { OrganizationDetails } from '../../shared/components/organization-details';
-import { LocationsDetails } from '../../shared/components/location/locations-details';
-import { ServicesDetails } from '../../shared/components/service/services-details';
+import LocationsDetails from '../../shared/components/location/locations-details';
+import ServicesDetails from '../../shared/components/service/services-details';
 import { ContactsDetails } from '../../shared/components/contact/contacts-details';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,6 +20,8 @@ export interface IDetailsProp extends StateProps, DispatchProps, RouteComponentP
   matchLocations?: boolean;
   toggleMatchLocations?: any;
   settings?: any;
+  serviceMatches?: any;
+  locationMatches?: any;
 }
 
 export interface IDetailsState {
@@ -45,7 +47,7 @@ export class Details extends React.Component<IDetailsProp, IDetailsState> {
 
   render() {
     const { isAreaOpen } = this.state;
-    const { settings } = this.props;
+    const { settings, serviceMatches, locationMatches } = this.props;
     const columnSize = 12;
     return (
       <div>
@@ -69,6 +71,7 @@ export class Details extends React.Component<IDetailsProp, IDetailsState> {
                 columnSize={columnSize}
                 isAreaOpen
                 settings={settings}
+                locationMatches={locationMatches}
               />
             ) : null}
             {this.displaySection('serviceFields') ? (
@@ -78,6 +81,7 @@ export class Details extends React.Component<IDetailsProp, IDetailsState> {
                 columnSize={columnSize}
                 isAreaOpen
                 settings={settings}
+                serviceMatches={serviceMatches}
               />
             ) : null}
             {this.displaySection('contactDetailsFields') ? (
@@ -100,6 +104,7 @@ export class Details extends React.Component<IDetailsProp, IDetailsState> {
                 columnSize={columnSize}
                 isAreaOpen={false}
                 settings={settings}
+                locationMatches={locationMatches}
               />
             ) : null}
             {this.displaySection('serviceFields') ? (
@@ -109,6 +114,7 @@ export class Details extends React.Component<IDetailsProp, IDetailsState> {
                 columnSize={columnSize}
                 isAreaOpen={false}
                 settings={settings}
+                serviceMatches={serviceMatches}
               />
             ) : null}
             {this.displaySection('contactDetailsFields') ? (

@@ -1,8 +1,8 @@
 package org.benetech.servicenet.service.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -46,9 +46,9 @@ public class OrganizationMatchDTO implements Serializable {
 
     private String partnerVersionName;
 
-    private Map<UUID, Set<UUID>> locationMatches;
+    private Map<UUID, List<LocationMatchDto>> locationMatches;
 
-    private Map<UUID, Set<UUID>> serviceMatches;
+    private Map<UUID, List<ServiceMatchDto>> serviceMatches;
 
     private Integer numberOfLocations;
 

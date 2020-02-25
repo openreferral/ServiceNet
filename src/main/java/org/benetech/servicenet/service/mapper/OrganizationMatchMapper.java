@@ -4,12 +4,11 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.domain.LocationMatch;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
@@ -17,6 +16,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.LocationMatchService;
 import org.benetech.servicenet.service.ServiceMatchService;
+import org.benetech.servicenet.service.dto.LocationMatchDto;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.ServiceMatchDto;
 import org.benetech.servicenet.util.CollectionUtils;
@@ -60,28 +60,18 @@ public abstract class OrganizationMatchMapper {
     public OrganizationMatchDTO toDtoWithLocationMatches(OrganizationMatch organizationMatch) {
         OrganizationMatchDTO dto = toDto(organizationMatch);
         Organization partner = organizationMatch.getPartnerVersion();
-        Map<UUID, Set<UUID>> locationMatches = new HashMap<>();
-        Map<UUID, Set<UUID>> serviceMatches = new HashMap<>();
+        Map<UUID, List<LocationMatchDto>> locationMatches = new HashMap<>();
+        Map<UUID, List<ServiceMatchDto>> serviceMatches = new HashMap<>();
+
         for (Location location : organizationMatch.getOrganizationRecord().getLocations()) {
-            Set<UUID> matches = new HashSet<>();
-            for (LocationMatch match : locationMatchService.findAllForLocation(location.getId())) {
-                if (partner.getLocations().contains(match.getMatchingLocation())) {
-                    matches.add(match.getMatchingLocation().getId());
-                }
-            }
+            List<LocationMatchDto> matches = locationMatchService.findAllDtoForLocation(location.getId());
             if (matches.size() > 0) {
                 locationMatches.put(location.getId(), matches);
             }
         }
 
         for (Service service : organizationMatch.getOrganizationRecord().getServices()) {
-            Set<UUID> matches = new HashSet<>();
-            for (ServiceMatchDto serviceMatch : serviceMatchService.findAllForService(service.getId())) {
-                if (partner.getServices().stream().map(AbstractEntity::getId)
-                        .collect(Collectors.toCollection(HashSet::new)).contains(serviceMatch.getMatchingService())) {
-                    matches.add(serviceMatch.getMatchingService());
-                }
-            }
+            List<ServiceMatchDto> matches = serviceMatchService.findAllForService(service.getId());
             if (matches.size() > 0) {
                 serviceMatches.put(service.getId(), matches);
             }

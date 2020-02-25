@@ -28,6 +28,7 @@
     "noPhysicalAddress": "No physical address provided",
     "showLessFields": "Show less fields",
     "matchesMyServiceRecord": "Matches my Service record",
-    "unmatchThisRecord": "Unmatch this record"
+    "unmatchThisRecord": "Unmatch this record",
+    "matchesMyLocationRecord": "Matches my Location record"
   }
 }

@@ -5,13 +5,15 @@ import { RouteComponentProps, Link } from 'react-router-dom';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IOrganizationMatch } from 'app/shared/model//organization-match.model';
 import { OrganizationDetails } from '../shared/components/organization-details';
-import { LocationsDetails } from '../shared/components/location/locations-details';
-import { ServicesDetails } from '../shared/components/service/services-details';
+import LocationsDetails from '../shared/components/location/locations-details';
+import ServicesDetails from '../shared/components/service/services-details';
 import { ContactsDetails } from '../shared/components/contact/contacts-details';
 import { Col, Jumbotron } from 'reactstrap';
 import { translate, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ReactGA from 'react-ga';
+import _ from 'lodash';
+import { getNotHiddenMatchesByOrg, getPartnerRecords } from 'app/modules/conflicts/shared/shared-record-view.reducer';
 
 export interface ISingleRecordViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {
   activity: IActivityRecord;
@@ -32,6 +34,14 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
     activeTab: '1',
     isAreaOpen: false
   };
+
+  componentDidMount() {
+    Promise.all([this.props.getNotHiddenMatchesByOrg(this.props.orgId)]).then(() => {
+      if (this.props.matches.length >= 0) {
+        this.props.getPartnerRecords(this.props.orgId);
+      }
+    });
+  }
 
   toggle = tab => {
     if (this.state.activeTab !== tab) {
@@ -77,6 +87,7 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
                   .sort((om1, om2) => Object.keys(om2.locationMatches).length - Object.keys(om1.locationMatches).length)
                   .map(match => (
                     <Link
+                      key={match.id}
                       to={`/multi-record-view/${match.organizationRecordId}/${match.partnerVersionId}`}
                       onClick={this.handleMatchClick}
                       className="match"
@@ -120,7 +131,8 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
 
     const columnSize = 6;
     const { isAreaOpen } = this.state;
-
+    const { partnerRecords, matches } = this.props;
+    const recordMatch = partnerRecords.length && _.find(matches, m => m.partnerVersionId === partnerRecords[0].organization.id);
     return (
       <div>
         <OrganizationDetails {...this.props} sideSection={sideSection} columnSize={columnSize} />
@@ -134,15 +146,39 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
         </h5>
         {isAreaOpen ? (
           <div>
-            <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} isAreaOpen />
-            <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} isAreaOpen />
+            <LocationsDetails
+              {...this.props}
+              locations={this.props.activity.locations}
+              columnSize={columnSize}
+              locationMatches={recordMatch.locationMatches}
+              isAreaOpen
+            />
+            <ServicesDetails
+              {...this.props}
+              services={this.props.activity.services}
+              columnSize={columnSize}
+              serviceMatches={recordMatch.serviceMatches}
+              isAreaOpen
+            />
             <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} isAreaOpen />
           </div>
         ) : null}
         {isAreaOpen ? null : (
           <div>
-            <LocationsDetails {...this.props} locations={this.props.activity.locations} columnSize={columnSize} isAreaOpen={false} />
-            <ServicesDetails {...this.props} services={this.props.activity.services} columnSize={columnSize} isAreaOpen={false} />
+            <LocationsDetails
+              {...this.props}
+              locations={this.props.activity.locations}
+              columnSize={columnSize}
+              locationMatches={recordMatch.locationMatches}
+              isAreaOpen={false}
+            />
+            <ServicesDetails
+              {...this.props}
+              services={this.props.activity.services}
+              columnSize={columnSize}
+              serviceMatches={recordMatch.serviceMatches}
+              isAreaOpen={false}
+            />
             <ContactsDetails {...this.props} contacts={this.props.activity.contacts} columnSize={columnSize} isAreaOpen={false} />
           </div>
         )}
@@ -151,9 +187,12 @@ export class Details extends React.Component<ISingleRecordViewProp, ISingleRecor
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = state => ({
+  partnerRecords: state.sharedRecordView.partnerRecords,
+  matches: state.sharedRecordView.matches
+});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { getPartnerRecords, getNotHiddenMatchesByOrg };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

@@ -10,5 +10,5 @@ public interface ServiceMatchService {
 
     List<ServiceMatchDto> findAllForService(UUID serviceId);
 
-    void delete(UUID serviceId, UUID matchingServiceId);
+    void delete(ServiceMatchDto serviceMatchDto);
 }

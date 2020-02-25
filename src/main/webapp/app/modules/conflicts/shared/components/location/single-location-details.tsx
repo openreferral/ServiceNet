@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Row } from 'reactstrap';
+import { Col, Row, Button } from 'reactstrap';
 import '../../shared-record-view.scss';
 import { TextFormat, translate, Translate } from 'react-jhipster';
 import { connect } from 'react-redux';
@@ -16,6 +16,8 @@ import { getTextField, getTextAreaField } from 'app/shared/util/single-record-vi
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import Select from 'react-select';
 import _ from 'lodash';
+import { createLocationMatch, deleteLocationMatch } from 'app/modules/conflicts/shared/shared-record-view.reducer';
+import LocationMatchesDetails from 'app/modules/conflicts/shared/components/location/location-matches-details';
 
 export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -32,6 +34,9 @@ export interface ISingleLocationDetailsProp extends StateProps, DispatchProps {
   isBaseRecord: boolean;
   locationNumber?: number;
   settings?: any;
+  locationMatches?: any;
+  baseRecord?: any;
+  orgId?: string;
 }
 
 export interface ISingleLocationDetailsState {
@@ -80,6 +85,32 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
     return _.values(_.pick(fieldsMap, keysFiltered));
   };
 
+  matchLocation = () => {
+    const matchingLocationId = this.props.record.location.id;
+    const locationId = this.props.baseLocation;
+    const orgId = this.props.baseRecord.organization.id;
+    this.props.createLocationMatch(locationId, matchingLocationId, orgId);
+  };
+
+  unmatchLocation = () => {
+    const matchingLocationId = this.props.record.location.id;
+    const locationId = this.props.baseLocation;
+    const orgId = this.props.baseRecord.organization.id;
+    this.props.deleteLocationMatch(locationId, matchingLocationId, orgId);
+  };
+
+  isMatched = () => {
+    const { locationMatches, baseLocation } = this.props;
+    const matchingLocationId = this.props.record.location.id;
+    if (!!locationMatches) {
+      return _.some(
+        _.reduce(locationMatches, (total, current) => total.concat(current), []),
+        val => val.matchingLocation === matchingLocationId && val.location === baseLocation
+      );
+    }
+    return true;
+  };
+
   render() {
     const {
       record,
@@ -91,7 +122,9 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       matchLocations,
       toggleMatchLocations,
       locationNumber,
-      settings
+      settings,
+      locationMatches,
+      orgId
     } = this.props;
     const customHeader = (
       <div className="title d-flex justify-content-between align-items-center mb-1">
@@ -130,8 +163,37 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       </div>
     );
 
+    const matchButton = (
+      <Button onClick={this.matchLocation} replace color="info">
+        <FontAwesomeIcon icon="arrow-left" />{' '}
+        <span className="d-none d-md-inline">
+          <Translate contentKey="multiRecordView.matchesMyLocationRecord" />
+        </span>
+      </Button>
+    );
+
+    const unmatchButton = (
+      <Button onClick={this.unmatchLocation} replace color="danger">
+        <FontAwesomeIcon icon="arrow-left" />{' '}
+        <span className="d-none d-md-inline">
+          <Translate contentKey="multiRecordView.unmatchThisRecord" />
+        </span>
+      </Button>
+    );
+
+    const matchOrUnMatchButton = (
+      <h5>
+        {locationMatches && this.props.baseRecord && this.props.baseRecord.organization.id !== record.location.organizationId
+          ? this.isMatched()
+            ? unmatchButton
+            : matchButton
+          : ''}
+      </h5>
+    );
+
     const itemHeader = (
       <div>
+        {matchOrUnMatchButton}
         <h5>
           <Translate contentKey="multiRecordView.lastCompleteReview" />
           {record.location.lastVerifiedOn ? (
@@ -160,7 +222,16 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
       ),
       OPENING_HOURS: <OpeningHoursDetails key="opening-hours-details" {...this.props} hours={record.regularScheduleOpeningHours} />,
       LANGUAGE: <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
-      HOLIDAY_SCHEDULE: <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />
+      HOLIDAY_SCHEDULE: <HolidaySchedulesDetails key="holiday-schedule-details" {...this.props} schedules={record.holidaySchedules} />,
+      LOCATION_MATCHES: (
+        <LocationMatchesDetails
+          key="location-matches"
+          orgId={orgId}
+          locationMatches={locationMatches}
+          locationId={record.location.id}
+          isBaseRecord={isBaseRecord}
+        />
+      )
     };
 
     const fields = {
@@ -194,9 +265,11 @@ export class SingleLocationDetails extends React.Component<ISingleLocationDetail
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = state => ({
+  baseLocation: state.sharedRecordView.openLocation
+});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { createLocationMatch, deleteLocationMatch };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

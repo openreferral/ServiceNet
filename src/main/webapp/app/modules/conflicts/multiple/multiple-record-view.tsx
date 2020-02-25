@@ -277,6 +277,8 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 matchingLocation={this.state.matchingLocation}
                 toggleMatchLocations={this.toggleMatchLocations}
                 settings={this.props.selectedSettings}
+                serviceMatches={match && match.serviceMatches}
+                locationMatches={match && match.locationMatches}
               />
             </Col>
           ) : (
@@ -329,6 +331,8 @@ export class MultipleRecordView extends React.Component<IMultipleRecordViewProp,
                 matchLocations={this.state.matchLocations}
                 matchingLocation={this.state.matchingLocation}
                 settings={this.props.selectedSettings}
+                serviceMatches={match && match.serviceMatches}
+                locationMatches={match && match.locationMatches}
               />
               <Jumbotron className="same-record-question-container">
                 <div className="same-record-question">

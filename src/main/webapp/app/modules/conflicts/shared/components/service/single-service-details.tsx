@@ -17,12 +17,12 @@ import { LanguagesDetails } from '../languages-details';
 import { HolidaySchedulesDetails } from '../holiday-schedules-details';
 import { ContactsDetails } from '../contact/contacts-details';
 import { PhonesDetails } from '../phone/phones-details';
+import ServiceMatchesDetails from 'app/modules/conflicts/shared/components/service/service-matches-details';
 import { getTextField } from 'app/shared/util/single-record-view-utils';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import Select from 'react-select';
 import _ from 'lodash';
-import { Link } from 'react-router-dom';
-import { createServiceMatch } from 'app/modules/conflicts/shared/shared-record-view.reducer';
+import { createServiceMatch, deleteServiceMatch } from 'app/modules/conflicts/shared/shared-record-view.reducer';
 
 export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   activity: IActivityRecord;
@@ -35,6 +35,11 @@ export interface ISingleServiceDetailsProp extends StateProps, DispatchProps {
   isAreaOpen: boolean;
   selectOptions: any;
   settings?: any;
+  serviceMatches?: any;
+  isBaseRecord: boolean;
+  selectedOption: number;
+  baseRecord?: any;
+  orgId?: string;
 }
 
 export interface ISingleServiceDetailsState {
@@ -63,7 +68,6 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
     if (settings === undefined || (!!settings && !settings.id)) {
       return _.values(fieldsMap);
     }
-
     const { serviceFields } = settings;
 
     const fieldsMapKeys = _.keys(fieldsMap);
@@ -72,16 +76,44 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
   };
 
   matchService = () => {
-    console.log('AAAAAAAAAAA23');
-    console.log(this.props);
     const matchingServiceId = this.props.record.service.id;
-    const serviceId = this.props.baseRecord.organization.id;
-    this.props.createServiceMatch(serviceId, matchingServiceId);
+    const serviceId = this.props.baseService;
+    const orgId = this.props.baseRecord.organization.id;
+    this.props.createServiceMatch(serviceId, matchingServiceId, orgId);
+  };
+
+  unmatchService = () => {
+    const matchingServiceId = this.props.record.service.id;
+    const serviceId = this.props.baseService;
+    const orgId = this.props.baseRecord.organization.id;
+    this.props.deleteServiceMatch(serviceId, matchingServiceId, orgId);
+  };
+
+  isMatched = () => {
+    const { serviceMatches, baseService } = this.props;
+    const matchingServiceId = this.props.record.service.id;
+    if (!!serviceMatches) {
+      return _.some(
+        _.reduce(serviceMatches, (total, current) => total.concat(current), []),
+        val => val.matchingService === matchingServiceId && val.service === baseService
+      );
+    }
+    return true;
   };
 
   render() {
-    const { record, isOnlyOne, columnSize, selectOptions, servicesCount, settings } = this.props;
-    console.log(record);
+    const {
+      record,
+      isOnlyOne,
+      columnSize,
+      selectOptions,
+      servicesCount,
+      settings,
+      serviceMatches,
+      isBaseRecord,
+      selectedOption,
+      orgId
+    } = this.props;
     const customHeader = (
       <div className="title d-flex justify-content-start align-items-center mb-1">
         <div
@@ -95,22 +127,43 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
         </div>
         {isOnlyOne ? null : (
           <div className="flex-grow-1">
-            <Select onChange={this.changeRecord} options={selectOptions} />
+            <Select onChange={this.changeRecord} options={selectOptions} value={selectOptions[selectedOption]} />
           </div>
         )}
       </div>
     );
 
+    const matchButton = (
+      <Button onClick={this.matchService} replace color="info">
+        <FontAwesomeIcon icon="arrow-left" />{' '}
+        <span className="d-none d-md-inline">
+          <Translate contentKey="multiRecordView.matchesMyServiceRecord" />
+        </span>
+      </Button>
+    );
+
+    const unmatchButton = (
+      <Button onClick={this.unmatchService} replace color="danger">
+        <FontAwesomeIcon icon="arrow-left" />{' '}
+        <span className="d-none d-md-inline">
+          <Translate contentKey="multiRecordView.unmatchThisRecord" />
+        </span>
+      </Button>
+    );
+
+    const matchOrUnMatchButton = (
+      <h5>
+        {serviceMatches && this.props.baseRecord && this.props.baseRecord.organization.id !== record.service.organizationId
+          ? this.isMatched()
+            ? unmatchButton
+            : matchButton
+          : ''}
+      </h5>
+    );
+
     const itemHeader = (
       <div>
-        <h5>
-          <Button onClick={this.matchService} replace color="info">
-            <FontAwesomeIcon icon="arrow-left" />{' '}
-            <span className="d-none d-md-inline">
-              <Translate contentKey="multiRecordView.matchesMyServiceRecord" />
-            </span>
-          </Button>
-        </h5>
+        {matchOrUnMatchButton}
         <h5>
           <Translate contentKey="multiRecordView.lastCompleteReview" />
           {record.service.lastVerifiedOn ? (
@@ -144,7 +197,16 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
       LANGS: <LanguagesDetails key="languages-details" {...this.props} langs={record.langs} />,
       HOLIDAY_SCHEDULES: <HolidaySchedulesDetails key="holiday-schedules-details" {...this.props} schedules={record.holidaySchedules} />,
       CONTACTS: <ContactsDetails key="contacts-details" {...this.props} contacts={record.contacts} settings={settings} />,
-      PHONES: <PhonesDetails key="phones-details" {...this.props} phones={record.phones} />
+      PHONES: <PhonesDetails key="phones-details" {...this.props} phones={record.phones} />,
+      SERVICE_MATCHES: (
+        <ServiceMatchesDetails
+          key="service-matches"
+          orgId={orgId}
+          serviceMatches={serviceMatches}
+          serviceId={record.service.id}
+          isBaseRecord={isBaseRecord}
+        />
+      )
     };
 
     const fields = {
@@ -211,9 +273,11 @@ export class SingleServiceDetails extends React.Component<ISingleServiceDetailsP
   }
 }
 
-const mapStateToProps = (storeState, { match }) => ({});
+const mapStateToProps = state => ({
+  baseService: state.sharedRecordView.openService
+});
 
-const mapDispatchToProps = { createServiceMatch };
+const mapDispatchToProps = { createServiceMatch, deleteServiceMatch };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

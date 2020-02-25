@@ -44,9 +44,7 @@ public class ServiceMatch extends AbstractEntity implements Serializable {
         if (srvc.getId() == null || getId() == null) {
             return false;
         }
-        return (Objects.equals(this.getId(), srvc.getId())) &&
-            (Objects.equals(this.getService().getId(), srvc.getService().getId())) &&
-            (Objects.equals(this.getMatchingService().getId(), srvc.getMatchingService().getId()));
+        return Objects.equals(this.getId(), srvc.getId());
     }
 
     @Override

@@ -5,20 +5,20 @@ import java.util.UUID;
 import lombok.Data;
 
 /**
- * A DTO for the ServiceMatch entity.
+ * A DTO for the LocationMatch entity.
  */
 @Data
-public class ServiceMatchDto implements Serializable {
+public class LocationMatchDto implements Serializable {
 
     private UUID id;
 
-    private UUID service;
+    private UUID location;
 
-    private UUID matchingService;
+    private UUID matchingLocation;
 
     private UUID orgId;
 
     private String organizationName;
 
-    private String serviceName;
+    private String locationName;
 }

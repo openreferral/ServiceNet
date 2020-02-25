@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { IActivityRecord } from 'app/shared/model/activity-record.model';
 import { IServiceRecord } from 'app/shared/model/service-record.model';
 import SingleServiceDetails from './single-service-details';
+import { setOpenService } from 'app/modules/conflicts/shared/shared-record-view.reducer';
 import { translate } from 'react-jhipster';
 import _ from 'lodash';
 
@@ -14,6 +15,8 @@ export interface IServicesDetailsProp extends StateProps, DispatchProps {
   showClipboard: boolean;
   isAreaOpen: boolean;
   settings?: any;
+  orgId?: any;
+  serviceMatches?: any;
 }
 
 export interface IServicesDetailsState {
@@ -27,7 +30,26 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
     isAreaOpen: this.props.isAreaOpen
   };
 
+  componentDidMount(): void {
+    this.setCurrentOpenService(this.state.serviceNumber);
+  }
+
+  isBaseRecord = record => {
+    const { orgId } = this.props;
+    return record.service.organizationId === orgId;
+  };
+
+  setCurrentOpenService = serviceNumber => {
+    const { services } = this.props;
+    const sortedServices = _.sortBy(services, ['service.name']);
+    const record = sortedServices[serviceNumber];
+    if (record && this.props.orgId === record.service.organizationId) {
+      this.props.setOpenService(record.service.id);
+    }
+  };
+
   changeRecord = serviceNumber => {
+    this.setCurrentOpenService(serviceNumber);
     this.setState({ serviceNumber });
   };
 
@@ -51,7 +73,7 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
   }
 
   render() {
-    const { services, isAreaOpen } = this.props;
+    const { services, isAreaOpen, serviceMatches } = this.props;
     const { serviceNumber } = this.state;
     const sortedServices = _.sortBy(services, ['service.name']);
     const record = sortedServices[serviceNumber];
@@ -67,6 +89,9 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
           servicesCount={`(${serviceNumber + 1}/${sortedServices.length}) `}
           isAreaOpen={isAreaOpen}
           settings={this.props.settings}
+          serviceMatches={serviceMatches}
+          isBaseRecord={this.isBaseRecord(record)}
+          selectedOption={serviceNumber}
         />
       ) : null;
 
@@ -74,9 +99,9 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = () => {};
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { setOpenService };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

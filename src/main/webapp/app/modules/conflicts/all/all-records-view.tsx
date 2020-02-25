@@ -185,6 +185,7 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
 
   render() {
     const { baseRecord, partnerRecords, systemAccountName, matches } = this.props;
+    const match = partnerRecords.length && _.find(matches, m => m.partnerVersionId === partnerRecords[0].organization.id);
     const baseProviderName = baseRecord ? baseRecord.organization.accountName : null;
     const loading = (
       <Col>
@@ -244,6 +245,8 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
                 matchingLocation={this.state.matchingLocation}
                 toggleMatchLocations={this.toggleMatchLocations}
                 settings={this.props.selectedSettings}
+                serviceMatches={match.serviceMatches}
+                locationMatches={match.locationMatches}
               />
             </div>
           ) : (
@@ -299,6 +302,8 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
                   matchLocations={this.state.matchLocations}
                   matchingLocation={this.state.matchingLocation}
                   settings={this.props.selectedSettings}
+                  serviceMatches={match.serviceMatches}
+                  locationMatches={match.locationMatches}
                 />
                 <Jumbotron className="same-record-question-container">
                   <div className="text-center">
