@@ -93,7 +93,7 @@ public class ActivityRepository {
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
 
-    private static final Double HIGHLY_MATCH_THRESHOLD = 0.75;
+    private static final Double HIGHLY_MATCH_THRESHOLD = 0.5;
 
     private final EntityManager em;
     private final CriteriaBuilder cb;
