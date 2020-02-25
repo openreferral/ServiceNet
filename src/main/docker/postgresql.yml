@@ -1,11 +1,11 @@
 version: '2'
 services:
-    servicenet-postgresql:
-        image: postgres:10.4
-        # volumes:
-        #     - ~/volumes/jhipster/ServiceNet/postgresql/:/var/lib/postgresql/data/
-        environment:
-        - POSTGRES_USER=ServiceNet
-        - POSTGRES_PASSWORD=
-        ports:
-        - 5432:5432
+  servicenet-postgresql:
+    image: postgres:12.1
+    # volumes:
+    #     - ~/volumes/jhipster/ServiceNetGateway/postgresql/:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=ServiceNetGateway
+      - POSTGRES_PASSWORD=
+    ports:
+      - 5432:5432

@@ -10,12 +10,16 @@ export const ACTION_TYPES = {
   FETCH_THREAD_DUMP: 'administration/FETCH_THREAD_DUMP',
   FETCH_CONFIGURATIONS: 'administration/FETCH_CONFIGURATIONS',
   FETCH_ENV: 'administration/FETCH_ENV',
-  FETCH_AUDITS: 'administration/FETCH_AUDITS'
+  FETCH_AUDITS: 'administration/FETCH_AUDITS',
+  FETCH_GATEWAY_ROUTE: 'administration/FETCH_GATEWAY_ROUTE'
 };
 
 const initialState = {
   loading: false,
   errorMessage: null,
+  gateway: {
+    routes: []
+  },
   logs: {
     loggers: [] as any[]
   },
@@ -36,6 +40,7 @@ export type AdministrationState = Readonly<typeof initialState>;
 
 export default (state: AdministrationState = initialState, action): AdministrationState => {
   switch (action.type) {
+    case REQUEST(ACTION_TYPES.FETCH_GATEWAY_ROUTE):
     case REQUEST(ACTION_TYPES.FETCH_METRICS):
     case REQUEST(ACTION_TYPES.FETCH_THREAD_DUMP):
     case REQUEST(ACTION_TYPES.FETCH_LOGS):
@@ -48,6 +53,7 @@ export default (state: AdministrationState = initialState, action): Administrati
         errorMessage: null,
         loading: true
       };
+    case FAILURE(ACTION_TYPES.FETCH_GATEWAY_ROUTE):
     case FAILURE(ACTION_TYPES.FETCH_METRICS):
     case FAILURE(ACTION_TYPES.FETCH_THREAD_DUMP):
     case FAILURE(ACTION_TYPES.FETCH_LOGS):
@@ -60,6 +66,14 @@ export default (state: AdministrationState = initialState, action): Administrati
         loading: false,
         errorMessage: action.payload,
         health: action.payload.response ? action.payload.response.data : null
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_GATEWAY_ROUTE):
+      return {
+        ...state,
+        loading: false,
+        gateway: {
+          routes: action.payload.data
+        }
       };
     case SUCCESS(ACTION_TYPES.FETCH_METRICS):
       return {
@@ -118,6 +132,10 @@ export default (state: AdministrationState = initialState, action): Administrati
 };
 
 // Actions
+export const gatewayRoutes = () => ({
+  type: ACTION_TYPES.FETCH_GATEWAY_ROUTE,
+  payload: axios.get('/api/gateway/routes')
+});
 
 export const systemHealth = () => ({
   type: ACTION_TYPES.FETCH_HEALTH,
@@ -141,7 +159,6 @@ export const getLoggers = () => ({
 
 export const changeLogLevel = (name, level) => {
   const body = {
-    level,
     name
   };
   return async dispatch => {

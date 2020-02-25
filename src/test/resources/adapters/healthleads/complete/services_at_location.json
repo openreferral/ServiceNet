@@ -1,8 +1,0 @@
-[
-  {
-    "description": "Service At Location Description",
-    "id": "serviceAtLocationId",
-    "location_id": "locationId",
-    "service_id": "serviceId"
-  }
-]

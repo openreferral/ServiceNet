@@ -13,6 +13,8 @@ export const ACTION_TYPES = {
   ERROR_MESSAGE: 'authentication/ERROR_MESSAGE'
 };
 
+const AUTH_TOKEN_KEY = 'jhi-authenticationToken';
+
 const initialState = {
   loading: false,
   loggingOut: false,
@@ -118,14 +120,19 @@ export const getSession = () => async (dispatch, getState) => {
 };
 
 export const login = (username, password, rememberMe = false) => async (dispatch, getState) => {
-  resetSearchPreferences(username);
-  const data = `j_username=${encodeURIComponent(username)}&j_password=${encodeURIComponent(
-    password
-  )}&remember-me=${rememberMe}&submit=Login`;
-  await dispatch({
+  const result = await dispatch({
     type: ACTION_TYPES.LOGIN,
-    payload: axios.post('api/authentication', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+    payload: axios.post('api/authenticate', { username, password, rememberMe })
   });
+  const bearerToken = result.value.headers.authorization;
+  if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
+    const jwt = bearerToken.slice(7, bearerToken.length);
+    if (rememberMe) {
+      Storage.local.set(AUTH_TOKEN_KEY, jwt);
+    } else {
+      Storage.session.set(AUTH_TOKEN_KEY, jwt);
+    }
+  }
   await dispatch(getSession());
 };
 
@@ -137,7 +144,17 @@ export const logout = () => async dispatch => {
   dispatch(getSession());
 };
 
+export const clearAuthToken = () => {
+  if (Storage.local.get(AUTH_TOKEN_KEY)) {
+    Storage.local.remove(AUTH_TOKEN_KEY);
+  }
+  if (Storage.session.get(AUTH_TOKEN_KEY)) {
+    Storage.session.remove(AUTH_TOKEN_KEY);
+  }
+};
+
 export const clearAuthentication = messageKey => (dispatch, getState) => {
+  clearAuthToken();
   dispatch(displayAuthError(messageKey));
   dispatch({
     type: ACTION_TYPES.CLEAR_AUTH

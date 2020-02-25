@@ -1,180 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
 
-    <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125352_added_entity_SystemAccount.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125353_added_entity_DocumentUpload.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125354_added_entity_Organization.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125355_added_entity_Service.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125356_added_entity_Program.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125357_added_entity_ServiceAtLocation.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125358_added_entity_Location.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125359_added_entity_PhysicalAddress.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125400_added_entity_PostalAddress.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125401_added_entity_Phone.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125402_added_entity_Contact.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125403_added_entity_RegularSchedule.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125404_added_entity_HolidaySchedule.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125405_added_entity_Funding.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125406_added_entity_Eligibility.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125407_added_entity_ServiceArea.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125408_added_entity_RequiredDocument.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125409_added_entity_PaymentAccepted.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125410_added_entity_Language.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125411_added_entity_AccessibilityForDisabilities.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125412_added_entity_ServiceTaxonomy.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125413_added_entity_Taxonomy.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125414_added_entity_OrganizationMatch.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125415_added_entity_Metadata.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125353_added_entity_DocumentUpload.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181211064830_added_entity_OpeningHours.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181217100327_added_SystemAccount_to_User.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181224110136_added_entity_Conflict.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181231125401_added_entity_DataImportReport.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190124144536_added_entity_FieldExclusion.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190124145536_added_entity_ExclusionsConfig.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190222165806_added_entity_GeocodingResult.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190530112156_added_entity_Beds.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190530112157_added_entity_Shelter.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190530112155_added_entity_Option.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190614184536_added_entity_LocationExclusion.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190709161437_added_entity_OrganizationError.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190709132431_added_entity_MatchSimilarity.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191218120000_added_entity_TaxonomyGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211929_added_entity_FieldsDisplaySettings.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211930_added_entity_LocationFieldsValue.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211931_added_entity_OrganizationFieldsValue.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211932_added_entity_PhysicalAddressFieldsValue.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211933_added_entity_PostalAddressFieldsValue.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211934_added_entity_ServiceFieldsValue.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211935_added_entity_ServiceTaxonomiesDetailsFieldsValue.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211936_added_entity_ContactDetailsFieldsValue.xml" relativeToChangelogFile="false"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+
+    <property name="floatType" value="float4" dbms="postgresql, h2"/>
+    <property name="floatType" value="float" dbms="mysql, oracle, mssql, mariadb"/>
+    <property name="clobType" value="longvarchar" dbms="h2"/>
+    <property name="clobType" value="clob" dbms="mysql, oracle, mssql, mariadb, postgresql"/>
+    <property name="uuidType" value="uuid" dbms="h2, postgresql"/>
+
+<!--    <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>-->
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
-    <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125355_added_entity_constraints_Service.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125356_added_entity_constraints_Program.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125357_added_entity_constraints_ServiceAtLocation.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125359_added_entity_constraints_PhysicalAddress.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125400_added_entity_constraints_PostalAddress.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125401_added_entity_constraints_Phone.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125402_added_entity_constraints_Contact.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125403_added_entity_constraints_RegularSchedule.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125404_added_entity_constraints_HolidaySchedule.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125405_added_entity_constraints_Funding.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125406_added_entity_constraints_Eligibility.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125407_added_entity_constraints_ServiceArea.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125408_added_entity_constraints_RequiredDocument.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125409_added_entity_constraints_PaymentAccepted.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125410_added_entity_constraints_Language.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125411_added_entity_constraints_AccessibilityForDisabilities.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125412_added_entity_constraints_ServiceTaxonomy.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125413_added_entity_constraints_Taxonomy.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125414_added_entity_constraints_OrganizationMatch.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125353_added_entity_constraints_DocumentUpload.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181119125415_added_entity_constraints_Metadata.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181211064830_added_entity_constraints_OpeningHours.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181224110136_added_entity_constraints_Conflict.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20181231125401_added_entity_constraints_DataImportReport.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190124145536_added_entity_constraints_ExclusionsConfig.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190222145536_added_index_on_Metadata_resource_id.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190301112806_create_activity_info_view.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190315164106_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190409141106_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190530112157_added_entity_constraints_Shelter.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190530112156_added_entity_constraints_Beds.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190614184536_added_entity_constraints_LocationExclusion.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190709161437_added_entity_constraints_OrganizationError.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190709132431_added_entity_constraints_MatchSimilarity.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190723141836_update_Location_add_geocoding_results.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191011144091_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191218120000_added_entity_constraints_TaxonomyGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200127211929_added_entity_constraints_FieldsDisplaySettings.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
-    <include file="config/liquibase/changelog/20181220100327_insert_initial_SystemAccounts.xml"
-             relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190508173955_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190515120552_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190517123504_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190521171012_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190522132906_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190605133534_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190605133534_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190522132906_alter_activity_info_view.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190530112158_alter_entity_Phone.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190530112159_insert_initial_Options.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190606153145_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190606150430_insert_Sacramento_profile.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190612171323_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190618151613_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190702113913_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190702150300_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190704150109_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190709164009_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190710124100_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190711134121_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190717122553_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190724121529_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190724161026_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190729094825_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190812105706_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/liquibase.quartz.init.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190823120904_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190808171712_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191022125054_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191030162926_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191105133657_add_User_Shelter_relation.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191107123821_update_OrganizationMatch_add_match_similarity.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191113144350_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191121132321_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191126140017_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191128145044999_update_OrganizationMatch_reset_similarity.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20191223150247_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200107161649_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200108105257_remove_duplicate_geocoding_results.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200130091215_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200205092141_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200205120804_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200205162542_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200211160346_changelog.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20200219134753_changelog.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

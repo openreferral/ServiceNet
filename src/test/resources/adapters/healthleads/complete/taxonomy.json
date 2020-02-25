@@ -1,9 +1,0 @@
-[
-  {
-    "name": "Taxonomy Name",
-    "parent_name": "Taxonomy Parent",
-    "id": "taxonomyId",
-    "vocabulary": "The Taxonomy Vocabulary",
-    "parent_id": "Taxonomy Parent"
-  }
-]

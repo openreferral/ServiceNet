@@ -20,7 +20,7 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
     main: './src/main/webapp/app/index'
   },
   output: {
-    path: utils.root('target/classes/public'),
+    path: utils.root('target/classes/static/'),
     filename: 'app/[name].[hash].bundle.js',
     chunkFilename: 'app/[name].[hash].chunk.js'
   },
@@ -47,7 +47,7 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
             options: { implementation: sass }
           }
         ]
-      },
+      }
     ]
   },
   optimization: {
@@ -58,13 +58,27 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
         parallel: true,
         // sourceMap: true, // Enable source maps. Please note that this will slow down the build
         terserOptions: {
+          ecma: 6,
+          toplevel: true,
+          module: true,
           beautify: false,
           comments: false,
           compress: {
-            warnings: false
+            warnings: false,
+            ecma: 6,
+            module: true,
+            toplevel: true
+          },
+          output: {
+              comments: false,
+              beautify: false,
+              indent_level: 2,
+              ecma: 6
           },
           mangle: {
-            keep_fnames: true
+            keep_fnames: true,
+            module: true,
+            toplevel: true
           }
         }
       }),
@@ -79,7 +93,6 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
     }),
     new MomentLocalesPlugin({
       localesToKeep: [
-        'en'
         // jhipster-needle-i18n-language-moment-webpack - JHipster will add/remove languages in this array
       ]
     }),
@@ -90,6 +103,7 @@ module.exports = webpackMerge(commonConfig({ env: ENV }), {
     new WorkboxPlugin.GenerateSW({
       clientsClaim: true,
       skipWaiting: true,
+      exclude: [/swagger-ui/]
     })
   ]
 });

@@ -3,6 +3,7 @@ package org.benetech.servicenet.repository;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.config.audit.AuditEventConverter;
 import org.benetech.servicenet.domain.PersistentAuditEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.audit.AuditEvent;
@@ -12,22 +13,20 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * An implementation of Spring Boot's AuditEventRepository.
+ * An implementation of Spring Boot's {@link AuditEventRepository}.
  */
 @Repository
 public class CustomAuditEventRepository implements AuditEventRepository {
+
+    private static final String AUTHORIZATION_FAILURE = "AUTHORIZATION_FAILURE";
 
     /**
      * Should be the same as in Liquibase migration.
      */
     protected static final int EVENT_DATA_COLUMN_MAX_LENGTH = 255;
-
-    private static final String AUTHORIZATION_FAILURE = "AUTHORIZATION_FAILURE";
 
     private final PersistenceAuditEventRepository persistenceAuditEventRepository;
 
@@ -36,7 +35,7 @@ public class CustomAuditEventRepository implements AuditEventRepository {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public CustomAuditEventRepository(PersistenceAuditEventRepository persistenceAuditEventRepository,
-                                      AuditEventConverter auditEventConverter) {
+            AuditEventConverter auditEventConverter) {
 
         this.persistenceAuditEventRepository = persistenceAuditEventRepository;
         this.auditEventConverter = auditEventConverter;
@@ -61,7 +60,7 @@ public class CustomAuditEventRepository implements AuditEventRepository {
             persistentAuditEvent.setAuditEventDate(event.getTimestamp());
             Map<String, String> eventData = auditEventConverter.convertDataToStrings(event.getData());
             persistentAuditEvent.setData(truncate(eventData));
-            persistenceAuditEventRepository.save(persistentAuditEvent);
+            // persistenceAuditEventRepository.save(persistentAuditEvent);
         }
     }
 
@@ -73,23 +72,18 @@ public class CustomAuditEventRepository implements AuditEventRepository {
 
         if (data != null) {
             for (Map.Entry<String, String> entry : data.entrySet()) {
-                results.put(entry.getKey(), getValueFromEntry(entry));
+                String value = entry.getValue();
+                if (value != null) {
+                    int length = value.length();
+                    if (length > EVENT_DATA_COLUMN_MAX_LENGTH) {
+                        value = value.substring(0, EVENT_DATA_COLUMN_MAX_LENGTH);
+                        log.warn("Event data for {} too long ({}) has been truncated to {}. Consider increasing column width.",
+                                 entry.getKey(), length, EVENT_DATA_COLUMN_MAX_LENGTH);
+                    }
+                }
+                results.put(entry.getKey(), value);
             }
         }
         return results;
-    }
-
-    private String getValueFromEntry(Map.Entry<String, String> entry) {
-        String value = entry.getValue();
-        if (value != null) {
-            int length = value.length();
-            if (length > EVENT_DATA_COLUMN_MAX_LENGTH) {
-                value = value.substring(0, EVENT_DATA_COLUMN_MAX_LENGTH);
-                log.warn(
-                    "Event data for {} too long ({}) has been truncated to {}. Consider increasing column width.",
-                    entry.getKey(), length, EVENT_DATA_COLUMN_MAX_LENGTH);
-            }
-        }
-        return value;
     }
 }

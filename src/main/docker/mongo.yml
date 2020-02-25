@@ -1,9 +1,8 @@
 version: '2'
 
 services:
-
-    servicenet-mongo:
-        image: mongo:4.0
-        restart: always
-        ports:
-        - 27017:27017
+  servicenet-mongo:
+    image: mongo:4.0
+    restart: always
+    ports:
+      - 27017:27017

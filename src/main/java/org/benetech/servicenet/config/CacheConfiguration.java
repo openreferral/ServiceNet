@@ -1,157 +1,156 @@
 package org.benetech.servicenet.config;
 
+import io.github.jhipster.config.JHipsterConstants;
 import io.github.jhipster.config.JHipsterProperties;
-import io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory;
-import org.benetech.servicenet.repository.GeocodingResultRepository;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.ExpiryPolicyBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.jsr107.Eh107Configuration;
-import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import java.time.Duration;
+import com.hazelcast.config.*;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.Hazelcast;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
+
+import javax.annotation.PreDestroy;
 
 @Configuration
 @EnableCaching
 public class CacheConfiguration {
 
-    private final javax.cache.configuration.Configuration<Object, Object> jcacheConfiguration;
+    private final Logger log = LoggerFactory.getLogger(CacheConfiguration.class);
 
-    public CacheConfiguration(JHipsterProperties jHipsterProperties) {
-        BeanClassLoaderAwareJCacheRegionFactory.setBeanClassLoader(this.getClass().getClassLoader());
-        JHipsterProperties.Cache.Ehcache ehcache =
-            jHipsterProperties.getCache().getEhcache();
+    private final Environment env;
 
-        jcacheConfiguration = Eh107Configuration.fromEhcacheCacheConfiguration(
-            CacheConfigurationBuilder.newCacheConfigurationBuilder(Object.class, Object.class,
-                ResourcePoolsBuilder.heap(ehcache.getMaxEntries()))
-                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ehcache.getTimeToLiveSeconds())))
-                .build());
+    private final ServerProperties serverProperties;
+
+    private final DiscoveryClient discoveryClient;
+
+    private Registration registration;
+
+    public CacheConfiguration(Environment env, ServerProperties serverProperties, DiscoveryClient discoveryClient) {
+        this.env = env;
+        this.serverProperties = serverProperties;
+        this.discoveryClient = discoveryClient;
+    }
+
+    @Autowired(required = false)
+    public void setRegistration(Registration registration) {
+        this.registration = registration;
+    }
+
+    @PreDestroy
+    public void destroy() {
+        log.info("Closing Cache Manager");
+        Hazelcast.shutdownAll();
     }
 
     @Bean
-    public JCacheManagerCustomizer cacheManagerCustomizer() {
-        return cm -> {
-            cm.createCache(GeocodingResultRepository.ADDRESS_CACHE, jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.repository.UserRepository.USERS_BY_LOGIN_CACHE, jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.repository.UserRepository.USERS_BY_EMAIL_CACHE, jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Authority.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".authorities",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.PersistentToken.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".persistentTokens",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.SystemAccount.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".systemAccount",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.DocumentUpload.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".programs",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".services",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".contacts",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".locations",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Organization.class.getName() + ".phones",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".areas", jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".docs", jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".paymentsAccepteds",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".langs", jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".taxonomies",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".phones",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".contacts",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Service.class.getName() + ".metadata",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ServiceMetadata.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Program.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Program.class.getName() + ".services",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ServiceAtLocation.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Location.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".langs",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".accessibilities",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".phones",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Location.class.getName() + ".geocodingResults",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.PhysicalAddress.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.PostalAddress.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Phone.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Contact.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Contact.class.getName() + ".phones",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.RegularSchedule.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.HolidaySchedule.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Funding.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Eligibility.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ServiceArea.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.RequiredDocument.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.PaymentAccepted.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Language.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.AccessibilityForDisabilities.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ServiceTaxonomy.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Taxonomy.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.OrganizationMatch.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Metadata.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.OpeningHours.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.RegularSchedule.class.getName() + ".openingHours",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Conflict.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Conflict.class.getName() + ".partner",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.DataImportReport.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.DataImportReport.class.getName() + ".organizationErrors",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.FieldExclusion.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ExclusionsConfig.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ExclusionsConfig.class.getName() + ".exclusions",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ExclusionsConfig.class.getName() + ".locationExclusions",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.GeocodingResult.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Beds.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".phones", jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Option.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".tags", jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".languages", jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".definedCoverageAreas",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.Shelter.class.getName() + ".users",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.User.class.getName() + ".shelters",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.LocationExclusion.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.OrganizationError.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.MatchSimilarity.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ActivityFilter.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.LocationMatch.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.TaxonomyGroup.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.TaxonomyGroup.class.getName() + ".taxonomies",
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.FieldsDisplaySettings.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.LocationFieldsValue.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.OrganizationFieldsValue.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.PhysicalAddressFieldsValue.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.PostalAddressFieldsValue.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ServiceFieldsValue.class.getName(), jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ServiceTaxonomiesDetailsFieldsValue.class.getName(),
-                jcacheConfiguration);
-            cm.createCache(org.benetech.servicenet.domain.ContactDetailsFieldsValue.class.getName(), jcacheConfiguration);
-            // jhipster-needle-ehcache-add-entry
-        };
+    public CacheManager cacheManager(HazelcastInstance hazelcastInstance) {
+        log.debug("Starting HazelcastCacheManager");
+        return new com.hazelcast.spring.cache.HazelcastCacheManager(hazelcastInstance);
     }
+
+    @Bean
+    public HazelcastInstance hazelcastInstance(JHipsterProperties jHipsterProperties) {
+        log.debug("Configuring Hazelcast");
+        HazelcastInstance hazelCastInstance = Hazelcast.getHazelcastInstanceByName("ServiceNetGateway");
+        if (hazelCastInstance != null) {
+            log.debug("Hazelcast already initialized");
+            return hazelCastInstance;
+        }
+        Config config = new Config();
+        config.setInstanceName("ServiceNetGateway");
+        config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
+        if (this.registration == null) {
+            log.warn("No discovery service is set up, Hazelcast cannot create a cluster.");
+        } else {
+            // The serviceId is by default the application's name,
+            // see the "spring.application.name" standard Spring property
+            String serviceId = registration.getServiceId();
+            log.debug("Configuring Hazelcast clustering for instanceId: {}", serviceId);
+            // In development, everything goes through 127.0.0.1, with a different port
+            if (env.acceptsProfiles(Profiles.of(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT))) {
+                log.debug("Application is running with the \"dev\" profile, Hazelcast " +
+                          "cluster will only work with localhost instances");
+
+                System.setProperty("hazelcast.local.localAddress", "127.0.0.1");
+                config.getNetworkConfig().setPort(serverProperties.getPort() + 5701);
+                config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
+                for (ServiceInstance instance : discoveryClient.getInstances(serviceId)) {
+                    String clusterMember = "127.0.0.1:" + (instance.getPort() + 5701);
+                    log.debug("Adding Hazelcast (dev) cluster member {}", clusterMember);
+                    config.getNetworkConfig().getJoin().getTcpIpConfig().addMember(clusterMember);
+                }
+            } else { // Production configuration, one host per instance all using port 5701
+                config.getNetworkConfig().setPort(5701);
+                config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
+                for (ServiceInstance instance : discoveryClient.getInstances(serviceId)) {
+                    String clusterMember = instance.getHost() + ":5701";
+                    log.debug("Adding Hazelcast (prod) cluster member {}", clusterMember);
+                    config.getNetworkConfig().getJoin().getTcpIpConfig().addMember(clusterMember);
+                }
+            }
+        }
+        config.getMapConfigs().put("default", initializeDefaultMapConfig(jHipsterProperties));
+
+        // Full reference is available at: http://docs.hazelcast.org/docs/management-center/3.9/manual/html/Deploying_and_Starting.html
+        config.setManagementCenterConfig(initializeDefaultManagementCenterConfig(jHipsterProperties));
+        config.getMapConfigs().put("org.benetech.servicenet.domain.*", initializeDomainMapConfig(jHipsterProperties));
+        return Hazelcast.newHazelcastInstance(config);
+    }
+
+    private ManagementCenterConfig initializeDefaultManagementCenterConfig(JHipsterProperties jHipsterProperties) {
+        ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig();
+        managementCenterConfig.setEnabled(jHipsterProperties.getCache().getHazelcast().getManagementCenter().isEnabled());
+        managementCenterConfig.setUrl(jHipsterProperties.getCache().getHazelcast().getManagementCenter().getUrl());
+        managementCenterConfig.setUpdateInterval(jHipsterProperties.getCache().getHazelcast().getManagementCenter().getUpdateInterval());
+        return managementCenterConfig;
+    }
+
+    private MapConfig initializeDefaultMapConfig(JHipsterProperties jHipsterProperties) {
+        MapConfig mapConfig = new MapConfig();
+
+        /*
+        Number of backups. If 1 is set as the backup-count for example,
+        then all entries of the map will be copied to another JVM for
+        fail-safety. Valid numbers are 0 (no backup), 1, 2, 3.
+        */
+        mapConfig.setBackupCount(jHipsterProperties.getCache().getHazelcast().getBackupCount());
+
+        /*
+        Valid values are:
+        NONE (no eviction),
+        LRU (Least Recently Used),
+        LFU (Least Frequently Used).
+        NONE is the default.
+        */
+        mapConfig.setEvictionPolicy(EvictionPolicy.LRU);
+
+        /*
+        Maximum size of the map. When max size is reached,
+        map is evicted based on the policy defined.
+        Any integer between 0 and Integer.MAX_VALUE. 0 means
+        Integer.MAX_VALUE. Default is 0.
+        */
+        mapConfig.setMaxSizeConfig(new MaxSizeConfig(0, MaxSizeConfig.MaxSizePolicy.USED_HEAP_SIZE));
+
+        return mapConfig;
+    }
+
+    private MapConfig initializeDomainMapConfig(JHipsterProperties jHipsterProperties) {
+        MapConfig mapConfig = new MapConfig();
+        mapConfig.setTimeToLiveSeconds(jHipsterProperties.getCache().getHazelcast().getTimeToLiveSeconds());
+        return mapConfig;
+    }
+
 }

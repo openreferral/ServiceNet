@@ -3,6 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
+const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 const path = require('path');
 
 const utils = require('./utils.js');
@@ -109,7 +110,8 @@ module.exports = options => ({
     }),
     new ForkTsCheckerWebpackPlugin({ tslint: true }),
     new CopyWebpackPlugin([
-      { from: './node_modules/swagger-ui/dist/*', to: 'swagger-ui/dist/*' },
+      { from: './node_modules/swagger-ui-dist/*.{js,css,html,png}', to: 'swagger-ui', flatten: true, ignore: ['index.html']},
+      { from: './node_modules/axios/dist/axios.min.js', to: 'swagger-ui'},
       { from: './src/main/webapp//swagger-ui/', to: 'swagger-ui' },
       { from: './src/main/webapp/static/', to: 'content' },
       { from: './src/main/webapp/favicon.ico', to: 'favicon.ico' },
@@ -122,12 +124,13 @@ module.exports = options => ({
       chunksSortMode: 'dependency',
       inject: 'body'
     }),
+    new BaseHrefWebpackPlugin({ baseHref: '/' }),
     new MergeJsonWebpackPlugin({
       output: {
         groupBy: [
-                    { pattern: "./src/main/webapp/i18n/en/*.json", fileName: "./i18n/en.json" }
-                    // jhipster-needle-i18n-language-webpack - JHipster will add/remove languages in this array
-                ]
+          { pattern: "./src/main/webapp/i18n/en/*.json", fileName: "./i18n/en.json" }
+          // jhipster-needle-i18n-language-webpack - JHipster will add/remove languages in this array
+        ]
       }
     }),
   ]

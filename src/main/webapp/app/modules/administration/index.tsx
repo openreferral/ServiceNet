@@ -9,6 +9,7 @@ import Configuration from './configuration/configuration';
 import Audits from './audits/audits';
 import Docs from './docs/docs';
 import SchedulerAdministration from './scheduler/scheduler';
+import Gateway from './gateway/gateway';
 
 const Routes = ({ match }) => (
   <div>
@@ -20,6 +21,7 @@ const Routes = ({ match }) => (
     <ErrorBoundaryRoute exact path={`${match.url}/scheduler`} component={SchedulerAdministration} />
     <ErrorBoundaryRoute exact path={`${match.url}/audits`} component={Audits} />
     <ErrorBoundaryRoute exact path={`${match.url}/logs`} component={Logs} />
+    <ErrorBoundaryRoute exact path={`${match.url}/gateway`} component={Gateway} />
   </div>
 );
 
