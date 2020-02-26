@@ -69,6 +69,16 @@ public class LocationMatchServiceImpl implements LocationMatchService {
 
     @Override
     public void delete(UUID locationId, UUID matchingLocationId) {
-        locationMatchRepository.deleteByLocationIdAndMatchingLocationId(locationId, matchingLocationId);
+        Optional<LocationMatch> existingMatch = locationMatchRepository.findByLocationIdAndMatchingLocationId(
+            locationId, matchingLocationId);
+        if (existingMatch.isPresent()) {
+            log.debug("Request to delete LocationMatch : {}", existingMatch.get().getId());
+            locationMatchRepository.delete(existingMatch.get());
+        }
+    }
+
+    @Override
+    public List<LocationMatch> findAll() {
+        return locationMatchRepository.findAll();
     }
 }

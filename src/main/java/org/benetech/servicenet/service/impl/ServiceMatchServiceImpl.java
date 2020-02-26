@@ -59,4 +59,12 @@ public class ServiceMatchServiceImpl implements ServiceMatchService {
             serviceMatchRepository.delete(existingMatch.get());
         }
     }
+
+    /**
+     * For test purpose
+     */
+    @Override
+    public List<ServiceMatch> findAll() {
+        return serviceMatchRepository.findAll();
+    }
 }

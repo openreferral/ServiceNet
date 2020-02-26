@@ -3,11 +3,13 @@ package org.benetech.servicenet.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ServiceMatchService;
 import org.benetech.servicenet.service.dto.ServiceMatchDto;
 import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ public class ServiceMatchResource {
         this.serviceMatchService = serviceMatchService;
     }
 
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.USER + "')")
     @PostMapping("/service-matches")
     @Timed
     public ResponseEntity<ServiceMatchDto> createServiceMatch(
@@ -41,6 +44,7 @@ public class ServiceMatchResource {
             .body(result);
     }
 
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.USER + "')")
     @DeleteMapping("/service-matches")
     @Timed
     public ResponseEntity<Void> deleteServiceMatch(

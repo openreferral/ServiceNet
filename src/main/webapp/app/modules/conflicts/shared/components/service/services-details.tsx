@@ -99,7 +99,7 @@ export class ServicesDetails extends React.Component<IServicesDetailsProp, IServ
   }
 }
 
-const mapStateToProps = () => {};
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = { setOpenService };
 

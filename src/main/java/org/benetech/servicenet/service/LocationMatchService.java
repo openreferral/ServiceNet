@@ -20,4 +20,6 @@ public interface LocationMatchService {
     Set<LocationMatch> findAllForLocation(UUID locationId);
 
     void delete(UUID locationId, UUID matchingLocationId);
+
+    List<LocationMatch> findAll();
 }
