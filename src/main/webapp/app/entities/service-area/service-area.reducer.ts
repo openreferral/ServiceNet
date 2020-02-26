@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IServiceArea, defaultValue } from 'app/shared/model/service-area.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_SERVICEAREA_LIST: 'serviceArea/FETCH_SERVICEAREA_LIST',
@@ -106,7 +107,7 @@ export default (state: ServiceAreaState = initialState, action): ServiceAreaStat
   }
 };
 
-const apiUrl = 'api/service-areas';
+const apiUrl = SERVICENET_API_URL + '/service-areas';
 
 // Actions
 

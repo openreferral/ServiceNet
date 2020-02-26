@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IPostalAddress, defaultValue } from 'app/shared/model/postal-address.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_POSTALADDRESS_LIST: 'postalAddress/FETCH_POSTALADDRESS_LIST',
@@ -97,7 +98,7 @@ export default (state: PostalAddressState = initialState, action): PostalAddress
   }
 };
 
-const apiUrl = 'api/postal-addresses';
+const apiUrl = SERVICENET_API_URL + '/postal-addresses';
 
 // Actions
 

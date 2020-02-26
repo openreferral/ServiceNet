@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IContactDetailsFieldsValue, defaultValue } from 'app/shared/model/contact-details-fields-value.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_CONTACTDETAILSFIELDSVALUE_LIST: 'contactDetailsFieldsValue/FETCH_CONTACTDETAILSFIELDSVALUE_LIST',
@@ -95,7 +96,7 @@ export default (state: ContactDetailsFieldsValueState = initialState, action): C
   }
 };
 
-const apiUrl = 'api/contact-details-fields-values';
+const apiUrl = SERVICENET_API_URL + '/contact-details-fields-values';
 
 // Actions
 

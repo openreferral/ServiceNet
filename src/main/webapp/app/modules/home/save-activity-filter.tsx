@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { IRootState } from 'app/shared/reducers';
 import { updateActivityFilter, getSavedFilters } from './filter-activity.reducer';
 import ActivityFilterDeleteConfirmation from 'app/modules/home/activity-filter-delete-confirmation';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export interface ISaveActivityFilterState {
   selectedFilter: any;
@@ -34,7 +35,7 @@ export class SaveActivityFilter extends React.Component<ISaveActivityFilterProps
   }
 
   saveFilter = () => {
-    const url = 'api/activity-filter/save-user-filter';
+    const url = SERVICENET_API_URL + '/activity-filter/save-user-filter';
     const filter = { ...this.props.activityFilter, name: this.state.filterName, hiddenFilter: false };
 
     axios
@@ -66,7 +67,7 @@ export class SaveActivityFilter extends React.Component<ISaveActivityFilterProps
   };
 
   handleConfirmDelete = activityFilterId => {
-    const url = `api/activity-filters/${activityFilterId}`;
+    const url = `${SERVICENET_API_URL}/activity-filters/${activityFilterId}`;
 
     axios
       .delete(url)
@@ -91,7 +92,7 @@ export class SaveActivityFilter extends React.Component<ISaveActivityFilterProps
   };
 
   saveCurrentFilter = filter => {
-    const url = 'api/activity-filter/current-user-filter';
+    const url = SERVICENET_API_URL + '/activity-filter/current-user-filter';
 
     axios.post(url, filter);
   };

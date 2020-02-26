@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ITaxonomy, defaultValue } from 'app/shared/model/taxonomy.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_TAXONOMY_LIST: 'taxonomy/FETCH_TAXONOMY_LIST',
@@ -97,7 +98,7 @@ export default (state: TaxonomyState = initialState, action): TaxonomyState => {
   }
 };
 
-const apiUrl = 'api/taxonomies';
+const apiUrl = SERVICENET_API_URL + '/taxonomies';
 
 // Actions
 

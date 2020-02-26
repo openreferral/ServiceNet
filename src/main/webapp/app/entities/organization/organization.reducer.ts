@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IOrganization, defaultValue } from 'app/shared/model/organization.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ORGANIZATION_LIST: 'organization/FETCH_ORGANIZATION_LIST',
@@ -108,7 +109,7 @@ export default (state: OrganizationState = initialState, action): OrganizationSt
   }
 };
 
-const apiUrl = 'api/organizations';
+const apiUrl = SERVICENET_API_URL + '/organizations';
 
 // Actions
 

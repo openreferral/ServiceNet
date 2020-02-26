@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_SYSTEM_ACCOUNTS: 'uploadPage/FETCH_SYSTEM_ACCOUNTS'
@@ -36,7 +37,7 @@ export default (state: UploadPageState = initialState, action): UploadPageState 
 };
 
 // Actions
-const apiUrl = 'api/';
+const apiUrl = SERVICENET_API_URL + '/';
 
 export const getSystemAccounts = () => ({
   type: ACTION_TYPES.FETCH_SYSTEM_ACCOUNTS,

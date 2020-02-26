@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IFieldsDisplaySettings, defaultValue } from 'app/shared/model/fields-display-settings.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_FIELDSDISPLAYSETTINGS_LIST: 'fieldsDisplaySettings/FETCH_FIELDSDISPLAYSETTINGS_LIST',
@@ -112,7 +113,7 @@ export default (state: FieldsDisplaySettingsState = initialState, action): Field
   }
 };
 
-const apiUrl = 'api/fields-display-settings';
+const apiUrl = SERVICENET_API_URL + '/fields-display-settings';
 
 // Actions
 

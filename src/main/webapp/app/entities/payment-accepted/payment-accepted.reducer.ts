@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IPaymentAccepted, defaultValue } from 'app/shared/model/payment-accepted.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_PAYMENTACCEPTED_LIST: 'paymentAccepted/FETCH_PAYMENTACCEPTED_LIST',
@@ -95,7 +96,7 @@ export default (state: PaymentAcceptedState = initialState, action): PaymentAcce
   }
 };
 
-const apiUrl = 'api/payment-accepteds';
+const apiUrl = SERVICENET_API_URL + '/payment-accepteds';
 
 // Actions
 

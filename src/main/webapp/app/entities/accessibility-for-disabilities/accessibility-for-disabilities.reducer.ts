@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IAccessibilityForDisabilities, defaultValue } from 'app/shared/model/accessibility-for-disabilities.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ACCESSIBILITYFORDISABILITIES_LIST: 'accessibilityForDisabilities/FETCH_ACCESSIBILITYFORDISABILITIES_LIST',
@@ -97,7 +98,7 @@ export default (state: AccessibilityForDisabilitiesState = initialState, action)
   }
 };
 
-const apiUrl = 'api/accessibility-for-disabilities';
+const apiUrl = SERVICENET_API_URL + '/accessibility-for-disabilities';
 
 // Actions
 

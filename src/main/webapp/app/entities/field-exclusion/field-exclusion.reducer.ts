@@ -6,6 +6,7 @@ import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util'
 
 import { IFieldExclusion, defaultValue } from 'app/shared/model/field-exclusion.model';
 import { IExclusionsConfig } from 'app/shared/model/exclusions-config.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_FIELDEXCLUSION_LIST: 'fieldExclusion/FETCH_FIELDEXCLUSION_LIST',
@@ -106,8 +107,8 @@ export default (state: FieldExclusionState = initialState, action): FieldExclusi
   }
 };
 
-const apiUrl = 'api/field-exclusions';
-const configUrl = 'api/exclusions-configs';
+const apiUrl = SERVICENET_API_URL + '/field-exclusions';
+const configUrl = SERVICENET_API_URL + '/exclusions-configs';
 
 // Actions
 

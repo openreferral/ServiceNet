@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IOrganizationFieldsValue, defaultValue } from 'app/shared/model/organization-fields-value.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ORGANIZATIONFIELDSVALUE_LIST: 'organizationFieldsValue/FETCH_ORGANIZATIONFIELDSVALUE_LIST',
@@ -95,7 +96,7 @@ export default (state: OrganizationFieldsValueState = initialState, action): Org
   }
 };
 
-const apiUrl = 'api/organization-fields-values';
+const apiUrl = SERVICENET_API_URL + '/organization-fields-values';
 
 // Actions
 

@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IOption, defaultValue } from 'app/shared/model/option.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_OPTION_LIST: 'option/FETCH_OPTION_LIST',
@@ -127,7 +128,7 @@ export default (state: OptionState = initialState, action): OptionState => {
   }
 };
 
-const apiUrl = 'api/options';
+const apiUrl = SERVICENET_API_URL + '/options';
 
 // Actions
 

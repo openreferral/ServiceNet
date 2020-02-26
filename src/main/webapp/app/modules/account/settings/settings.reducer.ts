@@ -3,6 +3,7 @@ import { translate, Storage } from 'react-jhipster';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { getSession } from 'app/shared/reducers/authentication';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   UPDATE_ACCOUNT: 'account/UPDATE_ACCOUNT',
@@ -52,7 +53,7 @@ export default (state: SettingsState = initialState, action): SettingsState => {
 };
 
 // Actions
-const apiUrl = 'api/account';
+const apiUrl = SERVICENET_API_URL + '/account';
 
 export const saveAccountSettings = account => async (dispatch, getState) => {
   await dispatch({

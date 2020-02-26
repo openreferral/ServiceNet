@@ -4,6 +4,7 @@ import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IUser, defaultValue } from 'app/shared/model/user.model';
 import { ISystemAccount } from 'app/shared/model/system-account.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ROLES: 'userManagement/FETCH_ROLES',
@@ -119,7 +120,7 @@ export default (state: UserManagementState = initialState, action): UserManageme
   }
 };
 
-const baseApiUrl = 'api';
+const baseApiUrl = SERVICENET_API_URL + '';
 const apiUrl = baseApiUrl + '/users';
 // Actions
 export const getUsers: ICrudGetAllAction<IUser> = (page, size, sort) => {

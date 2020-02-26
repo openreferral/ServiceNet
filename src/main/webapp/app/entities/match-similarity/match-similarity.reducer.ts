@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IMatchSimilarity, defaultValue } from 'app/shared/model/match-similarity.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_MATCHSIMILARITY_LIST: 'matchSimilarity/FETCH_MATCHSIMILARITY_LIST',
@@ -97,7 +98,7 @@ export default (state: MatchSimilarityState = initialState, action): MatchSimila
   }
 };
 
-const apiUrl = 'api/match-similarities';
+const apiUrl = SERVICENET_API_URL + '/match-similarities';
 
 // Actions
 

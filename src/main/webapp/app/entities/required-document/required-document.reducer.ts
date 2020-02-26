@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IRequiredDocument, defaultValue } from 'app/shared/model/required-document.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_REQUIREDDOCUMENT_LIST: 'requiredDocument/FETCH_REQUIREDDOCUMENT_LIST',
@@ -97,7 +98,7 @@ export default (state: RequiredDocumentState = initialState, action): RequiredDo
   }
 };
 
-const apiUrl = 'api/required-documents';
+const apiUrl = SERVICENET_API_URL + '/required-documents';
 
 // Actions
 

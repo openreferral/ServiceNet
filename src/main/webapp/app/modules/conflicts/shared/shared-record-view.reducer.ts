@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_BASE_ORGANIZATION: 'recordView/FETCH_BASE_ORGANIZATION',
@@ -81,7 +82,7 @@ export default (state: SharedRecordViewState = initialState, action): SharedReco
 };
 
 // Actions
-const url = 'api/';
+const url = SERVICENET_API_URL + '/';
 const activityUrl = url + 'activities/';
 const partnerActivityUrl = url + 'partner-activities/';
 const matchesUrl = url + 'organization-matches/organization/';

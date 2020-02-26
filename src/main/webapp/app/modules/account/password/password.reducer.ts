@@ -2,6 +2,7 @@ import axios from 'axios';
 import { translate } from 'react-jhipster';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   UPDATE_PASSWORD: 'account/UPDATE_PASSWORD',
@@ -51,7 +52,7 @@ export default (state: PasswordState = initialState, action): PasswordState => {
 };
 
 // Actions
-const apiUrl = 'api/account';
+const apiUrl = SERVICENET_API_URL + '/account';
 
 export const savePassword = (currentPassword, newPassword) => ({
   type: ACTION_TYPES.UPDATE_PASSWORD,

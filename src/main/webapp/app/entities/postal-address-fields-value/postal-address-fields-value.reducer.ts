@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IPostalAddressFieldsValue, defaultValue } from 'app/shared/model/postal-address-fields-value.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_POSTALADDRESSFIELDSVALUE_LIST: 'postalAddressFieldsValue/FETCH_POSTALADDRESSFIELDSVALUE_LIST',
@@ -95,7 +96,7 @@ export default (state: PostalAddressFieldsValueState = initialState, action): Po
   }
 };
 
-const apiUrl = 'api/postal-address-fields-values';
+const apiUrl = SERVICENET_API_URL + '/postal-address-fields-values';
 
 // Actions
 

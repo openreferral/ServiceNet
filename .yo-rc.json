@@ -21,7 +21,7 @@
     "serviceDiscoveryType": "consul",
     "buildTool": "maven",
     "enableSwaggerCodegen": false,
-    "jwtSecretKey": "YWI3MTEzZTU4ODIzMGVmMjU4OTQ3NTU5ZTY0OWMyYWM5MTBlNTg1MmVmYzk3YTEyZDVhZTYzMWZiODQ0NTYyZGU2ZGE2NTA5MGU1Y2M5ZDFhNzI4NmRjMmY1MmY5MTAxMmU0MTZjZTNiZGU5OTA3MzAzYmYwMDg0YTQ2ZWFiZjM=",
+    "jwtSecretKey": "MGFmMzE0OTM2NGZjOTkzYjU2MWNhZThhNmU0MzIwNGUxY2VlNWNjNjAwNzU2OTc4ZTNkYmZjMGQ4ZmYwNzY2OGVkYTVhMzRmYTA1Y2YxOGMxOTMwMWY0ODFmMjEzOTFjODdkNDM2OGU5MWFhZDQ0YjYyMjkzMjdhNzg3Njc5MTA==",
     "embeddableLaunchScript": false,
     "useSass": true,
     "clientPackageManager": "npm",
@@ -35,6 +35,7 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "enableTranslation": false,
-    "blueprints": []
+    "blueprints": [],
+    "rememberMeKey": "b24b759de3b5bd38145f39a79eacf410517527736c4d19f48612d890e84442e26a9619f9778956528195a1db5c7cc014403f"
   }
 }

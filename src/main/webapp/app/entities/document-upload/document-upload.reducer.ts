@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IDocumentUpload, defaultValue } from 'app/shared/model/document-upload.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_DOCUMENTUPLOAD_LIST: 'documentUpload/FETCH_DOCUMENTUPLOAD_LIST',
@@ -97,7 +98,7 @@ export default (state: DocumentUploadState = initialState, action): DocumentUplo
   }
 };
 
-const apiUrl = 'api/document-uploads';
+const apiUrl = SERVICENET_API_URL + '/document-uploads';
 
 // Actions
 

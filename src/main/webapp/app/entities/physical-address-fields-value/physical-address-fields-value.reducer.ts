@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IPhysicalAddressFieldsValue, defaultValue } from 'app/shared/model/physical-address-fields-value.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_PHYSICALADDRESSFIELDSVALUE_LIST: 'physicalAddressFieldsValue/FETCH_PHYSICALADDRESSFIELDSVALUE_LIST',
@@ -95,7 +96,7 @@ export default (state: PhysicalAddressFieldsValueState = initialState, action): 
   }
 };
 
-const apiUrl = 'api/physical-address-fields-values';
+const apiUrl = SERVICENET_API_URL + '/physical-address-fields-values';
 
 // Actions
 

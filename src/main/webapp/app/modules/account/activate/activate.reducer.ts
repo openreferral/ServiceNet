@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   ACTIVATE_ACCOUNT: 'activate/ACTIVATE_ACCOUNT',
@@ -43,7 +44,7 @@ export default (state: ActivateState = initialState, action): ActivateState => {
 // Actions
 export const activateAction = key => ({
   type: ACTION_TYPES.ACTIVATE_ACCOUNT,
-  payload: axios.get('api/activate?key=' + key)
+  payload: axios.get(SERVICENET_API_URL + '/activate?key=' + key)
 });
 
 export const reset = () => ({

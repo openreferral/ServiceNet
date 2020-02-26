@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IExclusionsConfig, defaultValue } from 'app/shared/model/exclusions-config.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_EXCLUSIONSCONFIG_LIST: 'exclusionsConfig/FETCH_EXCLUSIONSCONFIG_LIST',
@@ -95,7 +96,7 @@ export default (state: ExclusionsConfigState = initialState, action): Exclusions
   }
 };
 
-const apiUrl = 'api/exclusions-configs';
+const apiUrl = SERVICENET_API_URL + '/exclusions-configs';
 
 // Actions
 

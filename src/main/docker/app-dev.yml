@@ -8,12 +8,11 @@ services:
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
       - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
+      # You can find the host ip by running: "ip -4 addr show docker0 | grep -Po 'inet \K[\d.]+'"
       - SPRING_DATASOURCE_URL=jdbc:postgresql://172.17.0.1:5432/ServiceNet
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_DATA_MONGODB_URI=mongodb://servicenet-mongo:27017/serviceNet
-    ports:
-      - 8081:8081
   servicenet-mongo:
     extends:
       file: mongo.yml

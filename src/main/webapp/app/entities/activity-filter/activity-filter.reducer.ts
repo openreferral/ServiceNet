@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IActivityFilter, defaultValue } from 'app/shared/model/activity-filter.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ACTIVITYFILTER_LIST: 'activityFilter/FETCH_ACTIVITYFILTER_LIST',
@@ -97,7 +98,7 @@ export default (state: ActivityFilterState = initialState, action): ActivityFilt
   }
 };
 
-const apiUrl = 'api/activity-filters';
+const apiUrl = SERVICENET_API_URL + '/activity-filters';
 
 // Actions
 

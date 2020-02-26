@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IEligibility, defaultValue } from 'app/shared/model/eligibility.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ELIGIBILITY_LIST: 'eligibility/FETCH_ELIGIBILITY_LIST',
@@ -97,7 +98,7 @@ export default (state: EligibilityState = initialState, action): EligibilityStat
   }
 };
 
-const apiUrl = 'api/eligibilities';
+const apiUrl = SERVICENET_API_URL + '/eligibilities';
 
 // Actions
 

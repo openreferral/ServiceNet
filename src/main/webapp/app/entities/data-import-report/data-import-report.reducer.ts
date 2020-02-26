@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IDataImportReport, defaultValue } from 'app/shared/model/data-import-report.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_DATAIMPORTREPORT_LIST: 'dataImportReport/FETCH_DATAIMPORTREPORT_LIST',
@@ -97,7 +98,7 @@ export default (state: DataImportReportState = initialState, action): DataImport
   }
 };
 
-const apiUrl = 'api/data-import-reports';
+const apiUrl = SERVICENET_API_URL + '/data-import-reports';
 
 // Actions
 

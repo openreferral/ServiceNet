@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ILocationFieldsValue, defaultValue } from 'app/shared/model/location-fields-value.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_LOCATIONFIELDSVALUE_LIST: 'locationFieldsValue/FETCH_LOCATIONFIELDSVALUE_LIST',
@@ -95,7 +96,7 @@ export default (state: LocationFieldsValueState = initialState, action): Locatio
   }
 };
 
-const apiUrl = 'api/location-fields-values';
+const apiUrl = SERVICENET_API_URL + '/location-fields-values';
 
 // Actions
 

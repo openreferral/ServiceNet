@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IHolidaySchedule, defaultValue } from 'app/shared/model/holiday-schedule.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_HOLIDAYSCHEDULE_LIST: 'holidaySchedule/FETCH_HOLIDAYSCHEDULE_LIST',
@@ -97,7 +98,7 @@ export default (state: HolidayScheduleState = initialState, action): HolidaySche
   }
 };
 
-const apiUrl = 'api/holiday-schedules';
+const apiUrl = SERVICENET_API_URL + '/holiday-schedules';
 
 // Actions
 

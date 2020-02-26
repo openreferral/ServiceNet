@@ -12,6 +12,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IShelter, defaultValue } from 'app/shared/model/shelter.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_SHELTER_LIST: 'shelter/FETCH_SHELTER_LIST',
@@ -128,7 +129,7 @@ export default (state: ShelterState = initialState, action): ShelterState => {
   }
 };
 
-const apiUrl = 'api/shelters';
+const apiUrl = SERVICENET_API_URL + '/shelters';
 
 // Actions
 export const searchEntities = (search, page, size, sort, filter) => {

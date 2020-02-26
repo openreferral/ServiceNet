@@ -12,6 +12,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IOrganizationError, defaultValue } from 'app/shared/model/organization-error.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ORGANIZATIONERROR_LIST: 'organizationError/FETCH_ORGANIZATIONERROR_LIST',
@@ -108,7 +109,7 @@ export default (state: OrganizationErrorState = initialState, action): Organizat
   }
 };
 
-const apiUrl = 'api/organization-errors';
+const apiUrl = SERVICENET_API_URL + '/organization-errors';
 
 // Actions
 

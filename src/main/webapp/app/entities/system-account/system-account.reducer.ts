@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ISystemAccount, defaultValue } from 'app/shared/model/system-account.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_SYSTEMACCOUNT_LIST: 'systemAccount/FETCH_SYSTEMACCOUNT_LIST',
@@ -95,7 +96,7 @@ export default (state: SystemAccountState = initialState, action): SystemAccount
   }
 };
 
-const apiUrl = 'api/system-accounts';
+const apiUrl = SERVICENET_API_URL + '/system-accounts';
 
 // Actions
 

@@ -3,7 +3,7 @@ import { Storage } from 'react-jhipster';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { setLocale } from 'app/shared/reducers/locale';
-import { resetSearchPreferences } from 'app/shared/util/search-utils';
+import { AUTH_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   LOGIN: 'authentication/LOGIN',
@@ -109,7 +109,7 @@ export const displayAuthError = message => ({ type: ACTION_TYPES.ERROR_MESSAGE, 
 export const getSession = () => async (dispatch, getState) => {
   await dispatch({
     type: ACTION_TYPES.GET_SESSION,
-    payload: axios.get('api/account')
+    payload: axios.get(AUTH_API_URL + '/account')
   });
 
   const { account } = getState().authentication;
@@ -122,9 +122,9 @@ export const getSession = () => async (dispatch, getState) => {
 export const login = (username, password, rememberMe = false) => async (dispatch, getState) => {
   const result = await dispatch({
     type: ACTION_TYPES.LOGIN,
-    payload: axios.post('api/authenticate', { username, password, rememberMe })
+    payload: axios.post(AUTH_API_URL + '/authenticate', { username, password, rememberMe })
   });
-  const bearerToken = result.value.headers.authorization;
+  const bearerToken = result.value.headers && result.value.headers.authorization;
   if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
     const jwt = bearerToken.slice(7, bearerToken.length);
     if (rememberMe) {
@@ -139,7 +139,7 @@ export const login = (username, password, rememberMe = false) => async (dispatch
 export const logout = () => async dispatch => {
   await dispatch({
     type: ACTION_TYPES.LOGOUT,
-    payload: axios.post('api/logout', {})
+    payload: axios.post(AUTH_API_URL + '/logout', {})
   });
   dispatch(getSession());
 };

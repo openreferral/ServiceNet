@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IBeds, defaultValue } from 'app/shared/model/beds.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_BEDS_LIST: 'beds/FETCH_BEDS_LIST',
@@ -97,7 +98,7 @@ export default (state: BedsState = initialState, action): BedsState => {
   }
 };
 
-const apiUrl = 'api/beds';
+const apiUrl = SERVICENET_API_URL + '/beds';
 
 // Actions
 

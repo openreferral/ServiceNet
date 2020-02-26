@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IRegularSchedule, defaultValue } from 'app/shared/model/regular-schedule.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_REGULARSCHEDULE_LIST: 'regularSchedule/FETCH_REGULARSCHEDULE_LIST',
@@ -97,7 +98,7 @@ export default (state: RegularScheduleState = initialState, action): RegularSche
   }
 };
 
-const apiUrl = 'api/regular-schedules';
+const apiUrl = SERVICENET_API_URL + '/regular-schedules';
 
 // Actions
 

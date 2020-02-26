@@ -5,6 +5,7 @@ import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util'
 
 import { IActivity, defaultValue } from 'app/shared/model/activity.model';
 import _ from 'lodash';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ACTIVITY_LIST: 'activity/FETCH_ACTIVITY_LIST',
@@ -69,7 +70,7 @@ export default (state: ActivityState = initialState, action): ActivityState => {
   }
 };
 
-const apiUrl = 'api/activities';
+const apiUrl = SERVICENET_API_URL + '/activities';
 
 // Actions
 
@@ -83,7 +84,7 @@ export const getEntities = (search, page, size, sort, filter) => {
 };
 
 export const getSuggestions = (search, filter) => {
-  const requestUrl = `${`api/activity-suggestions?search=${search}`}`;
+  const requestUrl = `${SERVICENET_API_URL}/activity-suggestions?search=${search}`;
 
   return {
     type: ACTION_TYPES.FETCH_PREVIEW_ACTIVITY_LIST,

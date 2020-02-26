@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ILocation, defaultValue } from 'app/shared/model/location.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_LOCATION_LIST: 'location/FETCH_LOCATION_LIST',
@@ -108,7 +109,7 @@ export default (state: LocationState = initialState, action): LocationState => {
   }
 };
 
-const apiUrl = 'api/locations';
+const apiUrl = SERVICENET_API_URL + '/locations';
 
 // Actions
 

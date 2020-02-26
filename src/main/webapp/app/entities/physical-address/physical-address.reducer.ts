@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IPhysicalAddress, defaultValue } from 'app/shared/model/physical-address.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_PHYSICALADDRESS_LIST: 'physicalAddress/FETCH_PHYSICALADDRESS_LIST',
@@ -97,7 +98,7 @@ export default (state: PhysicalAddressState = initialState, action): PhysicalAdd
   }
 };
 
-const apiUrl = 'api/physical-addresses';
+const apiUrl = SERVICENET_API_URL + '/physical-addresses';
 
 // Actions
 

@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ITaxonomyGroup, defaultValue } from 'app/shared/model/taxonomy-group.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_TAXONOMYGROUP_LIST: 'taxonomyGroup/FETCH_TAXONOMYGROUP_LIST',
@@ -97,7 +98,7 @@ export default (state: TaxonomyGroupState = initialState, action): TaxonomyGroup
   }
 };
 
-const apiUrl = 'api/taxonomy-groups';
+const apiUrl = SERVICENET_API_URL + '/taxonomy-groups';
 
 // Actions
 

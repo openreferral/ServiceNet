@@ -24,6 +24,7 @@ import DismissModal from '../shared/components/dismiss-modal';
 import SuccessModal from '../shared/components/success-modal';
 import FieldsDisplaySettingsPanel from '../multiple/fields-display-settings-panel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export interface IAllRecordsViewProp extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -83,7 +84,7 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
     const match = this.state.selectedMatch;
     const matchId = match && match.id ? match.id : '';
     axios
-      .post(`/api/organization-matches/${matchId}/dismiss`, dismissParams)
+      .post(`${SERVICENET_API_URL}/organization-matches/${matchId}/dismiss`, dismissParams)
       .then(() => {
         this.setState({ showDismissModal: false, showSuccessModal: true, matchNumber: 0 });
         Promise.all([this.props.getNotHiddenMatchesByOrg(this.props.orgId)]).then(() => {
@@ -118,7 +119,7 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
     const matchId = match && match.id ? match.id : '';
     event.preventDefault();
     axios
-      .post(`/api/organization-matches/${matchId}/hide`)
+      .post(`${SERVICENET_API_URL}/organization-matches/${matchId}/hide`)
       .then(() => {
         toast.success(translate('hiddenMatches.hiddenSuccessfully'));
         if (matches.length === 1) {

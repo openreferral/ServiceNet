@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IProgram, defaultValue } from 'app/shared/model/program.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_PROGRAM_LIST: 'program/FETCH_PROGRAM_LIST',
@@ -95,7 +96,7 @@ export default (state: ProgramState = initialState, action): ProgramState => {
   }
 };
 
-const apiUrl = 'api/programs';
+const apiUrl = SERVICENET_API_URL + '/programs';
 
 // Actions
 

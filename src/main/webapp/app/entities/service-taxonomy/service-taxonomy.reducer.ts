@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IServiceTaxonomy, defaultValue } from 'app/shared/model/service-taxonomy.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_SERVICETAXONOMY_LIST: 'serviceTaxonomy/FETCH_SERVICETAXONOMY_LIST',
@@ -108,7 +109,7 @@ export default (state: ServiceTaxonomyState = initialState, action): ServiceTaxo
   }
 };
 
-const apiUrl = 'api/service-taxonomies';
+const apiUrl = SERVICENET_API_URL + '/service-taxonomies';
 
 // Actions
 

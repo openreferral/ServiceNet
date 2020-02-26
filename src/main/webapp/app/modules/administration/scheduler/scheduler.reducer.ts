@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_JOBS: 'schedulerAdministration/FETCH_JOBS',
@@ -47,7 +48,7 @@ export default (state: SchedulerState = initialState, action): SchedulerState =>
 };
 
 // Actions
-const baseUrl = 'api/jobs';
+const baseUrl = SERVICENET_API_URL + '/jobs';
 const pauseUrl = `${baseUrl}/pause`;
 
 export const getJobs = () => ({

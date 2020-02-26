@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IServiceTaxonomiesDetailsFieldsValue, defaultValue } from 'app/shared/model/service-taxonomies-details-fields-value.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_SERVICETAXONOMIESDETAILSFIELDSVALUE_LIST: 'serviceTaxonomiesDetailsFieldsValue/FETCH_SERVICETAXONOMIESDETAILSFIELDSVALUE_LIST',
@@ -95,7 +96,7 @@ export default (state: ServiceTaxonomiesDetailsFieldsValueState = initialState, 
   }
 };
 
-const apiUrl = 'api/service-taxonomies-details-fields-values';
+const apiUrl = SERVICENET_API_URL + '/service-taxonomies-details-fields-values';
 
 // Actions
 

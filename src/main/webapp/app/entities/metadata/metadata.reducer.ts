@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IMetadata, defaultValue } from 'app/shared/model/metadata.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_METADATA_LIST: 'metadata/FETCH_METADATA_LIST',
@@ -106,7 +107,7 @@ export default (state: MetadataState = initialState, action): MetadataState => {
   }
 };
 
-const apiUrl = 'api/metadata';
+const apiUrl = SERVICENET_API_URL + '/metadata';
 
 // Actions
 

@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IServiceFieldsValue, defaultValue } from 'app/shared/model/service-fields-value.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_SERVICEFIELDSVALUE_LIST: 'serviceFieldsValue/FETCH_SERVICEFIELDSVALUE_LIST',
@@ -95,7 +96,7 @@ export default (state: ServiceFieldsValueState = initialState, action): ServiceF
   }
 };
 
-const apiUrl = 'api/service-fields-values';
+const apiUrl = SERVICENET_API_URL + '/service-fields-values';
 
 // Actions
 

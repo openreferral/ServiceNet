@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ILocationExclusion, defaultValue } from 'app/shared/model/location-exclusion.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_LOCATIONEXCLUSION_LIST: 'locationExclusion/FETCH_LOCATIONEXCLUSION_LIST',
@@ -95,7 +96,7 @@ export default (state: LocationExclusionState = initialState, action): LocationE
   }
 };
 
-const apiUrl = 'api/location-exclusions';
+const apiUrl = SERVICENET_API_URL + '/location-exclusions';
 
 // Actions
 

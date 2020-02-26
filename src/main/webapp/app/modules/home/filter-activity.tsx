@@ -22,6 +22,7 @@ import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
 import { GOOGLE_API_KEY } from 'app/config/constants';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export interface IFilterActivityState {
   filtersChanged: boolean;
@@ -216,7 +217,7 @@ export class FilterActivity extends React.Component<IFilterActivityProps, IFilte
   };
 
   saveCurrentFilter = filter => {
-    const url = 'api/activity-filter/current-user-filter';
+    const url = SERVICENET_API_URL + '/activity-filter/current-user-filter';
 
     axios.post(url, filter);
   };

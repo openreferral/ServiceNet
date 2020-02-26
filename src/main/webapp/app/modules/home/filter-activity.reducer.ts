@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { ORGANIZATION, getDefaultSearchFieldOptions } from 'app/modules/home/filter.constants';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_POSTAL_CODE_LIST: 'filterActivity/FETCH_POSTAL_CODE_LIST',
@@ -129,7 +130,7 @@ export default (state: FilterActivityState = initialState, action): FilterActivi
 // Actions
 
 export const getPostalCodeList = () => {
-  const requestUrl = `api/activity-filter/get-postal-codes`;
+  const requestUrl = `${SERVICENET_API_URL}/activity-filter/get-postal-codes`;
   return {
     type: ACTION_TYPES.FETCH_POSTAL_CODE_LIST,
     payload: axios.get<any>(requestUrl)
@@ -137,7 +138,7 @@ export const getPostalCodeList = () => {
 };
 
 export const getRegionList = () => {
-  const requestUrl = `api/activity-filter/get-regions`;
+  const requestUrl = `${SERVICENET_API_URL}/activity-filter/get-regions`;
   return {
     type: ACTION_TYPES.FETCH_REGION_LIST,
     payload: axios.get<any>(requestUrl)
@@ -145,7 +146,7 @@ export const getRegionList = () => {
 };
 
 export const getCityList = () => {
-  const requestUrl = `api/activity-filter/get-cities`;
+  const requestUrl = `${SERVICENET_API_URL}/activity-filter/get-cities`;
   return {
     type: ACTION_TYPES.FETCH_CITY_LIST,
     payload: axios.get<any>(requestUrl)
@@ -153,7 +154,7 @@ export const getCityList = () => {
 };
 
 export const getPartnerList = () => {
-  const requestUrl = `api/system-accounts`;
+  const requestUrl = `${SERVICENET_API_URL}/system-accounts`;
   return {
     type: ACTION_TYPES.FETCH_PARTNER_LIST,
     payload: axios.get<any>(requestUrl)
@@ -161,7 +162,7 @@ export const getPartnerList = () => {
 };
 
 export const getTaxonomyMap = () => {
-  const requestUrl = `api/activity-filter/get-taxonomies`;
+  const requestUrl = `${SERVICENET_API_URL}/activity-filter/get-taxonomies`;
   return {
     type: ACTION_TYPES.FETCH_TAXONOMY_LIST,
     payload: axios.get<any>(requestUrl)
@@ -174,7 +175,7 @@ export const updateActivityFilter = activityFilter => ({
 });
 
 export const getSavedFilters = () => {
-  const requestUrl = `api/activity-filter/get-user-filters`;
+  const requestUrl = `${SERVICENET_API_URL}/activity-filter/get-user-filters`;
   return {
     type: ACTION_TYPES.FETCH_SAVED_FILTERS,
     payload: axios.get<any>(requestUrl)

@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IOrganizationMatch, defaultValue } from 'app/shared/model/organization-match.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_ORGANIZATIONMATCH_LIST: 'organizationMatch/FETCH_ORGANIZATIONMATCH_LIST',
@@ -108,7 +109,7 @@ export default (state: OrganizationMatchState = initialState, action): Organizat
   }
 };
 
-const apiUrl = 'api/organization-matches';
+const apiUrl = SERVICENET_API_URL + '/organization-matches';
 
 // Actions
 

@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IPhone, defaultValue } from 'app/shared/model/phone.model';
+import { SERVICENET_API_URL } from 'app/shared/util/service-url.constants';
 
 export const ACTION_TYPES = {
   FETCH_PHONE_LIST: 'phone/FETCH_PHONE_LIST',
@@ -108,7 +109,7 @@ export default (state: PhoneState = initialState, action): PhoneState => {
   }
 };
 
-const apiUrl = 'api/phones';
+const apiUrl = SERVICENET_API_URL + '/phones';
 
 // Actions
 
