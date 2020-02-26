@@ -335,7 +335,11 @@ export class AllRecordsView extends React.Component<IAllRecordsViewProp, IAllRec
           handleClose={this.handleDismissModalClose}
           handleDismiss={this.handleDismiss}
         />
-        <div className="fields-display-settings-btn" onClick={this.toggleFieldSettings} id="fields-display-settings-btn">
+        <div
+          className={this.state.fieldSettingsExpanded ? 'fields-display-settings-btn-return' : 'fields-display-settings-btn'}
+          onClick={this.toggleFieldSettings}
+          id="fields-display-settings-btn"
+        >
           {this.state.fieldSettingsExpanded ? (
             <FontAwesomeIcon icon="undo-alt" size="lg" />
           ) : (
