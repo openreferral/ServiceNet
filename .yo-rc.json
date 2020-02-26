@@ -9,7 +9,7 @@
     "packageName": "org.benetech.servicenet",
     "packageFolder": "org/benetech/servicenet",
     "serverPort": "8081",
-    "authenticationType": "session",
+    "authenticationType": "jwt",
     "cacheProvider": "hazelcast",
     "enableHibernateCache": true,
     "websocket": false,
@@ -33,7 +33,6 @@
     "clientPackageManager": "npm",
     "blueprints": [],
     "skipClient": true,
-    "skipUserManagement": true,
-    "rememberMeKey": "b24b759de3b5bd38145f39a79eacf410517527736c4d19f48612d890e84442e26a9619f9778956528195a1db5c7cc014403f"
+    "skipUserManagement": true
   }
 }
