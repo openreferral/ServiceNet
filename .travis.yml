@@ -22,11 +22,8 @@ before_install:
 install:
   - chmod +x mvnw
   - ./mvnw dependency:go-offline --no-transfer-progress
-  - ./mvnw com.github.eirslett:frontend-maven-plugin:install-node-and-npm@'install node and npm'
-  - ./mvnw com.github.eirslett:frontend-maven-plugin:npm@'npm install'
 script:
   - ./mvnw clean --no-transfer-progress
-  - npm test
   - ./mvnw test --no-transfer-progress
 notifications:
   webhooks:
