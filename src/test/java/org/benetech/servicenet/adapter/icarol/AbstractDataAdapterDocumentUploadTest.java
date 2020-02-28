@@ -4,6 +4,8 @@ import static org.benetech.servicenet.adapter.AdapterTestsUtils.mockEndpointWith
 import static org.benetech.servicenet.config.Constants.EDEN_PROVIDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 
 import com.google.gson.Gson;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.UUID;
 import org.apache.http.client.HttpClient;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -37,6 +40,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockserver.client.MockServerClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -71,7 +75,7 @@ public class AbstractDataAdapterDocumentUploadTest {
     @Mock
     private UserService userService;
 
-    @Mock
+    @MockBean
     private MongoDbService mongoDbService;
 
     @Mock
@@ -89,6 +93,7 @@ public class AbstractDataAdapterDocumentUploadTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(mongoDbService.saveOriginalDocument(any())).thenReturn(UUID.randomUUID().toString());
         testDatabaseManagement.clearDb();
     }
 
