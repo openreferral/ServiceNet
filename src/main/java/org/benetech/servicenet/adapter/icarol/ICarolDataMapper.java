@@ -5,6 +5,7 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -231,6 +232,7 @@ public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
         return Arrays.stream(contactDetails)
             .filter(entry -> entry.getContact().getType().equals(PHONE_NUMBER))
             .map(this::mapContactToPhone)
+            .filter(Objects::nonNull)
             .collect(Collectors.toSet());
     }
 

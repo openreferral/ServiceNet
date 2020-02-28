@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.PostalAddressFieldsValueRepository;
 import org.benetech.servicenet.service.PostalAddressFieldsValueService;
 import org.benetech.servicenet.service.dto.PostalAddressFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.PostalAddressFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -120,7 +120,7 @@ public class PostalAddressFieldsValueResourceIntTest {
         // Create the PostalAddressFieldsValue
         PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper.toDto(postalAddressFieldsValue);
         restPostalAddressFieldsValueMockMvc.perform(post("/api/postal-address-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressFieldsValueDTO)))
             .andExpect(status().isCreated());
 
@@ -142,7 +142,7 @@ public class PostalAddressFieldsValueResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPostalAddressFieldsValueMockMvc.perform(post("/api/postal-address-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -160,11 +160,11 @@ public class PostalAddressFieldsValueResourceIntTest {
         // Get all the postalAddressFieldsValueList
         restPostalAddressFieldsValueMockMvc.perform(get("/api/postal-address-fields-values?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(postalAddressFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].postalAddressField").value(hasItem(DEFAULT_POSTAL_ADDRESS_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getPostalAddressFieldsValue() throws Exception {
@@ -174,7 +174,7 @@ public class PostalAddressFieldsValueResourceIntTest {
         // Get the postalAddressFieldsValue
         restPostalAddressFieldsValueMockMvc.perform(get("/api/postal-address-fields-values/{id}", postalAddressFieldsValue.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(postalAddressFieldsValue.getId().toString()))
             .andExpect(jsonPath("$.postalAddressField").value(DEFAULT_POSTAL_ADDRESS_FIELD.toString()));
     }
@@ -204,7 +204,7 @@ public class PostalAddressFieldsValueResourceIntTest {
         PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper.toDto(updatedPostalAddressFieldsValue);
 
         restPostalAddressFieldsValueMockMvc.perform(put("/api/postal-address-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressFieldsValueDTO)))
             .andExpect(status().isOk());
 
@@ -225,7 +225,7 @@ public class PostalAddressFieldsValueResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPostalAddressFieldsValueMockMvc.perform(put("/api/postal-address-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -244,7 +244,7 @@ public class PostalAddressFieldsValueResourceIntTest {
 
         // Delete the postalAddressFieldsValue
         restPostalAddressFieldsValueMockMvc.perform(delete("/api/postal-address-fields-values/{id}", postalAddressFieldsValue.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

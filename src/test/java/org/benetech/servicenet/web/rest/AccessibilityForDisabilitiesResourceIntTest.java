@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.AccessibilityForDisabilitiesRepository
 import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.dto.AccessibilityForDisabilitiesDTO;
 import org.benetech.servicenet.service.mapper.AccessibilityForDisabilitiesMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -116,7 +116,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         AccessibilityForDisabilitiesDTO accessibilityForDisabilitiesDTO =
             accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
         restAccessibilityForDisabilitiesMockMvc.perform(post("/api/accessibility-for-disabilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(accessibilityForDisabilitiesDTO)))
             .andExpect(status().isCreated());
 
@@ -142,7 +142,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restAccessibilityForDisabilitiesMockMvc.perform(post("/api/accessibility-for-disabilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(accessibilityForDisabilitiesDTO)))
             .andExpect(status().isBadRequest());
 
@@ -164,7 +164,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
             accessibilityForDisabilitiesMapper.toDto(accessibilityForDisabilities);
 
         restAccessibilityForDisabilitiesMockMvc.perform(post("/api/accessibility-for-disabilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(accessibilityForDisabilitiesDTO)))
             .andExpect(status().isBadRequest());
 
@@ -182,7 +182,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         // Get all the accessibilityForDisabilitiesList
         restAccessibilityForDisabilitiesMockMvc.perform(get("/api/accessibility-for-disabilities?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(accessibilityForDisabilities.getId().toString())))
             .andExpect(jsonPath("$.[*].accessibility").value(hasItem(DEFAULT_ACCESSIBILITY.toString())))
             .andExpect(jsonPath("$.[*].details").value(hasItem(DEFAULT_DETAILS.toString())));
@@ -198,7 +198,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         restAccessibilityForDisabilitiesMockMvc.perform(get("/api/accessibility-for-disabilities/{id}",
             accessibilityForDisabilities.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(accessibilityForDisabilities.getId().toString()))
             .andExpect(jsonPath("$.accessibility").value(DEFAULT_ACCESSIBILITY.toString()))
             .andExpect(jsonPath("$.details").value(DEFAULT_DETAILS.toString()));
@@ -233,7 +233,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
             accessibilityForDisabilitiesMapper.toDto(updatedAccessibilityForDisabilities);
 
         restAccessibilityForDisabilitiesMockMvc.perform(put("/api/accessibility-for-disabilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(accessibilityForDisabilitiesDTO)))
             .andExpect(status().isOk());
 
@@ -258,7 +258,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAccessibilityForDisabilitiesMockMvc.perform(put("/api/accessibility-for-disabilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(accessibilityForDisabilitiesDTO)))
             .andExpect(status().isBadRequest());
 
@@ -279,7 +279,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
         // Get the accessibilityForDisabilities
         restAccessibilityForDisabilitiesMockMvc.perform(delete("/api/accessibility-for-disabilities/{id}",
             accessibilityForDisabilities.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

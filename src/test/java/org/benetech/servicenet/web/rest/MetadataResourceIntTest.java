@@ -10,7 +10,7 @@ import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.dto.MetadataDTO;
 import org.benetech.servicenet.service.mapper.MetadataMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -145,7 +145,7 @@ public class MetadataResourceIntTest {
         // Create the Metadata
         MetadataDTO metadataDTO = metadataMapper.toDto(metadata);
         restMetadataMockMvc.perform(post("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isCreated());
 
@@ -173,7 +173,7 @@ public class MetadataResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restMetadataMockMvc.perform(post("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isBadRequest());
 
@@ -193,7 +193,7 @@ public class MetadataResourceIntTest {
         MetadataDTO metadataDTO = metadataMapper.toDto(metadata);
 
         restMetadataMockMvc.perform(post("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isBadRequest());
 
@@ -212,7 +212,7 @@ public class MetadataResourceIntTest {
         MetadataDTO metadataDTO = metadataMapper.toDto(metadata);
 
         restMetadataMockMvc.perform(post("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isBadRequest());
 
@@ -231,7 +231,7 @@ public class MetadataResourceIntTest {
         MetadataDTO metadataDTO = metadataMapper.toDto(metadata);
 
         restMetadataMockMvc.perform(post("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isBadRequest());
 
@@ -250,7 +250,7 @@ public class MetadataResourceIntTest {
         MetadataDTO metadataDTO = metadataMapper.toDto(metadata);
 
         restMetadataMockMvc.perform(post("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isBadRequest());
 
@@ -269,7 +269,7 @@ public class MetadataResourceIntTest {
         MetadataDTO metadataDTO = metadataMapper.toDto(metadata);
 
         restMetadataMockMvc.perform(post("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isBadRequest());
 
@@ -287,7 +287,7 @@ public class MetadataResourceIntTest {
         // Get all the metadataList
         restMetadataMockMvc.perform(get("/api/metadata?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(metadata.getId().toString())))
             .andExpect(jsonPath("$.[*].resourceId").value(hasItem(DEFAULT_RESOURCE_ID.toString())))
             .andExpect(jsonPath("$.[*].lastActionDate").value(hasItem(sameInstant(DEFAULT_LAST_ACTION_DATE))))
@@ -297,7 +297,7 @@ public class MetadataResourceIntTest {
             .andExpect(jsonPath("$.[*].replacementValue").value(hasItem(DEFAULT_REPLACEMENT_VALUE)))
             .andExpect(jsonPath("$.[*].resourceClass").value(hasItem(DEFAULT_RESOURCE_CLASS)));
     }
-    
+
     @Test
     @Transactional
     public void getMetadata() throws Exception {
@@ -308,7 +308,7 @@ public class MetadataResourceIntTest {
         // Get the metadata
         restMetadataMockMvc.perform(get("/api/metadata/{id}", metadata.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(metadata.getId().toString()))
             .andExpect(jsonPath("$.resourceId").value(DEFAULT_RESOURCE_ID.toString()))
             .andExpect(jsonPath("$.lastActionDate").value(sameInstant(DEFAULT_LAST_ACTION_DATE)))
@@ -350,7 +350,7 @@ public class MetadataResourceIntTest {
         MetadataDTO metadataDTO = metadataMapper.toDto(updatedMetadata);
 
         restMetadataMockMvc.perform(put("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isOk());
 
@@ -377,7 +377,7 @@ public class MetadataResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restMetadataMockMvc.perform(put("/api/metadata")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(metadataDTO)))
             .andExpect(status().isBadRequest());
 
@@ -396,7 +396,7 @@ public class MetadataResourceIntTest {
 
         // Get the metadata
         restMetadataMockMvc.perform(delete("/api/metadata/{id}", metadata.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

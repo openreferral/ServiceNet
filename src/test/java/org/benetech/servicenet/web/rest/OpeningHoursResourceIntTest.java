@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.OpeningHoursRepository;
 import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.mapper.OpeningHoursMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -115,7 +115,7 @@ public class OpeningHoursResourceIntTest {
         // Create the OpeningHours
         OpeningHoursDTO openingHoursDTO = openingHoursMapper.toDto(openingHours);
         restOpeningHoursMockMvc.perform(post("/api/opening-hours")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(openingHoursDTO)))
             .andExpect(status().isCreated());
 
@@ -139,7 +139,7 @@ public class OpeningHoursResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOpeningHoursMockMvc.perform(post("/api/opening-hours")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(openingHoursDTO)))
             .andExpect(status().isBadRequest());
 
@@ -159,7 +159,7 @@ public class OpeningHoursResourceIntTest {
         OpeningHoursDTO openingHoursDTO = openingHoursMapper.toDto(openingHours);
 
         restOpeningHoursMockMvc.perform(post("/api/opening-hours")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(openingHoursDTO)))
             .andExpect(status().isBadRequest());
 
@@ -176,13 +176,13 @@ public class OpeningHoursResourceIntTest {
         // Get all the openingHoursList
         restOpeningHoursMockMvc.perform(get("/api/opening-hours?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(openingHours.getId().toString())))
             .andExpect(jsonPath("$.[*].weekday").value(hasItem(DEFAULT_WEEKDAY)))
             .andExpect(jsonPath("$.[*].opensAt").value(hasItem(DEFAULT_OPENS_AT)))
             .andExpect(jsonPath("$.[*].closesAt").value(hasItem(DEFAULT_CLOSES_AT)));
     }
-    
+
     @Test
     @Transactional
     public void getOpeningHours() throws Exception {
@@ -192,7 +192,7 @@ public class OpeningHoursResourceIntTest {
         // Get the openingHours
         restOpeningHoursMockMvc.perform(get("/api/opening-hours/{id}", openingHours.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(openingHours.getId().toString()))
             .andExpect(jsonPath("$.weekday").value(DEFAULT_WEEKDAY))
             .andExpect(jsonPath("$.opensAt").value(DEFAULT_OPENS_AT))
@@ -226,7 +226,7 @@ public class OpeningHoursResourceIntTest {
         OpeningHoursDTO openingHoursDTO = openingHoursMapper.toDto(updatedOpeningHours);
 
         restOpeningHoursMockMvc.perform(put("/api/opening-hours")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(openingHoursDTO)))
             .andExpect(status().isOk());
 
@@ -249,7 +249,7 @@ public class OpeningHoursResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOpeningHoursMockMvc.perform(put("/api/opening-hours")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(openingHoursDTO)))
             .andExpect(status().isBadRequest());
 
@@ -268,7 +268,7 @@ public class OpeningHoursResourceIntTest {
 
         // Get the openingHours
         restOpeningHoursMockMvc.perform(delete("/api/opening-hours/{id}", openingHours.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

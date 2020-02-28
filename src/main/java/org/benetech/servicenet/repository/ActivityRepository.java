@@ -33,7 +33,7 @@ import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.enumeration.SearchOn;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
-import org.benetech.servicenet.web.rest.SearchField;
+import org.benetech.servicenet.domain.enumeration.SearchField;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.EligibilityRepository;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.benetech.servicenet.service.mapper.EligibilityMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +110,7 @@ public class EligibilityResourceIntTest {
         // Create the Eligibility
         EligibilityDTO eligibilityDTO = eligibilityMapper.toDto(eligibility);
         restEligibilityMockMvc.perform(post("/api/eligibilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(eligibilityDTO)))
             .andExpect(status().isCreated());
 
@@ -132,7 +132,7 @@ public class EligibilityResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restEligibilityMockMvc.perform(post("/api/eligibilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(eligibilityDTO)))
             .andExpect(status().isBadRequest());
 
@@ -152,7 +152,7 @@ public class EligibilityResourceIntTest {
         EligibilityDTO eligibilityDTO = eligibilityMapper.toDto(eligibility);
 
         restEligibilityMockMvc.perform(post("/api/eligibilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(eligibilityDTO)))
             .andExpect(status().isBadRequest());
 
@@ -169,7 +169,7 @@ public class EligibilityResourceIntTest {
         // Get all the eligibilityList
         restEligibilityMockMvc.perform(get("/api/eligibilities?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(eligibility.getId().toString())))
             .andExpect(jsonPath("$.[*].eligibility").value(hasItem(DEFAULT_ELIGIBILITY.toString())));
     }
@@ -183,7 +183,7 @@ public class EligibilityResourceIntTest {
         // Get the eligibility
         restEligibilityMockMvc.perform(get("/api/eligibilities/{id}", eligibility.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(eligibility.getId().toString()))
             .andExpect(jsonPath("$.eligibility").value(DEFAULT_ELIGIBILITY.toString()));
     }
@@ -213,7 +213,7 @@ public class EligibilityResourceIntTest {
         EligibilityDTO eligibilityDTO = eligibilityMapper.toDto(updatedEligibility);
 
         restEligibilityMockMvc.perform(put("/api/eligibilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(eligibilityDTO)))
             .andExpect(status().isOk());
 
@@ -234,7 +234,7 @@ public class EligibilityResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restEligibilityMockMvc.perform(put("/api/eligibilities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(eligibilityDTO)))
             .andExpect(status().isBadRequest());
 
@@ -253,7 +253,7 @@ public class EligibilityResourceIntTest {
 
         // Get the eligibility
         restEligibilityMockMvc.perform(delete("/api/eligibilities/{id}", eligibility.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

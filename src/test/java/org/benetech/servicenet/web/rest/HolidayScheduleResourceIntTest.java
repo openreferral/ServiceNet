@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.HolidayScheduleRepository;
 import org.benetech.servicenet.service.HolidayScheduleService;
 import org.benetech.servicenet.service.dto.HolidayScheduleDTO;
 import org.benetech.servicenet.service.mapper.HolidayScheduleMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -128,7 +128,7 @@ public class HolidayScheduleResourceIntTest {
         // Create the HolidaySchedule
         HolidayScheduleDTO holidayScheduleDTO = holidayScheduleMapper.toDto(holidaySchedule);
         restHolidayScheduleMockMvc.perform(post("/api/holiday-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(holidayScheduleDTO)))
             .andExpect(status().isCreated());
 
@@ -154,7 +154,7 @@ public class HolidayScheduleResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restHolidayScheduleMockMvc.perform(post("/api/holiday-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(holidayScheduleDTO)))
             .andExpect(status().isBadRequest());
 
@@ -174,7 +174,7 @@ public class HolidayScheduleResourceIntTest {
         HolidayScheduleDTO holidayScheduleDTO = holidayScheduleMapper.toDto(holidaySchedule);
 
         restHolidayScheduleMockMvc.perform(post("/api/holiday-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(holidayScheduleDTO)))
             .andExpect(status().isBadRequest());
 
@@ -193,7 +193,7 @@ public class HolidayScheduleResourceIntTest {
         HolidayScheduleDTO holidayScheduleDTO = holidayScheduleMapper.toDto(holidaySchedule);
 
         restHolidayScheduleMockMvc.perform(post("/api/holiday-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(holidayScheduleDTO)))
             .andExpect(status().isBadRequest());
 
@@ -212,7 +212,7 @@ public class HolidayScheduleResourceIntTest {
         HolidayScheduleDTO holidayScheduleDTO = holidayScheduleMapper.toDto(holidaySchedule);
 
         restHolidayScheduleMockMvc.perform(post("/api/holiday-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(holidayScheduleDTO)))
             .andExpect(status().isBadRequest());
 
@@ -229,7 +229,7 @@ public class HolidayScheduleResourceIntTest {
         // Get all the holidayScheduleList
         restHolidayScheduleMockMvc.perform(get("/api/holiday-schedules?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(holidaySchedule.getId().toString())))
             .andExpect(jsonPath("$.[*].closed").value(hasItem(DEFAULT_CLOSED.booleanValue())))
             .andExpect(jsonPath("$.[*].opensAt").value(hasItem(DEFAULT_OPENS_AT.toString())))
@@ -247,7 +247,7 @@ public class HolidayScheduleResourceIntTest {
         // Get the holidaySchedule
         restHolidayScheduleMockMvc.perform(get("/api/holiday-schedules/{id}", holidaySchedule.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(holidaySchedule.getId().toString()))
             .andExpect(jsonPath("$.closed").value(DEFAULT_CLOSED.booleanValue()))
             .andExpect(jsonPath("$.opensAt").value(DEFAULT_OPENS_AT.toString()))
@@ -285,7 +285,7 @@ public class HolidayScheduleResourceIntTest {
         HolidayScheduleDTO holidayScheduleDTO = holidayScheduleMapper.toDto(updatedHolidaySchedule);
 
         restHolidayScheduleMockMvc.perform(put("/api/holiday-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(holidayScheduleDTO)))
             .andExpect(status().isOk());
 
@@ -310,7 +310,7 @@ public class HolidayScheduleResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restHolidayScheduleMockMvc.perform(put("/api/holiday-schedules")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(holidayScheduleDTO)))
             .andExpect(status().isBadRequest());
 
@@ -329,7 +329,7 @@ public class HolidayScheduleResourceIntTest {
 
         // Get the holidaySchedule
         restHolidayScheduleMockMvc.perform(delete("/api/holiday-schedules/{id}", holidaySchedule.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ServiceAtLocationRepository;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
 import org.benetech.servicenet.service.mapper.ServiceAtLocationMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +110,7 @@ public class ServiceAtLocationResourceIntTest {
         // Create the ServiceAtLocation
         ServiceAtLocationDTO serviceAtLocationDTO = serviceAtLocationMapper.toDto(serviceAtLocation);
         restServiceAtLocationMockMvc.perform(post("/api/service-at-locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceAtLocationDTO)))
             .andExpect(status().isCreated());
 
@@ -132,7 +132,7 @@ public class ServiceAtLocationResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restServiceAtLocationMockMvc.perform(post("/api/service-at-locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceAtLocationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -150,7 +150,7 @@ public class ServiceAtLocationResourceIntTest {
         // Get all the serviceAtLocationList
         restServiceAtLocationMockMvc.perform(get("/api/service-at-locations?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(serviceAtLocation.getId().toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
     }
@@ -164,7 +164,7 @@ public class ServiceAtLocationResourceIntTest {
         // Get the serviceAtLocation
         restServiceAtLocationMockMvc.perform(get("/api/service-at-locations/{id}", serviceAtLocation.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(serviceAtLocation.getId().toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
     }
@@ -194,7 +194,7 @@ public class ServiceAtLocationResourceIntTest {
         ServiceAtLocationDTO serviceAtLocationDTO = serviceAtLocationMapper.toDto(updatedServiceAtLocation);
 
         restServiceAtLocationMockMvc.perform(put("/api/service-at-locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceAtLocationDTO)))
             .andExpect(status().isOk());
 
@@ -215,7 +215,7 @@ public class ServiceAtLocationResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restServiceAtLocationMockMvc.perform(put("/api/service-at-locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceAtLocationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -234,7 +234,7 @@ public class ServiceAtLocationResourceIntTest {
 
         // Get the serviceAtLocation
         restServiceAtLocationMockMvc.perform(delete("/api/service-at-locations/{id}", serviceAtLocation.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

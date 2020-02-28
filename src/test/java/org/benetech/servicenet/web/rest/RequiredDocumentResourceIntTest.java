@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.RequiredDocumentRepository;
 import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 import org.benetech.servicenet.service.mapper.RequiredDocumentMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +110,7 @@ public class RequiredDocumentResourceIntTest {
         // Create the RequiredDocument
         RequiredDocumentDTO requiredDocumentDTO = requiredDocumentMapper.toDto(requiredDocument);
         restRequiredDocumentMockMvc.perform(post("/api/required-documents")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(requiredDocumentDTO)))
             .andExpect(status().isCreated());
 
@@ -132,7 +132,7 @@ public class RequiredDocumentResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restRequiredDocumentMockMvc.perform(post("/api/required-documents")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(requiredDocumentDTO)))
             .andExpect(status().isBadRequest());
 
@@ -152,7 +152,7 @@ public class RequiredDocumentResourceIntTest {
         RequiredDocumentDTO requiredDocumentDTO = requiredDocumentMapper.toDto(requiredDocument);
 
         restRequiredDocumentMockMvc.perform(post("/api/required-documents")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(requiredDocumentDTO)))
             .andExpect(status().isBadRequest());
 
@@ -169,7 +169,7 @@ public class RequiredDocumentResourceIntTest {
         // Get all the requiredDocumentList
         restRequiredDocumentMockMvc.perform(get("/api/required-documents?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(requiredDocument.getId().toString())))
             .andExpect(jsonPath("$.[*].document").value(hasItem(DEFAULT_DOCUMENT.toString())));
     }
@@ -183,7 +183,7 @@ public class RequiredDocumentResourceIntTest {
         // Get the requiredDocument
         restRequiredDocumentMockMvc.perform(get("/api/required-documents/{id}", requiredDocument.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(requiredDocument.getId().toString()))
             .andExpect(jsonPath("$.document").value(DEFAULT_DOCUMENT.toString()));
     }
@@ -213,7 +213,7 @@ public class RequiredDocumentResourceIntTest {
         RequiredDocumentDTO requiredDocumentDTO = requiredDocumentMapper.toDto(updatedRequiredDocument);
 
         restRequiredDocumentMockMvc.perform(put("/api/required-documents")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(requiredDocumentDTO)))
             .andExpect(status().isOk());
 
@@ -234,7 +234,7 @@ public class RequiredDocumentResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restRequiredDocumentMockMvc.perform(put("/api/required-documents")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(requiredDocumentDTO)))
             .andExpect(status().isBadRequest());
 
@@ -253,7 +253,7 @@ public class RequiredDocumentResourceIntTest {
 
         // Get the requiredDocument
         restRequiredDocumentMockMvc.perform(delete("/api/required-documents/{id}", requiredDocument.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

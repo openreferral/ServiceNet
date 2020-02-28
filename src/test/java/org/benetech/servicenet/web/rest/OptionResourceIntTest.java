@@ -5,7 +5,7 @@ import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.domain.Option;
 import org.benetech.servicenet.repository.OptionRepository;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -109,7 +109,7 @@ public class OptionResourceIntTest {
 
         // Create the Option
         restOptionMockMvc.perform(post("/api/options")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(option)))
             .andExpect(status().isCreated());
 
@@ -131,7 +131,7 @@ public class OptionResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOptionMockMvc.perform(post("/api/options")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(option)))
             .andExpect(status().isBadRequest());
 
@@ -149,7 +149,7 @@ public class OptionResourceIntTest {
         // Get all the optionList
         restOptionMockMvc.perform(get("/api/options?sort=id,desc&size=2000"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(option.getId().toString())))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].value").value(hasItem(DEFAULT_VALUE)));
@@ -164,7 +164,7 @@ public class OptionResourceIntTest {
         // Get the option
         restOptionMockMvc.perform(get("/api/options/{id}", option.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(option.getId().toString()))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
             .andExpect(jsonPath("$.value").value(DEFAULT_VALUE));
@@ -195,7 +195,7 @@ public class OptionResourceIntTest {
             .value(UPDATED_VALUE);
 
         restOptionMockMvc.perform(put("/api/options")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(updatedOption)))
             .andExpect(status().isOk());
 
@@ -216,7 +216,7 @@ public class OptionResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOptionMockMvc.perform(put("/api/options")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(option)))
             .andExpect(status().isBadRequest());
 
@@ -235,7 +235,7 @@ public class OptionResourceIntTest {
 
         // Delete the option
         restOptionMockMvc.perform(delete("/api/options/{id}", option.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

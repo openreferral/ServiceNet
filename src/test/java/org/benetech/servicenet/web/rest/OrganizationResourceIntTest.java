@@ -11,7 +11,7 @@ import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
-import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -116,7 +115,7 @@ public class OrganizationResourceIntTest {
         // Create the Organization
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
         restOrganizationMockMvc.perform(post("/api/organizations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
             .andExpect(status().isCreated());
 
@@ -148,7 +147,7 @@ public class OrganizationResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrganizationMockMvc.perform(post("/api/organizations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -168,7 +167,7 @@ public class OrganizationResourceIntTest {
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
 
         restOrganizationMockMvc.perform(post("/api/organizations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -187,7 +186,7 @@ public class OrganizationResourceIntTest {
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
 
         restOrganizationMockMvc.perform(post("/api/organizations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -205,7 +204,7 @@ public class OrganizationResourceIntTest {
         // Get all the organizationList
         restOrganizationMockMvc.perform(get("/api/organizations?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organization.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(OrganizationMother.DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].alternateName").value(hasItem(OrganizationMother.DEFAULT_ALTERNATE_NAME.toString())))
@@ -229,7 +228,7 @@ public class OrganizationResourceIntTest {
         // Get the organization
         restOrganizationMockMvc.perform(get("/api/organizations/{id}", organization.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(organization.getId().toString()))
             .andExpect(jsonPath("$.name").value(OrganizationMother.DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.alternateName").value(OrganizationMother.DEFAULT_ALTERNATE_NAME.toString()))
@@ -278,7 +277,7 @@ public class OrganizationResourceIntTest {
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
 
         restOrganizationMockMvc.perform(put("/api/organizations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
             .andExpect(status().isOk());
 
@@ -309,7 +308,7 @@ public class OrganizationResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOrganizationMockMvc.perform(put("/api/organizations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -329,7 +328,7 @@ public class OrganizationResourceIntTest {
 
         // Get the organization
         restOrganizationMockMvc.perform(delete("/api/organizations/{id}", organization.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

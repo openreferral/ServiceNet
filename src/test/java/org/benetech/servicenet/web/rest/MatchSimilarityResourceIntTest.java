@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.MatchSimilarityRepository;
 import org.benetech.servicenet.service.MatchSimilarityService;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.benetech.servicenet.service.mapper.MatchSimilarityMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -129,7 +129,7 @@ public class MatchSimilarityResourceIntTest {
 
         // Create the MatchSimilarity
         restMatchSimilarityMockMvc.perform(post("/api/match-similarities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(matchSimilarity)))
             .andExpect(status().isCreated());
 
@@ -152,7 +152,7 @@ public class MatchSimilarityResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restMatchSimilarityMockMvc.perform(post("/api/match-similarities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(matchSimilarity)))
             .andExpect(status().isBadRequest());
 
@@ -171,7 +171,7 @@ public class MatchSimilarityResourceIntTest {
         // Get all the matchSimilarityList
         restMatchSimilarityMockMvc.perform(get("/api/match-similarities?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(matchSimilarity.getId().toString())))
             .andExpect(jsonPath("$.[*].similarity").value(hasItem(DEFAULT_SIMILARITY.intValue())))
             .andExpect(jsonPath("$.[*].resourceClass").value(hasItem(DEFAULT_RESOURCE_CLASS.toString())));
@@ -186,7 +186,7 @@ public class MatchSimilarityResourceIntTest {
         // Get the matchSimilarity
         restMatchSimilarityMockMvc.perform(get("/api/match-similarities/{id}", matchSimilarity.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(matchSimilarity.getId().toString()))
             .andExpect(jsonPath("$.similarity").value(DEFAULT_SIMILARITY))
             .andExpect(jsonPath("$.resourceClass").value(DEFAULT_RESOURCE_CLASS))
@@ -219,7 +219,7 @@ public class MatchSimilarityResourceIntTest {
             .fieldName(UPDATED_FIELD_NAME);
 
         restMatchSimilarityMockMvc.perform(put("/api/match-similarities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(matchSimilarity)))
             .andExpect(status().isOk());
 
@@ -239,7 +239,7 @@ public class MatchSimilarityResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restMatchSimilarityMockMvc.perform(put("/api/match-similarities")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(matchSimilarity)))
             .andExpect(status().isBadRequest());
 
@@ -258,7 +258,7 @@ public class MatchSimilarityResourceIntTest {
 
         // Delete the matchSimilarity
         restMatchSimilarityMockMvc.perform(delete("/api/match-similarities/{id}", matchSimilarity.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

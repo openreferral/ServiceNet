@@ -5,7 +5,7 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.repository.OrganizationErrorRepository;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -132,7 +132,7 @@ public class OrganizationErrorResourceIntTest {
 
         // Create the OrganizationError
         restOrganizationErrorMockMvc.perform(post("/api/organization-errors")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationError)))
             .andExpect(status().isCreated());
 
@@ -157,7 +157,7 @@ public class OrganizationErrorResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrganizationErrorMockMvc.perform(post("/api/organization-errors")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationError)))
             .andExpect(status().isBadRequest());
 
@@ -176,7 +176,7 @@ public class OrganizationErrorResourceIntTest {
         // Get all the organizationErrorList
         restOrganizationErrorMockMvc.perform(get("/api/organization-errors?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organizationError.getId().toString())))
             .andExpect(jsonPath("$.[*].entityName").value(hasItem(DEFAULT_ENTITY_NAME.toString())))
             .andExpect(jsonPath("$.[*].fieldName").value(hasItem(DEFAULT_FIELD_NAME.toString())))
@@ -184,7 +184,7 @@ public class OrganizationErrorResourceIntTest {
             .andExpect(jsonPath("$.[*].invalidValue").value(hasItem(DEFAULT_INVALID_VALUE.toString())))
             .andExpect(jsonPath("$.[*].cause").value(hasItem(DEFAULT_CAUSE.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getOrganizationError() throws Exception {
@@ -194,7 +194,7 @@ public class OrganizationErrorResourceIntTest {
         // Get the organizationError
         restOrganizationErrorMockMvc.perform(get("/api/organization-errors/{id}", organizationError.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(organizationError.getId().toString()))
             .andExpect(jsonPath("$.entityName").value(DEFAULT_ENTITY_NAME.toString()))
             .andExpect(jsonPath("$.fieldName").value(DEFAULT_FIELD_NAME.toString()))
@@ -231,7 +231,7 @@ public class OrganizationErrorResourceIntTest {
             .cause(UPDATED_CAUSE);
 
         restOrganizationErrorMockMvc.perform(put("/api/organization-errors")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(updatedOrganizationError)))
             .andExpect(status().isOk());
 
@@ -255,7 +255,7 @@ public class OrganizationErrorResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOrganizationErrorMockMvc.perform(put("/api/organization-errors")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationError)))
             .andExpect(status().isBadRequest());
 
@@ -274,7 +274,7 @@ public class OrganizationErrorResourceIntTest {
 
         // Delete the organizationError
         restOrganizationErrorMockMvc.perform(delete("/api/organization-errors/{id}", organizationError.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

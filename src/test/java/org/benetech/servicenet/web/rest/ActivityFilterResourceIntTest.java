@@ -26,7 +26,7 @@ import org.benetech.servicenet.service.ActivityFilterService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.mapper.ActivityFilterMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -191,7 +191,7 @@ public class ActivityFilterResourceIntTest {
         // Create the ActivityFilter
         ActivityFilterDTO activityFilterDTO = activityFilterMapper.toDto(activityFilter);
         restActivityFilterMockMvc.perform(post("/api/activity-filters")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(activityFilterDTO)))
             .andExpect(status().isCreated());
 
@@ -218,7 +218,7 @@ public class ActivityFilterResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restActivityFilterMockMvc.perform(post("/api/activity-filters")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(activityFilterDTO)))
             .andExpect(status().isBadRequest());
 
@@ -237,7 +237,7 @@ public class ActivityFilterResourceIntTest {
         // Get all the activityFilterList
         restActivityFilterMockMvc.perform(get("/api/activity-filters?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(activityFilter.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].citiesFilterList").value(hasItem(DEFAULT_CITIES_FILTER_LIST)))
@@ -263,7 +263,7 @@ public class ActivityFilterResourceIntTest {
         // Get the activityFilter
         restActivityFilterMockMvc.perform(get("/api/activity-filters/{id}", activityFilter.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(activityFilter.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.dateFilter").value(DEFAULT_DATE_FILTER.toString()))
@@ -310,7 +310,7 @@ public class ActivityFilterResourceIntTest {
         ActivityFilterDTO activityFilterDTO = activityFilterMapper.toDto(updatedActivityFilter);
 
         restActivityFilterMockMvc.perform(put("/api/activity-filters")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(activityFilterDTO)))
             .andExpect(status().isOk());
 
@@ -336,7 +336,7 @@ public class ActivityFilterResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restActivityFilterMockMvc.perform(put("/api/activity-filters")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(activityFilterDTO)))
             .andExpect(status().isBadRequest());
 
@@ -355,7 +355,7 @@ public class ActivityFilterResourceIntTest {
 
         // Delete the activityFilter
         restActivityFilterMockMvc.perform(delete("/api/activity-filters/{id}", activityFilter.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

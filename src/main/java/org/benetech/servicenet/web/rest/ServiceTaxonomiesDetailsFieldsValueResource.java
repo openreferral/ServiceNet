@@ -2,7 +2,7 @@ package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
 import org.benetech.servicenet.service.ServiceTaxonomiesDetailsFieldsValueService;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.dto.ServiceTaxonomiesDetailsFieldsValueDTO;
 
 import org.benetech.servicenet.web.rest.util.HeaderUtil;

@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ProgramRepository;
 import org.benetech.servicenet.service.ProgramService;
 import org.benetech.servicenet.service.dto.ProgramDTO;
 import org.benetech.servicenet.service.mapper.ProgramMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -113,7 +113,7 @@ public class ProgramResourceIntTest {
         // Create the Program
         ProgramDTO programDTO = programMapper.toDto(program);
         restProgramMockMvc.perform(post("/api/programs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(programDTO)))
             .andExpect(status().isCreated());
 
@@ -136,7 +136,7 @@ public class ProgramResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restProgramMockMvc.perform(post("/api/programs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(programDTO)))
             .andExpect(status().isBadRequest());
 
@@ -156,7 +156,7 @@ public class ProgramResourceIntTest {
         ProgramDTO programDTO = programMapper.toDto(program);
 
         restProgramMockMvc.perform(post("/api/programs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(programDTO)))
             .andExpect(status().isBadRequest());
 
@@ -173,7 +173,7 @@ public class ProgramResourceIntTest {
         // Get all the programList
         restProgramMockMvc.perform(get("/api/programs?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(program.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].alternateName").value(hasItem(DEFAULT_ALTERNATE_NAME.toString())));
@@ -188,7 +188,7 @@ public class ProgramResourceIntTest {
         // Get the program
         restProgramMockMvc.perform(get("/api/programs/{id}", program.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(program.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.alternateName").value(DEFAULT_ALTERNATE_NAME.toString()));
@@ -220,7 +220,7 @@ public class ProgramResourceIntTest {
         ProgramDTO programDTO = programMapper.toDto(updatedProgram);
 
         restProgramMockMvc.perform(put("/api/programs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(programDTO)))
             .andExpect(status().isOk());
 
@@ -242,7 +242,7 @@ public class ProgramResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restProgramMockMvc.perform(put("/api/programs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(programDTO)))
             .andExpect(status().isBadRequest());
 
@@ -261,7 +261,7 @@ public class ProgramResourceIntTest {
 
         // Get the program
         restProgramMockMvc.perform(delete("/api/programs/{id}", program.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

@@ -3,14 +3,11 @@
     "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
     "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
+    <property name="cacheFile" value="target/cachefile"/>
     <module name="SuppressWarningsFilter"/>
     <module name="SeverityMatchFilter">
         <property name="severity" value="info"/>
         <property name="acceptOnMatch" value="false"/>
-    </module>
-    <module name="SuppressionCommentFilter"/>
-    <module name="SuppressWithNearbyCommentFilter">
-        <property name="commentFormat" value="NO CHECKSTYLE (\w+)"/>
     </module>
 
     <module name="FileLength">
@@ -30,11 +27,17 @@
         <property name="format" value="System.out.println"/>
     </module>
 
-    <module name="TreeWalker">
-        <module name="SuppressWarningsHolder"/>
-        <property name="cacheFile" value="target/cachefile"/>
+    <module name="LineLength">
+        <property name="severity" value="error"/>
+        <property name="max" value="125"/>
+    </module>
 
-        <module name="FileContentsHolder"/>
+    <module name="TreeWalker">
+        <module name="SuppressionCommentFilter"/>
+        <module name="SuppressWithNearbyCommentFilter">
+            <property name="commentFormat" value="NO CHECKSTYLE (\w+)"/>
+        </module>
+        <module name="SuppressWarningsHolder"/>
 
         <module name="ArrayTypeStyle">
             <property name="severity" value="error"/>
@@ -133,13 +136,8 @@
         <module name="LeftCurly">
             <property name="severity" value="error"/>
             <property name="option" value="eol"/>
-            <property name="maxLineLength" value="80"/>
             <property name="tokens"
                       value="CLASS_DEF,CTOR_DEF,INTERFACE_DEF,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,METHOD_DEF"/>
-        </module>
-        <module name="LineLength">
-            <property name="severity" value="error"/>
-            <property name="max" value="125"/>
         </module>
         <module name="LocalFinalVariableName">
             <property name="severity" value="error"/>

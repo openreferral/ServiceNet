@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,7 +130,7 @@ public class LocationResourceIntTest {
         // Create the Location
         LocationDTO locationDTO = locationMapper.toDto(location);
         restLocationMockMvc.perform(post("/api/locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(locationDTO)))
             .andExpect(status().isCreated());
 
@@ -157,7 +157,7 @@ public class LocationResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restLocationMockMvc.perform(post("/api/locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(locationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -177,7 +177,7 @@ public class LocationResourceIntTest {
         LocationDTO locationDTO = locationMapper.toDto(location);
 
         restLocationMockMvc.perform(post("/api/locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(locationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -194,7 +194,7 @@ public class LocationResourceIntTest {
         // Get all the locationList
         restLocationMockMvc.perform(get("/api/locations?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(location.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].alternateName").value(hasItem(DEFAULT_ALTERNAME_NAME.toString())))
@@ -213,7 +213,7 @@ public class LocationResourceIntTest {
         // Get the location
         restLocationMockMvc.perform(get("/api/locations/{id}", location.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(location.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.alternateName").value(DEFAULT_ALTERNAME_NAME.toString()))
@@ -253,7 +253,7 @@ public class LocationResourceIntTest {
         LocationDTO locationDTO = locationMapper.toDto(updatedLocation);
 
         restLocationMockMvc.perform(put("/api/locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(locationDTO)))
             .andExpect(status().isOk());
 
@@ -279,7 +279,7 @@ public class LocationResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLocationMockMvc.perform(put("/api/locations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(locationDTO)))
             .andExpect(status().isBadRequest());
 
@@ -298,7 +298,7 @@ public class LocationResourceIntTest {
 
         // Get the location
         restLocationMockMvc.perform(delete("/api/locations/{id}", location.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

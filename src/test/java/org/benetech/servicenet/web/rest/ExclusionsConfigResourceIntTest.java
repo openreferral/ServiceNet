@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ExclusionsConfigRepository;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
 import org.benetech.servicenet.service.mapper.ExclusionsConfigMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +110,7 @@ public class ExclusionsConfigResourceIntTest {
         // Create the ExclusionsConfig
         ExclusionsConfigDTO exclusionsConfigDTO = exclusionsConfigMapper.toDto(exclusionsConfig);
         restExclusionsConfigMockMvc.perform(post("/api/exclusions-configs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(exclusionsConfigDTO)))
             .andExpect(status().isCreated());
 
@@ -131,7 +131,7 @@ public class ExclusionsConfigResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restExclusionsConfigMockMvc.perform(post("/api/exclusions-configs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(exclusionsConfigDTO)))
             .andExpect(status().isBadRequest());
 
@@ -149,10 +149,10 @@ public class ExclusionsConfigResourceIntTest {
         // Get all the exclusionsConfigList
         restExclusionsConfigMockMvc.perform(get("/api/exclusions-configs?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(exclusionsConfig.getId().toString()));
     }
-    
+
     @Test
     @Transactional
     public void getExclusionsConfig() throws Exception {
@@ -162,7 +162,7 @@ public class ExclusionsConfigResourceIntTest {
         // Get the exclusionsConfig
         restExclusionsConfigMockMvc.perform(get("/api/exclusions-configs/{id}", exclusionsConfig.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(exclusionsConfig.getId().toString()));
     }
 
@@ -189,7 +189,7 @@ public class ExclusionsConfigResourceIntTest {
         ExclusionsConfigDTO exclusionsConfigDTO = exclusionsConfigMapper.toDto(updatedExclusionsConfig);
 
         restExclusionsConfigMockMvc.perform(put("/api/exclusions-configs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(exclusionsConfigDTO)))
             .andExpect(status().isOk());
 
@@ -209,7 +209,7 @@ public class ExclusionsConfigResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restExclusionsConfigMockMvc.perform(put("/api/exclusions-configs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(exclusionsConfigDTO)))
             .andExpect(status().isBadRequest());
 
@@ -228,7 +228,7 @@ public class ExclusionsConfigResourceIntTest {
 
         // Get the exclusionsConfig
         restExclusionsConfigMockMvc.perform(delete("/api/exclusions-configs/{id}", exclusionsConfig.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

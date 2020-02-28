@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.LanguageRepository;
 import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.mapper.LanguageMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +110,7 @@ public class LanguageResourceIntTest {
         // Create the Language
         LanguageDTO languageDTO = languageMapper.toDto(language);
         restLanguageMockMvc.perform(post("/api/languages")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(languageDTO)))
             .andExpect(status().isCreated());
 
@@ -132,7 +132,7 @@ public class LanguageResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restLanguageMockMvc.perform(post("/api/languages")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(languageDTO)))
             .andExpect(status().isBadRequest());
 
@@ -152,7 +152,7 @@ public class LanguageResourceIntTest {
         LanguageDTO languageDTO = languageMapper.toDto(language);
 
         restLanguageMockMvc.perform(post("/api/languages")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(languageDTO)))
             .andExpect(status().isBadRequest());
 
@@ -169,7 +169,7 @@ public class LanguageResourceIntTest {
         // Get all the languageList
         restLanguageMockMvc.perform(get("/api/languages?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(language.getId().toString())))
             .andExpect(jsonPath("$.[*].language").value(hasItem(DEFAULT_LANGUAGE.toString())));
     }
@@ -183,7 +183,7 @@ public class LanguageResourceIntTest {
         // Get the language
         restLanguageMockMvc.perform(get("/api/languages/{id}", language.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(language.getId().toString()))
             .andExpect(jsonPath("$.language").value(DEFAULT_LANGUAGE.toString()));
     }
@@ -213,7 +213,7 @@ public class LanguageResourceIntTest {
         LanguageDTO languageDTO = languageMapper.toDto(updatedLanguage);
 
         restLanguageMockMvc.perform(put("/api/languages")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(languageDTO)))
             .andExpect(status().isOk());
 
@@ -234,7 +234,7 @@ public class LanguageResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLanguageMockMvc.perform(put("/api/languages")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(languageDTO)))
             .andExpect(status().isBadRequest());
 
@@ -253,7 +253,7 @@ public class LanguageResourceIntTest {
 
         // Get the language
         restLanguageMockMvc.perform(delete("/api/languages/{id}", language.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

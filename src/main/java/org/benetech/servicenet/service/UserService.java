@@ -1,6 +1,8 @@
 package org.benetech.servicenet.service;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.Shelter;
@@ -17,9 +19,9 @@ import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.security.SecurityUtils;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.util.RandomUtil;
-import org.benetech.servicenet.web.rest.errors.EmailAlreadyUsedException;
-import org.benetech.servicenet.web.rest.errors.InvalidPasswordException;
-import org.benetech.servicenet.web.rest.errors.LoginAlreadyUsedException;
+import org.benetech.servicenet.errors.EmailAlreadyUsedException;
+import org.benetech.servicenet.errors.InvalidPasswordException;
+import org.benetech.servicenet.errors.LoginAlreadyUsedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -405,6 +407,56 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    private static User getUser(Map<String, Object> details) {
+        User user = new User();
+        // handle resource server JWT, where sub claim is email and uid is ID
+        if (details.get("uid") != null) {
+            user.setId((UUID) details.get("uid"));
+            user.setLogin((String) details.get("sub"));
+        } else {
+            user.setId((UUID) details.get("sub"));
+        }
+        if (details.get("preferred_username") != null) {
+            user.setLogin(((String) details.get("preferred_username")).toLowerCase());
+        } else if (user.getLogin() == null) {
+            user.setLogin(user.getId().toString());
+        }
+        if (details.get("given_name") != null) {
+            user.setFirstName((String) details.get("given_name"));
+        }
+        if (details.get("family_name") != null) {
+            user.setLastName((String) details.get("family_name"));
+        }
+        if (details.get("email_verified") != null) {
+            user.setActivated((Boolean) details.get("email_verified"));
+        }
+        if (details.get("email") != null) {
+            user.setEmail(((String) details.get("email")).toLowerCase());
+        } else {
+            user.setEmail((String) details.get("sub"));
+        }
+        if (details.get("langKey") != null) {
+            user.setLangKey((String) details.get("langKey"));
+        } else if (details.get("locale") != null) {
+            // trim off country code if it exists
+            String locale = (String) details.get("locale");
+            if (locale.contains("_")) {
+                locale = locale.substring(0, locale.indexOf('_'));
+            } else if (locale.contains("-")) {
+                locale = locale.substring(0, locale.indexOf('-'));
+            }
+            user.setLangKey(locale.toLowerCase());
+        } else {
+            // set langKey to default if not specified by IdP
+            user.setLangKey(Constants.DEFAULT_LANGUAGE);
+        }
+        if (details.get("picture") != null) {
+            user.setImageUrl((String) details.get("picture"));
+        }
+        user.setActivated(true);
+        return user;
+    }
+
     private void clearUserCaches(User user) {
         Cache login = cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE);
         Cache email = cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE);
@@ -432,5 +484,44 @@ public class UserService {
         } else {
             return Collections.emptySet();
         }
+    }
+
+    private User syncUserWithIdP(Map<String, Object> details, User user) {
+        // save authorities in to sync user roles/groups between IdP and JHipster's local database
+        Collection<String> dbAuthorities = getAuthorities();
+        Collection<String> userAuthorities =
+            user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toList());
+        for (String authority : userAuthorities) {
+            if (!dbAuthorities.contains(authority)) {
+                log.debug("Saving authority '{}' in local database", authority);
+                Authority authorityToSave = new Authority();
+                authorityToSave.setName(authority);
+                authorityRepository.save(authorityToSave);
+            }
+        }
+        // save account in to sync users between IdP and JHipster's local database
+        Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
+        if (existingUser.isPresent()) {
+            // if IdP sends last updated information, use it to determine if an update should happen
+            if (details.get("updated_at") != null) {
+                Instant dbModifiedDate = existingUser.get().getLastModifiedDate();
+                Instant idpModifiedDate = (Instant) details.get("updated_at");
+                if (idpModifiedDate.isAfter(dbModifiedDate)) {
+                    log.debug("Updating user '{}' in local database", user.getLogin());
+                    updateUser(user.getFirstName(), user.getLastName(), user.getEmail(),
+                        user.getLangKey(), user.getImageUrl());
+                }
+                // no last updated info, blindly update
+            } else {
+                log.debug("Updating user '{}' in local database", user.getLogin());
+                updateUser(user.getFirstName(), user.getLastName(), user.getEmail(),
+                    user.getLangKey(), user.getImageUrl());
+            }
+        } else {
+            log.debug("Saving user '{}' in local database", user.getLogin());
+            userRepository.save(user);
+            this.clearUserCaches(user);
+        }
+        return user;
     }
 }

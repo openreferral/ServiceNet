@@ -6,7 +6,7 @@ import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.dto.DismissMatchDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;

@@ -20,7 +20,7 @@ import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
-import org.benetech.servicenet.web.rest.Suggestions;
+import org.benetech.servicenet.service.dto.Suggestions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

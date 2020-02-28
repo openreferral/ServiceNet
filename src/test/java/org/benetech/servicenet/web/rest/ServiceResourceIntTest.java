@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,15 +24,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
-import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -163,7 +158,7 @@ public class ServiceResourceIntTest {
         // Create the Service
         ServiceDTO serviceDTO = serviceMapper.toDto(service);
         restServiceMockMvc.perform(post("/api/services")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceDTO)))
             .andExpect(status().isCreated());
 
@@ -198,7 +193,7 @@ public class ServiceResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restServiceMockMvc.perform(post("/api/services")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceDTO)))
             .andExpect(status().isBadRequest());
 
@@ -218,7 +213,7 @@ public class ServiceResourceIntTest {
         ServiceDTO serviceDTO = serviceMapper.toDto(service);
 
         restServiceMockMvc.perform(post("/api/services")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceDTO)))
             .andExpect(status().isBadRequest());
 
@@ -235,7 +230,7 @@ public class ServiceResourceIntTest {
         // Get all the serviceList
         restServiceMockMvc.perform(get("/api/services?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(service.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].alternateName").value(hasItem(DEFAULT_ALTERNATE_NAME.toString())))
@@ -261,7 +256,7 @@ public class ServiceResourceIntTest {
         // Get the service
         restServiceMockMvc.perform(get("/api/services/{id}", service.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(service.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.alternateName").value(DEFAULT_ALTERNATE_NAME.toString()))
@@ -315,7 +310,7 @@ public class ServiceResourceIntTest {
         ServiceDTO serviceDTO = serviceMapper.toDto(updatedService);
 
         restServiceMockMvc.perform(put("/api/services")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceDTO)))
             .andExpect(status().isOk());
 
@@ -349,7 +344,7 @@ public class ServiceResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restServiceMockMvc.perform(put("/api/services")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceDTO)))
             .andExpect(status().isBadRequest());
 
@@ -368,7 +363,7 @@ public class ServiceResourceIntTest {
 
         // Get the service
         restServiceMockMvc.perform(delete("/api/services/{id}", service.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

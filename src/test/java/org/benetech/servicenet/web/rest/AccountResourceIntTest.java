@@ -17,7 +17,7 @@ import org.benetech.servicenet.service.MailService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.PasswordChangeDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.web.rest.vm.KeyAndPasswordVM;
 import org.benetech.servicenet.web.rest.vm.ManagedUserVM;
 import org.junit.Before;
@@ -147,7 +147,7 @@ public class AccountResourceIntTest {
         restUserMockMvc.perform(get("/api/account")
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.login").value("test"))
             .andExpect(jsonPath("$.firstName").value("john"))
             .andExpect(jsonPath("$.lastName").value("doe"))
@@ -182,7 +182,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(validUser)))
             .andExpect(status().isCreated());
 
@@ -205,7 +205,7 @@ public class AccountResourceIntTest {
 
         restUserMockMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
             .andExpect(status().isBadRequest());
 
@@ -229,7 +229,7 @@ public class AccountResourceIntTest {
 
         restUserMockMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
             .andExpect(status().isBadRequest());
 
@@ -253,7 +253,7 @@ public class AccountResourceIntTest {
 
         restUserMockMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
             .andExpect(status().isBadRequest());
 
@@ -277,7 +277,7 @@ public class AccountResourceIntTest {
 
         restUserMockMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
             .andExpect(status().isBadRequest());
 
@@ -317,14 +317,14 @@ public class AccountResourceIntTest {
         // First user
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(firstUser)))
             .andExpect(status().isCreated());
 
         // Second (non activated) user
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(secondUser)))
             .andExpect(status().isCreated());
 
@@ -336,7 +336,7 @@ public class AccountResourceIntTest {
         // Second (already activated) user
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(secondUser)))
             .andExpect(status().is4xxClientError());
     }
@@ -358,7 +358,7 @@ public class AccountResourceIntTest {
         // Register first user
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(firstUser)))
             .andExpect(status().isCreated());
 
@@ -379,7 +379,7 @@ public class AccountResourceIntTest {
         // Register second (non activated) user
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(secondUser)))
             .andExpect(status().isCreated());
 
@@ -404,7 +404,7 @@ public class AccountResourceIntTest {
         // Register third (not activated) user
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(userWithUpperCaseEmail)))
             .andExpect(status().isCreated());
 
@@ -418,7 +418,7 @@ public class AccountResourceIntTest {
         // Register 4th (already activated) user
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(secondUser)))
             .andExpect(status().is4xxClientError());
     }
@@ -439,7 +439,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(validUser)))
             .andExpect(status().isCreated());
 
@@ -500,7 +500,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/account")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(userDTO)))
             .andExpect(status().isOk());
 
@@ -539,7 +539,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/account")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(userDTO)))
             .andExpect(status().isBadRequest());
 
@@ -578,7 +578,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/account")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(userDTO)))
             .andExpect(status().isBadRequest());
 
@@ -610,7 +610,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/account")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(userDTO)))
             .andExpect(status().isOk());
 
@@ -630,7 +630,7 @@ public class AccountResourceIntTest {
         userRepository.saveAndFlush(user);
 
         restMvc.perform(post("/api/account/change-password")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO("1" + currentPassword, "new password"))))
             .andExpect(status().isBadRequest());
 
@@ -651,7 +651,7 @@ public class AccountResourceIntTest {
         userRepository.saveAndFlush(user);
 
         restMvc.perform(post("/api/account/change-password")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, "new password"))))
             .andExpect(status().isOk());
 
@@ -671,7 +671,7 @@ public class AccountResourceIntTest {
         userRepository.saveAndFlush(user);
 
         restMvc.perform(post("/api/account/change-password")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, "new"))))
             .andExpect(status().isBadRequest());
 
@@ -691,7 +691,7 @@ public class AccountResourceIntTest {
         userRepository.saveAndFlush(user);
 
         restMvc.perform(post("/api/account/change-password")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(
                 TestUtil.convertObjectToJsonBytes(new PasswordChangeDTO(currentPassword, RandomStringUtils.random(101)))))
             .andExpect(status().isBadRequest());
@@ -826,7 +826,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/account/reset-password/finish")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(keyAndPassword)))
             .andExpect(status().isOk());
 
@@ -851,7 +851,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/account/reset-password/finish")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(keyAndPassword)))
             .andExpect(status().isBadRequest());
 
@@ -868,7 +868,7 @@ public class AccountResourceIntTest {
 
         restMvc.perform(
             post("/api/account/reset-password/finish")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .contentType(TestUtil.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(keyAndPassword)))
             .andExpect(status().isInternalServerError());
     }
@@ -893,7 +893,7 @@ public class AccountResourceIntTest {
         restMvc.perform(get("/api/account")
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.systemAccountName").value(SystemAccountMother.UPDATED_NAME))
             .andExpect(jsonPath("$.authorities")
                 .value(hasItems(AuthoritiesConstants.USER, AuthoritiesConstants.ADMIN)));

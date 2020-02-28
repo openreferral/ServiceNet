@@ -3,7 +3,7 @@ package org.benetech.servicenet.web.rest;
 import java.util.UUID;
 import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.repository.OrganizationErrorRepository;
-import org.benetech.servicenet.web.rest.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.security.AuthoritiesConstants;

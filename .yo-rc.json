@@ -1,39 +1,38 @@
 {
   "generator-jhipster": {
     "promptValues": {
-      "packageName": "org.benetech.servicenet",
-      "nativeLanguage": "en"
+      "packageName": "org.benetech.servicenet"
     },
-    "jhipsterVersion": "5.6.1",
-    "applicationType": "monolith",
+    "jhipsterVersion": "6.7.1",
+    "applicationType": "microservice",
     "baseName": "ServiceNet",
     "packageName": "org.benetech.servicenet",
     "packageFolder": "org/benetech/servicenet",
-    "serverPort": "8080",
-    "authenticationType": "session",
-    "cacheProvider": "ehcache",
+    "serverPort": "8081",
+    "authenticationType": "jwt",
+    "cacheProvider": "hazelcast",
     "enableHibernateCache": true,
     "websocket": false,
     "databaseType": "sql",
-    "devDatabaseType": "h2Memory",
+    "devDatabaseType": "postgresql",
     "prodDatabaseType": "postgresql",
     "searchEngine": false,
     "messageBroker": false,
-    "serviceDiscoveryType": false,
+    "serviceDiscoveryType": "consul",
     "buildTool": "maven",
     "enableSwaggerCodegen": false,
-    "rememberMeKey": "472eef473bf94448dac3886fe398d2b92b19098daa3062aaf0b72dc707fe6b60f0ed20a6f42a38cd3480801c10cf7d299159",
-    "clientFramework": "react",
-    "useSass": true,
-    "clientPackageManager": "npm",
-    "testFrameworks": [
-      "cucumber"
-    ],
+    "jwtSecretKey": "MGFmMzE0OTM2NGZjOTkzYjU2MWNhZThhNmU0MzIwNGUxY2VlNWNjNjAwNzU2OTc4ZTNkYmZjMGQ4ZmYwNzY2OGVkYTVhMzRmYTA1Y2YxOGMxOTMwMWY0ODFmMjEzOTFjODdkNDM2OGU5MWFhZDQ0YjYyMjkzMjdhNzg3Njc5MTA=",
+    "embeddableLaunchScript": false,
+    "creationTimestamp": 1581956550975,
+    "testFrameworks": [],
     "jhiPrefix": "jhi",
-    "enableTranslation": true,
-    "nativeLanguage": "en",
-    "languages": [
-      "en"
-    ]
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "clientPackageManager": "npm",
+    "blueprints": [],
+    "skipClient": true,
+    "skipUserManagement": true
   }
 }

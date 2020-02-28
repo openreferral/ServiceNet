@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.ServiceAreaRepository;
 import org.benetech.servicenet.service.ServiceAreaService;
 import org.benetech.servicenet.service.dto.ServiceAreaDTO;
 import org.benetech.servicenet.service.mapper.ServiceAreaMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +110,7 @@ public class ServiceAreaResourceIntTest {
         // Create the ServiceArea
         ServiceAreaDTO serviceAreaDTO = serviceAreaMapper.toDto(serviceArea);
         restServiceAreaMockMvc.perform(post("/api/service-areas")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceAreaDTO)))
             .andExpect(status().isCreated());
 
@@ -132,7 +132,7 @@ public class ServiceAreaResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restServiceAreaMockMvc.perform(post("/api/service-areas")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceAreaDTO)))
             .andExpect(status().isBadRequest());
 
@@ -150,7 +150,7 @@ public class ServiceAreaResourceIntTest {
         // Get all the serviceAreaList
         restServiceAreaMockMvc.perform(get("/api/service-areas?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(serviceArea.getId().toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
     }
@@ -164,7 +164,7 @@ public class ServiceAreaResourceIntTest {
         // Get the serviceArea
         restServiceAreaMockMvc.perform(get("/api/service-areas/{id}", serviceArea.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(serviceArea.getId().toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
     }
@@ -194,7 +194,7 @@ public class ServiceAreaResourceIntTest {
         ServiceAreaDTO serviceAreaDTO = serviceAreaMapper.toDto(updatedServiceArea);
 
         restServiceAreaMockMvc.perform(put("/api/service-areas")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceAreaDTO)))
             .andExpect(status().isOk());
 
@@ -215,7 +215,7 @@ public class ServiceAreaResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restServiceAreaMockMvc.perform(put("/api/service-areas")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceAreaDTO)))
             .andExpect(status().isBadRequest());
 
@@ -234,7 +234,7 @@ public class ServiceAreaResourceIntTest {
 
         // Get the serviceArea
         restServiceAreaMockMvc.perform(delete("/api/service-areas/{id}", serviceArea.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

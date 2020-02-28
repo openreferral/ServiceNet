@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.mapper.PhoneMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -126,7 +126,7 @@ public class PhoneResourceIntTest {
         // Create the Phone
         PhoneDTO phoneDTO = phoneMapper.toDto(phone);
         restPhoneMockMvc.perform(post("/api/phones")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(phoneDTO)))
             .andExpect(status().isCreated());
 
@@ -152,7 +152,7 @@ public class PhoneResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPhoneMockMvc.perform(post("/api/phones")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(phoneDTO)))
             .andExpect(status().isBadRequest());
 
@@ -172,7 +172,7 @@ public class PhoneResourceIntTest {
         PhoneDTO phoneDTO = phoneMapper.toDto(phone);
 
         restPhoneMockMvc.perform(post("/api/phones")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(phoneDTO)))
             .andExpect(status().isBadRequest());
 
@@ -189,7 +189,7 @@ public class PhoneResourceIntTest {
         // Get all the phoneList
         restPhoneMockMvc.perform(get("/api/phones?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(phone.getId().toString())))
             .andExpect(jsonPath("$.[*].number").value(hasItem(DEFAULT_NUMBER.toString())))
             .andExpect(jsonPath("$.[*].extension").value(hasItem(DEFAULT_EXTENSION)))
@@ -207,7 +207,7 @@ public class PhoneResourceIntTest {
         // Get the phone
         restPhoneMockMvc.perform(get("/api/phones/{id}", phone.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(phone.getId().toString()))
             .andExpect(jsonPath("$.number").value(DEFAULT_NUMBER.toString()))
             .andExpect(jsonPath("$.extension").value(DEFAULT_EXTENSION))
@@ -245,7 +245,7 @@ public class PhoneResourceIntTest {
         PhoneDTO phoneDTO = phoneMapper.toDto(updatedPhone);
 
         restPhoneMockMvc.perform(put("/api/phones")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(phoneDTO)))
             .andExpect(status().isOk());
 
@@ -270,7 +270,7 @@ public class PhoneResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPhoneMockMvc.perform(put("/api/phones")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(phoneDTO)))
             .andExpect(status().isBadRequest());
 
@@ -289,7 +289,7 @@ public class PhoneResourceIntTest {
 
         // Get the phone
         restPhoneMockMvc.perform(delete("/api/phones/{id}", phone.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

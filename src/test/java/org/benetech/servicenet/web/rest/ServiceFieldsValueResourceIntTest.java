@@ -7,7 +7,7 @@ import org.benetech.servicenet.repository.ServiceFieldsValueRepository;
 import org.benetech.servicenet.service.ServiceFieldsValueService;
 import org.benetech.servicenet.service.dto.ServiceFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.ServiceFieldsValueMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -120,7 +120,7 @@ public class ServiceFieldsValueResourceIntTest {
         // Create the ServiceFieldsValue
         ServiceFieldsValueDTO serviceFieldsValueDTO = serviceFieldsValueMapper.toDto(serviceFieldsValue);
         restServiceFieldsValueMockMvc.perform(post("/api/service-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceFieldsValueDTO)))
             .andExpect(status().isCreated());
 
@@ -142,7 +142,7 @@ public class ServiceFieldsValueResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restServiceFieldsValueMockMvc.perform(post("/api/service-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -160,11 +160,11 @@ public class ServiceFieldsValueResourceIntTest {
         // Get all the serviceFieldsValueList
         restServiceFieldsValueMockMvc.perform(get("/api/service-fields-values?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(serviceFieldsValue.getId().toString())))
             .andExpect(jsonPath("$.[*].serviceField").value(hasItem(DEFAULT_SERVICE_FIELD.toString())));
     }
-    
+
     @Test
     @Transactional
     public void getServiceFieldsValue() throws Exception {
@@ -174,7 +174,7 @@ public class ServiceFieldsValueResourceIntTest {
         // Get the serviceFieldsValue
         restServiceFieldsValueMockMvc.perform(get("/api/service-fields-values/{id}", serviceFieldsValue.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(serviceFieldsValue.getId().toString()))
             .andExpect(jsonPath("$.serviceField").value(DEFAULT_SERVICE_FIELD.toString()));
     }
@@ -204,7 +204,7 @@ public class ServiceFieldsValueResourceIntTest {
         ServiceFieldsValueDTO serviceFieldsValueDTO = serviceFieldsValueMapper.toDto(updatedServiceFieldsValue);
 
         restServiceFieldsValueMockMvc.perform(put("/api/service-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceFieldsValueDTO)))
             .andExpect(status().isOk());
 
@@ -225,7 +225,7 @@ public class ServiceFieldsValueResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restServiceFieldsValueMockMvc.perform(put("/api/service-fields-values")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceFieldsValueDTO)))
             .andExpect(status().isBadRequest());
 
@@ -244,7 +244,7 @@ public class ServiceFieldsValueResourceIntTest {
 
         // Delete the serviceFieldsValue
         restServiceFieldsValueMockMvc.perform(delete("/api/service-fields-values/{id}", serviceFieldsValue.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

@@ -14,82 +14,157 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
+feign:
+  hystrix:
+    enabled: true
+  # client:
+  #     config:
+  #         default:
+  #             connectTimeout: 5000
+  #             readTimeout: 5000
+
+# See https://github.com/Netflix/Hystrix/wiki/Configuration
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          # See https://github.com/spring-cloud/spring-cloud-netflix/issues/1330
+          # thread:
+          #     timeoutInMilliseconds: 10000
+  shareSecurityContext: true
+
 management:
-    endpoints:
-        web:
-            base-path: /management
-            exposure:
-                include: ["configprops", "env", "health", "info", "threaddump", "logfile" ]
-    endpoint:
-        health:
-            show-details: when_authorized
-    info:
-        git:
-            mode: full
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: ['configprops', 'env', 'health', 'info', 'jhimetrics', 'logfile', 'loggers', 'prometheus', 'threaddump']
+  endpoint:
     health:
-        mail:
-            enabled: false # When using the MailService, configure an SMTP server and set this to true
-    metrics:
-        enabled: false # http://micrometer.io/ is disabled by default, as we use http://metrics.dropwizard.io/ instead
+      show-details: when_authorized
+      roles: 'ROLE_ADMIN'
+    jhimetrics:
+      enabled: true
+  info:
+    git:
+      mode: full
+  health:
+    mail:
+      enabled: false # When using the MailService, configure an SMTP server and set this to true
+  metrics:
+    export:
+      # Prometheus is the default metrics backend
+      prometheus:
+        enabled: true
+        step: 60
+    enable:
+      http: true
+      jvm: true
+      logback: true
+      process: true
+      system: true
+    distribution:
+      percentiles-histogram:
+        all: true
+      percentiles:
+        all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+    tags:
+      application: ${spring.application.name}
+    web:
+      server:
+        auto-time-requests: true
 
 spring:
-    application:
-        name: ServiceNet
-    data:
-        mongodb:
-            connection:
-                timeout: 500
-    profiles:
-        # The commented value for `active` can be replaced with valid Spring profiles to load.
-        # Otherwise, it will be filled in by maven when building the WAR file
-        # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
-        active: #spring.profiles.active#
+  application:
+    name: ServiceNet
+  cloud:
+    consul:
+      discovery:
+        healthCheckPath: /management/health
+        instanceId: servicenet:${spring.application.instance-id:${random.value}}
+        service-name: servicenet
+      config:
+        watch:
+          enabled: false
+  jmx:
+    enabled: false
+  data:
     jpa:
-        open-in-view: false
-        properties:
-            hibernate.jdbc.time_zone: UTC
-        hibernate:
-            ddl-auto: none
-            naming:
-                physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-                implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-    messages:
-        basename: i18n/messages
-    mvc:
-        favicon:
-            enabled: false
-    thymeleaf:
-        mode: HTML
-    servlet.multipart:
-        max-request-size: 100MB
-        max-file-size: 10MB
-    quartz:
-        job-store-type: jdbc
-        properties.org.quartz.threadPool.threadCount: 1
-        properties.org.quartz.jobStore.dataSource: quartzDataSource
-        properties.org.quartz.dataSource.quartzDataSource.driver: org.postgresql.Driver
-        properties.org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-        properties.org.quartz.dataSource.quartzDataSource.URL: ${spring.datasource.url}
-        properties.org.quartz.dataSource.quartzDataSource.user: ${spring.datasource.username}
-        properties.org.quartz.dataSource.quartzDataSource.password: ${spring.datasource.password}
-        properties.org.quartz.jobStore.useProperties: true
-        properties.org.quartz.jobStore.tablePrefix: qrtz_
-        properties.org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-        # Enable HikariCP DB conn Pool
-        properties.org.quartz.dataSource.quartzDataSource.provider: hikaricp
+      repositories:
+        bootstrap-mode: deferred
+    mongodb:
+      uri: mongodb://localhost:27017/serviceNet
+      connection:
+        timeout: 500
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate.jdbc.time_zone: UTC
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+  messages:
+    basename: i18n/messages
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    favicon:
+      enabled: false
+  task:
+    execution:
+      thread-name-prefix: service-net-task-
+      pool:
+        core-size: 2
+        max-size: 50
+        queue-capacity: 10000
+    scheduling:
+      thread-name-prefix: service-net-scheduling-
+      pool:
+        size: 2
+  thymeleaf:
+    mode: HTML
+  output:
+    ansi:
+      console-available: true
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: http://localhost:9080/auth/realms/jhipster
+        registration:
+          oidc:
+            client-id: internal
+            client-secret: internal
+  quartz:
+    job-store-type: jdbc
+    properties.org.quartz.threadPool.threadCount: 1
+    properties.org.quartz.jobStore.dataSource: quartzDataSource
+    properties.org.quartz.dataSource.quartzDataSource.driver: org.postgresql.Driver
+    properties.org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+    properties.org.quartz.dataSource.quartzDataSource.URL: ${spring.datasource.url}
+    properties.org.quartz.dataSource.quartzDataSource.user: ${spring.datasource.username}
+    properties.org.quartz.dataSource.quartzDataSource.password: ${spring.datasource.password}
+    properties.org.quartz.jobStore.useProperties: true
+    properties.org.quartz.jobStore.tablePrefix: qrtz_
+    properties.org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+    # Enable HikariCP DB conn Pool
+    properties.org.quartz.dataSource.quartzDataSource.provider: hikaricp
 
 server:
-    servlet:
-        session:
-            cookie:
-                http-only: true
-            timeout: 7200
-    connection-timeout: 600000
+  servlet:
+    session:
+      cookie:
+        http-only: true
 
 # Properties to be exposed on the /info management endpoint
 info:
-    # Comma separated list of profiles that will trigger the ribbon to show
-    display-ribbon-on-profiles: "dev,staging"
+  # Comma separated list of profiles that will trigger the ribbon to show
+  display-ribbon-on-profiles: 'dev,staging'
 
 # ===================================================================
 # JHipster specific properties
@@ -98,85 +173,48 @@ info:
 # ===================================================================
 
 jhipster:
-    async:
-        core-pool-size: 2
-        max-pool-size: 4
-        queue-capacity: 250
-        # By default CORS is disabled. Uncomment to enable.
-        #cors:
-        #allowed-origins: "*"
-        #allowed-methods: "*"
-        #allowed-headers: "*"
-        #exposed-headers: "Link,X-Total-Count"
-        #allow-credentials: true
-        #max-age: 1800
-    mail:
-        from: ServiceNet@localhost
-    swagger:
-        default-include-pattern: /api/.*
-        title: ServiceNet API
-        description: ServiceNet API documentation
-        version: 0.0.1
-        terms-of-service-url:
-        contact-name:
-        contact-url:
-        contact-email:
-        license:
-        license-url:
-
-similarity-ratio:
-    weight:
-        name:
-            base: 1.0
-            similar-initials-sorted: 0.1
-            similar-initials: 0.2
-            similar-words-sorted: 0.95
-            fuzzy-similarity-threshold: 0.8
-            fuzzy-partial-similarity-threshold: 0.9
-        location:
-            base: 0.9
-            in-level-2-distance: 0.8
-            in-level-3-distance: 0.4
-            in-same-city-zipcode: 0.1
-        email:
-            base: 0.1
-            same-domain: 0.01
-            same-normalized-local-parts: 0.9
-        url:
-            base: 0.1
-            equal-upper-cased: 0.95
-        year-incorporated:
-            base: 0.4
-            same-year: 0.2
-            same:month: 0.8
-        alternate-name: 0.5
-        description: 0.1
-    config:
-        location:
-            level-1-distance: 100
-            level-2-distance: 500
-            level-3-distance: 1000
-            match-threshold: 0.9
-        organization-match-threshold: 1.0
-    credentials:
-        google-api: ${GOOGLE_API_KEY:default_key}
-
-scheduler:
-    eden-data:
-        interval: 604800 #one week
-        api-key: ${EDEN_API_KEY:default_key}
-    uwba-data:
-        interval: 604800 #one week
-        api-key: ${UWBA_API_KEY:default_key}
-    shelter-tech-data:
-        interval: 604800 #one week
-    smc-connect-taxonomies:
-        interval: 2592000 #one month
-    eden-taxonomies:
-        interval: 2592000 #one month
-    uwba-taxonomies:
-        interval: 2592000 #one month
-
+  async:
+    core-pool-size: 2
+    max-pool-size: 4
+    queue-capacity: 250
+  clientApp:
+    name: 'serviceNetApp'
+  # By default CORS is disabled. Uncomment to enable.
+  # cors:
+  #     allowed-origins: "*"
+  #     allowed-methods: "*"
+  #     allowed-headers: "*"
+  #     exposed-headers: "Authorization,Link,X-Total-Count"
+  #     allow-credentials: true
+  #     max-age: 1800
+  mail:
+    from: ServiceNet@localhost
+  swagger:
+    default-include-pattern: /api/.*
+    title: ServiceNet API
+    description: ServiceNet API documentation
+    version: 0.0.1
+    terms-of-service-url:
+    contact-name:
+    contact-url:
+    contact-email:
+    license:
+    license-url:
+  security:
+    authentication:
+      jwt:
+        # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+        base64-secret: MGFmMzE0OTM2NGZjOTkzYjU2MWNhZThhNmU0MzIwNGUxY2VlNWNjNjAwNzU2OTc4ZTNkYmZjMGQ4ZmYwNzY2OGVkYTVhMzRmYTA1Y2YxOGMxOTMwMWY0ODFmMjEzOTFjODdkNDM2OGU5MWFhZDQ0YjYyMjkzMjdhNzg3Njc5MTA==
+        # Token is valid 24 hours
+        token-validity-in-seconds: 86400
+        token-validity-in-seconds-for-remember-me: 2592000
+    remember-me:
+      # security key (this key should be unique for your application, and kept secret)
+      key: b24b759de3b5bd38145f39a79eacf410517527736c4d19f48612d890e84442e26a9619f9778956528195a1db5c7cc014403f
+    oauth2:
+      audience:
+        - account
+        - api://default
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
@@ -188,6 +226,60 @@ scheduler:
 
 # application:
 
+similarity-ratio:
+  weight:
+    name:
+      base: 1.0
+      similar-initials-sorted: 0.1
+      similar-initials: 0.2
+      similar-words-sorted: 0.95
+      fuzzy-similarity-threshold: 0.8
+      fuzzy-partial-similarity-threshold: 0.9
+    location:
+      base: 0.9
+      in-level-2-distance: 0.8
+      in-level-3-distance: 0.4
+      in-same-city-zipcode: 0.1
+    email:
+      base: 0.1
+      same-domain: 0.01
+      same-normalized-local-parts: 0.9
+    url:
+      base: 0.1
+      equal-upper-cased: 0.95
+    year-incorporated:
+      base: 0.4
+      same-year: 0.2
+      same:month: 0.8
+    alternate-name: 0.5
+    description: 0.1
+  config:
+    location:
+      level-1-distance: 100
+      level-2-distance: 500
+      level-3-distance: 1000
+      match-threshold: 0.9
+      always-compare: false
+    organization-match-threshold: 1.0
+  credentials:
+    google-api: ${GOOGLE_API_KEY:default_key}
+
+scheduler:
+  eden-data:
+    interval: 604800 #one week
+    api-key: ${EDEN_API_KEY:default_key}
+  uwba-data:
+    interval: 604800 #one week
+    api-key: ${UWBA_API_KEY:default_key}
+  shelter-tech-data:
+    interval: 604800 #one week
+  smc-connect-taxonomies:
+    interval: 2592000 #one month
+  eden-taxonomies:
+    interval: 2592000 #one month
+  uwba-taxonomies:
+    interval: 2592000 #one month
+
 adapter:
-    icarol:
-        uri: https://api.icarol.com/v1/Resource
+  icarol:
+    uri: https://api.icarol.com/v1/Resource

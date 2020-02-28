@@ -5,7 +5,7 @@ import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.domain.Beds;
 import org.benetech.servicenet.repository.BedsRepository;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,14 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
 import java.util.List;
 
 
-import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -113,7 +108,7 @@ public class BedsResourceIntTest {
 
         // Create the Beds
         restBedsMockMvc.perform(post("/api/beds")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(beds)))
             .andExpect(status().isCreated());
 
@@ -136,7 +131,7 @@ public class BedsResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restBedsMockMvc.perform(post("/api/beds")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(beds)))
             .andExpect(status().isBadRequest());
 
@@ -154,12 +149,12 @@ public class BedsResourceIntTest {
         // Get all the bedsList
         restBedsMockMvc.perform(get("/api/beds?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(beds.getId().toString()))
             .andExpect(jsonPath("$.[*].availableBeds").value(hasItem(DEFAULT_AVAILABLE_BEDS)))
             .andExpect(jsonPath("$.[*].waitlist").value(hasItem(DEFAULT_WAITLIST)));
     }
-    
+
     @Test
     @Transactional
     public void getBeds() throws Exception {
@@ -169,7 +164,7 @@ public class BedsResourceIntTest {
         // Get the beds
         restBedsMockMvc.perform(get("/api/beds/{id}", beds.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(beds.getId().toString()))
             .andExpect(jsonPath("$.availableBeds").value(DEFAULT_AVAILABLE_BEDS))
             .andExpect(jsonPath("$.waitlist").value(DEFAULT_WAITLIST));
@@ -200,7 +195,7 @@ public class BedsResourceIntTest {
             .waitlist(UPDATED_WAITLIST);
 
         restBedsMockMvc.perform(put("/api/beds")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(updatedBeds)))
             .andExpect(status().isOk());
 
@@ -221,7 +216,7 @@ public class BedsResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restBedsMockMvc.perform(put("/api/beds")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(beds)))
             .andExpect(status().isBadRequest());
 
@@ -240,7 +235,7 @@ public class BedsResourceIntTest {
 
         // Delete the beds
         restBedsMockMvc.perform(delete("/api/beds/{id}", beds.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty

@@ -8,7 +8,7 @@ import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMatchMapper;
-import org.benetech.servicenet.web.rest.errors.ExceptionTranslator;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -118,7 +118,7 @@ public class OrganizationMatchResourceIntTest {
         // Create the OrganizationMatch
         OrganizationMatchDTO organizationMatchDTO = organizationMatchMapper.toDto(organizationMatch);
         restOrganizationMatchMockMvc.perform(post("/api/organization-matches")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationMatchDTO)))
             .andExpect(status().isCreated());
 
@@ -141,7 +141,7 @@ public class OrganizationMatchResourceIntTest {
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrganizationMatchMockMvc.perform(post("/api/organization-matches")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationMatchDTO)))
             .andExpect(status().isBadRequest());
 
@@ -159,7 +159,7 @@ public class OrganizationMatchResourceIntTest {
         // Get all the organizationMatchList
         restOrganizationMatchMockMvc.perform(get("/api/organization-matches?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organizationMatch.getId().toString())))
             .andExpect(jsonPath("$.[*].timestamp").value(hasItem(sameInstant(DEFAULT_TIMESTAMP))))
             .andExpect(jsonPath("$.[*].dismissed").value(hasItem(DEFAULT_DISMISSED)));
@@ -174,7 +174,7 @@ public class OrganizationMatchResourceIntTest {
         // Get the organizationMatch
         restOrganizationMatchMockMvc.perform(get("/api/organization-matches/{id}", organizationMatch.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(organizationMatch.getId().toString()))
             .andExpect(jsonPath("$.timestamp").value(sameInstant(DEFAULT_TIMESTAMP)))
             .andExpect(jsonPath("$.dismissed").value(DEFAULT_DISMISSED));
@@ -206,7 +206,7 @@ public class OrganizationMatchResourceIntTest {
         OrganizationMatchDTO organizationMatchDTO = organizationMatchMapper.toDto(updatedOrganizationMatch);
 
         restOrganizationMatchMockMvc.perform(put("/api/organization-matches")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationMatchDTO)))
             .andExpect(status().isOk());
 
@@ -228,7 +228,7 @@ public class OrganizationMatchResourceIntTest {
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOrganizationMatchMockMvc.perform(put("/api/organization-matches")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationMatchDTO)))
             .andExpect(status().isBadRequest());
 
@@ -247,7 +247,7 @@ public class OrganizationMatchResourceIntTest {
 
         // Get the organizationMatch
         restOrganizationMatchMockMvc.perform(delete("/api/organization-matches/{id}", organizationMatch.getId())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         // Validate the database is empty
