@@ -2,8 +2,10 @@ package org.benetech.servicenet.service.mapper;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,7 +17,10 @@ import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.LocationMatchService;
+import org.benetech.servicenet.service.ServiceMatchService;
+import org.benetech.servicenet.service.dto.LocationMatchDto;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
+import org.benetech.servicenet.service.dto.ServiceMatchDto;
 import org.benetech.servicenet.util.CollectionUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -35,7 +40,13 @@ public abstract class OrganizationMatchMapper {
     private LocationMatchService locationMatchService;
 
     @Autowired
+    private LocationMatchMapper locationMatchMapper;
+
+    @Autowired
     private MetadataRepository metadataRepository;
+
+    @Autowired
+    private ServiceMatchService serviceMatchService;
 
     @Mapping(source = "organizationRecord.id", target = "organizationRecordId")
     @Mapping(source = "organizationRecord.name", target = "organizationRecordName")
@@ -54,21 +65,32 @@ public abstract class OrganizationMatchMapper {
     public OrganizationMatchDTO toDtoWithLocationMatches(OrganizationMatch organizationMatch) {
         OrganizationMatchDTO dto = toDto(organizationMatch);
         Organization partner = organizationMatch.getPartnerVersion();
-        Map<UUID, Set<UUID>> locationMatches = new HashMap<>();
+        Map<UUID, List<LocationMatchDto>> locationMatches = new HashMap<>();
+        Map<UUID, List<ServiceMatchDto>> serviceMatches = new HashMap<>();
+
         for (Location location : organizationMatch.getOrganizationRecord().getLocations()) {
-            Set<UUID> matches = new HashSet<>();
+            Set<LocationMatchDto> matches = new HashSet<>();
             for (LocationMatch match : locationMatchService.findAllForLocation(location.getId())) {
                 if (partner.getLocations().contains(match.getMatchingLocation())) {
-                    matches.add(match.getMatchingLocation().getId());
+                    matches.add(locationMatchMapper.toDto(match));
                 }
             }
             if (matches.size() > 0) {
-                locationMatches.put(location.getId(), matches);
+                locationMatches.put(location.getId(), new ArrayList<>(matches));
             }
         }
+
+        for (Service service : organizationMatch.getOrganizationRecord().getServices()) {
+            List<ServiceMatchDto> matches = serviceMatchService.findAllForService(service.getId());
+            if (matches.size() > 0) {
+                serviceMatches.put(service.getId(), matches);
+            }
+        }
+
         dto.setNumberOfLocations(partner.getLocations().size());
         dto.setProviderName(partner.getAccount().getName());
         dto.setLocationMatches(locationMatches);
+        dto.setServiceMatches(serviceMatches);
         dto.setFreshness(getFreshness(partner));
         return dto;
     }
