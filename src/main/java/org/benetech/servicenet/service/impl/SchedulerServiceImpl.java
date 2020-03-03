@@ -9,6 +9,7 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.scheduler.BaseJob;
 import org.benetech.servicenet.scheduler.EdenDataUpdateJob;
 import org.benetech.servicenet.scheduler.EdenTaxonomyUpdateJob;
+import org.benetech.servicenet.scheduler.GeocodingResultUpdateJob;
 import org.benetech.servicenet.scheduler.OrganizationMatchDiscoveryJob;
 import org.benetech.servicenet.scheduler.OrganizationMatchUpdateJob;
 import org.benetech.servicenet.scheduler.SMCConnectTaxonomyUpdateJob;
@@ -62,6 +63,9 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Autowired
     private DataImportReportService dataImportReportService;
 
+    @Autowired
+    private GeocodingResultUpdateJob geocodingResultUpdateJob;
+
     @PostConstruct
     private void loadJobsAndTriggersOnStartupIfNeeded() {
 
@@ -76,6 +80,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         jobs.add(uwbaTaxonomyUpdateJob);
         jobs.add(organizationMatchDiscoveryJob);
         jobs.add(organizationMatchUpdateJob);
+        jobs.add(geocodingResultUpdateJob);
 
         jobs
             .forEach(job -> {
@@ -177,6 +182,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         allBeans.add(uwbaTaxonomyUpdateJob);
         allBeans.add(organizationMatchDiscoveryJob);
         allBeans.add(organizationMatchUpdateJob);
+        allBeans.add(geocodingResultUpdateJob);
 
         return allBeans.stream()
             .filter(b -> b.getFullName().equals(name))

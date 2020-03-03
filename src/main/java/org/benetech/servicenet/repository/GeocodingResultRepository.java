@@ -60,4 +60,6 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
         + "WHERE gr.locality != ''"
         + "ORDER BY gr.locality")
     SortedSet<String> getDistinctCityFromGeoResults();
+
+    List<GeocodingResult> findByFormattedAddressIsNullOrLocalityIsNullAndAddressIsNotNull();
 }
