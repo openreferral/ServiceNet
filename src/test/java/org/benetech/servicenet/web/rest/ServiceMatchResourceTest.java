@@ -82,7 +82,7 @@ public class ServiceMatchResourceTest {
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceMatchDto)))
             .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.service").value(SERVICE_UUID.toString()))
             .andExpect(jsonPath("$.matchingService").value(MATCHING_SERVICE_UUID.toString()));
 
@@ -102,7 +102,7 @@ public class ServiceMatchResourceTest {
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceMatchDto)))
             .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.service").value(SERVICE_UUID.toString()))
             .andExpect(jsonPath("$.matchingService").value(MATCHING_SERVICE_UUID.toString()));
 
@@ -112,7 +112,7 @@ public class ServiceMatchResourceTest {
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(serviceMatchDto)))
             .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.service").value(SERVICE_UUID.toString()))
             .andExpect(jsonPath("$.matchingService").value(MATCHING_SERVICE_UUID.toString()));
 

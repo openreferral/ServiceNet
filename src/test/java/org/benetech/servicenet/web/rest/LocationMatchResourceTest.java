@@ -82,7 +82,7 @@ public class LocationMatchResourceTest {
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(locationMatchDto)))
             .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.location").value(LOCATION_UUID.toString()))
             .andExpect(jsonPath("$.matchingLocation").value(MATCHING_LOCATION_UUID.toString()));
 
@@ -102,7 +102,7 @@ public class LocationMatchResourceTest {
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(locationMatchDto)))
             .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.location").value(LOCATION_UUID.toString()))
             .andExpect(jsonPath("$.matchingLocation").value(MATCHING_LOCATION_UUID.toString()));
 
@@ -112,7 +112,7 @@ public class LocationMatchResourceTest {
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(locationMatchDto)))
             .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.location").value(LOCATION_UUID.toString()))
             .andExpect(jsonPath("$.matchingLocation").value(MATCHING_LOCATION_UUID.toString()));
 
