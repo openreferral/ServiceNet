@@ -32,6 +32,15 @@ public class ServiceMatchServiceImpl implements ServiceMatchService {
     public ServiceMatchDto save(ServiceMatchDto serviceMatchDto) {
         Optional<ServiceMatch> existingMatch = serviceMatchRepository.findByServiceIdAndMatchingServiceId(
             serviceMatchDto.getService(), serviceMatchDto.getMatchingService());
+
+        List<ServiceMatch> allServiceMatches = serviceMatchRepository.findAllByServiceIdAndMatchingServiceId(
+            serviceMatchDto.getService(), serviceMatchDto.getMatchingService()
+        );
+
+        if (allServiceMatches.size() > 1) {
+            serviceMatchRepository.deleteAll();
+        }
+
         if (existingMatch.isEmpty()) {
             log.debug("Request to save ServiceMatch for service id : {} and matching service id: {}",
                 serviceMatchDto.getService(), serviceMatchDto.getMatchingService());

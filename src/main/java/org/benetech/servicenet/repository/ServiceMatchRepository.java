@@ -1,5 +1,6 @@
 package org.benetech.servicenet.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -22,4 +23,6 @@ public interface ServiceMatchRepository extends JpaRepository<ServiceMatch, UUID
     Optional<ServiceMatch> findByMatchingServiceId(UUID id);
 
     void deleteByServiceIdAndMatchingServiceId(UUID serviceId, UUID matchingServiceId);
+
+    List<ServiceMatch> findAllByServiceIdAndMatchingServiceId(UUID serviceId, UUID matchingServiceId);
 }

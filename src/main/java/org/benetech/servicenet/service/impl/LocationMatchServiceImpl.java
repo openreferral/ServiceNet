@@ -33,6 +33,13 @@ public class LocationMatchServiceImpl implements LocationMatchService {
     public LocationMatchDto save(LocationMatchDto locationMatchDto) {
         Optional<LocationMatch> existingMatch = locationMatchRepository.findByLocationIdAndMatchingLocationId(
             locationMatchDto.getLocation(), locationMatchDto.getMatchingLocation());
+
+        List<LocationMatch> allLocationMatches = locationMatchRepository.findAllByLocationIdAndMatchingLocationId(
+            locationMatchDto.getLocation(), locationMatchDto.getMatchingLocation());
+
+        if (allLocationMatches.size() > 1) {
+            locationMatchRepository.deleteAll();
+        }
         if (existingMatch.isEmpty()) {
             log.debug("Request to save LocationMatch for location id : {} and matching location id: {}",
                 locationMatchDto.getLocation(), locationMatchDto.getMatchingLocation());
