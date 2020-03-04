@@ -1,5 +1,6 @@
 package org.benetech.servicenet.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.benetech.servicenet.domain.LocationMatch;
@@ -24,4 +25,6 @@ public interface LocationMatchRepository extends JpaRepository<LocationMatch, UU
         @Param("matchingLocationId") UUID matchingLocationId);
 
     void deleteByLocationIdAndMatchingLocationId(UUID locationId, UUID matchingLocationId);
+
+    List<LocationMatch> findAllByLocationIdAndMatchingLocationId(UUID locationId, UUID matchingLocationId);
 }
