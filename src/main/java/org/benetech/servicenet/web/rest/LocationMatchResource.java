@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class LocationMatchResource {
 
-    private static final String ENTITY_NAME = "location_match";
+    private static final String ENTITY_NAME = "locationMatch";
     private final LocationMatchService locationMatchService;
 
     public LocationMatchResource(LocationMatchService locationMatchService) {
