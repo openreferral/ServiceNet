@@ -1,9 +1,12 @@
 package org.benetech.servicenet.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.benetech.servicenet.domain.LocationMatch;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -16,7 +19,12 @@ import java.util.UUID;
 public interface LocationMatchRepository extends JpaRepository<LocationMatch, UUID> {
     Set<LocationMatch> findByLocationId(UUID locationId);
 
-    Optional<LocationMatch> findByLocationIdAndMatchingLocationId(UUID locationId, UUID matchingLocationId);
+    @Query("SELECT locationMatch FROM LocationMatch locationMatch "
+        + "WHERE locationMatch.location.id = :locationId AND locationMatch.matchingLocation.id = :matchingLocationId")
+    Optional<LocationMatch> findByLocationIdAndMatchingLocationId(@Param("locationId") UUID locationId,
+        @Param("matchingLocationId") UUID matchingLocationId);
 
     void deleteByLocationIdAndMatchingLocationId(UUID locationId, UUID matchingLocationId);
+
+    List<LocationMatch> findAllByLocationIdAndMatchingLocationId(UUID locationId, UUID matchingLocationId);
 }
