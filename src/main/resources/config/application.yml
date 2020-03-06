@@ -287,5 +287,5 @@ adapter:
     uri: https://api.icarol.com/v1/Resource
 
 feedback:
-  receiver-address: kdondziaktest@gmail.com
+  receiver-address: feedback@benetech.org
   feedback-subject: Benetech ServiceNet Feedback
