@@ -26,11 +26,11 @@ public class SendGridMailResource {
     }
 
     @PreAuthorize("hasRole('" + AuthoritiesConstants.SACRAMENTO + "')")
-    @PostMapping("/send-mail")
+    @PostMapping("/feedback")
     @Timed
     public ResponseEntity<Void> sendMail(@RequestBody FeedbackDto feedbackDto) {
         log.debug("REST request send mail : {}", feedbackDto);
-        sendGridMailService.sendFeedBackMail(
+        sendGridMailService.sendFeedback(
             feedbackDto.getEmailAddress(),
             feedbackDto.getMessage()
         );
