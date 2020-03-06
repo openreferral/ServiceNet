@@ -140,6 +140,8 @@ spring:
           oidc:
             client-id: internal
             client-secret: internal
+  sendgrid:
+    api-key: ${SENDGRID_API_KEY:default_key}
   quartz:
     job-store-type: jdbc
     properties.org.quartz.threadPool.threadCount: 1
@@ -283,3 +285,7 @@ scheduler:
 adapter:
   icarol:
     uri: https://api.icarol.com/v1/Resource
+
+feedback:
+  receiver-address: kdondziaktest@gmail.com
+  feedback-subject: Benetech ServiceNet Feedback
