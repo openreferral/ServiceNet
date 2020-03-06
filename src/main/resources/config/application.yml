@@ -287,5 +287,5 @@ adapter:
     uri: https://api.icarol.com/v1/Resource
 
 feedback:
-  receiver-address: feedback@benetech.org
+  receiver-address: ${FEEDBACK_RECEIVER_ADDRESS:feedback@benetech.org}
   feedback-subject: Benetech ServiceNet Feedback
