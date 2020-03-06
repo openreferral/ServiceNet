@@ -76,6 +76,7 @@
         <fuzzywuzzy.version>1.2.0</fuzzywuzzy.version>
         <google-maps.version>0.9.1</google-maps.version>
         <slf4j-simple.version>1.7.25</slf4j-simple.version>
+        <sendgrid.version>4.4.5</sendgrid.version>
 
         <!-- Plugin versions -->
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
@@ -500,6 +501,11 @@
             <groupId>me.xdrop</groupId>
             <artifactId>fuzzywuzzy</artifactId>
             <version>${fuzzywuzzy.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sendgrid</groupId>
+            <artifactId>sendgrid-java</artifactId>
+            <version>${sendgrid.version}</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
