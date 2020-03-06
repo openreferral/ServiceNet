@@ -1,7 +1,7 @@
 package org.benetech.servicenet.service;
 
 public interface SendGridMailService {
-    void sendMail(String from, String to, String subject, String text);
+    void sendMail(String from, String to, String subject, String content);
 
-    void sendFeedBackMail(String from, String text);
+    void sendFeedback(String from, String content);
 }

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.service.SendGridMailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -23,19 +24,21 @@ public class SendGridMailServiceImpl implements SendGridMailService {
 
     private final String MAIL_CONTENT_TYPE = "text/plain";
 
-    private final String RECEIVER_MAIL = "feedback@benetech.org";
+    @Value("${feedback.receiver-address:feedback@benetech.org}")
+    private String receiverAddress;
 
-    private final String SUBJECT = "Benetech ServiceNet Feedback";
+    @Value("${feedback.feedback-subject:Benetech ServiceNet Feedback}")
+    private String subject;
 
     @Autowired
     private SendGrid sendGrid;
 
     @Override
-    public void sendMail(String from, String to, String subj, String text) {
-        Email fromWho = new Email(this.getValidEmailAddress(from));
-        Email toWho = new Email(to);
-        Content content = new Content(MAIL_CONTENT_TYPE, text);
-        Mail mail = new Mail(fromWho, subj, toWho, content);
+    public void sendMail(String from, String to, String subj, String content) {
+        Email fromEmail = new Email(this.getValidEmailAddress(from));
+        Email toEmail = new Email(to);
+        Content mailContent = new Content(MAIL_CONTENT_TYPE, content);
+        Mail mail = new Mail(fromEmail, subj, toEmail, mailContent);
 
         Request request = new Request();
         try {
@@ -43,15 +46,15 @@ public class SendGridMailServiceImpl implements SendGridMailService {
             request.setEndpoint(MAIL_ENDPOINT);
             request.setBody(mail.build());
             Response response = sendGrid.api(request);
-            log.debug(response.getStatusCode() + " " + response.getBody() + "" + response.getHeaders());
+            log.debug(response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders());
         } catch (IOException ex) {
             log.error(ex.getMessage(), ex);
         }
     }
 
     @Override
-    public void sendFeedBackMail(String from, String text) {
-        this.sendMail(from, RECEIVER_MAIL, SUBJECT, text);
+    public void sendFeedback(String from, String content) {
+        this.sendMail(from, receiverAddress, subject, content);
     }
 
     private String getValidEmailAddress(String email) {
@@ -60,10 +63,10 @@ public class SendGridMailServiceImpl implements SendGridMailService {
                 InternetAddress emailAddr = new InternetAddress(email);
                 emailAddr.validate();
             } catch (AddressException ex) {
-                return RECEIVER_MAIL;
+                return receiverAddress;
             }
         } else {
-            return RECEIVER_MAIL;
+            return receiverAddress;
         }
 
         return email;
