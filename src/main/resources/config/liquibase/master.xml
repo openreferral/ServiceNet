@@ -66,6 +66,7 @@
     <include file="config/liquibase/changelog/20200127211934_added_entity_ServiceFieldsValue.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200127211935_added_entity_ServiceTaxonomiesDetailsFieldsValue.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200127211936_added_entity_ContactDetailsFieldsValue.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200306142713_added_entity_RequestLogger.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
              relativeToChangelogFile="false"/>

@@ -1,0 +1,47 @@
+{
+    "name": "RequestLogger",
+    "fields": [
+        {
+            "fieldName": "requestUri",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "remoteAddr",
+            "fieldType": "String"
+        },
+        {
+          "fieldName": "requestMethod",
+          "fieldType": "String"
+        },
+        {
+            "fieldName": "requestParameters",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "requestBody",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "responseStatus",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "responseBody",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200306142713",
+    "entityTableName": "request_logger",
+    "dto": "mapstruct",
+    "pagination": true,
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "ServiceNet",
+    "applications": "*",
+    "microserviceName": "ServiceNet"
+}
