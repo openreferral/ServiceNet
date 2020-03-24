@@ -128,6 +128,12 @@ jhipster:
         enabled: false
         update-interval: 3
         url:
+  security:
+    client-authorization:
+      access-token-uri: http://servicenetauth/oauth/token
+      token-service-id: servicenetauth
+      client-id: internal
+      client-secret: internal
   mail: # specific JHipster mail property, for standard properties see MailProperties
     base-url: http://my-server-url-to-change # Modify according to your server's URL
   metrics:
@@ -143,7 +149,17 @@ jhipster:
       queue-size: 512
   audit-events:
     retention-period: 30 # Number of days before audit events are deleted.
-
+oauth2:
+  signature-verification:
+    public-key-endpoint-uri: http://servicenetauth/oauth/token_key
+    #ttl for public keys to verify JWT tokens (in ms)
+    ttl: 3600000
+    #max. rate at which public keys will be fetched (in ms)
+    public-key-refresh-rate-limit: 10000
+  web-client-configuration:
+    #change client secret in production, keep in sync with UAA configuration
+    client-id: web_app
+    secret: changeit
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

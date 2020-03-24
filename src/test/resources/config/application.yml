@@ -13,62 +13,70 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
-
 spring:
-    application:
-        name: ServiceNet
-    cache:
-        type: simple
-    datasource:
-        type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:h2:mem:ServiceNet;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-        name:
-        username:
-        password:
-        hikari:
-            auto-commit: false
-    data:
-        mongodb:
-            uri: mongodb://localhost:27017/serviceNet
-            connection:
-                timeout: 500
-    jpa:
-        database-platform: io.github.jhipster.domain.util.FixedH2Dialect
-        database: H2
-        open-in-view: false
-        show-sql: false
-        hibernate:
-            ddl-auto: none
-            naming:
-                physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-                implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-        properties:
-            hibernate.id.new_generator_mappings: true
-            hibernate.connection.provider_disables_autocommit: true
-            hibernate.cache.use_second_level_cache: false
-            hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: true
-            hibernate.hbm2ddl.auto: validate
-            hibernate.jdbc.time_zone: UTC
-    liquibase:
-        contexts: test
-    mail:
-        host: localhost
-    messages:
-        basename: i18n/messages
-    mvc:
-        favicon:
-            enabled: false
-    thymeleaf:
-        mode: HTML
-    main:
-      allow-bean-definition-overriding: true
-
-
+  application:
+    name: ServiceNet
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:h2:mem:ServiceNet;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    name:
+    username:
+    password:
+    hikari:
+      auto-commit: false
+  jackson:
+    serialization:
+      write-durations-as-timestamps: false
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/serviceNet
+      connection:
+        timeout: 500
+  jpa:
+    database-platform: io.github.jhipster.domain.util.FixedH2Dialect
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      hibernate.hbm2ddl.auto: validate
+      hibernate.jdbc.time_zone: UTC
+  liquibase:
+    contexts: test
+  mail:
+    host: localhost
+  main:
+    allow-bean-definition-overriding: true
+  messages:
+    basename: i18n/messages
+  mvc:
+    favicon:
+      enabled: false
+  task:
+    execution:
+      thread-name-prefix: service-net-task-
+      pool:
+        core-size: 1
+        max-size: 50
+        queue-capacity: 10000
+    scheduling:
+      thread-name-prefix: service-net-scheduling-
+      pool:
+        size: 1
+  thymeleaf:
+    mode: HTML
 
 server:
-    port: 10344
-    address: localhost
+  port: 10344
+  address: localhost
 
 # ===================================================================
 # JHipster specific properties
@@ -108,17 +116,17 @@ jhipster:
   security:
     authentication:
       jwt:
-        # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
-        base64-secret: MGFmMzE0OTM2NGZjOTkzYjU2MWNhZThhNmU0MzIwNGUxY2VlNWNjNjAwNzU2OTc4ZTNkYmZjMGQ4ZmYwNzY2OGVkYTVhMzRmYTA1Y2YxOGMxOTMwMWY0ODFmMjEzOTFjODdkNDM2OGU5MWFhZDQ0YjYyMjkzMjdhNzg3Njc5MTA==
+        # This token must be encoded using Base64 (you can type `echo 'secret-key'|base64` on your command line)
+        base64-secret:
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
-        token-validity-in-seconds-for-remember-me: 2592000
-    remember-me:
-      # security key (this key should be unique for your application, and kept secret)
-      key: b24b759de3b5bd38145f39a79eacf410517527736c4d19f48612d890e84442e26a9619f9778956528195a1db5c7cc014403f
-  # To test logstash appender
-  logging:
-    logstash:
+    client-authorization:
+      access-token-uri: http://servicenetauth/oauth/token
+      token-service-id: servicenetauth
+      client-id: internal
+      client-secret: internal
+  metrics:
+    logs: # Reports metrics in the logs
       enabled: true
       host: localhost
       port: 5000
