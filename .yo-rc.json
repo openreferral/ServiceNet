@@ -1,7 +1,8 @@
 {
   "generator-jhipster": {
     "promptValues": {
-      "packageName": "org.benetech.servicenet"
+      "packageName": "org.benetech.servicenet",
+      "nativeLanguage": "en"
     },
     "jhipsterVersion": "6.7.1",
     "applicationType": "microservice",
@@ -9,7 +10,8 @@
     "packageName": "org.benetech.servicenet",
     "packageFolder": "org/benetech/servicenet",
     "serverPort": "8081",
-    "authenticationType": "jwt",
+    "authenticationType": "uaa",
+    "uaaBaseName": "ServiceNetAuth",
     "cacheProvider": "hazelcast",
     "enableHibernateCache": true,
     "websocket": false,
@@ -21,7 +23,6 @@
     "serviceDiscoveryType": "consul",
     "buildTool": "maven",
     "enableSwaggerCodegen": false,
-    "jwtSecretKey": "MGFmMzE0OTM2NGZjOTkzYjU2MWNhZThhNmU0MzIwNGUxY2VlNWNjNjAwNzU2OTc4ZTNkYmZjMGQ4ZmYwNzY2OGVkYTVhMzRmYTA1Y2YxOGMxOTMwMWY0ODFmMjEzOTFjODdkNDM2OGU5MWFhZDQ0YjYyMjkzMjdhNzg3Njc5MTA=",
     "embeddableLaunchScript": false,
     "creationTimestamp": 1581956550975,
     "testFrameworks": [],
@@ -30,6 +31,8 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "enableTranslation": false,
+    "nativeLanguage": "en",
+    "languages": ["en"],
     "clientPackageManager": "npm",
     "blueprints": [],
     "skipClient": true,
