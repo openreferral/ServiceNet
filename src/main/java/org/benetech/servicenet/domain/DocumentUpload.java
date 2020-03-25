@@ -38,7 +38,7 @@ public class DocumentUpload extends AbstractEntity implements Serializable {
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties("")
-    private User uploader;
+    private UserProfile uploader;
 
     @Transient
     private String filename;
@@ -92,17 +92,17 @@ public class DocumentUpload extends AbstractEntity implements Serializable {
         this.parsedDocumentId = parsedDocumentId;
     }
 
-    public User getUploader() {
+    public UserProfile getUploader() {
         return uploader;
     }
 
-    public DocumentUpload uploader(User user) {
-        this.uploader = user;
+    public DocumentUpload uploader(UserProfile userProfile) {
+        this.uploader = userProfile;
         return this;
     }
 
-    public void setUploader(User user) {
-        this.uploader = user;
+    public void setUploader(UserProfile userProfile) {
+        this.uploader = userProfile;
     }
 
     public String getFilename() {

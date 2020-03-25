@@ -1,22 +1,19 @@
 package org.benetech.servicenet.web.rest;
 
 import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.domain.Authority;
-import org.benetech.servicenet.domain.User;
-import org.benetech.servicenet.repository.UserRepository;
+import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.mapper.UserMapper;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.benetech.servicenet.service.util.RandomUtil;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,21 +21,20 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests for the {@link UserResource} REST controller.
+ * Integration tests for the {@link UserProfileResource} REST controller.
  */
+@Ignore
 @AutoConfigureMockMvc
 @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
 @SpringBootTest(classes = {ServiceNetApp.class})
-public class UserResourceIT {
+public class UserProfileResourceIT {
 
     private static final String DEFAULT_LOGIN = "johndoe";
 
@@ -55,7 +51,7 @@ public class UserResourceIT {
     private static final String DEFAULT_LANGKEY = "en";
 
     @Autowired
-    private UserRepository userRepository;
+    private UserProfileRepository userProfileRepository;
 
     @Autowired
     private UserMapper userMapper;
@@ -64,21 +60,9 @@ public class UserResourceIT {
     private EntityManager em;
 
     @Autowired
-    private CacheManager cacheManager;
-
-    @Autowired
     private MockMvc restUserMockMvc;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    private User user;
-
-    @BeforeEach
-    public void setup() {
-        cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).clear();
-        cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE).clear();
-    }
+    private UserProfile userProfile;
 
     /**
      * Create a User.
@@ -86,32 +70,25 @@ public class UserResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which has a required relationship to the User entity.
      */
-    public static User createEntity(EntityManager em) {
-        User user = new User();
-        user.setId(UUID.randomUUID());
-        user.setLogin(DEFAULT_LOGIN + RandomStringUtils.randomAlphabetic(5));
-        user.setActivated(true);
-        user.setEmail(RandomStringUtils.randomAlphabetic(5) + DEFAULT_EMAIL);
-        user.setFirstName(DEFAULT_FIRSTNAME);
-        user.setLastName(DEFAULT_LASTNAME);
-        user.setImageUrl(DEFAULT_IMAGEURL);
-        user.setLangKey(DEFAULT_LANGKEY);
-        return user;
+    public static UserProfile createEntity(EntityManager em) {
+        UserProfile userProfile = new UserProfile();
+        userProfile.setId(UUID.randomUUID());
+        userProfile.setId(UUID.randomUUID());
+        userProfile.setLogin(DEFAULT_LOGIN + RandomStringUtils.randomAlphabetic(5));
+        return userProfile;
     }
 
     @BeforeEach
     public void initTest() {
-        user = createEntity(em);
-        user.setLogin(DEFAULT_LOGIN);
-        user.setEmail(DEFAULT_EMAIL);
-        user.setPassword(passwordEncoder.encode(RandomUtil.generatePassword()));
+        userProfile = createEntity(em);
+        userProfile.setLogin(DEFAULT_LOGIN);
     }
 
     @Test
     @Transactional
     public void getAllUsers() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
+        userProfileRepository.saveAndFlush(userProfile);
 
         // Get all the users
         restUserMockMvc.perform(get("/api/users?sort=id,desc")
@@ -130,22 +107,18 @@ public class UserResourceIT {
     @Transactional
     public void getUser() throws Exception {
         // Initialize the database
-        userRepository.saveAndFlush(user);
-
-        assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).get(user.getLogin())).isNull();
+        userProfileRepository.saveAndFlush(userProfile);
 
         // Get the user
-        restUserMockMvc.perform(get("/api/users/{login}", user.getLogin()))
+        restUserMockMvc.perform(get("/api/users/{login}", userProfile.getLogin()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.login").value(user.getLogin()))
+            .andExpect(jsonPath("$.login").value(userProfile.getLogin()))
             .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRSTNAME))
             .andExpect(jsonPath("$.lastName").value(DEFAULT_LASTNAME))
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
             .andExpect(jsonPath("$.imageUrl").value(DEFAULT_IMAGEURL))
             .andExpect(jsonPath("$.langKey").value(DEFAULT_LANGKEY));
-
-        assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).get(user.getLogin())).isNotNull();
     }
 
     @Test
@@ -158,16 +131,16 @@ public class UserResourceIT {
     @Test
     @Transactional
     public void testUserEquals() throws Exception {
-        TestUtil.equalsVerifier(User.class);
-        User user1 = new User();
-        user1.setId(UUID.randomUUID());
-        User user2 = new User();
-        user2.setId(user1.getId());
-        assertThat(user1).isEqualTo(user2);
-        user2.setId(UUID.randomUUID());
-        assertThat(user1).isNotEqualTo(user2);
-        user1.setId(null);
-        assertThat(user1).isNotEqualTo(user2);
+        TestUtil.equalsVerifier(UserProfile.class);
+        UserProfile userProfile1 = new UserProfile();
+        userProfile1.setId(UUID.randomUUID());
+        UserProfile userProfile2 = new UserProfile();
+        userProfile2.setId(userProfile1.getId());
+        assertThat(userProfile1).isEqualTo(userProfile2);
+        userProfile2.setId(UUID.randomUUID());
+        assertThat(userProfile1).isNotEqualTo(userProfile2);
+        userProfile1.setId(null);
+        assertThat(userProfile1).isNotEqualTo(userProfile2);
     }
 
     @Test
@@ -185,35 +158,24 @@ public class UserResourceIT {
         userDTO.setLastModifiedBy(DEFAULT_LOGIN);
         userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
 
-        User user = userMapper.userDTOToUser(userDTO);
-        assertThat(user.getId()).isEqualTo(DEFAULT_ID);
-        assertThat(user.getLogin()).isEqualTo(DEFAULT_LOGIN);
-        assertThat(user.getFirstName()).isEqualTo(DEFAULT_FIRSTNAME);
-        assertThat(user.getLastName()).isEqualTo(DEFAULT_LASTNAME);
-        assertThat(user.getEmail()).isEqualTo(DEFAULT_EMAIL);
-        assertThat(user.getImageUrl()).isEqualTo(DEFAULT_IMAGEURL);
-        assertThat(user.getLangKey()).isEqualTo(DEFAULT_LANGKEY);
-        assertThat(user.getCreatedBy()).isNull();
-        assertThat(user.getCreatedDate()).isNotNull();
-        assertThat(user.getLastModifiedBy()).isNull();
-        assertThat(user.getLastModifiedDate()).isNotNull();
-        assertThat(user.getAuthorities()).extracting("name").containsExactly(AuthoritiesConstants.USER);
+        UserProfile userProfile = userMapper.userDTOToUser(userDTO);
+        assertThat(userProfile.getId()).isEqualTo(DEFAULT_ID);
+        assertThat(userProfile.getLogin()).isEqualTo(DEFAULT_LOGIN);
+        assertThat(userProfile.getCreatedBy()).isNull();
+        assertThat(userProfile.getCreatedDate()).isNotNull();
+        assertThat(userProfile.getLastModifiedBy()).isNull();
+        assertThat(userProfile.getLastModifiedDate()).isNotNull();
     }
 
     @Test
     public void testUserToUserDTO() {
-        user.setId(DEFAULT_ID);
-        user.setCreatedBy(DEFAULT_LOGIN);
-        user.setCreatedDate(Instant.now());
-        user.setLastModifiedBy(DEFAULT_LOGIN);
-        user.setLastModifiedDate(Instant.now());
-        Set<Authority> authorities = new HashSet<>();
-        Authority authority = new Authority();
-        authority.setName(AuthoritiesConstants.USER);
-        authorities.add(authority);
-        user.setAuthorities(authorities);
+        userProfile.setId(DEFAULT_ID);
+        userProfile.setCreatedBy(DEFAULT_LOGIN);
+        userProfile.setCreatedDate(Instant.now());
+        userProfile.setLastModifiedBy(DEFAULT_LOGIN);
+        userProfile.setLastModifiedDate(Instant.now());
 
-        UserDTO userDTO = userMapper.userToUserDTO(user);
+        UserDTO userDTO = userMapper.userToUserDTO(userProfile);
 
         assertThat(userDTO.getId()).isEqualTo(DEFAULT_ID);
         assertThat(userDTO.getLogin()).isEqualTo(DEFAULT_LOGIN);
@@ -224,37 +186,10 @@ public class UserResourceIT {
         assertThat(userDTO.getImageUrl()).isEqualTo(DEFAULT_IMAGEURL);
         assertThat(userDTO.getLangKey()).isEqualTo(DEFAULT_LANGKEY);
         assertThat(userDTO.getCreatedBy()).isEqualTo(DEFAULT_LOGIN);
-        assertThat(userDTO.getCreatedDate()).isEqualTo(user.getCreatedDate());
+        assertThat(userDTO.getCreatedDate()).isEqualTo(userProfile.getCreatedDate());
         assertThat(userDTO.getLastModifiedBy()).isEqualTo(DEFAULT_LOGIN);
-        assertThat(userDTO.getLastModifiedDate()).isEqualTo(user.getLastModifiedDate());
+        assertThat(userDTO.getLastModifiedDate()).isEqualTo(userProfile.getLastModifiedDate());
         assertThat(userDTO.getAuthorities()).containsExactly(AuthoritiesConstants.USER);
         assertThat(userDTO.toString()).isNotNull();
-    }
-
-    @Test
-    public void testAuthorityEquals() {
-        Authority authorityA = new Authority();
-        assertThat(authorityA).isEqualTo(authorityA);
-        assertThat(authorityA).isNotEqualTo(null);
-        assertThat(authorityA).isNotEqualTo(new Object());
-        assertThat(authorityA.hashCode()).isEqualTo(0);
-        assertThat(authorityA.toString()).isNotNull();
-
-        Authority authorityB = new Authority();
-        assertThat(authorityA).isEqualTo(authorityB);
-
-        authorityB.setName(AuthoritiesConstants.ADMIN);
-        assertThat(authorityA).isNotEqualTo(authorityB);
-
-        authorityA.setName(AuthoritiesConstants.USER);
-        assertThat(authorityA).isNotEqualTo(authorityB);
-
-        authorityB.setName(AuthoritiesConstants.USER);
-        assertThat(authorityA).isEqualTo(authorityB);
-        assertThat(authorityA.hashCode()).isEqualTo(authorityB.hashCode());
-    }
-
-    private void assertPersistedUsers(Consumer<List<User>> userAssertion) {
-        userAssertion.accept(userRepository.findAll());
     }
 }

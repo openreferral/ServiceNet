@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.domain.Shelter;
-import org.benetech.servicenet.repository.PersistentTokenRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.UserService;
@@ -128,9 +127,6 @@ public class ShelterResourceIntTest {
 
     @Mock
     private UserService userServiceMock;
-
-    @Autowired
-    private PersistentTokenRepository persistentTokenRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;

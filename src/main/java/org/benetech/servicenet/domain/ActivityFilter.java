@@ -88,7 +88,7 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
 
     @ManyToOne
     @JsonIgnoreProperties("filters")
-    private User user;
+    private UserProfile userProfile;
 
     @Column(name = "apply_location_search")
     private boolean applyLocationSearch;
@@ -285,12 +285,12 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
         this.showPartner = showPartner;
     }
 
-    public User getUser() {
-        return user;
+    public UserProfile getUserProfile() {
+        return userProfile;
     }
 
-    public ActivityFilter user(User user) {
-        this.user = user;
+    public ActivityFilter user(UserProfile userProfile) {
+        this.userProfile = userProfile;
         return this;
     }
 
@@ -346,8 +346,8 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
         this.radius = radius;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

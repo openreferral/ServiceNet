@@ -12,7 +12,7 @@ import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.mother.ConflictMother;
 import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
@@ -69,7 +69,7 @@ public class ActivityServiceImplTest {
 
     private Organization organizationOther;
 
-    private User user;
+    private UserProfile userProfile;
 
     private Conflict conflict;
 
@@ -108,10 +108,10 @@ public class ActivityServiceImplTest {
         em.persist(conflict);
         em.flush();
 
-        user = userService.getUserWithAuthoritiesAndAccount()
+        userProfile = userService.getCurrentUserOptional()
             .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
-        user.setSystemAccount(systemAccount);
-        em.persist(user);
+        userProfile.setSystemAccount(systemAccount);
+        em.persist(userProfile);
         em.flush();
     }
 
@@ -120,7 +120,7 @@ public class ActivityServiceImplTest {
     public void getAllNotHiddenActivities() {
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId(), "", new ActivityFilterDTO());
+            pageRequest, userProfile.getSystemAccount().getId(), "", new ActivityFilterDTO());
 
         assertEquals(1, activities.getTotalElements());
         ActivityDTO actualAct = activities.stream().collect(Collectors.toList()).get(0);
@@ -157,7 +157,7 @@ public class ActivityServiceImplTest {
         activityFilterDTO.setHiddenFilter(true);
 
         Page<ActivityDTO> activities = activityService.getAllOrganizationActivities(
-            pageRequest, user.getSystemAccount().getId(), "", activityFilterDTO);
+            pageRequest, userProfile.getSystemAccount().getId(), "", activityFilterDTO);
 
         assertEquals(0, activities.getTotalElements());
     }

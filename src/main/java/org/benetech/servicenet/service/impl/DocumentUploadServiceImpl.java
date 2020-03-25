@@ -9,7 +9,7 @@ import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.converter.FileConverterFactory;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
@@ -135,7 +135,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     @Override
     public DocumentUpload saveForCurrentUser(DocumentUpload documentUpload) {
-        Optional<User> currentUser = userService.getUserWithAuthoritiesAndAccount();
+        Optional<UserProfile> currentUser = userService.getCurrentUserOptional();
         if (currentUser.isPresent()) {
             documentUpload.setDateUploaded(ZonedDateTime.now(ZoneId.systemDefault()));
             documentUpload.setUploader(currentUser.get());
@@ -147,7 +147,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     @Override
     public DocumentUpload saveForSystemUser(DocumentUpload documentUpload) {
-        Optional<User> currentUser = userService.getSystemUser();
+        Optional<UserProfile> currentUser = userService.getSystemUser();
         if (currentUser.isPresent()) {
             documentUpload.setDateUploaded(ZonedDateTime.now(ZoneId.systemDefault()));
             documentUpload.setUploader(currentUser.get());
@@ -215,7 +215,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             return currentProviderName;
         }
 
-        Optional<User> user = userService.getUserWithAuthoritiesAndAccount();
+        Optional<UserProfile> user = userService.getCurrentUserOptional();
         if (user.isPresent()) {
             if (user.get().getSystemAccount() != null) {
                 return user.get().getSystemAccount().getName();

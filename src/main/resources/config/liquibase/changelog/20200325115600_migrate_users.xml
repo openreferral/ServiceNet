@@ -1,0 +1,72 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="jkondrat" id="1585137373634-1">
+        <sql>
+            INSERT INTO auth.jhi_user (id, login, password_hash, first_name, last_name, email, image_url, activated,
+            lang_key, activation_key, reset_key, reset_date, created_by, created_date, last_modified_by, last_modified_date)
+            SELECT id, login, password_hash, first_name, last_name, email, image_url, activated,
+            lang_key, activation_key, reset_key, reset_date, created_by, created_date, last_modified_by, last_modified_date
+            FROM jhi_user
+            ON CONFLICT (id) DO UPDATE SET
+            login = EXCLUDED.login,
+            password_hash = EXCLUDED.password_hash,
+            first_name = EXCLUDED.first_name,
+            last_name = EXCLUDED.last_name,
+            email = EXCLUDED.email,
+            image_url = EXCLUDED.image_url,
+            activated = EXCLUDED.activated,
+            lang_key = EXCLUDED.lang_key,
+            activation_key = EXCLUDED.activation_key,
+            reset_key = EXCLUDED.reset_key,
+            reset_date = EXCLUDED.reset_date,
+            created_by = EXCLUDED.created_by,
+            created_date = EXCLUDED.created_date,
+            last_modified_by = EXCLUDED.last_modified_by,
+            last_modified_date = EXCLUDED.last_modified_date;
+
+            INSERT INTO auth.jhi_authority (name)
+            SELECT name
+            FROM jhi_authority
+            ON CONFLICT DO NOTHING;
+
+            INSERT INTO auth.jhi_user_authority (user_id, authority_name)
+            SELECT user_id, authority_name
+            FROM jhi_user_authority
+            ON CONFLICT DO NOTHING;
+
+            ALTER TABLE jhi_user RENAME TO user_profile;
+
+            ALTER TABLE user_profile ADD COLUMN user_id UUID;
+            UPDATE user_profile SET user_id = id;
+
+            ALTER TABLE user_profile
+            DROP COLUMN password_hash,
+            DROP COLUMN first_name,
+            DROP COLUMN last_name,
+            DROP COLUMN email,
+            DROP COLUMN image_url,
+            DROP COLUMN activated,
+            DROP COLUMN lang_key,
+            DROP COLUMN activation_key,
+            DROP COLUMN reset_key,
+            DROP COLUMN reset_date;
+
+            ALTER TABLE activity_filter
+            RENAME COLUMN user_id TO user_profile_id;
+
+            ALTER TABLE fields_display_settings
+            RENAME COLUMN user_id TO user_profile_id;
+
+            ALTER TABLE metadata
+            RENAME COLUMN user_id TO user_profile_id;
+
+            ALTER TABLE user_shelters RENAME TO user_profile_shelters;
+            ALTER TABLE user_profile_shelters
+            RENAME COLUMN user_id TO user_profile_id;
+
+            DROP TABLE jhi_user_authority;
+            DROP TABLE jhi_authority;
+            DROP TABLE jhi_persistent_token;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
