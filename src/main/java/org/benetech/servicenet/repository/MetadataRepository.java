@@ -22,7 +22,7 @@ import java.util.UUID;
 @Repository
 public interface MetadataRepository extends JpaRepository<Metadata, UUID> {
 
-    @Query("select metadata from Metadata metadata where metadata.user.login = ?#{principal.username}")
+    @Query("select metadata from Metadata metadata where metadata.userProfile.login = ?#{principal}")
     List<Metadata> findByUserIsCurrentUser();
 
     @Query("select metadata from Metadata metadata where metadata.resourceId in (:resourceIds)")
@@ -75,6 +75,6 @@ public interface MetadataRepository extends JpaRepository<Metadata, UUID> {
                         String fieldName,
                         ActionType lastActionType);
 
-    @Query("select metadata from Metadata metadata where metadata.user.id = :id")
+    @Query("select metadata from Metadata metadata where metadata.userProfile.id = :id")
     List<Metadata> findAllByUserId(@Param("id") UUID id);
 }

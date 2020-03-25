@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.repository.BedsRepository;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
-import org.benetech.servicenet.repository.UserRepository;
+import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
 import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
@@ -44,15 +45,15 @@ public class ShelterServiceImpl implements ShelterService {
 
     private final PhoneRepository phoneRepository;
 
-    private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
 
     public ShelterServiceImpl(ShelterRepository shelterRepository, ShelterMapper shelterMapper,
-        BedsRepository bedsRepository, PhoneRepository phoneRepository, UserRepository userRepository) {
+        BedsRepository bedsRepository, PhoneRepository phoneRepository, UserProfileRepository userProfileRepository) {
         this.shelterRepository = shelterRepository;
         this.shelterMapper = shelterMapper;
         this.bedsRepository = bedsRepository;
         this.phoneRepository = phoneRepository;
-        this.userRepository = userRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     /**
@@ -87,7 +88,7 @@ public class ShelterServiceImpl implements ShelterService {
         shelter.setEmails(emails);
 
         if (shelter.getId() != null) {
-            shelter.setUsers(shelterRepository.findById(shelter.getId()).orElse(shelter).getUsers());
+            shelter.setUserProfiles(shelterRepository.findById(shelter.getId()).orElse(shelter).getUserProfiles());
         }
 
         shelter = shelterRepository.save(shelter);
@@ -160,5 +161,15 @@ public class ShelterServiceImpl implements ShelterService {
     public void delete(UUID id) {
         log.debug("Request to delete Shelter : {}", id);
         shelterRepository.deleteById(id);
+    }
+
+    private Set<Shelter> sheltersFromUUIDs(List<UUID> uuids) {
+        if (uuids != null) {
+            return uuids.stream()
+                .map(uuid -> shelterRepository.getOne(uuid))
+                .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
+        }
     }
 }

@@ -12,11 +12,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface FieldsDisplaySettingsMapper extends EntityMapper<FieldsDisplaySettingsDTO, FieldsDisplaySettings> {
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "user.login", target = "userLogin")
+    @Mapping(source = "userProfile.id", target = "userId")
+    @Mapping(source = "userProfile.login", target = "userLogin")
     FieldsDisplaySettingsDTO toDto(FieldsDisplaySettings fieldsDisplaySettings);
 
-    @Mapping(source = "userId", target = "user")
+    @Mapping(source = "userId", target = "userProfile")
     FieldsDisplaySettings toEntity(FieldsDisplaySettingsDTO fieldsDisplaySettingsDTO);
 
     default FieldsDisplaySettings fromId(UUID id) {

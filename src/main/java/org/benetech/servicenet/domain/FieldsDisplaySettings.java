@@ -80,7 +80,7 @@ public class FieldsDisplaySettings implements Serializable {
 
     @ManyToOne
     @JsonIgnoreProperties("fieldsDisplaySettings")
-    private User user;
+    private UserProfile userProfile;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public UUID getId() {
@@ -195,17 +195,17 @@ public class FieldsDisplaySettings implements Serializable {
         this.contactDetailsFields = contactDetailsFields;
     }
 
-    public User getUser() {
-        return user;
+    public UserProfile getUserProfile() {
+        return userProfile;
     }
 
-    public FieldsDisplaySettings user(User user) {
-        this.user = user;
+    public FieldsDisplaySettings user(UserProfile userProfile) {
+        this.userProfile = userProfile;
         return this;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

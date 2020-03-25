@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ActivityFilter;
 import org.benetech.servicenet.domain.Taxonomy;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.ActivityFilterRepository;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
@@ -97,8 +97,8 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     @Override
     public ActivityFilterDTO saveForCurrentUser(ActivityFilterDTO activityFilterDTO) {
-        User currentUser = userService.getCurrentUser();
-        activityFilterDTO.setUserId(currentUser.getId());
+        UserProfile currentUserProfile = userService.getCurrentUser();
+        activityFilterDTO.setUserId(currentUserProfile.getId());
 
         return save(activityFilterDTO);
     }
@@ -165,18 +165,18 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     @Override
     public void saveCurrentUserActivityFilter(ActivityFilterDTO activityFilterDTO) {
-        User currentUser = userService.getCurrentUser();
+        UserProfile currentUserProfile = userService.getCurrentUser();
         ActivityFilter activityFilter = activityFilterMapper.toEntity(activityFilterDTO);
         activityFilter.setId(null);
-        activityFilter.setUser(null);
+        activityFilter.setUserProfile(null);
 
-        if (currentUser.getFilter() != null) {
-            activityFilter.setId(currentUser.getFilter().getId());
+        if (currentUserProfile.getFilter() != null) {
+            activityFilter.setId(currentUserProfile.getFilter().getId());
         }
 
         activityFilterRepository.save(activityFilter);
 
-        currentUser.setFilter(activityFilter);
-        userService.save(currentUser);
+        currentUserProfile.setFilter(activityFilter);
+        userService.save(currentUserProfile);
     }
 }

@@ -35,7 +35,7 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
     private String dismissComment;
 
     @ManyToOne
-    private User dismissedBy;
+    private UserProfile dismissedBy;
 
     @Column(name = "dismiss_date")
     private ZonedDateTime dismissDate;
@@ -44,7 +44,7 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
     private Boolean hidden = false;
 
     @ManyToOne
-    private User hiddenBy;
+    private UserProfile hiddenBy;
 
     @Column(name = "hidden_date")
     private ZonedDateTime hiddenDate;

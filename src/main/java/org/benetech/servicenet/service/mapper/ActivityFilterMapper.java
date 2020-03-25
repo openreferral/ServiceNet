@@ -12,11 +12,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface ActivityFilterMapper extends EntityMapper<ActivityFilterDTO, ActivityFilter> {
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "user.login", target = "userLogin")
+    @Mapping(source = "userProfile.id", target = "userId")
+    @Mapping(source = "userProfile.login", target = "userLogin")
     ActivityFilterDTO toDto(ActivityFilter activityFilter);
 
-    @Mapping(source = "userId", target = "user")
+    @Mapping(source = "userId", target = "userProfile")
     ActivityFilter toEntity(ActivityFilterDTO activityFilterDTO);
 
     default ActivityFilter fromId(UUID id) {

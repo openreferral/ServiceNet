@@ -15,11 +15,11 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 @Mapper(componentModel = "spring", uses = {UserMapper.class}, unmappedTargetPolicy = IGNORE)
 public interface MetadataMapper extends EntityMapper<MetadataDTO, Metadata> {
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "user.login", target = "userLogin")
+    @Mapping(source = "userProfile.id", target = "userId")
+    @Mapping(source = "userProfile.login", target = "userLogin")
     MetadataDTO toDto(Metadata metadata);
 
-    @Mapping(source = "userId", target = "user")
+    @Mapping(source = "userId", target = "userProfile")
     Metadata toEntity(MetadataDTO metadataDTO);
 
     default Metadata fromId(UUID id) {

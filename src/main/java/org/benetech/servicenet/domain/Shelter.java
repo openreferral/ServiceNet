@@ -167,10 +167,10 @@ public class Shelter extends AbstractEntity implements Serializable, Address {
     @JsonIgnore
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @JoinTable(name = "user_shelters",
+    @JoinTable(name = "user_profile_shelters",
         joinColumns = @JoinColumn(name = "shelter_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
-    private Set<User> users;
+        inverseJoinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"))
+    private Set<UserProfile> userProfiles;
 
     public String getAgencyName() {
         return agencyName;
@@ -493,17 +493,17 @@ public class Shelter extends AbstractEntity implements Serializable, Address {
         this.languages = option;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public Set<UserProfile> getUserProfiles() {
+        return userProfiles;
     }
 
-    public Shelter users(Set<User> users) {
-        this.users = users;
+    public Shelter users(Set<UserProfile> userProfiles) {
+        this.userProfiles = userProfiles;
         return this;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setUserProfiles(Set<UserProfile> userProfiles) {
+        this.userProfiles = userProfiles;
     }
 
     public Set<Option> getDefinedCoverageAreas() {
@@ -570,7 +570,7 @@ public class Shelter extends AbstractEntity implements Serializable, Address {
             ", transportation='" + getTransportation() + "'" +
             ", disabilityAccess='" + getDisabilityAccess() + "'" +
             ", languages='" + getLanguages() + "'" +
-            ", users='" + getUsers() + "'" +
+            ", users='" + getUserProfiles() + "'" +
             "}";
     }
 }

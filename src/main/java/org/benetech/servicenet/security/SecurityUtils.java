@@ -1,5 +1,7 @@
 package org.benetech.servicenet.security;
 
+import java.util.Map;
+import java.util.UUID;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -8,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
 /**
  * Utility class for Spring Security.
@@ -25,6 +28,23 @@ public final class SecurityUtils {
     public static Optional<String> getCurrentUserLogin() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
+    }
+
+    /**
+     * Get the id of the current user.
+     *
+     * @return the id of the current user.
+     */
+    public static UUID getCurrentUserId() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Object details = securityContext.getAuthentication().getDetails();
+        if (details instanceof OAuth2AuthenticationDetails) {
+            Object decodedDetails = ((OAuth2AuthenticationDetails) details).getDecodedDetails();
+            if (decodedDetails instanceof Map) {
+                return UUID.fromString(((Map) decodedDetails).get("user_id").toString());
+            }
+        }
+        return null;
     }
 
     private static String extractPrincipal(Authentication authentication) {

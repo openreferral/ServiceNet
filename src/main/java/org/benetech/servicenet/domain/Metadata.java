@@ -63,7 +63,7 @@ public class Metadata extends AbstractEntity implements Serializable {
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties("")
-    private User user;
+    private UserProfile userProfile;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
@@ -158,16 +158,16 @@ public class Metadata extends AbstractEntity implements Serializable {
         this.resourceClass = resourceClass;
     }
 
-    public User getUser() {
-        return user;
+    public UserProfile getUserProfile() {
+        return userProfile;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
-    public Metadata user(User user) {
-        this.user = user;
+    public Metadata user(UserProfile userProfile) {
+        this.userProfile = userProfile;
         return this;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

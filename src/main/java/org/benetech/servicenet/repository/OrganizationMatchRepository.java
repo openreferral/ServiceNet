@@ -2,7 +2,7 @@ package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,7 +32,7 @@ public interface OrganizationMatchRepository extends JpaRepository<OrganizationM
 
     List<OrganizationMatch> findAllByHidden(Boolean hidden);
 
-    List<OrganizationMatch> findAllByHiddenAndHiddenBy(Boolean hidden, User hiddenBy);
+    List<OrganizationMatch> findAllByHiddenAndHiddenBy(Boolean hidden, UserProfile hiddenBy);
 
     @Query("SELECT orgMatch FROM OrganizationMatch orgMatch WHERE orgMatch.organizationRecord.id = :organizationRecordId AND"
         + " orgMatch.hidden = :hidden ORDER BY orgMatch.partnerVersion.lastVerifiedOn DESC NULLS LAST, "

@@ -3,9 +3,8 @@ package org.benetech.servicenet.service.dto;
 import java.util.List;
 import lombok.Data;
 import org.benetech.servicenet.config.Constants;
-import org.benetech.servicenet.domain.Authority;
 import org.benetech.servicenet.domain.Shelter;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -67,28 +66,19 @@ public class UserDTO {
         // Empty constructor needed for Jackson.
     }
 
-    public UserDTO(User user) {
-        this.id = user.getId();
-        this.login = user.getLogin();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.activated = user.isActivated();
-        this.imageUrl = user.getImageUrl();
-        this.langKey = user.getLangKey();
-        this.createdBy = user.getCreatedBy();
-        this.createdDate = user.getCreatedDate();
-        this.lastModifiedBy = user.getLastModifiedBy();
-        this.lastModifiedDate = user.getLastModifiedDate();
-        this.authorities = user.getAuthorities().stream()
-            .map(Authority::getName)
-            .collect(Collectors.toSet());
-        if (user.getSystemAccount() != null) {
-            this.systemAccountId = user.getSystemAccount().getId();
-            this.systemAccountName = user.getSystemAccount().getName();
+    public UserDTO(UserProfile userProfile) {
+        this.id = userProfile.getUserId();
+        this.login = userProfile.getLogin();
+        this.createdBy = userProfile.getCreatedBy();
+        this.createdDate = userProfile.getCreatedDate();
+        this.lastModifiedBy = userProfile.getLastModifiedBy();
+        this.lastModifiedDate = userProfile.getLastModifiedDate();
+        if (userProfile.getSystemAccount() != null) {
+            this.systemAccountId = userProfile.getSystemAccount().getId();
+            this.systemAccountName = userProfile.getSystemAccount().getName();
         }
-        if (user.getShelters() != null) {
-            this.shelters = user.getShelters().stream()
+        if (userProfile.getShelters() != null) {
+            this.shelters = userProfile.getShelters().stream()
                 .map(Shelter::getId)
                 .collect(Collectors.toList());
         }
