@@ -7,6 +7,7 @@ import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +29,11 @@ public class UserMapper {
 
     private ShelterRepository shelterRepository;
 
-    private UserProfileRepository userProfileRepository;
+    private UserService userService;
 
     public UserMapper(SystemAccountMapper systemAccountMapper, ShelterRepository shelterRepository,
-        UserProfileRepository userProfileRepository) {
-        this.userProfileRepository = userProfileRepository;
+        UserService userService) {
+        this.userService = userService;
         this.systemAccountMapper = systemAccountMapper;
         this.shelterRepository = shelterRepository;
     }
@@ -53,9 +54,8 @@ public class UserMapper {
             return null;
         } else {
             UserProfile userProfile = new UserProfile();
-            Optional<UserProfile> existingProfile = userProfileRepository.findOneByUserId(userDTO.getId());
-            // TODO: create user profile if it doesn't exist (service method)
-            userProfile.setId(existingProfile.get().getId());
+            UserProfile existingProfile = userService.getOrCreateUserProfile(userDTO.getId(), userDTO.getLogin());
+            userProfile.setId(existingProfile.getId());
             userProfile.setUserId(userDTO.getId());
             userProfile.setLogin(userDTO.getLogin());
             userProfile.setShelters(this.sheltersFromUUIDs(userDTO.getShelters()));

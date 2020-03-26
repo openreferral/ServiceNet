@@ -195,7 +195,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Override
     public List<OrganizationMatchDTO> findCurrentUsersHiddenOrganizationMatches() {
-        Optional<UserProfile> currentUser = userService.getCurrentUserOptional();
+        Optional<UserProfile> currentUser = userService.getCurrentUserProfileOptional();
         if (currentUser.isPresent()) {
             List<OrganizationMatch> matches;
             if (userService.isCurrentUserAdmin()) {
@@ -293,7 +293,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             match.setDismissComment(dismissMatchDTO.getComment());
             match.setDismissDate(ZonedDateTime.now(ZoneId.systemDefault()));
 
-            userService.getCurrentUserOptional().ifPresentOrElse(
+            userService.getCurrentUserProfileOptional().ifPresentOrElse(
                 match::setDismissedBy,
                 () -> { throw new IllegalStateException("No current user found"); }
             );
@@ -324,7 +324,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             match.setHidden(true);
             match.setHiddenDate(ZonedDateTime.now(ZoneId.systemDefault()));
 
-            userService.getCurrentUserOptional().ifPresentOrElse(
+            userService.getCurrentUserProfileOptional().ifPresentOrElse(
                 match::setHiddenBy,
                 () -> { throw new IllegalStateException("No current user found"); }
             );
@@ -342,7 +342,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Override
     public void revertHideOrganizationMatch(UUID id) {
-        Optional<UserProfile> currentUser = userService.getCurrentUserOptional();
+        Optional<UserProfile> currentUser = userService.getCurrentUserProfileOptional();
         if (currentUser.isPresent()) {
             organizationMatchRepository.findById(id).ifPresent(match -> {
                 if (userService.isCurrentUserAdmin() || match.getHiddenBy().equals(currentUser.get())) {

@@ -21,6 +21,8 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> 
 
     Optional<UserProfile> findOneByLogin(String login);
 
+    void deleteByLogin(String login);
+
     Optional<UserProfile> findOneByUserId(UUID userId);
 
     Page<UserProfile> findAllByLoginNot(Pageable pageable, String login);

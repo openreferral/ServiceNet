@@ -1,10 +1,13 @@
 package org.benetech.servicenet.web.rest;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
 
 import org.benetech.servicenet.domain.Shelter;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.UserService;
@@ -39,6 +42,8 @@ import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversi
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -366,6 +371,14 @@ public class ShelterResourceIntTest {
 
         // Update the shelter
         Shelter updatedShelter = shelterRepository.findById(shelter.getId()).get();
+
+        // Add shelter to the current user so he can update it
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        Set<Shelter> shelters = new HashSet<>();
+        shelters.add(updatedShelter);
+        currentUser.setShelters(shelters);
+        userService.saveProfile(currentUser);
+
         // Disconnect from session so that the updates on updatedShelter are not directly saved in db
         em.detach(updatedShelter);
         updatedShelter

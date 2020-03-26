@@ -1,10 +1,13 @@
 package org.benetech.servicenet.service;
 
 import java.util.Collections;
+import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.repository.DocumentUploadRepository;
+import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
@@ -51,59 +54,102 @@ public class UserService {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private ServiceNetAuthClient authClient;
+
+    @Autowired
+    private DocumentUploadRepository documentUploadRepository;
+
+    @Autowired
+    private MetadataRepository metadataRepository;
+
+    /**
+     * Create a new user.
+     *
+     * @param userDTO user to create
+     * @return created user
+     */
+    public UserDTO createUser(UserDTO userDTO) {
+        return createOrUpdateUserProfile(
+            authClient.createUser(userDTO), userDTO
+        );
+    }
+
     /**
      * Update all information for a specific user, and return the modified user.
      *
      * @param userDTO user to update
      * @return updated user
      */
-    public Optional<UserDTO> updateUser(UserDTO userDTO) {
-        return Optional.of(userProfileRepository
-            .findById(userDTO.getId()))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .map(user -> {
-                this.clearUserCaches(user);
-                user.setLogin(userDTO.getLogin().toLowerCase(Locale.ROOT));
-                user.setSystemAccount(getSystemAccount(userDTO));
-                user.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
-                this.clearUserCaches(user);
-                log.debug("Changed Information for User: {}", user);
-                return user;
-            })
-            .map(UserDTO::new);
+    public UserDTO updateUser(UserDTO userDTO) {
+        return createOrUpdateUserProfile(
+            authClient.updateUser(userDTO), userDTO
+        );
     }
 
-    public Optional<UserProfile> getSystemUser() {
+    public void deleteUser(String login) {
+        Optional<UserProfile> system = getSystemUserProfile();
+        if (system.isPresent()) {
+            userProfileRepository.findOneByLogin(login).ifPresent(user -> {
+                authClient.deleteUser(login);
+                documentUploadRepository.findAllByUploaderId(user.getId()).forEach(doc -> {
+                    doc.setUploader(system.get());
+                    documentUploadRepository.save(doc);
+                });
+                metadataRepository.findAllByUserId(user.getId()).forEach(meta -> {
+                    meta.setUserProfile(system.get());
+                    metadataRepository.save(meta);
+                });
+                userProfileRepository.delete(user);
+                this.clearUserCaches(user);
+                log.debug("Deleted User: {}", user);
+            });
+        } else {
+            throw new IllegalStateException("User's metadata couldn't be archived.");
+        }
+    }
+
+    public UserDTO getUser(String login) {
+        UserDTO userDTO = authClient.getUser(login);
+        return getCompleteUserDto(userDTO, getOrCreateUserProfile(userDTO.getId(), login));
+    }
+
+    public List<String> getAuthorities() {
+        return authClient.getAuthorities();
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> getAllManagedUsers(Pageable pageable) {
+        return authClient.getUsers(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserProfile> getAllManagedUserProfiles(Pageable pageable) {
+        return userProfileRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER);
+    }
+
+    public Optional<UserProfile> getSystemUserProfile() {
         return userProfileRepository.findOneByLogin(SYSTEM);
     }
 
-    public UserProfile getCurrentOrSystemUser() {
-        Optional<UserProfile> current = SecurityUtils.getCurrentUserLogin()
-            .flatMap(userProfileRepository::findOneWithAccountByLogin);
-        if (current.isPresent()) {
-            return current.get();
+    public UserProfile getCurrentOrSystemUserProfile() {
+        Optional<UserProfile> userProfile = getCurrentUserProfileOptional();
+        if (userProfile.isPresent()) {
+            return userProfile.get();
+        } else {
+            Optional<UserProfile> system = userProfileRepository.findOneByLogin(SYSTEM);
+            if (system.isPresent()) {
+                return system.get();
+            }
+            throw new IllegalStateException("No current or system user found");
         }
-        Optional<UserProfile> system = userProfileRepository.findOneByLogin(SYSTEM);
-        if (system.isPresent()) {
-            return system.get();
-        }
-        throw new IllegalStateException("No current or system user found");
     }
 
     @Transactional(readOnly = true)
     public Optional<SystemAccount> getCurrentSystemAccount() {
-        Optional<UserProfile> current = SecurityUtils.getCurrentUserLogin().flatMap(
-            userProfileRepository::findOneByLogin);
-         UserProfile userProfile = current.orElseThrow(() -> new IllegalStateException("No current user found"));
-
+        UserProfile userProfile = getCurrentUserProfile();
         return (userProfile.getSystemAccount() != null) ? Optional.of(userProfile.getSystemAccount()) :
             Optional.empty();
-    }
-
-    @Transactional(readOnly = true)
-    public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
-        return userProfileRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
     }
 
     public String getCurrentSystemAccountName() {
@@ -111,27 +157,65 @@ public class UserService {
         return accountOpt.map(SystemAccount::getName).orElse(null);
     }
 
-    public Optional<UserProfile> getCurrentUserOptional() {
-        return SecurityUtils.getCurrentUserLogin().flatMap(
-            userProfileRepository::findOneByLogin);
+    public Optional<UserProfile> getCurrentUserProfileOptional() {
+        Optional<String> login = SecurityUtils.getCurrentUserLogin();
+        if (login.isPresent()) {
+            UUID userId = SecurityUtils.getCurrentUserId();
+            return Optional.of(getOrCreateUserProfile(userId, login.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 
-    public Optional<UserProfile> getUser(UUID id) {
+    public Optional<UserProfile> getUserProfile(UUID id) {
         return userProfileRepository.findById(id);
     }
 
-    public UserProfile getCurrentUser() {
-        Optional<UserProfile> current = SecurityUtils.getCurrentUserLogin().flatMap(
-            userProfileRepository::findOneByLogin);
-        return current.orElseThrow(() -> new IllegalStateException("No current user found"));
+    public UserProfile getCurrentUserProfile() {
+        Optional<String> login = SecurityUtils.getCurrentUserLogin();
+        if (login.isPresent()) {
+            UUID userId = SecurityUtils.getCurrentUserId();
+            return getOrCreateUserProfile(userId, login.get());
+        } else {
+            throw new IllegalStateException("No current user found");
+        }
     }
 
-    public UserProfile save(UserProfile userProfile) {
+    public UserProfile saveProfile(UserProfile userProfile) {
         return userProfileRepository.save(userProfile);
     }
 
     public Boolean isCurrentUserAdmin() {
        return SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN);
+    }
+
+    public UserProfile getOrCreateUserProfile(UUID userId, String login) {
+        Optional<UserProfile> existingProfile = userProfileRepository.findOneByUserId(userId);
+        if (existingProfile.isPresent()) {
+            return existingProfile.get();
+        } else {
+            existingProfile = userProfileRepository.findOneByLogin(login);
+            UserProfile userProfile = new UserProfile();
+            if (existingProfile.isPresent()) {
+                userProfile = existingProfile.get();
+            }
+            userProfile.setUserId(userId);
+            userProfile.setLogin(login);
+            return userProfileRepository.save(userProfile);
+        }
+    }
+
+    public UserDTO getCompleteUserDto(UserDTO authUser, UserProfile userProfile) {
+        SystemAccount systemAccount = userProfile.getSystemAccount();
+        if (systemAccount != null) {
+            authUser.setSystemAccountId(systemAccount.getId());
+            authUser.setSystemAccountName(systemAccount.getName());
+        }
+        if (userProfile.getShelters() != null) {
+            authUser.setShelters(userProfile.getShelters().stream()
+                .map(Shelter::getId).collect(Collectors.toList()));
+        }
+        return authUser;
     }
 
     private void clearUserCaches(UserProfile userProfile) {
@@ -159,5 +243,15 @@ public class UserService {
         } else {
             return Collections.emptySet();
         }
+    }
+
+    private UserDTO createOrUpdateUserProfile(UserDTO authUser, UserDTO userDTO) {
+        UserProfile userProfile = getOrCreateUserProfile(authUser.getId(), userDTO.getLogin());
+        userProfile.setLogin(userDTO.getLogin().toLowerCase(Locale.ROOT));
+        userProfile.setSystemAccount(getSystemAccount(userDTO));
+        userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
+        userProfileRepository.save(userProfile);
+        this.clearUserCaches(userProfile);
+        return getCompleteUserDto(authUser, userProfile);
     }
 }

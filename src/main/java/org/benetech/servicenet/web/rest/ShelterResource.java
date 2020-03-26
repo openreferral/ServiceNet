@@ -93,7 +93,7 @@ public class ShelterResource {
         if (shelter.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUser().getShelters().stream().map(Shelter::getId)
+        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUserProfile().getShelters().stream().map(Shelter::getId)
             .collect(Collectors.toList()).contains(shelter.getId()))) {
             throw new BadRequestAlertException("You are not allowed to edit this shelter", ENTITY_NAME, "cantedit");
         }

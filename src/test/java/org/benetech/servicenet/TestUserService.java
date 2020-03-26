@@ -24,7 +24,7 @@ public class TestUserService extends UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserProfile> getCurrentUserOptional() {
+    public Optional<UserProfile> getCurrentUserProfileOptional() {
         return userProfileRepository.findOneByLogin(ADMIN_LOGIN);
     }
 

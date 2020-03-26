@@ -1,9 +1,9 @@
 package org.benetech.servicenet.service;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
+import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Metadata;
@@ -19,7 +19,6 @@ import org.benetech.servicenet.mother.UserMother;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
-import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.domain.Page;
@@ -38,19 +38,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -69,6 +65,9 @@ public class UserProfileServiceIntTest {
     @Mock
     private MetadataService metadataService;
 
+    @MockBean
+    private ServiceNetAuthClient authClient;
+
     @Autowired
     @InjectMocks
     private HibernatePostUpdateListener hibernatePostUpdateListener;
@@ -85,6 +84,7 @@ public class UserProfileServiceIntTest {
     private UserProfileRepository userProfileRepository;
 
     @Autowired
+    @InjectMocks
     private UserService userService;
 
     @Autowired
@@ -101,13 +101,20 @@ public class UserProfileServiceIntTest {
 
     private UserProfile userProfile;
 
+    private UserDTO user;
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
         userProfile = new UserProfile();
         userProfile.setLogin("johndoe");
+        user = new UserDTO();
+        user.setLogin("system");
 
         when(dateTimeProvider.getNow()).thenReturn(Optional.of(LocalDateTime.now()));
+        when(authClient.updateUser(any())).thenReturn(user);
+        when(authClient.createUser(any())).thenReturn(user);
+        when(authClient.getUser(any())).thenReturn(user);
         auditingHandler.setDateTimeProvider(dateTimeProvider);
     }
 
@@ -119,7 +126,7 @@ public class UserProfileServiceIntTest {
             userProfileRepository.saveAndFlush(userProfile);
         }
         final PageRequest pageable = PageRequest.of(0, (int) userProfileRepository.count());
-        final Page<UserDTO> allManagedUsers = userService.getAllManagedUsers(pageable);
+        final Page<UserProfile> allManagedUsers = userService.getAllManagedUserProfiles(pageable);
         assertThat(allManagedUsers.getContent().stream()
             .noneMatch(user -> Constants.ANONYMOUS_USER.equals(user.getLogin())))
             .isTrue();
@@ -132,7 +139,7 @@ public class UserProfileServiceIntTest {
         em.persist(userProfile);
         em.flush();
 
-        Optional<UserProfile> fetchedOpt = userService.getUser(userProfile.getId());
+        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile.getId());
 
         assertTrue(fetchedOpt.isPresent());
         UserProfile fetched = fetchedOpt.get();
@@ -146,7 +153,7 @@ public class UserProfileServiceIntTest {
         em.persist(userProfile);
         em.flush();
 
-        Optional<UserProfile> fetchedOpt = userService.getUser(userProfile.getId());
+        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile.getId());
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
 
@@ -161,14 +168,14 @@ public class UserProfileServiceIntTest {
         em.persist(userProfile);
         em.flush();
 
-        Optional<UserProfile> fetchedOpt = userService.getUser(userProfile.getId());
+        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile.getId());
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
         SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
         userDTO.setSystemAccountName(account.getName());
         userDTO.setSystemAccountId(account.getId());
 
-        Optional<UserDTO> updated = userService.updateUser(userDTO);
+        Optional<UserDTO> updated = Optional.ofNullable(userService.updateUser(userDTO));
 
         assertTrue(updated.isPresent());
         assertNotNull(updated.get().getSystemAccountName());
@@ -179,7 +186,7 @@ public class UserProfileServiceIntTest {
     @Test
     @Transactional
     public void shouldUpdateUserFetchedByCurrentWithSystemAccount() {
-        Optional<UserProfile> fetchedOpt = userService.getCurrentUserOptional();
+        Optional<UserProfile> fetchedOpt = userService.getCurrentUserProfileOptional();
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
         SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
@@ -187,7 +194,7 @@ public class UserProfileServiceIntTest {
         userDTO.setSystemAccountId(account.getId());
         userService.updateUser(userDTO);
 
-        Optional<UserProfile> resultOpt = userService.getCurrentUserOptional();
+        Optional<UserProfile> resultOpt = userService.getCurrentUserProfileOptional();
 
         assertTrue(resultOpt.isPresent());
         assertEquals(resultOpt.get().getSystemAccount().getName(), account.getName());
@@ -202,7 +209,7 @@ public class UserProfileServiceIntTest {
         assertNotEquals(TestConstants.SYSTEM, documentUpload.getUploader().getLogin());
         int usersNumber = userProfileRepository.findAll().size();
 
-        userProfileRepository.deleteById(documentUpload.getUploader().getId());
+        userService.deleteUser(documentUpload.getUploader().getLogin());
 
         Optional<DocumentUpload> result = documentUploadRepository.findById(documentUpload.getId());
         assertThat(result).isPresent();
@@ -220,11 +227,11 @@ public class UserProfileServiceIntTest {
     @Test
     @Transactional
     public void shouldAssignAllUsersMetadataToSystemUserBeforeRemoval() {
-        Metadata metadata= MetadataMother.createDefaultAndPersist(em);
+        Metadata metadata = MetadataMother.createDefaultAndPersist(em);
         assertNotEquals(TestConstants.SYSTEM, metadata.getUserProfile().getLogin());
         int usersNumber = userProfileRepository.findAll().size();
 
-        userProfileRepository.deleteById(metadata.getUserProfile().getId());
+        userService.deleteUser(metadata.getUserProfile().getLogin());
 
         Optional<Metadata> result = metadataRepository.findById(metadata.getId());
         assertThat(result).isPresent();

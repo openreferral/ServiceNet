@@ -138,7 +138,7 @@ public class ActivityFilterResourceIntTest {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static ActivityFilter createEntity(EntityManager em) {
+    public ActivityFilter createEntity(EntityManager em) {
         ActivityFilter activityFilter = new ActivityFilter()
             .name(DEFAULT_NAME)
             .citiesFilterList(DEFAULT_CITIES_FILTER_LIST)
@@ -152,6 +152,7 @@ public class ActivityFilterResourceIntTest {
             .toDate(DEFAULT_TO_DATE)
             .hiddenFilter(DEFAULT_HIDDEN_FILTER)
             .showOnlyHighlyMatched(DEFAULT_SHOW_HIGHLY_MATCHED_FILTER);
+        activityFilter.setUserProfile(userService.getCurrentUserProfile());
         return activityFilter;
     }
     /**
@@ -180,7 +181,6 @@ public class ActivityFilterResourceIntTest {
     @Before
     public void initTest() {
         activityFilter = createEntity(em);
-        activityFilter.user(userService.getCurrentUser());
     }
 
     @Test

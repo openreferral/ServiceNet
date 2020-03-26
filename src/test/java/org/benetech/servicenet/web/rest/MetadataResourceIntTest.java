@@ -118,7 +118,8 @@ public class MetadataResourceIntTest {
             .replacementValue(DEFAULT_REPLACEMENT_VALUE)
             .resourceClass(DEFAULT_RESOURCE_CLASS);
         // Add required entity
-        UserProfile userProfile = UserProfileResourceIT.createEntity(em);
+        UserProfile userProfile = new UserProfile();
+        userProfile.setLogin(UUID.randomUUID().toString());
         em.persist(userProfile);
         em.flush();
         metadata.setUserProfile(userProfile);
