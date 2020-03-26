@@ -128,9 +128,6 @@ jhipster:
   metrics:
     logs: # Reports metrics in the logs
       enabled: true
-      host: localhost
-      port: 5000
-      queue-size: 512
 
 similarity-ratio:
     weight:

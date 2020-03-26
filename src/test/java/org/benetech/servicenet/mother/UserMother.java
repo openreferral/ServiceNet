@@ -32,6 +32,13 @@ public class UserMother {
             .build();
     }
 
+    public static UserProfile createWithLogin(String login) {
+        return UserProfile.builder()
+            .login(login)
+            .systemAccount(SystemAccountMother.createDefault())
+            .build();
+    }
+
     public static UserProfile createDefaultAndPersist(EntityManager em) {
         SystemAccount account = SystemAccountMother.createDefaultAndPersist(em);
         UserProfile userProfile = createDefault();
@@ -44,6 +51,15 @@ public class UserMother {
     public static UserProfile createDifferentAndPersist(EntityManager em) {
         SystemAccount account = SystemAccountMother.createDefaultAndPersist(em);
         UserProfile userProfile = createDifferent();
+        userProfile.setSystemAccount(account);
+        em.persist(userProfile);
+        em.flush();
+        return userProfile;
+    }
+
+    public static UserProfile createWithLoginAndPersist(EntityManager em, String login) {
+        SystemAccount account = SystemAccountMother.createDefaultAndPersist(em);
+        UserProfile userProfile = createWithLogin(login);
         userProfile.setSystemAccount(account);
         em.persist(userProfile);
         em.flush();

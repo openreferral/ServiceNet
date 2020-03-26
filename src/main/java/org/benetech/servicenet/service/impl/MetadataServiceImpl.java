@@ -57,7 +57,7 @@ public class MetadataServiceImpl implements MetadataService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<Metadata> saveForCurrentOrSystemUser(List<Metadata> metadata) {
-        UserProfile userProfile = userService.getCurrentOrSystemUser();
+        UserProfile userProfile = userService.getCurrentOrSystemUserProfile();
         for (Metadata entry : metadata) {
             entry.setUserProfile(userProfile);
             entry.setLastActionDate(ZonedDateTime.now(ZoneId.systemDefault()));

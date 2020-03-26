@@ -135,7 +135,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     @Override
     public DocumentUpload saveForCurrentUser(DocumentUpload documentUpload) {
-        Optional<UserProfile> currentUser = userService.getCurrentUserOptional();
+        Optional<UserProfile> currentUser = userService.getCurrentUserProfileOptional();
         if (currentUser.isPresent()) {
             documentUpload.setDateUploaded(ZonedDateTime.now(ZoneId.systemDefault()));
             documentUpload.setUploader(currentUser.get());
@@ -147,7 +147,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     @Override
     public DocumentUpload saveForSystemUser(DocumentUpload documentUpload) {
-        Optional<UserProfile> currentUser = userService.getSystemUser();
+        Optional<UserProfile> currentUser = userService.getSystemUserProfile();
         if (currentUser.isPresent()) {
             documentUpload.setDateUploaded(ZonedDateTime.now(ZoneId.systemDefault()));
             documentUpload.setUploader(currentUser.get());
@@ -215,7 +215,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             return currentProviderName;
         }
 
-        Optional<UserProfile> user = userService.getCurrentUserOptional();
+        Optional<UserProfile> user = userService.getCurrentUserProfileOptional();
         if (user.isPresent()) {
             if (user.get().getSystemAccount() != null) {
                 return user.get().getSystemAccount().getName();

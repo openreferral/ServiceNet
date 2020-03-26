@@ -1,7 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet author="jkondrat" id="1585137373634-1">
-        <sql>
+        <sql dbms="postgresql">
             INSERT INTO auth.jhi_user (id, login, password_hash, first_name, last_name, email, image_url, activated,
             lang_key, activation_key, reset_key, reset_date, created_by, created_date, last_modified_by, last_modified_date)
             SELECT id, login, password_hash, first_name, last_name, email, image_url, activated,
@@ -33,22 +33,34 @@
             SELECT user_id, authority_name
             FROM jhi_user_authority
             ON CONFLICT DO NOTHING;
-
+        </sql>
+    </changeSet>
+    <changeSet author="jkondrat" id="1585137373634-2">
+        <sql>
             ALTER TABLE jhi_user RENAME TO user_profile;
 
             ALTER TABLE user_profile ADD COLUMN user_id UUID;
             UPDATE user_profile SET user_id = id;
 
             ALTER TABLE user_profile
-            DROP COLUMN password_hash,
-            DROP COLUMN first_name,
-            DROP COLUMN last_name,
-            DROP COLUMN email,
-            DROP COLUMN image_url,
-            DROP COLUMN activated,
-            DROP COLUMN lang_key,
-            DROP COLUMN activation_key,
-            DROP COLUMN reset_key,
+            DROP COLUMN password_hash;
+            ALTER TABLE user_profile
+            DROP COLUMN first_name;
+            ALTER TABLE user_profile
+            DROP COLUMN last_name;
+            ALTER TABLE user_profile
+            DROP COLUMN email;
+            ALTER TABLE user_profile
+            DROP COLUMN image_url;
+            ALTER TABLE user_profile
+            DROP COLUMN activated;
+            ALTER TABLE user_profile
+            DROP COLUMN lang_key;
+            ALTER TABLE user_profile
+            DROP COLUMN activation_key;
+            ALTER TABLE user_profile
+            DROP COLUMN reset_key;
+            ALTER TABLE user_profile
             DROP COLUMN reset_date;
 
             ALTER TABLE activity_filter

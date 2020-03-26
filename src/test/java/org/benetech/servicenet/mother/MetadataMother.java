@@ -88,7 +88,7 @@ public final class MetadataMother {
 
     public static Metadata createAllFieldsAndPersist(EntityManager em) {
         Metadata metadata = createAllFields();
-        metadata.setUserProfile(UserMother.createDifferentAndPersist(em));
+        metadata.setUserProfile(UserMother.createWithLoginAndPersist(em, "allfields"));
         em.persist(metadata);
         em.flush();
         return metadata;

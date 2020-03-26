@@ -97,7 +97,7 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     @Override
     public ActivityFilterDTO saveForCurrentUser(ActivityFilterDTO activityFilterDTO) {
-        UserProfile currentUserProfile = userService.getCurrentUser();
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
         activityFilterDTO.setUserId(currentUserProfile.getId());
 
         return save(activityFilterDTO);
@@ -160,12 +160,12 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     @Override
     @Transactional(readOnly = true)
     public ActivityFilterDTO getCurrentUserActivityFilter() {
-        return activityFilterMapper.toDto(userService.getCurrentUser().getFilter());
+        return activityFilterMapper.toDto(userService.getCurrentUserProfile().getFilter());
     }
 
     @Override
     public void saveCurrentUserActivityFilter(ActivityFilterDTO activityFilterDTO) {
-        UserProfile currentUserProfile = userService.getCurrentUser();
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
         ActivityFilter activityFilter = activityFilterMapper.toEntity(activityFilterDTO);
         activityFilter.setId(null);
         activityFilter.setUserProfile(null);
@@ -177,6 +177,6 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
         activityFilterRepository.save(activityFilter);
 
         currentUserProfile.setFilter(activityFilter);
-        userService.save(currentUserProfile);
+        userService.saveProfile(currentUserProfile);
     }
 }

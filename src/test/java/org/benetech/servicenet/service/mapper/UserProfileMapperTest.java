@@ -1,37 +1,51 @@
 package org.benetech.servicenet.service.mapper;
 
 import java.util.UUID;
+import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.UserProfile;
-import org.benetech.servicenet.repository.UserProfileRepository;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link UserMapper}.
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ServiceNetApp.class)
 public class UserProfileMapperTest {
 
     private static final String DEFAULT_LOGIN = "johndoe";
     private static final UUID DEFAULT_ID = UUID.randomUUID();
 
-    private UserMapper userMapper;
-    private SystemAccountMapper systemAccountMapper;
-    private UserProfile userProfile;
     @Mock
-    private UserProfileRepository userProfileRepository;
+    private UserService userService;
+
+    @Autowired
+    SystemAccountMapper systemAccountMapper;
+
+    @Autowired
+    @InjectMocks
+    private UserMapper userMapper;
+
+    private UserProfile userProfile;
     private UserDTO userDto;
 
-    @BeforeEach
+    @Before
+    @Transactional
     public void init() {
-        systemAccountMapper = new SystemAccountMapperImpl();
-        userMapper = new UserMapper(systemAccountMapper, null, userProfileRepository);
         userProfile = new UserProfile();
         userProfile.setLogin(DEFAULT_LOGIN);
 
@@ -39,6 +53,7 @@ public class UserProfileMapperTest {
     }
 
     @Test
+    @Transactional
     public void usersToUserDTOsShouldMapOnlyNonNullUsers() {
         List<UserProfile> userProfiles = new ArrayList<>();
         userProfiles.add(userProfile);
@@ -51,6 +66,7 @@ public class UserProfileMapperTest {
     }
 
     @Test
+    @Transactional
     public void userDTOsToUsersShouldMapOnlyNonNullUsers() {
         List<UserDTO> usersDto = new ArrayList<>();
         usersDto.add(userDto);
@@ -63,11 +79,13 @@ public class UserProfileMapperTest {
     }
 
     @Test
+    @Transactional
     public void userDTOToUserMapWithNullUserShouldReturnNull() {
         assertThat(userMapper.userDTOToUser(null)).isNull();
     }
 
     @Test
+    @Transactional
     public void testUserFromId() {
         assertThat(userMapper.userFromId(DEFAULT_ID).getId()).isEqualTo(DEFAULT_ID);
         assertThat(userMapper.userFromId(null)).isNull();

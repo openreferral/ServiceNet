@@ -108,7 +108,7 @@ public class ActivityServiceImplTest {
         em.persist(conflict);
         em.flush();
 
-        userProfile = userService.getCurrentUserOptional()
+        userProfile = userService.getCurrentUserProfileOptional()
             .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
         userProfile.setSystemAccount(systemAccount);
         em.persist(userProfile);

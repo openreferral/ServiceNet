@@ -34,7 +34,6 @@ import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.ServiceMetadata;
 import org.benetech.servicenet.manager.ImportManager;
 import org.benetech.servicenet.repository.ServiceMetadataRepository;
