@@ -124,7 +124,7 @@ enum ContactDetailsFields {
 }
 
 relationship ManyToOne {
-    FieldsDisplaySettings{user} to User,
+    FieldsDisplaySettings{userProfile} to UserProfile,
 }
 
 service FieldsDisplaySettings with serviceImpl

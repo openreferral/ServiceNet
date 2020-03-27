@@ -1,10 +1,11 @@
 package org.benetech.servicenet.web.rest;
 
+import java.util.UUID;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.DocumentUpload;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.DocumentUploadService;
@@ -104,10 +105,11 @@ public class DocumentUploadResourceIntTest {
             .originalDocumentId(DEFAULT_ORIGINAL_DOCUMENT_ID)
             .parsedDocumentId(DEFAULT_PARSED_DOCUMENT_ID);
         // Add required entity
-        User user = UserResourceIntTest.createEntity(em);
-        em.persist(user);
+        UserProfile userProfile = new UserProfile();
+        userProfile.setLogin(UUID.randomUUID().toString());
+        em.persist(userProfile);
         em.flush();
-        documentUpload.setUploader(user);
+        documentUpload.setUploader(userProfile);
         return documentUpload;
     }
 

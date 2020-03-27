@@ -1,7 +1,7 @@
 package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.DocumentUpload;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
@@ -38,18 +38,18 @@ public final class DocumentUploadMother {
     }
 
     public static DocumentUpload createDefaultAndPersist(EntityManager em) {
-        User user = UserMother.createDefaultAndPersist(em);
+        UserProfile userProfile = UserMother.createDefaultAndPersist(em);
         DocumentUpload documentUpload = createDefault();
-        documentUpload.setUploader(user);
+        documentUpload.setUploader(userProfile);
         em.persist(documentUpload);
         em.flush();
         return documentUpload;
     }
 
     public static DocumentUpload createDifferentAndPersist(EntityManager em) {
-        User user = UserMother.createDifferentAndPersist(em);
+        UserProfile userProfile = UserMother.createDifferentAndPersist(em);
         DocumentUpload documentUpload = createDifferent();
-        documentUpload.setUploader(user);
+        documentUpload.setUploader(userProfile);
         em.persist(documentUpload);
         em.flush();
         return documentUpload;

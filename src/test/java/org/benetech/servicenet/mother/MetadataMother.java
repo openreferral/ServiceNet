@@ -72,7 +72,7 @@ public final class MetadataMother {
 
     public static Metadata createDefaultAndPersist(EntityManager em) {
         Metadata metadata = createDefault();
-        metadata.setUser(UserMother.createDefaultAndPersist(em));
+        metadata.setUserProfile(UserMother.createDefaultAndPersist(em));
         em.persist(metadata);
         em.flush();
         return metadata;
@@ -80,7 +80,7 @@ public final class MetadataMother {
 
     public static Metadata createDifferentAndPersist(EntityManager em) {
         Metadata metadata = createDifferent();
-        metadata.setUser(UserMother.createDifferentAndPersist(em));
+        metadata.setUserProfile(UserMother.createDifferentAndPersist(em));
         em.persist(metadata);
         em.flush();
         return metadata;
@@ -88,12 +88,12 @@ public final class MetadataMother {
 
     public static Metadata createAllFieldsAndPersist(EntityManager em) {
         Metadata metadata = createAllFields();
-        metadata.setUser(UserMother.createDifferentAndPersist(em));
+        metadata.setUserProfile(UserMother.createWithLoginAndPersist(em, "allfields"));
         em.persist(metadata);
         em.flush();
         return metadata;
     }
-    
+
     private MetadataMother() {
     }
 }

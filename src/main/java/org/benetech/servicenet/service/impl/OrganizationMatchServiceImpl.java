@@ -9,7 +9,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.MatchSimilarityRepository;
@@ -195,10 +195,10 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Override
     public List<OrganizationMatchDTO> findCurrentUsersHiddenOrganizationMatches() {
-        Optional<User> currentUser = userService.getUserWithAuthoritiesAndAccount();
+        Optional<UserProfile> currentUser = userService.getCurrentUserProfileOptional();
         if (currentUser.isPresent()) {
             List<OrganizationMatch> matches;
-            if (currentUser.get().isAdmin()) {
+            if (userService.isCurrentUserAdmin()) {
                 matches = organizationMatchRepository.findAllByHidden(true);
             } else {
                 matches = organizationMatchRepository.findAllByHiddenAndHiddenBy(true, currentUser.get());
@@ -293,7 +293,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             match.setDismissComment(dismissMatchDTO.getComment());
             match.setDismissDate(ZonedDateTime.now(ZoneId.systemDefault()));
 
-            userService.getUserWithAuthoritiesAndAccount().ifPresentOrElse(
+            userService.getCurrentUserProfileOptional().ifPresentOrElse(
                 match::setDismissedBy,
                 () -> { throw new IllegalStateException("No current user found"); }
             );
@@ -324,7 +324,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             match.setHidden(true);
             match.setHiddenDate(ZonedDateTime.now(ZoneId.systemDefault()));
 
-            userService.getUserWithAuthoritiesAndAccount().ifPresentOrElse(
+            userService.getCurrentUserProfileOptional().ifPresentOrElse(
                 match::setHiddenBy,
                 () -> { throw new IllegalStateException("No current user found"); }
             );
@@ -342,10 +342,10 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Override
     public void revertHideOrganizationMatch(UUID id) {
-        Optional<User> currentUser = userService.getUserWithAuthoritiesAndAccount();
+        Optional<UserProfile> currentUser = userService.getCurrentUserProfileOptional();
         if (currentUser.isPresent()) {
             organizationMatchRepository.findById(id).ifPresent(match -> {
-                if (currentUser.get().isAdmin() || match.getHiddenBy().equals(currentUser.get())) {
+                if (userService.isCurrentUserAdmin() || match.getHiddenBy().equals(currentUser.get())) {
                     match.setHidden(false);
                     match.setHiddenBy(null);
                     match.setHiddenDate(null);

@@ -2,7 +2,7 @@ package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Metadata;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.ActionType;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.MetadataService;
@@ -57,9 +57,9 @@ public class MetadataServiceImpl implements MetadataService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<Metadata> saveForCurrentOrSystemUser(List<Metadata> metadata) {
-        User user = userService.getCurrentOrSystemUser();
+        UserProfile userProfile = userService.getCurrentOrSystemUserProfile();
         for (Metadata entry : metadata) {
-            entry.setUser(user);
+            entry.setUserProfile(userProfile);
             entry.setLastActionDate(ZonedDateTime.now(ZoneId.systemDefault()));
         }
         return metadataRepository.saveAll(metadata);

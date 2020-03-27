@@ -17,15 +17,15 @@ public interface FieldsDisplaySettingsRepository extends
     JpaRepository<FieldsDisplaySettings, UUID> {
 
     @Query("select fieldsDisplaySettings from FieldsDisplaySettings fieldsDisplaySettings where "
-        + "fieldsDisplaySettings.user.login = ?#{principal.username}")
+        + "fieldsDisplaySettings.userProfile.login = ?#{principal}")
     List<FieldsDisplaySettings> findByUserIsCurrentUser();
 
     @Query("select fds from FieldsDisplaySettings fds "
-        + "where user.systemAccount.id = :systemAccountId")
+        + "where userProfile.systemAccount.id = :systemAccountId")
     List<FieldsDisplaySettings> findBySystemAccount(@Param("systemAccountId") UUID systemAccountId);
 
     @Query("select fds from FieldsDisplaySettings fds "
-        + "where user.systemAccount.name = :systemAccountName and fds.name = :settingName")
+        + "where userProfile.systemAccount.name = :systemAccountName and fds.name = :settingName")
     List<FieldsDisplaySettings> findBySystemAccountAndName(
         @Param("systemAccountName") String systemAccountName,
         @Param("settingName") String settingName

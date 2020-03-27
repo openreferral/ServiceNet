@@ -3,7 +3,7 @@ entity SystemAccount {
 }
 
 entity DocumentUpload {
-    // uploader user reference
+    // uploader userProfile reference
     dateUploaded ZonedDateTime required,
     documentId String unique required
 }
@@ -160,7 +160,7 @@ entity Metadata {
     fieldName String required,
     previousValue TextBlob,
     replacementValue TextBlob
-    // user reference
+    // userProfile reference
 }
 
 enum ActionType {
@@ -192,9 +192,9 @@ relationship ManyToOne {
     Contact{serviceAtLocation} to ServiceAtLocation,
 
     ServiceArea{srvc(name)} to Service{areas},
-    
+
     RequiredDocument{srvc(name)} to Service{docs(document)},
-    
+
     PaymentAccepted{srvc(name)} to Service{paymentsAccepted},
 
     Language{srvc(name)} to Service{langs(language)},
@@ -211,7 +211,7 @@ relationship ManyToOne {
 relationship OneToOne {
     Organization{location(name)} to Location,
     Organization{replacedBy} to Organization,
-    
+
     ServiceAtLocation{srvc(name)} to Service{location(name)},
 
     PhysicalAddress{location(name)} to Location{physicalAddress(address1)},

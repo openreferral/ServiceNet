@@ -4,7 +4,7 @@ import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.Metadata;
-import org.benetech.servicenet.domain.User;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.ActionType;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.MetadataService;
@@ -118,10 +118,11 @@ public class MetadataResourceIntTest {
             .replacementValue(DEFAULT_REPLACEMENT_VALUE)
             .resourceClass(DEFAULT_RESOURCE_CLASS);
         // Add required entity
-        User user = UserResourceIntTest.createEntity(em);
-        em.persist(user);
+        UserProfile userProfile = new UserProfile();
+        userProfile.setLogin(UUID.randomUUID().toString());
+        em.persist(userProfile);
         em.flush();
-        metadata.setUser(user);
+        metadata.setUserProfile(userProfile);
         return metadata;
     }
 

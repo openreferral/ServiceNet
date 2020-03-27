@@ -1,5 +1,7 @@
 package org.benetech.servicenet.security;
 
+import java.util.Map;
+import java.util.UUID;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -8,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
 /**
  * Utility class for Spring Security.
@@ -27,6 +30,23 @@ public final class SecurityUtils {
         return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
     }
 
+    /**
+     * Get the id of the current user.
+     *
+     * @return the id of the current user.
+     */
+    public static UUID getCurrentUserId() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Object details = securityContext.getAuthentication().getDetails();
+        if (details instanceof OAuth2AuthenticationDetails) {
+            Object decodedDetails = ((OAuth2AuthenticationDetails) details).getDecodedDetails();
+            if (decodedDetails instanceof Map) {
+                return UUID.fromString(((Map) decodedDetails).get("user_id").toString());
+            }
+        }
+        return null;
+    }
+
     private static String extractPrincipal(Authentication authentication) {
         if (authentication == null) {
             return null;
@@ -39,18 +59,6 @@ public final class SecurityUtils {
         return null;
     }
 
-
-    /**
-     * Get the JWT of the current user.
-     *
-     * @return the JWT of the current user.
-     */
-    public static Optional<String> getCurrentUserJWT() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        return Optional.ofNullable(securityContext.getAuthentication())
-            .filter(authentication -> authentication.getCredentials() instanceof String)
-            .map(authentication -> (String) authentication.getCredentials());
-    }
 
     /**
      * Check if a user is authenticated.
