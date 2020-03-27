@@ -30,10 +30,10 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.domain.enumeration.SearchField;
 import org.benetech.servicenet.domain.enumeration.SearchOn;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
-import org.benetech.servicenet.domain.enumeration.SearchField;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -358,7 +358,9 @@ public class ActivityRepository {
         Join<Organization, Service> serviceJoin = orgJoin.join(SERVICES, JoinType.LEFT);
         Join<ActivityInfo, OrganizationMatch> matchJoin = root.join(ORGANIZATION_MATCHES, JoinType.LEFT);
 
-        predicate = cb.and(predicate, cb.equal(matchJoin.get(HIDDEN), activityFilterDTO.isHiddenFilter()));
+        predicate = cb.and(predicate, cb.or(matchJoin.isNull(),
+            cb.equal(matchJoin.get(HIDDEN), activityFilterDTO.isHiddenFilter()))
+        );
 
         predicate = addPartnerFilters(predicate, activityFilterDTO, ownerId, isCurrentAccount, matchJoin, orgJoin);
 
@@ -390,6 +392,10 @@ public class ActivityRepository {
         Sort.Order order = sort.getOrderFor(field);
 
         if (order != null) {
+            if (SIMILARITY.equals(field)) {
+                orderList.add(cb.desc(cb.selectCase()
+                    .when(cb.equal(cb.size(root.get(ORGANIZATION_MATCHES)), 0), 0).otherwise(1)));
+            }
             if (order.isAscending()) {
                 orderList.add(cb.asc(root.get(field)));
             } else {
