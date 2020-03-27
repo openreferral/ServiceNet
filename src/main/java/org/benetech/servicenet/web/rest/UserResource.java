@@ -82,7 +82,7 @@ public class UserResource {
         } else {
             UserDTO newUser = userService.createUser(userDTO);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
-                .headers(HeaderUtil.createAlert(applicationName,  "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
+                .headers(HeaderUtil.createAlert(applicationName,  "userManagement.created", newUser.getLogin()))
                 .body(newUser);
         }
     }
@@ -100,7 +100,7 @@ public class UserResource {
         UserDTO updatedUser = userService.updateUser(userDTO);
 
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createAlert(applicationName, "A user is updated with identifier " + userDTO.getLogin(), userDTO.getLogin()))
+            .headers(HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin()))
             .body(updatedUser);
     }
 
@@ -149,6 +149,6 @@ public class UserResource {
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);
-        return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "A user is deleted with identifier " + login, login)).build();
+        return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "userManagement.deleted", login)).build();
     }
 }
