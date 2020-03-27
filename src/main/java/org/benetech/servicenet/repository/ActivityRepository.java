@@ -392,6 +392,10 @@ public class ActivityRepository {
         Sort.Order order = sort.getOrderFor(field);
 
         if (order != null) {
+            if (SIMILARITY.equals(field)) {
+                orderList.add(cb.desc(cb.selectCase()
+                    .when(cb.equal(cb.size(root.get(ORGANIZATION_MATCHES)), 0), 0).otherwise(1)));
+            }
             if (order.isAscending()) {
                 orderList.add(cb.asc(root.get(field)));
             } else {
