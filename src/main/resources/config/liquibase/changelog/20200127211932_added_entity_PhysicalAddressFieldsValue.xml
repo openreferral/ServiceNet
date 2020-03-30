@@ -29,6 +29,7 @@
             file="config/liquibase/initial-data/physical_address_fields_value.csv"
             separator=";"
             tableName="physical_address_fields_value">
+            <column name="id" type="uuid"/>
             <column name="physical_address_field" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>

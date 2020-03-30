@@ -30,6 +30,7 @@
             separator=";"
             tableName="postal_address_fields_value">
             <column name="postal_address_field" type="string"/>
+            <column name="id" type="uuid"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
     </changeSet>
