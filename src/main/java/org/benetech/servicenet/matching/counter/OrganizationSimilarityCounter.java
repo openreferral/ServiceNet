@@ -64,10 +64,15 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
         similarityDtos.add(getEmailSimilarity(org1, org2, context));
         similarityDtos.add(getUrlSimilarity(org1, org2, context));
         similarityDtos.add(getYearIncorporatedSimilarity(org1, org2, context));
-        BigDecimal currentResult = similarityDtos.stream()
+
+        BigDecimal totalWeight = getTotalWeight(similarityDtos);
+        BigDecimal currentResult = (totalWeight.compareTo(BigDecimal.ZERO) > 0) ?
+            similarityDtos.stream()
             .map(MatchSimilarityDTO::getSimilarity)
             .reduce(BigDecimal.ZERO, BigDecimal::add)
-            .divide(getTotalWeight(similarityDtos), 2, RoundingMode.FLOOR);
+            .divide(totalWeight, 2, RoundingMode.FLOOR)
+            : BigDecimal.ZERO;
+
         if (BooleanUtils.isTrue(alwaysCompareLocations) || currentResult.compareTo(BigDecimal.ZERO) > 0) {
             if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
                 similarityDtos.add(getLocationSimilarity(org1, org2, context));
