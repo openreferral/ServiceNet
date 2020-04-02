@@ -144,9 +144,23 @@ jhipster:
   audit-events:
     retention-period: 30 # Number of days before audit events are deleted.
   security:
-    remember-me:
-      # security key (this key should be unique for your application, and kept secret)
-      key: 472eef473bf94448dac3886fe398d2b92b19098daa3062aaf0b72dc707fe6b60f0ed20a6f42a38cd3480801c10cf7d299159
+    client-authorization:
+      access-token-uri: http://servicenetauth/oauth/token
+      token-service-id: servicenetauth
+      client-id: internal
+      client-secret: changeme
+
+oauth2:
+  signature-verification:
+    public-key-endpoint-uri: http://servicenetauth/oauth/token_key
+    #ttl for public keys to verify JWT tokens (in ms)
+    ttl: 3600000
+    #max. rate at which public keys will be fetched (in ms)
+    public-key-refresh-rate-limit: 10000
+  web-client-configuration:
+    #change client secret in production, keep in sync with UAA configuration
+    client-id: web_app
+    secret: changeme
 
 # ===================================================================
 # Application specific properties
