@@ -34,7 +34,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
     private static final String PROGRAM_NAME = "programName";
     private static final String ALTERNATE_NAME = "alternateName";
     private static final String DEFINED_COVERAGE_AREAS = "definedCoverageAreas";
-    private static final String USERS = "users";
+    private static final String USER_PROFILES = "userProfiles";
     private static final String TAGS = "tags";
     private static final String VALUE = "value";
     private static final String ID = "id";
@@ -132,7 +132,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
             }
         }
         if (filters.getUserId() != null) {
-            Join<Shelter, Option> join = root.join(USERS, JoinType.LEFT);
+            Join<Shelter, Option> join = root.join(USER_PROFILES, JoinType.LEFT);
             predicates.add(cb.equal(join.get(ID), UUID.fromString(filters.getUserId())));
         }
         if (applyPositionFiltering(filters)) {
