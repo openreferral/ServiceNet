@@ -49,11 +49,11 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
 
     @Override
     @ConfidentialFilter
-    public void createOrUpdateGeocodinResults(List<GeocodingResult> geocodingResult, Location location, DataImportReport report) {
-        if (geocodingResult == null) {
+    public void createOrUpdateGeocodingResults(List<GeocodingResult> geocodingResults, Location location, DataImportReport report) {
+        if (geocodingResults == null) {
             return;
         }
-        Set<GeocodingResult> filtered = geocodingResult.stream()
+        Set<GeocodingResult> filtered = geocodingResults.stream()
             .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()) && isValid(x, report, location.getExternalDbId()))
             .collect(Collectors.toSet());
 

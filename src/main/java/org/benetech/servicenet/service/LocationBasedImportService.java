@@ -32,5 +32,5 @@ public interface LocationBasedImportService {
 
     void createOrUpdatePhonesForLocation(Set<Phone> phones, Location location, DataImportReport report);
 
-    void createOrUpdateGeocodinResults(List<GeocodingResult> geocodingResults, Location location, DataImportReport report);
+    void createOrUpdateGeocodingResults(List<GeocodingResult> geocodingResults, Location location, DataImportReport report);
 }
