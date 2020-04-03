@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.List;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
@@ -11,16 +12,20 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
+import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.repository.RegularScheduleRepository;
+import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.LocationBasedImportService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
+import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.persistence.EntityManager;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,6 +43,32 @@ public class LocationBasedImportServiceImpl implements LocationBasedImportServic
 
     @Autowired
     private SharedImportService sharedImportService;
+
+    @Autowired
+    private GeocodingResultService geocodingResultService;
+
+    @Override
+    @ConfidentialFilter
+    public void createOrUpdateGeocodingResults(List<GeocodingResult> geocodingResults, Location location, DataImportReport report) {
+        if (geocodingResults == null) {
+            return;
+        }
+        Set<GeocodingResult> filtered = geocodingResults.stream()
+            .filter(x -> BooleanUtils.isNotTrue(x.getIsConfidential()) && isValid(x, report, location.getExternalDbId()))
+            .collect(Collectors.toSet());
+
+        filtered.forEach(geo -> {
+            Optional<GeocodingResultDTO> geocodingFromDb = geocodingResultService.findOne(geo.getId());
+
+            geocodingFromDb.ifPresentOrElse(
+                geocodingResultDTO -> {
+                    geo.setId(geocodingResultDTO.getId());
+                    em.merge(geo);
+                },
+                () -> em.persist(geo)
+            );
+        });
+    }
 
     @Override
     @ConfidentialFilter

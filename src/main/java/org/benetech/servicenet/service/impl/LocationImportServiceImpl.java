@@ -62,7 +62,8 @@ public class LocationImportServiceImpl implements LocationImportService {
         locationBasedImportService.createOrUpdatePhysicalAddress(
             filledLocation.getPhysicalAddress(), location, importData.getReport());
         // update geocoding results
-        locationService.save(location);
+        locationBasedImportService.createOrUpdateGeocodingResults(
+            filledLocation.getGeocodingResults(), location, importData.getReport());
         locationBasedImportService.createOrUpdatePostalAddress(
             filledLocation.getPostalAddress(), location, importData.getReport());
         locationBasedImportService.createOrUpdateLangsForLocation(
