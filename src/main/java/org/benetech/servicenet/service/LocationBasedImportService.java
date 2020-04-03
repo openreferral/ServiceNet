@@ -1,7 +1,9 @@
 package org.benetech.servicenet.service;
 
+import java.util.List;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
@@ -29,4 +31,6 @@ public interface LocationBasedImportService {
     void createOrUpdateLangsForLocation(Set<Language> langs, Location location, DataImportReport report);
 
     void createOrUpdatePhonesForLocation(Set<Phone> phones, Location location, DataImportReport report);
+
+    void createOrUpdateGeocodinResults(List<GeocodingResult> geocodingResults, Location location, DataImportReport report);
 }
