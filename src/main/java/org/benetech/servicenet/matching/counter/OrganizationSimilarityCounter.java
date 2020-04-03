@@ -163,9 +163,9 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
                     location1,
                     location2,
                     context,
-                    "Name",
+                    "Location",
                     "Organization",
-                    weightProvider.getNameWeight()
+                    weightProvider.getLocationWeight()
                 );
                 BigDecimal similarity = similarityDto.getSimilarity();
                 if (similarity.compareTo(max) > 0) {
