@@ -3,27 +3,20 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.errors.BadRequestAlertException;
-import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
-import org.benetech.servicenet.service.MailService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -48,15 +41,8 @@ public class UserResource {
 
     private final UserService userService;
 
-    private final UserProfileRepository userProfileRepository;
-
-    private final MailService mailService;
-
-    public UserResource(UserService userService,
-        UserProfileRepository userProfileRepository, MailService mailService) {
+    public UserResource(UserService userService) {
         this.userService = userService;
-        this.userProfileRepository = userProfileRepository;
-        this.mailService = mailService;
     }
 
     /**
@@ -150,5 +136,16 @@ public class UserResource {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "userManagement.deleted", login)).build();
+    }
+
+    /**
+     * {@code GET  /account} : get the current user.
+     *
+     * @return the current user.
+     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
+     */
+    @GetMapping("/account")
+    public UserDTO getAccount() {
+        return userService.getAccount();
     }
 }
