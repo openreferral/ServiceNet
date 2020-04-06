@@ -79,6 +79,9 @@ management:
 spring:
   application:
     name: ServiceNet
+  servlet.multipart:
+    max-request-size: 100MB
+    max-file-size: 10MB
   cloud:
     consul:
       discovery:
