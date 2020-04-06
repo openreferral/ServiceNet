@@ -114,6 +114,12 @@ public class UserService {
         return getCompleteUserDto(userDTO, getOrCreateUserProfile(userDTO.getId(), login));
     }
 
+    public UserDTO getAccount() {
+        UserProfile currentProfile = getCurrentUserProfile();
+        UserDTO userDTO = authClient.getUser(currentProfile.getLogin());
+        return getCompleteUserDto(userDTO, currentProfile);
+    }
+
     public List<String> getAuthorities() {
         return authClient.getAuthorities();
     }
