@@ -15,6 +15,8 @@ import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
+import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.LocationMatchService;
 import org.benetech.servicenet.service.ServiceMatchService;
@@ -27,6 +29,7 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import static org.mapstruct.ReportingPolicy.IGNORE;
 
@@ -48,6 +51,12 @@ public abstract class OrganizationMatchMapper {
     @Autowired
     private ServiceMatchService serviceMatchService;
 
+    @Autowired
+    private LocationSimilarityCounter locationSimilarityCounter;
+
+    @Value("${similarity-ratio.credentials.google-api}")
+    private String googleApiKey;
+
     @Mapping(source = "organizationRecord.id", target = "organizationRecordId")
     @Mapping(source = "organizationRecord.name", target = "organizationRecordName")
     @Mapping(source = "partnerVersion.id", target = "partnerVersionId")
@@ -67,12 +76,16 @@ public abstract class OrganizationMatchMapper {
         Organization partner = organizationMatch.getPartnerVersion();
         Map<UUID, List<LocationMatchDto>> locationMatches = new HashMap<>();
         Map<UUID, List<ServiceMatchDto>> serviceMatches = new HashMap<>();
+        MatchingContext matchingContext = new MatchingContext(googleApiKey);;
 
         for (Location location : organizationMatch.getOrganizationRecord().getLocations()) {
             Set<LocationMatchDto> matches = new HashSet<>();
             for (LocationMatch match : locationMatchService.findAllForLocation(location.getId())) {
                 if (partner.getLocations().contains(match.getMatchingLocation())) {
-                    matches.add(locationMatchMapper.toDto(match));
+                    LocationMatchDto locationMatchDto = locationMatchMapper.toDto(match);
+                    locationMatchDto.setSimilarity(locationSimilarityCounter.countSimilarityRatio(
+                        location, match.getMatchingLocation(), matchingContext).doubleValue());
+                    matches.add(locationMatchDto);
                 }
             }
             if (matches.size() > 0) {
