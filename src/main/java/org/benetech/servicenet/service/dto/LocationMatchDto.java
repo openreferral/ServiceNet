@@ -21,4 +21,6 @@ public class LocationMatchDto implements Serializable {
     private String organizationName;
 
     private String locationName;
+
+    private Double similarity;
 }
