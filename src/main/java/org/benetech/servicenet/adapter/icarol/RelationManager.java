@@ -64,7 +64,8 @@ class RelationManager {
 
                 importOrganization(importData, agency, locations, services);
             } catch (Exception e) {
-                log.warn("Skipping organization with name: " + mapper.extractNameIfNotConfidential(agency.getNames()), e);
+                log.warn("Skipping organization with name: " +
+                    ((agency.getNames() != null) ? mapper.extractNameIfNotConfidential(agency.getNames()) : null), e);
             }
         }
     }
