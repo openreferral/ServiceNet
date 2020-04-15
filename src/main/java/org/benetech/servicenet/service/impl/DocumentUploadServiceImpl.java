@@ -70,7 +70,8 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     @Override
     public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter, String providerName)
         throws IllegalArgumentException, IOException {
-        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now())
+            .systemAccount(providerName);
 
         String parsedDocument = FileConverterFactory.getConverter(file, delimiter).convert(file);
         String parsedDocumentId = mongoDbService.saveParsedDocument(parsedDocument);
@@ -103,7 +104,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             return true;
         }
 
-        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now()).systemAccount(providerName);
         List<String> parsedDocuments = new ArrayList<>();
         List<DocumentUpload> documentUploads = new ArrayList<>();
 
