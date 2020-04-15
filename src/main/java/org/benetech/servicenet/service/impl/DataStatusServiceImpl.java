@@ -2,9 +2,9 @@ package org.benetech.servicenet.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.SystemAccount;
-import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.repository.DataImportReportRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.DataStatusService;
 import org.benetech.servicenet.service.dto.DataStatusDto;
@@ -25,14 +25,14 @@ public class DataStatusServiceImpl implements DataStatusService {
     private SystemAccountRepository systemAccountRepository;
 
     @Autowired
-    private OrganizationRepository organizationRepository;
+    private DataImportReportRepository dataImportReportRepository;
 
     @Override
     public Page<DataStatusDto> getDataStatuses(Pageable pageable) {
         List<DataStatusDto> results = new ArrayList<>();
         Page<SystemAccount> systemAccounts = systemAccountRepository.findAll(pageable);
         for (SystemAccount systemAccount : systemAccounts) {
-            organizationRepository.findFirstByAccountIdOrderByUpdatedAtDesc(systemAccount.getId())
+            dataImportReportRepository.findFirstBySystemAccountOrderByEndDateDesc(systemAccount.getName())
                 .ifPresent(org -> results.add(this.getDataStatusSto(org, systemAccount)));
         }
         long totalAccounts = systemAccounts.getTotalElements();
@@ -44,10 +44,10 @@ public class DataStatusServiceImpl implements DataStatusService {
         );
     }
 
-    private DataStatusDto getDataStatusSto(Organization organization, SystemAccount systemAccount) {
+    private DataStatusDto getDataStatusSto(DataImportReport dataImportReport, SystemAccount systemAccount) {
         DataStatusDto dataStatusDto = new DataStatusDto();
         dataStatusDto.setProviderName(systemAccount.getName());
-        dataStatusDto.setLastUpdateDateTime(organization.getUpdatedAt().toLocalDateTime());
+        dataStatusDto.setLastUpdateDateTime(dataImportReport.getEndDate().toLocalDateTime());
         return dataStatusDto;
     }
 }

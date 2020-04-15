@@ -53,6 +53,4 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         @Param("ids") List<UUID> ids);
 
     Page<Organization> findAll(Pageable pageable);
-
-    Optional<Organization> findFirstByAccountIdOrderByUpdatedAtDesc(@Param("ownerId") UUID ownerId);
 }
