@@ -43,7 +43,9 @@ public class ShelterTechDataUpdateJob extends BaseJob {
     protected void executeInternal(JobExecutionContext context) {
         log.info(getFullName() + " is being executed");
 
-        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now()).jobName(getFullName());
+        DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now())
+            .jobName(getFullName())
+            .systemAccount(getSystemAccount());
         String response = ShelterTechCollector.getData();
 
         documentUploadService.uploadApiData(response, getSystemAccount(), report);

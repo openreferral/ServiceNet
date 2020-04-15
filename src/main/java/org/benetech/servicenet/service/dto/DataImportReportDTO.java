@@ -47,6 +47,8 @@ public class DataImportReportDTO implements Serializable {
 
     private UUID documentUploadId;
 
+    private String systemAccount;
+
     @Getter
     @Setter
     private Set<OrganizationError> organizationErrors = new HashSet<>();

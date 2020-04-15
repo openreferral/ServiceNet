@@ -1,26 +1,25 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.Objects;
 
 /**
  * A DataImportReport.
@@ -69,6 +68,9 @@ public class DataImportReport extends AbstractEntity implements Serializable {
     @JoinColumn(unique = true)
     private DocumentUpload documentUpload;
 
+    @Column(name = "system_account")
+    private String systemAccount;
+
     @Getter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataImportReport")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -114,6 +116,11 @@ public class DataImportReport extends AbstractEntity implements Serializable {
 
     public DataImportReport documentUpload(DocumentUpload documentUpload) {
         this.documentUpload = documentUpload;
+        return this;
+    }
+
+    public DataImportReport systemAccount(String systemAccount) {
+        this.systemAccount = systemAccount;
         return this;
     }
 
