@@ -8,6 +8,8 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.jwt.crypto.sign.RsaVerifier;
 import org.springframework.security.jwt.crypto.sign.SignatureVerifier;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
@@ -19,6 +21,9 @@ import java.util.Map;
 /**
  * Client fetching the public key from UAA to create a {@link SignatureVerifier}.
  */
+
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Component
 public class UaaSignatureVerifierClient implements OAuth2SignatureVerifierClient {
     private final Logger log = LoggerFactory.getLogger(UaaSignatureVerifierClient.class);
