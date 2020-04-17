@@ -28,7 +28,7 @@ public class DataStatusResource {
     @Autowired
     private DataStatusService dataStatusService;
 
-    @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.USER + "')")
     @GetMapping("/data-status")
     @Timed
     public ResponseEntity<List<DataStatusDto>> fetchDataStatus(Pageable pageable) {
