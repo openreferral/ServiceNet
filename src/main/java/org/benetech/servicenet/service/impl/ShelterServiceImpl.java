@@ -74,18 +74,22 @@ public class ShelterServiceImpl implements ShelterService {
             shelter.setBeds(bedsRepository.save(beds));
         }
 
-        Set<Phone> phones = shelter.getPhones().stream()
-            .filter(phone -> StringUtils.isNotBlank(phone.getNumber()))
-            .collect(Collectors.toSet());
-        for (Phone phone: phones) {
-            phone.setShelter(shelter);
+        if (shelter.getPhones() != null) {
+            Set<Phone> phones = shelter.getPhones().stream()
+                .filter(phone -> StringUtils.isNotBlank(phone.getNumber()))
+                .collect(Collectors.toSet());
+            for (Phone phone : phones) {
+                phone.setShelter(shelter);
+            }
+            shelter.setPhones(phones);
         }
 
-        shelter.setPhones(phones);
-        List<String> emails = shelter.getEmails().stream()
-            .filter(StringUtils::isNotBlank)
-            .collect(Collectors.toList());
-        shelter.setEmails(emails);
+        if (shelter.getEmails() != null) {
+            List<String> emails = shelter.getEmails().stream()
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+            shelter.setEmails(emails);
+        }
 
         if (shelter.getId() != null) {
             shelter.setUserProfiles(shelterRepository.findById(shelter.getId()).orElse(shelter).getUserProfiles());
