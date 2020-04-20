@@ -42,4 +42,9 @@ public class EmailSimilarityCounterIntTest {
     public void shouldReturnMaxRatioForSameLocalPart() {
         assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.com", null).compareTo(BigDecimal.valueOf(1)));
     }
+
+    @Test
+    public void shouldReturnMaxRatioForSameLocalPartWithoutDomain() {
+        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one", "one", null).compareTo(BigDecimal.valueOf(1)));
+    }
 }
