@@ -82,6 +82,8 @@ public interface OrganizationService {
 
     Organization findOneWithEagerAssociations(UUID id);
 
+    Optional<Organization> findByIdOrExternalDbId(String id);
+
     /**
      * Delete the "id" organization.
      *

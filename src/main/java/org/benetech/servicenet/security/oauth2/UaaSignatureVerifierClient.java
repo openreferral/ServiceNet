@@ -21,7 +21,6 @@ import java.util.Map;
 /**
  * Client fetching the public key from UAA to create a {@link SignatureVerifier}.
  */
-
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Component

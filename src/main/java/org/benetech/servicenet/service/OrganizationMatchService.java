@@ -37,6 +37,8 @@ public interface OrganizationMatchService {
 
     List<OrganizationMatchDTO> findAllForOrganization(UUID orgId);
 
+    List<OrganizationMatch> findAllMatchesForOrganization(UUID orgId);
+
     List<OrganizationMatchDTO> findAllDismissedForOrganization(UUID orgId);
 
     List<OrganizationMatchDTO> findAllNotDismissedForOrganization(UUID orgId);

@@ -166,6 +166,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     }
 
     @Override
+    public List<OrganizationMatch> findAllMatchesForOrganization(UUID orgId) {
+        return new LinkedList<>(organizationMatchRepository.findAllByOrganizationRecordId(orgId));
+    }
+
+    @Override
     public List<OrganizationMatchDTO> findAllDismissedForOrganization(UUID orgId) {
         return organizationMatchRepository.findAllByOrganizationRecordIdAndDismissed(orgId, true).stream()
             .map(organizationMatchMapper::toDto)
