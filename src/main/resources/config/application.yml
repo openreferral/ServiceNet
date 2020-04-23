@@ -147,8 +147,6 @@ spring:
     properties.org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
     # Enable HikariCP DB conn Pool
     properties.org.quartz.dataSource.quartzDataSource.provider: hikaricp
-
-security:
   sendgrid:
     api-key: ${SENDGRID_API_KEY:default_key}
 
