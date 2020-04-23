@@ -1,5 +1,6 @@
 package org.benetech.servicenet.config;
 
+import com.hazelcast.config.MaxSizeConfig.MaxSizePolicy;
 import io.github.jhipster.config.JHipsterConstants;
 import io.github.jhipster.config.JHipsterProperties;
 
@@ -142,7 +143,7 @@ public class CacheConfiguration {
         Any integer between 0 and Integer.MAX_VALUE. 0 means
         Integer.MAX_VALUE. Default is 0.
         */
-        mapConfig.setMaxSizeConfig(new MaxSizeConfig(0, MaxSizeConfig.MaxSizePolicy.USED_HEAP_SIZE));
+        mapConfig.setMaxSizeConfig(new MaxSizeConfig(64, MaxSizePolicy.FREE_HEAP_SIZE));
 
         return mapConfig;
     }
@@ -150,6 +151,8 @@ public class CacheConfiguration {
     private MapConfig initializeDomainMapConfig(JHipsterProperties jHipsterProperties) {
         MapConfig mapConfig = new MapConfig();
         mapConfig.setTimeToLiveSeconds(jHipsterProperties.getCache().getHazelcast().getTimeToLiveSeconds());
+        mapConfig.setEvictionPolicy(EvictionPolicy.LRU);
+        mapConfig.setMaxSizeConfig(new MaxSizeConfig(64, MaxSizePolicy.FREE_HEAP_SIZE));
         return mapConfig;
     }
 
