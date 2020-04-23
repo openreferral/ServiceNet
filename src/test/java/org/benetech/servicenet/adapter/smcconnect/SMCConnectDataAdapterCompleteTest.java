@@ -140,7 +140,7 @@ public class SMCConnectDataAdapterCompleteTest {
         }
 
         MultipleImportData importData = new MultipleImportData(data, uploads,
-            new DataImportReport(), SMC_CONNECT_PROVIDER, true, null);
+            new DataImportReport(), SMC_CONNECT_PROVIDER, true);
         adapter.importData(importData);
     }
 

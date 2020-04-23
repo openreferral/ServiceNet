@@ -56,9 +56,9 @@ public class ImportManagerTest {
 
         assertEquals(0, organizationService.findAll().size());
 
-        importManager.createOrUpdateOrganization(org1, EXTERNAL_ID_1, new ImportData(new DataImportReport(), PROVIDER, true, null));
-        importManager.createOrUpdateOrganization(org2, EXTERNAL_ID_2, new ImportData(new DataImportReport(), PROVIDER, true, null));
-        importManager.createOrUpdateOrganization(org3, EXTERNAL_ID_3, new ImportData(new DataImportReport(), PROVIDER, true, null));
+        importManager.createOrUpdateOrganization(org1, EXTERNAL_ID_1, new ImportData(new DataImportReport(), PROVIDER, true));
+        importManager.createOrUpdateOrganization(org2, EXTERNAL_ID_2, new ImportData(new DataImportReport(), PROVIDER, true));
+        importManager.createOrUpdateOrganization(org3, EXTERNAL_ID_3, new ImportData(new DataImportReport(), PROVIDER, true));
 
         assertEquals(3, organizationService.findAll().size());
     }

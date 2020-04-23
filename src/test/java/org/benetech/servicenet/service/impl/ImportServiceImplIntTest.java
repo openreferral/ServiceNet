@@ -36,7 +36,7 @@ public class ImportServiceImplIntTest {
     private static final String TAX_ID = "taxId";
     private static final String PROVIDER = "provider";
     private static final DataImportReport REPORT = new DataImportReport();
-    private static final ImportData IMPORT_DATA = new ImportData(REPORT, PROVIDER, true, null);
+    private static final ImportData IMPORT_DATA = new ImportData(REPORT, PROVIDER, true);
 
     @InjectMocks
     private ImportServiceImpl importService;
@@ -89,7 +89,7 @@ public class ImportServiceImplIntTest {
         when(serviceImportService.createOrUpdateService(any(Service.class), anyString(), anyString(),
             any(DataImportReport.class))).thenReturn(service2);
 
-        importService.createOrUpdateOrganization(org, ORG_ID, new ImportData(new DataImportReport(), PROVIDER, true, null));
+        importService.createOrUpdateOrganization(org, ORG_ID, new ImportData(new DataImportReport(), PROVIDER, true));
 
         verify(organizationImportService)
             .createOrUpdateOrganization(any(Organization.class), anyString(), anyString(), any(DataImportReport.class));
@@ -98,7 +98,7 @@ public class ImportServiceImplIntTest {
         verify(serviceImportService, times(2))
             .createOrUpdateService(any(Service.class), anyString(), anyString(), any(DataImportReport.class));
         verify(transactionSynchronizationService)
-            .registerSynchronizationOfMatchingOrganizations(any(Organization.class), any());
+            .registerSynchronizationOfMatchingOrganizations(any(Organization.class));
     }
 
     @Test

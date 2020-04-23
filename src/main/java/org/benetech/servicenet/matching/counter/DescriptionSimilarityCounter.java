@@ -3,7 +3,6 @@ package org.benetech.servicenet.matching.counter;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import org.apache.commons.lang3.StringUtils;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -12,7 +11,7 @@ import java.util.Locale;
 public class DescriptionSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     @Override
-    public BigDecimal countSimilarityRatio(String description1, String description2, MatchingContext context) {
+    public BigDecimal countSimilarityRatio(String description1, String description2) {
         if (StringUtils.isBlank(description1) || StringUtils.isBlank(description2)) {
             return NO_MATCH_RATIO;
         }

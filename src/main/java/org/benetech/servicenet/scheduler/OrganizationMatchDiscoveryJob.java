@@ -2,7 +2,6 @@ package org.benetech.servicenet.scheduler;
 
 import java.util.Date;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.quartz.JobExecutionContext;
@@ -40,7 +39,7 @@ public class OrganizationMatchDiscoveryJob extends BaseJob {
         try {
             for (Organization org : organizationService.findAllWithEagerAssociations()) {
                 organizationMatchService.createOrUpdateOrganizationMatchesSynchronously(
-                    org, new MatchingContext(googleApiKey));
+                    org);
             }
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);

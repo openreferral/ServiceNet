@@ -5,13 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import org.benetech.servicenet.domain.GeocodingResult;
-import org.benetech.servicenet.matching.model.MatchingContext;
+import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,8 +25,8 @@ public class GeocodingResultUpdateJob extends BaseJob {
     @Autowired
     private GeocodingResultRepository geocodingResultRepository;
 
-    @Value("${similarity-ratio.credentials.google-api}")
-    private String googleApiKey;
+    @Autowired
+    private GeoApi geoApi;
 
     @Override
     public String getDescription() {
@@ -57,7 +56,7 @@ public class GeocodingResultUpdateJob extends BaseJob {
             .findByFormattedAddressIsNullOrLocalityIsNullAndAddressIsNotNull();
         try {
             for (GeocodingResult geocodingResult : locationList) {
-                this.updateGeo(new MatchingContext(googleApiKey), geocodingResult.getAddress(), geocodingResult.getId());
+                this.updateGeo(geocodingResult.getAddress(), geocodingResult.getId());
             }
             log.info(getFullName() + " executed successfully");
         } catch (RuntimeException e) {
@@ -65,8 +64,8 @@ public class GeocodingResultUpdateJob extends BaseJob {
         }
     }
 
-    private void updateGeo(MatchingContext context, String address, UUID id) {
-        Arrays.stream(context.getGeoApi().geocode(address))
+    private void updateGeo(String address, UUID id) {
+        Arrays.stream(geoApi.geocode(address))
             .forEach(x -> {
                 GeocodingResult geo = new GeocodingResult(address, x);
                 geo.setId(id);

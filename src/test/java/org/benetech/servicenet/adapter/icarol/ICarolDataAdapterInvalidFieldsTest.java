@@ -67,7 +67,7 @@ public class ICarolDataAdapterInvalidFieldsTest {
     public void setUp() throws IOException {
         testDatabaseManagement.clearDb();
         String json = AdapterTestsUtils.readResourceAsString(INVALID_FIELDS_JSON);
-        importData = new SingleImportData(json, new DataImportReport(), EDEN_PROVIDER, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), EDEN_PROVIDER, true);
     }
 
     @Test

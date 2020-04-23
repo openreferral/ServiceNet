@@ -66,8 +66,8 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class, MockedGeocodingConfiguration.class})
 public class LocationImportServiceTest {
 
-    private static final ImportData IMPORT_DATA = new ImportData(new DataImportReport(), PROVIDER, true, null);
-    
+    private static final ImportData IMPORT_DATA = new ImportData(new DataImportReport(), PROVIDER, true);
+
     @Autowired
     private LocationImportService importService;
 
@@ -97,7 +97,7 @@ public class LocationImportServiceTest {
 
     @Autowired
     private LanguageService languageService;
-    
+
     @Autowired
     private PhoneService phoneService;
 

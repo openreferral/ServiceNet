@@ -13,7 +13,6 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.matching.counter.GeocodeUtils;
 import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,12 +40,9 @@ public class LocationSimilarityCounterIntTest {
     @InjectMocks
     private LocationSimilarityCounter locationSimilarityCounter;
 
-    private MatchingContext matchingContext;
-
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
-        matchingContext = new MatchingContext(geoApiMock);
     }
 
     @Test
@@ -56,7 +52,7 @@ public class LocationSimilarityCounterIntTest {
 
         assertEquals(6012092, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(0, 0), new LatLng(40, 40)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.ZERO));
     }
 
@@ -66,7 +62,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Example Street 344", 1.009, 1);
         assertEquals(1001, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1.009, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.ZERO));
     }
 
@@ -76,7 +72,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Example Street 344", 1.00899, 1);
         assertEquals(1000, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1.00899, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.valueOf(0.4)));
     }
 
@@ -86,7 +82,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Example Street 344", 1.00451, 1);
         assertEquals(501, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1.00451, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.valueOf(0.4)));
     }
 
@@ -96,7 +92,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Example Street 344", 1.0044966, 1);
         assertEquals(500, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1.0044966, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.valueOf(0.8)));
     }
 
@@ -106,7 +102,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Example Street 344", 1.00449, 1);
         assertEquals(499, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1.00449, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.valueOf(0.8)));
     }
 
@@ -116,7 +112,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Example Street 344", 1.00091, 1);
         assertEquals(101, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1.00091, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.valueOf(0.8)));
     }
 
@@ -126,7 +122,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Example Street 344",1.0008993, 1);
         assertEquals(100, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1.0008993, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.ONE));
     }
 
@@ -136,7 +132,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Example Street 344", 1.00089, 1);
         assertEquals(99, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1.00089, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.ONE));
     }
 
@@ -146,7 +142,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("Super Street 494", 1, 1);
         assertEquals(0, GeocodeUtils.getStraightLineDistanceInMeters(new LatLng(1, 1), new LatLng(1, 1)), DISTANCE_PRECISION);
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.ONE));
     }
 
@@ -157,7 +153,7 @@ public class LocationSimilarityCounterIntTest {
         Location location2 = locationOf("801 Turk Street San Francisco", 37.781465, -122.4225301);
         location2.setName("EDD Workforce Service - San Francisco Civic Center");
 
-        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2, matchingContext);
+        BigDecimal result = locationSimilarityCounter.countSimilarityRatio(location1, location2);
         assertEquals(0, result.compareTo(BigDecimal.ONE));
     }
 

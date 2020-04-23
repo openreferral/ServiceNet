@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Shelter;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
 import org.mapstruct.Mapper;
@@ -34,10 +33,9 @@ public abstract class ShelterMapper {
 
     public ShelterDTO toGeocodedDto(Shelter shelter) {
         ShelterDTO dto = toDto(shelter);
-        MatchingContext context = new MatchingContext(googleApiKey);
         if (StringUtils.isNotBlank(shelter.getAddress())) {
             List<GeocodingResult> geocodingResults = geocodingResultService
-                .findAllForAddressOrFetchIfEmpty(shelter, context);
+                .findAllForAddressOrFetchIfEmpty(shelter);
             dto.setGeocodingResults(geocodingResults);
         }
         return dto;

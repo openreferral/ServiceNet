@@ -2,7 +2,6 @@ package org.benetech.servicenet.matching.counter;
 
 import java.math.BigDecimal;
 import org.apache.commons.lang3.StringUtils;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +21,7 @@ public class EmailSimilarityCounter extends AbstractSimilarityCounter<String> {
     private BigDecimal normalizedLocalPartWeight;
 
     @Override
-    public BigDecimal countSimilarityRatio(String email1, String email2, MatchingContext context) {
+    public BigDecimal countSimilarityRatio(String email1, String email2) {
         if (StringUtils.isBlank(email1) || StringUtils.isBlank(email2)) {
             return NO_MATCH_RATIO;
         }

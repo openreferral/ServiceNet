@@ -23,7 +23,7 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "   %@$#Aaa! Aa";
         String string2 = "%@$#a.aA aa  ";
 
-        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
+        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2);
         assertEquals(0, result.compareTo(BigDecimal.ONE));
     }
 
@@ -32,7 +32,7 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "AAAA";
         String string2 = "BBBB";
 
-        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
+        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2);
         assertEquals(0, result.compareTo(BigDecimal.ZERO));
     }
 
@@ -41,7 +41,7 @@ public class DescriptionSimilarityCounterIntTest {
         String string1 = "AAAA";
         String string2 = "AA";
 
-        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2, null);
+        BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2);
         assertEquals(0, result.compareTo(BigDecimal.valueOf(0.5)));
     }
 }

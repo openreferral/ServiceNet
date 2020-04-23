@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 
 public abstract class AbstractSimilarityCounter<V> {
@@ -14,20 +13,19 @@ public abstract class AbstractSimilarityCounter<V> {
      *
      * @param obj1 the first object to be compared
      * @param obj2 the second object to be compared
-     * @param context contains contex required to perform matching, so it won't have to initialized too often
-     *
+*
      * @return similarity ratio
      */
-    public abstract BigDecimal countSimilarityRatio(V obj1, V obj2, MatchingContext context);
+    public abstract BigDecimal countSimilarityRatio(V obj1, V obj2);
 
-    public List<MatchSimilarityDTO> getMatchSimilarityDTOs(V obj1, V obj2, MatchingContext context) {
+    public List<MatchSimilarityDTO> getMatchSimilarityDTOs(V obj1, V obj2) {
         return Collections.emptyList();
     }
 
-    public MatchSimilarityDTO getFieldMatchSimilarityDTO(V obj1, V obj2, MatchingContext context,
+    public MatchSimilarityDTO getFieldMatchSimilarityDTO(V obj1, V obj2,
         String fieldName, String resourceClass, BigDecimal weight) {
         MatchSimilarityDTO similarityMatchDto = new MatchSimilarityDTO();
-        similarityMatchDto.setSimilarity(countSimilarityRatio(obj1, obj2, context).multiply(weight));
+        similarityMatchDto.setSimilarity(countSimilarityRatio(obj1, obj2).multiply(weight));
         similarityMatchDto.setResourceClass(resourceClass);
         similarityMatchDto.setFieldName(fieldName);
         similarityMatchDto.setWeight(hasValue(obj1, obj2) ? weight : BigDecimal.ZERO);

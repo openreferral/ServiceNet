@@ -15,8 +15,8 @@ import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.LocationMatchService;
 import org.benetech.servicenet.service.ServiceMatchService;
@@ -54,6 +54,9 @@ public abstract class OrganizationMatchMapper {
     @Autowired
     private LocationSimilarityCounter locationSimilarityCounter;
 
+    @Autowired
+    private GeoApi geoApi;
+
     @Value("${similarity-ratio.credentials.google-api}")
     private String googleApiKey;
 
@@ -76,7 +79,6 @@ public abstract class OrganizationMatchMapper {
         Organization partner = organizationMatch.getPartnerVersion();
         Map<UUID, List<LocationMatchDto>> locationMatches = new HashMap<>();
         Map<UUID, List<ServiceMatchDto>> serviceMatches = new HashMap<>();
-        MatchingContext matchingContext = new MatchingContext(googleApiKey);;
 
         for (Location location : organizationMatch.getOrganizationRecord().getLocations()) {
             Set<LocationMatchDto> matches = new HashSet<>();
@@ -84,7 +86,7 @@ public abstract class OrganizationMatchMapper {
                 if (partner.getLocations().contains(match.getMatchingLocation())) {
                     LocationMatchDto locationMatchDto = locationMatchMapper.toDto(match);
                     locationMatchDto.setSimilarity(locationSimilarityCounter.countSimilarityRatio(
-                        location, match.getMatchingLocation(), matchingContext).doubleValue());
+                        location, match.getMatchingLocation()).doubleValue());
                     matches.add(locationMatchDto);
                 }
             }

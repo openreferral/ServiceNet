@@ -59,7 +59,7 @@ public class LAACInvalidFieldsDataAdapterTest {
     public void setUp() throws IOException {
         testDatabaseManagement.clearDb();
         String json = AdapterTestsUtils.readResourceAsString(INVALID_FIELDS_JSON);
-        SingleImportData importData = new SingleImportData(json, new DataImportReport(), LAAC_PROVIDER, true, null);
+        SingleImportData importData = new SingleImportData(json, new DataImportReport(), LAAC_PROVIDER, true);
         adapter.importData(importData);
     }
 

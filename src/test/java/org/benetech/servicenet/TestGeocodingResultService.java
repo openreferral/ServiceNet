@@ -2,7 +2,6 @@ package org.benetech.servicenet;
 
 import org.benetech.servicenet.domain.Address;
 import org.benetech.servicenet.domain.GeocodingResult;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.impl.GeocodingResultServiceImpl;
 import org.benetech.servicenet.service.mapper.GeocodingResultMapper;
@@ -25,7 +24,7 @@ public class TestGeocodingResultService extends GeocodingResultServiceImpl {
     }
 
     @Override
-    public List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context) {
+    public List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address) {
         return new ArrayList<>();
     }
 }

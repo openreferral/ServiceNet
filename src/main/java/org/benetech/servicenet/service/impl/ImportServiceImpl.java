@@ -6,7 +6,6 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
@@ -53,7 +52,7 @@ public class ImportServiceImpl implements ImportService {
             importServices(filledOrganization.getServices(), organization,
                 importData.getProviderName(), importData.getReport());
 
-            registerSynchronizationOfMatchingOrganizations(organization, importData.getContext());
+            registerSynchronizationOfMatchingOrganizations(organization);
         }
         return organization;
     }
@@ -99,7 +98,7 @@ public class ImportServiceImpl implements ImportService {
         org.setLocations(savedLocations);
     }
 
-    private void registerSynchronizationOfMatchingOrganizations(Organization organization, MatchingContext context) {
-        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization, context);
+    private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
     }
 }
