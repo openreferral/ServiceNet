@@ -43,7 +43,11 @@ public class EmailSimilarityCounter extends AbstractSimilarityCounter<String> {
 
     private String getDomainName(String email) {
         String[] parts = email.split(AT);
-        return parts[DOMAIN_PART].toUpperCase(Locale.ROOT);
+        if (parts.length > DOMAIN_PART) {
+            return parts[DOMAIN_PART].toUpperCase(Locale.ROOT);
+        } else {
+            return null;
+        }
     }
 
     private String getLocalPart(String email) {
@@ -52,7 +56,8 @@ public class EmailSimilarityCounter extends AbstractSimilarityCounter<String> {
     }
 
     private boolean areDomainsDifferent(String email1, String email2) {
-        return !getDomainName(email1).equals(getDomainName(email2));
+        String domain1 = getDomainName(email1);
+        return domain1 != null && !domain1.equals(getDomainName(email2));
     }
 
     private boolean areNormalizedLocalPartDifferent(String email1, String email2) {
