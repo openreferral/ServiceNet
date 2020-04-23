@@ -73,7 +73,7 @@ public class LAACDataRelationshipsTest {
     @Before
     public void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString("laac/complete.json");
-        importData = new SingleImportData(json, new DataImportReport(), LAAC_PROVIDER, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), LAAC_PROVIDER, true);
         adapter.importData(importData);
     }
 

@@ -103,7 +103,7 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
             data.add(readResourceAsString(INCOMPLETE + fileName + JSON));
         }
 
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true, null);
+        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true);
         adapter.importData(importData);
     }
 

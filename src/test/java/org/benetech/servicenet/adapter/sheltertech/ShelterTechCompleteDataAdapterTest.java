@@ -107,7 +107,7 @@ public class ShelterTechCompleteDataAdapterTest {
     @BeforeClass
     public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
-        importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true);
     }
 
     @Before

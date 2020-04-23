@@ -10,7 +10,6 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +35,7 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
     private BigDecimal sameCityOrZipCodeRatio;
 
     @Override
-    public BigDecimal countSimilarityRatio(Location location1, Location location2, MatchingContext context) {
+    public BigDecimal countSimilarityRatio(Location location1, Location location2) {
         if (anyPhysicalAddressIsNull(location1, location2) || areLocations255AddressTextBlank(location1, location2)) {
             return NO_MATCH_RATIO;
         }

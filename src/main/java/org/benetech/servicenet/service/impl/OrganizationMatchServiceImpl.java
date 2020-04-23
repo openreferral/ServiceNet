@@ -11,7 +11,6 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.MatchSimilarityRepository;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.MatchSimilarityService;
@@ -245,12 +244,12 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Async
     @Override
-    public void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context) {
-        createOrUpdateOrganizationMatchesSynchronously(organization, context);
+    public void createOrUpdateOrganizationMatches(Organization organization) {
+        createOrUpdateOrganizationMatchesSynchronously(organization);
     }
 
     @Override
-    public void createOrUpdateOrganizationMatchesSynchronously(Organization organization, MatchingContext context) {
+    public void createOrUpdateOrganizationMatchesSynchronously(Organization organization) {
         log.info(organization.getName() + ": Updating organization matches");
         List<OrganizationMatch> matches = findCurrentMatches(organization);
         List<OrganizationMatch> partnerMatches = findCurrentPartnersMatches(organization);
@@ -265,7 +264,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             }
             List<Organization> partnerOrganizations = findOrganizationsExcept(organization.getAccount().getName());
 
-            List<OrganizationMatch> currentMatches = findAndPersistMatches(organization, partnerOrganizations, context);
+            List<OrganizationMatch> currentMatches = findAndPersistMatches(organization, partnerOrganizations);
             removeObsoleteMatches(currentMatches, matches);
             removeObsoleteMatches(currentMatches, partnerMatches);
 
@@ -405,7 +404,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     }
 
     private List<OrganizationMatch> findAndPersistMatches(Organization organization,
-        List<Organization> partnerOrganizations, MatchingContext context) {
+        List<Organization> partnerOrganizations) {
         List<OrganizationMatch> matches = new LinkedList<>();
         long startTime = System.currentTimeMillis();
         //TODO: Remove time counting logic (#264)
@@ -414,7 +413,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             + partnerOrganizations.size() + " organizations to compare with");
         for (Organization partner : partnerOrganizations) {
             List<MatchSimilarityDTO> similarityDTOs = organizationSimilarityCounter
-                .getMatchSimilarityDTOs(organization, partner, context);
+                .getMatchSimilarityDTOs(organization, partner);
             if (isSimilar(similarityDTOs)) {
                 matches.addAll(createOrganizationMatches(organization, partner, similarityDTOs));
             }

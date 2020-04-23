@@ -2,7 +2,6 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.DismissMatchDTO;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
@@ -72,9 +71,9 @@ public interface OrganizationMatchService {
      */
     void delete(UUID id);
 
-    void createOrUpdateOrganizationMatches(Organization organization, MatchingContext context);
+    void createOrUpdateOrganizationMatches(Organization organization);
 
-    void createOrUpdateOrganizationMatchesSynchronously(Organization organization, MatchingContext context);
+    void createOrUpdateOrganizationMatchesSynchronously(Organization organization);
 
     void dismissOrganizationMatch(UUID id, DismissMatchDTO dismissMatchDTO);
 

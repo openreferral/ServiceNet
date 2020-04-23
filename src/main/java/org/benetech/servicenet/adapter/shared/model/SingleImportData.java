@@ -10,9 +10,9 @@ public class SingleImportData extends ImportData {
 
     private String singleObjectData;
 
-    public SingleImportData(String singleObjectsData, DataImportReport report, String providerName, boolean isFileUpload,
-                            String googleApiKey) {
-        super(report, providerName, isFileUpload, googleApiKey);
+    public SingleImportData(String singleObjectsData, DataImportReport report, String providerName,
+        boolean isFileUpload) {
+        super(report, providerName, isFileUpload);
         this.singleObjectData = singleObjectsData;
     }
 }

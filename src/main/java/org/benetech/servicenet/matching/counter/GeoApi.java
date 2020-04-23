@@ -6,15 +6,20 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
 
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GeoApi {
 
     private static final String CONNECTION_ERROR = "Cannot connect with Google Maps API. Using address: '%s'. " +
         "API Error: %s ";
 
-    private GeoApiContext context;
+    private final GeoApiContext context;
 
-    public GeoApi(String googleApiKey) {
+    @Autowired
+    public GeoApi(@Value("${similarity-ratio.credentials.google-api}") String googleApiKey) {
         context = getGeoApiContext(googleApiKey);
     }
 

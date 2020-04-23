@@ -122,8 +122,8 @@ spring:
       thread-name-prefix: service-net-task-
       pool:
         core-size: 2
-        max-size: 50
-        queue-capacity: 10000
+        max-size: 4
+        queue-capacity: 250
     scheduling:
       thread-name-prefix: service-net-scheduling-
       pool:

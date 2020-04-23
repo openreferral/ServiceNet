@@ -20,31 +20,31 @@ public class EmailSimilarityCounterIntTest {
 
     @Test
     public void shouldReturnMinRatioForDifferentDomains() {
-        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.org", null).compareTo(BigDecimal.ZERO));
+        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.org").compareTo(BigDecimal.ZERO));
     }
 
     @Test
     public void shouldReturnProperRatioForSameDomain() {
-        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "two@email.com", null).compareTo(BigDecimal.valueOf(0.01)));
+        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "two@email.com").compareTo(BigDecimal.valueOf(0.01)));
     }
 
     @Test
     public void shouldReturnProperRatioForSameDomainButUpperCase() {
-        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "two@EMAIL.COM", null).compareTo(BigDecimal.valueOf(0.01)));
+        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "two@EMAIL.COM").compareTo(BigDecimal.valueOf(0.01)));
     }
 
     @Test
     public void shouldReturnProperRatioForSameNormalizedLocalPart() {
-        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("One@email.com", "onE@email.com", null).compareTo(BigDecimal.valueOf(0.9)));
+        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("One@email.com", "onE@email.com").compareTo(BigDecimal.valueOf(0.9)));
     }
 
     @Test
     public void shouldReturnMaxRatioForSameLocalPart() {
-        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.com", null).compareTo(BigDecimal.valueOf(1)));
+        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one@email.com", "one@email.com").compareTo(BigDecimal.valueOf(1)));
     }
 
     @Test
     public void shouldReturnMaxRatioForSameLocalPartWithoutDomain() {
-        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one", "one", null).compareTo(BigDecimal.valueOf(1)));
+        assertEquals(0, emailSimilarityCounter.countSimilarityRatio("one", "one").compareTo(BigDecimal.valueOf(1)));
     }
 }

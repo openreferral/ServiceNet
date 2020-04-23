@@ -61,7 +61,7 @@ public class ImportServiceConfidentialityImplIntTest {
     private static final boolean EXISTING_BOOLEAN = false;
     private static final int NEW_INT = 1;
     private static final int OTHER_INT = 2;
-    private static final ImportData IMPORT_DATA = new ImportData(new DataImportReport(), PROVIDER, true, null);
+    private static final ImportData IMPORT_DATA = new ImportData(new DataImportReport(), PROVIDER, true);
 
     @Autowired
     private EntityManager em;
@@ -240,7 +240,7 @@ public class ImportServiceConfidentialityImplIntTest {
         Organization organization = generateNewOrganization(generateExistingAccount());
         organization.setIsConfidential(true);
 
-        var created = importManager.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true, null));
+        var created = importManager.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true));
 
         assertEquals(0, organizationService.findAllDTOs().size());
         assertNull(created);
@@ -251,12 +251,12 @@ public class ImportServiceConfidentialityImplIntTest {
     public void shouldNotUpdateOrganizationIfConfidential() {
         SystemAccount account = generateExistingAccount();
         Organization newOrganization = generateExistingOrganization(account);
-        importManager.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true, null));
+        importManager.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true));
         assertEquals(1, organizationService.findAllDTOs().size());
 
         newOrganization.setIsConfidential(true);
         newOrganization.setName(NEW_STRING);
-        var updated = importManager.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true, null));
+        var updated = importManager.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true));
 
         assertEquals(1, organizationService.findAllDTOs().size());
         assertEquals(EXISTING_STRING, organizationService.findAllDTOs().get(0).getName());
@@ -450,7 +450,7 @@ public class ImportServiceConfidentialityImplIntTest {
         return new Location().externalDbId(EXISTING_EXTERNAL_ID).providerName(PROVIDER)
             .name(EXISTING_STRING);
     }
-    
+
     private Service generateNewService() {
         Service result = new Service().externalDbId(NEW_EXTERNAL_ID).providerName(PROVIDER)
             .name(NEW_STRING);

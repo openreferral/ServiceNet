@@ -1,7 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.LocationService;
@@ -64,7 +63,7 @@ public class LocationServiceImpl implements LocationService {
     public Location save(Location location) {
         location.setGeocodingResults(
             geocodingResultService.findAllForAddressOrFetchIfEmpty(
-                location.getPhysicalAddress(), new MatchingContext(googleApiKey)));
+                location.getPhysicalAddress()));
         return locationRepository.save(location);
     }
 

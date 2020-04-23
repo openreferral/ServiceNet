@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
@@ -13,7 +12,6 @@ import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,9 +20,6 @@ public class OrganizationMatchUpdateJob extends BaseJob {
     private static final String NAME = "Organization Match Update Job";
     private static final String DESCRIPTION = "Update existing Organization Matches";
     private final Logger log = LoggerFactory.getLogger(OrganizationMatchUpdateJob.class);
-
-    @Value("${similarity-ratio.credentials.google-api}")
-    private String googleApiKey;
 
     @Autowired
     private OrganizationService organizationService;
@@ -52,7 +47,7 @@ public class OrganizationMatchUpdateJob extends BaseJob {
                     .findOneWithEagerAssociations(match.getPartnerVersionId());
 
                 List<MatchSimilarityDTO> similarityDTOs = organizationSimilarityCounter.getMatchSimilarityDTOs(
-                    organization, partner, new MatchingContext(googleApiKey));
+                    organization, partner);
                 organizationMatchService.createOrganizationMatches(organization, partner, similarityDTOs);
             }
         } catch (RuntimeException ex) {
