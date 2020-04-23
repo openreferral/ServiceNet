@@ -96,7 +96,7 @@ public class ICarolDataRelationshipsTest {
     @Before
     public void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
-        importData = new SingleImportData(json, new DataImportReport(), EDEN_PROVIDER, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), EDEN_PROVIDER, true);
         adapter.importData(importData);
     }
 

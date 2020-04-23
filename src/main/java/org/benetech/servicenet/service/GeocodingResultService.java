@@ -2,7 +2,6 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Address;
 import org.benetech.servicenet.domain.GeocodingResult;
-import org.benetech.servicenet.matching.model.MatchingContext;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,5 +49,5 @@ public interface GeocodingResultService {
      */
     void delete(UUID id);
 
-    List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context);
+    List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address);
 }

@@ -117,7 +117,7 @@ public class LAACDataAdapterTest {
     @Test
     public void testSavingLAACData() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString("laac/orgs.json");
-        SingleImportData importData = new SingleImportData(json, new DataImportReport(), LAAC_PROVIDER, true, null);
+        SingleImportData importData = new SingleImportData(json, new DataImportReport(), LAAC_PROVIDER, true);
 
         adapter.importData(importData);
 

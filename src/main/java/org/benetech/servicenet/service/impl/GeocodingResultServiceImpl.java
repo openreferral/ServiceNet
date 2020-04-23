@@ -4,11 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Address;
 import org.benetech.servicenet.domain.GeocodingResult;
-import org.benetech.servicenet.matching.model.MatchingContext;
+import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 import org.benetech.servicenet.service.mapper.GeocodingResultMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
     private final GeocodingResultRepository geocodingResultRepository;
 
     private final GeocodingResultMapper geocodingResultMapper;
+
+    @Autowired
+    private GeoApi geoApi;
 
     public GeocodingResultServiceImpl(GeocodingResultRepository geocodingResultRepository,
                                       GeocodingResultMapper geocodingResultMapper) {
@@ -72,7 +76,7 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
     }
 
     @Override
-    public List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address, MatchingContext context) {
+    public List<GeocodingResult> findAllForAddressOrFetchIfEmpty(Address address) {
         if (address == null || address.getAddress() == null) {
             return new ArrayList<>();
         }
@@ -86,7 +90,7 @@ public class GeocodingResultServiceImpl implements GeocodingResultService {
         if (!currentResults.isEmpty()) {
             return currentResults;
         }
-        return Arrays.stream(context.getGeoApi().geocode(address.getAddress()))
+        return Arrays.stream(geoApi.geocode(address.getAddress()))
             .map(x -> save(new GeocodingResult(addressString, x)))
             .collect(Collectors.toList());
     }

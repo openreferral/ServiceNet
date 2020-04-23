@@ -110,7 +110,7 @@ public class MatchingAccuracyIntTest {
         importShelterTechData();
         importSmcConnectData();
         for (Organization org : organizationService.findAll()) {
-            organizationMatchService.createOrUpdateOrganizationMatches(org, null);
+            organizationMatchService.createOrUpdateOrganizationMatches(org);
         }
     }
 
@@ -138,21 +138,21 @@ public class MatchingAccuracyIntTest {
             uploads.add(upload);
             data.add(loadCsv(HEALTHLEADS_DIR + fileName + CSV));
         }
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true, null);
+        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true);
         healthleadsDataAdapter.importData(importData);
     }
 
     private void importLaacData() throws IOException {
         String csv = loadCsv(LAAC_DIR + BAD_MATCHES + CSV);
 
-        SingleImportData importData = new SingleImportData(csv, new DataImportReport(), LAAC_PROVIDER, true, null);
+        SingleImportData importData = new SingleImportData(csv, new DataImportReport(), LAAC_PROVIDER, true);
         laacDataAdapter.importData(importData);
     }
 
     private void importShelterTechData() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(SHELTER_TECH_DIR + BAD_MATCHES + JSON);
 
-        SingleImportData importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true, null);
+        SingleImportData importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true);
         shelterTechDataAdapter.importData(importData);
     }
 
@@ -171,7 +171,7 @@ public class MatchingAccuracyIntTest {
             uploads.add(upload);
             data.add(loadCsv(SMC_DIR + fileName + CSV));
         }
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), SMC_CONNECT_PROVIDER, true, null);
+        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), SMC_CONNECT_PROVIDER, true);
         smcConnectDataAdapter.importData(importData);
     }
 }

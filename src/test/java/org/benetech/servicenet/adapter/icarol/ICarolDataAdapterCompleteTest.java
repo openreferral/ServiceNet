@@ -102,7 +102,7 @@ public class ICarolDataAdapterCompleteTest {
     public void setUp() throws IOException {
         testDatabaseManagement.clearDb();
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);
-        importData = new SingleImportData(json, new DataImportReport(), EDEN_PROVIDER, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), EDEN_PROVIDER, true);
     }
 
     @Test

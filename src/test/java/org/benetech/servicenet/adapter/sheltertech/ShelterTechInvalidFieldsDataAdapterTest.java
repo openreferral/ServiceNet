@@ -65,7 +65,7 @@ public class ShelterTechInvalidFieldsDataAdapterTest {
     @BeforeClass
     public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(INVALID_FIELDS_JSON);
-        importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true, null);
+        importData = new SingleImportData(json, new DataImportReport(), SHELTER_TECH_PROVIDER, true);
     }
 
     @Before

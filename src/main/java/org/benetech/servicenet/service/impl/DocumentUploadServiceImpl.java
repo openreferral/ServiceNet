@@ -114,7 +114,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         log.info("Data upload for " + providerName + " has started");
         DataImportReport reportToSave = adapter
             .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName,
-                true, googleApiKey)))
+                true)))
             .orElse(report);
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
@@ -199,7 +199,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
                 long startTime = System.currentTimeMillis();
                 log.info("Data upload for " + providerName + " has started");
                 DataImportReport importReport = a.importData(new SingleImportData(parsedDocument, report,
-                    providerName, isFileUpload, googleApiKey));
+                    providerName, isFileUpload));
                 long stopTime = System.currentTimeMillis();
                 long elapsedTime = stopTime - startTime;
                 //TODO: Remove time counting logic (#264)

@@ -121,12 +121,12 @@ public class OrganizationMatchServiceImplTest {
 
         BigDecimal similarityRatio = BigDecimal.valueOf(1.0f);
         BigDecimal totalWeight = BigDecimal.valueOf(3.1f);
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(similarityRatio);
-        when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2, null)).thenReturn(similarities);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(similarityRatio);
+        when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2)).thenReturn(similarities);
         when(organizationSimilarityCounter.getTotalWeight(similarities)).thenReturn(totalWeight);
 
         int dbSize = organizationMatchService.findAll().size();
-        organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1);
         List<OrganizationMatchDTO> matches = organizationMatchService.findAll();
 
         assertEquals(dbSize + 2, matches.size());
@@ -152,12 +152,12 @@ public class OrganizationMatchServiceImplTest {
         em.persist(new OrganizationMatch().organizationRecord(org2).partnerVersion(org1));
         em.flush();
 
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(COMPLETE_MATCH_RATIO);
-        when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2, null)).thenReturn(MATCHING_SIMILARITY_DTOS);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(COMPLETE_MATCH_RATIO);
+        when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2)).thenReturn(MATCHING_SIMILARITY_DTOS);
         when(organizationSimilarityCounter.getTotalWeight(any())).thenReturn(BigDecimal.valueOf(3.1f));
 
         int dbSize = organizationMatchService.findAll().size();
-        organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1);
 
         assertEquals(dbSize, organizationMatchService.findAll().size());
     }
@@ -176,9 +176,9 @@ public class OrganizationMatchServiceImplTest {
         em.flush();
 
         BigDecimal ratioBelowThreshold = BigDecimal.valueOf(0.2f);
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2, null)).thenReturn(ratioBelowThreshold);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(ratioBelowThreshold);
 
-        organizationMatchService.createOrUpdateOrganizationMatches(org1, null);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1);
 
         assertEquals(0, organizationMatchService.findAll().size());
     }
