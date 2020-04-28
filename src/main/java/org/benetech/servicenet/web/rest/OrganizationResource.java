@@ -72,6 +72,28 @@ public class OrganizationResource {
     }
 
     /**
+     * POST  /organizations/user-owned : Create a new organization owned by current user.
+     *
+     * @param organizationDTO the organizationDTO to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new organizationDTO,
+     * or with status 400 (Bad Request) if the organization has already an ID
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PostMapping("/organizations/user-owned")
+    @Timed
+    public ResponseEntity<OrganizationDTO> createOrganizationOwnedByUser(
+        @Valid @RequestBody OrganizationDTO organizationDTO) throws URISyntaxException {
+        log.debug("REST request to save Organization : {}", organizationDTO);
+        if (organizationDTO.getId() != null) {
+            throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
+        return ResponseEntity.created(new URI("/api/organizations/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
      * PUT  /organizations : Updates an existing organization.
      *
      * @param organizationDTO the organizationDTO to update
@@ -90,6 +112,29 @@ public class OrganizationResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         OrganizationDTO result = organizationService.save(organizationDTO);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * PUT  /organizations/user-owned : Updates an users existing organization.
+     *
+     * @param organizationDTO the organizationDTO to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated organizationDTO,
+     * or with status 400 (Bad Request) if the organizationDTO is not valid,
+     * or with status 500 (Internal Server Error) if the organizationDTO couldn't be updated
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PutMapping("/organizations/user-owned")
+    @Timed
+    public ResponseEntity<OrganizationDTO> updateOrganizationOwnedByUser(
+        @Valid @RequestBody OrganizationDTO organizationDTO) throws URISyntaxException {
+        log.debug("REST request to update Organization : {}", organizationDTO);
+        if (organizationDTO.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))
             .body(result);

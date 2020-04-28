@@ -30,6 +30,7 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     @Mapping(target = "programs", ignore = true)
     @Mapping(target = "locations", ignore = true)
     @Mapping(target = "services", ignore = true)
+    @Mapping(target = "userProfiles", ignore = true)
     Organization toEntity(OrganizationDTO organizationDTO);
 
     default Organization fromId(UUID id) {

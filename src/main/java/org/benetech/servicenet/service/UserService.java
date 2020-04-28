@@ -3,11 +3,13 @@ package org.benetech.servicenet.service;
 import java.util.Collections;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.MetadataRepository;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
@@ -62,6 +64,9 @@ public class UserService {
 
     @Autowired
     private MetadataRepository metadataRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
 
     /**
      * Create a new user.
@@ -207,6 +212,9 @@ public class UserService {
             }
             userProfile.setUserId(userId);
             userProfile.setLogin(login);
+            SystemAccount systemAccount = systemAccountRepository
+                .findByName(Constants.SERVICE_PROVIDER).orElse(null);
+            userProfile.setSystemAccount(systemAccount);
             return userProfileRepository.save(userProfile);
         }
     }
@@ -238,7 +246,7 @@ public class UserService {
         if (systemAccountId != null) {
             return systemAccountRepository.findById(systemAccountId).orElse(null);
         }
-        return null;
+        return systemAccountRepository.findByName(Constants.SERVICE_PROVIDER).orElse(null);
     }
 
     private Set<Shelter> sheltersFromUUIDs(List<UUID> uuids) {
@@ -251,11 +259,22 @@ public class UserService {
         }
     }
 
+    private Set<Organization> organizationsFromUUIDs(List<UUID> uuids) {
+        if (uuids != null) {
+            return uuids.stream()
+                .map(uuid -> organizationRepository.getOne(uuid))
+                .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
     private UserDTO createOrUpdateUserProfile(UserDTO authUser, UserDTO userDTO) {
         UserProfile userProfile = getOrCreateUserProfile(authUser.getId(), userDTO.getLogin());
         userProfile.setLogin(userDTO.getLogin().toLowerCase(Locale.ROOT));
         userProfile.setSystemAccount(getSystemAccount(userDTO));
         userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
+        userProfile.setOrganizations(organizationsFromUUIDs(userDTO.getOrganizations()));
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);

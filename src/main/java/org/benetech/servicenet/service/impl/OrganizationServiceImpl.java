@@ -1,8 +1,11 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.Collections;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
@@ -31,9 +34,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationMapper organizationMapper;
 
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper) {
+    private final UserService userService;
+
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
+        UserService userService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
+        this.userService = userService;
     }
 
     /**
@@ -62,6 +69,26 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to save Organization : {}", organization);
 
         return organizationRepository.save(organization);
+    }
+
+    /**
+     * Save a organization with user profile.
+     *
+     * @param organizationDTO the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public OrganizationDTO saveWithUser(OrganizationDTO organizationDTO) {
+        log.debug("Request to save Organization : {}", organizationDTO);
+
+        Organization organization = organizationMapper.toEntity(organizationDTO);
+        if (organization.getId() == null) {
+            UserProfile userProfile = userService.getCurrentUserProfile();
+            organization.setAccount(userProfile.getSystemAccount());
+            organization.setUserProfiles(Collections.singleton(userProfile));
+        }
+        organization = organizationRepository.save(organization);
+        return organizationMapper.toDto(organization);
     }
 
     /**

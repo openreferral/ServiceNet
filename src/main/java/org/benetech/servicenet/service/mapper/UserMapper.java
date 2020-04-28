@@ -1,12 +1,11 @@
 package org.benetech.servicenet.service.mapper;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
-import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.springframework.stereotype.Service;
@@ -31,11 +30,14 @@ public class UserMapper {
 
     private UserService userService;
 
+    private OrganizationRepository organizationRepository;
+
     public UserMapper(SystemAccountMapper systemAccountMapper, ShelterRepository shelterRepository,
-        UserService userService) {
+        UserService userService, OrganizationRepository organizationRepository) {
         this.userService = userService;
         this.systemAccountMapper = systemAccountMapper;
         this.shelterRepository = shelterRepository;
+        this.organizationRepository = organizationRepository;
     }
 
     public UserDTO userToUserDTO(UserProfile userProfile) {
@@ -59,6 +61,7 @@ public class UserMapper {
             userProfile.setUserId(userDTO.getId());
             userProfile.setLogin(userDTO.getLogin());
             userProfile.setShelters(this.sheltersFromUUIDs(userDTO.getShelters()));
+            userProfile.setOrganizations(this.organizationsFromUUIDs(userDTO.getOrganizations()));
             userProfile.setSystemAccount(systemAccountMapper.fromId(userDTO.getSystemAccountId()));
             return userProfile;
         }
@@ -84,6 +87,16 @@ public class UserMapper {
         if (uuids != null) {
             return uuids.stream()
                 .map(uuid -> shelterRepository.getOne(uuid))
+                .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
+    private Set<Organization> organizationsFromUUIDs(List<UUID> uuids) {
+        if (uuids != null) {
+            return uuids.stream()
+                .map(uuid -> organizationRepository.getOne(uuid))
                 .collect(Collectors.toSet());
         } else {
             return Collections.emptySet();
