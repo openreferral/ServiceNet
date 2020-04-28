@@ -2,8 +2,11 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import java.util.stream.Collectors;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
@@ -43,9 +46,11 @@ public class OrganizationResource {
     private static final String ENTITY_NAME = "organization";
     private final Logger log = LoggerFactory.getLogger(OrganizationResource.class);
     private final OrganizationService organizationService;
+    private final UserService userService;
 
-    public OrganizationResource(OrganizationService organizationService) {
+    public OrganizationResource(OrganizationService organizationService, UserService userService) {
         this.organizationService = organizationService;
+        this.userService = userService;
     }
 
     /**
@@ -118,7 +123,7 @@ public class OrganizationResource {
     }
 
     /**
-     * PUT  /organizations/user-owned : Updates an users existing organization.
+     * PUT  /organizations/user-owned : Updates current users existing organization.
      *
      * @param organizationDTO the organizationDTO to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated organizationDTO,
@@ -133,6 +138,12 @@ public class OrganizationResource {
         log.debug("REST request to update Organization : {}", organizationDTO);
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+
+        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUserProfile()
+            .getOrganizations().stream().map(Organization::getId)
+            .collect(Collectors.toList()).contains(organizationDTO.getId()))) {
+            throw new BadRequestAlertException("You are not allowed to edit this organization", ENTITY_NAME, "cantedit");
         }
         OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
         return ResponseEntity.ok()
@@ -188,6 +199,25 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<Void> deleteOrganization(@PathVariable UUID id) {
         log.debug("REST request to delete Organization : {}", id);
+        organizationService.delete(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * DELETE  /organizations/user-owned/:id : delete the "id" organization from current user.
+     *
+     * @param id the id of the organizationDTO to delete
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @DeleteMapping("/organizations/user-owned/{id}")
+    @Timed
+    public ResponseEntity<Void> deleteOrganizationUserOwned(@PathVariable UUID id) {
+        log.debug("REST request to delete Organization : {}", id);
+        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUserProfile()
+            .getOrganizations().stream().map(Organization::getId)
+            .collect(Collectors.toList()).contains(id))) {
+            throw new BadRequestAlertException("You are not allowed to delete this organization", ENTITY_NAME, "cantdelete");
+        }
         organizationService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
