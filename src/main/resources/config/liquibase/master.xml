@@ -180,5 +180,6 @@
     <include file="config/liquibase/changelog/20200303113615_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200325115600_migrate_users.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200415103658_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200420122259_added_entity_ClientProfile.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

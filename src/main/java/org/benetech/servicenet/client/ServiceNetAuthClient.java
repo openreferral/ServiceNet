@@ -1,14 +1,19 @@
 package org.benetech.servicenet.client;
 
 import java.util.List;
+import javax.validation.Valid;
+import org.benetech.servicenet.service.dto.ClientDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @AuthorizedFeignClient(name = "servicenetauth")
 public interface ServiceNetAuthClient {
+
+    // User resource
 
     @RequestMapping(value = "/api/users/authorities", method = RequestMethod.GET)
     List<String> getAuthorities();
@@ -27,4 +32,21 @@ public interface ServiceNetAuthClient {
 
     @RequestMapping(value = "/api/users/{login}", method = RequestMethod.DELETE)
     void deleteUser(@PathVariable("login") String login);
+
+    // Client Resource
+
+    @RequestMapping(value = "/api/clients", method = RequestMethod.POST)
+    ClientDTO createClient(@Valid @RequestBody ClientDTO clientDTO);
+
+    @RequestMapping(value = "/api/clients", method = RequestMethod.PUT)
+    ClientDTO updateClient(@Valid @RequestBody ClientDTO clientDTO);
+
+    @RequestMapping(value = "api/clients/{id}", method = RequestMethod.GET)
+    ClientDTO getClient(@PathVariable("id") String id);
+
+    @RequestMapping(value = "/api/clients", method = RequestMethod.GET)
+    List<ClientDTO> getAllClients(Pageable pageable);
+
+    @RequestMapping(value = "/api/clients/{id}", method = RequestMethod.DELETE)
+    void deleteClient(@PathVariable("id") String id);
 }

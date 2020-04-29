@@ -1,0 +1,21 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "ServiceNet",
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "clientId",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20200420122259",
+    "dto": "no",
+    "searchEngine": false,
+    "service": "no",
+    "entityTableName": "client_profile",
+    "databaseType": "sql",
+    "readOnly": false,
+    "jpaMetamodelFiltering": false,
+    "pagination": "no",
+    "microserviceName": "ServiceNet"
+}

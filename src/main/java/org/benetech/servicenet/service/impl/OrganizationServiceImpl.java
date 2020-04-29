@@ -186,6 +186,16 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.findOneWithEagerAssociations(id);
     }
 
+    @Override
+    public Optional<Organization> findByIdOrExternalDbId(String id) {
+        try {
+            UUID uuid = UUID.fromString(id);
+            return organizationRepository.findByIdOrExternalDbId(uuid, "");
+        } catch (IllegalArgumentException e) {
+            return organizationRepository.findByIdOrExternalDbId(null, id);
+        }
+    }
+
     /**
      * Delete the organization by id.
      *
