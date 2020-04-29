@@ -86,7 +86,7 @@ public class UserDTO {
                 .collect(Collectors.toList());
         }
         if (userProfile.getOrganizations() != null) {
-            this.shelters = userProfile.getOrganizations().stream()
+            this.organizations = userProfile.getOrganizations().stream()
                 .map(Organization::getId)
                 .collect(Collectors.toList());
         }
