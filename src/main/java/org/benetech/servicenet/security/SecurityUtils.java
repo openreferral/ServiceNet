@@ -47,6 +47,18 @@ public final class SecurityUtils {
         return null;
     }
 
+    public static String getCurrentClientId() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Object details = securityContext.getAuthentication().getDetails();
+        if (details instanceof OAuth2AuthenticationDetails) {
+            Object decodedDetails = ((OAuth2AuthenticationDetails) details).getDecodedDetails();
+            if (decodedDetails instanceof Map) {
+                return ((Map) decodedDetails).get("client_id").toString();
+            }
+        }
+        return null;
+    }
+
     private static String extractPrincipal(Authentication authentication) {
         if (authentication == null) {
             return null;
