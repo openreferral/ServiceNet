@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.dto;
 
+import java.util.Set;
 import lombok.Data;
 
 import javax.persistence.Lob;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import org.benetech.servicenet.domain.UserProfile;
 
 /**
  * A DTO for the Organization entity.
@@ -62,6 +64,8 @@ public class OrganizationDTO implements Serializable {
     public Boolean isActive() {
         return active;
     }
+
+    public Set<UserProfile> userProfiles;
 
     @Override
     public boolean equals(Object o) {

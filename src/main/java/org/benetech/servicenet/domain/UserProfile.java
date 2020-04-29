@@ -76,6 +76,14 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     private Set<Shelter> shelters;
 
     @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "user_profile_organizations",
+        joinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "organization_id", referencedColumnName = "id"))
+    private Set<Organization> organizations;
+
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "filter_id")
     private ActivityFilter filter;

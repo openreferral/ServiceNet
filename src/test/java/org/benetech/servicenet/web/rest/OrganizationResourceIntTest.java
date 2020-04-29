@@ -9,6 +9,7 @@ import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.benetech.servicenet.errors.ExceptionTranslator;
@@ -59,6 +60,9 @@ public class OrganizationResourceIntTest {
     private OrganizationService organizationService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -94,7 +98,7 @@ public class OrganizationResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OrganizationResource organizationResource = new OrganizationResource(organizationService);
+        final OrganizationResource organizationResource = new OrganizationResource(organizationService, userService);
         this.restOrganizationMockMvc = MockMvcBuilders.standaloneSetup(organizationResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
