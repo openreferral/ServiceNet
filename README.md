@@ -91,6 +91,12 @@ Then run:
 
 For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
 
+## Running re-create SQL script for Quartz data tables
+Sometimes it may be a case where one would like to re-create Quartz DB structure. In order to do so run following in terminal in the project root directory (add credentials argument if required):
+```bash
+psql ServiceNet < src/main/resources/config/liquibase/tables_postgres.sql
+```
+
 ## Continuous Integration (optional)
 
 To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.

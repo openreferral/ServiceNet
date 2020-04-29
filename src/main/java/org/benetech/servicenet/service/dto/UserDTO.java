@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.dto;
 import java.util.List;
 import lombok.Data;
 import org.benetech.servicenet.config.Constants;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.UserProfile;
 
@@ -62,6 +63,8 @@ public class UserDTO {
 
     private List<UUID> shelters;
 
+    private List<UUID> organizations;
+
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -80,6 +83,11 @@ public class UserDTO {
         if (userProfile.getShelters() != null) {
             this.shelters = userProfile.getShelters().stream()
                 .map(Shelter::getId)
+                .collect(Collectors.toList());
+        }
+        if (userProfile.getOrganizations() != null) {
+            this.organizations = userProfile.getOrganizations().stream()
+                .map(Organization::getId)
                 .collect(Collectors.toList());
         }
     }

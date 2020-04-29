@@ -30,6 +30,8 @@ public final class Constants {
 
     public static final String HEALTHLEADS_PROVIDER = "healthleads";
 
+    public static final String SERVICE_PROVIDER = "ServiceProvider";
+
     public static final String SPRING_PROFILE_STAGING = "staging";
 
     private Constants() {

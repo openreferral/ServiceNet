@@ -1,10 +1,15 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.Collections;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
+import org.benetech.servicenet.service.util.RandomUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -31,9 +36,16 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationMapper organizationMapper;
 
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper) {
+    private final UserService userService;
+
+    private final TransactionSynchronizationService transactionSynchronizationService;
+
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
+        UserService userService, TransactionSynchronizationService transactionSynchronizationService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
+        this.userService = userService;
+        this.transactionSynchronizationService = transactionSynchronizationService;
     }
 
     /**
@@ -62,6 +74,34 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to save Organization : {}", organization);
 
         return organizationRepository.save(organization);
+    }
+
+    /**
+     * Save a organization with user profile.
+     *
+     * @param organizationDTO the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public OrganizationDTO saveWithUser(OrganizationDTO organizationDTO) {
+        log.debug("Request to save Organization : {}", organizationDTO);
+
+        Organization organization = organizationMapper.toEntity(organizationDTO);
+        if (organization.getId() == null) {
+            UserProfile userProfile = userService.getCurrentUserProfile();
+            organization.setAccount(userProfile.getSystemAccount());
+            organization.setUserProfiles(Collections.singleton(userProfile));
+            // TODO: Remove unique together (external_db_id, account_id) on db for organization and check it only before
+            //  creating organization during uploading data from spreadsheets or from external APIs.
+            //  Then next line can be removed. Issue: #956
+            organization.setExternalDbId(RandomUtil.generateSeriesData());
+        }
+        organization = organizationRepository.save(organization);
+        // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
+        //  For the independent user with Service Provider (not the external one) system account type, matching should look
+        //  for all that kind of users. Issue: #957
+        registerSynchronizationOfMatchingOrganizations(organization);
+        return organizationMapper.toDto(organization);
     }
 
     /**
@@ -205,5 +245,9 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void delete(UUID id) {
         log.debug("Request to delete Organization : {}", id);
         organizationRepository.deleteById(id);
+    }
+
+    private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
     }
 }

@@ -2,6 +2,8 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
@@ -132,6 +134,14 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
 
+    @JsonIgnore
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "user_profile_organizations",
+        joinColumns = @JoinColumn(name = "organization_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"))
+    private Set<UserProfile> userProfiles;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     @PrePersist
@@ -154,6 +164,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.updatedAt = org.updatedAt;
         this.externalDbId = org.externalDbId;
         this.lastVerifiedOn = org.lastVerifiedOn;
+        this.userProfiles = org.userProfiles;
     }
 
     public Organization name(String name) {
@@ -303,6 +314,19 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     public Organization lastVerifiedOn(ZonedDateTime lastVerifiedOn) {
         this.lastVerifiedOn = lastVerifiedOn;
         return this;
+    }
+
+    public Set<UserProfile> getUserProfiles() {
+        return userProfiles;
+    }
+
+    public Organization users(Set<UserProfile> userProfiles) {
+        this.userProfiles = userProfiles;
+        return this;
+    }
+
+    public void setUserProfiles(Set<UserProfile> userProfiles) {
+        this.userProfiles = userProfiles;
     }
 
     @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
