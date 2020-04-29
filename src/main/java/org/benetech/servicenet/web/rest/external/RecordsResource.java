@@ -16,8 +16,8 @@ import org.benetech.servicenet.security.SecurityUtils;
 import org.benetech.servicenet.service.ClientProfileService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
-import org.benetech.servicenet.service.dto.ExternalRequestRecord;
-import org.benetech.servicenet.service.dto.ExternalResponseRecord;
+import org.benetech.servicenet.service.dto.external.RecordRequest;
+import org.benetech.servicenet.service.dto.external.RecordDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST controller for managing external records request.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/partner-api")
 public class RecordsResource {
 
     private final Logger log = LoggerFactory.getLogger(RecordsResource.class);
@@ -49,38 +49,39 @@ public class RecordsResource {
     @PreAuthorize("hasRole('" + AuthoritiesConstants.EXTERNAL + "')")
     @PostMapping("/records")
     @Timed
-    public ResponseEntity<List<ExternalResponseRecord>> getOrganizationMatchInfos(
-        @Valid @RequestBody ExternalRequestRecord externalRequestRecord) throws URISyntaxException, BadRequestAlertException {
-        log.debug("REST request to get Record : {}", externalRequestRecord);
+    public ResponseEntity<List<RecordDto>> getOrganizationMatchInfos(
+        @Valid @RequestBody RecordRequest recordRequest) throws URISyntaxException, BadRequestAlertException {
+        log.debug("REST request to get Record : {}", recordRequest);
 
         String clientId = SecurityUtils.getCurrentClientId();
         Optional<ClientProfile> optionalClientProfile = clientProfileService.findById(clientId);
         if (optionalClientProfile.isEmpty()) {
-            throw new BadRequestAlertException("There is provider associated with this account.",
+            throw new BadRequestAlertException("There is no provider associated with this account.",
                 RecordType.ORGANIZATION.toString(), "id");
         }
         ClientProfile clientProfile = optionalClientProfile.get();
-        Optional<Organization> optionalOrganization = organizationService.findByIdOrExternalDbId(externalRequestRecord.getId());
+        Optional<Organization> optionalOrganization = organizationService.findByIdOrExternalDbId(
+            recordRequest.getId());
         if (optionalOrganization.isEmpty()) {
             throw new BadRequestAlertException("There is no organization with such id.",
                 RecordType.ORGANIZATION.toString(), "id");
         }
         Organization organization = optionalOrganization.get();
         if (!clientProfile.getSystemAccount().getId().equals(organization.getAccount().getId())) {
-            throw new BadRequestAlertException("Organization not belongs to the provider.",
+            throw new BadRequestAlertException("Organization does not belong to the provider.",
                 RecordType.ORGANIZATION.toString(), "id");
         }
         List<OrganizationMatch> matches = organizationMatchService.findAllMatchesForOrganization(organization.getId());
 
-        List<ExternalResponseRecord> results = this.mapMatchesToResponses(matches, externalRequestRecord.getSimilarity());
+        List<RecordDto> results = this.mapMatchesToExternalRecords(matches, recordRequest.getSimilarity());
         return ResponseEntity.ok()
             .body(results);
     }
 
-    private List<ExternalResponseRecord> mapMatchesToResponses(List<OrganizationMatch> matches, double similarity) {
-        List<ExternalResponseRecord> results = new ArrayList<>();
+    private List<RecordDto> mapMatchesToExternalRecords(List<OrganizationMatch> matches, double similarity) {
+        List<RecordDto> results = new ArrayList<>();
         for (OrganizationMatch match : matches) {
-            ExternalResponseRecord response = new ExternalResponseRecord();
+            RecordDto response = new RecordDto();
             response.setServiceNetId(match.getPartnerVersion().getId());
             response.setOrganizationName(match.getPartnerVersion().getName());
             response.setExternalDbId(match.getPartnerVersion().getExternalDbId());

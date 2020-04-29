@@ -7,7 +7,9 @@ import org.benetech.servicenet.service.dto.ClientProfileDto;
 
 public interface ClientProfileService {
 
-    ClientProfileDto save(ClientProfileDto clientProfileDto);
+    ClientProfile save(ClientProfileDto clientProfileDto);
+
+    ClientProfileDto save(ClientProfile clientProfile);
 
     ClientProfileDto update(ClientProfileDto clientProfileDto);
 

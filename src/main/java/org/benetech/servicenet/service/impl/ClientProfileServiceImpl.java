@@ -27,8 +27,13 @@ public class ClientProfileServiceImpl implements ClientProfileService {
     }
 
     @Override
-    public ClientProfileDto save(ClientProfileDto clientProfileDto) {
+    public ClientProfile save(ClientProfileDto clientProfileDto) {
         ClientProfile clientProfile = clientProfileMapper.toEntity(clientProfileDto);
+        return clientProfileRepository.save(clientProfile);
+    }
+
+    @Override
+    public ClientProfileDto save(ClientProfile clientProfile) {
         return clientProfileMapper.toDto(clientProfileRepository.save(clientProfile));
     }
 

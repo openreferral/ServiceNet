@@ -1,4 +1,4 @@
-package org.benetech.servicenet.service.dto;
+package org.benetech.servicenet.service.dto.external;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ExternalResponseRecord implements Serializable {
+public class RecordDto implements Serializable {
 
     private UUID serviceNetId;
 
