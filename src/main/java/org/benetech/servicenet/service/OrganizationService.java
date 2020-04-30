@@ -90,7 +90,7 @@ public interface OrganizationService {
 
     Organization findOneWithEagerAssociations(UUID id);
 
-    Optional<Organization> findByIdOrExternalDbId(String id);
+    Optional<Organization> findByIdOrExternalDbId(String id, UUID providerId);
 
     /**
      * Delete the "id" organization.

@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import javax.validation.Valid;
 import org.benetech.servicenet.domain.ClientProfile;
 import org.benetech.servicenet.domain.Organization;
@@ -60,17 +61,14 @@ public class RecordsResource {
                 RecordType.ORGANIZATION.toString(), "id");
         }
         ClientProfile clientProfile = optionalClientProfile.get();
+        UUID providerId = clientProfile.getSystemAccount().getId();
         Optional<Organization> optionalOrganization = organizationService.findByIdOrExternalDbId(
-            recordRequest.getId());
+            recordRequest.getId(), providerId);
         if (optionalOrganization.isEmpty()) {
             throw new BadRequestAlertException("There is no organization with such id.",
                 RecordType.ORGANIZATION.toString(), "id");
         }
         Organization organization = optionalOrganization.get();
-        if (!clientProfile.getSystemAccount().getId().equals(organization.getAccount().getId())) {
-            throw new BadRequestAlertException("Organization does not belong to the provider.",
-                RecordType.ORGANIZATION.toString(), "id");
-        }
         List<OrganizationMatch> matches = organizationMatchService.findAllMatchesForOrganization(organization.getId());
 
         List<RecordDto> results = this.mapMatchesToExternalRecords(matches, recordRequest.getSimilarity());
