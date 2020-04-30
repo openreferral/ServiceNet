@@ -3,6 +3,8 @@ package org.benetech.servicenet.service.impl;
 import java.util.Collections;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.domain.enumeration.RecordType;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
@@ -227,13 +229,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public Optional<Organization> findByIdOrExternalDbId(String id) {
+    public Optional<Organization> findByIdOrExternalDbId(String id, UUID providerId) {
+        List<Organization> orgList;
         try {
             UUID uuid = UUID.fromString(id);
-            return organizationRepository.findByIdOrExternalDbId(uuid, "");
+            orgList = organizationRepository.findAllByIdOrExternalDbId(uuid, id);
         } catch (IllegalArgumentException e) {
-            return organizationRepository.findByIdOrExternalDbId(null, id);
+            orgList = organizationRepository.findAllByIdOrExternalDbId(null, id);
         }
+        return Optional.ofNullable(this.getProvidersOrganization(orgList, providerId));
     }
 
     /**
@@ -245,6 +249,19 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void delete(UUID id) {
         log.debug("Request to delete Organization : {}", id);
         organizationRepository.deleteById(id);
+    }
+
+    private Organization getProvidersOrganization(List<Organization> organizations, UUID id) {
+        for (Organization organization : organizations) {
+            if (organization.getAccount().getId().equals(id)) {
+                return organization;
+            }
+        }
+        if (!organizations.isEmpty()) {
+            throw new BadRequestAlertException("Organization does not belong to the provider.",
+                RecordType.ORGANIZATION.toString(), "id");
+        }
+        return null;
     }
 
     private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
