@@ -57,7 +57,7 @@ public class ClientResource {
      */
     @PostMapping("/clients")
     @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<ClientDTO> createClient(@Valid @RequestBody ClientDTO clientDTO) throws URISyntaxException {
+    public ResponseEntity<ClientDTO> createClient(@Valid @RequestBody ClientDTO clientDTO) throws URISyntaxException, BadRequestAlertException {
         log.debug("REST request to save Client : {}", clientDTO);
 
         ClientDTO newClient = clientService.createClient(clientDTO);
