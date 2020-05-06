@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.mapper;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.dto.ServiceRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -41,6 +42,20 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
     @Mapping(target = "taxonomies", ignore = true)
     @Mapping(target = "phones", ignore = true)
     Service toEntity(ServiceDTO serviceDTO);
+
+    @Mapping(source = "type", target = "type", ignore = true)
+    @Mapping(target = "locations", ignore = true)
+    @Mapping(target = "regularSchedule", ignore = true)
+    @Mapping(target = "holidaySchedules", ignore = true)
+    @Mapping(target = "funding", ignore = true)
+    @Mapping(target = "eligibility", ignore = true)
+    @Mapping(target = "areas", ignore = true)
+    @Mapping(target = "docs", ignore = true)
+    @Mapping(target = "paymentsAccepteds", ignore = true)
+    @Mapping(target = "langs", ignore = true)
+    @Mapping(target = "taxonomies", ignore = true)
+    @Mapping(target = "phones", ignore = true)
+    Service toEntity(SimpleServiceDTO serviceDTO);
 
     default Service fromId(UUID id) {
         if (id == null) {

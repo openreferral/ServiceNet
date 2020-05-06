@@ -53,6 +53,19 @@ public class ServiceTaxonomyServiceImpl implements ServiceTaxonomyService {
     }
 
     /**
+     * Save a serviceTaxonomy.
+     *
+     * @param serviceTaxonomy the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public ServiceTaxonomy save(ServiceTaxonomy serviceTaxonomy) {
+        log.debug("Request to save ServiceTaxonomy : {}", serviceTaxonomy);
+
+        return serviceTaxonomyRepository.save(serviceTaxonomy);
+    }
+
+    /**
      * Get all the serviceTaxonomies.
      *
      * @return the list of entities

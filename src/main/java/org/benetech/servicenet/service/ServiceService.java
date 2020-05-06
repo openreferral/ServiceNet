@@ -23,6 +23,14 @@ public interface ServiceService {
     ServiceDTO save(ServiceDTO serviceDTO);
 
     /**
+     * Save a service.
+     *
+     * @param service the entity to save
+     * @return the persisted entity
+     */
+    Service save(Service service);
+
+    /**
      * Get all the services.
      *
      * @return the list of entities

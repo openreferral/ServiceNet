@@ -53,6 +53,19 @@ public class ServiceAtLocationServiceImpl implements ServiceAtLocationService {
     }
 
     /**
+     * Save a serviceAtLocation.
+     *
+     * @param serviceAtLocation the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public ServiceAtLocation save(ServiceAtLocation serviceAtLocation) {
+        log.debug("Request to save ServiceAtLocation : {}", serviceAtLocation);
+
+        return serviceAtLocationRepository.save(serviceAtLocation);
+    }
+
+    /**
      * Get all the serviceAtLocations.
      *
      * @return the list of entities

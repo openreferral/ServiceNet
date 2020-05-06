@@ -7,8 +7,9 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.UserService;
-import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -70,7 +71,7 @@ public class OrganizationResource {
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        OrganizationDTO result = organizationService.save(organizationDTO);
+        org.benetech.servicenet.service.dto.OrganizationDTO result = organizationService.save(organizationDTO);
         return ResponseEntity.created(new URI("/api/organizations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -79,7 +80,7 @@ public class OrganizationResource {
     /**
      * POST  /organizations/user-owned : Create a new organization owned by current user.
      *
-     * @param organizationDTO the organizationDTO to create
+     * @param organizationDTO the organizationRecordDTO to create
      * @return the ResponseEntity with status 201 (Created) and with body the new organizationDTO,
      * or with status 400 (Bad Request) if the organization has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
@@ -87,7 +88,7 @@ public class OrganizationResource {
     @PostMapping("/organizations/user-owned")
     @Timed
     public ResponseEntity<OrganizationDTO> createOrganizationOwnedByUser(
-        @Valid @RequestBody OrganizationDTO organizationDTO) throws URISyntaxException {
+        @Valid @RequestBody SimpleOrganizationDTO organizationDTO) throws URISyntaxException {
         log.debug("REST request to save Organization : {}", organizationDTO);
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
@@ -134,7 +135,7 @@ public class OrganizationResource {
     @PutMapping("/organizations/user-owned")
     @Timed
     public ResponseEntity<OrganizationDTO> updateOrganizationOwnedByUser(
-        @Valid @RequestBody OrganizationDTO organizationDTO) throws URISyntaxException {
+        @Valid @RequestBody SimpleOrganizationDTO organizationDTO) throws URISyntaxException {
         log.debug("REST request to update Organization : {}", organizationDTO);
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -145,7 +146,7 @@ public class OrganizationResource {
             .collect(Collectors.toList()).contains(organizationDTO.getId()))) {
             throw new BadRequestAlertException("You are not allowed to edit this organization", ENTITY_NAME, "cantedit");
         }
-        OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
+        org.benetech.servicenet.service.dto.OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))
             .body(result);
@@ -160,7 +161,7 @@ public class OrganizationResource {
      */
     @GetMapping("/organizations")
     @Timed
-    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(@RequestParam(required = false) String filter,
+    public ResponseEntity<List<org.benetech.servicenet.service.dto.OrganizationDTO>> getAllOrganizations(@RequestParam(required = false) String filter,
     Pageable pageable) {
         Page<OrganizationDTO> page;
         if ("funding-is-null".equals(filter)) {

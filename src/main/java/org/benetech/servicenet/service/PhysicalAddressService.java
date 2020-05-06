@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,14 @@ public interface PhysicalAddressService {
      * @return the persisted entity
      */
     PhysicalAddressDTO save(PhysicalAddressDTO physicalAddressDTO);
+
+    /**
+     * Save a physicalAddress.
+     *
+     * @param physicalAddress the entity to save
+     * @return the persisted entity
+     */
+    PhysicalAddress save(PhysicalAddress physicalAddress);
 
     /**
      * Get all the physicalAddresses.

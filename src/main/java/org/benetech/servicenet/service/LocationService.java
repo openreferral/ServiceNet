@@ -24,6 +24,8 @@ public interface LocationService {
 
     Location save(Location location);
 
+    Location saveWithRelations(Location location);
+
     /**
      * Get all the locations.
      *

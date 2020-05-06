@@ -52,6 +52,19 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     /**
+     * Save a service.
+     *
+     * @param service the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public Service save(Service service) {
+        log.debug("Request to save Service : {}", service);
+
+        return serviceRepository.save(service);
+    }
+
+    /**
      * Get all the services.
      *
      * @return the list of entities
