@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import com.netflix.hystrix.exception.HystrixBadRequestException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -7,6 +8,9 @@ import java.util.stream.Collectors;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.domain.ClientProfile;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.errors.ErrorConstants;
+import org.benetech.servicenet.errors.IdAlreadyUsedException;
 import org.benetech.servicenet.repository.ClientProfileRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.dto.ClientDTO;
@@ -45,10 +49,17 @@ public class ClientService {
      * @param clientDto client to create
      * @return created client
      */
-    public ClientDTO createClient(ClientDTO clientDto) {
-        ClientDTO result = authClient.createClient(clientDto);
-        this.createOrUpdateClientProfile(result, clientDto);
-        return this.getRealDto(result);
+    public ClientDTO createClient(ClientDTO clientDto) throws BadRequestAlertException {
+        try {
+            ClientDTO result = authClient.createClient(clientDto);
+            this.createOrUpdateClientProfile(result, clientDto);
+            return this.getRealDto(result);
+        } catch (HystrixBadRequestException e) {
+            if (e instanceof IdAlreadyUsedException) {
+                throw new BadRequestAlertException(ErrorConstants.EMAIL_ALREADY_USED_TYPE, "Id already used!", "clientManagement", "clientexists");
+            }
+            throw e;
+        }
     }
 
     /**

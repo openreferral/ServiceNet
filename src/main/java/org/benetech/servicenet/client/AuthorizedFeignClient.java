@@ -1,5 +1,6 @@
 package org.benetech.servicenet.client;
 
+import feign.ExceptionPropagationPolicy;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.core.annotation.AliasFor;
@@ -46,6 +47,8 @@ public @interface AuthorizedFeignClient {
      * @return the fallback class for the specified Feign client interface.
      */
     Class<?> fallback() default void.class;
+
+    ExceptionPropagationPolicy getExceptionPropagationPolicy() default ExceptionPropagationPolicy.UNWRAP;
 
     /**
      * Path prefix to be used by all method-level mappings. Can be used with or without {@code @RibbonClient}.

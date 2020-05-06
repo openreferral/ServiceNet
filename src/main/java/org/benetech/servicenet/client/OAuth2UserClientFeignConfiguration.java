@@ -1,10 +1,8 @@
 package org.benetech.servicenet.client;
 
-import java.io.IOException;
-
-import org.springframework.context.annotation.Bean;
-
 import feign.RequestInterceptor;
+import java.io.IOException;
+import org.springframework.context.annotation.Bean;
 
 public class OAuth2UserClientFeignConfiguration {
 
