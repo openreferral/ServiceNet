@@ -4,9 +4,12 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 
 import java.util.UUID;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.service.dto.LocationDTO;
 
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -25,6 +28,15 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
     @Mapping(target = "geocodingResults", ignore = true)
     Location toEntity(LocationDTO locationDTO);
 
+    @Mapping(target = "physicalAddress", ignore = true)
+    @Mapping(target = "postalAddress", ignore = true)
+    @Mapping(target = "regularSchedule", ignore = true)
+    @Mapping(target = "holidaySchedules", ignore = true)
+    @Mapping(target = "langs", ignore = true)
+    @Mapping(target = "accessibilities", ignore = true)
+    @Mapping(target = "geocodingResults", ignore = true)
+    Location toEntity(SimpleLocationDTO locationDTO);
+
     @Mapping(source = "organization.id", target = "organizationId")
     @Mapping(source = "organization.name", target = "organizationName")
     LocationDTO toDto(Location location);
@@ -41,5 +53,25 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
         Location location = new Location();
         location.setId(id);
         return location;
+    }
+
+    default PostalAddress extractPostalAddress(SimpleLocationDTO simpleLocationDTO) {
+        PostalAddress postalAddress = new PostalAddress();
+        postalAddress.address1(simpleLocationDTO.getAddress1());
+        postalAddress.address2(simpleLocationDTO.getAddress2());
+        postalAddress.city(simpleLocationDTO.getCity());
+        postalAddress.setPostalCode(simpleLocationDTO.getZipcode());
+        postalAddress.setStateProvince(simpleLocationDTO.getCa());
+        return postalAddress;
+    }
+
+    default PhysicalAddress extractPhysicalAddress(SimpleLocationDTO simpleLocationDTO) {
+        PhysicalAddress physicalAddress = new PhysicalAddress();
+        physicalAddress.address1(simpleLocationDTO.getAddress1());
+        physicalAddress.address2(simpleLocationDTO.getAddress2());
+        physicalAddress.city(simpleLocationDTO.getCity());
+        physicalAddress.setPostalCode(simpleLocationDTO.getZipcode());
+        physicalAddress.setStateProvince(simpleLocationDTO.getCa());
+        return physicalAddress;
     }
 }

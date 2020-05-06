@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.service.dto.PostalAddressDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,14 @@ public interface PostalAddressService {
      * @return the persisted entity
      */
     PostalAddressDTO save(PostalAddressDTO postalAddressDTO);
+
+    /**
+     * Save a postalAddress.
+     *
+     * @param postalAddress the entity to save
+     * @return the persisted entity
+     */
+    PostalAddress save(PostalAddress postalAddress);
 
     /**
      * Get all the postalAddresses.

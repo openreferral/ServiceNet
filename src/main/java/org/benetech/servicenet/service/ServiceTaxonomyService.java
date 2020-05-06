@@ -23,6 +23,14 @@ public interface ServiceTaxonomyService {
     ServiceTaxonomyDTO save(ServiceTaxonomyDTO serviceTaxonomyDTO);
 
     /**
+     * Save a serviceTaxonomy.
+     *
+     * @param serviceTaxonomy the entity to save
+     * @return the persisted entity
+     */
+    ServiceTaxonomy save(ServiceTaxonomy serviceTaxonomy);
+
+    /**
      * Get all the serviceTaxonomies.
      *
      * @return the list of entities

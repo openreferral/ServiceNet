@@ -23,6 +23,14 @@ public interface ServiceAtLocationService {
     ServiceAtLocationDTO save(ServiceAtLocationDTO serviceAtLocationDTO);
 
     /**
+     * Save a serviceAtLocation.
+     *
+     * @param serviceAtLocation the entity to save
+     * @return the persisted entity
+     */
+    ServiceAtLocation save(ServiceAtLocation serviceAtLocation);
+
+    /**
      * Get all the serviceAtLocations.
      *
      * @return the list of entities

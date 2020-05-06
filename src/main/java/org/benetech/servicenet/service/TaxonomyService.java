@@ -38,6 +38,14 @@ public interface TaxonomyService {
     Page<TaxonomyDTO> findAll(Pageable pageable);
 
     /**
+     * Get provider's taxonomies.
+     *
+     * @param providerName provider's name
+     * @return the list of entities
+     */
+    List<TaxonomyDTO> findByProvider(String providerName);
+
+    /**
      * Get associated taxonomies.
      *
      * @param pageable the pagination information
@@ -56,6 +64,8 @@ public interface TaxonomyService {
     Optional<Taxonomy> findForExternalDb(String externalDbId, String providerName);
 
     Optional<Taxonomy> findForTaxonomyId(String taxonomyId, String providerName);
+
+    Optional<Taxonomy> findById(UUID id);
 
     Taxonomy save(Taxonomy taxonomy);
 

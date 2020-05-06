@@ -107,6 +107,19 @@ public class TaxonomyResource {
     }
 
     /**
+     * GET  /provider-taxonomies/:provider : get provider's taxonomies.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of taxonomies in body
+     */
+    @GetMapping("/provider-taxonomies/{provider}")
+    @Timed
+    public ResponseEntity<List<TaxonomyDTO>> getProviderTaxonomies(@PathVariable String provider) {
+        log.debug("REST request to get {} provider's Taxonomies", provider);
+        List<TaxonomyDTO> taxonomies = taxonomyService.findByProvider(provider);
+        return new ResponseEntity<>(taxonomies, HttpStatus.OK);
+    }
+
+    /**
      * GET  /associated-taxonomies : get all the associated taxonomies.
      *
      * @param pageable the pagination information

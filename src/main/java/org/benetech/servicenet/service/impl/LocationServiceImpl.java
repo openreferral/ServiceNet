@@ -1,9 +1,13 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.LocationService;
+import org.benetech.servicenet.service.PhysicalAddressService;
+import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.slf4j.Logger;
@@ -36,14 +40,21 @@ public class LocationServiceImpl implements LocationService {
 
     private final GeocodingResultService geocodingResultService;
 
+    private final PhysicalAddressService physicalAddressService;
+
+    private final PostalAddressService postalAddressService;
+
     @Value("${similarity-ratio.credentials.google-api}")
     private String googleApiKey;
 
     public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper,
-        GeocodingResultService geocodingResultService) {
+        GeocodingResultService geocodingResultService, PhysicalAddressService physicalAddressService,
+        PostalAddressService postalAddressService) {
         this.locationRepository = locationRepository;
         this.locationMapper = locationMapper;
         this.geocodingResultService = geocodingResultService;
+        this.physicalAddressService = physicalAddressService;
+        this.postalAddressService = postalAddressService;
     }
 
     /**
@@ -65,6 +76,24 @@ public class LocationServiceImpl implements LocationService {
             geocodingResultService.findAllForAddressOrFetchIfEmpty(
                 location.getPhysicalAddress()));
         return locationRepository.save(location);
+    }
+
+    @Override
+    public Location saveWithRelations(Location location) {
+        Location persistentLocation = locationRepository.save(location);
+
+        PhysicalAddress physicalAddress = location.getPhysicalAddress();
+        physicalAddress.setLocation(persistentLocation);
+        physicalAddress = physicalAddressService.save(physicalAddress);
+        persistentLocation.setPhysicalAddress(physicalAddress);
+
+        PostalAddress postalAddress = location.getPostalAddress();
+        postalAddress.setLocation(persistentLocation);
+        postalAddress = postalAddressService.save(postalAddress);
+        persistentLocation.setPostalAddress(postalAddress);
+
+        // update geocoding results
+        return save(persistentLocation);
     }
 
     /**
