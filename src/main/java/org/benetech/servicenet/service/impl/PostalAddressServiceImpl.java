@@ -53,6 +53,18 @@ public class PostalAddressServiceImpl implements PostalAddressService {
     }
 
     /**
+     * Save a postalAddress.
+     *
+     * @param postalAddress the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public PostalAddress save(PostalAddress postalAddress) {
+        log.debug("Request to save PostalAddress : {}", postalAddress);
+        return postalAddressRepository.save(postalAddress);
+    }
+
+    /**
      * Get all the postalAddresses.
      *
      * @return the list of entities

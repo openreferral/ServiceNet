@@ -1,5 +1,6 @@
 package org.benetech.servicenet.repository;
 
+import java.util.List;
 import java.util.SortedSet;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,8 @@ import java.util.UUID;
 public interface TaxonomyRepository extends JpaRepository<Taxonomy, UUID>, TaxonomyRepositoryCustom {
 
     Optional<Taxonomy> findOneByExternalDbIdAndProviderName(String externalDbId, String providerName);
+
+    List<Taxonomy> findAllByProviderName(String providerName);
 
     Optional<Taxonomy> findOneByTaxonomyIdAndProviderName(String taxonomyId, String providerName);
 

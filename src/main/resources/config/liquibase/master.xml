@@ -182,4 +182,5 @@
     <include file="config/liquibase/changelog/20200415103658_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200420122259_added_entity_ClientProfile.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200427123945_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200505135050_create_service_provider_taxonomies.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

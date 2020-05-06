@@ -2,6 +2,7 @@ package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -36,14 +37,14 @@ public interface OrganizationService {
      * @param organizationDTO the entity to save
      * @return the persisted entity
      */
-    OrganizationDTO saveWithUser(OrganizationDTO organizationDTO);
+    OrganizationDTO saveWithUser(SimpleOrganizationDTO organizationDTO);
 
     /**
      * Get all the organizations.
      *
      * @return the list of entities
      */
-    List<OrganizationDTO> findAllDTOs();
+    List<org.benetech.servicenet.service.dto.OrganizationDTO> findAllDTOs();
 
     List<Organization> findAll();
 
@@ -59,14 +60,14 @@ public interface OrganizationService {
      * @param pageable the pagination information
      * @return the list of entities
      */
-    Page<OrganizationDTO> findAll(Pageable pageable);
+    Page<org.benetech.servicenet.service.dto.OrganizationDTO> findAll(Pageable pageable);
 
     /**
      * Get all the OrganizationDTO where Funding is null.
      *
      * @return the list of entities
      */
-    List<OrganizationDTO> findAllWhereFundingIsNull();
+    List<org.benetech.servicenet.service.dto.OrganizationDTO> findAllWhereFundingIsNull();
 
     Optional<Organization> findWithEagerAssociations(String externalDbId, String providerName);
 
@@ -76,7 +77,7 @@ public interface OrganizationService {
      * @param pageable the pagination information
      * @return the list of entities
      */
-    Page<OrganizationDTO> findAllWhereFundingIsNull(Pageable pageable);
+    Page<org.benetech.servicenet.service.dto.OrganizationDTO> findAllWhereFundingIsNull(Pageable pageable);
 
     /**
      * Get the "id" organization.
@@ -84,7 +85,7 @@ public interface OrganizationService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<OrganizationDTO> findOneDTO(UUID id);
+    Optional<org.benetech.servicenet.service.dto.OrganizationDTO> findOneDTO(UUID id);
 
     Optional<Organization> findOne(UUID id);
 

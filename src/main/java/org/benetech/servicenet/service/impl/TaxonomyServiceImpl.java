@@ -80,6 +80,18 @@ public class TaxonomyServiceImpl implements TaxonomyService {
     }
 
     /**
+     * Get provider's taxonomies.
+     *
+     * @param providerName provider's name
+     * @return the list of entities
+     */
+    @Override
+    public List<TaxonomyDTO> findByProvider(String providerName) {
+        return taxonomyRepository.findAllByProviderName(providerName).stream()
+            .map(taxonomyMapper::toDto).collect(Collectors.toList());
+    }
+
+    /**
      * Get the associated taxonomies.
      *
      * @param pageable the pagination information
@@ -115,6 +127,19 @@ public class TaxonomyServiceImpl implements TaxonomyService {
     @Override
     public Optional<Taxonomy> findForTaxonomyId(String taxonomyId, String providerName) {
         return taxonomyRepository.findOneByTaxonomyIdAndProviderName(taxonomyId, providerName);
+    }
+
+    /**
+     * Get one taxonomy by id.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Taxonomy> findById(UUID id) {
+        log.debug("Request to get Taxonomy : {}", id);
+        return taxonomyRepository.findById(id);
     }
 
     @Override

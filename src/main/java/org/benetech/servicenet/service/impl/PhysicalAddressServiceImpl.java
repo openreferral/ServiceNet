@@ -53,6 +53,18 @@ public class PhysicalAddressServiceImpl implements PhysicalAddressService {
     }
 
     /**
+     * Save a physicalAddress.
+     *
+     * @param physicalAddress the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public PhysicalAddress save(PhysicalAddress physicalAddress) {
+        log.debug("Request to save PhysicalAddress : {}", physicalAddress);
+        return physicalAddressRepository.save(physicalAddress);
+    }
+
+    /**
      * Get all the physicalAddresses.
      *
      * @return the list of entities

@@ -1,22 +1,41 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
+
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.ServiceAtLocationService;
+import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.ServiceTaxonomyService;
+import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
+import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
+import org.benetech.servicenet.service.mapper.ServiceMapper;
 import org.benetech.servicenet.service.util.RandomUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
@@ -28,7 +47,7 @@ import java.util.stream.Collectors;
 /**
  * Service Implementation for managing Organization.
  */
-@Service
+@org.springframework.stereotype.Service
 @Transactional
 public class OrganizationServiceImpl implements OrganizationService {
 
@@ -38,16 +57,40 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationMapper organizationMapper;
 
+    private final ServiceMapper serviceMapper;
+
+    private final LocationMapper locationMapper;
+
+    private final LocationService locationService;
+
+    private final ServiceAtLocationService serviceAtLocationService;
+
+    private final ServiceService serviceService;
+
     private final UserService userService;
+
+    private final TaxonomyService taxonomyService;
 
     private final TransactionSynchronizationService transactionSynchronizationService;
 
+    private final ServiceTaxonomyService serviceTaxonomyService;
+
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
-        UserService userService, TransactionSynchronizationService transactionSynchronizationService) {
+        UserService userService, TransactionSynchronizationService transactionSynchronizationService,
+        ServiceMapper serviceMapper, LocationMapper locationMapper, LocationService locationService,
+        ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
+        TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
         this.transactionSynchronizationService = transactionSynchronizationService;
+        this.serviceMapper = serviceMapper;
+        this.locationMapper = locationMapper;
+        this.locationService = locationService;
+        this.serviceService = serviceService;
+        this.serviceAtLocationService = serviceAtLocationService;
+        this.taxonomyService = taxonomyService;
+        this.serviceTaxonomyService = serviceTaxonomyService;
     }
 
     /**
@@ -57,7 +100,8 @@ public class OrganizationServiceImpl implements OrganizationService {
      * @return the persisted entity
      */
     @Override
-    public OrganizationDTO save(OrganizationDTO organizationDTO) {
+    public OrganizationDTO save(
+        OrganizationDTO organizationDTO) {
         log.debug("Request to save Organization : {}", organizationDTO);
 
         Organization organization = organizationMapper.toEntity(organizationDTO);
@@ -84,8 +128,9 @@ public class OrganizationServiceImpl implements OrganizationService {
      * @param organizationDTO the entity to save
      * @return the persisted entity
      */
+    @Transactional
     @Override
-    public OrganizationDTO saveWithUser(OrganizationDTO organizationDTO) {
+    public OrganizationDTO saveWithUser(SimpleOrganizationDTO organizationDTO) {
         log.debug("Request to save Organization : {}", organizationDTO);
 
         Organization organization = organizationMapper.toEntity(organizationDTO);
@@ -97,12 +142,15 @@ public class OrganizationServiceImpl implements OrganizationService {
             //  creating organization during uploading data from spreadsheets or from external APIs.
             //  Then next line can be removed. Issue: #956
             organization.setExternalDbId(RandomUtil.generateSeriesData());
+            organization = organizationRepository.save(organization);
+
+            List<Location> locations = saveLocations(organization, organizationDTO.getLocations());
+            saveServices(organization, organizationDTO.getServices(), locations);
+            // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
+            //  For the independent user with Service Provider (not the external one) system account type, matching should look
+            //  for all that kind of users. Issue: #957
+            registerSynchronizationOfMatchingOrganizations(organization);
         }
-        organization = organizationRepository.save(organization);
-        // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
-        //  For the independent user with Service Provider (not the external one) system account type, matching should look
-        //  for all that kind of users. Issue: #957
-        registerSynchronizationOfMatchingOrganizations(organization);
         return organizationMapper.toDto(organization);
     }
 
@@ -266,5 +314,58 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
         transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
+    }
+
+    private List<Location> saveLocations(Organization organization, List<SimpleLocationDTO> dtos) {
+        List<Location> locations = new ArrayList<>();
+        for (SimpleLocationDTO locationDTO : dtos) {
+            Location location = locationMapper.toEntity(locationDTO);
+            location.setPhysicalAddress(locationMapper.extractPhysicalAddress(locationDTO));
+            location.setPostalAddress(locationMapper.extractPostalAddress(locationDTO));
+            location.providerName(SERVICE_PROVIDER);
+            location.setOrganization(organization);
+            locations.add(locationService.saveWithRelations(location));
+        }
+        organization.setLocations(new HashSet<>(locations));
+        return locations;
+    }
+
+    private Set<Service> saveServices(Organization organization, List<SimpleServiceDTO> dtos,
+        List<Location> locations) {
+        Set<Service> services = new HashSet<>();
+        for (SimpleServiceDTO serviceDTO : dtos) {
+            Service service = serviceMapper.toEntity(serviceDTO);
+            service.setProviderName(SERVICE_PROVIDER);
+            service.setOrganization(organization);
+            service = serviceService.save(service);
+            HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
+            for (String taxonomyId : serviceDTO.getType()) {
+                Optional<Taxonomy> taxonomy = taxonomyService
+                    .findById(UUID.fromString(taxonomyId));
+                if (taxonomy.isPresent()) {
+                    ServiceTaxonomy serviceTaxonomy = new ServiceTaxonomy();
+                    serviceTaxonomy.setSrvc(service);
+                    serviceTaxonomy.setTaxonomy(taxonomy.get());
+                    serviceTaxonomy.setProviderName(SERVICE_PROVIDER);
+                    taxonomies.add(serviceTaxonomyService.save(serviceTaxonomy));
+                }
+            }
+            service.setTaxonomies(taxonomies);
+            Set<Location> serviceLocations = serviceDTO.getLocationIndexes().stream().map(
+                idx -> locations.get(Integer.parseInt(idx))
+            ).collect(Collectors.toSet());
+            Set<ServiceAtLocation> servicesAtLocation = new HashSet<>();
+            for (Location location : serviceLocations) {
+                ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
+                serviceAtLocation.setSrvc(service);
+                serviceAtLocation.setLocation(location);
+                serviceAtLocation.setProviderName(SERVICE_PROVIDER);
+                servicesAtLocation.add(serviceAtLocationService.save(serviceAtLocation));
+            }
+            service.setLocations(servicesAtLocation);
+            services.add(service);
+        }
+        organization.setServices(services);
+        return services;
     }
 }
