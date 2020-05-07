@@ -15,7 +15,7 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderActivityRecordDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -97,7 +97,7 @@ public class ActivityResource {
 
     @GetMapping("/provider-records")
     @Timed
-    public ResponseEntity<List<ProviderActivityRecordDTO>> getProviderActivities() {
+    public ResponseEntity<List<ProviderRecordDTO>> getProviderActivities() {
         return ResponseEntity.ok().body(
             activityService.getPartnerActivitiesForCurrentUser()
         );

@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.UserProfile;
@@ -24,12 +23,11 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderActivityRecordDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
 import org.benetech.servicenet.service.dto.Suggestions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -132,11 +130,11 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProviderActivityRecordDTO> getPartnerActivitiesForCurrentUser() {
+    public List<ProviderRecordDTO> getPartnerActivitiesForCurrentUser() {
         UserProfile userProfile = userService.getCurrentUserProfile();
         List<Organization> organizations = organizationService.findAllByUserProfile(userProfile);
         return organizations.stream()
-            .map(this::mapToProviderActivityRecordDTO)
+            .map(this::getProviderRecordDTO)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
@@ -173,10 +171,10 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
-    private ProviderActivityRecordDTO mapToProviderActivityRecordDTO(Organization organization) {
+    private ProviderRecordDTO getProviderRecordDTO(Organization organization) {
         try {
-            Optional<ActivityRecordDTO> opt = recordsService.getRecordFromOrganization(organization);
-            return opt.map(ProviderActivityRecordDTO::new).orElse(null);
+            Optional<ProviderRecordDTO> opt = recordsService.getProviderRecordFromOrganization(organization);
+            return opt.orElse(null);
         } catch (IllegalAccessException e) {
             return null;
         }

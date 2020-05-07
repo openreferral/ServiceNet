@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProviderActivityRecordDTO {
+public class ProviderRecordDTO {
 
     private OrganizationDTO organization;
 
@@ -20,11 +20,4 @@ public class ProviderActivityRecordDTO {
     private Set<LocationRecordDTO> locations;
 
     private Set<ServiceRecordDTO> services;
-
-    public ProviderActivityRecordDTO(ActivityRecordDTO activityRecordDTO) {
-        this.organization = activityRecordDTO.getOrganization();
-        this.lastUpdated = activityRecordDTO.getLastUpdated();
-        this.locations = activityRecordDTO.getLocations();
-        this.services = activityRecordDTO.getServices();
-    }
 }
