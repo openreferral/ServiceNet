@@ -1,6 +1,7 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,6 +22,9 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
 
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     List<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId);
+
+    @Query("SELECT org FROM Organization org WHERE :userProfile MEMBER OF org.userProfiles")
+    List<Organization> findAllWithUserProfile(@Param("userProfile") UserProfile userProfile);
 
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     Page<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
