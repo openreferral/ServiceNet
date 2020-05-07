@@ -5,10 +5,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ExclusionsConfig;
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.service.ActivityService;
@@ -16,9 +19,11 @@ import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
 import org.benetech.servicenet.service.dto.Suggestions;
 import org.slf4j.Logger;
@@ -49,14 +54,17 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final OrganizationService organizationService;
 
+    private final UserService userService;
+
     public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
         ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService,
-        OrganizationService organizationService) {
+        OrganizationService organizationService, UserService userService) {
         this.activityRepository = activityRepository;
         this.recordsService = recordsService;
         this.exclusionsConfigService = exclusionsConfigService;
         this.organizationMatchService = organizationMatchService;
         this.organizationService = organizationService;
+        this.userService = userService;
     }
 
     @Override
@@ -121,6 +129,17 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ProviderRecordDTO> getPartnerActivitiesForCurrentUser() {
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        List<Organization> organizations = organizationService.findAllByUserProfile(userProfile);
+        return organizations.stream()
+            .map(this::getProviderRecordDTO)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public Suggestions getNameSuggestions(
         ActivityFilterDTO activityFilterDTO, UUID systemAccountId, String search) {
 
@@ -149,6 +168,15 @@ public class ActivityServiceImpl implements ActivityService {
             return activityRepository.findAllWithFilters(ownerId, search, activityFilterDTO, pageable);
         } else {
             return new PageImpl<>(Collections.emptyList(), pageable, Collections.emptyList().size());
+        }
+    }
+
+    private ProviderRecordDTO getProviderRecordDTO(Organization organization) {
+        try {
+            Optional<ProviderRecordDTO> opt = recordsService.getProviderRecordFromOrganization(organization);
+            return opt.orElse(null);
+        } catch (IllegalAccessException e) {
+            return null;
         }
     }
 }

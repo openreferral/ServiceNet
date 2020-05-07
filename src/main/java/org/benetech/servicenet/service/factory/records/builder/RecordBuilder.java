@@ -22,6 +22,7 @@ import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.benetech.servicenet.service.mapper.ContactMapper;
 import org.benetech.servicenet.service.mapper.FieldExclusionMapper;
@@ -73,6 +74,28 @@ public class RecordBuilder {
             mapContacts(buildCollection(organization.getContacts(), Contact.class, baseExclusions)),
             mapExclusions(baseExclusions),
             conflictDTOS);
+    }
+
+    public ProviderRecordDTO buildBasicProviderRecord(Organization organization, ZonedDateTime lastUpdated,
+        Set<LocationExclusion> locationExclusions) {
+        return new ProviderRecordDTO(
+            mapOrganization(organization),
+            lastUpdated,
+            mapLocations(filterLocations(organization.getLocations(), locationExclusions)),
+            mapServices(organization.getServices())
+        );
+    }
+
+    public ProviderRecordDTO buildFilteredProviderRecord(Organization organization, ZonedDateTime lastUpdated,
+        Set<FieldExclusion> baseExclusions, Set<LocationExclusion> locationExclusions)
+        throws IllegalAccessException {
+        return new ProviderRecordDTO(
+            mapOrganization(buildObject(organization, Organization.class, baseExclusions)),
+            lastUpdated,
+            mapLocations(buildCollection(filterLocations(organization.getLocations(), locationExclusions),
+                Location.class, baseExclusions)),
+            mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions))
+        );
     }
 
     private Set<Location> filterLocations(Set<Location> locations, Set<LocationExclusion> locationExclusions) {

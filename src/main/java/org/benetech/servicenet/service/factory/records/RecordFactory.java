@@ -14,6 +14,7 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.factory.records.builder.RecordBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,6 +60,23 @@ public class RecordFactory {
         List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, fieldExclusions, exclusionsMap);
 
         return filterRecord(organization, filteredConflicts, fieldExclusions, locationExclusions);
+    }
+
+
+    public Optional<ProviderRecordDTO> getFilteredProviderRecord(Organization organization) {
+
+        Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
+
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusionsMap);
+        Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
+            .flatMap(e -> e.getExclusions().stream())
+            .collect(Collectors.toSet());
+
+        Set<LocationExclusion> locationExclusions = baseExclusions.stream()
+            .flatMap(e -> e.getLocationExclusions().stream())
+            .collect(Collectors.toSet());
+
+        return filterProviderRecord(organization, fieldExclusions, locationExclusions);
     }
 
     public ActivityDTO getFilteredResult(ActivityInfo info, Map<UUID, ExclusionsConfig> exclusionsMap) {
@@ -124,6 +142,16 @@ public class RecordFactory {
         }
     }
 
+    private Optional<ProviderRecordDTO> filterProviderRecord(Organization organization,
+        Set<FieldExclusion> exclusions, Set<LocationExclusion> locationExclusions) {
+        try {
+            return Optional.of(buildProviderRecord(organization, exclusions, locationExclusions));
+        } catch (IllegalAccessException e) {
+            log.error("Unable to filter record.");
+            return Optional.empty();
+        }
+    }
+
     private ActivityRecordDTO buildRecord(Organization organization, List<ConflictDTO> conflictDTOS,
         Set<FieldExclusion> exclusions, Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
 
@@ -133,6 +161,18 @@ public class RecordFactory {
         } else {
             return recordBuilder.buildFilteredRecord(organization, organization.getUpdatedAt(),
                 conflictDTOS, exclusions, locationExclusions);
+        }
+    }
+
+    private ProviderRecordDTO buildProviderRecord(Organization organization,
+        Set<FieldExclusion> exclusions, Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
+
+        if (exclusions.isEmpty()) {
+            return recordBuilder.buildBasicProviderRecord(
+                organization, organization.getUpdatedAt(), locationExclusions);
+        } else {
+            return recordBuilder.buildFilteredProviderRecord(organization, organization.getUpdatedAt(),
+                 exclusions, locationExclusions);
         }
     }
 }

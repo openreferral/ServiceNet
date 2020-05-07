@@ -7,6 +7,7 @@ import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.factory.records.RecordFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,12 @@ public class RecordsServiceImpl implements RecordsService {
     @Override
     public Optional<ActivityRecordDTO> getRecordFromOrganization(Organization organization) {
         return recordFactory.getFilteredRecord(organization);
+    }
+
+    @Override
+    public Optional<ProviderRecordDTO> getProviderRecordFromOrganization(
+        Organization organization) throws IllegalAccessException {
+        return recordFactory.getFilteredProviderRecord(organization);
     }
 
     @Override

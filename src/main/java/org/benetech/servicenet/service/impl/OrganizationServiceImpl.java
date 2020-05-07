@@ -190,6 +190,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    public List<Organization> findAllByUserProfile(UserProfile userProfile) {
+        log.debug("Request to get all Organizations which are associated with userProfile: {}", userProfile);
+        return organizationRepository.findAllWithUserProfile(userProfile);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds) {
         log.debug("Request to get all Organizations which are not associated with provider: {} and not in: {}",

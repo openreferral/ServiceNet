@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,8 @@ public interface OrganizationService {
     List<Organization> findAllWithEagerAssociations();
 
     List<Organization> findAllOthers(String providerName);
+
+    List<Organization> findAllByUserProfile(UserProfile userProfile);
 
     List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds);
 

@@ -85,7 +85,7 @@ public class ActivityServiceImplTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        activityService = new ActivityServiceImpl(activityRepository, recordsService, exclusionsConfigService, organizationMatchService, organizationService);
+        activityService = new ActivityServiceImpl(activityRepository, recordsService, exclusionsConfigService, organizationMatchService, organizationService, userService);
     }
 
     @Before
