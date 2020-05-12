@@ -59,4 +59,35 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         @Param("ids") List<UUID> ids);
 
     Page<Organization> findAll(Pageable pageable);
+
+    @Query("SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.account "
+        + "LEFT JOIN FETCH org.locations locs "
+        + "LEFT JOIN FETCH org.services srvs "
+        + "LEFT JOIN FETCH org.contacts "
+        + "LEFT JOIN FETCH org.phones "
+        + "LEFT JOIN FETCH org.programs "
+        + "LEFT JOIN FETCH locs.regularSchedule lRS "
+        + "LEFT JOIN FETCH lRS.openingHours "
+        + "LEFT JOIN FETCH locs.holidaySchedules "
+        + "LEFT JOIN FETCH locs.langs "
+        + "LEFT JOIN FETCH locs.accessibilities "
+        + "LEFT JOIN FETCH srvs.regularSchedule sRS "
+        + "LEFT JOIN FETCH sRS.openingHours "
+        + "LEFT JOIN FETCH srvs.holidaySchedules "
+        + "LEFT JOIN FETCH srvs.funding "
+        + "LEFT JOIN FETCH srvs.eligibility "
+        + "LEFT JOIN FETCH srvs.docs "
+        + "LEFT JOIN FETCH srvs.paymentsAccepteds "
+        + "LEFT JOIN FETCH srvs.langs "
+        + "LEFT JOIN FETCH srvs.taxonomies "
+        + "LEFT JOIN FETCH srvs.phones "
+        + "LEFT JOIN FETCH srvs.contacts "
+        + "WHERE org.id = :id OR "
+        + "org.externalDbId = :externalDbId OR "
+        + "locs.id = :id OR "
+        + "locs.externalDbId = :externalDbId OR "
+        + "srvs.id = :id OR "
+        + "srvs.externalDbId = :externalDbId")
+    Organization findOneWithAllEagerAssociationsByIdOrExternalDbId(@Param("id") UUID id, @Param("externalDbId") String externalDbId);
 }

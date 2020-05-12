@@ -294,6 +294,18 @@ public class OrganizationServiceImpl implements OrganizationService {
         return Optional.ofNullable(this.getProvidersOrganization(orgList, providerId));
     }
 
+    @Override
+    public Optional<Organization> findWithEagerByIdOrExternalDbId(String id) {
+        Organization orgList;
+        try {
+            UUID uuid = UUID.fromString(id);
+            orgList = organizationRepository.findOneWithAllEagerAssociationsByIdOrExternalDbId(uuid, id);
+        } catch (IllegalArgumentException e) {
+            orgList = organizationRepository.findOneWithAllEagerAssociationsByIdOrExternalDbId(null, id);
+        }
+        return Optional.ofNullable(orgList);
+    }
+
     /**
      * Delete the organization by id.
      *

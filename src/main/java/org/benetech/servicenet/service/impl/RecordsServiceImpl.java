@@ -8,6 +8,7 @@ import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 import org.benetech.servicenet.service.factory.records.RecordFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,5 +39,10 @@ public class RecordsServiceImpl implements RecordsService {
     public ActivityDTO getActivityDTOFromActivityInfo(ActivityInfo activityInfo,
         Map<UUID, ExclusionsConfig> exclusionsMap) {
         return recordFactory.getFilteredResult(activityInfo, exclusionsMap);
+    }
+
+    @Override
+    public RecordDetailsDTO getRecordDetailsFromOrganization(Organization organization) {
+        return recordFactory.getRecordDetails(organization);
     }
 }

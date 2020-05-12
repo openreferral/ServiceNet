@@ -8,14 +8,20 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.view.ActivityInfo;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
+import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
+import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
+import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
 import org.benetech.servicenet.service.factory.records.builder.RecordBuilder;
+import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +47,15 @@ public class RecordFactory {
     private ConflictService conflictService;
 
     @Autowired
+    private OrganizationMatchService organizationMatchService;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private OrganizationMapper organizationMapper;
+
+    @Autowired
     private RecordBuilder recordBuilder;
 
     public Optional<ActivityRecordDTO> getFilteredRecord(Organization organization) {
@@ -62,6 +77,24 @@ public class RecordFactory {
         return filterRecord(organization, filteredConflicts, fieldExclusions, locationExclusions);
     }
 
+    public RecordDetailsDTO getRecordDetails(Organization organization) {
+        List<ConflictDTO> conflicts = getBaseConflicts(organization.getId());
+        List<OrganizationMatchDTO> orgMatches = getOrganizationMatches(organization.getId());
+        Set<RecordDetailsOrganizationDTO> partnerOrgs = getPartnerOrganizations(orgMatches);
+
+        return recordBuilder.buildRecordDetails(organization, conflicts, orgMatches, partnerOrgs);
+    }
+
+    private Set<RecordDetailsOrganizationDTO> getPartnerOrganizations(List<OrganizationMatchDTO> orgMatches) {
+        Set<UUID> partnerOrgsIds = orgMatches.stream()
+            .map(OrganizationMatchDTO::getPartnerVersionId)
+            .collect(Collectors.toSet());
+        Set<Organization> partnerOrgs = partnerOrgsIds
+            .stream()
+            .map(uuid -> organizationRepository.findOneWithAllEagerAssociationsByIdOrExternalDbId(uuid, uuid.toString()))
+            .collect(Collectors.toSet());
+        return partnerOrgs.stream().map(organizationMapper::toRecordDetailsDto).collect(Collectors.toSet());
+    }
 
     public Optional<ProviderRecordDTO> getFilteredProviderRecord(Organization organization) {
 
@@ -101,6 +134,10 @@ public class RecordFactory {
 
     private List<ConflictDTO> getBaseConflicts(UUID resourceId) {
         return conflictService.findAllPendingWithResourceId(resourceId);
+    }
+
+    private List<OrganizationMatchDTO> getOrganizationMatches(UUID resourceId) {
+        return organizationMatchService.findAllForOrganization(resourceId);
     }
 
     private List<ConflictDTO> filterConflicts(List<ConflictDTO> conflicts, Set<FieldExclusion> baseExclusions,
