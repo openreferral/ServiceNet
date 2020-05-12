@@ -22,8 +22,11 @@ import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 import org.benetech.servicenet.service.dto.ServiceRecordDTO;
+import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
 import org.benetech.servicenet.service.mapper.ContactMapper;
 import org.benetech.servicenet.service.mapper.FieldExclusionMapper;
 import org.benetech.servicenet.service.mapper.LocationMapper;
@@ -60,6 +63,16 @@ public class RecordBuilder {
             mapContacts(organization.getContacts()),
             new HashSet<>(),
             conflictDTOS);
+    }
+
+    public RecordDetailsDTO buildRecordDetails(Organization organization,
+        List<ConflictDTO> conflictDTOs, List<OrganizationMatchDTO> orgMatchDTOs, Set<RecordDetailsOrganizationDTO> partnerOrgs) {
+        return new RecordDetailsDTO(
+            mapOrganizationForRecordDetails(organization),
+            partnerOrgs,
+            orgMatchDTOs,
+            conflictDTOs
+        );
     }
 
     public ActivityRecordDTO buildFilteredRecord(Organization organization, ZonedDateTime lastUpdated,
@@ -142,5 +155,9 @@ public class RecordBuilder {
 
     private OrganizationDTO mapOrganization(Organization organization) {
         return organizationMapper.toDto(organization);
+    }
+
+    private RecordDetailsOrganizationDTO mapOrganizationForRecordDetails(Organization organization) {
+        return organizationMapper.toRecordDetailsDto(organization);
     }
 }

@@ -17,13 +17,18 @@ import org.benetech.servicenet.security.SecurityUtils;
 import org.benetech.servicenet.service.ClientProfileService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.RecordsService;
+import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 import org.benetech.servicenet.service.dto.external.RecordRequest;
 import org.benetech.servicenet.service.dto.external.RecordDto;
+import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +45,12 @@ public class RecordsResource {
 
     @Autowired
     private OrganizationService organizationService;
+
+    @Autowired
+    private RecordsService recordsService;
+
+    @Autowired
+    private OrganizationMapper organizationMapper;
 
     @Autowired
     private OrganizationMatchService organizationMatchService;
@@ -74,6 +85,20 @@ public class RecordsResource {
         List<RecordDto> results = this.mapMatchesToExternalRecords(matches, recordRequest.getSimilarity());
         return ResponseEntity.ok()
             .body(results);
+    }
+
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.EXTERNAL + "')")
+    @GetMapping("/record-details/{elementId}")
+    @Timed
+    public ResponseEntity<RecordDetailsDTO> getRecordDetails(@PathVariable String elementId) {
+        Optional<Organization> optionalOrganization = organizationService.findWithEagerByIdOrExternalDbId(elementId);
+        if (optionalOrganization.isEmpty()) {
+            throw new BadRequestAlertException("There is no organization associated to given id.",
+                RecordType.ORGANIZATION.toString(), "id");
+        }
+        Organization organization = optionalOrganization.get();
+
+        return ResponseEntity.ok().body(recordsService.getRecordDetailsFromOrganization(organization));
     }
 
     private List<RecordDto> mapMatchesToExternalRecords(List<OrganizationMatch> matches, double similarity) {
