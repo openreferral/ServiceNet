@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 
 public interface RecordsService {
 
@@ -18,4 +19,6 @@ public interface RecordsService {
     Optional<ProviderRecordDTO> getProviderRecordFromOrganization(Organization organization) throws IllegalAccessException;
 
     ActivityDTO getActivityDTOFromActivityInfo(ActivityInfo activityInfo, Map<UUID, ExclusionsConfig> exclusionsMap);
+
+    RecordDetailsDTO getRecordDetailsFromOrganization(Organization organization);
 }

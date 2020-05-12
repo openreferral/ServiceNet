@@ -96,6 +96,8 @@ public interface OrganizationService {
 
     Optional<Organization> findByIdOrExternalDbId(String id, UUID providerId);
 
+    Optional<Organization> findWithEagerByIdOrExternalDbId(String id);
+
     /**
      * Delete the "id" organization.
      *

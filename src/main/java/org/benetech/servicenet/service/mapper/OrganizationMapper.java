@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.mapper;
 
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -40,6 +41,8 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     @Mapping(target = "services", ignore = true)
     @Mapping(target = "userProfiles", ignore = true)
     Organization toEntity(SimpleOrganizationDTO organizationDTO);
+
+    RecordDetailsOrganizationDTO toRecordDetailsDto(Organization organization);
 
     default Organization fromId(UUID id) {
         if (id == null) {
