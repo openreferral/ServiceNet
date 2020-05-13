@@ -66,6 +66,7 @@
     <include file="config/liquibase/changelog/20200127211934_added_entity_ServiceFieldsValue.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200127211935_added_entity_ServiceTaxonomiesDetailsFieldsValue.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200127211936_added_entity_ContactDetailsFieldsValue.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200513104705_added_entity_DailyUpdate.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
              relativeToChangelogFile="false"/>
@@ -129,6 +130,7 @@
     <include file="config/liquibase/changelog/20191011144091_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20191218120000_added_entity_constraints_TaxonomyGroup.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200127211929_added_entity_constraints_FieldsDisplaySettings.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200513104705_added_entity_constraints_DailyUpdate.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <include file="config/liquibase/changelog/20181220100327_insert_initial_SystemAccounts.xml"
              relativeToChangelogFile="false"/>
@@ -183,4 +185,6 @@
     <include file="config/liquibase/changelog/20200420122259_added_entity_ClientProfile.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200427123945_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200505135050_create_service_provider_taxonomies.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200513104705_added_entity_DailyUpdate.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200513104705_added_entity_constraints_DailyUpdate.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

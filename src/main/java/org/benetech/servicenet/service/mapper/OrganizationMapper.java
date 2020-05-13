@@ -40,6 +40,7 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     @Mapping(target = "locations", ignore = true)
     @Mapping(target = "services", ignore = true)
     @Mapping(target = "userProfiles", ignore = true)
+    @Mapping(target = "dailyUpdates", ignore = true)
     Organization toEntity(SimpleOrganizationDTO organizationDTO);
 
     RecordDetailsOrganizationDTO toRecordDetailsDto(Organization organization);

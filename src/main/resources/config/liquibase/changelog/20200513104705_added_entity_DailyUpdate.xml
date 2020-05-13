@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="clobType" value="clob" dbms="oracle, h2, postgresql"/>
+    <property name="clobType" value="longtext" dbms="mysql"/>
+    <!--
+        Added the entity DailyUpdate.
+    -->
+    <changeSet id="20200513104705-1" author="jhipster">
+        <createTable tableName="daily_update">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="update" type="${clobType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="expiry" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="created_at" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="organization_id" type="uuid">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
+        </createTable>
+        <dropDefaultValue tableName="daily_update" columnName="expiry" columnDataType="datetime"/>
+        <dropDefaultValue tableName="daily_update" columnName="created_at" columnDataType="datetime"/>
+    </changeSet>
+
+    <changeSet id="20200513104705-1-relations" author="jhipster">
+
+    </changeSet>
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
+
+</databaseChangeLog>
