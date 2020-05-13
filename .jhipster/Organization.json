@@ -112,6 +112,12 @@
             "relationshipName": "services",
             "otherEntityName": "service",
             "otherEntityRelationshipName": "organization"
+        },
+        {
+          "relationshipType": "one-to-many",
+          "relationshipName": "dailyUpdates",
+          "otherEntityName": "dailyUpdate",
+          "otherEntityRelationshipName": "organization"
         }
     ],
     "changelogDate": "20181119125354",

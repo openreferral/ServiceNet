@@ -142,6 +142,10 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         inverseJoinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"))
     private Set<UserProfile> userProfiles;
 
+    @OneToMany(mappedBy = "organization")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<DailyUpdate> dailyUpdates = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     @PrePersist
@@ -165,6 +169,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.externalDbId = org.externalDbId;
         this.lastVerifiedOn = org.lastVerifiedOn;
         this.userProfiles = org.userProfiles;
+        this.dailyUpdates = org.dailyUpdates;
     }
 
     public Organization name(String name) {
@@ -314,6 +319,30 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     public Organization lastVerifiedOn(ZonedDateTime lastVerifiedOn) {
         this.lastVerifiedOn = lastVerifiedOn;
         return this;
+    }
+
+    public Organization dailyUpdates(Set<DailyUpdate> dailyUpdates) {
+        this.dailyUpdates = dailyUpdates;
+        return this;
+    }
+
+    public Organization addDailyUpdates(DailyUpdate dailyUpdate) {
+        this.dailyUpdates.add(dailyUpdate);
+        dailyUpdate.setOrganization(this);
+        return this;
+    }
+
+    public Organization removeDailyUpdates(DailyUpdate dailyUpdate) {
+        this.dailyUpdates.remove(dailyUpdate);
+        dailyUpdate.setOrganization(null);
+        return this;
+    }
+
+    public Set<DailyUpdate> getDailyUpdates() {
+        return dailyUpdates;
+    }
+    public void setDailyUpdates(Set<DailyUpdate> dailyUpdates) {
+        this.dailyUpdates = dailyUpdates;
     }
 
     public Set<UserProfile> getUserProfiles() {
