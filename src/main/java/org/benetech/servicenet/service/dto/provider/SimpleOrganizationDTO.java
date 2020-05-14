@@ -31,6 +31,8 @@ public class SimpleOrganizationDTO implements Serializable {
 
     private String url;
 
+    private String update;
+
     private ZonedDateTime updatedAt;
 
     @Getter

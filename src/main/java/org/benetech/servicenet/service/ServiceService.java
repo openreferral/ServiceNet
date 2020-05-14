@@ -77,6 +77,14 @@ public interface ServiceService {
     Optional<ServiceDTO> findOne(UUID id);
 
     /**
+     * Get the "id" service.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    Optional<Service> findById(UUID id);
+
+    /**
      * Delete the "id" service.
      *
      * @param id the id of the entity

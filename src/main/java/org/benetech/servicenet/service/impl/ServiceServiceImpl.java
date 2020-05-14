@@ -157,6 +157,19 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     /**
+     * Get one service by id.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Service> findById(UUID id) {
+        log.debug("Request to get Service : {}", id);
+        return serviceRepository.findById(id);
+    }
+
+    /**
      * Delete the service by id.
      *
      * @param id the id of the entity

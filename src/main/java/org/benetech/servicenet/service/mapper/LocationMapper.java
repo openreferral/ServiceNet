@@ -62,8 +62,9 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
         return location;
     }
 
-    default PostalAddress extractPostalAddress(SimpleLocationDTO simpleLocationDTO) {
-        PostalAddress postalAddress = new PostalAddress();
+    default PostalAddress extractPostalAddress(SimpleLocationDTO simpleLocationDTO, Location existingLocation) {
+        PostalAddress postalAddress = (existingLocation != null)
+            ? existingLocation.getPostalAddress() : new PostalAddress();
         postalAddress.address1(simpleLocationDTO.getAddress1());
         postalAddress.address2(simpleLocationDTO.getAddress2());
         postalAddress.city(simpleLocationDTO.getCity());
@@ -72,8 +73,9 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
         return postalAddress;
     }
 
-    default PhysicalAddress extractPhysicalAddress(SimpleLocationDTO simpleLocationDTO) {
-        PhysicalAddress physicalAddress = new PhysicalAddress();
+    default PhysicalAddress extractPhysicalAddress(SimpleLocationDTO simpleLocationDTO, Location existingLocation) {
+        PhysicalAddress physicalAddress = (existingLocation != null)
+            ? existingLocation.getPhysicalAddress() : new PhysicalAddress();
         physicalAddress.address1(simpleLocationDTO.getAddress1());
         physicalAddress.address2(simpleLocationDTO.getAddress2());
         physicalAddress.city(simpleLocationDTO.getCity());

@@ -97,6 +97,14 @@ public interface LocationService {
     Optional<LocationDTO> findOne(UUID id);
 
     /**
+     * Get the "id" location.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    Optional<Location> findById(UUID id);
+
+    /**
      * Delete the "id" location.
      *
      * @param id the id of the entity
