@@ -190,6 +190,20 @@ public class OrganizationResource {
     }
 
     /**
+     * GET  /provider-organization/:id : get the organization with given id for service provider.
+     *
+     * @param id the id of the organization to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the SimpleOrganizationDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/provider-organization/{id}")
+    @Timed
+    public ResponseEntity<SimpleOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id) {
+        log.debug("REST request to get Organization : {}", id);
+        Optional<SimpleOrganizationDTO> organizationDTO = organizationService.findOneDTOForProvider(id);
+        return ResponseUtil.wrapOrNotFound(organizationDTO);
+    }
+
+    /**
      * DELETE  /organizations/:id : delete the "id" organization.
      *
      * @param id the id of the organizationDTO to delete
