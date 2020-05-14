@@ -140,6 +140,14 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<ProviderRecordDTO> getAllPartnerActivities(Pageable pageable) {
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        Page<Organization> organizations = organizationService.findAllOrganizations(userProfile, pageable);
+        return organizations.map(this::getProviderRecordDTO);
+    }
+
+    @Override
     public Suggestions getNameSuggestions(
         ActivityFilterDTO activityFilterDTO, UUID systemAccountId, String search) {
 

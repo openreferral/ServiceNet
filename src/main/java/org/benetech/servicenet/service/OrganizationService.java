@@ -49,6 +49,8 @@ public interface OrganizationService {
 
     List<Organization> findAll();
 
+    Page<Organization> findAllOrganizations(UserProfile userProfile, Pageable pageable);
+
     List<Organization> findAllWithEagerAssociations();
 
     List<Organization> findAllOthers(String providerName);
