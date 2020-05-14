@@ -567,26 +567,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${maven-checkstyle.version}</version>
-                <executions>
-                    <execution>
-                        <id>checkstyle</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>true</failsOnError>
-                    <configLocation>checks/checkstyle/checkstyle.xml</configLocation>
-                    <sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>${maven-pmd.version}</version>
                 <executions>
@@ -684,9 +664,8 @@
                         </dependency>
                     </dependencies>
                     <configuration>
-                        <configLocation>checkstyle.xml</configLocation>
-                        <includes>pom.xml,README.md</includes>
-                        <excludes>.git/**/*,target/**/*,node_modules/**/*,node/**/*</excludes>
+                        <configLocation>checks/checkstyle/checkstyle.xml</configLocation>
+                        <excludes>.git/**/*,target/**/*,node_modules/**/*,node/**/*,.mvn/**</excludes>
                         <sourceDirectories>./</sourceDirectories>
                     </configuration>
                     <executions>
