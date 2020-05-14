@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.mapper;
 
+import java.util.Collections;
+import java.util.List;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
@@ -45,6 +47,8 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
 
     RecordDetailsOrganizationDTO toRecordDetailsDto(Organization organization);
 
+    SimpleOrganizationDTO toSimpleDto(Organization organization);
+
     default Organization fromId(UUID id) {
         if (id == null) {
             return null;
@@ -52,5 +56,9 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
         Organization organization = new Organization();
         organization.setId(id);
         return organization;
+    }
+
+    default List<String> map(String value) {
+        return Collections.singletonList(value);
     }
 }

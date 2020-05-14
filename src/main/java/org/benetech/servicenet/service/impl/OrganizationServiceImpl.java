@@ -277,6 +277,20 @@ public class OrganizationServiceImpl implements OrganizationService {
             .map(organizationMapper::toDto);
     }
 
+    /**
+     * Get one organization by id for provider view.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id) {
+        log.debug("Request to get Organization : {}", id);
+        return findOne(id)
+            .map(organizationMapper::toSimpleDto);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Optional<Organization> findOne(UUID id) {

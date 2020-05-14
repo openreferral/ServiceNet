@@ -106,4 +106,6 @@ public interface OrganizationService {
      * @param id the id of the entity
      */
     void delete(UUID id);
+
+    Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id);
 }
