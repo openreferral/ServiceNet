@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
+import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 
 /**
  * A DTO for the Organization entity.
@@ -37,6 +38,9 @@ public class SimpleOrganizationDTO implements Serializable {
 
     @Getter
     List<SimpleServiceDTO> services;
+
+    @Getter
+    List<DailyUpdateDTO> dailyUpdates;
 
     @Override
     public boolean equals(Object o) {
