@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,6 +102,14 @@ public class ActivityResource {
         return ResponseEntity.ok().body(
             activityService.getPartnerActivitiesForCurrentUser()
         );
+    }
+
+    @GetMapping("/all-provider-records")
+    @Timed
+    public ResponseEntity<List<ProviderRecordDTO>> getAllProviderActivities(Pageable pageable) {
+        Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @PostMapping("/activity-suggestions")
