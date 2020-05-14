@@ -1,0 +1,40 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "ServiceNet",
+    "relationships": [
+      {
+        "relationshipType": "many-to-one",
+        "relationshipName": "organization",
+        "otherEntityName": "organization",
+        "otherEntityField": "name"
+      }
+    ],
+    "fields": [
+        {
+            "fieldName": "update",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "expiry",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "createdAt",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "changelogDate": "20200513104705",
+    "dto": "mapstruct",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "daily_update",
+    "databaseType": "sql",
+    "readOnly": false,
+    "jpaMetamodelFiltering": false,
+    "pagination": "pagination",
+    "microserviceName": "ServiceNet"
+}
