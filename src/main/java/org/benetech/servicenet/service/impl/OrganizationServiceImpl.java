@@ -222,6 +222,13 @@ public class OrganizationServiceImpl implements OrganizationService {
             .map(organizationMapper::toDto);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Organization> findAllOrganizations(UserProfile userProfile, Pageable pageable) {
+        log.debug("Request to get all Conflicts");
+        return organizationRepository.findAllWithoutUserProfile(userProfile, pageable);
+    }
+
     /**
      * get all the organizations where Funding is null.
      *
