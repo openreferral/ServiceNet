@@ -228,6 +228,19 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
+     * Get one location by id.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Location> findById(UUID id) {
+        log.debug("Request to get Location : {}", id);
+        return locationRepository.findById(id);
+    }
+
+    /**
      * Delete the location by id.
      *
      * @param id the id of the entity
