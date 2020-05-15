@@ -142,15 +142,15 @@ public class OrganizationServiceImpl implements OrganizationService {
             //  creating organization during uploading data from spreadsheets or from external APIs.
             //  Then next line can be removed. Issue: #956
             organization.setExternalDbId(RandomUtil.generateSeriesData());
-            organization = organizationRepository.save(organization);
-
-            List<Location> locations = saveLocations(organization, organizationDTO.getLocations());
-            saveServices(organization, organizationDTO.getServices(), locations);
-            // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
-            //  For the independent user with Service Provider (not the external one) system account type, matching should look
-            //  for all that kind of users. Issue: #957
-            registerSynchronizationOfMatchingOrganizations(organization);
         }
+        organization = organizationRepository.save(organization);
+
+        List<Location> locations = saveLocations(organization, organizationDTO.getLocations());
+        saveServices(organization, organizationDTO.getServices(), locations);
+        // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
+        //  For the independent user with Service Provider (not the external one) system account type, matching should look
+        //  for all that kind of users. Issue: #957
+        registerSynchronizationOfMatchingOrganizations(organization);
         return organizationMapper.toDto(organization);
     }
 
@@ -287,8 +287,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Transactional(readOnly = true)
     public Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id) {
         log.debug("Request to get Organization : {}", id);
-        return findOne(id)
-            .map(organizationMapper::toSimpleDto);
+        return findOne(id).map(this::mapToSimpleDto);
     }
 
     @Override
@@ -359,8 +358,10 @@ public class OrganizationServiceImpl implements OrganizationService {
         List<Location> locations = new ArrayList<>();
         for (SimpleLocationDTO locationDTO : dtos) {
             Location location = locationMapper.toEntity(locationDTO);
-            location.setPhysicalAddress(locationMapper.extractPhysicalAddress(locationDTO));
-            location.setPostalAddress(locationMapper.extractPostalAddress(locationDTO));
+            Location existingLocation = (location.getId() != null) ?
+                locationService.findById(location.getId()).get() : null;
+            location.setPhysicalAddress(locationMapper.extractPhysicalAddress(locationDTO, existingLocation));
+            location.setPostalAddress(locationMapper.extractPostalAddress(locationDTO, existingLocation));
             location.providerName(SERVICE_PROVIDER);
             location.setOrganization(organization);
             locations.add(locationService.saveWithRelations(location));
@@ -378,15 +379,21 @@ public class OrganizationServiceImpl implements OrganizationService {
             service.setOrganization(organization);
             service = serviceService.save(service);
             HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
-            for (String taxonomyId : serviceDTO.getType()) {
-                Optional<Taxonomy> taxonomy = taxonomyService
-                    .findById(UUID.fromString(taxonomyId));
-                if (taxonomy.isPresent()) {
-                    ServiceTaxonomy serviceTaxonomy = new ServiceTaxonomy();
-                    serviceTaxonomy.setSrvc(service);
-                    serviceTaxonomy.setTaxonomy(taxonomy.get());
-                    serviceTaxonomy.setProviderName(SERVICE_PROVIDER);
-                    taxonomies.add(serviceTaxonomyService.save(serviceTaxonomy));
+            Set<UUID> existingTaxonomies = (service.getTaxonomies() != null) ? service.getTaxonomies().stream()
+                .map(st -> st.getTaxonomy().getId()).collect(Collectors.toSet())
+                : Collections.emptySet();
+            for (String taxonomyId : serviceDTO.getTaxonomyIds()) {
+                UUID id = UUID.fromString(taxonomyId);
+                if (!existingTaxonomies.contains(id)) {
+                    Optional<Taxonomy> taxonomy = taxonomyService
+                        .findById(id);
+                    if (taxonomy.isPresent()) {
+                        ServiceTaxonomy serviceTaxonomy = new ServiceTaxonomy();
+                        serviceTaxonomy.setSrvc(service);
+                        serviceTaxonomy.setTaxonomy(taxonomy.get());
+                        serviceTaxonomy.setProviderName(SERVICE_PROVIDER);
+                        taxonomies.add(serviceTaxonomyService.save(serviceTaxonomy));
+                    }
                 }
             }
             service.setTaxonomies(taxonomies);
@@ -394,17 +401,44 @@ public class OrganizationServiceImpl implements OrganizationService {
                 idx -> locations.get(Integer.parseInt(idx))
             ).collect(Collectors.toSet());
             Set<ServiceAtLocation> servicesAtLocation = new HashSet<>();
+            Set<UUID> existingLocations = (service.getLocations() != null) ? service.getLocations().stream()
+                .map(sat -> sat.getLocation().getId()).collect(Collectors.toSet())
+                : Collections.emptySet();
             for (Location location : serviceLocations) {
-                ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
-                serviceAtLocation.setSrvc(service);
-                serviceAtLocation.setLocation(location);
-                serviceAtLocation.setProviderName(SERVICE_PROVIDER);
-                servicesAtLocation.add(serviceAtLocationService.save(serviceAtLocation));
+                if (location.getId() == null || !existingLocations.contains(location.getId())) {
+                    ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
+                    serviceAtLocation.setSrvc(service);
+                    serviceAtLocation.setLocation(location);
+                    serviceAtLocation.setProviderName(SERVICE_PROVIDER);
+                    servicesAtLocation.add(serviceAtLocationService.save(serviceAtLocation));
+                }
             }
             service.setLocations(servicesAtLocation);
             services.add(service);
         }
         organization.setServices(services);
         return services;
+    }
+
+    private SimpleOrganizationDTO mapToSimpleDto(Organization org) {
+        SimpleOrganizationDTO organizationDto = organizationMapper.toSimpleDto(org);
+        organizationDto.getServices().forEach(dto -> {
+            Service service = org.getServices().stream()
+                .filter(s -> s.getId().equals(dto.getId())).findAny().get();
+            dto.setLocationIndexes(
+                service.getLocations().stream()
+                    .map(ServiceAtLocation::getLocation)
+                    .map(loc -> String.valueOf(organizationDto.getLocations().stream()
+                        .map(SimpleLocationDTO::getId).collect(Collectors.toList())
+                        .indexOf(loc.getId())))
+                    .collect(Collectors.toList())
+            );
+            dto.setTaxonomyIds(
+                service.getTaxonomies().stream()
+                    .map(st -> st.getTaxonomy().getId().toString())
+                    .collect(Collectors.toList())
+            );
+        });
+        return organizationDto;
     }
 }
