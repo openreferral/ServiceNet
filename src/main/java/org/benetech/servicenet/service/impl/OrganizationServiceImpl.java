@@ -226,7 +226,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Transactional(readOnly = true)
     public Page<Organization> findAllOrganizations(UserProfile userProfile, Pageable pageable) {
         log.debug("Request to get all Conflicts");
-        return organizationRepository.findAllWithoutUserProfile(userProfile, pageable);
+        return organizationRepository.findAllWithoutUserProfile(userProfile, SERVICE_PROVIDER, pageable);
     }
 
     /**
