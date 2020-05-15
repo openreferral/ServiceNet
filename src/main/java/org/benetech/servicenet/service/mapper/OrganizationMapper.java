@@ -57,8 +57,4 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
         organization.setId(id);
         return organization;
     }
-
-    default List<String> map(String value) {
-        return Collections.singletonList(value);
-    }
 }
