@@ -398,7 +398,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             }
             service.setTaxonomies(taxonomies);
             Set<Location> serviceLocations = serviceDTO.getLocationIndexes().stream().map(
-                idx -> locations.get(Integer.parseInt(idx))
+                locations::get
             ).collect(Collectors.toSet());
             Set<ServiceAtLocation> servicesAtLocation = new HashSet<>();
             Set<UUID> existingLocations = (service.getLocations() != null) ? service.getLocations().stream()
@@ -428,9 +428,9 @@ public class OrganizationServiceImpl implements OrganizationService {
             dto.setLocationIndexes(
                 service.getLocations().stream()
                     .map(ServiceAtLocation::getLocation)
-                    .map(loc -> String.valueOf(organizationDto.getLocations().stream()
+                    .map(loc -> organizationDto.getLocations().stream()
                         .map(SimpleLocationDTO::getId).collect(Collectors.toList())
-                        .indexOf(loc.getId())))
+                        .indexOf(loc.getId()))
                     .collect(Collectors.toList())
             );
             dto.setTaxonomyIds(
