@@ -2,8 +2,10 @@ package org.benetech.servicenet.service.dto.provider;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Data;
+import org.benetech.servicenet.service.dto.ServiceTaxonomyDTO;
 
 @Data
 public class SimpleServiceDTO implements Serializable {
@@ -12,7 +14,9 @@ public class SimpleServiceDTO implements Serializable {
 
     private String name;
 
-    private List<String> type;
+    private String type;
+
+    private List<String> taxonomyIds;
 
     private String description;
 

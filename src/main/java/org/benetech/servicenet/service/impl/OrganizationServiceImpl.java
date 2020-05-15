@@ -287,8 +287,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Transactional(readOnly = true)
     public Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id) {
         log.debug("Request to get Organization : {}", id);
-        return findOne(id)
-            .map(organizationMapper::toSimpleDto);
+        return findOne(id).map(this::mapToSimpleDto);
     }
 
     @Override
@@ -380,10 +379,10 @@ public class OrganizationServiceImpl implements OrganizationService {
             service.setOrganization(organization);
             service = serviceService.save(service);
             HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
-            Set<UUID> existingTaxonomies = service.getTaxonomies().stream().map(
-                st -> st.getTaxonomy().getId()
-            ).collect(Collectors.toSet());
-            for (String taxonomyId : serviceDTO.getType()) {
+            Set<UUID> existingTaxonomies = (service.getTaxonomies() != null) ? service.getTaxonomies().stream()
+                .map(st -> st.getTaxonomy().getId()).collect(Collectors.toSet())
+                : Collections.emptySet();
+            for (String taxonomyId : serviceDTO.getTaxonomyIds()) {
                 UUID id = UUID.fromString(taxonomyId);
                 if (!existingTaxonomies.contains(id)) {
                     Optional<Taxonomy> taxonomy = taxonomyService
@@ -402,9 +401,9 @@ public class OrganizationServiceImpl implements OrganizationService {
                 idx -> locations.get(Integer.parseInt(idx))
             ).collect(Collectors.toSet());
             Set<ServiceAtLocation> servicesAtLocation = new HashSet<>();
-            Set<UUID> existingLocations = service.getLocations().stream().map(
-                sat -> sat.getLocation().getId()
-            ).collect(Collectors.toSet());
+            Set<UUID> existingLocations = (service.getLocations() != null) ? service.getLocations().stream()
+                .map(sat -> sat.getLocation().getId()).collect(Collectors.toSet())
+                : Collections.emptySet();
             for (Location location : serviceLocations) {
                 if (location.getId() == null || !existingLocations.contains(location.getId())) {
                     ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
@@ -419,5 +418,27 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
         organization.setServices(services);
         return services;
+    }
+
+    private SimpleOrganizationDTO mapToSimpleDto(Organization org) {
+        SimpleOrganizationDTO organizationDto = organizationMapper.toSimpleDto(org);
+        organizationDto.getServices().forEach(dto -> {
+            Service service = org.getServices().stream()
+                .filter(s -> s.getId().equals(dto.getId())).findAny().get();
+            dto.setLocationIndexes(
+                service.getLocations().stream()
+                    .map(ServiceAtLocation::getLocation)
+                    .map(loc -> String.valueOf(organizationDto.getLocations().stream()
+                        .map(SimpleLocationDTO::getId).collect(Collectors.toList())
+                        .indexOf(loc.getId())))
+                    .collect(Collectors.toList())
+            );
+            dto.setTaxonomyIds(
+                service.getTaxonomies().stream()
+                    .map(st -> st.getTaxonomy().getId().toString())
+                    .collect(Collectors.toList())
+            );
+        });
+        return organizationDto;
     }
 }
