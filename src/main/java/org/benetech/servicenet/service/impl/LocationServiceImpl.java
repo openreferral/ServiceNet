@@ -248,6 +248,15 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Location : {}", id);
-        locationRepository.deleteById(id);
+        Location location = locationRepository.findById(id).orElse(null);
+        if (location != null) {
+            if (location.getPhysicalAddress() != null) {
+                physicalAddressService.delete(location.getPhysicalAddress().getId());
+            }
+            if (location.getPostalAddress() != null) {
+                postalAddressService.delete(location.getPostalAddress().getId());
+            }
+            locationRepository.deleteById(id);
+        }
     }
 }

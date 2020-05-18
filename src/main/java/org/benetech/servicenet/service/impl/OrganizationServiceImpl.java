@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
@@ -134,14 +135,19 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to save Organization : {}", organizationDTO);
 
         Organization organization = organizationMapper.toEntity(organizationDTO);
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        organization.setAccount(userProfile.getSystemAccount());
+        organization.setUserProfiles(Collections.singleton(userProfile));
+
         if (organization.getId() == null) {
-            UserProfile userProfile = userService.getCurrentUserProfile();
-            organization.setAccount(userProfile.getSystemAccount());
-            organization.setUserProfiles(Collections.singleton(userProfile));
             // TODO: Remove unique together (external_db_id, account_id) on db for organization and check it only before
             //  creating organization during uploading data from spreadsheets or from external APIs.
             //  Then next line can be removed. Issue: #956
             organization.setExternalDbId(RandomUtil.generateSeriesData());
+        } else {
+            Organization existingOrganization = findOne(organization.getId()).get();
+            organization.setLocations(existingOrganization.getLocations());
+            organization.setServices(existingOrganization.getServices());
         }
         organization = organizationRepository.save(organization);
 
@@ -356,6 +362,9 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private List<Location> saveLocations(Organization organization, List<SimpleLocationDTO> dtos) {
         List<Location> locations = new ArrayList<>();
+        Set<UUID> locationsToKeep = dtos.stream().map(SimpleLocationDTO::getId).collect(Collectors.toSet());
+        Set<Location> locationsToRemove = organization.getLocations().stream()
+            .filter(l -> !locationsToKeep.contains(l.getId())).collect(Collectors.toSet());
         for (SimpleLocationDTO locationDTO : dtos) {
             Location location = locationMapper.toEntity(locationDTO);
             Location existingLocation = (location.getId() != null) ?
@@ -366,6 +375,9 @@ public class OrganizationServiceImpl implements OrganizationService {
             location.setOrganization(organization);
             locations.add(locationService.saveWithRelations(location));
         }
+        for (Location location : locationsToRemove) {
+            locationService.delete(location.getId());
+        }
         organization.setLocations(new HashSet<>(locations));
         return locations;
     }
@@ -373,48 +385,31 @@ public class OrganizationServiceImpl implements OrganizationService {
     private Set<Service> saveServices(Organization organization, List<SimpleServiceDTO> dtos,
         List<Location> locations) {
         Set<Service> services = new HashSet<>();
+        Set<UUID> servicesToKeep = dtos.stream().map(SimpleServiceDTO::getId).collect(Collectors.toSet());
+        Set<Service> servicesToRemove = organization.getServices().stream()
+            .filter(s -> !servicesToKeep.contains(s.getId())).collect(Collectors.toSet());
         for (SimpleServiceDTO serviceDTO : dtos) {
             Service service = serviceMapper.toEntity(serviceDTO);
+            UUID id = service.getId();
+            if (id != null) {
+                Service existingService = organization.getServices().stream()
+                    .filter(s -> s.getId().equals(id)).findFirst().orElse(service);
+                service.setTaxonomies(existingService.getTaxonomies());
+                service.setLocations(existingService.getLocations());
+            }
             service.setProviderName(SERVICE_PROVIDER);
             service.setOrganization(organization);
             service = serviceService.save(service);
-            HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
-            Set<UUID> existingTaxonomies = (service.getTaxonomies() != null) ? service.getTaxonomies().stream()
-                .map(st -> st.getTaxonomy().getId()).collect(Collectors.toSet())
-                : Collections.emptySet();
-            for (String taxonomyId : serviceDTO.getTaxonomyIds()) {
-                UUID id = UUID.fromString(taxonomyId);
-                if (!existingTaxonomies.contains(id)) {
-                    Optional<Taxonomy> taxonomy = taxonomyService
-                        .findById(id);
-                    if (taxonomy.isPresent()) {
-                        ServiceTaxonomy serviceTaxonomy = new ServiceTaxonomy();
-                        serviceTaxonomy.setSrvc(service);
-                        serviceTaxonomy.setTaxonomy(taxonomy.get());
-                        serviceTaxonomy.setProviderName(SERVICE_PROVIDER);
-                        taxonomies.add(serviceTaxonomyService.save(serviceTaxonomy));
-                    }
-                }
-            }
-            service.setTaxonomies(taxonomies);
-            Set<Location> serviceLocations = serviceDTO.getLocationIndexes().stream().map(
-                locations::get
-            ).collect(Collectors.toSet());
-            Set<ServiceAtLocation> servicesAtLocation = new HashSet<>();
-            Set<UUID> existingLocations = (service.getLocations() != null) ? service.getLocations().stream()
-                .map(sat -> sat.getLocation().getId()).collect(Collectors.toSet())
-                : Collections.emptySet();
-            for (Location location : serviceLocations) {
-                if (location.getId() == null || !existingLocations.contains(location.getId())) {
-                    ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
-                    serviceAtLocation.setSrvc(service);
-                    serviceAtLocation.setLocation(location);
-                    serviceAtLocation.setProviderName(SERVICE_PROVIDER);
-                    servicesAtLocation.add(serviceAtLocationService.save(serviceAtLocation));
-                }
-            }
-            service.setLocations(servicesAtLocation);
+            service.setTaxonomies(
+                saveTaxonomies(serviceDTO, service)
+            );
+            service.setLocations(
+                saveLocations(serviceDTO, service, locations)
+            );
             services.add(service);
+        }
+        for (Service service : servicesToRemove) {
+            serviceService.delete(service.getId());
         }
         organization.setServices(services);
         return services;
@@ -440,5 +435,64 @@ public class OrganizationServiceImpl implements OrganizationService {
             );
         });
         return organizationDto;
+    }
+
+    private Set<ServiceTaxonomy> saveTaxonomies(SimpleServiceDTO serviceDTO, Service service) {
+        HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
+        Set<UUID> existingTaxonomies = (service.getTaxonomies() != null)
+            ? service.getTaxonomies().stream()
+            .map(st -> st.getTaxonomy().getId()).collect(Collectors.toSet())
+            : Collections.emptySet();
+        Set<UUID> dtoTaxonomies = serviceDTO.getTaxonomyIds().stream().map(UUID::fromString).collect(
+            Collectors.toSet());
+        Set<UUID> taxonomiesToAdd = dtoTaxonomies.stream().filter(id -> !existingTaxonomies.contains(id)).collect(
+            Collectors.toSet());
+        Set<UUID> serviceTaxonomiesToRemove = (service.getTaxonomies() != null)
+            ? service.getTaxonomies().stream()
+            .filter(st -> !dtoTaxonomies.contains(st.getTaxonomy().getId()))
+            .map(AbstractEntity::getId).collect(Collectors.toSet())
+            : Collections.emptySet();
+        for (UUID taxonomyId : taxonomiesToAdd) {
+            Optional<Taxonomy> taxonomy = taxonomyService
+                .findById(taxonomyId);
+            if (taxonomy.isPresent()) {
+                ServiceTaxonomy serviceTaxonomy = new ServiceTaxonomy();
+                serviceTaxonomy.setSrvc(service);
+                serviceTaxonomy.setTaxonomy(taxonomy.get());
+                serviceTaxonomy.setProviderName(SERVICE_PROVIDER);
+                taxonomies.add(serviceTaxonomyService.save(serviceTaxonomy));
+            }
+        }
+        for (UUID taxonomyId : serviceTaxonomiesToRemove) {
+            serviceTaxonomyService.delete(taxonomyId);
+        }
+        return taxonomies;
+    }
+
+    private Set<ServiceAtLocation> saveLocations(SimpleServiceDTO serviceDTO, Service service,
+        List<Location> locations) {
+        Set<Location> serviceLocations = serviceDTO.getLocationIndexes().stream().map(
+            locations::get
+        ).collect(Collectors.toSet());
+        Set<ServiceAtLocation> servicesAtLocation = new HashSet<>();
+        Set<UUID> existingLocations = (service.getLocations() != null) ? service.getLocations().stream()
+            .map(sat -> sat.getLocation().getId()).collect(Collectors.toSet())
+            : Collections.emptySet();
+        Set<ServiceAtLocation> servicesAtLocationToRemove = (service.getLocations() != null) ? service.getLocations().stream()
+            .filter(sat -> !serviceLocations.contains(sat.getLocation())).collect(Collectors.toSet())
+            : Collections.emptySet();
+        for (Location location : serviceLocations) {
+            if (location.getId() == null || !existingLocations.contains(location.getId())) {
+                ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
+                serviceAtLocation.setSrvc(service);
+                serviceAtLocation.setLocation(location);
+                serviceAtLocation.setProviderName(SERVICE_PROVIDER);
+                servicesAtLocation.add(serviceAtLocationService.save(serviceAtLocation));
+            }
+        }
+        for (ServiceAtLocation sat : servicesAtLocationToRemove) {
+            serviceAtLocationService.delete(sat.getId());
+        }
+        return servicesAtLocation;
     }
 }
