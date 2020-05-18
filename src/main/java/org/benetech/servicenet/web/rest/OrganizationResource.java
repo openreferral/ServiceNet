@@ -146,7 +146,7 @@ public class OrganizationResource {
             .collect(Collectors.toList()).contains(organizationDTO.getId()))) {
             throw new BadRequestAlertException("You are not allowed to edit this organization", ENTITY_NAME, "cantedit");
         }
-        org.benetech.servicenet.service.dto.OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
+        OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))
             .body(result);
@@ -161,7 +161,7 @@ public class OrganizationResource {
      */
     @GetMapping("/organizations")
     @Timed
-    public ResponseEntity<List<org.benetech.servicenet.service.dto.OrganizationDTO>> getAllOrganizations(@RequestParam(required = false) String filter,
+    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(@RequestParam(required = false) String filter,
     Pageable pageable) {
         Page<OrganizationDTO> page;
         if ("funding-is-null".equals(filter)) {
@@ -235,5 +235,24 @@ public class OrganizationResource {
         }
         organizationService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * POST  /organizations/deactivate/:id : deactivate the "id" organization from current user.
+     *
+     * @param id the id of the organizationDTO to deactivate
+     * @return the ResponseEntity with status 200 (OK)
+     */
+    @PostMapping("/organizations/deactivate/{id}")
+    @Timed
+    public ResponseEntity<Void> deactivateOrganization(@PathVariable UUID id) {
+        log.debug("REST request to deactivate Organization : {}", id);
+        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUserProfile()
+            .getOrganizations().stream().map(Organization::getId)
+            .collect(Collectors.toList()).contains(id))) {
+            throw new BadRequestAlertException("You are not allowed to deactivate this organization", ENTITY_NAME, "cantedit");
+        }
+        organizationService.deactivate(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build();
     }
 }
