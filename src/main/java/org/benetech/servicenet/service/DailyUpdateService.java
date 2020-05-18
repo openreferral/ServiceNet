@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import java.util.UUID;
+import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +21,14 @@ public interface DailyUpdateService {
      * @return the persisted entity.
      */
     DailyUpdateDTO save(DailyUpdateDTO dailyUpdateDTO);
+
+    /**
+     * Save a dailyUpdate.
+     *
+     * @param dailyUpdate the entity to save.
+     * @return the persisted entity.
+     */
+    DailyUpdate save(DailyUpdate dailyUpdate);
 
     /**
      * Get all the dailyUpdates.

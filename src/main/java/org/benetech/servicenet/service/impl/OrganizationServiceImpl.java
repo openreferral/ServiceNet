@@ -2,11 +2,14 @@ package org.benetech.servicenet.service.impl;
 
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import org.benetech.servicenet.domain.AbstractEntity;
+import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
@@ -17,6 +20,7 @@ import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.service.DailyUpdateService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
@@ -76,11 +80,14 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final ServiceTaxonomyService serviceTaxonomyService;
 
+    private final DailyUpdateService dailyUpdateService;
+
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
         ServiceMapper serviceMapper, LocationMapper locationMapper, LocationService locationService,
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
-        TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService) {
+        TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
+        DailyUpdateService dailyUpdateService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -92,6 +99,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.serviceAtLocationService = serviceAtLocationService;
         this.taxonomyService = taxonomyService;
         this.serviceTaxonomyService = serviceTaxonomyService;
+        this.dailyUpdateService = dailyUpdateService;
     }
 
     /**
@@ -148,11 +156,13 @@ public class OrganizationServiceImpl implements OrganizationService {
             Organization existingOrganization = findOne(organization.getId()).get();
             organization.setLocations(existingOrganization.getLocations());
             organization.setServices(existingOrganization.getServices());
+            organization.setDailyUpdates(existingOrganization.getDailyUpdates());
         }
         organization = organizationRepository.save(organization);
 
         List<Location> locations = saveLocations(organization, organizationDTO.getLocations());
         saveServices(organization, organizationDTO.getServices(), locations);
+        saveDailyUpdates(organization, organizationDTO);
         // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
         //  For the independent user with Service Provider (not the external one) system account type, matching should look
         //  for all that kind of users. Issue: #957
@@ -494,5 +504,29 @@ public class OrganizationServiceImpl implements OrganizationService {
             serviceAtLocationService.delete(sat.getId());
         }
         return servicesAtLocation;
+    }
+
+    private Set<DailyUpdate> saveDailyUpdates(Organization organization, SimpleOrganizationDTO organizationDTO) {
+        Set<DailyUpdate> dailyUpdates = organization.getDailyUpdates();
+        if (organizationDTO.getUpdate() != null) {
+            ZonedDateTime now = ZonedDateTime.now();
+            List<DailyUpdate> sortedDailyUpdates = dailyUpdates.stream().sorted(
+                Comparator.comparing(DailyUpdate::getCreatedAt)
+            ).collect(Collectors.toList());
+            DailyUpdate latestDailyUpdate = (sortedDailyUpdates.size() > 0)
+                ? sortedDailyUpdates.get(sortedDailyUpdates.size() - 1) : null;
+            if (latestDailyUpdate == null || !organizationDTO.getUpdate().equals(latestDailyUpdate.getUpdate())) {
+                DailyUpdate dailyUpdate = new DailyUpdate();
+                dailyUpdate.setUpdate(organizationDTO.getUpdate());
+                dailyUpdate.setOrganization(organization);
+                dailyUpdate.setCreatedAt(now);
+                dailyUpdates.add(dailyUpdateService.save(dailyUpdate));
+                if (latestDailyUpdate != null) {
+                    latestDailyUpdate.setExpiry(now);
+                    dailyUpdateService.save(latestDailyUpdate);
+                }
+            }
+        }
+        return dailyUpdates;
     }
 }
