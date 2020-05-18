@@ -246,7 +246,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @Transactional(readOnly = true)
     public Page<OrganizationDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Conflicts");
+        log.debug("Request to get all organizations");
         return organizationRepository.findAll(pageable)
             .map(organizationMapper::toDto);
     }
@@ -254,7 +254,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @Transactional(readOnly = true)
     public Page<Organization> findAllOrganizations(UserProfile userProfile, Pageable pageable) {
-        log.debug("Request to get all Conflicts");
+        log.debug("Request to get all organizations without user profile");
         return organizationRepository.findAllWithoutUserProfile(userProfile, SERVICE_PROVIDER, pageable);
     }
 
@@ -364,6 +364,21 @@ public class OrganizationServiceImpl implements OrganizationService {
     public void delete(UUID id) {
         log.debug("Request to delete Organization : {}", id);
         organizationRepository.deleteById(id);
+    }
+
+    /**
+     * Deactivate the organization by id.
+     *
+     * @param id the id of the entity
+     */
+    @Override
+    public void deactivate(UUID id) {
+        log.debug("Request to deactivate Organization : {}", id);
+        Organization organization = organizationRepository.findById(id).orElse(null);
+        if (organization != null) {
+            organization.setActive(false);
+            organizationRepository.save(organization);
+        }
     }
 
     private Organization getProvidersOrganization(List<Organization> organizations, UUID id) {

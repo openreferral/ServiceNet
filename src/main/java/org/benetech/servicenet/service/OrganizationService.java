@@ -107,5 +107,12 @@ public interface OrganizationService {
      */
     void delete(UUID id);
 
+    /**
+     * Deactivate the "id" organization.
+     *
+     * @param id the id of the entity
+     */
+    void deactivate(UUID id);
+
     Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id);
 }

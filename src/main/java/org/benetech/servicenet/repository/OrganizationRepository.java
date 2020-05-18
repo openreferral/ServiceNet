@@ -23,10 +23,10 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     List<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId);
 
-    @Query("SELECT org FROM Organization org WHERE :userProfile MEMBER OF org.userProfiles")
+    @Query("SELECT org FROM Organization org WHERE :userProfile MEMBER OF org.userProfiles AND org.active = true")
     List<Organization> findAllWithUserProfile(@Param("userProfile") UserProfile userProfile);
 
-    @Query("SELECT org FROM Organization org WHERE :userProfile NOT MEMBER OF org.userProfiles AND org.account.name = :accountName")
+    @Query("SELECT org FROM Organization org WHERE :userProfile NOT MEMBER OF org.userProfiles AND org.account.name = :accountName AND org.active = true")
     Page<Organization> findAllWithoutUserProfile(@Param("userProfile") UserProfile userProfile, @Param("accountName") String accountName, Pageable pageable);
 
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
