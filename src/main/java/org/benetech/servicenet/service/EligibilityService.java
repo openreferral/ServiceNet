@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,14 @@ public interface EligibilityService {
      * @return the persisted entity
      */
     EligibilityDTO save(EligibilityDTO eligibilityDTO);
+
+    /**
+     * Save a eligibility.
+     *
+     * @param eligibility the entity to save
+     * @return the persisted entity
+     */
+    Eligibility save(Eligibility eligibility);
 
     /**
      * Get all the eligibilities.

@@ -28,6 +28,7 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
     @Mapping(target = "regularScheduleOpeningHours", source = "regularSchedule.openingHours")
     ServiceRecordDTO toRecord(Service service);
 
+    @Mapping(source = "eligibility.eligibility", target = "eligibilityCriteria")
     SimpleServiceDTO toSimpleDto(Service service);
 
     @Mapping(source = "organizationId", target = "organization")

@@ -16,7 +16,8 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 /**
  * Mapper for the entity Organization and its DTO OrganizationDTO.
  */
-@Mapper(componentModel = "spring", uses = {LocationMapper.class, DocumentUploadMapper.class, SystemAccountMapper.class},
+@Mapper(componentModel = "spring", uses = {LocationMapper.class, DocumentUploadMapper.class,
+    SystemAccountMapper.class, ServiceMapper.class},
     unmappedTargetPolicy = IGNORE)
 public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organization> {
 
