@@ -166,8 +166,15 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
         organization = organizationRepository.save(organization);
 
-        List<Location> locations = saveLocations(organization, organizationDTO.getLocations());
-        saveServices(organization, organizationDTO.getServices(), locations);
+        List<Location> locations = saveLocations(
+            organization,
+            (organizationDTO.getLocations()) != null ? organizationDTO.getLocations() : Collections.emptyList()
+        );
+        saveServices(
+            organization,
+            (organizationDTO.getServices()) != null ? organizationDTO.getServices() : Collections.emptyList(),
+            locations
+        );
         saveDailyUpdates(organization, organizationDTO);
         // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
         //  For the independent user with Service Provider (not the external one) system account type, matching should look
