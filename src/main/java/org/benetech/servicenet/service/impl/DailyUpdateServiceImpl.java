@@ -49,6 +49,18 @@ public class DailyUpdateServiceImpl implements DailyUpdateService {
     }
 
     /**
+     * Save a dailyUpdate.
+     *
+     * @param dailyUpdate the entity to save.
+     * @return the persisted entity.
+     */
+    @Override
+    public DailyUpdate save(DailyUpdate dailyUpdate) {
+        log.debug("Request to save DailyUpdate : {}", dailyUpdate);
+        return dailyUpdateRepository.save(dailyUpdate);
+    }
+
+    /**
      * Get all the dailyUpdates.
      *
      * @param pageable the pagination information.
