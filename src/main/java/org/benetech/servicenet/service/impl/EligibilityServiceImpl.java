@@ -52,6 +52,19 @@ public class EligibilityServiceImpl implements EligibilityService {
     }
 
     /**
+     * Save a eligibility.
+     *
+     * @param eligibility the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public Eligibility save(Eligibility eligibility) {
+        log.debug("Request to save Eligibility : {}", eligibility);
+
+        return eligibilityRepository.save(eligibility);
+    }
+
+    /**
      * Get all the eligibilities.
      *
      * @return the list of entities
