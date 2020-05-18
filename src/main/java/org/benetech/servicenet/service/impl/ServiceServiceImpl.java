@@ -1,8 +1,12 @@
 package org.benetech.servicenet.service.impl;
 
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.repository.ServiceRepository;
+import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
 import org.slf4j.Logger;
@@ -31,9 +35,16 @@ public class ServiceServiceImpl implements ServiceService {
 
     private final ServiceMapper serviceMapper;
 
-    public ServiceServiceImpl(ServiceRepository serviceRepository, ServiceMapper serviceMapper) {
+    private final ServiceAtLocationService serviceAtLocationService;
+
+    private final ServiceTaxonomyService serviceTaxonomyService;
+
+    public ServiceServiceImpl(ServiceRepository serviceRepository, ServiceMapper serviceMapper,
+        ServiceAtLocationService serviceAtLocationService, ServiceTaxonomyService serviceTaxonomyService) {
         this.serviceRepository = serviceRepository;
         this.serviceMapper = serviceMapper;
+        this.serviceAtLocationService = serviceAtLocationService;
+        this.serviceTaxonomyService = serviceTaxonomyService;
     }
 
     /**
@@ -177,6 +188,15 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Service : {}", id);
-        serviceRepository.deleteById(id);
+        Optional<Service> service = findById(id);
+        if (service.isPresent()) {
+            for (ServiceTaxonomy st : service.get().getTaxonomies()) {
+                serviceTaxonomyService.delete(st.getId());
+            }
+            for (ServiceAtLocation sat : service.get().getLocations()) {
+                serviceAtLocationService.delete(sat.getId());
+            }
+            serviceRepository.deleteById(id);
+        }
     }
 }
