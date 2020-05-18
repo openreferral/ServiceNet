@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DailyUpdate;
+import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
@@ -21,6 +22,7 @@ import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.DailyUpdateService;
+import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
@@ -82,12 +84,14 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final DailyUpdateService dailyUpdateService;
 
+    private final EligibilityService eligibilityService;
+
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
         ServiceMapper serviceMapper, LocationMapper locationMapper, LocationService locationService,
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
         TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
-        DailyUpdateService dailyUpdateService) {
+        DailyUpdateService dailyUpdateService, EligibilityService eligibilityService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -100,6 +104,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.taxonomyService = taxonomyService;
         this.serviceTaxonomyService = serviceTaxonomyService;
         this.dailyUpdateService = dailyUpdateService;
+        this.eligibilityService = eligibilityService;
     }
 
     /**
@@ -406,6 +411,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                     .filter(s -> s.getId().equals(id)).findFirst().orElse(service);
                 service.setTaxonomies(existingService.getTaxonomies());
                 service.setLocations(existingService.getLocations());
+                service.setEligibility(existingService.getEligibility());
             }
             service.setProviderName(SERVICE_PROVIDER);
             service.setOrganization(organization);
@@ -415,6 +421,9 @@ public class OrganizationServiceImpl implements OrganizationService {
             );
             service.setLocations(
                 saveLocations(serviceDTO, service, locations)
+            );
+            service.setEligibility(
+                saveEligibility(service, serviceDTO)
             );
             services.add(service);
         }
@@ -528,5 +537,12 @@ public class OrganizationServiceImpl implements OrganizationService {
             }
         }
         return dailyUpdates;
+    }
+
+    private Eligibility saveEligibility(Service service, SimpleServiceDTO serviceDTO) {
+        Eligibility eligibility = (service.getEligibility() != null) ? service.getEligibility() : new Eligibility();
+        eligibility.setEligibility(serviceDTO.getEligibilityCriteria());
+        eligibility.setSrvc(service);
+        return eligibilityService.save(eligibility);
     }
 }

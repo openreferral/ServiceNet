@@ -4,6 +4,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.repository.ServiceRepository;
+import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
@@ -39,12 +40,16 @@ public class ServiceServiceImpl implements ServiceService {
 
     private final ServiceTaxonomyService serviceTaxonomyService;
 
+    private final EligibilityService eligibilityService;
+
     public ServiceServiceImpl(ServiceRepository serviceRepository, ServiceMapper serviceMapper,
-        ServiceAtLocationService serviceAtLocationService, ServiceTaxonomyService serviceTaxonomyService) {
+        ServiceAtLocationService serviceAtLocationService, ServiceTaxonomyService serviceTaxonomyService,
+        EligibilityService eligibilityService) {
         this.serviceRepository = serviceRepository;
         this.serviceMapper = serviceMapper;
         this.serviceAtLocationService = serviceAtLocationService;
         this.serviceTaxonomyService = serviceTaxonomyService;
+        this.eligibilityService = eligibilityService;
     }
 
     /**
@@ -188,13 +193,16 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Service : {}", id);
-        Optional<Service> service = findById(id);
-        if (service.isPresent()) {
-            for (ServiceTaxonomy st : service.get().getTaxonomies()) {
+        Service service = findById(id).orElse(null);
+        if (service != null) {
+            for (ServiceTaxonomy st : service.getTaxonomies()) {
                 serviceTaxonomyService.delete(st.getId());
             }
-            for (ServiceAtLocation sat : service.get().getLocations()) {
+            for (ServiceAtLocation sat : service.getLocations()) {
                 serviceAtLocationService.delete(sat.getId());
+            }
+            if (service.getEligibility() != null) {
+                eligibilityService.delete(service.getEligibility().getId());
             }
             serviceRepository.deleteById(id);
         }
