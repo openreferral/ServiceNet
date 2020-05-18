@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
@@ -540,9 +541,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     private Eligibility saveEligibility(Service service, SimpleServiceDTO serviceDTO) {
-        Eligibility eligibility = (service.getEligibility() != null) ? service.getEligibility() : new Eligibility();
-        eligibility.setEligibility(serviceDTO.getEligibilityCriteria());
-        eligibility.setSrvc(service);
-        return eligibilityService.save(eligibility);
+        Eligibility existingEligibility = service.getEligibility();
+        Eligibility eligibility = (existingEligibility != null) ? existingEligibility: new Eligibility();
+        if (StringUtils.isNotBlank(serviceDTO.getEligibilityCriteria())) {
+            eligibility.setEligibility(serviceDTO.getEligibilityCriteria());
+            eligibility.setSrvc(service);
+            return eligibilityService.save(eligibility);
+        } else if (existingEligibility != null) {
+            eligibilityService.delete(existingEligibility.getId());
+        }
+        return null;
     }
 }
