@@ -355,6 +355,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         return Optional.ofNullable(orgList);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Organization> findOneWithIdAndUserProfile(UUID id, UserProfile userProfile) {
+        return organizationRepository.findOneWithIdAndUserProfile(id, userProfile);
+    }
+
     /**
      * Delete the organization by id.
      *
