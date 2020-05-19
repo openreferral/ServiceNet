@@ -4,6 +4,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.benetech.servicenet.service.dto.ClientDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ public interface ServiceNetAuthClient {
     List<String> getAuthorities();
 
     @RequestMapping(value = "/api/users", method = RequestMethod.GET)
-    List<UserDTO> getUsers(Pageable pageable);
+    Page<UserDTO> getUsers(Pageable pageable);
 
     @RequestMapping(value = "/api/users", method = RequestMethod.POST)
     UserDTO createUser(UserDTO userDTO);

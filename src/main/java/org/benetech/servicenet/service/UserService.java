@@ -130,8 +130,19 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserDTO> getAllManagedUsers(Pageable pageable) {
-        return authClient.getUsers(pageable);
+    public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
+        return authClient.getUsers(pageable).map(u -> {
+            final Optional<UserProfile> optUserProfile = userProfileRepository.findOneByLogin(u.getLogin());
+            if (optUserProfile.isPresent()) {
+                UserProfile userProfile = optUserProfile.get();
+                SystemAccount systemAccount = userProfile.getSystemAccount();
+                if (systemAccount != null) {
+                    u.setSystemAccountId(systemAccount.getId());
+                    u.setSystemAccountName(systemAccount.getName());
+                }
+            }
+            return u;
+        });
     }
 
     @Transactional(readOnly = true)
