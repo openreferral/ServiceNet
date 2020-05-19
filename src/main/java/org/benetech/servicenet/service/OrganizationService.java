@@ -115,4 +115,6 @@ public interface OrganizationService {
     void deactivate(UUID id);
 
     Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id);
+
+    Optional<Organization> findOneWithIdAndUserProfile(UUID id, UserProfile userProfile);
 }

@@ -140,11 +140,10 @@ public class OrganizationResource {
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-
-        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUserProfile()
-            .getOrganizations().stream().map(Organization::getId)
-            .collect(Collectors.toList()).contains(organizationDTO.getId()))) {
-            throw new BadRequestAlertException("You are not allowed to edit this organization", ENTITY_NAME, "cantedit");
+        Optional<Organization> existingOrganization = organizationService
+            .findOneWithIdAndUserProfile(organizationDTO.getId(), userService.getCurrentUserProfile());
+        if (existingOrganization.isEmpty()) {
+            throw new BadRequestAlertException("You are not allowed to edit this organization", ENTITY_NAME, "cantEditRecord");
         }
         OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
         return ResponseEntity.ok()
@@ -228,9 +227,9 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<Void> deleteOrganizationUserOwned(@PathVariable UUID id) {
         log.debug("REST request to delete Organization : {}", id);
-        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUserProfile()
-            .getOrganizations().stream().map(Organization::getId)
-            .collect(Collectors.toList()).contains(id))) {
+        Optional<Organization> existingOrganization = organizationService
+            .findOneWithIdAndUserProfile(id, userService.getCurrentUserProfile());
+        if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException("You are not allowed to delete this organization", ENTITY_NAME, "cantdelete");
         }
         organizationService.delete(id);
@@ -247,10 +246,10 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<Void> deactivateOrganization(@PathVariable UUID id) {
         log.debug("REST request to deactivate Organization : {}", id);
-        if (!(userService.isCurrentUserAdmin() || userService.getCurrentUserProfile()
-            .getOrganizations().stream().map(Organization::getId)
-            .collect(Collectors.toList()).contains(id))) {
-            throw new BadRequestAlertException("You are not allowed to deactivate this organization", ENTITY_NAME, "cantedit");
+        Optional<Organization> existingOrganization = organizationService
+            .findOneWithIdAndUserProfile(id, userService.getCurrentUserProfile());
+        if (existingOrganization.isEmpty()) {
+            throw new BadRequestAlertException("You are not allowed to deactivate this organization", ENTITY_NAME, "cantEditRecord");
         }
         organizationService.deactivate(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build();
