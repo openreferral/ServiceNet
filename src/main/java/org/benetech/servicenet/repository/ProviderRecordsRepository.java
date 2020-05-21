@@ -53,6 +53,7 @@ public class ProviderRecordsRepository {
 
     private static final String ORGANIZATIONS = "organizations";
     private static final String NAME = "name";
+    private static final String DESCRIPTION = "description";
 
     private static final String ACCOUNT = "account";
     private static final String ACCOUNT_ID = "accountId";
@@ -77,13 +78,13 @@ public class ProviderRecordsRepository {
     }
 
     public Page<Organization> findAllWithFilters(UserProfile userProfile,
-        ProviderFilterDTO providerFilterDTO, Pageable pageable) {
+        ProviderFilterDTO providerFilterDTO, String search, Pageable pageable) {
 
         CriteriaQuery<Organization> queryCriteria = cb.createQuery(Organization.class);
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
         queryCriteria.select(selectRoot);
 
-        addFilters(queryCriteria, selectRoot, userProfile, providerFilterDTO);
+        addFilters(queryCriteria, selectRoot, userProfile, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(ID));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
@@ -95,23 +96,38 @@ public class ProviderRecordsRepository {
         }
 
         List<Organization> results = query.getResultList();
-        Long total = this.getTotal(providerFilterDTO, userProfile);
+        Long total = this.getTotal(providerFilterDTO, userProfile, search);
 
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
     private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, UserProfile userProfile,
-        ProviderFilterDTO providerFilterDTO) {
+        ProviderFilterDTO providerFilterDTO, String search) {
         Predicate predicate = cb.conjunction();
 
         Join<Organization, SystemAccount> systemAccountJoin = root.join(ACCOUNT, JoinType.LEFT);
-        Join<Organization, Service> serviceJoinJoin = root.join(SERVICES, JoinType.LEFT);
+        Join<Organization, Service> serviceJoin = root.join(SERVICES, JoinType.LEFT);
 
         predicate = cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER);
 
-        predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoinJoin);
+        predicate = this.addSearch(predicate, search, root, serviceJoin);
+        predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
         query.where(predicate);
+    }
+
+    private Predicate addSearch(Predicate predicate, String search,
+        Root<Organization> root, Join<Organization, Service> serviceJoin) {
+        if (StringUtils.isNotBlank(search)) {
+            String searchQuery = '%' + search.toUpperCase() + '%';
+            Predicate searchPredicate = cb.or(
+                cb.like(cb.upper(root.get(NAME)), searchQuery),
+                cb.like(cb.upper(root.get(DESCRIPTION)), searchQuery),
+                cb.like(cb.upper(serviceJoin.get(NAME)), searchQuery)
+            );
+            predicate = cb.and(predicate, searchPredicate);
+        }
+        return predicate;
     }
 
     private Predicate addTaxonomiesFilter(Predicate predicate, ProviderFilterDTO providerFilterDTO, Join<Organization,
@@ -125,10 +141,10 @@ public class ProviderRecordsRepository {
         return predicate;
     }
 
-    private Long getTotal(ProviderFilterDTO providerFilterDTO, UserProfile userProfile) {
+    private Long getTotal(ProviderFilterDTO providerFilterDTO, UserProfile userProfile, String search) {
         CriteriaQuery<Long> countCriteria = cb.createQuery(Long.class);
         Root<Organization> selectRoot = countCriteria.from(Organization.class);
-        this.addFilters(countCriteria, selectRoot, userProfile, providerFilterDTO);
+        this.addFilters(countCriteria, selectRoot, userProfile, providerFilterDTO, search);
         countCriteria.select(cb.countDistinct(selectRoot));
         return em.createQuery(countCriteria).getSingleResult();
     }
