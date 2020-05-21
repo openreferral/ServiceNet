@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -108,10 +109,10 @@ public class ActivityResource {
     @PostMapping("/all-provider-records")
     @Timed
     public ResponseEntity<List<ProviderRecordDTO>> getAllProviderActivities(
-        @RequestBody ProviderFilterDTO providerFilterDTO, Pageable pageable) {
+        @RequestBody ProviderFilterDTO providerFilterDTO, @RequestParam(required = false) String search, Pageable pageable) {
         System.out.println("CCCCCCCCC");
         System.out.println("AAAAAAAAA " + providerFilterDTO.toString());
-        Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(providerFilterDTO, pageable);
+        Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(providerFilterDTO, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
