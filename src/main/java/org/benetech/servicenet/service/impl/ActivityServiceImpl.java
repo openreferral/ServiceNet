@@ -14,6 +14,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.repository.ActivityRepository;
+import org.benetech.servicenet.repository.ProviderRecordsRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -24,6 +25,7 @@ import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
 import org.benetech.servicenet.service.dto.Suggestions;
 import org.slf4j.Logger;
@@ -56,15 +58,19 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final UserService userService;
 
+    private final ProviderRecordsRepository providerRecordsRepository;
+
     public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
         ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService,
-        OrganizationService organizationService, UserService userService) {
+        OrganizationService organizationService, UserService userService,
+        ProviderRecordsRepository providerRecordsRepository) {
         this.activityRepository = activityRepository;
         this.recordsService = recordsService;
         this.exclusionsConfigService = exclusionsConfigService;
         this.organizationMatchService = organizationMatchService;
         this.organizationService = organizationService;
         this.userService = userService;
+        this.providerRecordsRepository = providerRecordsRepository;
     }
 
     @Override
@@ -141,9 +147,12 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordDTO> getAllPartnerActivities(Pageable pageable) {
+    public Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO,
+        Pageable pageable) {
         UserProfile userProfile = userService.getCurrentUserProfile();
-        Page<Organization> organizations = organizationService.findAllOrganizations(userProfile, pageable);
+        //Page<Organization> organizations = organizationService.findAllOrganizations(userProfile, pageable);
+        Page<Organization> organizations = providerRecordsRepository
+            .findAllWithFilters(userProfile, providerFilterDTO, pageable);
         return organizations.map(this::getProviderRecordDTO);
     }
 

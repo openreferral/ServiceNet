@@ -17,6 +17,7 @@ import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
+import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,10 +105,13 @@ public class ActivityResource {
         );
     }
 
-    @GetMapping("/all-provider-records")
+    @PostMapping("/all-provider-records")
     @Timed
-    public ResponseEntity<List<ProviderRecordDTO>> getAllProviderActivities(Pageable pageable) {
-        Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(pageable);
+    public ResponseEntity<List<ProviderRecordDTO>> getAllProviderActivities(
+        @RequestBody ProviderFilterDTO providerFilterDTO, Pageable pageable) {
+        System.out.println("CCCCCCCCC");
+        System.out.println("AAAAAAAAA " + providerFilterDTO.toString());
+        Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(providerFilterDTO, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
