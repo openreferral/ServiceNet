@@ -17,6 +17,7 @@ import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
+import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -104,10 +106,11 @@ public class ActivityResource {
         );
     }
 
-    @GetMapping("/all-provider-records")
+    @PostMapping("/all-provider-records")
     @Timed
-    public ResponseEntity<List<ProviderRecordDTO>> getAllProviderActivities(Pageable pageable) {
-        Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(pageable);
+    public ResponseEntity<List<ProviderRecordDTO>> getAllProviderActivities(
+        @RequestBody ProviderFilterDTO providerFilterDTO, @RequestParam(required = false) String search, Pageable pageable) {
+        Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(providerFilterDTO, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
