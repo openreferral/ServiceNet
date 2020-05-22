@@ -1,0 +1,17 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="jkondrat" id="20200522173507-1">
+        <dropUniqueConstraint
+            constraintName="UK_organization__externaldbid_accountid"
+            tableName="organization"
+            uniqueColumns="external_db_id, account_id"
+        />
+    </changeSet>
+    <changeSet author="jkondrat" id="20200522173507-2">
+        <sql>
+            UPDATE organization SET external_db_id = null WHERE account_id = (
+                SELECT id FROM system_account WHERE name = 'ServiceProvider'
+            )
+        </sql>
+    </changeSet>
+</databaseChangeLog>

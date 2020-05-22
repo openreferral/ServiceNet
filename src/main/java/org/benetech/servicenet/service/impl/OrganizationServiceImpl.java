@@ -153,12 +153,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         organization.setAccount(userProfile.getSystemAccount());
         organization.setUserProfiles(Collections.singleton(userProfile));
 
-        if (organization.getId() == null) {
-            // TODO: Remove unique together (external_db_id, account_id) on db for organization and check it only before
-            //  creating organization during uploading data from spreadsheets or from external APIs.
-            //  Then next line can be removed. Issue: #956
-            organization.setExternalDbId(RandomUtil.generateSeriesData());
-        } else {
+        if (organization.getId() != null) {
             Organization existingOrganization = findOne(organization.getId()).get();
             organization.setLocations(existingOrganization.getLocations());
             organization.setServices(existingOrganization.getServices());
