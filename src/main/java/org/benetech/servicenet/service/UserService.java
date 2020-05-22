@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import com.netflix.hystrix.exception.HystrixBadRequestException;
 import java.util.Collections;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
@@ -7,6 +8,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.errors.HystrixBadRequestAlertException;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
@@ -75,9 +77,14 @@ public class UserService {
      * @return created user
      */
     public UserDTO createUser(UserDTO userDTO) {
-        return createOrUpdateUserProfile(
-            authClient.createUser(userDTO), userDTO
-        );
+        try {
+            return createOrUpdateUserProfile(
+                authClient.createUser(userDTO), userDTO
+            );
+        } catch (HystrixBadRequestException e) {
+            handleHystrixException(e);
+            return null;
+        }
     }
 
     /**
@@ -87,9 +94,14 @@ public class UserService {
      * @return updated user
      */
     public UserDTO updateUser(UserDTO userDTO) {
-        return createOrUpdateUserProfile(
-            authClient.updateUser(userDTO), userDTO
-        );
+        try {
+            return createOrUpdateUserProfile(
+                authClient.updateUser(userDTO), userDTO
+            );
+        } catch (HystrixBadRequestException e) {
+            handleHystrixException(e);
+            return null;
+        }
     }
 
     public void deleteUser(String login) {
@@ -289,5 +301,12 @@ public class UserService {
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);
+    }
+
+    private void handleHystrixException(HystrixBadRequestException e) {
+        if (e instanceof HystrixBadRequestAlertException) {
+            throw ((HystrixBadRequestAlertException) e).getCause();
+        }
+        throw e;
     }
 }
