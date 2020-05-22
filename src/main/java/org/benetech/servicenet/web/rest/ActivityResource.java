@@ -110,8 +110,6 @@ public class ActivityResource {
     @Timed
     public ResponseEntity<List<ProviderRecordDTO>> getAllProviderActivities(
         @RequestBody ProviderFilterDTO providerFilterDTO, @RequestParam(required = false) String search, Pageable pageable) {
-        System.out.println("CCCCCCCCC");
-        System.out.println("AAAAAAAAA " + providerFilterDTO.toString());
         Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(providerFilterDTO, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
