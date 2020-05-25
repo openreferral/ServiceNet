@@ -187,4 +187,5 @@
     <include file="config/liquibase/changelog/20200505135050_create_service_provider_taxonomies.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200513104705_added_entity_DailyUpdate.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200513104705_added_entity_constraints_DailyUpdate.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200525155552_remove_duplicate_geocoding_results.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
