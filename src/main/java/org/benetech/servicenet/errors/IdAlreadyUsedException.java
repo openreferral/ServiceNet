@@ -1,6 +1,6 @@
 package org.benetech.servicenet.errors;
 
-import com.netflix.hystrix.exception.HystrixBadRequestException;;
+import com.netflix.hystrix.exception.HystrixBadRequestException;
 
 public class IdAlreadyUsedException extends HystrixBadRequestException {
 
