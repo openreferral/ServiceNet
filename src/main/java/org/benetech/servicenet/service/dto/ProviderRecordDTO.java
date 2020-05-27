@@ -20,4 +20,14 @@ public class ProviderRecordDTO {
     private Set<LocationRecordDTO> locations;
 
     private Set<ServiceRecordDTO> services;
+
+    private UserDTO owner;
+
+    public ProviderRecordDTO(OrganizationDTO organization, ZonedDateTime lastUpdated,
+        Set<LocationRecordDTO> locations, Set<ServiceRecordDTO> services) {
+        this.organization = organization;
+        this.lastUpdated = lastUpdated;
+        this.locations = locations;
+        this.services = services;
+    }
 }
