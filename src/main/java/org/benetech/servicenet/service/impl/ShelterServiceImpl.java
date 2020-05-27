@@ -164,7 +164,11 @@ public class ShelterServiceImpl implements ShelterService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Shelter : {}", id);
-        shelterRepository.deleteById(id);
+        Shelter shelterToDelete = shelterRepository.getOne(id);
+        Beds beds = shelterToDelete.getBeds();
+        shelterToDelete.setBeds(null);
+        beds.setShelter(null);
+        shelterRepository.delete(shelterToDelete);
     }
 
     private Set<Shelter> sheltersFromUUIDs(List<UUID> uuids) {
