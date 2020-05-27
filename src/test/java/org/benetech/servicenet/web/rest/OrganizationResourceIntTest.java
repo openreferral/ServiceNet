@@ -8,6 +8,7 @@ import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
+import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
@@ -75,6 +76,9 @@ public class OrganizationResourceIntTest {
     private SystemAccountRepository systemAccountRepository;
 
     @Autowired
+    private ActivityService activityService;
+
+    @Autowired
     private EntityManager em;
 
     private MockMvc restOrganizationMockMvc;
@@ -98,7 +102,7 @@ public class OrganizationResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OrganizationResource organizationResource = new OrganizationResource(organizationService, userService);
+        final OrganizationResource organizationResource = new OrganizationResource(organizationService, userService, activityService);
         this.restOrganizationMockMvc = MockMvcBuilders.standaloneSetup(organizationResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

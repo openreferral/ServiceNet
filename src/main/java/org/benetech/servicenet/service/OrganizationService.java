@@ -114,7 +114,17 @@ public interface OrganizationService {
      */
     void deactivate(UUID id);
 
+
+    /**
+     * Reactivate the "id" organization.
+     *
+     * @param id the id of the entity
+     */
+    void reactivate(UUID id);
+
     Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id);
 
     Optional<Organization> findOneWithIdAndUserProfile(UUID id, UserProfile userProfile);
+
+    List<Organization> findAllByAccountNameAndNotActive();
 }

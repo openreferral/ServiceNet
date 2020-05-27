@@ -5,6 +5,7 @@ import java.util.List;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -45,6 +46,8 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     @Mapping(target = "userProfiles", ignore = true)
     @Mapping(target = "dailyUpdates", ignore = true)
     Organization toEntity(SimpleOrganizationDTO organizationDTO);
+
+    DeactivatedOrganizationDTO toDeactivatedOrganizationDto(Organization organization);
 
     RecordDetailsOrganizationDTO toRecordDetailsDto(Organization organization);
 

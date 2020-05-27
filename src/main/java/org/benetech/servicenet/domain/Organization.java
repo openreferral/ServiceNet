@@ -90,6 +90,9 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
+    @Column(name = "deactivated_at")
+    private ZonedDateTime deactivatedAt;
+
     @Column(name = "external_db_id")
     @Size(max = 255, message = "Field value is too long.")
     private String externalDbId;
