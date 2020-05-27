@@ -150,7 +150,6 @@ public class ActivityServiceImpl implements ActivityService {
     public Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO,
         String search, Pageable pageable) {
         UserProfile userProfile = userService.getCurrentUserProfile();
-        //Page<Organization> organizations = organizationService.findAllOrganizations(userProfile, pageable);
         Page<Organization> organizations = providerRecordsRepository
             .findAllWithFilters(userProfile, providerFilterDTO, search, pageable);
         return organizations.map(this::getProviderRecordDTO);

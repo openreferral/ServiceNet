@@ -4,6 +4,7 @@ import static org.benetech.servicenet.service.factory.records.builder.FilteredEn
 import static org.benetech.servicenet.service.factory.records.builder.FilteredEntityBuilder.buildObject;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,8 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.LocationExclusion;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ContactDTO;
@@ -24,6 +27,7 @@ import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
@@ -52,6 +56,9 @@ public class RecordBuilder {
 
     @Autowired
     private FieldExclusionMapper exclusionMapper;
+
+    @Autowired
+    private UserService userService;
 
     public ActivityRecordDTO buildBasicRecord(Organization organization, ZonedDateTime lastUpdated,
         List<ConflictDTO> conflictDTOS, Set<LocationExclusion> locationExclusions) {
@@ -91,23 +98,27 @@ public class RecordBuilder {
 
     public ProviderRecordDTO buildBasicProviderRecord(Organization organization, ZonedDateTime lastUpdated,
         Set<LocationExclusion> locationExclusions) {
+        UserDTO user = this.getUserDtoOfOrganization(organization);
         return new ProviderRecordDTO(
             mapOrganization(organization),
             lastUpdated,
             mapLocations(filterLocations(organization.getLocations(), locationExclusions)),
-            mapServices(organization.getServices())
+            mapServices(organization.getServices()),
+            user
         );
     }
 
     public ProviderRecordDTO buildFilteredProviderRecord(Organization organization, ZonedDateTime lastUpdated,
         Set<FieldExclusion> baseExclusions, Set<LocationExclusion> locationExclusions)
         throws IllegalAccessException {
+        UserDTO user = this.getUserDtoOfOrganization(organization);
         return new ProviderRecordDTO(
             mapOrganization(buildObject(organization, Organization.class, baseExclusions)),
             lastUpdated,
             mapLocations(buildCollection(filterLocations(organization.getLocations(), locationExclusions),
                 Location.class, baseExclusions)),
-            mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions))
+            mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
+            user
         );
     }
 
@@ -159,5 +170,15 @@ public class RecordBuilder {
 
     private RecordDetailsOrganizationDTO mapOrganizationForRecordDetails(Organization organization) {
         return organizationMapper.toRecordDetailsDto(organization);
+    }
+
+    private UserDTO getUserDtoOfOrganization(Organization organization) {
+        UserDTO result = null;
+        Set<UserProfile> userProfiles = organization.getUserProfiles();
+        if (userProfiles.size() > 0) {
+            UserProfile userProfile = new ArrayList<UserProfile>(userProfiles).get(userProfiles.size() - 1);
+            result = userService.getUser(userProfile.getLogin());
+        }
+        return result;
     }
 }
