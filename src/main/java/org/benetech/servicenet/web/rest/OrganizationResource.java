@@ -2,13 +2,14 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
-import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.security.AuthoritiesConstants;
+import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
@@ -48,10 +49,13 @@ public class OrganizationResource {
     private final Logger log = LoggerFactory.getLogger(OrganizationResource.class);
     private final OrganizationService organizationService;
     private final UserService userService;
+    private final ActivityService activityService;
 
-    public OrganizationResource(OrganizationService organizationService, UserService userService) {
+    public OrganizationResource(OrganizationService organizationService, UserService userService,
+        ActivityService activityService) {
         this.organizationService = organizationService;
         this.userService = userService;
+        this.activityService = activityService;
     }
 
     /**
@@ -253,5 +257,25 @@ public class OrganizationResource {
         }
         organizationService.deactivate(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * POST  /organizations/deactivate/:id : reactivate the "id" organization from current user.
+     *
+     * @param id the id of the organizationDTO to reactivate
+     * @return List of all not active organizations
+     */
+    @PostMapping("/organizations/reactivate/{id}")
+    @Timed
+    public ResponseEntity<List<DeactivatedOrganizationDTO>> reactivateOrganization(@PathVariable UUID id) {
+        log.debug("REST request to deactivate Organization : {}", id);
+        Optional<Organization> existingOrganization = organizationService
+            .findOneWithIdAndUserProfile(id, userService.getCurrentUserProfile());
+        if (existingOrganization.isEmpty()) {
+            throw new BadRequestAlertException("You are not allowed to deactivate this organization", ENTITY_NAME, "cantEditRecord");
+        }
+        organizationService.reactivate(id);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
+            .body(activityService.getAllDeactivatedRecords());
     }
 }

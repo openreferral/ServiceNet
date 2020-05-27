@@ -29,6 +29,7 @@ import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.benetech.servicenet.web.rest.ActivityResource;
 import org.benetech.servicenet.errors.InternalServerErrorException;
 import org.junit.Before;
@@ -86,12 +87,15 @@ public class ActivityServiceImplTest {
     @Autowired
     private ProviderRecordsRepository providerRecordsRepository;
 
+    @Autowired
+    private OrganizationMapper organizationMapper;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         activityService = new ActivityServiceImpl(activityRepository, recordsService,
             exclusionsConfigService, organizationMatchService, organizationService, userService,
-            providerRecordsRepository);
+            providerRecordsRepository, organizationMapper);
     }
 
     @Before
