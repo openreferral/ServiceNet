@@ -17,6 +17,7 @@ import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
+import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -124,5 +125,13 @@ public class ActivityResource {
 
         Suggestions suggestions = activityService.getNameSuggestions(activityFilterDTO, systemAccountId, search);
         return ResponseEntity.ok().body(suggestions);
+    }
+
+    @GetMapping("/deactivated-provider-records")
+    @Timed
+    public ResponseEntity<List<DeactivatedOrganizationDTO>> getDeactivatedProviderActivities() {
+        return ResponseEntity.ok().body(
+            activityService.getAllDeactivatedRecords()
+        );
     }
 }

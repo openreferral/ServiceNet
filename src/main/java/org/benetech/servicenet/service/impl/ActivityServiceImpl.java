@@ -25,9 +25,11 @@ import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
 import org.benetech.servicenet.service.dto.Suggestions;
+import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -60,10 +62,13 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final ProviderRecordsRepository providerRecordsRepository;
 
+    private final OrganizationMapper organizationMapper;
+
     public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
         ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService,
         OrganizationService organizationService, UserService userService,
-        ProviderRecordsRepository providerRecordsRepository) {
+        ProviderRecordsRepository providerRecordsRepository,
+        OrganizationMapper organizationMapper) {
         this.activityRepository = activityRepository;
         this.recordsService = recordsService;
         this.exclusionsConfigService = exclusionsConfigService;
@@ -71,6 +76,7 @@ public class ActivityServiceImpl implements ActivityService {
         this.organizationService = organizationService;
         this.userService = userService;
         this.providerRecordsRepository = providerRecordsRepository;
+        this.organizationMapper = organizationMapper;
     }
 
     @Override
@@ -170,6 +176,14 @@ public class ActivityServiceImpl implements ActivityService {
             .map(org.benetech.servicenet.domain.Service::getName)
             .distinct().collect(Collectors.toList());
         return new Suggestions(orgNames, serviceNames);
+    }
+
+    @Override
+    public List<DeactivatedOrganizationDTO> getAllDeactivatedRecords() {
+        List<Organization> organizations = organizationService.findAllByAccountNameAndNotActive();
+        return organizations.stream()
+            .map(this.organizationMapper::toDeactivatedOrganizationDto)
+            .collect(Collectors.toList());
     }
 
     private ActivityDTO getEntityActivity(ActivityInfo info, Map<UUID, ExclusionsConfig> exclusionsMap) {

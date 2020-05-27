@@ -378,8 +378,33 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationRepository.findById(id).orElse(null);
         if (organization != null) {
             organization.setActive(false);
+            organization.setDeactivatedAt(ZonedDateTime.now());
             organizationRepository.save(organization);
         }
+    }
+
+    /**
+     * Deactivate the organization by id.
+     *
+     * @param id the id of the entity
+     */
+    @Override
+    public void reactivate(UUID id) {
+        log.debug("Request to reactivate Organization : {}", id);
+        Organization organization = organizationRepository.findById(id).orElse(null);
+        if (organization != null) {
+            organization.setActive(true);
+            organization.setDeactivatedAt(null);
+            organizationRepository.save(organization);
+        }
+    }
+
+    @Override
+    public List<Organization> findAllByAccountNameAndNotActive() {
+        log.debug("Request to get deactivated organizations");
+        List<Organization> organizations = organizationRepository
+            .findAllByAccountNameAndNotActive(SERVICE_PROVIDER);
+        return organizations;
     }
 
     private Organization getProvidersOrganization(List<Organization> organizations, UUID id) {
