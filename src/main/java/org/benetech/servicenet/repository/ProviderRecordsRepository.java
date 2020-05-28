@@ -37,6 +37,7 @@ public class ProviderRecordsRepository {
 
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
+    private static final String ACTIVE = "active";
 
     private static final String ACCOUNT = "account";
     private static final String USER_PROFILES = "userProfiles";
@@ -95,7 +96,9 @@ public class ProviderRecordsRepository {
         Join<Organization, Service> serviceJoin = root.join(SERVICES, JoinType.LEFT);
         Join<Organization, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
 
-        predicate = cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER);
+        predicate = cb.equal(root.get(ACTIVE), true);
+
+        predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
 
         predicate = this.addSearch(predicate, search, root, serviceJoin);
 
