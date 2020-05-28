@@ -44,6 +44,10 @@ For more information, refer to the [Running tests page][].
 
 ### Code quality
 
+To check checkstyle, run:
+
+    ./mvnw checkstyle:check
+    
 Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
 
 ```
