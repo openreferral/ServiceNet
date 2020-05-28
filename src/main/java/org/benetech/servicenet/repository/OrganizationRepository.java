@@ -29,8 +29,12 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE org.id = :id AND :userProfile MEMBER OF org.userProfiles")
     Optional<Organization> findOneWithIdAndUserProfile(@Param("id") UUID id, @Param("userProfile") UserProfile userProfile);
 
-    @Query("SELECT org FROM Organization org WHERE :userProfile NOT MEMBER OF org.userProfiles AND org.account.name = :accountName AND org.active = true")
-    Page<Organization> findAllWithoutUserProfile(@Param("userProfile") UserProfile userProfile, @Param("accountName") String accountName, Pageable pageable);
+    @Query("SELECT org FROM Organization org WHERE :userProfile NOT MEMBER OF org.userProfiles AND "
+        + "org.account.name = :accountName AND org.active = true")
+    Page<Organization> findAllWithoutUserProfile(
+        @Param("userProfile") UserProfile userProfile,
+        @Param("accountName") String accountName, Pageable pageable
+    );
 
     @Query("SELECT org FROM Organization org WHERE org.account.name = :accountName AND org.active = false")
     List<Organization> findAllByAccountNameAndNotActive(@Param("accountName") String accountName);
@@ -98,5 +102,8 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         + "locs.externalDbId = :externalDbId OR "
         + "srvs.id = :id OR "
         + "srvs.externalDbId = :externalDbId")
-    Organization findOneWithAllEagerAssociationsByIdOrExternalDbId(@Param("id") UUID id, @Param("externalDbId") String externalDbId);
+    Organization findOneWithAllEagerAssociationsByIdOrExternalDbId(
+        @Param("id") UUID id,
+        @Param("externalDbId") String externalDbId
+    );
 }

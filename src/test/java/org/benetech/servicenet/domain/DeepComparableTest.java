@@ -28,7 +28,7 @@ public class DeepComparableTest {
         Location loc1duplicate = mockLocation(LOC_1_NAME);
 
         Organization org1 = mockOrganization(ORG_1_NAME, new Location[]{loc1, loc2});
-        Organization org1duplicate = mockOrganization( ORG_1_NAME, new Location[]{loc2, loc1duplicate});
+        Organization org1duplicate = mockOrganization(ORG_1_NAME, new Location[]{loc2, loc1duplicate});
         Assert.assertTrue(org1.deepEquals(org1duplicate));
     }
 

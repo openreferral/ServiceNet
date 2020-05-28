@@ -25,6 +25,10 @@ public class OAuth2InterceptedFeignConfiguration {
 
     private final LoadBalancedResourceDetails loadBalancedResourceDetails;
 
+    private static final int STATUS_400 = 400;
+
+    private static final int STATUS_409 = 409;
+
     public OAuth2InterceptedFeignConfiguration(LoadBalancedResourceDetails loadBalancedResourceDetails) {
         this.loadBalancedResourceDetails = loadBalancedResourceDetails;
     }
@@ -54,9 +58,9 @@ public class OAuth2InterceptedFeignConfiguration {
     public ErrorDecoder errorDecoder() {
         return (methodKey, response) -> {
             int status = response.status();
-            if (status == 409) {
+            if (status == STATUS_409) {
                 return new IdAlreadyUsedException();
-            } else if (status == 400) {
+            } else if (status == STATUS_400) {
                 Optional<HystrixBadRequestAlertException> exception = getResponseBody(
                     response, HystrixBadRequestAlertException.class);
                 if (exception.isPresent()) {

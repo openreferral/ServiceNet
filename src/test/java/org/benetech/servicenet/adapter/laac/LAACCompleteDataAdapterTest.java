@@ -46,6 +46,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class LAACCompleteDataAdapterTest {
 
     private static final String COMPLETE_JSON = "laac/complete.json";
+    private static final int YEAR = 2019;
+    private static final int DAY = 21;
 
     @Autowired
     private LAACDataAdapter adapter;
@@ -98,7 +100,7 @@ public class LAACCompleteDataAdapterTest {
     public void shouldImportCompleteOrganization() {
         Organization result = organizationService.findAll().get(0);
         assertEquals("Patients Health - health.com", result.getName());
-        assertEquals(LocalDate.of(2019, 1, 21), result.getYearIncorporated());
+        assertEquals(LocalDate.of(YEAR, 1, DAY), result.getYearIncorporated());
         assertEquals("Who we are, What are we doing?\n The description of the organization", result.getDescription());
         assertEquals("http:www.org.com/health", result.getUrl());
         assertEquals("626f8818-9d53-4b8b-8d72-d5b6980cacb4", result.getExternalDbId());

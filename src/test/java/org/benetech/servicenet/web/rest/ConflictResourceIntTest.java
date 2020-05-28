@@ -112,10 +112,10 @@ public class ConflictResourceIntTest {
         int databaseSizeBeforeCreate = conflictRepository.findAll().size();
 
         // Create the Conflict
-        Conflict conflict = ConflictMother.createDefault();
-        em.persist(conflict.getOwner());
+        Conflict c = ConflictMother.createDefault();
+        em.persist(c.getOwner());
         em.flush();
-        ConflictDTO conflictDTO = conflictMapper.toDto(conflict);
+        ConflictDTO conflictDTO = conflictMapper.toDto(c);
         restConflictMockMvc.perform(post("/api/conflicts")
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(conflictDTO)))
@@ -142,10 +142,10 @@ public class ConflictResourceIntTest {
     @Transactional
     public void createConflictWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = conflictRepository.findAll().size();
-        Conflict conflict = ConflictMother.createDefault();
+        Conflict c = ConflictMother.createDefault();
         // Create the Conflict with an existing ID
-        conflict.setId(UUID_1);
-        ConflictDTO conflictDTO = conflictMapper.toDto(conflict);
+        c.setId(UUID_1);
+        ConflictDTO conflictDTO = conflictMapper.toDto(c);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restConflictMockMvc.perform(post("/api/conflicts")
@@ -287,10 +287,10 @@ public class ConflictResourceIntTest {
         int databaseSizeBeforeUpdate = conflictRepository.findAll().size();
 
         // Create the Conflict
-        SystemAccount owner = SystemAccountMother.createDefaultAndPersist(em);
-        Conflict conflict = ConflictMother.createDefault();
-        conflict.setOwner(owner);
-        ConflictDTO conflictDTO = conflictMapper.toDto(conflict);
+        SystemAccount o = SystemAccountMother.createDefaultAndPersist(em);
+        Conflict c = ConflictMother.createDefault();
+        c.setOwner(o);
+        ConflictDTO conflictDTO = conflictMapper.toDto(c);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restConflictMockMvc.perform(put("/api/conflicts")

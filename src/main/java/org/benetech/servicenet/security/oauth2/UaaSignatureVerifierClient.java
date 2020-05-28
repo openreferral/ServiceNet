@@ -26,11 +26,17 @@ import java.util.Map;
 @Component
 public class UaaSignatureVerifierClient implements OAuth2SignatureVerifierClient {
     private final Logger log = LoggerFactory.getLogger(UaaSignatureVerifierClient.class);
+
     private final RestTemplate restTemplate;
+
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected final OAuth2Properties oAuth2Properties;
 
-    public UaaSignatureVerifierClient(DiscoveryClient discoveryClient, @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate,
-                                  OAuth2Properties oAuth2Properties) {
+    public UaaSignatureVerifierClient(
+        DiscoveryClient discoveryClient,
+        @Qualifier("loadBalancedRestTemplate") RestTemplate restTemplate,
+        OAuth2Properties oAuth2Properties
+    ) {
         this.restTemplate = restTemplate;
         this.oAuth2Properties = oAuth2Properties;
         // Load available UAA servers

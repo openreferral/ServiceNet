@@ -2,6 +2,7 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.PostalAddress;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class PostalAddressMother {
 
     public static final String ADDRESS_1 = "Postal Address";

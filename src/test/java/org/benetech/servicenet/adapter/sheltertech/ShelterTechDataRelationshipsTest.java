@@ -128,7 +128,7 @@ public class ShelterTechDataRelationshipsTest {
         List<RegularScheduleDTO> schedules = regularScheduleService.findAll();
         assertEquals(1, schedules.size());
 
-        for(OpeningHoursDTO result : results) {
+        for (OpeningHoursDTO result : results) {
             assertEquals(schedules.get(0).getId(), result.getRegularScheduleId());
         }
     }

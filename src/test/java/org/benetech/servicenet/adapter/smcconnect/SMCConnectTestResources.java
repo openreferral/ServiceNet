@@ -3,6 +3,7 @@ package org.benetech.servicenet.adapter.smcconnect;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 final class SMCConnectTestResources {
 
     static final String SMCCONNECT = "smcconnect/";

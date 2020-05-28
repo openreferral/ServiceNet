@@ -1,4 +1,5 @@
 package org.benetech.servicenet.web.rest;
+
 import com.codahale.metrics.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.security.AuthoritiesConstants;

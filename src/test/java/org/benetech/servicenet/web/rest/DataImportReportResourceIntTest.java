@@ -62,7 +62,9 @@ public class DataImportReportResourceIntTest {
     private static final Integer DEFAULT_NUMBER_OF_CREATED_ORGS = 1;
     private static final Integer UPDATED_NUMBER_OF_CREATED_ORGS = 2;
 
-    private static final ZonedDateTime DEFAULT_START_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime DEFAULT_START_DATE = ZonedDateTime.ofInstant(
+        Instant.ofEpochMilli(0L), ZoneOffset.UTC
+    );
     private static final ZonedDateTime UPDATED_START_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final ZonedDateTime DEFAULT_END_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);

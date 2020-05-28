@@ -1,14 +1,8 @@
 package org.benetech.servicenet.conflict.detector;
 
-import org.benetech.servicenet.MockedUserTestConfiguration;
-import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.Organization;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.Collections;
@@ -24,8 +18,16 @@ public class OrganizationConflictDetectorUnitTest {
     private static final String DEFAULT_EMAIL = "DDDDDD";
     private static final String DEFAULT_URL = "EEEEEE";
     private static final String DEFAULT_TAX_STATUS = "FFFFFF";
-    private static final String DEFAULT_TAX_ID= "GGGGGG";
-    private static final String DEFAULT_LEGAL_STATUS= "IIIIII";
+    private static final String DEFAULT_TAX_ID = "GGGGGG";
+    private static final String DEFAULT_LEGAL_STATUS = "IIIIII";
+    private static final int THREE = 3;
+    private static final int FIVE = 5;
+    private static final int EIGHT = 8;
+    private static final int TEN = 10;
+    private static final int FOURTEEN = 14;
+    private static final int FIFTHEEN = 15;
+    private static final int TWENTY = 20;
+    private static final int FIFTY = 50;
 
     private OrganizationConflictDetector conflictDetector = new OrganizationConflictDetector();
 
@@ -76,20 +78,19 @@ public class OrganizationConflictDetectorUnitTest {
         Organization organization = createDefaultOgranization();
         Organization mirrorOrganization = new Organization()
             .name(StringUtils.randomAlphanumeric(7))
-            .alternateName(StringUtils.randomAlphanumeric(10))
-            .description(StringUtils.randomAlphanumeric(50))
-            .email(StringUtils.randomAlphanumeric(5))
-            .url(StringUtils.randomAlphanumeric(14))
-            .taxStatus(StringUtils.randomAlphanumeric(3))
-            .taxId(StringUtils.randomAlphanumeric(20))
+            .alternateName(StringUtils.randomAlphanumeric(TEN))
+            .description(StringUtils.randomAlphanumeric(FIFTY))
+            .email(StringUtils.randomAlphanumeric(FIVE))
+            .url(StringUtils.randomAlphanumeric(FOURTEEN))
+            .taxStatus(StringUtils.randomAlphanumeric(THREE))
+            .taxId(StringUtils.randomAlphanumeric(TWENTY))
             .yearIncorporated(null)
-            .legalStatus(StringUtils.randomAlphanumeric(15));
+            .legalStatus(StringUtils.randomAlphanumeric(FIFTHEEN));
 
         List<Conflict> conflicts = conflictDetector.detectConflicts(organization, mirrorOrganization);
 
-        assertEquals(8, conflicts.size());
+        assertEquals(EIGHT, conflicts.size());
     }
-
 
     @Test
     public void shouldFindConflictsWhenTheOtherValueIsNull() {
@@ -98,7 +99,7 @@ public class OrganizationConflictDetectorUnitTest {
 
         List<Conflict> conflicts = conflictDetector.detectConflicts(organization, mirrorOrganization);
 
-        assertEquals(8, conflicts.size());
+        assertEquals(EIGHT, conflicts.size());
     }
 
     @Test

@@ -37,15 +37,20 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the ShelterResource REST controller.
@@ -113,7 +118,7 @@ public class ShelterResourceIntTest {
     private static final String DEFAULT_DISABILITY_ACCESS = "AAAAAAAAAA";
     private static final String UPDATED_DISABILITY_ACCESS = "BBBBBBBBBB";
 
-    static UUID id = UUID.randomUUID();
+    private static UUID id = UUID.randomUUID();
 
     @Autowired
     private ShelterRepository shelterRepository;
@@ -294,13 +299,13 @@ public class ShelterResourceIntTest {
         ShelterResource shelterResource = new ShelterResource(shelterServiceMock, userServiceMock);
         when(shelterRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
-        MockMvc restShelterMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
+        MockMvc restSTMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
 
-        restShelterMockMvc.perform(get("/api/shelters?eagerload=true"))
+        restSTMockMvc.perform(get("/api/shelters?eagerload=true"))
         .andExpect(status().isOk());
 
         verify(shelterRepositoryMock, times(1)).findAllWithEagerRelationships(any());
@@ -310,13 +315,13 @@ public class ShelterResourceIntTest {
     public void getAllSheltersWithEagerRelationshipsIsNotEnabled() throws Exception {
         ShelterResource shelterResource = new ShelterResource(shelterServiceMock, userServiceMock);
             when(shelterRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-            MockMvc restShelterMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
+            MockMvc restSTMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
 
-        restShelterMockMvc.perform(get("/api/shelters?eagerload=true"))
+        restSTMockMvc.perform(get("/api/shelters?eagerload=true"))
         .andExpect(status().isOk());
 
             verify(shelterRepositoryMock, times(1)).findAllWithEagerRelationships(any());

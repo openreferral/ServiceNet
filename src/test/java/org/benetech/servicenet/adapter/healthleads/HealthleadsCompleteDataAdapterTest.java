@@ -78,6 +78,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class HealthleadsCompleteDataAdapterTest {
 
     private static final String COMPLETE = "healthleads/complete/";
+    private static final int YEAR = 2019;
+    private static final double LAT = 20.456654;
+    private static final double LNG = -10.321321;
+    private static final int EXTENSION_1 = 200;
+    private static final int EXTENSION_2 = 500;
 
     @Autowired
     private HealthleadsDataAdapter adapter;
@@ -159,7 +164,8 @@ public class HealthleadsCompleteDataAdapterTest {
             data.add(readResourceAsString(COMPLETE + fileName + JSON));
         }
 
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true);
+        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(),
+            HEALTHLEADS_PROVIDER, true);
         adapter.importData(importData);
     }
 
@@ -173,8 +179,9 @@ public class HealthleadsCompleteDataAdapterTest {
         assertEquals("organization@org.com", result.getEmail());
         assertEquals("Organization Tax Status", result.getTaxStatus());
         assertEquals("taxId", result.getTaxId());
-        assertEquals(LocalDate.of(2019, 1, 2), result.getYearIncorporated());
-        assertEquals("The main purpose of the organization solutions to patients problems.", result.getDescription());
+        assertEquals(LocalDate.of(YEAR, 1, 2), result.getYearIncorporated());
+        assertEquals("The main purpose of the organization solutions to patients problems.",
+            result.getDescription());
         assertEquals("www.organization.org", result.getUrl());
         assertEquals("organizationId", result.getExternalDbId());
     }
@@ -215,36 +222,38 @@ public class HealthleadsCompleteDataAdapterTest {
         assertEquals("Alternate Location", result.getAlternateName());
         assertEquals("The Location Description", result.getDescription());
         assertEquals("Location Transportation", result.getTransportation());
-        assertEquals(-10.321321, result.getLongitude());
-        assertEquals(20.456654, result.getLatitude());
+        assertEquals(LNG, result.getLongitude());
+        assertEquals(LAT, result.getLatitude());
 
         assertEquals("Mon-Fri 8:30am-5pm", schedules.get(0).getNotes());
     }
 
     @Test
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
     public void shouldImportCompleteLocationBasedPhone() {
         List<PhoneDTO> result = phoneService.findAll();
 
         assertTrue(result.stream().anyMatch(x ->
                 x.getNumber().equals("(200) 200-2000")
-                    && x.getExtension().equals(200)
-                    && x.getType().equals("fax")
-                    && x.getLanguage().equals("Spanish")
-                    && x.getDescription().equals("Phone Description For Location")
+                && x.getExtension().equals(EXTENSION_1)
+                && x.getType().equals("fax")
+                && x.getLanguage().equals("Spanish")
+                && x.getDescription().equals("Phone Description For Location")
             )
         );
     }
 
     @Test
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
     public void shouldImportCompleteServiceBasedPhone() {
         List<PhoneDTO> result = phoneService.findAll();
 
         assertTrue(result.stream().anyMatch(x ->
                 x.getNumber().equals("(900) 500-9000")
-                    && x.getExtension().equals(500)
-                    && x.getType().equals("voice")
-                    && x.getLanguage().equals("English")
-                    && x.getDescription().equals("Phone Description")
+                && x.getExtension().equals(EXTENSION_2)
+                && x.getType().equals("voice")
+                && x.getLanguage().equals("English")
+                && x.getDescription().equals("Phone Description")
             )
         );
     }

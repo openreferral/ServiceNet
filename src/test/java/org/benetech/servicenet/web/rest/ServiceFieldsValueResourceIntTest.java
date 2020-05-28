@@ -30,10 +30,16 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.benetech.servicenet.domain.enumeration.ServiceFields;
+
 /**
  * Integration tests for the {@link ServiceFieldsValueResource} REST controller.
  */
@@ -75,7 +81,9 @@ public class ServiceFieldsValueResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ServiceFieldsValueResource serviceFieldsValueResource = new ServiceFieldsValueResource(serviceFieldsValueService);
+        final ServiceFieldsValueResource serviceFieldsValueResource = new ServiceFieldsValueResource(
+            serviceFieldsValueService
+        );
         this.restServiceFieldsValueMockMvc = MockMvcBuilders.standaloneSetup(serviceFieldsValueResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,6 +103,7 @@ public class ServiceFieldsValueResourceIntTest {
             .serviceField(DEFAULT_SERVICE_FIELD);
         return serviceFieldsValue;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -183,7 +192,8 @@ public class ServiceFieldsValueResourceIntTest {
     @Transactional
     public void getNonExistingServiceFieldsValue() throws Exception {
         // Get the serviceFieldsValue
-        restServiceFieldsValueMockMvc.perform(get("/api/service-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
+        restServiceFieldsValueMockMvc
+            .perform(get("/api/service-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -196,7 +206,8 @@ public class ServiceFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = serviceFieldsValueRepository.findAll().size();
 
         // Update the serviceFieldsValue
-        ServiceFieldsValue updatedServiceFieldsValue = serviceFieldsValueRepository.findById(serviceFieldsValue.getId()).get();
+        ServiceFieldsValue updatedServiceFieldsValue = serviceFieldsValueRepository
+            .findById(serviceFieldsValue.getId()).get();
         // Disconnect from session so that the updates on updatedServiceFieldsValue are not directly saved in db
         em.detach(updatedServiceFieldsValue);
         updatedServiceFieldsValue

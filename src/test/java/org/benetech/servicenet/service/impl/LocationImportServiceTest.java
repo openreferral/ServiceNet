@@ -104,6 +104,12 @@ public class LocationImportServiceTest {
     @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
+    private static final int YEAR_19 = 2019;
+
+    private static final int YEAR_18 = 2018;
+
+    private static final int THREE = 3;
+
     @Before
     public void clearDb() {
         testDatabaseManagement.clearDb();
@@ -333,8 +339,8 @@ public class LocationImportServiceTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateHolidayScheduleForLocation() {
         Location location = helper.generateNewLocation();
-        LocalDate start = LocalDate.of(2019, 1, 1);
-        LocalDate end = LocalDate.of(2019, 1, 3);
+        LocalDate start = LocalDate.of(YEAR_19, 1, 1);
+        LocalDate end = LocalDate.of(YEAR_19, 1, THREE);
         HolidaySchedule schedule = new HolidaySchedule().closesAt(NEW_STRING).closed(false)
             .startDate(start).endDate(end).providerName(PROVIDER).externalDbId(NEW_EXTERNAL_ID);
         location.setHolidaySchedules(Collections.singleton(schedule));
@@ -356,15 +362,15 @@ public class LocationImportServiceTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateHolidayScheduleForLocation() {
         Location location = helper.generateExistingLocation();
-        LocalDate start = LocalDate.of(2018, 1, 1);
-        LocalDate end = LocalDate.of(2018, 1, 3);
+        LocalDate start = LocalDate.of(YEAR_18, 1, 1);
+        LocalDate end = LocalDate.of(YEAR_18, 1, THREE);
         HolidaySchedule schedule = new HolidaySchedule().closesAt(EXISTING_STRING).closed(true).location(location)
             .startDate(start).endDate(end).providerName(PROVIDER).externalDbId(EXISTING_EXTERNAL_ID);
         helper.persist(schedule);
         helper.flushAndRefresh(location);
 
-        LocalDate newStart = LocalDate.of(2019, 1, 1);
-        LocalDate newEnd = LocalDate.of(2019, 1, 3);
+        LocalDate newStart = LocalDate.of(YEAR_19, 1, 1);
+        LocalDate newEnd = LocalDate.of(YEAR_19, 1, THREE);
         HolidaySchedule newSchedule = new HolidaySchedule().closesAt(NEW_STRING).closed(false)
             .startDate(newStart).endDate(newEnd).providerName(PROVIDER).externalDbId(EXISTING_EXTERNAL_ID);
         Location locationToUpdate = helper.generateExistingLocationDoNotPersist();
@@ -411,7 +417,8 @@ public class LocationImportServiceTest {
         Location location = helper.generateExistingLocation();
         OpeningHours otherOpeningHours = new OpeningHours().weekday(OTHER_INT).opensAt(OTHER_STRING).closesAt(OTHER_STRING);
         helper.persist(otherOpeningHours);
-        RegularSchedule schedule = new RegularSchedule().openingHours(helper.mutableSet(otherOpeningHours)).location(location);
+        RegularSchedule schedule = new RegularSchedule().openingHours(helper.mutableSet(otherOpeningHours))
+            .location(location);
         helper.persist(schedule);
         helper.flushAndRefresh(location);
 

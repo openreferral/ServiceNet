@@ -75,6 +75,11 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class SMCConnectDataAdapterCompleteTest {
 
+    private static final int YEAR_2001 = 2001;
+    private static final int YEAR_2002 = 2002;
+    private static final int DECEMBER = 12;
+    private static final int FIVE = 5;
+
     @Autowired
     private SMCConnectDataAdapter adapter;
 
@@ -234,7 +239,7 @@ public class SMCConnectDataAdapterCompleteTest {
     public void testRelationsAfterGetOpeningHoursFromJson() {
         // OpeningHours has a reference to the RegularSchedule
         List<OpeningHoursDTO> results = openingHoursService.findAll();
-         assertEquals(5, results.size());
+         assertEquals(FIVE, results.size());
 
         List<RegularScheduleDTO> schedules = regularScheduleService.findAll();
         assertEquals(2, schedules.size());
@@ -409,7 +414,7 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testAfterGetOpeningHoursFromJson() {
         List<OpeningHoursDTO> results = openingHoursService.findAll();
-        assertEquals(5, results.size());
+        assertEquals(FIVE, results.size());
 
         results.forEach(r -> {
                 assertThat(DAYS, Matchers.hasItem(r.getWeekday()));
@@ -462,8 +467,8 @@ public class SMCConnectDataAdapterCompleteTest {
         assertEquals(2, results.size());
 
         results.forEach(r -> {
-                assertEquals(LocalDate.of(2001, 12, 24), r.getStartDate());
-                assertEquals(LocalDate.of(2002, 1, 1), r.getEndDate());
+                assertEquals(LocalDate.of(YEAR_2001, DECEMBER, 24), r.getStartDate());
+                assertEquals(LocalDate.of(YEAR_2002, 1, 1), r.getEndDate());
                 assertTrue(r.isClosed());
             }
         );

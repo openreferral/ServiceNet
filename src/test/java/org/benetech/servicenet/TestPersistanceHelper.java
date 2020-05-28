@@ -29,7 +29,7 @@ import static org.benetech.servicenet.TestConstants.PROVIDER;
 public class TestPersistanceHelper {
 
     @Autowired
-    public EntityManager em;
+    private EntityManager em;
 
     @Autowired
     private SystemAccountRepository systemAccountRepository;

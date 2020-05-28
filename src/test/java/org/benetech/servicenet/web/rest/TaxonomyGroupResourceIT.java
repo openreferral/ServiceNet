@@ -33,9 +33,18 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link TaxonomyGroupResource} REST controller.
@@ -104,6 +113,7 @@ public class TaxonomyGroupResourceIT {
         TaxonomyGroup taxonomyGroup = new TaxonomyGroup();
         return taxonomyGroup;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -158,7 +168,6 @@ public class TaxonomyGroupResourceIT {
         assertThat(taxonomyGroupList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
     public void getAllTaxonomyGroups() throws Exception {
@@ -177,13 +186,13 @@ public class TaxonomyGroupResourceIT {
         TaxonomyGroupResource taxonomyGroupResource = new TaxonomyGroupResource(taxonomyGroupServiceMock);
         when(taxonomyGroupServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
-        MockMvc restTaxonomyGroupMockMvc = MockMvcBuilders.standaloneSetup(taxonomyGroupResource)
+        MockMvc restTaxGroupMockMvc = MockMvcBuilders.standaloneSetup(taxonomyGroupResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
 
-        restTaxonomyGroupMockMvc.perform(get("/api/taxonomy-groups?eagerload=true"))
+        restTaxGroupMockMvc.perform(get("/api/taxonomy-groups?eagerload=true"))
         .andExpect(status().isOk());
 
         verify(taxonomyGroupServiceMock, times(1)).findAllWithEagerRelationships(any());
@@ -193,13 +202,13 @@ public class TaxonomyGroupResourceIT {
     public void getAllTaxonomyGroupsWithEagerRelationshipsIsNotEnabled() throws Exception {
         TaxonomyGroupResource taxonomyGroupResource = new TaxonomyGroupResource(taxonomyGroupServiceMock);
             when(taxonomyGroupServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-            MockMvc restTaxonomyGroupMockMvc = MockMvcBuilders.standaloneSetup(taxonomyGroupResource)
+            MockMvc restTaxGroupMockMvc = MockMvcBuilders.standaloneSetup(taxonomyGroupResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
 
-        restTaxonomyGroupMockMvc.perform(get("/api/taxonomy-groups?eagerload=true"))
+        restTaxGroupMockMvc.perform(get("/api/taxonomy-groups?eagerload=true"))
         .andExpect(status().isOk());
 
             verify(taxonomyGroupServiceMock, times(1)).findAllWithEagerRelationships(any());

@@ -32,8 +32,8 @@ import static org.junit.Assert.assertTrue;
 public class ICarolDataMapperTest {
 
     private ICarolDataMapper mapper;
-    private String PROVIDER_NAME = "provider name";
 
+    private static final String PROVIDER_NAME = "provider name";
     private static final String ID = "id";
     private static final String PRIMARY = "Primary";
     private static final String PHONE_NUMBER = "PhoneNumber";

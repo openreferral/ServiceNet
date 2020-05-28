@@ -203,6 +203,7 @@ public class ServiceMapperTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
     public void shouldMapPhonesToRecord() {
         Service entry = new Service().phones((Set.of(
             PhoneMother.createDefault(),

@@ -30,10 +30,16 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.benetech.servicenet.domain.enumeration.PhysicalAddressFields;
+
 /**
  * Integration tests for the {@link PhysicalAddressFieldsValueResource} REST controller.
  */
@@ -75,7 +81,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PhysicalAddressFieldsValueResource physicalAddressFieldsValueResource = new PhysicalAddressFieldsValueResource(physicalAddressFieldsValueService);
+        final PhysicalAddressFieldsValueResource physicalAddressFieldsValueResource =
+            new PhysicalAddressFieldsValueResource(physicalAddressFieldsValueService);
         this.restPhysicalAddressFieldsValueMockMvc = MockMvcBuilders.standaloneSetup(physicalAddressFieldsValueResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,6 +102,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
             .physicalAddressField(DEFAULT_PHYSICAL_ADDRESS_FIELD);
         return physicalAddressFieldsValue;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -118,16 +126,19 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         int databaseSizeBeforeCreate = physicalAddressFieldsValueRepository.findAll().size();
 
         // Create the PhysicalAddressFieldsValue
-        PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper.toDto(physicalAddressFieldsValue);
+        PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper
+            .toDto(physicalAddressFieldsValue);
         restPhysicalAddressFieldsValueMockMvc.perform(post("/api/physical-address-fields-values")
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressFieldsValueDTO)))
             .andExpect(status().isCreated());
 
         // Validate the PhysicalAddressFieldsValue in the database
-        List<PhysicalAddressFieldsValue> physicalAddressFieldsValueList = physicalAddressFieldsValueRepository.findAll();
+        List<PhysicalAddressFieldsValue> physicalAddressFieldsValueList = physicalAddressFieldsValueRepository
+            .findAll();
         assertThat(physicalAddressFieldsValueList).hasSize(databaseSizeBeforeCreate + 1);
-        PhysicalAddressFieldsValue testPhysicalAddressFieldsValue = physicalAddressFieldsValueList.get(physicalAddressFieldsValueList.size() - 1);
+        PhysicalAddressFieldsValue testPhysicalAddressFieldsValue = physicalAddressFieldsValueList
+            .get(physicalAddressFieldsValueList.size() - 1);
         assertThat(testPhysicalAddressFieldsValue.getPhysicalAddressField()).isEqualTo(DEFAULT_PHYSICAL_ADDRESS_FIELD);
     }
 
@@ -138,7 +149,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
 
         // Create the PhysicalAddressFieldsValue with an existing ID
         physicalAddressFieldsValue.setId(TestConstants.UUID_1);
-        PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper.toDto(physicalAddressFieldsValue);
+        PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper
+            .toDto(physicalAddressFieldsValue);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPhysicalAddressFieldsValueMockMvc.perform(post("/api/physical-address-fields-values")
@@ -147,7 +159,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
             .andExpect(status().isBadRequest());
 
         // Validate the PhysicalAddressFieldsValue in the database
-        List<PhysicalAddressFieldsValue> physicalAddressFieldsValueList = physicalAddressFieldsValueRepository.findAll();
+        List<PhysicalAddressFieldsValue> physicalAddressFieldsValueList = physicalAddressFieldsValueRepository
+            .findAll();
         assertThat(physicalAddressFieldsValueList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -162,7 +175,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(physicalAddressFieldsValue.getId().toString())))
-            .andExpect(jsonPath("$.[*].physicalAddressField").value(hasItem(DEFAULT_PHYSICAL_ADDRESS_FIELD.toString())));
+            .andExpect(jsonPath("$.[*].physicalAddressField")
+                .value(hasItem(DEFAULT_PHYSICAL_ADDRESS_FIELD.toString())));
     }
 
     @Test
@@ -172,7 +186,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         physicalAddressFieldsValueRepository.saveAndFlush(physicalAddressFieldsValue);
 
         // Get the physicalAddressFieldsValue
-        restPhysicalAddressFieldsValueMockMvc.perform(get("/api/physical-address-fields-values/{id}", physicalAddressFieldsValue.getId()))
+        restPhysicalAddressFieldsValueMockMvc
+            .perform(get("/api/physical-address-fields-values/{id}", physicalAddressFieldsValue.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(physicalAddressFieldsValue.getId().toString()))
@@ -183,7 +198,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
     @Transactional
     public void getNonExistingPhysicalAddressFieldsValue() throws Exception {
         // Get the physicalAddressFieldsValue
-        restPhysicalAddressFieldsValueMockMvc.perform(get("/api/physical-address-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
+        restPhysicalAddressFieldsValueMockMvc
+            .perform(get("/api/physical-address-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -196,12 +212,14 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = physicalAddressFieldsValueRepository.findAll().size();
 
         // Update the physicalAddressFieldsValue
-        PhysicalAddressFieldsValue updatedPhysicalAddressFieldsValue = physicalAddressFieldsValueRepository.findById(physicalAddressFieldsValue.getId()).get();
+        PhysicalAddressFieldsValue updatedPhysicalAddressFieldsValue = physicalAddressFieldsValueRepository
+            .findById(physicalAddressFieldsValue.getId()).get();
         // Disconnect from session so that the updates on updatedPhysicalAddressFieldsValue are not directly saved in db
         em.detach(updatedPhysicalAddressFieldsValue);
         updatedPhysicalAddressFieldsValue
             .physicalAddressField(UPDATED_PHYSICAL_ADDRESS_FIELD);
-        PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper.toDto(updatedPhysicalAddressFieldsValue);
+        PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper
+            .toDto(updatedPhysicalAddressFieldsValue);
 
         restPhysicalAddressFieldsValueMockMvc.perform(put("/api/physical-address-fields-values")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -211,7 +229,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         // Validate the PhysicalAddressFieldsValue in the database
         List<PhysicalAddressFieldsValue> physicalAddressFieldsValueList = physicalAddressFieldsValueRepository.findAll();
         assertThat(physicalAddressFieldsValueList).hasSize(databaseSizeBeforeUpdate);
-        PhysicalAddressFieldsValue testPhysicalAddressFieldsValue = physicalAddressFieldsValueList.get(physicalAddressFieldsValueList.size() - 1);
+        PhysicalAddressFieldsValue testPhysicalAddressFieldsValue = physicalAddressFieldsValueList
+            .get(physicalAddressFieldsValueList.size() - 1);
         assertThat(testPhysicalAddressFieldsValue.getPhysicalAddressField()).isEqualTo(UPDATED_PHYSICAL_ADDRESS_FIELD);
     }
 
@@ -221,7 +240,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = physicalAddressFieldsValueRepository.findAll().size();
 
         // Create the PhysicalAddressFieldsValue
-        PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper.toDto(physicalAddressFieldsValue);
+        PhysicalAddressFieldsValueDTO physicalAddressFieldsValueDTO = physicalAddressFieldsValueMapper
+            .toDto(physicalAddressFieldsValue);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPhysicalAddressFieldsValueMockMvc.perform(put("/api/physical-address-fields-values")
@@ -243,7 +263,8 @@ public class PhysicalAddressFieldsValueResourceIntTest {
         int databaseSizeBeforeDelete = physicalAddressFieldsValueRepository.findAll().size();
 
         // Delete the physicalAddressFieldsValue
-        restPhysicalAddressFieldsValueMockMvc.perform(delete("/api/physical-address-fields-values/{id}", physicalAddressFieldsValue.getId())
+        restPhysicalAddressFieldsValueMockMvc
+            .perform(delete("/api/physical-address-fields-values/{id}", physicalAddressFieldsValue.getId())
             .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 

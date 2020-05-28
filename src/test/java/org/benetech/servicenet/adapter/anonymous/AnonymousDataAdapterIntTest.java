@@ -47,6 +47,10 @@ import static org.junit.Assert.assertEquals;
 @Ignore("Will be removed in #80")
 public class AnonymousDataAdapterIntTest {
 
+    private static final int FOUR = 4;
+    private static final int SIX = 6;
+    private static final int FOURTEEN = 14;
+
     @Autowired
     private AnonymousDataAdapter adapter;
 
@@ -107,9 +111,9 @@ public class AnonymousDataAdapterIntTest {
         assertEquals(entriesNumber, organizationService.findAllDTOs().size());
         assertEquals(entriesNumber, eligibilityService.findAll().size());
         assertEquals(entriesNumber, serviceService.findAll().size());
-        assertEquals(6, programService.findAll().size());
-        assertEquals(4, languageService.findAll().size());
-        assertEquals(14, openingHoursService.findAll().size());
+        assertEquals(SIX, programService.findAll().size());
+        assertEquals(FOUR, languageService.findAll().size());
+        assertEquals(FOURTEEN, openingHoursService.findAll().size());
         assertEquals(entriesNumber, accessibilityForDisabilitiesService.findAll().size());
         assertEquals(2, regularScheduleService.findAll().size());
     }

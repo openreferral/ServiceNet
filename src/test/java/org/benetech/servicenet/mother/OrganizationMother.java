@@ -3,12 +3,10 @@ package org.benetech.servicenet.mother;
 import org.benetech.servicenet.domain.Organization;
 
 import javax.persistence.EntityManager;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class OrganizationMother {
 
     public static final String DEFAULT_NAME = "AAAAAAAAAA";

@@ -15,6 +15,8 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(classes = ServiceNetApp.class)
 public class DescriptionSimilarityCounterIntTest {
 
+    private static final BigDecimal FAKE_SIMILARITY = BigDecimal.valueOf(0.5);
+
     @Autowired
     private DescriptionSimilarityCounter descriptionSimilarityCounter;
 
@@ -42,6 +44,6 @@ public class DescriptionSimilarityCounterIntTest {
         String string2 = "AA";
 
         BigDecimal result = descriptionSimilarityCounter.countSimilarityRatio(string1, string2);
-        assertEquals(0, result.compareTo(BigDecimal.valueOf(0.5)));
+        assertEquals(0, result.compareTo(FAKE_SIMILARITY));
     }
 }

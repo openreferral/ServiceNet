@@ -4,6 +4,7 @@ import org.benetech.servicenet.domain.HolidaySchedule;
 
 import java.time.LocalDate;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class HolidayScheduleMother {
 
     public static final LocalDate END_DATE = LocalDate.of(2013, 1, 10);

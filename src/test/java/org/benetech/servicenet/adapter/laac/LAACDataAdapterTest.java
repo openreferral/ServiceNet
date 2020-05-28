@@ -45,6 +45,7 @@ public class LAACDataAdapterTest {
 
     private static final int THREE = 3;
     private static final int TWO = 2;
+    private static final int FOUR = 4;
     private static final String ID_FORMAT = "extId%d";
     private static final String SERVICE_NAME_FORMAT = "Organization Name %d - Service";
     private static final String SERVICE_TYPE_FORMAT = "ServiceType0%d, ServiceType1%d";
@@ -173,7 +174,7 @@ public class LAACDataAdapterTest {
     }
 
     private void assertExtractedLanguages() {
-        assertEquals(4, languageService.findAll().size());
+        assertEquals(FOUR, languageService.findAll().size());
 
         for (LanguageDTO language : languageService.findAll()) {
             assertTrue(RUSSIAN.equals(language.getLanguage())

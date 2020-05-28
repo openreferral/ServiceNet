@@ -30,10 +30,16 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.benetech.servicenet.domain.enumeration.LocationFields;
+
 /**
  * Integration tests for the {@link LocationFieldsValueResource} REST controller.
  */
@@ -75,7 +81,8 @@ public class LocationFieldsValueResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final LocationFieldsValueResource locationFieldsValueResource = new LocationFieldsValueResource(locationFieldsValueService);
+        final LocationFieldsValueResource locationFieldsValueResource = new LocationFieldsValueResource(
+            locationFieldsValueService);
         this.restLocationFieldsValueMockMvc = MockMvcBuilders.standaloneSetup(locationFieldsValueResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,6 +102,7 @@ public class LocationFieldsValueResourceIntTest {
             .locationField(DEFAULT_LOCATION_FIELD);
         return locationFieldsValue;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -172,7 +180,8 @@ public class LocationFieldsValueResourceIntTest {
         locationFieldsValueRepository.saveAndFlush(locationFieldsValue);
 
         // Get the locationFieldsValue
-        restLocationFieldsValueMockMvc.perform(get("/api/location-fields-values/{id}", locationFieldsValue.getId()))
+        restLocationFieldsValueMockMvc
+            .perform(get("/api/location-fields-values/{id}", locationFieldsValue.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(locationFieldsValue.getId().toString()))
@@ -183,7 +192,8 @@ public class LocationFieldsValueResourceIntTest {
     @Transactional
     public void getNonExistingLocationFieldsValue() throws Exception {
         // Get the locationFieldsValue
-        restLocationFieldsValueMockMvc.perform(get("/api/location-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
+        restLocationFieldsValueMockMvc
+            .perform(get("/api/location-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -196,7 +206,8 @@ public class LocationFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = locationFieldsValueRepository.findAll().size();
 
         // Update the locationFieldsValue
-        LocationFieldsValue updatedLocationFieldsValue = locationFieldsValueRepository.findById(locationFieldsValue.getId()).get();
+        LocationFieldsValue updatedLocationFieldsValue = locationFieldsValueRepository
+            .findById(locationFieldsValue.getId()).get();
         // Disconnect from session so that the updates on updatedLocationFieldsValue are not directly saved in db
         em.detach(updatedLocationFieldsValue);
         updatedLocationFieldsValue
@@ -243,7 +254,8 @@ public class LocationFieldsValueResourceIntTest {
         int databaseSizeBeforeDelete = locationFieldsValueRepository.findAll().size();
 
         // Delete the locationFieldsValue
-        restLocationFieldsValueMockMvc.perform(delete("/api/location-fields-values/{id}", locationFieldsValue.getId())
+        restLocationFieldsValueMockMvc
+            .perform(delete("/api/location-fields-values/{id}", locationFieldsValue.getId())
             .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 

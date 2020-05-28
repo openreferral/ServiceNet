@@ -71,7 +71,6 @@ public final class SecurityUtils {
         return null;
     }
 
-
     /**
      * Check if a user is authenticated.
      *

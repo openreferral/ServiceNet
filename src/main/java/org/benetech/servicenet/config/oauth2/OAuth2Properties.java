@@ -21,6 +21,10 @@ public class OAuth2Properties {
         return signatureVerification;
     }
 
+    private static final int TEN = 10;
+
+    private static final int SECONDS = 1800;
+
     public static class WebClientConfiguration {
         private String clientId = "web_app";
         private String secret = "changeit";
@@ -30,7 +34,7 @@ public class OAuth2Properties {
          * Only checked during token refresh, so long access token validity may
          * delay the session timeout accordingly.
          */
-        private int sessionTimeoutInSeconds = 1800;
+        private int sessionTimeoutInSeconds = SECONDS;
         /**
          * Defines the cookie domain. If specified, cookies will be set on this domain.
          * If not configured, then cookies will be set on the top-level domain of the
@@ -79,7 +83,7 @@ public class OAuth2Properties {
          * We won't fetch new public keys any faster than that to avoid spamming UAA in case
          * we receive a lot of "illegal" tokens.
          */
-        private long publicKeyRefreshRateLimit = 10 * 1000L;
+        private long publicKeyRefreshRateLimit = TEN * 1000L;
         /**
          * Maximum TTL for the public key in ms.
          * The public key will be fetched again from UAA if it gets older than that.

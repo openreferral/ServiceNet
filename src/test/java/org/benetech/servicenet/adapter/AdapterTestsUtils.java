@@ -19,6 +19,8 @@ public final class AdapterTestsUtils {
 
     private static final String RESOURCE_PACKAGE = "adapters/";
 
+    private static final int STATUS = 200;
+
     public static String readResourceAsString(String resourceName) throws IOException {
         try (InputStream is = readResourceAsSteam(resourceName)) {
             return IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -42,9 +44,9 @@ public final class AdapterTestsUtils {
                     new Header("Authorization", "Bearer default_key")),
             Times.once())
             .respond(response()
-                .withStatusCode(200)
+                .withStatusCode(STATUS)
                 .withBody(AdapterTestsUtils.readResourceAsString(resourceName))
-                .withDelay(TimeUnit.SECONDS,1)
+                .withDelay(TimeUnit.SECONDS, 1)
             );
     }
 

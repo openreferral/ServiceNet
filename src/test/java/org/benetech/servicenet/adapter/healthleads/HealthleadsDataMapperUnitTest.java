@@ -1,16 +1,35 @@
 package org.benetech.servicenet.adapter.healthleads;
 
-import org.benetech.servicenet.adapter.healthleads.model.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsEligibility;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLanguage;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsLocation;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsOrganization;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhone;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsPhysicalAddress;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsRequiredDocument;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsService;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceAtLocation;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsServiceTaxonomy;
+import org.benetech.servicenet.adapter.healthleads.model.HealthleadsTaxonomy;
 import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-
 public class HealthleadsDataMapperUnitTest {
-    
+
+    private static final int YEAR = 2018;
+    private static final Double LAT = 128.0;
+    private static final Double LNG = -3.5;
+    private static final int THREE = 3;
+    private static final Integer EXTENSION_1 = 123;
+    private static final Integer EXTENSION_2 = 321;
+
     @Test
     public void testExtractEligibility() {
         HealthleadsEligibility eligibility = new HealthleadsEligibility();
@@ -21,7 +40,7 @@ public class HealthleadsDataMapperUnitTest {
         
         assertEquals("Eligibility  string", extracted.getEligibility());
     }
-    
+
     @Test
     public void testExtractLocation() {
         HealthleadsLocation location = new HealthleadsLocation();
@@ -37,8 +56,8 @@ public class HealthleadsDataMapperUnitTest {
         
         assertEquals("alternateName", extracted.getAlternateName());
         assertEquals("description", extracted.getDescription());
-        assertEquals(Double.valueOf(128.0), extracted.getLatitude());
-        assertEquals(Double.valueOf(-3.5), extracted.getLongitude());
+        assertEquals(LAT, extracted.getLatitude());
+        assertEquals(LNG, extracted.getLongitude());
         assertEquals("Name", extracted.getName());
         assertEquals("Transportation", extracted.getTransportation());
     }
@@ -67,7 +86,7 @@ public class HealthleadsDataMapperUnitTest {
         assertEquals("taxId", extracted.getTaxId());
         assertEquals("taxStatus", extracted.getTaxStatus());
         assertEquals("www.organization.com", extracted.getUrl());
-        assertEquals(LocalDate.of(2018, 1, 2), extracted.getYearIncorporated());
+        assertEquals(LocalDate.of(YEAR, 1, 2), extracted.getYearIncorporated());
     }
 
     @Test
@@ -180,7 +199,7 @@ public class HealthleadsDataMapperUnitTest {
         Set<org.benetech.servicenet.domain.Language> extracted
             = HealthLeadsDataMapper.INSTANCE.extractLanguages(Set.of(language));
 
-        assertEquals(3, extracted.size());
+        assertEquals(THREE, extracted.size());
         for (org.benetech.servicenet.domain.Language extractedLanguage : extracted) {
             assertTrue(extractedLanguage.getLanguage().equals("English")
                 || extractedLanguage.getLanguage().equals("German")
@@ -213,12 +232,12 @@ public class HealthleadsDataMapperUnitTest {
         for (org.benetech.servicenet.domain.Phone extractedPhone : extractedPhones) {
             if ("type1".equals(extractedPhone.getType())) {
                 assertEquals("description1", extractedPhone.getDescription());
-                assertEquals(Integer.valueOf(123), extractedPhone.getExtension());
+                assertEquals(EXTENSION_1, extractedPhone.getExtension());
                 assertEquals("English", extractedPhone.getLanguage());
                 assertEquals("123456789", extractedPhone.getNumber());
             } else if ("type2".equals(extractedPhone.getType())) {
                 assertEquals("description2", extractedPhone.getDescription());
-                assertEquals(Integer.valueOf(321), extractedPhone.getExtension());
+                assertEquals(EXTENSION_2, extractedPhone.getExtension());
                 assertEquals("German", extractedPhone.getLanguage());
                 assertEquals("987654321", extractedPhone.getNumber());
             } else {

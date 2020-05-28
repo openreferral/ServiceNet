@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -30,8 +29,13 @@ import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link DailyUpdateResource} REST controller.
@@ -48,10 +52,11 @@ public class DailyUpdateResourceIT {
     private static final ZonedDateTime DEFAULT_EXPIRY = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_EXPIRY = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    private static final ZonedDateTime DEFAULT_CREATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime DEFAULT_CREATED_AT = ZonedDateTime
+        .ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    private static final UUID id = UUID.randomUUID();
+    private static final UUID ID = UUID.randomUUID();
 
     @Autowired
     private DailyUpdateRepository dailyUpdateRepository;
@@ -83,6 +88,7 @@ public class DailyUpdateResourceIT {
             .createdAt(DEFAULT_CREATED_AT);
         return dailyUpdate;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -129,7 +135,7 @@ public class DailyUpdateResourceIT {
         int databaseSizeBeforeCreate = dailyUpdateRepository.findAll().size();
 
         // Create the DailyUpdate with an existing ID
-        dailyUpdate.setId(id);
+        dailyUpdate.setId(ID);
         DailyUpdateDTO dailyUpdateDTO = dailyUpdateMapper.toDto(dailyUpdate);
 
         // An entity with an existing ID cannot be created, so this API call must fail
@@ -142,7 +148,6 @@ public class DailyUpdateResourceIT {
         List<DailyUpdate> dailyUpdateList = dailyUpdateRepository.findAll();
         assertThat(dailyUpdateList).hasSize(databaseSizeBeforeCreate);
     }
-
 
     @Test
     @Transactional

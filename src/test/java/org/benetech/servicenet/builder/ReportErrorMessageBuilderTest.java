@@ -15,7 +15,7 @@ public class ReportErrorMessageBuilderTest {
 
     @Test
     public void shouldBuildProperFirstReport() {
-        var result = ReportErrorMessageBuilder.build(getViolations(new Organization()), "Organization", null,"123");
+        var result = ReportErrorMessageBuilder.build(getViolations(new Organization()), "Organization", null, "123");
 
         var expected =
             "During the import, the following problems occurs:\n" +
