@@ -36,8 +36,10 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         @Param("accountName") String accountName, Pageable pageable
     );
 
-    @Query("SELECT org FROM Organization org WHERE org.account.name = :accountName AND org.active = false")
-    List<Organization> findAllByAccountNameAndNotActive(@Param("accountName") String accountName);
+    @Query("SELECT org FROM Organization org WHERE org.account.name = :accountName AND org.active = false "
+        + "AND :userProfile MEMBER OF org.userProfiles")
+    List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser(@Param("accountName") String accountName,
+        @Param("userProfile") UserProfile userProfile);
 
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     Page<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);

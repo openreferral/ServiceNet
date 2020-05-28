@@ -400,10 +400,11 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public List<Organization> findAllByAccountNameAndNotActive() {
+    public List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser() {
         log.debug("Request to get deactivated organizations");
+        UserProfile userProfile = userService.getCurrentUserProfile();
         List<Organization> organizations = organizationRepository
-            .findAllByAccountNameAndNotActive(SERVICE_PROVIDER);
+            .findAllByAccountNameAndNotActiveAndCurrentUser(SERVICE_PROVIDER, userProfile);
         return organizations;
     }
 

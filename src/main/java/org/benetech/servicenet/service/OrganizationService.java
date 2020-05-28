@@ -126,5 +126,5 @@ public interface OrganizationService {
 
     Optional<Organization> findOneWithIdAndUserProfile(UUID id, UserProfile userProfile);
 
-    List<Organization> findAllByAccountNameAndNotActive();
+    List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser();
 }

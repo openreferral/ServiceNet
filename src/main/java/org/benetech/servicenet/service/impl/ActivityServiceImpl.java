@@ -180,7 +180,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public List<DeactivatedOrganizationDTO> getAllDeactivatedRecords() {
-        List<Organization> organizations = organizationService.findAllByAccountNameAndNotActive();
+        List<Organization> organizations = organizationService
+            .findAllByAccountNameAndNotActiveAndCurrentUser();
         return organizations.stream()
             .map(this.organizationMapper::toDeactivatedOrganizationDto)
             .collect(Collectors.toList());
