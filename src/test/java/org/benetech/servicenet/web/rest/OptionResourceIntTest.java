@@ -25,14 +25,19 @@ import org.springframework.validation.Validator;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.benetech.servicenet.domain.enumeration.OptionType;
+
 /**
  * Test class for the OptionResource REST controller.
  *
@@ -70,7 +75,7 @@ public class OptionResourceIntTest {
 
     private Option option;
 
-    static UUID id = UUID.randomUUID();
+    private static UUID id = UUID.randomUUID();
 
     @Before
     public void setup() {

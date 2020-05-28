@@ -2,6 +2,14 @@ package org.benetech.servicenet.config;
 
 import io.github.jhipster.config.JHipsterConstants;
 import io.github.jhipster.config.JHipsterProperties;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -10,12 +18,11 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.servlet.*;
-import java.util.*;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -25,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Unit tests for the {@link WebConfigurer} class.
  */
 public class WebConfigurerTest {
+
+    private static final long MAX_AGE = 1800L;
 
     private WebConfigurer webConfigurer;
 
@@ -67,7 +76,7 @@ public class WebConfigurerTest {
         props.getCors().setAllowedOrigins(Collections.singletonList("*"));
         props.getCors().setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         props.getCors().setAllowedHeaders(Collections.singletonList("*"));
-        props.getCors().setMaxAge(1800L);
+        props.getCors().setMaxAge(MAX_AGE);
         props.getCors().setAllowCredentials(true);
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new WebConfigurerTestController())
@@ -97,7 +106,7 @@ public class WebConfigurerTest {
         props.getCors().setAllowedOrigins(Collections.singletonList("*"));
         props.getCors().setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         props.getCors().setAllowedHeaders(Collections.singletonList("*"));
-        props.getCors().setMaxAge(1800L);
+        props.getCors().setMaxAge(MAX_AGE);
         props.getCors().setAllowCredentials(true);
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new WebConfigurerTestController())

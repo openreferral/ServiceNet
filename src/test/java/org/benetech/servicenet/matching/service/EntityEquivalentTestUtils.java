@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 class EntityEquivalentTestUtils {
 
     static<V extends EntityEquivalent> boolean isMatchBetweenEntities(Set<V> set, UUID baseID, UUID partnerId) {

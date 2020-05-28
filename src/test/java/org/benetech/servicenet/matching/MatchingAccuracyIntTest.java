@@ -71,6 +71,8 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(classes = {ServiceNetApp.class, MockedGeocodingConfiguration.class})
 public class MatchingAccuracyIntTest {
 
+    private static final int EIGHT = 8;
+
     @Autowired
     private HealthleadsDataAdapter healthleadsDataAdapter;
 
@@ -117,7 +119,7 @@ public class MatchingAccuracyIntTest {
     @Test
     public void shouldNotMatchAnyOrganization() {
         List<Organization> organizations = organizationService.findAll();
-        assertEquals(8, organizations.size());
+        assertEquals(EIGHT, organizations.size());
         List<OrganizationMatchDTO> matches = organizationMatchService.findAll();
         assertEquals(0, matches.size());
     }
@@ -138,14 +140,16 @@ public class MatchingAccuracyIntTest {
             uploads.add(upload);
             data.add(loadCsv(HEALTHLEADS_DIR + fileName + CSV));
         }
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true);
+        MultipleImportData importData = new MultipleImportData(
+            data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true);
         healthleadsDataAdapter.importData(importData);
     }
 
     private void importLaacData() throws IOException {
         String csv = loadCsv(LAAC_DIR + BAD_MATCHES + CSV);
 
-        SingleImportData importData = new SingleImportData(csv, new DataImportReport(), LAAC_PROVIDER, true);
+        SingleImportData importData = new SingleImportData(
+            csv, new DataImportReport(), LAAC_PROVIDER, true);
         laacDataAdapter.importData(importData);
     }
 
@@ -171,7 +175,8 @@ public class MatchingAccuracyIntTest {
             uploads.add(upload);
             data.add(loadCsv(SMC_DIR + fileName + CSV));
         }
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), SMC_CONNECT_PROVIDER, true);
+        MultipleImportData importData = new MultipleImportData(
+            data, uploads, new DataImportReport(), SMC_CONNECT_PROVIDER, true);
         smcConnectDataAdapter.importData(importData);
     }
 }

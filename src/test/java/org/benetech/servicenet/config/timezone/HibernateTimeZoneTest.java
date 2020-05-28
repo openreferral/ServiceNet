@@ -41,6 +41,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class HibernateTimeZoneTest {
+    
+    private static final int YEAR = 1970;
 
     @Mock
     private MetadataService metadataService;
@@ -152,14 +154,14 @@ public class HibernateTimeZoneTest {
 
     @Test
     @Transactional
-    public void storeLocalTimeWithUtcConfigShouldBeStoredOnGMTTimeZoneAccordingToHis1stJan1970Value() {
+    public void storeLocalTimeWithUtcConfigShouldBeStoredOnGMTTimeZoneAccordingToHis1stJanYEARValue() {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("local_time", dateTimeWrapper.getId());
         SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
         String expectedValue = dateTimeWrapper
             .getLocalTime()
-            .atDate(LocalDate.of(1970, Month.JANUARY, 1))
+            .atDate(LocalDate.of(YEAR, Month.JANUARY, 1))
             .atZone(ZoneId.systemDefault())
             .format(timeFormatter);
 
@@ -168,7 +170,7 @@ public class HibernateTimeZoneTest {
 
     @Test
     @Transactional
-    public void storeOffsetTimeWithUtcConfigShouldBeStoredOnGMTTimeZoneAccordingToHis1stJan1970Value() {
+    public void storeOffsetTimeWithUtcConfigShouldBeStoredOnGMTTimeZoneAccordingToHis1stJanYEARValue() {
         dateTimeWrapperRepository.saveAndFlush(dateTimeWrapper);
 
         String request = generateSqlRequest("offset_time", dateTimeWrapper.getId());
@@ -176,7 +178,7 @@ public class HibernateTimeZoneTest {
         String expectedValue = dateTimeWrapper
             .getOffsetTime()
             .toLocalTime()
-            .atDate(LocalDate.of(1970, Month.JANUARY, 1))
+            .atDate(LocalDate.of(YEAR, Month.JANUARY, 1))
             .atZone(ZoneId.systemDefault())
             .format(timeFormatter);
 

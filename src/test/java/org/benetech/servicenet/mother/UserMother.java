@@ -4,9 +4,8 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
 
 import javax.persistence.EntityManager;
-import java.util.HashSet;
-import java.util.Set;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class UserMother {
     private static final String DEFAULT_LOGIN = "johndoe";
 

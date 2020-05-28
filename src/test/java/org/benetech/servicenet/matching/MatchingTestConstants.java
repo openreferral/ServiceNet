@@ -1,12 +1,12 @@
 package org.benetech.servicenet.matching;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 class MatchingTestConstants {
     static final String HEALTHLEADS_DIR = "healthleads/bad_matches/";
     static final String LAAC_DIR = "laac/";
     static final String SHELTER_TECH_DIR = "sheltertech/";
     static final String SMC_DIR = "smcconnect/bad_matches/";
     static final String BAD_MATCHES = "bad_matches";
-
 
     static final String JSON = ".json";
     static final String CSV = ".csv";

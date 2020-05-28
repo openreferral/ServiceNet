@@ -61,11 +61,11 @@ public class OrganizationDTO implements Serializable {
 
     private String externalDbId;
 
+    private Set<UserProfile> userProfiles;
+
     public Boolean isActive() {
         return active;
     }
-
-    public Set<UserProfile> userProfiles;
 
     @Override
     public boolean equals(Object o) {

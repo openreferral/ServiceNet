@@ -102,7 +102,9 @@ public class OrganizationResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OrganizationResource organizationResource = new OrganizationResource(organizationService, userService, activityService);
+        final OrganizationResource organizationResource = new OrganizationResource(
+            organizationService, userService, activityService
+        );
         this.restOrganizationMockMvc = MockMvcBuilders.standaloneSetup(organizationResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -221,7 +223,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].url").value(hasItem(OrganizationMother.DEFAULT_URL.toString())))
             .andExpect(jsonPath("$.[*].taxStatus").value(hasItem(OrganizationMother.DEFAULT_TAX_STATUS.toString())))
             .andExpect(jsonPath("$.[*].taxId").value(hasItem(OrganizationMother.DEFAULT_TAX_ID.toString())))
-            .andExpect(jsonPath("$.[*].yearIncorporated").value(hasItem(OrganizationMother.DEFAULT_YEAR_INCORPORATED.toString())))
+            .andExpect(jsonPath("$.[*].yearIncorporated").value(hasItem(OrganizationMother.DEFAULT_YEAR_INCORPORATED
+                .toString())))
             .andExpect(jsonPath("$.[*].legalStatus").value(hasItem(OrganizationMother.DEFAULT_LEGAL_STATUS.toString())))
             .andExpect(jsonPath("$.[*].active").value(hasItem(OrganizationMother.DEFAULT_ACTIVE.booleanValue())));
     }

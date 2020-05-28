@@ -2,6 +2,7 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.PhysicalAddress;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class PhysicalAddressMother {
 
     public static final String ADDRESS_1 = "Physical Address";

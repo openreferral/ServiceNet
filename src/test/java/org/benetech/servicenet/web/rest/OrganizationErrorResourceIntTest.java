@@ -28,8 +28,13 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@Link OrganizationErrorResource} REST controller.
@@ -53,7 +58,7 @@ public class OrganizationErrorResourceIntTest {
     private static final String DEFAULT_CAUSE = "AAAAAAAAAA";
     private static final String UPDATED_CAUSE = "BBBBBBBBBB";
 
-    private static final UUID id = UUID.randomUUID();
+    private static final UUID ID = UUID.randomUUID();
 
     @Autowired
     private OrganizationErrorRepository organizationErrorRepository;
@@ -80,7 +85,8 @@ public class OrganizationErrorResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OrganizationErrorResource organizationErrorResource = new OrganizationErrorResource(organizationErrorRepository);
+        final OrganizationErrorResource organizationErrorResource = new OrganizationErrorResource(
+            organizationErrorRepository);
         this.restOrganizationErrorMockMvc = MockMvcBuilders.standaloneSetup(organizationErrorResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -104,6 +110,7 @@ public class OrganizationErrorResourceIntTest {
             .cause(DEFAULT_CAUSE);
         return organizationError;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -153,7 +160,7 @@ public class OrganizationErrorResourceIntTest {
         int databaseSizeBeforeCreate = organizationErrorRepository.findAll().size();
 
         // Create the OrganizationError with an existing ID
-        organizationError.setId(id);
+        organizationError.setId(ID);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrganizationErrorMockMvc.perform(post("/api/organization-errors")
@@ -165,7 +172,6 @@ public class OrganizationErrorResourceIntTest {
         List<OrganizationError> organizationErrorList = organizationErrorRepository.findAll();
         assertThat(organizationErrorList).hasSize(databaseSizeBeforeCreate);
     }
-
 
     @Test
     @Transactional
@@ -287,7 +293,7 @@ public class OrganizationErrorResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(OrganizationError.class);
         OrganizationError organizationError1 = new OrganizationError();
-        organizationError1.setId(id);
+        organizationError1.setId(ID);
         OrganizationError organizationError2 = new OrganizationError();
         organizationError2.setId(organizationError1.getId());
         assertThat(organizationError1).isEqualTo(organizationError2);

@@ -1,4 +1,5 @@
 package org.benetech.servicenet.service.impl;
+
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -20,9 +21,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class SendGridMailServiceImpl implements SendGridMailService {
 
-    private final String MAIL_ENDPOINT = "mail/send";
+    private static final String MAIL_ENDPOINT = "mail/send";
 
-    private final String MAIL_CONTENT_TYPE = "text/plain";
+    private static final String MAIL_CONTENT_TYPE = "text/plain";
 
     @Value("${feedback.receiver-address:feedback@benetech.org}")
     private String receiverAddress;

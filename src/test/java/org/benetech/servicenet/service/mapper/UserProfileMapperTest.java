@@ -34,7 +34,7 @@ public class UserProfileMapperTest {
     private UserService userService;
 
     @Autowired
-    SystemAccountMapper systemAccountMapper;
+    private SystemAccountMapper systemAccountMapper;
 
     @Autowired
     @InjectMocks

@@ -23,7 +23,9 @@ public class OAuth2JwtAccessTokenConverter extends JwtAccessTokenConverter {
      */
     private long lastKeyFetchTimestamp;
 
-    public OAuth2JwtAccessTokenConverter(OAuth2Properties oAuth2Properties, OAuth2SignatureVerifierClient signatureVerifierClient) {
+    public OAuth2JwtAccessTokenConverter(OAuth2Properties oAuth2Properties,
+        OAuth2SignatureVerifierClient signatureVerifierClient
+    ) {
         this.oAuth2Properties = oAuth2Properties;
         this.signatureVerifierClient = signatureVerifierClient;
         tryCreateSignatureVerifier();
@@ -78,6 +80,7 @@ public class OAuth2JwtAccessTokenConverter extends JwtAccessTokenConverter {
         }
         return false;
     }
+
     /**
      * Extract JWT claims and set it to OAuth2Authentication decoded details.
      * Here is how to get details:

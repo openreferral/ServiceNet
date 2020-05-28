@@ -2,8 +2,6 @@ package org.benetech.servicenet.service;
 
 import io.github.jhipster.config.JHipsterProperties;
 import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.config.Constants;
-import org.benetech.servicenet.domain.UserProfile;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

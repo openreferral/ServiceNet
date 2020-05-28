@@ -2,7 +2,6 @@ package org.benetech.servicenet.service.dto;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
-import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Lob;
@@ -14,14 +13,12 @@ public class DailyUpdateDTO implements Serializable {
 
     private UUID id;
 
-
     @Lob
     private String update;
 
     private ZonedDateTime expiry;
 
     private ZonedDateTime createdAt;
-
 
     private UUID organizationId;
 

@@ -39,7 +39,6 @@ import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
-import org.benetech.servicenet.service.util.RandomUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -87,6 +86,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final EligibilityService eligibilityService;
 
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
         ServiceMapper serviceMapper, LocationMapper locationMapper, LocationService locationService,
@@ -546,8 +546,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         Set<UUID> existingLocations = (service.getLocations() != null) ? service.getLocations().stream()
             .map(sat -> sat.getLocation().getId()).collect(Collectors.toSet())
             : Collections.emptySet();
-        Set<ServiceAtLocation> servicesAtLocationToRemove = (service.getLocations() != null) ? service.getLocations().stream()
-            .filter(sat -> !serviceLocations.contains(sat.getLocation())).collect(Collectors.toSet())
+        Set<ServiceAtLocation> servicesAtLocationToRemove = (service.getLocations() != null) ? service.getLocations()
+            .stream().filter(sat -> !serviceLocations.contains(sat.getLocation())).collect(Collectors.toSet())
             : Collections.emptySet();
         for (Location location : serviceLocations) {
             if (location.getId() == null || !existingLocations.contains(location.getId())) {
@@ -590,7 +590,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private Eligibility saveEligibility(Service service, SimpleServiceDTO serviceDTO) {
         Eligibility existingEligibility = service.getEligibility();
-        Eligibility eligibility = (existingEligibility != null) ? existingEligibility: new Eligibility();
+        Eligibility eligibility = (existingEligibility != null) ? existingEligibility : new Eligibility();
         if (StringUtils.isNotBlank(serviceDTO.getEligibilityCriteria())) {
             eligibility.setEligibility(serviceDTO.getEligibilityCriteria());
             eligibility.setSrvc(service);

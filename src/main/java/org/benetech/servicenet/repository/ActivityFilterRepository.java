@@ -17,10 +17,12 @@ import org.springframework.stereotype.Repository;
 public interface ActivityFilterRepository extends JpaRepository<ActivityFilter, UUID> {
 
     @Query("select activityFilter from ActivityFilter activityFilter"
-        + " where activityFilter.userProfile.login = ?#{(principal.getClass().getName().equals(\"java.lang.String\")) ? principal : principal.username} order by name")
+        + " where activityFilter.userProfile.login = ?#{(principal.getClass().getName().equals(\"java.lang.String\")) "
+        + "? principal : principal.username} order by name")
     List<ActivityFilter> findByUserIsCurrentUser();
 
     @Query("select activityFilter from ActivityFilter activityFilter"
-        + " where activityFilter.userProfile.login = ?#{(principal.getClass().getName().equals(\"java.lang.String\")) ? principal : principal.username} and activityFilter.name = :name")
+        + " where activityFilter.userProfile.login = ?#{(principal.getClass().getName().equals(\"java.lang.String\")) "
+        + "? principal : principal.username} and activityFilter.name = :name")
     Optional<ActivityFilter> findByNameAndCurrentUser(@Param("name") String name);
 }

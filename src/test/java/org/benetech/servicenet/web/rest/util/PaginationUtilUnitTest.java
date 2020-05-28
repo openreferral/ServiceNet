@@ -19,17 +19,22 @@ import static org.junit.Assert.assertNotNull;
  */
 public class PaginationUtilUnitTest {
 
+    private static final int FOUR = 4;
+    private static final int PAGE = 6;
+    private static final int SIZE = 50;
+    private static final long TOTAL = 400L;
+
     @Test
     public void generatePaginationHttpHeadersTest() {
         String baseUrl = "/api/_search/example";
         List<String> content = new ArrayList<>();
-        Page<String> page = new PageImpl<>(content, PageRequest.of(6, 50), 400L);
+        Page<String> page = new PageImpl<>(content, PageRequest.of(PAGE, SIZE), TOTAL);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, baseUrl);
         List<String> strHeaders = headers.get(HttpHeaders.LINK);
         assertNotNull(strHeaders);
         assertEquals(1, strHeaders.size());
         String headerData = strHeaders.get(0);
-        assertEquals(4, headerData.split(",").length);
+        assertEquals(FOUR, headerData.split(",").length);
         String expectedData = "</api/_search/example?page=7&size=50>; rel=\"next\","
             + "</api/_search/example?page=5&size=50>; rel=\"prev\","
             + "</api/_search/example?page=7&size=50>; rel=\"last\","
@@ -37,7 +42,7 @@ public class PaginationUtilUnitTest {
         assertEquals(expectedData, headerData);
         List<String> xTotalCountHeaders = headers.get("X-Total-Count");
         assertEquals(1, xTotalCountHeaders.size());
-        assertEquals(400L, (long) Long.valueOf(xTotalCountHeaders.get(0)));
+        assertEquals(TOTAL, (long) Long.valueOf(xTotalCountHeaders.get(0)));
     }
 
 }

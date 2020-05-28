@@ -56,7 +56,12 @@ public class ClientService {
             return this.getRealDto(result);
         } catch (HystrixBadRequestException e) {
             if (e instanceof IdAlreadyUsedException) {
-                throw new BadRequestAlertException(ErrorConstants.EMAIL_ALREADY_USED_TYPE, "Id already used!", "clientManagement", "clientexists");
+                throw new BadRequestAlertException(
+                    ErrorConstants.EMAIL_ALREADY_USED_TYPE,
+                    "Id already used!",
+                    "clientManagement",
+                    "clientexists"
+                );
             }
             throw e;
         }

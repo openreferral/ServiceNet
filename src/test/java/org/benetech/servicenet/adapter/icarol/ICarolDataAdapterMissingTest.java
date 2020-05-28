@@ -31,6 +31,15 @@ import org.junit.Test;
 public class ICarolDataAdapterMissingTest {
 
     private static final String MINIMAL_JSON = "icarol/minimal.json";
+    private static final String AGENCY = "Agency";
+    private static final String PROGRAM = "Program";
+    private static final String SERVICE_SITE = "ServiceSite";
+    private static final String SITE = "Site";
+    private static final int MONDAY = 0;
+    private static final int TUESDAY = 1;
+    private static final int WEDNESDAY = 2;
+    private static final int THURSDAY = 3;
+    private static final int FRIDAY = 4;
 
     private final ICarolDataMapper mapper = ICarolDataMapper.INSTANCE;
 
@@ -45,16 +54,16 @@ public class ICarolDataAdapterMissingTest {
         for (JsonElement element : elements) {
             JsonObject jsonObject = element.getAsJsonObject();
             String type = jsonObject.get("type").getAsString();
-            if (type.equals("Agency")) {
+            if (AGENCY.equals(type)) {
                 data.addAgency(new Gson().fromJson(jsonObject, ICarolAgency.class));
             }
-            if (type.equals("Program")) {
+            if (PROGRAM.equals(type)) {
                 data.addProgram(new Gson().fromJson(jsonObject, ICarolProgram.class));
             }
-            if (type.equals("ServiceSite")) {
+            if (SERVICE_SITE.equals(type)) {
                 data.addServiceSite(new Gson().fromJson(jsonObject, ICarolServiceSite.class));
             }
-            if (type.equals("Site")) {
+            if (SITE.equals(type)) {
                 data.addSite(new Gson().fromJson(jsonObject, ICarolSite.class));
             }
         }
@@ -93,11 +102,11 @@ public class ICarolDataAdapterMissingTest {
         ICarolAgency agency = data.getAgencies().get(0);
         Set<OpeningHours> hours = mapper.extractOpeningHours(agency.getHours());
 
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 0));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 1));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 2));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 3));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 4));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == MONDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == TUESDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == WEDNESDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == THURSDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == FRIDAY));
     }
 
     @Test
@@ -129,11 +138,11 @@ public class ICarolDataAdapterMissingTest {
         ICarolProgram program = data.getPrograms().get(0);
         Set<OpeningHours> hours = mapper.extractOpeningHours(program.getHours());
 
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 0));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 1));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 2));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 3));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == 4));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == MONDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == TUESDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == WEDNESDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == THURSDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == FRIDAY));
     }
 
     @Test

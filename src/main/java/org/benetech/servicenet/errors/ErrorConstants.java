@@ -27,6 +27,7 @@ public final class ErrorConstants {
     public static final URI EMAIL_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/emailnotfound");
 
     public static final URI INCORRECT_FILES_NUMBER = URI.create(PROBLEM_BASE_URL + "/incorrectfilesnumber");
+
     private ErrorConstants() {
     }
 }

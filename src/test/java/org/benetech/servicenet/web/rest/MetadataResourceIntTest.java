@@ -280,7 +280,7 @@ public class MetadataResourceIntTest {
 
     @Test
     @Transactional
-    @WithMockUser(username = "username", roles={"ADMIN"})
+    @WithMockUser(username = "username", roles = {"ADMIN"})
     public void getAllMetadata() throws Exception {
         // Initialize the database
         metadataRepository.saveAndFlush(metadata);

@@ -1,7 +1,5 @@
 package org.benetech.servicenet.service.mapper;
 
-import java.util.Collections;
-import java.util.List;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;

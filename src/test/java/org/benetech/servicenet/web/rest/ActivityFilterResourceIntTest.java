@@ -139,7 +139,7 @@ public class ActivityFilterResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public ActivityFilter createEntity(EntityManager em) {
-        ActivityFilter activityFilter = new ActivityFilter()
+        ActivityFilter actFilter = new ActivityFilter()
             .name(DEFAULT_NAME)
             .citiesFilterList(DEFAULT_CITIES_FILTER_LIST)
             .regionFilterList(DEFAULT_REGION_FILTER_LIST)
@@ -152,9 +152,10 @@ public class ActivityFilterResourceIntTest {
             .toDate(DEFAULT_TO_DATE)
             .hiddenFilter(DEFAULT_HIDDEN_FILTER)
             .showOnlyHighlyMatched(DEFAULT_SHOW_HIGHLY_MATCHED_FILTER);
-        activityFilter.setUserProfile(userService.getCurrentUserProfile());
-        return activityFilter;
+        actFilter.setUserProfile(userService.getCurrentUserProfile());
+        return actFilter;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -226,7 +227,6 @@ public class ActivityFilterResourceIntTest {
         List<ActivityFilter> activityFilterList = activityFilterRepository.findAll();
         assertThat(activityFilterList).hasSize(databaseSizeBeforeCreate);
     }
-
 
     @Test
     @Transactional

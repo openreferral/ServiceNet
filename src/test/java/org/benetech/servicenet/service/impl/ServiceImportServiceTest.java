@@ -70,6 +70,12 @@ import static org.junit.Assert.assertNotNull;
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class ServiceImportServiceTest {
 
+    private static final int THREE = 3;
+
+    private static final int YEAR_2018 = 2018;
+
+    private static final int YEAR_2019 = 2019;
+
     @Autowired
     private ServiceImportService importService;
 
@@ -505,8 +511,8 @@ public class ServiceImportServiceTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldCreateHolidayScheduleForService() {
         Service service = helper.generateNewService();
-        LocalDate start = LocalDate.of(2019, 1, 1);
-        LocalDate end = LocalDate.of(2019, 1, 3);
+        LocalDate start = LocalDate.of(YEAR_2019, 1, 1);
+        LocalDate end = LocalDate.of(YEAR_2019, 1, THREE);
         HolidaySchedule schedule = new HolidaySchedule().closesAt(NEW_STRING).closed(false)
             .startDate(start).endDate(end).providerName(PROVIDER).externalDbId(NEW_EXTERNAL_ID);
         service.setHolidaySchedules(Collections.singleton(schedule));
@@ -528,15 +534,15 @@ public class ServiceImportServiceTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void shouldUpdateHolidayScheduleForService() {
         Service service = helper.generateExistingService();
-        LocalDate start = LocalDate.of(2018, 1, 1);
-        LocalDate end = LocalDate.of(2018, 1, 3);
+        LocalDate start = LocalDate.of(YEAR_2018, 1, 1);
+        LocalDate end = LocalDate.of(YEAR_2018, 1, THREE);
         HolidaySchedule schedule = new HolidaySchedule().closesAt(EXISTING_STRING).closed(true).srvc(service)
             .startDate(start).endDate(end).providerName(PROVIDER).externalDbId(EXISTING_EXTERNAL_ID);
         helper.persist(schedule);
         helper.flushAndRefresh(service);
 
-        LocalDate newStart = LocalDate.of(2019, 1, 1);
-        LocalDate newEnd = LocalDate.of(2019, 1, 3);
+        LocalDate newStart = LocalDate.of(YEAR_2019, 1, 1);
+        LocalDate newEnd = LocalDate.of(YEAR_2019, 1, THREE);
         HolidaySchedule newSchedule = new HolidaySchedule().closesAt(NEW_STRING).closed(false)
             .startDate(newStart).endDate(newEnd).providerName(PROVIDER).externalDbId(EXISTING_EXTERNAL_ID);
         Service serviceToUpdate = helper.generateExistingServiceDoNotPersist();

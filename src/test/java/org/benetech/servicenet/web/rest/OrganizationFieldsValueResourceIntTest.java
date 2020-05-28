@@ -30,10 +30,16 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.benetech.servicenet.domain.enumeration.OrganizationFields;
+
 /**
  * Integration tests for the {@link OrganizationFieldsValueResource} REST controller.
  */
@@ -75,7 +81,8 @@ public class OrganizationFieldsValueResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OrganizationFieldsValueResource organizationFieldsValueResource = new OrganizationFieldsValueResource(organizationFieldsValueService);
+        final OrganizationFieldsValueResource organizationFieldsValueResource = new OrganizationFieldsValueResource(
+            organizationFieldsValueService);
         this.restOrganizationFieldsValueMockMvc = MockMvcBuilders.standaloneSetup(organizationFieldsValueResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,6 +102,7 @@ public class OrganizationFieldsValueResourceIntTest {
             .organizationField(DEFAULT_ORGANIZATION_FIELD);
         return organizationFieldsValue;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -118,7 +126,8 @@ public class OrganizationFieldsValueResourceIntTest {
         int databaseSizeBeforeCreate = organizationFieldsValueRepository.findAll().size();
 
         // Create the OrganizationFieldsValue
-        OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper.toDto(organizationFieldsValue);
+        OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper
+            .toDto(organizationFieldsValue);
         restOrganizationFieldsValueMockMvc.perform(post("/api/organization-fields-values")
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationFieldsValueDTO)))
@@ -127,7 +136,8 @@ public class OrganizationFieldsValueResourceIntTest {
         // Validate the OrganizationFieldsValue in the database
         List<OrganizationFieldsValue> organizationFieldsValueList = organizationFieldsValueRepository.findAll();
         assertThat(organizationFieldsValueList).hasSize(databaseSizeBeforeCreate + 1);
-        OrganizationFieldsValue testOrganizationFieldsValue = organizationFieldsValueList.get(organizationFieldsValueList.size() - 1);
+        OrganizationFieldsValue testOrganizationFieldsValue = organizationFieldsValueList
+            .get(organizationFieldsValueList.size() - 1);
         assertThat(testOrganizationFieldsValue.getOrganizationField()).isEqualTo(DEFAULT_ORGANIZATION_FIELD);
     }
 
@@ -138,7 +148,8 @@ public class OrganizationFieldsValueResourceIntTest {
 
         // Create the OrganizationFieldsValue with an existing ID
         organizationFieldsValue.setId(TestConstants.UUID_1);
-        OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper.toDto(organizationFieldsValue);
+        OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper
+            .toDto(organizationFieldsValue);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrganizationFieldsValueMockMvc.perform(post("/api/organization-fields-values")
@@ -172,7 +183,8 @@ public class OrganizationFieldsValueResourceIntTest {
         organizationFieldsValueRepository.saveAndFlush(organizationFieldsValue);
 
         // Get the organizationFieldsValue
-        restOrganizationFieldsValueMockMvc.perform(get("/api/organization-fields-values/{id}", organizationFieldsValue.getId()))
+        restOrganizationFieldsValueMockMvc
+            .perform(get("/api/organization-fields-values/{id}", organizationFieldsValue.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(organizationFieldsValue.getId().toString()))
@@ -183,7 +195,8 @@ public class OrganizationFieldsValueResourceIntTest {
     @Transactional
     public void getNonExistingOrganizationFieldsValue() throws Exception {
         // Get the organizationFieldsValue
-        restOrganizationFieldsValueMockMvc.perform(get("/api/organization-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
+        restOrganizationFieldsValueMockMvc
+            .perform(get("/api/organization-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -196,12 +209,14 @@ public class OrganizationFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = organizationFieldsValueRepository.findAll().size();
 
         // Update the organizationFieldsValue
-        OrganizationFieldsValue updatedOrganizationFieldsValue = organizationFieldsValueRepository.findById(organizationFieldsValue.getId()).get();
+        OrganizationFieldsValue updatedOrganizationFieldsValue = organizationFieldsValueRepository
+            .findById(organizationFieldsValue.getId()).get();
         // Disconnect from session so that the updates on updatedOrganizationFieldsValue are not directly saved in db
         em.detach(updatedOrganizationFieldsValue);
         updatedOrganizationFieldsValue
             .organizationField(UPDATED_ORGANIZATION_FIELD);
-        OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper.toDto(updatedOrganizationFieldsValue);
+        OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper
+            .toDto(updatedOrganizationFieldsValue);
 
         restOrganizationFieldsValueMockMvc.perform(put("/api/organization-fields-values")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -211,7 +226,8 @@ public class OrganizationFieldsValueResourceIntTest {
         // Validate the OrganizationFieldsValue in the database
         List<OrganizationFieldsValue> organizationFieldsValueList = organizationFieldsValueRepository.findAll();
         assertThat(organizationFieldsValueList).hasSize(databaseSizeBeforeUpdate);
-        OrganizationFieldsValue testOrganizationFieldsValue = organizationFieldsValueList.get(organizationFieldsValueList.size() - 1);
+        OrganizationFieldsValue testOrganizationFieldsValue = organizationFieldsValueList
+            .get(organizationFieldsValueList.size() - 1);
         assertThat(testOrganizationFieldsValue.getOrganizationField()).isEqualTo(UPDATED_ORGANIZATION_FIELD);
     }
 
@@ -221,7 +237,8 @@ public class OrganizationFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = organizationFieldsValueRepository.findAll().size();
 
         // Create the OrganizationFieldsValue
-        OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper.toDto(organizationFieldsValue);
+        OrganizationFieldsValueDTO organizationFieldsValueDTO = organizationFieldsValueMapper
+            .toDto(organizationFieldsValue);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOrganizationFieldsValueMockMvc.perform(put("/api/organization-fields-values")
@@ -243,7 +260,8 @@ public class OrganizationFieldsValueResourceIntTest {
         int databaseSizeBeforeDelete = organizationFieldsValueRepository.findAll().size();
 
         // Delete the organizationFieldsValue
-        restOrganizationFieldsValueMockMvc.perform(delete("/api/organization-fields-values/{id}", organizationFieldsValue.getId())
+        restOrganizationFieldsValueMockMvc
+            .perform(delete("/api/organization-fields-values/{id}", organizationFieldsValue.getId())
             .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 

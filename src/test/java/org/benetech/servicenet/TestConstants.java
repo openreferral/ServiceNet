@@ -2,6 +2,7 @@ package org.benetech.servicenet;
 
 import java.util.UUID;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class TestConstants {
 
     public static final UUID UUID_1 = UUID.fromString("C56A4180-65AA-42EC-A945-5FD21DEC0538");

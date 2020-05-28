@@ -32,12 +32,13 @@ import static org.mockito.Mockito.when;
 public class OrganizationSimilarityCounterIntTest {
 
     private static final BigDecimal BASE_WEIGHT = BigDecimal.valueOf(1);
-    private static BigDecimal NAME_RATIO = BigDecimal.valueOf(0.1f);
-    private static BigDecimal DESCRIPTION_RATIO = BigDecimal.valueOf(0.3f);
-    private static BigDecimal EMAIL_RATIO = BigDecimal.valueOf(0.4f);
-    private static BigDecimal LOCATION_RATIO = BigDecimal.valueOf(0.5f);
-    private static BigDecimal URL_RATIO = BigDecimal.valueOf(0.6f);
-    private static BigDecimal YEARS_INCORPORATED_RATIO = BigDecimal.valueOf(0.7f);
+    private static final BigDecimal NAME_RATIO = BigDecimal.valueOf(0.1f);
+    private static final BigDecimal DESCRIPTION_RATIO = BigDecimal.valueOf(0.3f);
+    private static final BigDecimal EMAIL_RATIO = BigDecimal.valueOf(0.4f);
+    private static final BigDecimal LOCATION_RATIO = BigDecimal.valueOf(0.5f);
+    private static final BigDecimal URL_RATIO = BigDecimal.valueOf(0.6f);
+    private static final BigDecimal YEARS_INCORPORATED_RATIO = BigDecimal.valueOf(0.7f);
+    private static final BigDecimal TWO_POINT_TWO = BigDecimal.valueOf(2.2);
 
     @Mock
     private NameSimilarityCounter nameSimilarityCounter;
@@ -123,6 +124,6 @@ public class OrganizationSimilarityCounterIntTest {
         BigDecimal result = organizationSimilarityCounter.countSimilarityRatio(
             new Organization().locations(new HashSet<>()),
             new Organization().locations(new HashSet<>()));
-        assertEquals(0, BigDecimal.valueOf(2.2).compareTo(result.setScale(2, RoundingMode.HALF_UP)));
+        assertEquals(0, TWO_POINT_TWO.compareTo(result.setScale(2, RoundingMode.HALF_UP)));
     }
 }

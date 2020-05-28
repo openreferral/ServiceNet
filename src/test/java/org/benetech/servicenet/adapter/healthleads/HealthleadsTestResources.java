@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.healthleads;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 final class HealthleadsTestResources {
 
     static final String HEALTHLEADS = "healthleads/";

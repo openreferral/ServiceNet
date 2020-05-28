@@ -25,12 +25,16 @@ import org.springframework.validation.Validator;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the BedsResource REST controller.
@@ -69,7 +73,7 @@ public class BedsResourceIntTest {
 
     private Beds beds;
 
-    static UUID id = UUID.randomUUID();
+    private static UUID id = UUID.randomUUID();
 
     @Before
     public void setup() {

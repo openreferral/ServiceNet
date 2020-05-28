@@ -50,6 +50,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ShelterTechCompleteDataAdapterTest {
 
     private static final String COMPLETE_JSON = "sheltertech/complete.json";
+    private static final double LAT = 11.1222222;
+    private static final double LNG = -111.11111;
+    private static final int FOUR = 4;
 
     @Autowired
     private ShelterTechDataAdapter adapter;
@@ -156,8 +159,8 @@ public class ShelterTechCompleteDataAdapterTest {
         LocationDTO result = locationService.findAll().get(0);
 
         assertEquals("1233 90th St. - San Francisco (CA)", result.getName());
-        assertEquals(11.1222222, result.getLatitude());
-        assertEquals(-111.11111, result.getLongitude());
+        assertEquals(LAT, result.getLatitude());
+        assertEquals(LNG, result.getLongitude());
         assertEquals("888", result.getExternalDbId());
     }
 
@@ -239,7 +242,7 @@ public class ShelterTechCompleteDataAdapterTest {
 
         List<OpeningHoursDTO> result = openingHoursService.findAll();
 
-        assertEquals((Integer) 4, result.get(0).getWeekday());
+        assertEquals((Integer) FOUR, result.get(0).getWeekday());
         assertEquals("22:00", result.get(0).getOpensAt());
         assertNull(result.get(0).getClosesAt());
         assertEquals((Integer) 2, result.get(1).getWeekday());

@@ -30,10 +30,16 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.benetech.servicenet.domain.enumeration.PostalAddressFields;
+
 /**
  * Integration tests for the {@link PostalAddressFieldsValueResource} REST controller.
  */
@@ -75,7 +81,8 @@ public class PostalAddressFieldsValueResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PostalAddressFieldsValueResource postalAddressFieldsValueResource = new PostalAddressFieldsValueResource(postalAddressFieldsValueService);
+        final PostalAddressFieldsValueResource postalAddressFieldsValueResource = new PostalAddressFieldsValueResource(
+            postalAddressFieldsValueService);
         this.restPostalAddressFieldsValueMockMvc = MockMvcBuilders.standaloneSetup(postalAddressFieldsValueResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,6 +102,7 @@ public class PostalAddressFieldsValueResourceIntTest {
             .postalAddressField(DEFAULT_POSTAL_ADDRESS_FIELD);
         return postalAddressFieldsValue;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -118,7 +126,8 @@ public class PostalAddressFieldsValueResourceIntTest {
         int databaseSizeBeforeCreate = postalAddressFieldsValueRepository.findAll().size();
 
         // Create the PostalAddressFieldsValue
-        PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper.toDto(postalAddressFieldsValue);
+        PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper
+            .toDto(postalAddressFieldsValue);
         restPostalAddressFieldsValueMockMvc.perform(post("/api/postal-address-fields-values")
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressFieldsValueDTO)))
@@ -127,7 +136,8 @@ public class PostalAddressFieldsValueResourceIntTest {
         // Validate the PostalAddressFieldsValue in the database
         List<PostalAddressFieldsValue> postalAddressFieldsValueList = postalAddressFieldsValueRepository.findAll();
         assertThat(postalAddressFieldsValueList).hasSize(databaseSizeBeforeCreate + 1);
-        PostalAddressFieldsValue testPostalAddressFieldsValue = postalAddressFieldsValueList.get(postalAddressFieldsValueList.size() - 1);
+        PostalAddressFieldsValue testPostalAddressFieldsValue = postalAddressFieldsValueList
+            .get(postalAddressFieldsValueList.size() - 1);
         assertThat(testPostalAddressFieldsValue.getPostalAddressField()).isEqualTo(DEFAULT_POSTAL_ADDRESS_FIELD);
     }
 
@@ -138,7 +148,8 @@ public class PostalAddressFieldsValueResourceIntTest {
 
         // Create the PostalAddressFieldsValue with an existing ID
         postalAddressFieldsValue.setId(TestConstants.UUID_1);
-        PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper.toDto(postalAddressFieldsValue);
+        PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper
+            .toDto(postalAddressFieldsValue);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPostalAddressFieldsValueMockMvc.perform(post("/api/postal-address-fields-values")
@@ -162,7 +173,8 @@ public class PostalAddressFieldsValueResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(postalAddressFieldsValue.getId().toString())))
-            .andExpect(jsonPath("$.[*].postalAddressField").value(hasItem(DEFAULT_POSTAL_ADDRESS_FIELD.toString())));
+            .andExpect(jsonPath("$.[*].postalAddressField")
+                .value(hasItem(DEFAULT_POSTAL_ADDRESS_FIELD.toString())));
     }
 
     @Test
@@ -172,7 +184,8 @@ public class PostalAddressFieldsValueResourceIntTest {
         postalAddressFieldsValueRepository.saveAndFlush(postalAddressFieldsValue);
 
         // Get the postalAddressFieldsValue
-        restPostalAddressFieldsValueMockMvc.perform(get("/api/postal-address-fields-values/{id}", postalAddressFieldsValue.getId()))
+        restPostalAddressFieldsValueMockMvc
+            .perform(get("/api/postal-address-fields-values/{id}", postalAddressFieldsValue.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(postalAddressFieldsValue.getId().toString()))
@@ -183,7 +196,8 @@ public class PostalAddressFieldsValueResourceIntTest {
     @Transactional
     public void getNonExistingPostalAddressFieldsValue() throws Exception {
         // Get the postalAddressFieldsValue
-        restPostalAddressFieldsValueMockMvc.perform(get("/api/postal-address-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
+        restPostalAddressFieldsValueMockMvc
+            .perform(get("/api/postal-address-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -196,12 +210,14 @@ public class PostalAddressFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = postalAddressFieldsValueRepository.findAll().size();
 
         // Update the postalAddressFieldsValue
-        PostalAddressFieldsValue updatedPostalAddressFieldsValue = postalAddressFieldsValueRepository.findById(postalAddressFieldsValue.getId()).get();
+        PostalAddressFieldsValue updatedPostalAddressFieldsValue = postalAddressFieldsValueRepository
+            .findById(postalAddressFieldsValue.getId()).get();
         // Disconnect from session so that the updates on updatedPostalAddressFieldsValue are not directly saved in db
         em.detach(updatedPostalAddressFieldsValue);
         updatedPostalAddressFieldsValue
             .postalAddressField(UPDATED_POSTAL_ADDRESS_FIELD);
-        PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper.toDto(updatedPostalAddressFieldsValue);
+        PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper
+            .toDto(updatedPostalAddressFieldsValue);
 
         restPostalAddressFieldsValueMockMvc.perform(put("/api/postal-address-fields-values")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -211,7 +227,8 @@ public class PostalAddressFieldsValueResourceIntTest {
         // Validate the PostalAddressFieldsValue in the database
         List<PostalAddressFieldsValue> postalAddressFieldsValueList = postalAddressFieldsValueRepository.findAll();
         assertThat(postalAddressFieldsValueList).hasSize(databaseSizeBeforeUpdate);
-        PostalAddressFieldsValue testPostalAddressFieldsValue = postalAddressFieldsValueList.get(postalAddressFieldsValueList.size() - 1);
+        PostalAddressFieldsValue testPostalAddressFieldsValue = postalAddressFieldsValueList
+            .get(postalAddressFieldsValueList.size() - 1);
         assertThat(testPostalAddressFieldsValue.getPostalAddressField()).isEqualTo(UPDATED_POSTAL_ADDRESS_FIELD);
     }
 
@@ -221,7 +238,8 @@ public class PostalAddressFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = postalAddressFieldsValueRepository.findAll().size();
 
         // Create the PostalAddressFieldsValue
-        PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper.toDto(postalAddressFieldsValue);
+        PostalAddressFieldsValueDTO postalAddressFieldsValueDTO = postalAddressFieldsValueMapper
+            .toDto(postalAddressFieldsValue);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPostalAddressFieldsValueMockMvc.perform(put("/api/postal-address-fields-values")
@@ -243,7 +261,8 @@ public class PostalAddressFieldsValueResourceIntTest {
         int databaseSizeBeforeDelete = postalAddressFieldsValueRepository.findAll().size();
 
         // Delete the postalAddressFieldsValue
-        restPostalAddressFieldsValueMockMvc.perform(delete("/api/postal-address-fields-values/{id}", postalAddressFieldsValue.getId())
+        restPostalAddressFieldsValueMockMvc
+            .perform(delete("/api/postal-address-fields-values/{id}", postalAddressFieldsValue.getId())
             .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 

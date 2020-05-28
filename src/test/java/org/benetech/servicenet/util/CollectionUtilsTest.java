@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 
 public class CollectionUtilsTest {
 
+    private static final int THREE = 3;
+
     @Test
     public void shouldRemoveNullsFromSet() {
         Set<String> entry = new HashSet<>();
@@ -18,7 +20,7 @@ public class CollectionUtilsTest {
         entry.add("two");
         entry.add(null);
 
-        assertEquals(3, entry.size());
+        assertEquals(THREE, entry.size());
 
         assertEquals(2, CollectionUtils.filterNulls(entry).size());
     }
@@ -30,7 +32,7 @@ public class CollectionUtilsTest {
         entry.add("two");
         entry.add(null);
 
-        assertEquals(3, entry.size());
+        assertEquals(THREE, entry.size());
 
         assertEquals(2, CollectionUtils.filterNulls(entry).size());
     }
