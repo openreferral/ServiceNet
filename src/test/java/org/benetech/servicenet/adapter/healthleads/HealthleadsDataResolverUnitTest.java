@@ -285,7 +285,7 @@ public class HealthleadsDataResolverUnitTest {
             assertTrue(baseData instanceof HealthleadsServiceAtLocation);
             HealthleadsServiceAtLocation serviceAtLocation = (HealthleadsServiceAtLocation) baseData;
             assertEquals(DESCRIPTION + i, serviceAtLocation.getDescription());
-            assertEquals(SERVICE_AT_LOCATION + i,serviceAtLocation.getId());
+            assertEquals(SERVICE_AT_LOCATION + i, serviceAtLocation.getId());
             assertEquals(LOC + i, serviceAtLocation.getLocationId());
             assertEquals(SERV + i, serviceAtLocation.getServiceId());
             i++;

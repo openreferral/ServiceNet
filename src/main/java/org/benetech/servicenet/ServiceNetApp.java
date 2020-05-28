@@ -27,14 +27,15 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @ComponentScan(
-    excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = OAuth2InterceptedFeignConfiguration.class)
+    excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+    classes = OAuth2InterceptedFeignConfiguration.class)
 )
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 @EnableDiscoveryClient
 public class ServiceNetApp {
 
-    private static final Logger log = LoggerFactory.getLogger(ServiceNetApp.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceNetApp.class);
 
     private final Environment env;
 
@@ -47,18 +48,21 @@ public class ServiceNetApp {
      * <p>
      * Spring profiles can be configured with a program argument --spring.profiles.active=your-active-profile
      * <p>
-     * You can find more information on how profiles work with JHipster on <a href="https://www.jhipster.tech/profiles/">https://www.jhipster.tech/profiles/</a>.
+     * You can find more information on how profiles work with JHipster on
+     * <a href="https://www.jhipster.tech/profiles/">https://www.jhipster.tech/profiles/</a>.
      */
     @PostConstruct
     public void initApplication() {
         Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
         if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)
-            && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION) || activeProfiles.contains(SPRING_PROFILE_STAGING)) {
-            log.error("You have misconfigured your application! It should not run " +
+            && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION)
+            || activeProfiles.contains(SPRING_PROFILE_STAGING)) {
+            LOG.error("You have misconfigured your application! It should not run " +
                 "with both the 'dev' and 'prod' (or 'staging') profiles at the same time.");
         }
-        if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_CLOUD)) {
-            log.error("You have misconfigured your application! It should not " +
+        if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)
+            && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_CLOUD)) {
+            LOG.error("You have misconfigured your application! It should not " +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
     }
@@ -89,9 +93,9 @@ public class ServiceNetApp {
         try {
             hostAddress = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            log.warn("The host name could not be determined, using `localhost` as fallback");
+            LOG.warn("The host name could not be determined, using `localhost` as fallback");
         }
-        log.info("\n----------------------------------------------------------\n\t" +
+        LOG.info("\n----------------------------------------------------------\n\t" +
                 "Application '{}' is running! Access URLs:\n\t" +
                 "Local: \t\t{}://localhost:{}{}\n\t" +
                 "External: \t{}://{}:{}{}\n\t" +

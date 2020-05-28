@@ -11,7 +11,6 @@ import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
@@ -21,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Utility class for testing REST controllers.
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-public class TestUtil {
+public final class TestUtil {
 
     /**
      * MediaType for JSON UTF8

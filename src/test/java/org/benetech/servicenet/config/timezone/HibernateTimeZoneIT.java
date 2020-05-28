@@ -1,5 +1,14 @@
 package org.benetech.servicenet.config.timezone;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.repository.timezone.DateTimeWrapper;
@@ -12,7 +21,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 import static java.lang.String.format;
@@ -23,6 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest(classes = {ServiceNetApp.class})
 public class HibernateTimeZoneIT {
+
+    private static final int YEAR = 1970;
 
     @Autowired
     private DateTimeWrapperRepository dateTimeWrapperRepository;
@@ -121,7 +131,7 @@ public class HibernateTimeZoneIT {
         SqlRowSet resultSet = jdbcTemplate.queryForRowSet(request);
         String expectedValue = dateTimeWrapper
             .getLocalTime()
-            .atDate(LocalDate.of(1970, Month.JANUARY, 1))
+            .atDate(LocalDate.of(YEAR, Month.JANUARY, 1))
             .atZone(ZoneId.systemDefault())
             .format(timeFormatter);
 
@@ -138,7 +148,7 @@ public class HibernateTimeZoneIT {
         String expectedValue = dateTimeWrapper
             .getOffsetTime()
             .toLocalTime()
-            .atDate(LocalDate.of(1970, Month.JANUARY, 1))
+            .atDate(LocalDate.of(YEAR, Month.JANUARY, 1))
             .atZone(ZoneId.systemDefault())
             .format(timeFormatter);
 

@@ -62,6 +62,9 @@ import static org.junit.Assert.assertTrue;
 public class SMCConnectDataMapperMinimalTest {
 
     private static final String DIR = SMCCONNECT + MINIMAL;
+    private static final int YEAR_2001 = 2001;
+    private static final int YEAR_2002 = 2002;
+    private static final int DECEMBER = 12;
 
     private SmcConnectDataMapper mapper = SmcConnectDataMapper.INSTANCE;
 
@@ -103,8 +106,8 @@ public class SMCConnectDataMapperMinimalTest {
 
         HolidaySchedule result = mapper.extractHolidaySchedule(entities.get(0)).get();
 
-        assertEquals(LocalDate.of(2001, 12, 24), result.getStartDate());
-        assertEquals(LocalDate.of(2002, 1, 1), result.getEndDate());
+        assertEquals(LocalDate.of(YEAR_2001, DECEMBER, 24), result.getStartDate());
+        assertEquals(LocalDate.of(YEAR_2002, 1, 1), result.getEndDate());
     }
 
     @Test

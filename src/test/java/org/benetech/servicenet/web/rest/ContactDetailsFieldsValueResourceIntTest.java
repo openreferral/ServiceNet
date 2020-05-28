@@ -30,10 +30,16 @@ import java.util.List;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.benetech.servicenet.domain.enumeration.ContactDetailsFields;
+
 /**
  * Integration tests for the {@link ContactDetailsFieldsValueResource} REST controller.
  */
@@ -75,7 +81,9 @@ public class ContactDetailsFieldsValueResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ContactDetailsFieldsValueResource contactDetailsFieldsValueResource = new ContactDetailsFieldsValueResource(contactDetailsFieldsValueService);
+        final ContactDetailsFieldsValueResource contactDetailsFieldsValueResource = new ContactDetailsFieldsValueResource(
+            contactDetailsFieldsValueService
+        );
         this.restContactDetailsFieldsValueMockMvc = MockMvcBuilders.standaloneSetup(contactDetailsFieldsValueResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -95,6 +103,7 @@ public class ContactDetailsFieldsValueResourceIntTest {
             .contactDetailsField(DEFAULT_CONTACT_DETAILS_FIELD);
         return contactDetailsFieldsValue;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -118,7 +127,8 @@ public class ContactDetailsFieldsValueResourceIntTest {
         int databaseSizeBeforeCreate = contactDetailsFieldsValueRepository.findAll().size();
 
         // Create the ContactDetailsFieldsValue
-        ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper.toDto(contactDetailsFieldsValue);
+        ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper
+            .toDto(contactDetailsFieldsValue);
         restContactDetailsFieldsValueMockMvc.perform(post("/api/contact-details-fields-values")
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(contactDetailsFieldsValueDTO)))
@@ -127,7 +137,8 @@ public class ContactDetailsFieldsValueResourceIntTest {
         // Validate the ContactDetailsFieldsValue in the database
         List<ContactDetailsFieldsValue> contactDetailsFieldsValueList = contactDetailsFieldsValueRepository.findAll();
         assertThat(contactDetailsFieldsValueList).hasSize(databaseSizeBeforeCreate + 1);
-        ContactDetailsFieldsValue testContactDetailsFieldsValue = contactDetailsFieldsValueList.get(contactDetailsFieldsValueList.size() - 1);
+        ContactDetailsFieldsValue testContactDetailsFieldsValue = contactDetailsFieldsValueList
+            .get(contactDetailsFieldsValueList.size() - 1);
         assertThat(testContactDetailsFieldsValue.getContactDetailsField()).isEqualTo(DEFAULT_CONTACT_DETAILS_FIELD);
     }
 
@@ -138,7 +149,8 @@ public class ContactDetailsFieldsValueResourceIntTest {
 
         // Create the ContactDetailsFieldsValue with an existing ID
         contactDetailsFieldsValue.setId(TestConstants.UUID_1);
-        ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper.toDto(contactDetailsFieldsValue);
+        ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper
+            .toDto(contactDetailsFieldsValue);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restContactDetailsFieldsValueMockMvc.perform(post("/api/contact-details-fields-values")
@@ -172,7 +184,8 @@ public class ContactDetailsFieldsValueResourceIntTest {
         contactDetailsFieldsValueRepository.saveAndFlush(contactDetailsFieldsValue);
 
         // Get the contactDetailsFieldsValue
-        restContactDetailsFieldsValueMockMvc.perform(get("/api/contact-details-fields-values/{id}", contactDetailsFieldsValue.getId()))
+        restContactDetailsFieldsValueMockMvc
+            .perform(get("/api/contact-details-fields-values/{id}", contactDetailsFieldsValue.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(contactDetailsFieldsValue.getId().toString()))
@@ -183,7 +196,8 @@ public class ContactDetailsFieldsValueResourceIntTest {
     @Transactional
     public void getNonExistingContactDetailsFieldsValue() throws Exception {
         // Get the contactDetailsFieldsValue
-        restContactDetailsFieldsValueMockMvc.perform(get("/api/contact-details-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
+        restContactDetailsFieldsValueMockMvc
+            .perform(get("/api/contact-details-fields-values/{id}", TestConstants.NON_EXISTING_UUID))
             .andExpect(status().isNotFound());
     }
 
@@ -196,12 +210,14 @@ public class ContactDetailsFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = contactDetailsFieldsValueRepository.findAll().size();
 
         // Update the contactDetailsFieldsValue
-        ContactDetailsFieldsValue updatedContactDetailsFieldsValue = contactDetailsFieldsValueRepository.findById(contactDetailsFieldsValue.getId()).get();
+        ContactDetailsFieldsValue updatedContactDetailsFieldsValue = contactDetailsFieldsValueRepository
+            .findById(contactDetailsFieldsValue.getId()).get();
         // Disconnect from session so that the updates on updatedContactDetailsFieldsValue are not directly saved in db
         em.detach(updatedContactDetailsFieldsValue);
         updatedContactDetailsFieldsValue
             .contactDetailsField(UPDATED_CONTACT_DETAILS_FIELD);
-        ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper.toDto(updatedContactDetailsFieldsValue);
+        ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper
+            .toDto(updatedContactDetailsFieldsValue);
 
         restContactDetailsFieldsValueMockMvc.perform(put("/api/contact-details-fields-values")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -211,7 +227,8 @@ public class ContactDetailsFieldsValueResourceIntTest {
         // Validate the ContactDetailsFieldsValue in the database
         List<ContactDetailsFieldsValue> contactDetailsFieldsValueList = contactDetailsFieldsValueRepository.findAll();
         assertThat(contactDetailsFieldsValueList).hasSize(databaseSizeBeforeUpdate);
-        ContactDetailsFieldsValue testContactDetailsFieldsValue = contactDetailsFieldsValueList.get(contactDetailsFieldsValueList.size() - 1);
+        ContactDetailsFieldsValue testContactDetailsFieldsValue = contactDetailsFieldsValueList
+            .get(contactDetailsFieldsValueList.size() - 1);
         assertThat(testContactDetailsFieldsValue.getContactDetailsField()).isEqualTo(UPDATED_CONTACT_DETAILS_FIELD);
     }
 
@@ -221,7 +238,8 @@ public class ContactDetailsFieldsValueResourceIntTest {
         int databaseSizeBeforeUpdate = contactDetailsFieldsValueRepository.findAll().size();
 
         // Create the ContactDetailsFieldsValue
-        ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper.toDto(contactDetailsFieldsValue);
+        ContactDetailsFieldsValueDTO contactDetailsFieldsValueDTO = contactDetailsFieldsValueMapper
+            .toDto(contactDetailsFieldsValue);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restContactDetailsFieldsValueMockMvc.perform(put("/api/contact-details-fields-values")
@@ -243,7 +261,10 @@ public class ContactDetailsFieldsValueResourceIntTest {
         int databaseSizeBeforeDelete = contactDetailsFieldsValueRepository.findAll().size();
 
         // Delete the contactDetailsFieldsValue
-        restContactDetailsFieldsValueMockMvc.perform(delete("/api/contact-details-fields-values/{id}", contactDetailsFieldsValue.getId())
+        restContactDetailsFieldsValueMockMvc.perform(
+                delete("/api/contact-details-fields-values/{id}",
+                contactDetailsFieldsValue.getId()
+            )
             .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 

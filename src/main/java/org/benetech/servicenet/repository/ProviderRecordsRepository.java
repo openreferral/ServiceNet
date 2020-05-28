@@ -110,6 +110,7 @@ public class ProviderRecordsRepository {
 
     private Predicate addSearch(Predicate predicate, String search,
         Root<Organization> root, Join<Organization, Service> serviceJoin) {
+        Predicate predicateResult = predicate;
         if (StringUtils.isNotBlank(search)) {
             String searchQuery = '%' + search.toUpperCase() + '%';
             Predicate searchPredicate = cb.or(
@@ -117,9 +118,9 @@ public class ProviderRecordsRepository {
                 cb.like(cb.upper(root.get(DESCRIPTION)), searchQuery),
                 cb.like(cb.upper(serviceJoin.get(NAME)), searchQuery)
             );
-            predicate = cb.and(predicate, searchPredicate);
+            predicateResult = cb.and(predicate, searchPredicate);
         }
-        return predicate;
+        return predicateResult;
     }
 
     private Predicate addLocationFilters(Predicate predicate, ProviderFilterDTO providerFilterDTO,

@@ -28,6 +28,7 @@ public class ImportManagerTest {
     private static final String EXTERNAL_ID_1 = "ext1";
     private static final String EXTERNAL_ID_2 = "ext2";
     private static final String EXTERNAL_ID_3 = "ext3";
+    private static final int THREE = 3;
 
     @Autowired
     private ImportManager importManager;
@@ -56,11 +57,14 @@ public class ImportManagerTest {
 
         assertEquals(0, organizationService.findAll().size());
 
-        importManager.createOrUpdateOrganization(org1, EXTERNAL_ID_1, new ImportData(new DataImportReport(), PROVIDER, true));
-        importManager.createOrUpdateOrganization(org2, EXTERNAL_ID_2, new ImportData(new DataImportReport(), PROVIDER, true));
-        importManager.createOrUpdateOrganization(org3, EXTERNAL_ID_3, new ImportData(new DataImportReport(), PROVIDER, true));
+        importManager.createOrUpdateOrganization(org1, EXTERNAL_ID_1, new ImportData(
+            new DataImportReport(), PROVIDER, true));
+        importManager.createOrUpdateOrganization(org2, EXTERNAL_ID_2, new ImportData(
+            new DataImportReport(), PROVIDER, true));
+        importManager.createOrUpdateOrganization(org3, EXTERNAL_ID_3, new ImportData(
+            new DataImportReport(), PROVIDER, true));
 
-        assertEquals(3, organizationService.findAll().size());
+        assertEquals(THREE, organizationService.findAll().size());
     }
 
     private Organization generateOrganization(String string, String id) {

@@ -160,7 +160,10 @@ public class ImportServiceConfidentialityImplIntTest {
     @Test
     @Transactional
     public void shouldNotUpdatePhysicalAddressIfConfidential() {
-        PhysicalAddress existingAddress = new PhysicalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING);
+        PhysicalAddress existingAddress = new PhysicalAddress()
+            .address1(EXISTING_STRING)
+            .city(EXISTING_STRING)
+            .stateProvince(EXISTING_STRING);
         Location location = generateExistingLocation().physicalAddress(existingAddress);
         locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
         assertEquals(1, physicalAddressService.findAll().size());
@@ -188,7 +191,10 @@ public class ImportServiceConfidentialityImplIntTest {
     @Test
     @Transactional
     public void shouldNotUpdatePostalAddressIfConfidential() {
-        PostalAddress existingAddress = new PostalAddress().address1(EXISTING_STRING).city(EXISTING_STRING).stateProvince(EXISTING_STRING);
+        PostalAddress existingAddress = new PostalAddress()
+            .address1(EXISTING_STRING)
+            .city(EXISTING_STRING)
+            .stateProvince(EXISTING_STRING);
         Location location = generateExistingLocation().postalAddress(existingAddress);
         locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
         assertEquals(1, postalAddressService.findAll().size());
@@ -206,7 +212,8 @@ public class ImportServiceConfidentialityImplIntTest {
     @Transactional
     public void shouldNotCreateAccessibilityIfConfidentialEvenIfLocationHasFewOfThemButNotThisOne() {
         AccessibilityForDisabilities otherAccessibility = new AccessibilityForDisabilities().accessibility(OTHER_STRING);
-        AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING).details(NEW_STRING);
+        AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities()
+            .accessibility(NEW_STRING).details(NEW_STRING);
         newAccessibility.setIsConfidential(true);
         Location location = generateExistingLocation();
         location.setAccessibilities(Set.of(newAccessibility, otherAccessibility));
@@ -225,7 +232,8 @@ public class ImportServiceConfidentialityImplIntTest {
         locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
         assertEquals(1, accessibilityService.findAll().size());
 
-        AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities().accessibility(NEW_STRING).details(NEW_STRING);
+        AccessibilityForDisabilities newAccessibility = new AccessibilityForDisabilities()
+            .accessibility(NEW_STRING).details(NEW_STRING);
         newAccessibility.setIsConfidential(true);
         location.setAccessibilities(Set.of(otherAccessibility, newAccessibility));
         locationImportService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
@@ -240,7 +248,11 @@ public class ImportServiceConfidentialityImplIntTest {
         Organization organization = generateNewOrganization(generateExistingAccount());
         organization.setIsConfidential(true);
 
-        var created = importManager.createOrUpdateOrganization(organization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true));
+        var created = importManager.createOrUpdateOrganization(
+            organization,
+            EXISTING_EXTERNAL_ID,
+            new ImportData(new DataImportReport(), PROVIDER, true)
+        );
 
         assertEquals(0, organizationService.findAllDTOs().size());
         assertNull(created);
@@ -251,12 +263,20 @@ public class ImportServiceConfidentialityImplIntTest {
     public void shouldNotUpdateOrganizationIfConfidential() {
         SystemAccount account = generateExistingAccount();
         Organization newOrganization = generateExistingOrganization(account);
-        importManager.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true));
+        importManager.createOrUpdateOrganization(
+            newOrganization,
+            EXISTING_EXTERNAL_ID,
+            new ImportData(new DataImportReport(), PROVIDER, true)
+        );
         assertEquals(1, organizationService.findAllDTOs().size());
 
         newOrganization.setIsConfidential(true);
         newOrganization.setName(NEW_STRING);
-        var updated = importManager.createOrUpdateOrganization(newOrganization, EXISTING_EXTERNAL_ID, new ImportData(new DataImportReport(), PROVIDER, true));
+        var updated = importManager.createOrUpdateOrganization(
+            newOrganization,
+            EXISTING_EXTERNAL_ID,
+            new ImportData(new DataImportReport(), PROVIDER, true)
+        );
 
         assertEquals(1, organizationService.findAllDTOs().size());
         assertEquals(EXISTING_STRING, organizationService.findAllDTOs().get(0).getName());

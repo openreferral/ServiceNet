@@ -39,11 +39,17 @@ public class CustomAuditEventRepositoryIT {
 
     private CustomAuditEventRepository customAuditEventRepository;
 
+    private static final int SECONDS_1 = 3600;
+
+    private static final int SECONDS_2 = 10000;
+
+    private static final int TEN = 10;
+
     @BeforeEach
     public void setup() {
         customAuditEventRepository = new CustomAuditEventRepository(persistenceAuditEventRepository, auditEventConverter);
         persistenceAuditEventRepository.deleteAll();
-        Instant oneHourAgo = Instant.now().minusSeconds(3600);
+        Instant oneHourAgo = Instant.now().minusSeconds(SECONDS_1);
 
         PersistentAuditEvent testUserEvent = new PersistentAuditEvent();
         testUserEvent.setPrincipal("test-user");
@@ -56,7 +62,7 @@ public class CustomAuditEventRepositoryIT {
         PersistentAuditEvent testOldUserEvent = new PersistentAuditEvent();
         testOldUserEvent.setPrincipal("test-user");
         testOldUserEvent.setAuditEventType("test-type");
-        testOldUserEvent.setAuditEventDate(oneHourAgo.minusSeconds(10000));
+        testOldUserEvent.setAuditEventDate(oneHourAgo.minusSeconds(SECONDS_2));
 
         PersistentAuditEvent testOtherUserEvent = new PersistentAuditEvent();
         testOtherUserEvent.setPrincipal("other-test-user");
@@ -85,7 +91,7 @@ public class CustomAuditEventRepositoryIT {
     public void addAuditEventTruncateLargeData() {
         Map<String, Object> data = new HashMap<>();
         StringBuilder largeData = new StringBuilder();
-        for (int i = 0; i < EVENT_DATA_COLUMN_MAX_LENGTH + 10; i++) {
+        for (int i = 0; i < EVENT_DATA_COLUMN_MAX_LENGTH + TEN; i++) {
             largeData.append("a");
         }
         data.put("test-key", largeData);

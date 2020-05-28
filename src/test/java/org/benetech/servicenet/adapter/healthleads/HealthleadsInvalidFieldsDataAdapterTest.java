@@ -55,6 +55,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class HealthleadsInvalidFieldsDataAdapterTest {
 
     private static final String INCOMPLETE = "healthleads/invalid_fields/";
+    private static final int EXTENSION_1 = 200;
+    private static final int EXTENSION_2 = 500;
 
     @Autowired
     private HealthleadsDataAdapter adapter;
@@ -103,7 +105,8 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
             data.add(readResourceAsString(INCOMPLETE + fileName + JSON));
         }
 
-        MultipleImportData importData = new MultipleImportData(data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true);
+        MultipleImportData importData = new MultipleImportData(
+            data, uploads, new DataImportReport(), HEALTHLEADS_PROVIDER, true);
         adapter.importData(importData);
     }
 
@@ -118,6 +121,7 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
         assertEquals("", result.getEmail());
         assertEquals("", result.getTaxStatus());
     }
+
     @Test
     public void shouldImportLocationWithInvalidFields() {
         assertEquals(1, locationService.findAll().size());
@@ -142,11 +146,12 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
     public void shouldImportLocationBasedPhoneWithInvalidFields() {
         List<PhoneDTO> result = phoneService.findAll();
 
         assertTrue(result.stream().anyMatch(x ->
-                    x.getExtension().equals(200)
+                    x.getExtension().equals(EXTENSION_1)
                     && x.getDescription().equals("Phone Description For Location")
                     // Fields with validation errors
                     && x.getNumber().equals("")
@@ -157,11 +162,12 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:booleanExpressionComplexity")
     public void shouldImportServiceBasedPhoneWithInvalidFields() {
         List<PhoneDTO> result = phoneService.findAll();
 
         assertTrue(result.stream().anyMatch(x ->
-                    x.getExtension().equals(500)
+                    x.getExtension().equals(EXTENSION_2)
                     && x.getDescription().equals("Phone Description")
                     // Fields with validation errors
                     && x.getNumber().equals("")

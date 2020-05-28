@@ -35,8 +35,13 @@ import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversi
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link FieldsDisplaySettingsResource} REST controller.
@@ -104,7 +109,8 @@ public class FieldsDisplaySettingsResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final FieldsDisplaySettingsResource fieldsDisplaySettingsResource = new FieldsDisplaySettingsResource(fieldsDisplaySettingsService, mockUserService);
+        final FieldsDisplaySettingsResource fieldsDisplaySettingsResource = new FieldsDisplaySettingsResource(
+            fieldsDisplaySettingsService, mockUserService);
         this.restFieldsDisplaySettingsMockMvc = MockMvcBuilders.standaloneSetup(fieldsDisplaySettingsResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -131,6 +137,7 @@ public class FieldsDisplaySettingsResourceIntTest {
             .contactDetailsFields(DEFAULT_CONTACT_DETAILS_FIELDS);
         return fieldsDisplaySettings;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -170,7 +177,8 @@ public class FieldsDisplaySettingsResourceIntTest {
         // Validate the FieldsDisplaySettings in the database
         List<FieldsDisplaySettings> fieldsDisplaySettingsList = fieldsDisplaySettingsRepository.findAll();
         assertThat(fieldsDisplaySettingsList).hasSize(databaseSizeBeforeCreate + 1);
-        FieldsDisplaySettings testFieldsDisplaySettings = fieldsDisplaySettingsList.get(fieldsDisplaySettingsList.size() - 1);
+        FieldsDisplaySettings testFieldsDisplaySettings = fieldsDisplaySettingsList
+            .get(fieldsDisplaySettingsList.size() - 1);
         assertThat(testFieldsDisplaySettings.getName()).isEqualTo(DEFAULT_NAME);
     }
 
@@ -211,7 +219,8 @@ public class FieldsDisplaySettingsResourceIntTest {
             .andExpect(jsonPath("$.[*].physicalAddressFields").value(hasItem(DEFAULT_PHYSICAL_ADDRESS_FIELDS)))
             .andExpect(jsonPath("$.[*].postalAddressFields").value(hasItem(DEFAULT_POSTAL_ADDRESS_FIELDS)))
             .andExpect(jsonPath("$.[*].serviceFields").value(hasItem(DEFAULT_SERVICE_FIELDS)))
-            .andExpect(jsonPath("$.[*].serviceTaxonomiesDetailsFields").value(hasItem(DEFAULT_SERVICE_TAXONOMIES_DETAILS_FIELDS)))
+            .andExpect(jsonPath("$.[*].serviceTaxonomiesDetailsFields")
+                .value(hasItem(DEFAULT_SERVICE_TAXONOMIES_DETAILS_FIELDS)))
             .andExpect(jsonPath("$.[*].contactDetailsFields").value(hasItem(DEFAULT_CONTACT_DETAILS_FIELDS)));
     }
 
@@ -222,7 +231,8 @@ public class FieldsDisplaySettingsResourceIntTest {
         fieldsDisplaySettingsRepository.saveAndFlush(fieldsDisplaySettings);
 
         // Get the fieldsDisplaySettings
-        restFieldsDisplaySettingsMockMvc.perform(get("/api/fields-display-settings/{id}", fieldsDisplaySettings.getId()))
+        restFieldsDisplaySettingsMockMvc
+            .perform(get("/api/fields-display-settings/{id}", fieldsDisplaySettings.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(fieldsDisplaySettings.getId().toString()))
@@ -246,7 +256,8 @@ public class FieldsDisplaySettingsResourceIntTest {
         int databaseSizeBeforeUpdate = fieldsDisplaySettingsRepository.findAll().size();
 
         // Update the fieldsDisplaySettings
-        FieldsDisplaySettings updatedFieldsDisplaySettings = fieldsDisplaySettingsRepository.findById(fieldsDisplaySettings.getId()).get();
+        FieldsDisplaySettings updatedFieldsDisplaySettings = fieldsDisplaySettingsRepository
+            .findById(fieldsDisplaySettings.getId()).get();
         // Disconnect from session so that the updates on updatedFieldsDisplaySettings are not directly saved in db
         em.detach(updatedFieldsDisplaySettings);
         updatedFieldsDisplaySettings
@@ -268,7 +279,8 @@ public class FieldsDisplaySettingsResourceIntTest {
         // Validate the FieldsDisplaySettings in the database
         List<FieldsDisplaySettings> fieldsDisplaySettingsList = fieldsDisplaySettingsRepository.findAll();
         assertThat(fieldsDisplaySettingsList).hasSize(databaseSizeBeforeUpdate);
-        FieldsDisplaySettings testFieldsDisplaySettings = fieldsDisplaySettingsList.get(fieldsDisplaySettingsList.size() - 1);
+        FieldsDisplaySettings testFieldsDisplaySettings = fieldsDisplaySettingsList
+            .get(fieldsDisplaySettingsList.size() - 1);
         assertThat(testFieldsDisplaySettings.getName()).isEqualTo(UPDATED_NAME);
     }
 
@@ -300,7 +312,8 @@ public class FieldsDisplaySettingsResourceIntTest {
         int databaseSizeBeforeDelete = fieldsDisplaySettingsRepository.findAll().size();
 
         // Delete the fieldsDisplaySettings
-        restFieldsDisplaySettingsMockMvc.perform(delete("/api/fields-display-settings/{id}", fieldsDisplaySettings.getId())
+        restFieldsDisplaySettingsMockMvc
+            .perform(delete("/api/fields-display-settings/{id}", fieldsDisplaySettings.getId())
             .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 

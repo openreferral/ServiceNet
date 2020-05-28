@@ -72,8 +72,9 @@ public class RecordBuilder {
             conflictDTOS);
     }
 
-    public RecordDetailsDTO buildRecordDetails(Organization organization,
-        List<ConflictDTO> conflictDTOs, List<OrganizationMatchDTO> orgMatchDTOs, Set<RecordDetailsOrganizationDTO> partnerOrgs) {
+    public RecordDetailsDTO buildRecordDetails(Organization organization, List<ConflictDTO> conflictDTOs,
+        List<OrganizationMatchDTO> orgMatchDTOs, Set<RecordDetailsOrganizationDTO> partnerOrgs
+    ) {
         return new RecordDetailsDTO(
             mapOrganizationForRecordDetails(organization),
             partnerOrgs,

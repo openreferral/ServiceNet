@@ -41,6 +41,9 @@ import static org.junit.Assert.assertFalse;
 @ContextConfiguration(classes = ConflictDetectionServiceImplTest.AsyncConfiguration.class)
 public class ConflictDetectionServiceImplTest {
 
+    private static final int NUM_OF_CONFL = 9;
+    private static final int NUM_OF_MIRROR_CONFL = 9;
+
     @Autowired
     private ConflictDetectionService conflictDetectionService;
 
@@ -89,12 +92,10 @@ public class ConflictDetectionServiceImplTest {
         OrganizationMatch match2 = createMatch(org2, org1);
 
         int dbSize = conflictRepository.findAll().size();
-        int numberOfConflicts = 9;
-        int numberOfMirrorConflicts = 9;
 
         conflictDetectionService.detect(org1, Arrays.asList(match, match2));
 
-        assertEquals(dbSize + numberOfConflicts + numberOfMirrorConflicts, conflictRepository.findAll().size());
+        assertEquals(dbSize + NUM_OF_CONFL + NUM_OF_MIRROR_CONFL, conflictRepository.findAll().size());
     }
 
     @Test

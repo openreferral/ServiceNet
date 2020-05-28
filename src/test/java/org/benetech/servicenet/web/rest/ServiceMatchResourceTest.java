@@ -35,9 +35,9 @@ import org.springframework.validation.Validator;
 @SpringBootTest(classes = ServiceNetApp.class)
 public class ServiceMatchResourceTest {
 
-    private final UUID SERVICE_UUID = UUID.randomUUID();
+    private static final UUID SERVICE_UUID = UUID.randomUUID();
 
-    private final UUID MATCHING_SERVICE_UUID = UUID.randomUUID();
+    private static final UUID MATCHING_SERVICE_UUID = UUID.randomUUID();
 
     @Autowired
     private ServiceMatchService serviceMatchService;

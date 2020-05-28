@@ -36,13 +36,13 @@ public class SimpleOrganizationDTO implements Serializable {
     private ZonedDateTime updatedAt;
 
     @Getter
-    List<SimpleLocationDTO> locations;
+    private List<SimpleLocationDTO> locations;
 
     @Getter
-    List<SimpleServiceDTO> services;
+    private List<SimpleServiceDTO> services;
 
     @Getter
-    List<DailyUpdateDTO> dailyUpdates;
+    private List<DailyUpdateDTO> dailyUpdates;
 
     @Override
     public boolean equals(Object o) {

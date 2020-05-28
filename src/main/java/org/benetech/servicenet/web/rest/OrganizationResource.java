@@ -147,7 +147,11 @@ public class OrganizationResource {
         Optional<Organization> existingOrganization = organizationService
             .findOneWithIdAndUserProfile(organizationDTO.getId(), userService.getCurrentUserProfile());
         if (existingOrganization.isEmpty()) {
-            throw new BadRequestAlertException("You are not allowed to edit this organization", ENTITY_NAME, "cantEditRecord");
+            throw new BadRequestAlertException(
+                "You are not allowed to edit this organization",
+                ENTITY_NAME,
+                "cantEditRecord"
+            );
         }
         OrganizationDTO result = organizationService.saveWithUser(organizationDTO);
         return ResponseEntity.ok()
@@ -196,7 +200,8 @@ public class OrganizationResource {
      * GET  /provider-organization/:id : get the organization with given id for service provider.
      *
      * @param id the id of the organization to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the SimpleOrganizationDTO, or with status 404 (Not Found)
+     * @return the ResponseEntity with status 200 (OK) and with body the SimpleOrganizationDTO,
+     * or with status 404 (Not Found)
      */
     @GetMapping("/provider-organization/{id}")
     @Timed
@@ -253,7 +258,11 @@ public class OrganizationResource {
         Optional<Organization> existingOrganization = organizationService
             .findOneWithIdAndUserProfile(id, userService.getCurrentUserProfile());
         if (existingOrganization.isEmpty()) {
-            throw new BadRequestAlertException("You are not allowed to deactivate this organization", ENTITY_NAME, "cantEditRecord");
+            throw new BadRequestAlertException(
+                "You are not allowed to deactivate this organization",
+                ENTITY_NAME,
+                "cantEditRecord"
+            );
         }
         organizationService.deactivate(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString())).build();
@@ -272,7 +281,11 @@ public class OrganizationResource {
         Optional<Organization> existingOrganization = organizationService
             .findOneWithIdAndUserProfile(id, userService.getCurrentUserProfile());
         if (existingOrganization.isEmpty()) {
-            throw new BadRequestAlertException("You are not allowed to deactivate this organization", ENTITY_NAME, "cantEditRecord");
+            throw new BadRequestAlertException(
+                "You are not allowed to deactivate this organization",
+                ENTITY_NAME,
+                "cantEditRecord"
+            );
         }
         organizationService.reactivate(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))

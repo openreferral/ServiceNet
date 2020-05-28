@@ -27,6 +27,10 @@ public class PhysicalAddressConflictDetectorTest {
     private static final String DEFAULT_STATE_PROVINCE = "EEEEEE";
     private static final String DEFAULT_POSTAL_CODE = "FFFFFF";
     private static final String DEFAULT_COUNTRY = "GGGGGG";
+    private static final int THREE = 3;
+    private static final int FIVE = 5;
+    private static final int TWELVE = 12;
+    private static final int FIFTY = 50;
 
     @Autowired
     private PhysicalAddressConflictDetector conflictDetector;
@@ -76,18 +80,17 @@ public class PhysicalAddressConflictDetectorTest {
         PhysicalAddress address = createDefaultPhysicalAddress();
         PhysicalAddress mirrorAddress = new PhysicalAddress()
             .attention(StringUtils.randomAlphanumeric(7))
-            .address1(StringUtils.randomAlphanumeric(5))
-            .city(StringUtils.randomAlphanumeric(3))
+            .address1(StringUtils.randomAlphanumeric(FIVE))
+            .city(StringUtils.randomAlphanumeric(THREE))
             .region(StringUtils.randomAlphanumeric(1))
-            .stateProvince(StringUtils.randomAlphanumeric(12))
-            .postalCode(StringUtils.randomAlphanumeric(50))
+            .stateProvince(StringUtils.randomAlphanumeric(TWELVE))
+            .postalCode(StringUtils.randomAlphanumeric(FIFTY))
             .country(StringUtils.randomAlphanumeric(60));
 
         List<Conflict> conflicts = conflictDetector.detectConflicts(address, mirrorAddress);
 
         assertEquals(7, conflicts.size());
     }
-
 
     @Test
     public void shouldFindConflictsWhenTheOtherValueIsNull() {

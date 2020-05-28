@@ -59,6 +59,10 @@ public class ICarolDataAdapterCompleteTest {
     private static final int FRIDAY = 4;
     private static final int SATURDAY = 5;
     private static final int SUNDAY = 6;
+    private static final double LAT = 40.123456;
+    private static final double LNG = -120.123456;
+    private static final int THREE = 3;
+    private static final int FIVE = 5;
 
     @Autowired
     private EdenDataAdapter adapter;
@@ -149,8 +153,8 @@ public class ICarolDataAdapterCompleteTest {
 
         assertTrue(result.stream().anyMatch(x ->
             x.getName().equals("12345 Cool Street - CarpetHanger (CA)")
-                && x.getLatitude().equals(40.123456)
-                && x.getLongitude().equals(-120.123456)
+                && x.getLatitude().equals(LAT)
+                && x.getLongitude().equals(LNG)
                 && x.getExternalDbId().equals("11")
         ));
     }
@@ -202,7 +206,7 @@ public class ICarolDataAdapterCompleteTest {
 
         List<OpeningHoursDTO> result = openingHoursService.findAll();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < FIVE; i++) {
             assertEquals((Integer) i, result.get(i).getWeekday());
         }
         for (OpeningHoursDTO hours : result) {
@@ -249,7 +253,7 @@ public class ICarolDataAdapterCompleteTest {
         assertEquals("Farsi", result.get(0).getLanguage());
         assertEquals("Spanish", result.get(1).getLanguage());
         assertEquals("Vietnamese", result.get(2).getLanguage());
-        assertEquals("English", result.get(3).getLanguage());
+        assertEquals("English", result.get(THREE).getLanguage());
     }
 
     @Test

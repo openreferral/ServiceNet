@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
 import static org.benetech.servicenet.TestConstants.UUID_1;
 import static org.benetech.servicenet.TestConstants.UUID_2;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class ConflictMother {
 
     public static final String DEFAULT_CURRENT_VALUE = "AAAAAAAAAA";

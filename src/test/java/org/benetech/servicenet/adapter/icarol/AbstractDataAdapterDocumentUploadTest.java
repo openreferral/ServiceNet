@@ -59,6 +59,8 @@ public class AbstractDataAdapterDocumentUploadTest {
     private static final String SITES_MISSING_FILE = "sites-missing.json";
     private static final String SERVICE_SITES_MISSING_FILE = "serviceSites-missing.json";
     private static final String AGENCIES_MISSING_FILE = "agencies-missing.json";
+    private static final int PORT = 1080;
+    private static final int FOUR = 4;
 
     @Mock
     private HttpClient client;
@@ -88,7 +90,7 @@ public class AbstractDataAdapterDocumentUploadTest {
     @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
-    private static MockServerClient mockServer = startClientAndServer(1080);
+    private static MockServerClient mockServer = startClientAndServer(PORT);
 
     @Before
     public void setUp() {
@@ -151,7 +153,7 @@ public class AbstractDataAdapterDocumentUploadTest {
 
         documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
 
-        assertEquals(Integer.valueOf(4), report.getNumberOfCreatedServices());
+        assertEquals(Integer.valueOf(FOUR), report.getNumberOfCreatedServices());
         assertEquals(Integer.valueOf(0), report.getNumberOfUpdatedServices());
     }
 

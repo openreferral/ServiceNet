@@ -60,7 +60,7 @@ import static org.mockito.Mockito.when;
 public class UserProfileServiceIntTest {
 
     @Mock
-    DateTimeProvider dateTimeProvider;
+    private DateTimeProvider dateTimeProvider;
 
     @Mock
     private MetadataService metadataService;
@@ -135,25 +135,25 @@ public class UserProfileServiceIntTest {
     @Test
     @Transactional
     public void shouldFetchUserByIdWithAllSimpleValues() {
-        UserProfile userProfile = UserMother.createDefaultAndPersist(em);
-        em.persist(userProfile);
+        UserProfile userProfile1 = UserMother.createDefaultAndPersist(em);
+        em.persist(userProfile1);
         em.flush();
 
-        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile.getId());
+        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile1.getId());
 
         assertTrue(fetchedOpt.isPresent());
         UserProfile fetched = fetchedOpt.get();
-        assertEquals(userProfile.getLogin(), fetched.getLogin());
+        assertEquals(userProfile1.getLogin(), fetched.getLogin());
     }
 
     @Test
     @Transactional
     public void shouldConvertFetchedUserByIdWithSystemAccount() {
-        UserProfile userProfile = UserMother.createDefaultAndPersist(em);
-        em.persist(userProfile);
+        UserProfile userProfile2 = UserMother.createDefaultAndPersist(em);
+        em.persist(userProfile2);
         em.flush();
 
-        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile.getId());
+        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile2.getId());
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
 
@@ -164,11 +164,11 @@ public class UserProfileServiceIntTest {
     @Test
     @Transactional
     public void shouldUpdateFetchedUserByIdWithSystemAccount() {
-        UserProfile userProfile = UserMother.createDefaultAndPersist(em);
-        em.persist(userProfile);
+        UserProfile userProfile3 = UserMother.createDefaultAndPersist(em);
+        em.persist(userProfile3);
         em.flush();
 
-        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile.getId());
+        Optional<UserProfile> fetchedOpt = userService.getUserProfile(userProfile3.getId());
         assertTrue(fetchedOpt.isPresent());
         UserDTO userDTO = new UserDTO(fetchedOpt.get());
         SystemAccount account = SystemAccountMother.createDifferentAndPersist(em);
@@ -181,7 +181,6 @@ public class UserProfileServiceIntTest {
         assertNotNull(updated.get().getSystemAccountName());
         assertEquals(SystemAccountMother.UPDATED_NAME, updated.get().getSystemAccountName());
     }
-
 
     @Test
     @Transactional
@@ -200,7 +199,6 @@ public class UserProfileServiceIntTest {
         assertEquals(resultOpt.get().getSystemAccount().getName(), account.getName());
         assertEquals(resultOpt.get().getSystemAccount().getId(), account.getId());
     }
-
 
     @Test
     @Transactional

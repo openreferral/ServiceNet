@@ -2,6 +2,7 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.Service;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class ServiceMother {
 
     public static final String NAME = "Service name";

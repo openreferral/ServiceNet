@@ -30,6 +30,9 @@ import static org.junit.Assert.assertNull;
 @Ignore("Will be removed in #80")
 public class AnonymousDataMapperUnitTest {
 
+    private static final int SIX = 6;
+    private static final int EXTENSION = 48;
+
     private RawData rawData;
 
     @Before
@@ -67,7 +70,7 @@ public class AnonymousDataMapperUnitTest {
     public void shouldExtractPhoneFromRawData() {
         Phone extracted = AnonymousDataMapper.INSTANCE.extractPhone(rawData);
         assertEquals("12345671234", extracted.getNumber());
-        assertEquals(48, (int) extracted.getExtension());
+        assertEquals(EXTENSION, (int) extracted.getExtension());
     }
 
     @Test
@@ -123,8 +126,8 @@ public class AnonymousDataMapperUnitTest {
         assertEquals("09:00AM", day.getOpensAt());
         assertEquals("08:00PM", day.getClosesAt());
 
-        day = extracted.get(6);
-        assertEquals(6, (int) day.getWeekday());
+        day = extracted.get(SIX);
+        assertEquals(SIX, (int) day.getWeekday());
         assertEquals("CLOSED", day.getOpensAt());
         assertNull(day.getClosesAt());
     }

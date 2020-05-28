@@ -30,7 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * REST controller for managing users.
  * <p>
- * This class fetches and updates the {@link org.benetech.servicenet.service.dto.ClientDTO} entity from ServiceNet Authorization service
+ * This class fetches and updates the {@link org.benetech.servicenet.service.dto.ClientDTO} entity from
+ * ServiceNet Authorization service
  * as well as {@link ClientProfile} from ServiceNet core.
  * <p>
  */
@@ -51,13 +52,15 @@ public class ClientResource {
      *
      *
      * @param clientDTO the client to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new client, or with status {@code 400 (Bad Request)} if the id is already in use.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new client,
+     * or with status {@code 400 (Bad Request)} if the id is already in use.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the id is already in use.
      */
     @PostMapping("/clients")
     @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<ClientDTO> createClient(@Valid @RequestBody ClientDTO clientDTO) throws URISyntaxException, BadRequestAlertException {
+    public ResponseEntity<ClientDTO> createClient(@Valid @RequestBody ClientDTO clientDTO)
+        throws URISyntaxException, BadRequestAlertException {
         log.debug("REST request to save Client : {}", clientDTO);
 
         ClientDTO newClient = clientService.createClient(clientDTO);
@@ -100,7 +103,8 @@ public class ClientResource {
      * {@code GET /clients/:id} : get the "id" client.
      *
      * @param id the id of the client to find.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the "id" client, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the "id" client,
+     * or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/clients/{id}")
     public ResponseEntity<ClientDTO> getClient(@PathVariable String id) {
@@ -119,6 +123,8 @@ public class ClientResource {
     public ResponseEntity<Void> deleteClient(@PathVariable String id) {
         log.debug("REST request to delete Client: {}", id);
         clientService.deleteClient(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "clientManagement.deleted", id)).build();
+        return ResponseEntity.noContent().headers(
+            HeaderUtil.createAlert(applicationName,  "clientManagement.deleted", id)
+        ).build();
     }
 }

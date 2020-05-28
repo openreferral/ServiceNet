@@ -5,6 +5,7 @@ import org.benetech.servicenet.domain.RegularSchedule;
 
 import java.util.Set;
 
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class RegularScheduleMother {
 
     public static final int WEEKDAY_1 = 0;

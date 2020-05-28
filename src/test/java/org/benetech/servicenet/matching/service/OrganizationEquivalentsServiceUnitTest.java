@@ -26,7 +26,8 @@ public class OrganizationEquivalentsServiceUnitTest {
 
     @Test
     public void shouldGenerateProperSimpleEntityEquivalentsForOrganization() {
-        UUID funding1 = UUID.randomUUID(), funding2 = UUID.randomUUID();
+        UUID funding1 = UUID.randomUUID();
+        UUID funding2 = UUID.randomUUID();
 
         Organization org1 = generateOrganization(null, funding1);
         Organization org2 = generateOrganization(null, funding2);

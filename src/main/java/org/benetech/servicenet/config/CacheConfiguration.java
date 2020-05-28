@@ -1,10 +1,14 @@
 package org.benetech.servicenet.config;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.ManagementCenterConfig;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.config.MaxSizeConfig;
 import com.hazelcast.config.MaxSizeConfig.MaxSizePolicy;
 import io.github.jhipster.config.JHipsterConstants;
 import io.github.jhipster.config.JHipsterProperties;
 
-import com.hazelcast.config.*;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Hazelcast;
 
@@ -18,7 +22,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.serviceregistry.Registration;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 
@@ -37,6 +42,10 @@ public class CacheConfiguration {
     private final DiscoveryClient discoveryClient;
 
     private Registration registration;
+
+    private static final int SIZE = 64;
+
+    private static final int PORT = 5701;
 
     public CacheConfiguration(Environment env, ServerProperties serverProperties, DiscoveryClient discoveryClient) {
         this.env = env;
@@ -85,15 +94,15 @@ public class CacheConfiguration {
                           "cluster will only work with localhost instances");
 
                 System.setProperty("hazelcast.local.localAddress", "127.0.0.1");
-                config.getNetworkConfig().setPort(serverProperties.getPort() + 5701);
+                config.getNetworkConfig().setPort(serverProperties.getPort() + PORT);
                 config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
                 for (ServiceInstance instance : discoveryClient.getInstances(serviceId)) {
-                    String clusterMember = "127.0.0.1:" + (instance.getPort() + 5701);
+                    String clusterMember = "127.0.0.1:" + (instance.getPort() + PORT);
                     log.debug("Adding Hazelcast (dev) cluster member {}", clusterMember);
                     config.getNetworkConfig().getJoin().getTcpIpConfig().addMember(clusterMember);
                 }
             } else { // Production configuration, one host per instance all using port 5701
-                config.getNetworkConfig().setPort(5701);
+                config.getNetworkConfig().setPort(PORT);
                 config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
                 for (ServiceInstance instance : discoveryClient.getInstances(serviceId)) {
                     String clusterMember = instance.getHost() + ":5701";
@@ -104,7 +113,8 @@ public class CacheConfiguration {
         }
         config.getMapConfigs().put("default", initializeDefaultMapConfig(jHipsterProperties));
 
-        // Full reference is available at: http://docs.hazelcast.org/docs/management-center/3.9/manual/html/Deploying_and_Starting.html
+        // Full reference is available at:
+        // http://docs.hazelcast.org/docs/management-center/3.9/manual/html/Deploying_and_Starting.html
         config.setManagementCenterConfig(initializeDefaultManagementCenterConfig(jHipsterProperties));
         config.getMapConfigs().put("org.benetech.servicenet.domain.*", initializeDomainMapConfig(jHipsterProperties));
         return Hazelcast.newHazelcastInstance(config);
@@ -114,7 +124,8 @@ public class CacheConfiguration {
         ManagementCenterConfig managementCenterConfig = new ManagementCenterConfig();
         managementCenterConfig.setEnabled(jHipsterProperties.getCache().getHazelcast().getManagementCenter().isEnabled());
         managementCenterConfig.setUrl(jHipsterProperties.getCache().getHazelcast().getManagementCenter().getUrl());
-        managementCenterConfig.setUpdateInterval(jHipsterProperties.getCache().getHazelcast().getManagementCenter().getUpdateInterval());
+        managementCenterConfig.setUpdateInterval(jHipsterProperties.getCache().getHazelcast().getManagementCenter()
+            .getUpdateInterval());
         return managementCenterConfig;
     }
 
@@ -143,7 +154,7 @@ public class CacheConfiguration {
         Any integer between 0 and Integer.MAX_VALUE. 0 means
         Integer.MAX_VALUE. Default is 0.
         */
-        mapConfig.setMaxSizeConfig(new MaxSizeConfig(64, MaxSizePolicy.FREE_HEAP_SIZE));
+        mapConfig.setMaxSizeConfig(new MaxSizeConfig(SIZE, MaxSizePolicy.FREE_HEAP_SIZE));
 
         return mapConfig;
     }
@@ -152,7 +163,7 @@ public class CacheConfiguration {
         MapConfig mapConfig = new MapConfig();
         mapConfig.setTimeToLiveSeconds(jHipsterProperties.getCache().getHazelcast().getTimeToLiveSeconds());
         mapConfig.setEvictionPolicy(EvictionPolicy.LRU);
-        mapConfig.setMaxSizeConfig(new MaxSizeConfig(64, MaxSizePolicy.FREE_HEAP_SIZE));
+        mapConfig.setMaxSizeConfig(new MaxSizeConfig(SIZE, MaxSizePolicy.FREE_HEAP_SIZE));
         return mapConfig;
     }
 

@@ -50,6 +50,9 @@ public class OrganizationMatchServiceImplTest {
     private static final String ORG_1 = "org 1";
     private static final String ORG_2 = "org 2";
     private static final BigDecimal COMPLETE_MATCH_RATIO = BigDecimal.valueOf(1.0f);
+    private static final BigDecimal TOTAL_WEIGHT = BigDecimal.valueOf(3.1f);
+    private static final BigDecimal RATIO = BigDecimal.valueOf(0.2f);
+    private static final BigDecimal THRESHOLD = BigDecimal.valueOf(0.4f);
     private static final List<MatchSimilarityDTO> MATCHING_SIMILARITY_DTOS = new ArrayList<>();
 
     @Mock
@@ -97,7 +100,7 @@ public class OrganizationMatchServiceImplTest {
         organizationMatchService = new OrganizationMatchServiceImpl(organizationMatchRepository,
             organizationMatchMapper, organizationService, organizationSimilarityCounter,
             conflictDetectionService, userService, matchSimilarityService,
-            matchSimilarityRepository, BigDecimal.valueOf(0.4f));
+            matchSimilarityRepository, THRESHOLD);
         MatchSimilarityDTO completeSimilarity = new MatchSimilarityDTO();
         completeSimilarity.setSimilarity(BigDecimal.ONE);
         MATCHING_SIMILARITY_DTOS.add(completeSimilarity);
@@ -120,7 +123,7 @@ public class OrganizationMatchServiceImplTest {
         similarities.add(similarity);
 
         BigDecimal similarityRatio = BigDecimal.valueOf(1.0f);
-        BigDecimal totalWeight = BigDecimal.valueOf(3.1f);
+        BigDecimal totalWeight = TOTAL_WEIGHT;
         when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(similarityRatio);
         when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2)).thenReturn(similarities);
         when(organizationSimilarityCounter.getTotalWeight(similarities)).thenReturn(totalWeight);
@@ -134,7 +137,8 @@ public class OrganizationMatchServiceImplTest {
             && m.getPartnerVersionName().equals(ORG_2)));
         assertTrue(matches.stream().anyMatch(m -> m.getOrganizationRecordName().equals(ORG_2)
             && m.getPartnerVersionName().equals(ORG_1)));
-        assertTrue(matches.stream().anyMatch(m -> m.getSimilarity().equals(similarityRatio.divide(totalWeight, 2, RoundingMode.FLOOR))));
+        assertTrue(matches.stream().anyMatch(m -> m.getSimilarity()
+            .equals(similarityRatio.divide(totalWeight, 2, RoundingMode.FLOOR))));
     }
 
     @Test
@@ -154,7 +158,7 @@ public class OrganizationMatchServiceImplTest {
 
         when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(COMPLETE_MATCH_RATIO);
         when(organizationSimilarityCounter.getMatchSimilarityDTOs(org1, org2)).thenReturn(MATCHING_SIMILARITY_DTOS);
-        when(organizationSimilarityCounter.getTotalWeight(any())).thenReturn(BigDecimal.valueOf(3.1f));
+        when(organizationSimilarityCounter.getTotalWeight(any())).thenReturn(TOTAL_WEIGHT);
 
         int dbSize = organizationMatchService.findAll().size();
         organizationMatchService.createOrUpdateOrganizationMatches(org1);
@@ -175,8 +179,7 @@ public class OrganizationMatchServiceImplTest {
         em.persist(org2);
         em.flush();
 
-        BigDecimal ratioBelowThreshold = BigDecimal.valueOf(0.2f);
-        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(ratioBelowThreshold);
+        when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(RATIO);
 
         organizationMatchService.createOrUpdateOrganizationMatches(org1);
 

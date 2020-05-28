@@ -344,6 +344,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     public Set<DailyUpdate> getDailyUpdates() {
         return dailyUpdates;
     }
+
     public void setDailyUpdates(Set<DailyUpdate> dailyUpdates) {
         this.dailyUpdates = dailyUpdates;
     }

@@ -22,8 +22,7 @@ public class HystrixBadRequestAlertException extends HystrixBadRequestException 
         @JsonProperty("title") String title,
         @JsonProperty("status") Integer status,
         @JsonProperty("message") String message,
-        @JsonProperty("params") String params)
-    {
+        @JsonProperty("params") String params) {
         super(message);
         this.cause = new BadRequestAlertException(
             entityName, errorKey, type, title, status, message, params);

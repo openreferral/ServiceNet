@@ -322,7 +322,8 @@ public class AccessibilityForDisabilitiesResourceIntTest {
     @Test
     @Transactional
     public void testEntityFromId() {
-        assertThat(accessibilityForDisabilitiesMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
+        assertThat(accessibilityForDisabilitiesMapper.fromId(TestConstants.UUID_42).getId())
+            .isEqualTo(TestConstants.UUID_42);
         assertThat(accessibilityForDisabilitiesMapper.fromId(null)).isNull();
     }
 }
