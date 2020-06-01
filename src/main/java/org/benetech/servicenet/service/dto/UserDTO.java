@@ -65,6 +65,8 @@ public class UserDTO {
 
     private List<UUID> organizations;
 
+    private UUID siloId;
+
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -76,6 +78,9 @@ public class UserDTO {
         this.createdDate = userProfile.getCreatedDate();
         this.lastModifiedBy = userProfile.getLastModifiedBy();
         this.lastModifiedDate = userProfile.getLastModifiedDate();
+        if (userProfile.getSilo() != null) {
+            this.siloId = userProfile.getSilo().getId();
+        }
         if (userProfile.getSystemAccount() != null) {
             this.systemAccountId = userProfile.getSystemAccount().getId();
             this.systemAccountName = userProfile.getSystemAccount().getName();
