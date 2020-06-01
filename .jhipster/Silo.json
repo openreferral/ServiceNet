@@ -1,0 +1,29 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "ServiceNet",
+    "relationships": [
+        {
+            "relationshipName": "userProfiles",
+            "otherEntityName": "userProfile",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "silo"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": []
+        }
+    ],
+    "changelogDate": "20200529090643",
+    "dto": "mapstruct",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "silo",
+    "databaseType": "sql",
+    "readOnly": false,
+    "jpaMetamodelFiltering": false,
+    "pagination": "pagination",
+    "microserviceName": "ServiceNet"
+}

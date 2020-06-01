@@ -88,6 +88,10 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     @JoinColumn(name = "filter_id")
     private ActivityFilter filter;
 
+    @ManyToOne
+    @JsonIgnoreProperties("")
+    private Silo silo;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

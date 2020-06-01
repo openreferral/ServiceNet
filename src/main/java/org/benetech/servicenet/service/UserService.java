@@ -6,6 +6,7 @@ import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.errors.HystrixBadRequestAlertException;
@@ -13,6 +14,7 @@ import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
+import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
@@ -69,6 +71,9 @@ public class UserService {
 
     @Autowired
     private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private SiloRepository siloRepository;
 
     /**
      * Create a new user.
@@ -252,6 +257,9 @@ public class UserService {
             authUser.setShelters(userProfile.getShelters().stream()
                 .map(Shelter::getId).collect(Collectors.toList()));
         }
+        if (userProfile.getSilo() != null) {
+            authUser.setSiloId(userProfile.getSilo().getId());
+        }
         return authUser;
     }
 
@@ -298,9 +306,15 @@ public class UserService {
         userProfile.setSystemAccount(getSystemAccount(userDTO));
         userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
         userProfile.setOrganizations(organizationsFromUUIDs(userDTO.getOrganizations()));
+        userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);
+    }
+
+    private Silo getSilo(UUID id) {
+        Optional<Silo> silo = siloRepository.findById(id);
+        return silo.orElse(null);
     }
 
     private void handleHystrixException(HystrixBadRequestException e) {
