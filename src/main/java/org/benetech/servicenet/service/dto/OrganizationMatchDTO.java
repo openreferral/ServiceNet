@@ -66,6 +66,8 @@ public class OrganizationMatchDTO implements Serializable {
         return hidden;
     }
 
+    private OwnerDTO owner;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
