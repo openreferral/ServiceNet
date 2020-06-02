@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -101,6 +102,7 @@ public class ActivityServiceImplTest {
     @Before
     public void initTest() {
         organization = OrganizationMother.createDefaultAndPersist(em);
+        organization.setUserProfiles(new HashSet<>());
         organizationOther = OrganizationMother.createDifferentAndPersist(em);
         SystemAccount systemAccount = organization.getAccount();
 
@@ -114,6 +116,7 @@ public class ActivityServiceImplTest {
         conflict = ConflictMother.createDefaultAndPersist(em);
         conflict.setResourceId(organization.getId());
         conflict.setOwner(systemAccount);
+        conflict.setPartnerResourceId(organization.getId());
         conflict.setPartner(SystemAccountMother.createDifferentAndPersist(em));
         em.persist(conflict);
         em.flush();

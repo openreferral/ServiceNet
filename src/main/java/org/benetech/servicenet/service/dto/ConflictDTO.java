@@ -52,6 +52,8 @@ public class ConflictDTO implements Serializable {
 
     private String partnerName;
 
+    private OwnerDTO owner;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

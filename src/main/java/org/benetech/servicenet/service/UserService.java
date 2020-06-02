@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import com.netflix.hystrix.exception.HystrixBadRequestException;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
@@ -19,6 +20,7 @@ import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.security.SecurityUtils;
+import org.benetech.servicenet.service.dto.OwnerDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -261,6 +263,28 @@ public class UserService {
             authUser.setSiloId(userProfile.getSilo().getId());
         }
         return authUser;
+    }
+
+    public OwnerDTO getUserDtoOfOrganization(Organization organization) {
+        OwnerDTO result = null;
+        if (organization != null) {
+            Set<UserProfile> userProfiles = organization.getUserProfiles();
+            if (userProfiles.size() > 0) {
+                UserProfile userProfile = new ArrayList<UserProfile>(userProfiles).get(userProfiles.size() - 1);
+                UserDTO userDTO = this.getUser(userProfile.getLogin());
+                result = this.userDtoToOwnerDto(userDTO);
+            }
+        }
+
+        return result;
+    }
+
+    private OwnerDTO userDtoToOwnerDto(UserDTO userDTO) {
+        OwnerDTO result = new OwnerDTO();
+        result.setFirstName(userDTO.getFirstName());
+        result.setLastName(userDTO.getLastName());
+        result.setEmail(userDTO.getEmail());
+        return result;
     }
 
     private void clearUserCaches(UserProfile userProfile) {
