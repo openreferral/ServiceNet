@@ -26,6 +26,7 @@ import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
+import org.benetech.servicenet.service.dto.OwnerDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
@@ -62,6 +63,7 @@ public class RecordBuilder {
 
     public ActivityRecordDTO buildBasicRecord(Organization organization, ZonedDateTime lastUpdated,
         List<ConflictDTO> conflictDTOS, Set<LocationExclusion> locationExclusions) {
+        OwnerDTO owner = userService.getUserDtoOfOrganization(organization);
         return new ActivityRecordDTO(
             mapOrganization(organization),
             lastUpdated,
@@ -69,7 +71,8 @@ public class RecordBuilder {
             mapServices(organization.getServices()),
             mapContacts(organization.getContacts()),
             new HashSet<>(),
-            conflictDTOS);
+            conflictDTOS,
+            owner);
     }
 
     public RecordDetailsDTO buildRecordDetails(Organization organization, List<ConflictDTO> conflictDTOs,
@@ -86,6 +89,7 @@ public class RecordBuilder {
     public ActivityRecordDTO buildFilteredRecord(Organization organization, ZonedDateTime lastUpdated,
         List<ConflictDTO> conflictDTOS, Set<FieldExclusion> baseExclusions, Set<LocationExclusion> locationExclusions)
         throws IllegalAccessException {
+        OwnerDTO owner = userService.getUserDtoOfOrganization(organization);
         return new ActivityRecordDTO(
             mapOrganization(buildObject(organization, Organization.class, baseExclusions)),
             lastUpdated,
@@ -94,7 +98,8 @@ public class RecordBuilder {
             mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
             mapContacts(buildCollection(organization.getContacts(), Contact.class, baseExclusions)),
             mapExclusions(baseExclusions),
-            conflictDTOS);
+            conflictDTOS,
+            owner);
     }
 
     public ProviderRecordDTO buildBasicProviderRecord(Organization organization, ZonedDateTime lastUpdated,

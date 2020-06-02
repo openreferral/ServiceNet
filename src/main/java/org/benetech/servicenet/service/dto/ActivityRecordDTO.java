@@ -31,6 +31,8 @@ public class ActivityRecordDTO implements Serializable {
 
     private List<ConflictDTO> conflicts;
 
+    private OwnerDTO owner;
+
     public List<ConflictDTO> getConflicts() {
         conflicts.sort(new ConflictsComparator());
         return conflicts;
