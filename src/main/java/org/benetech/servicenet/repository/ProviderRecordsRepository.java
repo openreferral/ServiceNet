@@ -20,6 +20,7 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
@@ -41,6 +42,7 @@ public class ProviderRecordsRepository {
 
     private static final String ACCOUNT = "account";
     private static final String USER_PROFILES = "userProfiles";
+    private static final String SILO = "silo";
 
     private static final String CITY = "locality";
     private static final String REGION = "administrativeAreaLevel2";
@@ -96,9 +98,13 @@ public class ProviderRecordsRepository {
         Join<Organization, Service> serviceJoin = root.join(SERVICES, JoinType.LEFT);
         Join<Organization, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
 
+        Silo silo = userProfile.getSilo();
+
         predicate = cb.equal(root.get(ACTIVE), true);
 
         predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
+
+        predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
 
         predicate = this.addSearch(predicate, search, root, serviceJoin);
 

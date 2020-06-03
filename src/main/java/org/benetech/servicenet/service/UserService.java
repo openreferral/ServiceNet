@@ -329,7 +329,6 @@ public class UserService {
         userProfile.setLogin(userDTO.getLogin().toLowerCase(Locale.ROOT));
         userProfile.setSystemAccount(getSystemAccount(userDTO));
         userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
-        userProfile.setOrganizations(organizationsFromUUIDs(userDTO.getOrganizations()));
         userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
@@ -337,6 +336,9 @@ public class UserService {
     }
 
     private Silo getSilo(UUID id) {
+        if (id == null) {
+            return null;
+        }
         Optional<Silo> silo = siloRepository.findById(id);
         return silo.orElse(null);
     }
