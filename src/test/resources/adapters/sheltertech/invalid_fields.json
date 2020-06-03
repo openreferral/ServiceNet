@@ -95,7 +95,7 @@
           "country_code": "US"
         }
       ],
-      "address": {
+      "addresses": [{
         "id": 888,
         "attention": "k1yuLwM1yNMnXdqicmHgfkNGyhHmG5UjGySULXIxzk7d0an3poykas6PGGeSiBAgmQuXjMWK7jbyhB757UkbM0JHIos6dHEu50qPiBskmfKwzO1LcTHFHYjYysnwq01o5fj7Snl9Gm8bdqiKpy614OZXZUFLEYQ3kFgUKo3lOfDmIsDmPL5lCQcZLrwputHM1jLU3jLd14LSldQbdZVdFuzRQt8HItbSjT3MHE9sQceRfRNiq5JfPyz4wFuu2QMBuoGI",
         "address_1": "1k1yuLwM1yNMnXdqicmHgfkNGyhHmG5UjGySULXIxzk7d0an3poykas6PGGeSiBAgmQuXjMWK7jbyhB757UkbM0JHIos6dHEu50qPiBskmfKwzO1LcTHFHYjYysnwq01o5fj7Snl9Gm8bdqiKpy614OZXZUFLEYQ3kFgUKo3lOfDmIsDmPL5lCQcZLrwputHM1jLU3jLd14LSldQbdZVdFuzRQt8HItbSjT3MHE9sQceRfRNiq5JfPyz4wFuu2QMBuoGI",
@@ -108,7 +108,7 @@
         "country": "k1yuLwM1yNMnXdqicmHgfkNGyhHmG5UjGySULXIxzk7d0an3poykas6PGGeSiBAgmQuXjMWK7jbyhB757UkbM0JHIos6dHEu50qPiBskmfKwzO1LcTHFHYjYysnwq01o5fj7Snl9Gm8bdqiKpy614OZXZUFLEYQ3kFgUKo3lOfDmIsDmPL5lCQcZLrwputHM1jLU3jLd14LSldQbdZVdFuzRQt8HItbSjT3MHE9sQceRfRNiq5JfPyz4wFuu2QMBuoGI",
         "latitude": "11.1222222",
         "longitude": "-111.11111"
-      },
+      }],
       "notes": [
         {
           "id": 4332,

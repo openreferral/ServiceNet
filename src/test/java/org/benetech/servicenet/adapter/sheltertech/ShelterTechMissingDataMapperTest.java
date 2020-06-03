@@ -85,7 +85,7 @@ public class ShelterTechMissingDataMapperTest {
 
     @Test
     public void shouldNotThrowExceptionForMinimalDataForLocation() {
-        Location result = ShelterTechLocationMapper.INSTANCE.mapToLocation(data.getAddress()).get();
+        Location result = ShelterTechLocationMapper.INSTANCE.mapToLocation(data.getAddresses().get(0)).get();
 
         assertEquals("Line 1 - City (STATE)", result.getName());
     }
@@ -161,7 +161,7 @@ public class ShelterTechMissingDataMapperTest {
     @Test
     public void shouldNotThrowExceptionForMinimalDataForPhysicalAddress() {
         PhysicalAddress result = ShelterTechPhysicalAddressMapper.INSTANCE
-            .mapAddressRawToPhysicalAddress(data.getAddress());
+            .mapAddressRawToPhysicalAddress(data.getAddresses().get(0));
 
         assertEquals("Line 1", result.getAddress1());
         assertEquals("City", result.getCity());
@@ -187,7 +187,7 @@ public class ShelterTechMissingDataMapperTest {
     @Test
     public void shouldNotThrowExceptionForMinimalDataForPostalAddress() {
         PostalAddress result = ShelterTechPostalAddressMapper.INSTANCE
-            .mapAddressRawToPostalAddress(data.getAddress());
+            .mapAddressRawToPostalAddress(data.getAddresses().get(0));
 
         assertEquals("Line 1", result.getAddress1());
         assertEquals("City", result.getCity());

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.adapter.sheltertech.mapper;
 
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.sheltertech.model.AddressRaw;
 import org.benetech.servicenet.adapter.sheltertech.model.OrganizationRaw;
@@ -43,12 +44,12 @@ public interface ShelterTechOrganizationMapper {
         return false;
     }
 
-    @Named("locationFromAddressRaw")
-    default Set<Location> locationFromAddressRaw(AddressRaw raw) {
-        if (raw == null) {
+    @Named("locationsFromAddressesRaw")
+    default Set<Location> locationsFromAddressesRaw(List<AddressRaw> raws) {
+        if (raws == null) {
             return Collections.emptySet();
         }
-        return ShelterTechLocationMapper.INSTANCE.mapToLocations(Collections.singletonList(raw));
+        return ShelterTechLocationMapper.INSTANCE.mapToLocations(raws);
     }
 
     @Named("emailFromString")
@@ -81,7 +82,7 @@ public interface ShelterTechOrganizationMapper {
     @Mapping(source = "orgRaw.legalStatus", target = "legalStatus")
     @Mapping(source = "orgRaw.status", target = "active", qualifiedByName = "activeFromStatus")
     @Mapping(source = "orgRaw.id", target = "externalDbId")
-    @Mapping(source = "orgRaw.address", target = "locations", qualifiedByName = "locationFromAddressRaw")
+    @Mapping(source = "orgRaw.addresses", target = "locations", qualifiedByName = "locationsFromAddressesRaw")
     @Mapping(ignore = true, target = "replacedBy")
     @Mapping(source = "documentUpload", target = "sourceDocument")
     @Mapping(ignore = true, target = "account")
