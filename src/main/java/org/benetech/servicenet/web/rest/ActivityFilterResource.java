@@ -77,6 +77,30 @@ public class ActivityFilterResource {
     }
 
     /**
+     * GET getPostalCodesForServiceProviders
+     */
+    @GetMapping("/activity-filter/service-providers/get-postal-codes")
+    public Set<String> getPostalCodesForServiceProviders() {
+        return activityFilterService.getPostalCodesForServiceProviders();
+    }
+
+    /**
+     * GET getRegionsForServiceProviders
+     */
+    @GetMapping("/activity-filter/service-providers/get-regions")
+    public Set<String> getRegionsForServiceProviders() {
+        return activityFilterService.getRegionsForServiceProviders();
+    }
+
+    /**
+     * GET getCitiesForServiceProviders
+     */
+    @GetMapping("/activity-filter/service-providers/get-cities")
+    public Set<String> getCitiesForServiceProviders() {
+        return activityFilterService.getCitiesForServiceProviders();
+    }
+
+    /**
      * GET getTaxonomies
      */
     @GetMapping("/activity-filter/get-taxonomies")
