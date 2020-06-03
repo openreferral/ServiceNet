@@ -101,7 +101,7 @@
           "country_code": "US"
         }
       ],
-      "address": {
+      "addresses": [{
         "id": 888,
         "attention": "Room 540",
         "address_1": "1233 90th St.",
@@ -114,7 +114,7 @@
         "country": "USA",
         "latitude": "11.1222222",
         "longitude": "-111.11111"
-      },
+      }],
       "notes": [
         {
           "id": 4332,
