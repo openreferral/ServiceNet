@@ -43,6 +43,27 @@ public interface ActivityFilterService {
     Map<String, Set<String>> getTaxonomies();
 
     /**
+     * Get all the Postal Codes
+     *
+     * @return the list of Postal Codes for Service Providers View
+     */
+    Set<String> getPostalCodesForServiceProviders();
+
+    /**
+     * Get all the Regions
+     *
+     * @return the list of Regions for Service Providers View
+     */
+    Set<String> getRegionsForServiceProviders();
+
+    /**
+     * Get all the Cities for Service Providers View
+     *
+     * @return the list of Cities
+     */
+    Set<String> getCitiesForServiceProviders();
+
+    /**
      * Save a activityFilter.
      *
      * @param activityFilterDTO the entity to save.

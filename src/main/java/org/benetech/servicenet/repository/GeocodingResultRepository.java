@@ -65,5 +65,29 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
         + "ORDER BY gr.locality")
     SortedSet<String> getDistinctCityFromGeoResults();
 
+    @Query("SELECT DISTINCT gr.postalCode FROM Location l "
+        + "JOIN l.geocodingResults gr "
+        + "JOIN l.organization org "
+        + "JOIN org.userProfiles userProfile "
+        + "WHERE gr.postalCode != '' AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "ORDER BY gr.postalCode")
+    SortedSet<String> getDistinctPostalCodesFromGeoResultsForServiceProviders();
+
+    @Query("SELECT DISTINCT gr.administrativeAreaLevel2 FROM Location l "
+        + "JOIN l.geocodingResults gr "
+        + "JOIN l.organization org "
+        + "JOIN org.userProfiles userProfile "
+        + "WHERE gr.administrativeAreaLevel2 != '' AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "ORDER BY gr.administrativeAreaLevel2")
+    SortedSet<String> getDistinctRegionsFromGeoResultsForServiceProviders();
+
+    @Query("SELECT DISTINCT gr.locality FROM Location l "
+        + "JOIN l.geocodingResults gr "
+        + "JOIN l.organization org "
+        + "JOIN org.userProfiles userProfile "
+        + "WHERE gr.locality != '' AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "ORDER BY gr.locality")
+    SortedSet<String> getDistinctCityFromGeoResultsForServiceProviders();
+
     List<GeocodingResult> findByFormattedAddressIsNullOrLocalityIsNullAndAddressIsNotNull();
 }
