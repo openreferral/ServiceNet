@@ -52,7 +52,7 @@
           "country_code": null
         }
       ],
-      "address": {
+      "addresses": [{
         "id": null,
         "attention": null,
         "address_1": "Line 1",
@@ -65,7 +65,7 @@
         "country": null,
         "latitude": null,
         "longitude": null
-      },
+      }],
       "notes": [],
       "categories": [],
       "ratings": []
