@@ -86,9 +86,13 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
 
     private Set<Location> getLocationsToPersist(OrganizationRaw orgRaw, Set<Location> locations) {
         for (Location location : locations) {
-
-            location.setPostalAddress(getPostalAddressToPersist(orgRaw.getAddress()));
-            location.setPhysicalAddress(getPhysicalAddressToPersist(orgRaw.getAddress()));
+            AddressRaw addressRaw = orgRaw.getAddresses().stream().filter(
+                raw -> raw.getId().toString().equals(location.getExternalDbId())
+            ).findFirst().orElse(null);
+            if (addressRaw != null) {
+                location.setPostalAddress(getPostalAddressToPersist(addressRaw));
+                location.setPhysicalAddress(getPhysicalAddressToPersist(addressRaw));
+            }
             location.setPhones(getPhonesToPersist(orgRaw));
         }
         return locations;

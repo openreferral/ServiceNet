@@ -55,8 +55,8 @@ public class OrganizationRaw {
     @SerializedName("phones")
     private List<PhoneRaw> phones;
 
-    @SerializedName("address")
-    private AddressRaw address;
+    @SerializedName("addresses")
+    private List<AddressRaw> addresses;
 
     @SerializedName("notes")
     private List<NoteRaw> notes;
