@@ -103,6 +103,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
     private <T> void addFilters(CriteriaQuery<T> query, Root<Shelter> root, ShelterFiltersDTO filters) {
 
         List<Predicate> predicates = new ArrayList<>();
+        Join<Shelter, Option> bedsJoin = root.join(BEDS, JoinType.LEFT);
 
         if (StringUtils.isNotBlank(filters.getSearchQuery())) {
             String sq = filters.getSearchQuery().trim().toUpperCase();
@@ -113,8 +114,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
             ));
         }
         if (filters.isShowOnlyAvailableBeds()) {
-            Join<Shelter, Option> join = root.join(BEDS, JoinType.LEFT);
-            predicates.add(cb.greaterThan(join.get(AVAILABLE_BEDS), 0));
+            predicates.add(cb.greaterThan(bedsJoin.get(AVAILABLE_BEDS), 0));
         }
         if (CollectionUtils.isNotEmpty(filters.getDefinedCoverageAreas())) {
             Join<Shelter, Option> join = root.join(DEFINED_COVERAGE_AREAS, JoinType.LEFT);
@@ -158,6 +158,9 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
             predicates.add(cb.lessThanOrEqualTo(distance, filters.getRadius()));
             cb.asc(distance);
         }
+
+        query.groupBy(root.get(ID), root.get(AGENCY_NAME), root.get(PROGRAM_NAME),
+            root.get(ALTERNATE_NAME), root.get(BEDS), bedsJoin.get(AVAILABLE_BEDS));
 
         query.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
     }
