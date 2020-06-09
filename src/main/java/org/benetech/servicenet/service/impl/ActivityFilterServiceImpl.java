@@ -70,18 +70,18 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     }
 
     @Override
-    public Set<String> getPostalCodesForServiceProviders() {
-        return geocodingResultRepository.getDistinctPostalCodesFromGeoResultsForServiceProviders();
+    public Set<String> getPostalCodesForServiceProviders(UserProfile currentUserProfile) {
+        return geocodingResultRepository.getDistinctPostalCodesFromGeoResultsForServiceProviders(currentUserProfile);
     }
 
     @Override
-    public Set<String> getRegionsForServiceProviders() {
-        return geocodingResultRepository.getDistinctRegionsFromGeoResultsForServiceProviders();
+    public Set<String> getRegionsForServiceProviders(UserProfile currentUserProfile) {
+        return geocodingResultRepository.getDistinctRegionsFromGeoResultsForServiceProviders(currentUserProfile);
     }
 
     @Override
-    public Set<String> getCitiesForServiceProviders() {
-        return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders();
+    public Set<String> getCitiesForServiceProviders(UserProfile currentUserProfile) {
+        return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders(currentUserProfile);
     }
 
     @Override
