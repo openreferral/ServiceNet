@@ -191,4 +191,5 @@
     <include file="config/liquibase/changelog/20200522173507_remove_organization_unique_together.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200527101753_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200529100011_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200610080551_changelog.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

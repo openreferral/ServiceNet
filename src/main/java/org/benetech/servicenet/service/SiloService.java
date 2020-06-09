@@ -47,6 +47,14 @@ public interface SiloService {
     Optional<SiloDTO> findOne(UUID id);
 
     /**
+     * Get the "id" silo.
+     *
+     * @param name the name of the entity.
+     * @return the entity.
+     */
+    Optional<SiloDTO> findOneByName(String name);
+
+    /**
      * Delete the "id" silo.
      *
      * @param id the id of the entity.

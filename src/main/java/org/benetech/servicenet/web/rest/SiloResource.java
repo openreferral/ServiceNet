@@ -65,6 +65,11 @@ public class SiloResource {
         if (siloDTO.getId() != null) {
             throw new BadRequestAlertException("A new silo cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        siloService.findOneByName(siloDTO.getName()).ifPresent(s -> {
+            throw new BadRequestAlertException("Name is already used", ENTITY_NAME, "nameunique");
+        });
+
         SiloDTO result = siloService.save(siloDTO);
         return ResponseEntity.created(new URI("/api/silos/" + result.getId()))
             .headers(org.benetech.servicenet.web.rest.util.HeaderUtil
@@ -87,6 +92,13 @@ public class SiloResource {
         if (siloDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        siloService.findOneByName(siloDTO.getName()).ifPresent(s -> {
+            if (!s.getId().equals(siloDTO.getId())) {
+                throw new BadRequestAlertException("Name is already used", ENTITY_NAME, "nameunique");
+            }
+        });
+
         SiloDTO result = siloService.save(siloDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, siloDTO.getId().toString()))
