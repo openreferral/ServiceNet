@@ -1,6 +1,7 @@
 package org.benetech.servicenet.web.rest;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -81,7 +82,8 @@ public class ActivityFilterResource {
      */
     @GetMapping("/activity-filter/service-providers/get-postal-codes")
     public Set<String> getPostalCodesForServiceProviders() {
-        return activityFilterService.getPostalCodesForServiceProviders();
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
+        return activityFilterService.getPostalCodesForServiceProviders(currentUserProfile);
     }
 
     /**
@@ -89,7 +91,8 @@ public class ActivityFilterResource {
      */
     @GetMapping("/activity-filter/service-providers/get-regions")
     public Set<String> getRegionsForServiceProviders() {
-        return activityFilterService.getRegionsForServiceProviders();
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
+        return activityFilterService.getRegionsForServiceProviders(currentUserProfile);
     }
 
     /**
@@ -97,7 +100,8 @@ public class ActivityFilterResource {
      */
     @GetMapping("/activity-filter/service-providers/get-cities")
     public Set<String> getCitiesForServiceProviders() {
-        return activityFilterService.getCitiesForServiceProviders();
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
+        return activityFilterService.getCitiesForServiceProviders(currentUserProfile);
     }
 
     /**
