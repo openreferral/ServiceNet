@@ -23,6 +23,8 @@ public class ProviderRecordDTO {
 
     private UserDTO owner;
 
+    private Set<DailyUpdateDTO> dailyUpdates;
+
     public ProviderRecordDTO(OrganizationDTO organization, ZonedDateTime lastUpdated,
         Set<LocationRecordDTO> locations, Set<ServiceRecordDTO> services) {
         this.organization = organization;
