@@ -95,6 +95,14 @@ public class SiloServiceImpl implements SiloService {
             .map(siloMapper::toDto);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<SiloDTO> findOneByName(String name) {
+        log.debug("Request to get Silo : {}", name);
+        return siloRepository.getByName(name)
+            .map(siloMapper::toDto);
+    }
+
     /**
      * Delete the silo by id.
      *

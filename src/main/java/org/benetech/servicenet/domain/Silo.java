@@ -37,7 +37,7 @@ public class Silo implements Serializable {
     )
     private UUID id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @OneToMany(mappedBy = "silo")
