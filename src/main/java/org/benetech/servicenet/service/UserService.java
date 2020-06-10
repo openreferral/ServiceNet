@@ -22,6 +22,7 @@ import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.security.SecurityUtils;
 import org.benetech.servicenet.service.dto.OwnerDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
+import org.benetech.servicenet.service.dto.UserRegisterDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,23 @@ public class UserService {
         try {
             return createOrUpdateUserProfile(
                 authClient.createUser(userDTO), userDTO
+            );
+        } catch (HystrixBadRequestException e) {
+            handleHystrixException(e);
+            return null;
+        }
+    }
+
+    /**
+     * Register a new user.
+     *
+     * @param userRegisterDTO user to register
+     * @return registered user
+     */
+    public UserDTO registerUser(UserRegisterDTO userRegisterDTO) {
+        try {
+            return createOrUpdateUserProfile(
+                authClient.registerUser(userRegisterDTO), userRegisterDTO
             );
         } catch (HystrixBadRequestException e) {
             handleHystrixException(e);
@@ -231,7 +249,8 @@ public class UserService {
     }
 
     public UserProfile getOrCreateUserProfile(UUID userId, String login) {
-        Optional<UserProfile> existingProfile = userProfileRepository.findOneByUserId(userId);
+        Optional<UserProfile> existingProfile = userProfileRepository
+            .findOneByLogin(login.toLowerCase(Locale.ROOT));
         if (existingProfile.isPresent()) {
             return existingProfile.get();
         } else {

@@ -4,6 +4,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.benetech.servicenet.service.dto.ClientDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
+import org.benetech.servicenet.service.dto.UserRegisterDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,4 +51,7 @@ public interface ServiceNetAuthClient {
 
     @RequestMapping(value = "/api/clients/{id}", method = RequestMethod.DELETE)
     void deleteClient(@PathVariable("id") String id);
+
+    @RequestMapping(value = "/api/register", method = RequestMethod.POST)
+    UserDTO registerUser(UserRegisterDTO userRegisterDTO);
 }
