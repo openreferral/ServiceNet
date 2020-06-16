@@ -1,11 +1,13 @@
 package org.benetech.servicenet.service;
 
 import com.netflix.hystrix.exception.HystrixBadRequestException;
+import java.util.ArrayList;
 import java.util.Collections;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.errors.HystrixBadRequestAlertException;
@@ -13,11 +15,14 @@ import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
+import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.security.SecurityUtils;
+import org.benetech.servicenet.service.dto.OwnerDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
+import org.benetech.servicenet.service.dto.UserRegisterDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +75,9 @@ public class UserService {
     @Autowired
     private OrganizationRepository organizationRepository;
 
+    @Autowired
+    private SiloRepository siloRepository;
+
     /**
      * Create a new user.
      *
@@ -80,6 +88,23 @@ public class UserService {
         try {
             return createOrUpdateUserProfile(
                 authClient.createUser(userDTO), userDTO
+            );
+        } catch (HystrixBadRequestException e) {
+            handleHystrixException(e);
+            return null;
+        }
+    }
+
+    /**
+     * Register a new user.
+     *
+     * @param userRegisterDTO user to register
+     * @return registered user
+     */
+    public UserDTO registerUser(UserRegisterDTO userRegisterDTO) {
+        try {
+            return createOrUpdateUserProfile(
+                authClient.registerUser(userRegisterDTO), userRegisterDTO
             );
         } catch (HystrixBadRequestException e) {
             handleHystrixException(e);
@@ -224,7 +249,8 @@ public class UserService {
     }
 
     public UserProfile getOrCreateUserProfile(UUID userId, String login) {
-        Optional<UserProfile> existingProfile = userProfileRepository.findOneByUserId(userId);
+        Optional<UserProfile> existingProfile = userProfileRepository
+            .findOneByLogin(login.toLowerCase(Locale.ROOT));
         if (existingProfile.isPresent()) {
             return existingProfile.get();
         } else {
@@ -252,7 +278,32 @@ public class UserService {
             authUser.setShelters(userProfile.getShelters().stream()
                 .map(Shelter::getId).collect(Collectors.toList()));
         }
+        if (userProfile.getSilo() != null) {
+            authUser.setSiloId(userProfile.getSilo().getId());
+        }
         return authUser;
+    }
+
+    public OwnerDTO getUserDtoOfOrganization(Organization organization) {
+        OwnerDTO result = null;
+        if (organization != null) {
+            Set<UserProfile> userProfiles = organization.getUserProfiles();
+            if (userProfiles.size() > 0) {
+                UserProfile userProfile = new ArrayList<UserProfile>(userProfiles).get(userProfiles.size() - 1);
+                UserDTO userDTO = this.getUser(userProfile.getLogin());
+                result = this.userDtoToOwnerDto(userDTO);
+            }
+        }
+
+        return result;
+    }
+
+    private OwnerDTO userDtoToOwnerDto(UserDTO userDTO) {
+        OwnerDTO result = new OwnerDTO();
+        result.setFirstName(userDTO.getFirstName());
+        result.setLastName(userDTO.getLastName());
+        result.setEmail(userDTO.getEmail());
+        return result;
     }
 
     private void clearUserCaches(UserProfile userProfile) {
@@ -297,10 +348,18 @@ public class UserService {
         userProfile.setLogin(userDTO.getLogin().toLowerCase(Locale.ROOT));
         userProfile.setSystemAccount(getSystemAccount(userDTO));
         userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
-        userProfile.setOrganizations(organizationsFromUUIDs(userDTO.getOrganizations()));
+        userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);
+    }
+
+    private Silo getSilo(UUID id) {
+        if (id == null) {
+            return null;
+        }
+        Optional<Silo> silo = siloRepository.findById(id);
+        return silo.orElse(null);
     }
 
     private void handleHystrixException(HystrixBadRequestException e) {

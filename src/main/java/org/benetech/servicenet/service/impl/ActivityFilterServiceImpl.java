@@ -70,6 +70,21 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     }
 
     @Override
+    public Set<String> getPostalCodesForServiceProviders(UserProfile currentUserProfile) {
+        return geocodingResultRepository.getDistinctPostalCodesFromGeoResultsForServiceProviders(currentUserProfile);
+    }
+
+    @Override
+    public Set<String> getRegionsForServiceProviders(UserProfile currentUserProfile) {
+        return geocodingResultRepository.getDistinctRegionsFromGeoResultsForServiceProviders(currentUserProfile);
+    }
+
+    @Override
+    public Set<String> getCitiesForServiceProviders(UserProfile currentUserProfile) {
+        return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders(currentUserProfile);
+    }
+
+    @Override
     public Map<String, Set<String>> getTaxonomies() {
         List<Taxonomy> taxonomies = taxonomyRepository.findAssociatedTaxonomies();
         Map<String, Set<String>> taxonomiesByProvider = new HashMap<>();

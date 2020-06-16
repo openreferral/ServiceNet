@@ -34,6 +34,8 @@ public class ActivityDTO implements Serializable {
 
     private List<UUID> organizationMatches;
 
+    private OwnerDTO owner;
+
     public List<ConflictDTO> getConflicts() {
         conflicts.sort(new ConflictsComparator());
         return conflicts;

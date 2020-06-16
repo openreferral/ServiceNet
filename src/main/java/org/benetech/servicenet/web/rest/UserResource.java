@@ -1,15 +1,19 @@
 package org.benetech.servicenet.web.rest;
 
 import java.util.List;
+import java.util.Optional;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.security.AuthoritiesConstants;
+import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.SiloDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 
 import io.github.jhipster.web.util.HeaderUtil;
 
+import org.benetech.servicenet.service.dto.UserRegisterDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +35,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -51,8 +56,11 @@ public class UserResource {
 
     private final UserService userService;
 
-    public UserResource(UserService userService) {
+    private final SiloService siloService;
+
+    public UserResource(UserService userService, SiloService siloService) {
         this.userService = userService;
+        this.siloService = siloService;
     }
 
     /**
@@ -163,5 +171,29 @@ public class UserResource {
     @GetMapping("/account")
     public UserDTO getAccount() {
         return userService.getAccount();
+    }
+
+    /**
+     * {@code POST  /register/:siloName} : register user within a silo.
+     *
+     * @return the current user.
+     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
+     */
+    @PostMapping("/register/{siloName}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<UserDTO> registerAccount(
+        @Valid @PathVariable String siloName,
+        @Valid @RequestBody UserRegisterDTO userRegisterDTO
+    ) throws URISyntaxException {
+        Optional<SiloDTO> silo = siloService.findOneByName(siloName);
+        if (silo.isEmpty()) {
+            throw new BadRequestAlertException("Provided Silo does not exist", "silo", "notFound");
+        }
+        userRegisterDTO.setSiloId(silo.get().getId());
+        UserDTO user = userService.registerUser(userRegisterDTO);
+        return ResponseEntity.ok()
+            .headers(org.benetech.servicenet.web.rest.util.HeaderUtil
+                .createEntityCreationAlert("user", user.getLogin()))
+            .body(user);
     }
 }

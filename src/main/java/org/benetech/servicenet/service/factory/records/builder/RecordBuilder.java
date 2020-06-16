@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Contact;
+import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.LocationExclusion;
@@ -22,16 +23,19 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ContactDTO;
+import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
+import org.benetech.servicenet.service.dto.OwnerDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
 import org.benetech.servicenet.service.mapper.ContactMapper;
+import org.benetech.servicenet.service.mapper.DailyUpdateMapper;
 import org.benetech.servicenet.service.mapper.FieldExclusionMapper;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
@@ -60,8 +64,12 @@ public class RecordBuilder {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private DailyUpdateMapper dailyUpdateMapper;
+
     public ActivityRecordDTO buildBasicRecord(Organization organization, ZonedDateTime lastUpdated,
         List<ConflictDTO> conflictDTOS, Set<LocationExclusion> locationExclusions) {
+        OwnerDTO owner = userService.getUserDtoOfOrganization(organization);
         return new ActivityRecordDTO(
             mapOrganization(organization),
             lastUpdated,
@@ -69,7 +77,8 @@ public class RecordBuilder {
             mapServices(organization.getServices()),
             mapContacts(organization.getContacts()),
             new HashSet<>(),
-            conflictDTOS);
+            conflictDTOS,
+            owner);
     }
 
     public RecordDetailsDTO buildRecordDetails(Organization organization, List<ConflictDTO> conflictDTOs,
@@ -86,6 +95,7 @@ public class RecordBuilder {
     public ActivityRecordDTO buildFilteredRecord(Organization organization, ZonedDateTime lastUpdated,
         List<ConflictDTO> conflictDTOS, Set<FieldExclusion> baseExclusions, Set<LocationExclusion> locationExclusions)
         throws IllegalAccessException {
+        OwnerDTO owner = userService.getUserDtoOfOrganization(organization);
         return new ActivityRecordDTO(
             mapOrganization(buildObject(organization, Organization.class, baseExclusions)),
             lastUpdated,
@@ -94,7 +104,8 @@ public class RecordBuilder {
             mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
             mapContacts(buildCollection(organization.getContacts(), Contact.class, baseExclusions)),
             mapExclusions(baseExclusions),
-            conflictDTOS);
+            conflictDTOS,
+            owner);
     }
 
     public ProviderRecordDTO buildBasicProviderRecord(Organization organization, ZonedDateTime lastUpdated,
@@ -105,7 +116,8 @@ public class RecordBuilder {
             lastUpdated,
             mapLocations(filterLocations(organization.getLocations(), locationExclusions)),
             mapServices(organization.getServices()),
-            user
+            user,
+            mapDailyUpdates(organization.getDailyUpdates())
         );
     }
 
@@ -119,7 +131,8 @@ public class RecordBuilder {
             mapLocations(buildCollection(filterLocations(organization.getLocations(), locationExclusions),
                 Location.class, baseExclusions)),
             mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
-            user
+            user,
+            mapDailyUpdates(organization.getDailyUpdates())
         );
     }
 
@@ -140,6 +153,12 @@ public class RecordBuilder {
                 || (StringUtils.isNotBlank(exclusion.getCity())
                 && StringUtils.containsIgnoreCase(address.getCity(), exclusion.getCity())))
             .orElse(false);
+    }
+
+    private Set<DailyUpdateDTO> mapDailyUpdates(Set<DailyUpdate> dailyUpdates) {
+        return dailyUpdates.stream()
+            .map(dailyUpdateMapper::toDto)
+            .collect(Collectors.toSet());
     }
 
     private Set<FieldExclusionDTO> mapExclusions(Set<FieldExclusion> exclusions) {

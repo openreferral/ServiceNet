@@ -1,10 +1,20 @@
 package org.benetech.servicenet.service.impl;
 
+import java.time.ZonedDateTime;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.Conflict;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.benetech.servicenet.repository.ConflictRepository;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ConflictService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ConflictDTO;
+import org.benetech.servicenet.service.dto.OwnerDTO;
 import org.benetech.servicenet.service.mapper.ConflictMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Conflict.
@@ -33,9 +36,16 @@ public class ConflictServiceImpl implements ConflictService {
 
     private final ConflictMapper conflictMapper;
 
-    public ConflictServiceImpl(ConflictRepository conflictRepository, ConflictMapper conflictMapper) {
+    private final UserService userService;
+
+    private final OrganizationRepository organizationRepository;
+
+    public ConflictServiceImpl(ConflictRepository conflictRepository, ConflictMapper conflictMapper,
+        UserService userService, OrganizationRepository organizationRepository) {
         this.conflictRepository = conflictRepository;
         this.conflictMapper = conflictMapper;
+        this.userService = userService;
+        this.organizationRepository = organizationRepository;
     }
 
     /**
@@ -128,7 +138,13 @@ public class ConflictServiceImpl implements ConflictService {
     @Override
     public List<ConflictDTO> findAllPendingWithResourceId(UUID resourceId) {
         log.debug("Request to get all Conflicts with resourceId: {}.", resourceId);
-        return conflictRepository.findAllPendingWithResourceId(resourceId).stream().map(conflictMapper::toDto)
+        return conflictRepository.findAllPendingWithResourceId(resourceId).stream()
+            .map(conflictMapper::toDto)
+            .peek(conflictDTO -> {
+                Organization organization = organizationRepository.getOne(conflictDTO.getPartnerResourceId());
+                OwnerDTO owner = userService.getUserDtoOfOrganization(organization);
+                conflictDTO.setOwner(owner);
+            })
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
