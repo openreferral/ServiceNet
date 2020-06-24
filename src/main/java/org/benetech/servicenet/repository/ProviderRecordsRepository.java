@@ -15,6 +15,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
@@ -51,6 +52,7 @@ public class ProviderRecordsRepository {
     private static final String LOCATIONS = "locations";
 
     private static final String SERVICES = "services";
+    private static final String ELIGIBILITY = "eligibility";
     private static final String TAXONOMIES = "taxonomies";
     private static final String TAXONOMY = "taxonomy";
 
@@ -96,6 +98,7 @@ public class ProviderRecordsRepository {
         Join<Organization, SystemAccount> systemAccountJoin = root.join(ACCOUNT, JoinType.LEFT);
         Join<Organization, UserProfile> userProfileJoin = root.join(USER_PROFILES, JoinType.LEFT);
         Join<Organization, Service> serviceJoin = root.join(SERVICES, JoinType.LEFT);
+        Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(ELIGIBILITY, JoinType.LEFT);
         Join<Organization, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
 
         Silo silo = userProfile.getSilo();
@@ -106,7 +109,7 @@ public class ProviderRecordsRepository {
 
         predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
 
-        predicate = this.addSearch(predicate, search, root, serviceJoin);
+        predicate = this.addSearch(predicate, search, root, serviceJoin, eligibilityJoin);
 
         predicate = cb.and(predicate, cb.notEqual(userProfileJoin.get(ID), userProfile.getId()));
 
@@ -118,14 +121,17 @@ public class ProviderRecordsRepository {
     }
 
     private Predicate addSearch(Predicate predicate, String search,
-        Root<Organization> root, Join<Organization, Service> serviceJoin) {
+        Root<Organization> root, Join<Organization, Service> serviceJoin,
+        Join<Service, Eligibility> eligibilityJoin
+    ) {
         Predicate predicateResult = predicate;
         if (StringUtils.isNotBlank(search)) {
             String searchQuery = '%' + search.toUpperCase() + '%';
             Predicate searchPredicate = cb.or(
                 cb.like(cb.upper(root.get(NAME)), searchQuery),
                 cb.like(cb.upper(root.get(DESCRIPTION)), searchQuery),
-                cb.like(cb.upper(serviceJoin.get(NAME)), searchQuery)
+                cb.like(cb.upper(serviceJoin.get(NAME)), searchQuery),
+                cb.like(cb.upper(eligibilityJoin.get(ELIGIBILITY)), searchQuery)
             );
             predicateResult = cb.and(predicate, searchPredicate);
         }
