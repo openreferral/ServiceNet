@@ -185,9 +185,34 @@ jhipster:
   mail:
     from: ServiceNet@localhost
   swagger:
-    default-include-pattern: /api/.*
-    title: ServiceNet API
-    description: ServiceNet API documentation
+    default-include-pattern: /(api|partner-api)/.*
+    title: ServiceNet Core API
+    description: |
+      ### ServiceNet Core service API documentation. To explore other services API documentation select proper definition:
+
+      | Definition | Service |
+      | ---------- | --------|
+      | default | Gateway |
+      | servicenet | Core |
+      | servicenetauth | Auth |
+
+      ---
+
+      &nbsp;
+      ### How to get access to externally available endpoints:
+
+      1. You need to have client and a secret specified in the system.
+      2. Get access token which you have to add in the request header:
+
+      `http(s)://clientName:secret@host:port/services/servicenetauth/oauth/token?grant_type=client_credentials&scope=external`
+
+      _(In response you will get object with the access_token)_
+      3. Add this access token in the request cookie header.
+
+      `Cookie: access_token="your_token"`
+
+      &nbsp;
+      **To check documentation for externally available API endpoints filter for _external-access_ tag below**
     version: 0.0.1
     terms-of-service-url:
     contact-name:
