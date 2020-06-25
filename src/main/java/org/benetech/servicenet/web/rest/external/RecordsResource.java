@@ -1,6 +1,8 @@
 package org.benetech.servicenet.web.rest.external;
 
 import com.codahale.metrics.annotation.Timed;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/partner-api")
+@Api(tags = "external-access", description = "Endpoints with external access")
 public class RecordsResource {
 
     private final Logger log = LoggerFactory.getLogger(RecordsResource.class);
@@ -58,9 +61,18 @@ public class RecordsResource {
     @Autowired
     private ClientProfileService clientProfileService;
 
+    /**
+     * POST  /records : Resource to get the list of similar organizations
+     *
+     * @param recordRequest object containing string of id of searched organization and number of similarity threshold
+     * @return the ResponseEntity with status 200 (OK) and list of RecordDto
+     */
     @PreAuthorize("hasRole('" + AuthoritiesConstants.EXTERNAL + "')")
     @PostMapping("/records")
     @Timed
+    @ApiOperation(value = "Resource to get the list of organizations within a similarity threshold to"
+        + " organization with provided id. Given ID can be either the ID of the organization in ServiceNet database"
+        + " or ID from the external database of that organization's provider.")
     public ResponseEntity<List<RecordDto>> getOrganizationMatchInfos(
         @Valid @RequestBody RecordRequest recordRequest) throws URISyntaxException, BadRequestAlertException {
         log.debug("REST request to get Record : {}", recordRequest);
@@ -87,9 +99,19 @@ public class RecordsResource {
             .body(results);
     }
 
+    /**
+     * GET  /record-details : Resource to get all the record details for the specific organization
+     *
+     * @param elementId string
+     * @return the ResponseEntity with status 200 (OK) and RecordDetailsDTO
+     */
     @PreAuthorize("hasRole('" + AuthoritiesConstants.EXTERNAL + "')")
     @GetMapping("/record-details/{elementId}")
     @Timed
+    @ApiOperation(value = "Resource to get all the record details for the organization object found"
+        + " by provided elementId. elementId can be either ServiceNet's database ID of organization, "
+        + " service or location or external provider's database ID of organization, service or location."
+        + " Returned are record details for organization related to the object with elementId.")
     public ResponseEntity<RecordDetailsDTO> getRecordDetails(@PathVariable String elementId) {
         Optional<Organization> optionalOrganization = organizationService.findWithEagerByIdOrExternalDbId(elementId);
         if (optionalOrganization.isEmpty()) {
