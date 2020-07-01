@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -29,6 +30,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import org.hibernate.annotations.Type;
 
 /**
  * A user.
@@ -91,6 +93,19 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     @ManyToOne
     @JsonIgnoreProperties("")
     private Silo silo;
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "organization_name", columnDefinition = "clob")
+    private String organizationName;
+
+    @Column(name = "organization_url")
+    @Pattern(regexp = Constants.URL_REGEX)
+    private String organizationUrl;
+
+    @Column(name = "phone_number")
+    @Pattern(regexp = Constants.PHONE_REGEX)
+    private String phoneNumber;
 
     @Override
     public boolean equals(Object o) {

@@ -196,4 +196,22 @@ public class UserResource {
                 .createEntityCreationAlert("user", user.getLogin()))
             .body(user);
     }
+
+    /**
+     * {@code POST  /register/ : register user.
+     *
+     * @return the current user.
+     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
+     */
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<UserDTO> registerUser(
+        @Valid @RequestBody UserRegisterDTO userRegisterDTO
+    ) throws URISyntaxException {
+        UserDTO user = userService.registerUser(userRegisterDTO);
+        return ResponseEntity.ok()
+            .headers(org.benetech.servicenet.web.rest.util.HeaderUtil
+                .createEntityCreationAlert("user", user.getLogin()))
+            .body(user);
+    }
 }
