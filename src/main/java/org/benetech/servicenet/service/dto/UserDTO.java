@@ -67,6 +67,12 @@ public class UserDTO {
 
     private UUID siloId;
 
+    private String organizationName;
+
+    private String organizationUrl;
+
+    private String phoneNumber;
+
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -95,5 +101,8 @@ public class UserDTO {
                 .map(Organization::getId)
                 .collect(Collectors.toList());
         }
+        this.organizationName = userProfile.getOrganizationName();
+        this.organizationUrl = userProfile.getOrganizationUrl();
+        this.phoneNumber = userProfile.getPhoneNumber();
     }
 }

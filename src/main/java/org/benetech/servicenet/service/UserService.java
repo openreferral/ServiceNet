@@ -281,6 +281,9 @@ public class UserService {
         if (userProfile.getSilo() != null) {
             authUser.setSiloId(userProfile.getSilo().getId());
         }
+        authUser.setOrganizationName(userProfile.getOrganizationName());
+        authUser.setOrganizationUrl(userProfile.getOrganizationUrl());
+        authUser.setPhoneNumber(userProfile.getPhoneNumber());
         return authUser;
     }
 
@@ -346,6 +349,9 @@ public class UserService {
     private UserDTO createOrUpdateUserProfile(UserDTO authUser, UserDTO userDTO) {
         UserProfile userProfile = getOrCreateUserProfile(authUser.getId(), userDTO.getLogin());
         userProfile.setLogin(userDTO.getLogin().toLowerCase(Locale.ROOT));
+        userProfile.setOrganizationName(userDTO.getOrganizationName());
+        userProfile.setOrganizationUrl(userDTO.getOrganizationUrl());
+        userProfile.setPhoneNumber(userDTO.getPhoneNumber());
         userProfile.setSystemAccount(getSystemAccount(userDTO));
         userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
         userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
