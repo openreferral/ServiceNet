@@ -34,9 +34,9 @@ public final class Constants {
 
     public static final String SPRING_PROFILE_STAGING = "staging";
 
-    public static final String URL_REGEX = "^((http|https)://)?(www.)?[0-9a-zA-Z\\-]+\\..+$";
+    public static final String URL_REGEX = "^(((http|https)://)?(www.)?[0-9a-zA-Z\\-]+\\..+$)?";
 
-    public static final String PHONE_REGEX = "^\\([0-9]{3}\\)\\-[0-9]{3}\\-[0-9]{4}$";
+    public static final String PHONE_REGEX = "^(\\([0-9]{3}\\)\\-[0-9]{3}\\-[0-9]{4})?$";
 
     private Constants() {
     }
