@@ -87,10 +87,14 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
                 .setParameter("lon", filters.getLongitude())
                 .getResultList();
 
-            total = em.createQuery(countCriteria)
-                .setParameter("lat", filters.getLatitude())
-                .setParameter("lon", filters.getLongitude())
-                .getSingleResult();
+            if (results != null && results.size() > 0) {
+                total = em.createQuery(countCriteria)
+                    .setParameter("lat", filters.getLatitude())
+                    .setParameter("lon", filters.getLongitude())
+                    .getSingleResult();
+            } else {
+                total = 0L;
+            }
         } else {
             results = query.getResultList();
 
