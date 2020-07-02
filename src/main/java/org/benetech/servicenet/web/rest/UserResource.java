@@ -214,4 +214,22 @@ public class UserResource {
                 .createEntityCreationAlert("user", user.getLogin()))
             .body(user);
     }
+
+    /**
+     * {@code PUT  /account : update user account.
+     *
+     * @return the updated current user.
+     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
+     */
+    @PutMapping("/account")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UserDTO> updateAccount(
+        @Valid @RequestBody UserDTO userDTO
+    ) throws URISyntaxException {
+        UserDTO user = userService.updateUser(userDTO);
+        return ResponseEntity.ok()
+            .headers(org.benetech.servicenet.web.rest.util.HeaderUtil
+                .createEntityUpdateAlert("user", user.getLogin()))
+            .body(user);
+    }
 }
