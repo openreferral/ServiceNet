@@ -177,6 +177,12 @@ public class UserService {
                     u.setSystemAccountId(systemAccount.getId());
                     u.setSystemAccountName(systemAccount.getName());
                 }
+                if (userProfile.getSilo() != null) {
+                    u.setSiloId(userProfile.getSilo().getId());
+                }
+                u.setPhoneNumber(userProfile.getPhoneNumber());
+                u.setOrganizationName(userProfile.getOrganizationName());
+                u.setOrganizationUrl(userProfile.getOrganizationUrl());
             }
             return u;
         });
