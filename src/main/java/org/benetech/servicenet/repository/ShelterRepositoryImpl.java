@@ -98,7 +98,11 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
         } else {
             results = query.getResultList();
 
-            total = em.createQuery(countCriteria).getSingleResult();
+            if (results != null && results.size() > 0) {
+                total = em.createQuery(countCriteria).getSingleResult();
+            } else {
+                total = 0L;
+            }
         }
 
         return new PageImpl<>(results, pageable, total.intValue());
