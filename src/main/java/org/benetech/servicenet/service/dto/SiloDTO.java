@@ -13,6 +13,8 @@ public class SiloDTO implements Serializable {
 
     private String name;
 
+    private boolean isPublic = false;
+
     public UUID getId() {
         return id;
     }
@@ -56,5 +58,13 @@ public class SiloDTO implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             "}";
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 }

@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
@@ -39,6 +40,10 @@ public class Silo implements Serializable {
 
     @Column(name = "name", unique = true)
     private String name;
+
+    @NotNull
+    @Column(name = "is_public", nullable = false)
+    private Boolean isPublic = false;
 
     @OneToMany(mappedBy = "silo")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -73,6 +78,14 @@ public class Silo implements Serializable {
     public Silo userProfiles(Set<UserProfile> userProfiles) {
         this.userProfiles = userProfiles;
         return this;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public Silo addUserProfiles(UserProfile userProfile) {
