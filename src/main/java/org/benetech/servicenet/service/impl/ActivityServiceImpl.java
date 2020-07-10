@@ -168,16 +168,13 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO,
-        String search, Pageable pageable) {
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap() {
         UserProfile userProfile = userService.getCurrentUserProfile();
-        Page<Organization> organizations = providerRecordsRepository
-            .findAllWithFilters(userProfile, providerFilterDTO, search, pageable);
-        Page<ProviderRecordDTO> providerRecordDTOS = organizations.map(this::getProviderRecordDTO);
-        List<ProviderRecordForMapDTO> providerRecordForMapDTOS = providerRecordDTOS.stream()
-            .map(this::toProviderRecordForMapDTO)
-            .collect(Collectors.toCollection(ArrayList::new));
-        return new PageImpl<ProviderRecordForMapDTO>(providerRecordForMapDTOS);
+        Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
+            .findAllWithFiltersForMap(userProfile)
+            .map(this::getProviderRecordDTO)
+            .map(this::toProviderRecordForMapDTO);
+        return providerRecordForMapDTOList;
     }
 
     @Override
