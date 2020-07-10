@@ -32,7 +32,7 @@ public interface ActivityService {
 
     Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO, String search, Pageable pageable);
 
-    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO, String search, Pageable pageable);
+    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap();
 
     List<DeactivatedOrganizationDTO> getAllDeactivatedRecords();
 
