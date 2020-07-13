@@ -91,6 +91,22 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
+    public Page<Organization> findAllWithFiltersForMap(UserProfile userProfile) {
+
+        CriteriaQuery<Organization> queryCriteria = cb.createQuery(Organization.class);
+        Root<Organization> selectRoot = queryCriteria.from(Organization.class);
+        queryCriteria.select(selectRoot);
+
+        addFilters(queryCriteria, selectRoot, userProfile);
+        queryCriteria.groupBy(selectRoot.get(ID));
+
+        Query query = em.createQuery(queryCriteria);
+
+        List<Organization> results = query.getResultList();
+
+        return new PageImpl<>(results);
+    }
+
     private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, UserProfile userProfile,
         ProviderFilterDTO providerFilterDTO, String search) {
         Predicate predicate = cb.conjunction();
@@ -116,6 +132,26 @@ public class ProviderRecordsRepository {
         predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
         predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin);
+
+        query.where(predicate);
+    }
+
+    private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, UserProfile userProfile) {
+        Predicate predicate = cb.conjunction();
+
+        Join<Organization, SystemAccount> systemAccountJoin = root.join(ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = root.join(USER_PROFILES, JoinType.LEFT);
+        Join<Organization, Service> serviceJoin = root.join(SERVICES, JoinType.LEFT);
+
+        Silo silo = userProfile.getSilo();
+
+        predicate = cb.equal(root.get(ACTIVE), true);
+
+        predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
+
+        predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
+
+        predicate = cb.and(predicate, cb.notEqual(userProfileJoin.get(ID), userProfile.getId()));
 
         query.where(predicate);
     }

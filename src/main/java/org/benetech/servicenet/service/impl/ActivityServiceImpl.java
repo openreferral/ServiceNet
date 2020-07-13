@@ -2,11 +2,13 @@ package org.benetech.servicenet.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ExclusionsConfig;
@@ -24,7 +26,10 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
+import org.benetech.servicenet.service.dto.GeocodingResultDTO;
+import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
@@ -162,6 +167,24 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap() {
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
+            .findAllWithFiltersForMap(userProfile)
+            .map(this::getProviderRecordDTO)
+            .map(this::toProviderRecordForMapDTO);
+        return providerRecordForMapDTOList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProviderRecordDTO getPartnerActivityById(UUID id) {
+        Optional<Organization> optOrganization = organizationService.findOne(id);
+        return optOrganization.map(this::getProviderRecordDTO).orElse(null);
+    }
+
+    @Override
     public Suggestions getNameSuggestions(
         ActivityFilterDTO activityFilterDTO, UUID systemAccountId, String search) {
 
@@ -209,5 +232,16 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (IllegalAccessException e) {
             return null;
         }
+    }
+
+    private ProviderRecordForMapDTO toProviderRecordForMapDTO(ProviderRecordDTO providerRecordDTO) {
+        Set<LocationRecordDTO> locationRecordDTOS = providerRecordDTO.getLocations();
+        Set<GeocodingResultDTO> geocodingResultDTOS = new HashSet<>();
+        locationRecordDTOS.forEach(locationRecordDTO -> geocodingResultDTOS
+            .addAll(locationRecordDTO.getLocation().getGeocodingResults())
+        );
+        return new ProviderRecordForMapDTO(
+            providerRecordDTO.getOrganization().getId(), geocodingResultDTOS
+        );
     }
 }

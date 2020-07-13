@@ -7,6 +7,7 @@ import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
@@ -31,5 +32,9 @@ public interface ActivityService {
 
     Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO, String search, Pageable pageable);
 
+    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap();
+
     List<DeactivatedOrganizationDTO> getAllDeactivatedRecords();
+
+    ProviderRecordDTO getPartnerActivityById(UUID id);
 }

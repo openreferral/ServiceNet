@@ -16,6 +16,7 @@ import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
@@ -114,6 +115,20 @@ public class ActivityResource {
         Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(providerFilterDTO, search, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/all-provider-records-map")
+    @Timed
+    public ResponseEntity<List<ProviderRecordForMapDTO>> getAllProviderActivitiesForMap() {
+        Page<ProviderRecordForMapDTO> page = activityService.getAllPartnerActivitiesForMap();
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records-map");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/select-record/{orgId}")
+    @Timed
+    public ResponseEntity<ProviderRecordDTO> getSelectedRecord(@PathVariable UUID orgId) {
+        return ResponseEntity.ok().body(activityService.getPartnerActivityById(orgId));
     }
 
     @PostMapping("/activity-suggestions")
