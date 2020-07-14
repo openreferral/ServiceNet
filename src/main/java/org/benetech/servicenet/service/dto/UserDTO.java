@@ -5,6 +5,7 @@ import lombok.Data;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
+import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 
 import javax.validation.constraints.Email;
@@ -73,6 +74,8 @@ public class UserDTO {
 
     private String phoneNumber;
 
+    private List<UUID> userGroups;
+
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -104,5 +107,10 @@ public class UserDTO {
         this.organizationName = userProfile.getOrganizationName();
         this.organizationUrl = userProfile.getOrganizationUrl();
         this.phoneNumber = userProfile.getPhoneNumber();
+        if (userProfile.getUserGroups() != null) {
+            this.userGroups = userProfile.getUserGroups().stream()
+            .map(UserGroup::getId)
+            .collect(Collectors.toList());
+        }
     }
 }

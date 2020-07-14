@@ -18,10 +18,12 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.DailyUpdateService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LocationService;
@@ -86,13 +88,16 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final EligibilityService eligibilityService;
 
+    private final UserProfileRepository userProfileRepository;
+
     @SuppressWarnings("checkstyle:ParameterNumber")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
         ServiceMapper serviceMapper, LocationMapper locationMapper, LocationService locationService,
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
         TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
-        DailyUpdateService dailyUpdateService, EligibilityService eligibilityService) {
+        DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
+        UserProfileRepository userProfileRepository) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -106,6 +111,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.serviceTaxonomyService = serviceTaxonomyService;
         this.dailyUpdateService = dailyUpdateService;
         this.eligibilityService = eligibilityService;
+        this.userProfileRepository = userProfileRepository;
     }
 
     /**
@@ -217,6 +223,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<Organization> findAllByUserProfile(UserProfile userProfile) {
         log.debug("Request to get all Organizations which are associated with userProfile: {}", userProfile);
         return organizationRepository.findAllWithUserProfile(userProfile);
+    }
+
+    @Override
+    public List<Organization> findAllByUserGroups(List<UserGroup> userGroups) {
+        List<UserProfile> userProfiles = userProfileRepository.findAllWithUserGroups(userGroups);
+        return organizationRepository.findAllWithUserProfiles(userProfiles);
     }
 
     @Override

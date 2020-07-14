@@ -9,6 +9,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.errors.HystrixBadRequestAlertException;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
@@ -17,6 +18,7 @@ import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
+import org.benetech.servicenet.repository.UserGroupRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.security.SecurityUtils;
@@ -77,6 +79,9 @@ public class UserService {
 
     @Autowired
     private SiloRepository siloRepository;
+
+    @Autowired
+    private UserGroupRepository userGroupRepository;
 
     /**
      * Create a new user.
@@ -290,6 +295,11 @@ public class UserService {
         authUser.setOrganizationName(userProfile.getOrganizationName());
         authUser.setOrganizationUrl(userProfile.getOrganizationUrl());
         authUser.setPhoneNumber(userProfile.getPhoneNumber());
+        if (userProfile.getUserGroups() != null) {
+            authUser.setUserGroups(userProfile.getUserGroups().stream()
+                .map(UserGroup::getId)
+                .collect(Collectors.toList()));
+        }
         return authUser;
     }
 
@@ -342,6 +352,16 @@ public class UserService {
         }
     }
 
+    private Set<UserGroup> userGroupsFromUUIDs(List<UUID> uuids) {
+        if (uuids != null) {
+            return uuids.stream()
+                .map(uuid -> userGroupRepository.getOne(uuid))
+                .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
     private Set<Organization> organizationsFromUUIDs(List<UUID> uuids) {
         if (uuids != null) {
             return uuids.stream()
@@ -361,6 +381,7 @@ public class UserService {
         userProfile.setSystemAccount(getSystemAccount(userDTO));
         userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
         userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
+        userProfile.setUserGroups(userGroupsFromUUIDs(userDTO.getUserGroups()));
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);

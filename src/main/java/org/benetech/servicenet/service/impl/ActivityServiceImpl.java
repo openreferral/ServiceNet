@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.repository.ActivityRepository;
@@ -149,7 +150,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional(readOnly = true)
     public List<ProviderRecordDTO> getPartnerActivitiesForCurrentUser() {
         UserProfile userProfile = userService.getCurrentUserProfile();
-        List<Organization> organizations = organizationService.findAllByUserProfile(userProfile);
+        Set<UserGroup> userGroups = userProfile.getUserGroups();
+        List<Organization> organizations = organizationService.findAllByUserGroups(new ArrayList<>(userGroups));
         return organizations.stream()
             .map(this::getProviderRecordDTO)
             .filter(Objects::nonNull)

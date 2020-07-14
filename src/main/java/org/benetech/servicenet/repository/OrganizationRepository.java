@@ -26,6 +26,11 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE :userProfile MEMBER OF org.userProfiles AND org.active = true")
     List<Organization> findAllWithUserProfile(@Param("userProfile") UserProfile userProfile);
 
+    @Query(value = "SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.userProfiles profile "
+        + "WHERE profile IN (:userProfiles) AND org.active = true")
+    List<Organization> findAllWithUserProfiles(@Param("userProfiles") List<UserProfile> userProfiles);
+
     @Query("SELECT org FROM Organization org WHERE org.id = :id AND :userProfile MEMBER OF org.userProfiles")
     Optional<Organization> findOneWithIdAndUserProfile(@Param("id") UUID id, @Param("userProfile") UserProfile userProfile);
 

@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.HashSet;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -93,6 +94,14 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     @ManyToOne
     @JsonIgnoreProperties("")
     private Silo silo;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "user_profile_user_groups",
+        joinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "user_group_id", referencedColumnName = "id"))
+    private Set<UserGroup> userGroups = new HashSet<>();
 
     @Lob
     @Type(type = "org.hibernate.type.TextType")

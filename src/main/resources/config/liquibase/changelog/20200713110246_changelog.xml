@@ -1,0 +1,37 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="kdondziak" id="1594638189047-2">
+        <createTable tableName="user_group">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_groupPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="silo_id" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="kdondziak" id="1594638189047-3">
+        <createTable tableName="user_profile_user_groups">
+            <column name="user_profile_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_group_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="kdondziak" id="1594638189047-4">
+        <addPrimaryKey columnNames="user_group_id, user_profile_id" tableName="user_profile_user_groups"/>
+    </changeSet>
+    <changeSet author="kdondziak" id="1594638189047-5">
+        <addUniqueConstraint columnNames="name" constraintName="UC_USER_GROUPNAME_COL" tableName="user_group"/>
+    </changeSet>
+    <changeSet author="kdondziak" id="1594638189047-6">
+        <addForeignKeyConstraint baseColumnNames="user_group_id" baseTableName="user_profile_user_groups" constraintName="FK8rud3wps72n1kj5frwavw2fv9" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="user_group" validate="true"/>
+    </changeSet>
+    <changeSet author="kdondziak" id="1594638189047-7">
+        <addForeignKeyConstraint baseColumnNames="silo_id" baseTableName="user_group" constraintName="FKgplsi5dksss6sbjldet24f5w2" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="silo" validate="true"/>
+    </changeSet>
+    <changeSet author="kdondziak" id="1594638189047-8">
+        <addForeignKeyConstraint baseColumnNames="user_profile_id" baseTableName="user_profile_user_groups" constraintName="FKqmedu4sw6bdjb9v5ip9h3oukk" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="user_profile" validate="true"/>
+    </changeSet>
+</databaseChangeLog>
