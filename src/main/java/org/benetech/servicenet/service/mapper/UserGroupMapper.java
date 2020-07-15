@@ -1,11 +1,10 @@
 package org.benetech.servicenet.service.mapper;
 
-
 import java.util.UUID;
-import org.benetech.servicenet.domain.*;
+import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.service.dto.UserGroupDTO;
-
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for the entity {@link UserGroup} and its DTO {@link UserGroupDTO}.
