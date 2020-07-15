@@ -145,7 +145,7 @@ public class OrganizationResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Optional<Organization> existingOrganization = organizationService
-            .findOneWithIdAndUserProfile(organizationDTO.getId(), userService.getCurrentUserProfile());
+            .findOneWithIdAndUserProfileInUserGroups(organizationDTO.getId(), userService.getCurrentUserProfile());
         if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException(
                 "You are not allowed to edit this organization",
@@ -237,7 +237,7 @@ public class OrganizationResource {
     public ResponseEntity<Void> deleteOrganizationUserOwned(@PathVariable UUID id) {
         log.debug("REST request to delete Organization : {}", id);
         Optional<Organization> existingOrganization = organizationService
-            .findOneWithIdAndUserProfile(id, userService.getCurrentUserProfile());
+            .findOneWithIdAndUserProfileInUserGroups(id, userService.getCurrentUserProfile());
         if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException("You are not allowed to delete this organization", ENTITY_NAME, "cantdelete");
         }
@@ -256,7 +256,7 @@ public class OrganizationResource {
     public ResponseEntity<Void> deactivateOrganization(@PathVariable UUID id) {
         log.debug("REST request to deactivate Organization : {}", id);
         Optional<Organization> existingOrganization = organizationService
-            .findOneWithIdAndUserProfile(id, userService.getCurrentUserProfile());
+            .findOneWithIdAndUserProfileInUserGroups(id, userService.getCurrentUserProfile());
         if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException(
                 "You are not allowed to deactivate this organization",
@@ -277,9 +277,9 @@ public class OrganizationResource {
     @PostMapping("/organizations/reactivate/{id}")
     @Timed
     public ResponseEntity<List<DeactivatedOrganizationDTO>> reactivateOrganization(@PathVariable UUID id) {
-        log.debug("REST request to deactivate Organization : {}", id);
+        log.debug("REST request to reactivate Organization : {}", id);
         Optional<Organization> existingOrganization = organizationService
-            .findOneWithIdAndUserProfile(id, userService.getCurrentUserProfile());
+            .findOneWithIdAndUserProfileInUserGroupsAndNotActive(id, userService.getCurrentUserProfile());
         if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException(
                 "You are not allowed to deactivate this organization",

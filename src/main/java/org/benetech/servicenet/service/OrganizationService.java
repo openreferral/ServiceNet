@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
@@ -127,4 +128,10 @@ public interface OrganizationService {
     Optional<Organization> findOneWithIdAndUserProfile(UUID id, UserProfile userProfile);
 
     List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser();
+
+    List<Organization> findAllByUserGroups(List<UserGroup> userGroups);
+
+    Optional<Organization> findOneWithIdAndUserProfileInUserGroups(UUID id, UserProfile userProfile);
+
+    Optional<Organization> findOneWithIdAndUserProfileInUserGroupsAndNotActive(UUID id, UserProfile userProfile);
 }

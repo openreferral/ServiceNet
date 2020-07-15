@@ -3,9 +3,11 @@ package org.benetech.servicenet.service.mapper;
 import java.util.Collections;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Shelter;
+import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
+import org.benetech.servicenet.repository.UserGroupRepository;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.springframework.stereotype.Service;
@@ -32,12 +34,16 @@ public class UserMapper {
 
     private OrganizationRepository organizationRepository;
 
+    private UserGroupRepository userGroupRepository;
+
     public UserMapper(SystemAccountMapper systemAccountMapper, ShelterRepository shelterRepository,
-        UserService userService, OrganizationRepository organizationRepository) {
+        UserService userService, OrganizationRepository organizationRepository,
+        UserGroupRepository userGroupRepository) {
         this.userService = userService;
         this.systemAccountMapper = systemAccountMapper;
         this.shelterRepository = shelterRepository;
         this.organizationRepository = organizationRepository;
+        this.userGroupRepository = userGroupRepository;
     }
 
     public UserDTO userToUserDTO(UserProfile userProfile) {
@@ -63,6 +69,7 @@ public class UserMapper {
             userProfile.setShelters(this.sheltersFromUUIDs(userDTO.getShelters()));
             userProfile.setOrganizations(this.organizationsFromUUIDs(userDTO.getOrganizations()));
             userProfile.setSystemAccount(systemAccountMapper.fromId(userDTO.getSystemAccountId()));
+            userProfile.setUserGroups(this.userGroupsFromUUIDs(userDTO.getUserGroups()));
             return userProfile;
         }
     }
@@ -97,6 +104,16 @@ public class UserMapper {
         if (uuids != null) {
             return uuids.stream()
                 .map(uuid -> organizationRepository.getOne(uuid))
+                .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
+    private Set<UserGroup> userGroupsFromUUIDs(List<UUID> uuids) {
+        if (uuids != null) {
+            return uuids.stream()
+                .map(uuid -> userGroupRepository.getOne(uuid))
                 .collect(Collectors.toSet());
         } else {
             return Collections.emptySet();

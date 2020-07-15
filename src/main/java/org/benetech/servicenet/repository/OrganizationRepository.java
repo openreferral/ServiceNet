@@ -26,6 +26,27 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE :userProfile MEMBER OF org.userProfiles AND org.active = true")
     List<Organization> findAllWithUserProfile(@Param("userProfile") UserProfile userProfile);
 
+    @Query(value = "SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.userProfiles profile "
+        + "WHERE profile IN (:userProfiles) AND org.active = true")
+    List<Organization> findAllWithUserProfiles(@Param("userProfiles") List<UserProfile> userProfiles);
+
+    @Query(value = "SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.userProfiles profile "
+        + "WHERE profile IN (:userProfiles) "
+        + "AND org.id = :id "
+        + "AND org.active = true")
+    Optional<Organization> findAllWithIdAndUserProfiles(@Param("id") UUID id,
+        @Param("userProfiles") List<UserProfile> userProfiles);
+
+    @Query(value = "SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.userProfiles profile "
+        + "WHERE profile IN (:userProfiles) "
+        + "AND org.id = :id "
+        + "AND org.active = false")
+    Optional<Organization> findAllWithIdAndUserProfilesAndNotActive(@Param("id") UUID id,
+        @Param("userProfiles") List<UserProfile> userProfiles);
+
     @Query("SELECT org FROM Organization org WHERE org.id = :id AND :userProfile MEMBER OF org.userProfiles")
     Optional<Organization> findOneWithIdAndUserProfile(@Param("id") UUID id, @Param("userProfile") UserProfile userProfile);
 
@@ -40,6 +61,14 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         + "AND :userProfile MEMBER OF org.userProfiles")
     List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser(@Param("accountName") String accountName,
         @Param("userProfile") UserProfile userProfile);
+
+    @Query("SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.userProfiles profile "
+        + "WHERE org.account.name = :accountName "
+        + "AND org.active = false "
+        + "AND profile IN :userProfiles")
+    List<Organization> findAllByAccountNameAndNotActiveAndCurrentUserInUserGroups(@Param("accountName") String accountName,
+        @Param("userProfiles") List<UserProfile> userProfiles);
 
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     Page<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
