@@ -24,8 +24,13 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link UserGroupResource} REST controller.
@@ -66,6 +71,7 @@ public class UserGroupResourceIT {
             .name(DEFAULT_NAME);
         return userGroup;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -121,7 +127,6 @@ public class UserGroupResourceIT {
         assertThat(userGroupList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
     public void getAllUserGroups() throws Exception {
@@ -149,6 +154,7 @@ public class UserGroupResourceIT {
             .andExpect(jsonPath("$.id").value(userGroup.getId()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
     }
+
     @Test
     @Transactional
     public void getNonExistingUserGroup() throws Exception {

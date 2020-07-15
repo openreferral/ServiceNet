@@ -3,42 +3,21 @@ package org.benetech.servicenet.service.dto;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * A DTO for the {@link org.benetech.servicenet.domain.UserGroup} entity.
  */
+@Getter
+@Setter
 public class UserGroupDTO implements Serializable {
 
     private UUID id;
 
     private String name;
 
-
     private UUID siloId;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public UUID getSiloId() {
-        return siloId;
-    }
-
-    public void setSiloId(UUID siloId) {
-        this.siloId = siloId;
-    }
 
     @Override
     public boolean equals(Object o) {

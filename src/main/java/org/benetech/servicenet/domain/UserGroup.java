@@ -5,12 +5,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
 
 import java.io.Serializable;
 import org.hibernate.annotations.GenericGenerator;
@@ -22,6 +31,8 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "user_group")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class UserGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,6 +43,7 @@ public class UserGroup implements Serializable {
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
+
     private UUID id;
 
     @Column(name = "name", unique = true)
@@ -50,29 +62,10 @@ public class UserGroup implements Serializable {
     private Set<UserProfile> userProfiles;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     public UserGroup name(String name) {
         this.name = name;
         return this;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Silo getSilo() {
-        return silo;
     }
 
     public UserGroup silo(Silo silo) {
@@ -80,9 +73,6 @@ public class UserGroup implements Serializable {
         return this;
     }
 
-    public void setSilo(Silo silo) {
-        this.silo = silo;
-    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

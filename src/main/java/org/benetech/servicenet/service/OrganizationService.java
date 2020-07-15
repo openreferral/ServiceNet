@@ -130,4 +130,8 @@ public interface OrganizationService {
     List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser();
 
     List<Organization> findAllByUserGroups(List<UserGroup> userGroups);
+
+    Optional<Organization> findOneWithIdAndUserProfileInUserGroups(UUID id, UserProfile userProfile);
+
+    Optional<Organization> findOneWithIdAndUserProfileInUserGroupsAndNotActive(UUID id, UserProfile userProfile);
 }

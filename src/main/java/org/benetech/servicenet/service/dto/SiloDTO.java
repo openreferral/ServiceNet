@@ -13,7 +13,7 @@ public class SiloDTO implements Serializable {
 
     private String name;
 
-    private boolean isPublic = false;
+    private boolean isPublic;
 
     public UUID getId() {
         return id;

@@ -33,6 +33,7 @@ import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
+import org.benetech.servicenet.service.UserGroupService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
@@ -90,6 +91,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final UserProfileRepository userProfileRepository;
 
+    private final UserGroupService userGroupService;
+
     @SuppressWarnings("checkstyle:ParameterNumber")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
@@ -97,7 +100,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
         TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
-        UserProfileRepository userProfileRepository) {
+        UserProfileRepository userProfileRepository,
+        UserGroupService userGroupService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -112,6 +116,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.dailyUpdateService = dailyUpdateService;
         this.eligibilityService = eligibilityService;
         this.userProfileRepository = userProfileRepository;
+        this.userGroupService = userGroupService;
     }
 
     /**
@@ -368,6 +373,22 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.findOneWithIdAndUserProfile(id, userProfile);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Organization> findOneWithIdAndUserProfileInUserGroups(UUID id, UserProfile userProfile) {
+        List<UserGroup> userGroups = new ArrayList<>(userProfile.getUserGroups());
+        List<UserProfile> userProfiles = userProfileRepository.findAllWithUserGroups(userGroups);
+        return organizationRepository.findAllWithIdAndUserProfiles(id, userProfiles);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Organization> findOneWithIdAndUserProfileInUserGroupsAndNotActive(UUID id, UserProfile userProfile) {
+        List<UserGroup> userGroups = new ArrayList<>(userProfile.getUserGroups());
+        List<UserProfile> userProfiles = userProfileRepository.findAllWithUserGroups(userGroups);
+        return organizationRepository.findAllWithIdAndUserProfilesAndNotActive(id, userProfiles);
+    }
+
     /**
      * Delete the organization by id.
      *
@@ -415,8 +436,10 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser() {
         log.debug("Request to get deactivated organizations");
         UserProfile userProfile = userService.getCurrentUserProfile();
+        List<UserGroup> userGroups = new ArrayList<>(userProfile.getUserGroups());
+        List<UserProfile> userProfiles = userProfileRepository.findAllWithUserGroups(userGroups);
         List<Organization> organizations = organizationRepository
-            .findAllByAccountNameAndNotActiveAndCurrentUser(SERVICE_PROVIDER, userProfile);
+            .findAllByAccountNameAndNotActiveAndCurrentUserInUserGroups(SERVICE_PROVIDER, userProfiles);
         return organizations;
     }
 

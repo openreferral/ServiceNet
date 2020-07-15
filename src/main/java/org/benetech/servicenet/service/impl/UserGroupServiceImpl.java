@@ -50,7 +50,6 @@ public class UserGroupServiceImpl implements UserGroupService {
             .map(userGroupMapper::toDto);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public Optional<UserGroupDTO> findOne(UUID id) {
