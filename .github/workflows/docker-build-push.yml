@@ -2,7 +2,7 @@ name: Build Docker image with Jib, tag and push to Docker Hub
 
 on:
   push:
-    branches: [ dev, master ]
+    branches: [ dev, staging, master ]
 
 jobs:
   docker-build-push:
@@ -11,6 +11,9 @@ jobs:
     - name: Set container tag to 'dev'
       if: endsWith(github.ref, '/dev')
       run: echo "::set-env name=CONTAINER_TAG::dev"
+    - name: Set container tag to 'staging'
+      if: endsWith(github.ref, '/staging')
+      run: echo "::set-env name=CONTAINER_TAG::staging"
     - name: Set container tag to 'latest'
       if: endsWith(github.ref, '/master')
       run: echo "::set-env name=CONTAINER_TAG::latest"
