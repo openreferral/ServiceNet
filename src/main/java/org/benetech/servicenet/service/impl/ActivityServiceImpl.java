@@ -151,7 +151,12 @@ public class ActivityServiceImpl implements ActivityService {
     public List<ProviderRecordDTO> getPartnerActivitiesForCurrentUser() {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Set<UserGroup> userGroups = userProfile.getUserGroups();
-        List<Organization> organizations = organizationService.findAllByUserGroups(new ArrayList<>(userGroups));
+        List<Organization> organizations;
+        if (userGroups == null || userGroups.isEmpty()) {
+            organizations = organizationService.findAllByUserProfile(userProfile);
+        } else {
+            organizations = organizationService.findAllByUserGroups(new ArrayList<>(userGroups));
+        }
         return organizations.stream()
             .map(this::getProviderRecordDTO)
             .filter(Objects::nonNull)

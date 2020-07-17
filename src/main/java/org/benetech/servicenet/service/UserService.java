@@ -3,6 +3,7 @@ package org.benetech.servicenet.service;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Organization;
@@ -355,6 +356,7 @@ public class UserService {
     private Set<UserGroup> userGroupsFromUUIDs(List<UUID> uuids) {
         if (uuids != null) {
             return uuids.stream()
+                .filter(Objects::nonNull)
                 .map(uuid -> userGroupRepository.getOne(uuid))
                 .collect(Collectors.toSet());
         } else {
