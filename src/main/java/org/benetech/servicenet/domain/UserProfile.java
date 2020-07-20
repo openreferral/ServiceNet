@@ -97,7 +97,6 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "user_profile_user_groups",
         joinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "user_group_id", referencedColumnName = "id"))
