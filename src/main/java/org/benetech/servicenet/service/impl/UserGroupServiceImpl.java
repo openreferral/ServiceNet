@@ -37,11 +37,17 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     public UserGroupDTO save(UserGroupDTO userGroupDTO) {
         log.debug("Request to save UserGroup : {}", userGroupDTO);
-        UserGroup existingUserGroup = userGroupRepository.getOne(userGroupDTO.getId());
-        UserGroup userGroup = userGroupMapper.toEntity(userGroupDTO);
-        userGroup.setUserProfiles(existingUserGroup.getUserProfiles());
-        userGroup = userGroupRepository.save(userGroup);
-        return userGroupMapper.toDto(userGroup);
+        if (userGroupDTO.getId() != null) {
+            UserGroup existingUserGroup = userGroupRepository.getOne(userGroupDTO.getId());
+            UserGroup userGroup = userGroupMapper.toEntity(userGroupDTO);
+            userGroup.setUserProfiles(existingUserGroup.getUserProfiles());
+            userGroup = userGroupRepository.save(userGroup);
+            return userGroupMapper.toDto(userGroup);
+        } else {
+            UserGroup userGroup = userGroupMapper.toEntity(userGroupDTO);
+            userGroup = userGroupRepository.save(userGroup);
+            return userGroupMapper.toDto(userGroup);
+        }
     }
 
     @Override
