@@ -3,6 +3,7 @@ package org.benetech.servicenet.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
@@ -34,7 +35,15 @@ public interface ActivityService {
 
     Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap();
 
+    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(Silo silo);
+
     List<DeactivatedOrganizationDTO> getAllDeactivatedRecords();
 
     ProviderRecordDTO getPartnerActivityById(UUID id);
+
+    ProviderRecordDTO getPartnerActivityById(UUID id, Silo silo);
+
+    Page<ProviderRecordDTO> getAllPartnerActivitiesPublic(ProviderFilterDTO providerFilterDTO,
+        Silo silo, String search, Pageable pageable);
+
 }
