@@ -17,6 +17,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
@@ -331,10 +332,33 @@ public class OrganizationServiceImpl implements OrganizationService {
         return findOne(id).map(this::mapToSimpleDto);
     }
 
+    /**
+     * Get one organization by id and silo for provider view.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<SimpleOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo) {
+        log.debug("Request to get Organization : {}", id);
+        Optional<Organization> optionalOrganization = findOneByIdAndSilo(id, silo);
+        if (optionalOrganization.isEmpty()) {
+            throw new BadRequestAlertException("There is no organization with this id and silo", "providerRecord", "idnull");
+        }
+        return optionalOrganization.map(this::mapToSimpleDto);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Optional<Organization> findOne(UUID id) {
         return organizationRepository.findById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Organization> findOneByIdAndSilo(UUID id, Silo silo) {
+        return organizationRepository.findByIdAndSilo(id, silo);
     }
 
     @Override

@@ -13,9 +13,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.view.ActivityInfo;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.repository.ProviderRecordsRepository;
 import org.benetech.servicenet.service.ActivityService;
@@ -175,6 +177,15 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ProviderRecordDTO> getAllPartnerActivitiesPublic(ProviderFilterDTO providerFilterDTO,
+        Silo silo, String search, Pageable pageable) {
+        Page<Organization> organizations = providerRecordsRepository
+            .findAllWithFiltersPublic(providerFilterDTO, silo, search, pageable);
+        return organizations.map(this::getProviderRecordDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap() {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
@@ -186,8 +197,28 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(Silo silo) {
+        Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
+            .findAllWithFiltersForMap(silo)
+            .map(this::getProviderRecordDTO)
+            .map(this::toProviderRecordForMapDTO);
+        return providerRecordForMapDTOList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ProviderRecordDTO getPartnerActivityById(UUID id) {
         Optional<Organization> optOrganization = organizationService.findOne(id);
+        return optOrganization.map(this::getProviderRecordDTO).orElse(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProviderRecordDTO getPartnerActivityById(UUID id, Silo silo) {
+        Optional<Organization> optOrganization = organizationService.findOneByIdAndSilo(id, silo);
+        if (optOrganization.isEmpty()) {
+            throw new BadRequestAlertException("There is no organization with this id and silo", "providerRecord", "idnull");
+        }
         return optOrganization.map(this::getProviderRecordDTO).orElse(null);
     }
 

@@ -2,6 +2,7 @@ package org.benetech.servicenet.service;
 
 import java.util.List;
 import java.util.UUID;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.service.dto.SiloDTO;
 
 import org.springframework.data.domain.Page;
@@ -53,6 +54,8 @@ public interface SiloService {
      * @return the entity.
      */
     Optional<SiloDTO> findOneByName(String name);
+
+    Optional<Silo> getOneByName(String name);
 
     /**
      * Delete the "id" silo.

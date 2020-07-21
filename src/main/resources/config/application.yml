@@ -185,7 +185,7 @@ jhipster:
   mail:
     from: ServiceNet@localhost
   swagger:
-    default-include-pattern: /(api|partner-api)/.*
+    default-include-pattern: /(api|partner-api|public-api)/.*
     title: ServiceNet Core API
     description: |
       ### ServiceNet Core service API documentation. To explore other services API documentation select proper definition:

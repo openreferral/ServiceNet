@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ActivityFilter;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.ActivityFilterRepository;
@@ -75,13 +76,28 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     }
 
     @Override
+    public Set<String> getPostalCodesForServiceProviders(Silo silo) {
+        return geocodingResultRepository.getDistinctPostalCodesFromGeoResultsForServiceProviders(silo);
+    }
+
+    @Override
     public Set<String> getRegionsForServiceProviders(UserProfile currentUserProfile) {
         return geocodingResultRepository.getDistinctRegionsFromGeoResultsForServiceProviders(currentUserProfile);
     }
 
     @Override
+    public Set<String> getRegionsForServiceProviders(Silo silo) {
+        return geocodingResultRepository.getDistinctRegionsFromGeoResultsForServiceProviders(silo);
+    }
+
+    @Override
     public Set<String> getCitiesForServiceProviders(UserProfile currentUserProfile) {
         return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders(currentUserProfile);
+    }
+
+    @Override
+    public Set<String> getCitiesForServiceProviders(Silo silo) {
+        return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders(silo);
     }
 
     @Override

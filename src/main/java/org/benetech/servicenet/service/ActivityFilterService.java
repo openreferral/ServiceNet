@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,14 @@ public interface ActivityFilterService {
     Set<String> getPostalCodesForServiceProviders(UserProfile currentUserProfile);
 
     /**
+     * Get all the Postal Codes
+     *
+     * @return the list of Postal Codes for Service Providers View
+     * @param silo
+     */
+    Set<String> getPostalCodesForServiceProviders(Silo silo);
+
+    /**
      * Get all the Regions
      *
      * @return the list of Regions for Service Providers View
@@ -60,12 +69,28 @@ public interface ActivityFilterService {
     Set<String> getRegionsForServiceProviders(UserProfile currentUserProfile);
 
     /**
+     * Get all the Regions
+     *
+     * @return the list of Regions for Service Providers View
+     * @param silo
+     */
+    Set<String> getRegionsForServiceProviders(Silo silo);
+
+    /**
      * Get all the Cities for Service Providers View
      *
      * @return the list of Cities
      * @param currentUserProfile
      */
     Set<String> getCitiesForServiceProviders(UserProfile currentUserProfile);
+
+    /**
+     * Get all the Cities for Service Providers View
+     *
+     * @return the list of Cities
+     * @param silo
+     */
+    Set<String> getCitiesForServiceProviders(Silo silo);
 
     /**
      * Save a activityFilter.
