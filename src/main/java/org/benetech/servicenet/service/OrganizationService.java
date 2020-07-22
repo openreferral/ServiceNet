@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
@@ -95,6 +96,8 @@ public interface OrganizationService {
 
     Optional<Organization> findOne(UUID id);
 
+    Optional<Organization> findOneByIdAndSilo(UUID id, Silo silo);
+
     Organization findOneWithEagerAssociations(UUID id);
 
     Optional<Organization> findByIdOrExternalDbId(String id, UUID providerId);
@@ -124,6 +127,8 @@ public interface OrganizationService {
     void reactivate(UUID id);
 
     Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id);
+
+    Optional<SimpleOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo);
 
     Optional<Organization> findOneWithIdAndUserProfile(UUID id, UserProfile userProfile);
 

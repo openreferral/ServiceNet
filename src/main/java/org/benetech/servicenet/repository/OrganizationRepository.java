@@ -1,6 +1,7 @@
 package org.benetech.servicenet.repository;
 
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -137,4 +138,11 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         @Param("id") UUID id,
         @Param("externalDbId") String externalDbId
     );
+
+    @Query("SELECT org from Organization org "
+        + "LEFT JOIN FETCH org.userProfiles profile "
+        + "WHERE org.id = :id AND "
+        + "org.active = true AND "
+        + "profile.silo = :silo")
+    Optional<Organization> findByIdAndSilo(@Param("id") UUID id,  @Param("silo") Silo silo);
 }
