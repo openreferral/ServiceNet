@@ -3,6 +3,7 @@ package org.benetech.servicenet.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -144,8 +145,15 @@ public class OrganizationResource {
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Optional<Organization> existingOrganization = organizationService
-            .findOneWithIdAndUserProfileInUserGroups(organizationDTO.getId(), userService.getCurrentUserProfile());
+        Optional<Organization> existingOrganization;
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        if (userProfile.getUserGroups().isEmpty()) {
+            existingOrganization = organizationService
+                .findOneWithIdAndUserProfile(organizationDTO.getId(), userProfile);
+        } else {
+            existingOrganization = organizationService
+                .findOneWithIdAndUserProfileInUserGroups(organizationDTO.getId(), userProfile);
+        }
         if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException(
                 "You are not allowed to edit this organization",
@@ -236,8 +244,15 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<Void> deleteOrganizationUserOwned(@PathVariable UUID id) {
         log.debug("REST request to delete Organization : {}", id);
-        Optional<Organization> existingOrganization = organizationService
-            .findOneWithIdAndUserProfileInUserGroups(id, userService.getCurrentUserProfile());
+        Optional<Organization> existingOrganization;
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        if (userProfile.getUserGroups().isEmpty()) {
+            existingOrganization = organizationService
+                .findOneWithIdAndUserProfile(id, userProfile);
+        } else {
+            existingOrganization = organizationService
+                .findOneWithIdAndUserProfileInUserGroups(id, userProfile);
+        }
         if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException("You are not allowed to delete this organization", ENTITY_NAME, "cantdelete");
         }
@@ -255,8 +270,15 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<Void> deactivateOrganization(@PathVariable UUID id) {
         log.debug("REST request to deactivate Organization : {}", id);
-        Optional<Organization> existingOrganization = organizationService
-            .findOneWithIdAndUserProfileInUserGroups(id, userService.getCurrentUserProfile());
+        Optional<Organization> existingOrganization;
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        if (userProfile.getUserGroups().isEmpty()) {
+            existingOrganization = organizationService
+                .findOneWithIdAndUserProfile(id, userProfile);
+        } else {
+            existingOrganization = organizationService
+                .findOneWithIdAndUserProfileInUserGroups(id, userProfile);
+        }
         if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException(
                 "You are not allowed to deactivate this organization",
@@ -278,8 +300,15 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<List<DeactivatedOrganizationDTO>> reactivateOrganization(@PathVariable UUID id) {
         log.debug("REST request to reactivate Organization : {}", id);
-        Optional<Organization> existingOrganization = organizationService
-            .findOneWithIdAndUserProfileInUserGroupsAndNotActive(id, userService.getCurrentUserProfile());
+        Optional<Organization> existingOrganization;
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        if (userProfile.getUserGroups().isEmpty()) {
+            existingOrganization = organizationService
+                .findOneWithIdAndUserProfileAndNotActive(id, userProfile);
+        } else {
+            existingOrganization = organizationService
+                .findOneWithIdAndUserProfileInUserGroupsAndNotActive(id, userProfile);
+        }
         if (existingOrganization.isEmpty()) {
             throw new BadRequestAlertException(
                 "You are not allowed to deactivate this organization",

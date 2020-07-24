@@ -139,4 +139,6 @@ public interface OrganizationService {
     Optional<Organization> findOneWithIdAndUserProfileInUserGroups(UUID id, UserProfile userProfile);
 
     Optional<Organization> findOneWithIdAndUserProfileInUserGroupsAndNotActive(UUID id, UserProfile userProfile);
+
+    Optional<Organization> findOneWithIdAndUserProfileAndNotActive(UUID id, UserProfile userProfile);
 }

@@ -4,6 +4,7 @@ import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -413,6 +414,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.findAllWithIdAndUserProfilesAndNotActive(id, userProfiles);
     }
 
+    @Override
+    public Optional<Organization> findOneWithIdAndUserProfileAndNotActive(UUID id, UserProfile userProfile) {
+        List<UserProfile> userProfiles = Collections.singletonList(userProfile);
+        return organizationRepository.findAllWithIdAndUserProfilesAndNotActive(id, userProfiles);
+    }
+
     /**
      * Delete the organization by id.
      *
@@ -461,9 +468,16 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to get deactivated organizations");
         UserProfile userProfile = userService.getCurrentUserProfile();
         List<UserGroup> userGroups = new ArrayList<>(userProfile.getUserGroups());
-        List<UserProfile> userProfiles = userProfileRepository.findAllWithUserGroups(userGroups);
-        List<Organization> organizations = organizationRepository
-            .findAllByAccountNameAndNotActiveAndCurrentUserInUserGroups(SERVICE_PROVIDER, userProfiles);
+        List<Organization> organizations;
+        if (userGroups.isEmpty()) {
+            organizations = organizationRepository
+                .findAllByAccountNameAndNotActiveAndCurrentUser(SERVICE_PROVIDER, userProfile);
+        } else {
+            List<UserProfile> userProfiles = userProfileRepository.findAllWithUserGroups(userGroups);
+            organizations = organizationRepository
+                .findAllByAccountNameAndNotActiveAndCurrentUserInUserGroups(SERVICE_PROVIDER, userProfiles);
+        }
+
         return organizations;
     }
 
