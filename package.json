@@ -9,7 +9,7 @@
   ],
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "1.0.10-4.2.3",
-    "generator-jhipster": "^6.8.0"
+    "generator-jhipster": "6.10.1"
   },
   "engines": {
     "node": ">=8.9.0"
