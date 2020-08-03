@@ -123,13 +123,14 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
-    public Page<Organization> findAllWithFiltersForMap(UserProfile userProfile) {
+    public Page<Organization> findAllWithFiltersForMap(UserProfile userProfile, ProviderFilterDTO providerFilterDTO,
+        String search) {
 
         CriteriaQuery<Organization> queryCriteria = cb.createQuery(Organization.class);
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
         queryCriteria.select(selectRoot);
 
-        addFilters(queryCriteria, selectRoot, userProfile);
+        addFilters(queryCriteria, selectRoot, userProfile, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(ID));
 
         Query query = em.createQuery(queryCriteria);
@@ -139,13 +140,14 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results);
     }
 
-    public Page<Organization> findAllWithFiltersForMap(Silo silo) {
+    public Page<Organization> findAllWithFiltersForMap(Silo silo, ProviderFilterDTO providerFilterDTO,
+        String search) {
 
         CriteriaQuery<Organization> queryCriteria = cb.createQuery(Organization.class);
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
         queryCriteria.select(selectRoot);
 
-        addFilters(queryCriteria, selectRoot, silo);
+        addFilters(queryCriteria, selectRoot, silo, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(ID));
 
         Query query = em.createQuery(queryCriteria);

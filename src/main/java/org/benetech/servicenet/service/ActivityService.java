@@ -33,9 +33,9 @@ public interface ActivityService {
 
     Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO, String search, Pageable pageable);
 
-    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap();
+    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO, String search);
 
-    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(Silo silo);
+    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO, String search, Silo silo);
 
     List<DeactivatedOrganizationDTO> getAllDeactivatedRecords();
 
