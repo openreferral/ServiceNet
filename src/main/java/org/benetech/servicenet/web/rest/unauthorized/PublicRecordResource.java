@@ -115,14 +115,16 @@ public class PublicRecordResource {
         return new ResponseEntity<>(taxonomies, HttpStatus.OK);
     }
 
-    @GetMapping("/all-provider-records-map")
+    @PostMapping("/all-provider-records-map")
     @Timed
     public ResponseEntity<List<ProviderRecordForMapDTO>> getAllProviderActivitiesForMap(
-        @RequestParam String siloName
+        @RequestParam String siloName, @RequestBody ProviderFilterDTO providerFilterDTO,
+        @RequestParam(required = false) String search
     ) {
         Optional<Silo> optSilo = siloService.getOneByName(siloName);
         this.checkSilo(optSilo);
-        Page<ProviderRecordForMapDTO> page = activityService.getAllPartnerActivitiesForMap(optSilo.get());
+        Page<ProviderRecordForMapDTO> page = activityService.getAllPartnerActivitiesForMap(
+            providerFilterDTO, search, optSilo.get());
         HttpHeaders headers = PaginationUtil
             .generatePaginationHttpHeaders(page, "/public-api/all-provider-records-map");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);

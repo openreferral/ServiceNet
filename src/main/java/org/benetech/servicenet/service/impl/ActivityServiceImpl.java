@@ -186,10 +186,11 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap() {
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO,
+        String search) {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
-            .findAllWithFiltersForMap(userProfile)
+            .findAllWithFiltersForMap(userProfile, providerFilterDTO, search)
             .map(this::getProviderRecordDTO)
             .map(this::toProviderRecordForMapDTO);
         return providerRecordForMapDTOList;
@@ -197,9 +198,10 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(Silo silo) {
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO,
+        String search, Silo silo) {
         Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
-            .findAllWithFiltersForMap(silo)
+            .findAllWithFiltersForMap(silo, providerFilterDTO, search)
             .map(this::getProviderRecordDTO)
             .map(this::toProviderRecordForMapDTO);
         return providerRecordForMapDTOList;
