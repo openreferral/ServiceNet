@@ -11,7 +11,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.ExclusionsConfig;
+import org.benetech.servicenet.domain.GeocodingResult;
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserGroup;
@@ -33,10 +36,10 @@ import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
+import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
-import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,6 +194,7 @@ public class ActivityServiceImpl implements ActivityService {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
             .findAllWithFiltersForMap(userProfile, providerFilterDTO, search)
+            .map(org -> this.filterLocations(org, providerFilterDTO))
             .map(this::getProviderRecordDTO)
             .map(this::toProviderRecordForMapDTO);
         return providerRecordForMapDTOList;
@@ -283,5 +287,44 @@ public class ActivityServiceImpl implements ActivityService {
         return new ProviderRecordForMapDTO(
             providerRecordDTO.getOrganization().getId(), geocodingResultDTOS
         );
+    }
+
+    private Organization filterLocations(Organization organization, ProviderFilterDTO providerFilterDTO) {
+        Set<Location> locations = organization.getLocations().stream()
+            .peek(location -> location.setGeocodingResults(
+                location.getGeocodingResults().stream()
+                    .filter(Objects::nonNull)
+                    .filter(geo -> this.filterLocation(geo, providerFilterDTO))
+                    .collect(Collectors.toCollection(ArrayList::new))))
+            .collect(Collectors.toCollection(HashSet::new));
+        organization.setLocations(locations);
+        return organization;
+    }
+
+    private boolean filterLocation(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {
+        return this.compareCity(geocodingResult, providerFilterDTO)
+            && this.compareRegion(geocodingResult, providerFilterDTO)
+            && this.comparePostalCode(geocodingResult, providerFilterDTO);
+    }
+
+    private boolean compareCity(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {
+        if (StringUtils.isEmpty(geocodingResult.getLocality()) || StringUtils.isEmpty(providerFilterDTO.getCity())) {
+            return true;
+        }
+        return geocodingResult.getLocality().equals(providerFilterDTO.getCity());
+    }
+
+    private boolean compareRegion(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {
+        if (StringUtils.isEmpty(geocodingResult.getAdministrativeAreaLevel2()) || StringUtils.isEmpty(providerFilterDTO.getRegion())) {
+            return true;
+        }
+        return geocodingResult.getAdministrativeAreaLevel2().equals(providerFilterDTO.getRegion());
+    }
+
+    private boolean comparePostalCode(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {
+        if (StringUtils.isEmpty(geocodingResult.getPostalCode()) || StringUtils.isEmpty(providerFilterDTO.getZip())) {
+            return true;
+        }
+        return geocodingResult.getPostalCode().equals(providerFilterDTO.getZip());
     }
 }
