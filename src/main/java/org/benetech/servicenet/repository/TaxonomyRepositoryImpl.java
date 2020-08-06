@@ -10,7 +10,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
-import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Organization;
@@ -76,11 +75,10 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepositoryCustom {
 
     private <T> void addFilters(CriteriaQuery<T> query, Root<Taxonomy> root) {
         Subquery<UUID> subquery = query.subquery(UUID.class);
-        Root<OrganizationMatch> subRoot = subquery.from(OrganizationMatch.class);
-        Join<OrganizationMatch, Organization> organizationJoin = subRoot.join(ORGANIZATION, JoinType.LEFT);
-        Join<Organization, Service> serviceJoin = organizationJoin.join(SERVICES, JoinType.LEFT);
+        Root<Organization> subRoot = subquery.from(Organization.class);
+        Join<Organization, Service> serviceJoin = subRoot.join(SERVICES, JoinType.LEFT);
         Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(TAXONOMIES, JoinType.LEFT);
-        subquery.select(taxonomiesJoin.get(TAXONOMY).get(ID)).where(organizationJoin.get(ACTIVE));
+        subquery.select(taxonomiesJoin.get(TAXONOMY).get(ID)).where(subRoot.get(ACTIVE));
 
         Predicate predicate = cb.in(root.get(ID)).value(subquery);
         query.where(predicate);
