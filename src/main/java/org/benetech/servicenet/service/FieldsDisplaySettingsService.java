@@ -1,10 +1,11 @@
 package org.benetech.servicenet.service;
 
-import java.util.UUID;
-import org.benetech.servicenet.service.dto.FieldsDisplaySettingsDTO;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import org.benetech.servicenet.service.dto.FieldsDisplaySettingsDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing {@link org.benetech.servicenet.domain.FieldsDisplaySettings}.
@@ -25,6 +26,14 @@ public interface FieldsDisplaySettingsService {
      * @return the list of entities.
      */
     List<FieldsDisplaySettingsDTO> findAll();
+
+    /**
+     * Get all the fieldsDisplaySettings.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    Page<FieldsDisplaySettingsDTO> findAll(Pageable pageable);
 
     /**
      * Get all the fieldsDisplaySettings for current user.

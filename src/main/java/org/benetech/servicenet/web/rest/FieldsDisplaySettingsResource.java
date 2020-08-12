@@ -1,16 +1,25 @@
 package org.benetech.servicenet.web.rest;
 
+import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import javax.validation.Valid;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.FieldsDisplaySettingsService;
 import org.benetech.servicenet.service.UserService;
-import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.dto.FieldsDisplaySettingsDTO;
-
-import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,13 +29,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * REST controller for managing {@link org.benetech.servicenet.domain.FieldsDisplaySettings}.
@@ -113,13 +115,16 @@ public class FieldsDisplaySettingsResource {
     /**
      * {@code GET  /fields-display-settings} : get all the fieldsDisplaySettings.
      *
-
+     * @param pageable the pagination information
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fieldsDisplaySettings in body.
      */
     @GetMapping("/fields-display-settings")
-    public List<FieldsDisplaySettingsDTO> getAllFieldsDisplaySettings() {
+    public ResponseEntity<List<FieldsDisplaySettingsDTO>> getAllFieldsDisplaySettings(
+        Pageable pageable) {
         log.debug("REST request to get all FieldsDisplaySettings");
-        return fieldsDisplaySettingsService.findAll();
+        Page<FieldsDisplaySettingsDTO> page = fieldsDisplaySettingsService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/fields-display-settings");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

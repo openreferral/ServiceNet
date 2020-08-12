@@ -1,5 +1,10 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.SystemAccountService;
@@ -7,14 +12,10 @@ import org.benetech.servicenet.service.dto.SystemAccountDTO;
 import org.benetech.servicenet.service.mapper.SystemAccountMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing SystemAccount.
@@ -51,6 +52,14 @@ public class SystemAccountServiceImpl implements SystemAccountService {
         return systemAccountRepository.findAll().stream()
             .map(systemAccountMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SystemAccountDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all SystemAccounts");
+        return systemAccountRepository.findAll(pageable)
+            .map(systemAccountMapper::toDto);
     }
 
     @Override
