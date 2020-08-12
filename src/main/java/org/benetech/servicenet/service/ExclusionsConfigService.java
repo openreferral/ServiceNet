@@ -1,12 +1,13 @@
 package org.benetech.servicenet.service;
 
-import org.benetech.servicenet.domain.ExclusionsConfig;
-import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.benetech.servicenet.domain.ExclusionsConfig;
+import org.benetech.servicenet.service.dto.ExclusionsConfigDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing {@link org.benetech.servicenet.domain.ExclusionsConfig}.
@@ -27,6 +28,14 @@ public interface ExclusionsConfigService {
      * @return the list of entities.
      */
     List<ExclusionsConfigDTO> findAll();
+
+    /**
+     * Get all the exclusionsConfigs.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    Page<ExclusionsConfigDTO> findAll(Pageable pageable);
 
     Map<UUID, ExclusionsConfig> getAllBySystemAccountId();
 

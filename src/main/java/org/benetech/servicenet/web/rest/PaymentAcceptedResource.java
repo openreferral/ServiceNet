@@ -2,13 +2,23 @@ package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.PaymentAcceptedService;
 import org.benetech.servicenet.service.dto.PaymentAcceptedDTO;
-import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,12 +29,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * REST controller for managing PaymentAccepted.
@@ -91,13 +95,16 @@ public class PaymentAcceptedResource {
     /**
      * GET  /payment-accepteds : get all the paymentAccepteds.
      *
+     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of paymentAccepteds in body
      */
     @GetMapping("/payment-accepteds")
     @Timed
-    public List<PaymentAcceptedDTO> getAllPaymentAccepteds() {
+    public ResponseEntity<List<PaymentAcceptedDTO>> getAllPaymentAccepteds(Pageable pageable) {
         log.debug("REST request to get all PaymentAccepteds");
-        return paymentAcceptedService.findAll();
+        Page<PaymentAcceptedDTO> page = paymentAcceptedService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/payment-accepteds");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

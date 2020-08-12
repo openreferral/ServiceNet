@@ -1,21 +1,21 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import org.benetech.servicenet.service.PhysicalAddressFieldsValueService;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.PhysicalAddressFieldsValue;
 import org.benetech.servicenet.repository.PhysicalAddressFieldsValueRepository;
+import org.benetech.servicenet.service.PhysicalAddressFieldsValueService;
 import org.benetech.servicenet.service.dto.PhysicalAddressFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.PhysicalAddressFieldsValueMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link PhysicalAddressFieldsValue}.
@@ -67,6 +67,19 @@ public class PhysicalAddressFieldsValueServiceImpl implements PhysicalAddressFie
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the physicalAddressFieldsValues.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PhysicalAddressFieldsValueDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all PhysicalAddressFieldsValues");
+        return physicalAddressFieldsValueRepository.findAll(pageable)
+            .map(physicalAddressFieldsValueMapper::toDto);
+    }
 
     /**
      * Get one physicalAddressFieldsValue by id.

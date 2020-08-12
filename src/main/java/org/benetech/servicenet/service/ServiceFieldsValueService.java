@@ -1,10 +1,11 @@
 package org.benetech.servicenet.service;
 
-import java.util.UUID;
-import org.benetech.servicenet.service.dto.ServiceFieldsValueDTO;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import org.benetech.servicenet.service.dto.ServiceFieldsValueDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing {@link org.benetech.servicenet.domain.ServiceFieldsValue}.
@@ -26,6 +27,13 @@ public interface ServiceFieldsValueService {
      */
     List<ServiceFieldsValueDTO> findAll();
 
+    /**
+     * Get all the serviceFieldsValues.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    Page<ServiceFieldsValueDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" serviceFieldsValue.

@@ -1,12 +1,13 @@
 package org.benetech.servicenet.service;
 
-import org.benetech.servicenet.domain.FieldExclusion;
-import org.benetech.servicenet.service.dto.FieldExclusionDTO;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.benetech.servicenet.domain.FieldExclusion;
+import org.benetech.servicenet.service.dto.FieldExclusionDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing FieldExclusion.
@@ -27,6 +28,14 @@ public interface FieldExclusionService {
      * @return the list of entities
      */
     List<FieldExclusionDTO> findAll();
+
+    /**
+     * Get all the fieldExclusions.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<FieldExclusionDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" fieldExclusion.

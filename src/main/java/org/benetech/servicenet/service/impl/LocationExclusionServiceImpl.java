@@ -1,21 +1,21 @@
 package org.benetech.servicenet.service.impl;
 
-import org.benetech.servicenet.service.LocationExclusionService;
-import org.benetech.servicenet.domain.LocationExclusion;
-import org.benetech.servicenet.repository.LocationExclusionRepository;
-import org.benetech.servicenet.service.dto.LocationExclusionDTO;
-import org.benetech.servicenet.service.mapper.LocationExclusionMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.benetech.servicenet.domain.LocationExclusion;
+import org.benetech.servicenet.repository.LocationExclusionRepository;
+import org.benetech.servicenet.service.LocationExclusionService;
+import org.benetech.servicenet.service.dto.LocationExclusionDTO;
+import org.benetech.servicenet.service.mapper.LocationExclusionMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service Implementation for managing {@link LocationExclusion}.
@@ -64,6 +64,19 @@ public class LocationExclusionServiceImpl implements LocationExclusionService {
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the locationExclusions.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<LocationExclusionDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all LocationExclusions");
+        return locationExclusionRepository.findAll(pageable)
+            .map(locationExclusionMapper::toDto);
+    }
 
     /**
      * Get one locationExclusion by id.

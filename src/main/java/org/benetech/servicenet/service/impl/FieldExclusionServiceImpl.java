@@ -1,5 +1,11 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.FieldExclusion;
 import org.benetech.servicenet.repository.FieldExclusionRepository;
 import org.benetech.servicenet.service.FieldExclusionService;
@@ -7,15 +13,10 @@ import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.mapper.FieldExclusionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing FieldExclusion.
@@ -52,6 +53,14 @@ public class FieldExclusionServiceImpl implements FieldExclusionService {
         return fieldExclusionRepository.findAll().stream()
             .map(fieldExclusionMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<FieldExclusionDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all FieldExclusions");
+        return fieldExclusionRepository.findAll(pageable)
+            .map(fieldExclusionMapper::toDto);
     }
 
     @Override

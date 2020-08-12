@@ -1,11 +1,12 @@
 package org.benetech.servicenet.service;
 
-import org.benetech.servicenet.domain.SystemAccount;
-import org.benetech.servicenet.service.dto.SystemAccountDTO;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.service.dto.SystemAccountDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing SystemAccount.
@@ -27,6 +28,13 @@ public interface SystemAccountService {
      */
     List<SystemAccountDTO> findAll();
 
+    /**
+     * Get all the systemAccounts.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<SystemAccountDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" systemAccount.

@@ -1,10 +1,12 @@
 package org.benetech.servicenet.service;
 
-import org.benetech.servicenet.domain.Metadata;
-import org.benetech.servicenet.service.dto.MetadataDTO;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.benetech.servicenet.domain.Metadata;
+import org.benetech.servicenet.service.dto.MetadataDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing Metadata.
@@ -34,6 +36,13 @@ public interface MetadataService {
      */
     List<MetadataDTO> findAll();
 
+    /**
+     * Get all the metadata.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<MetadataDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" metadata.
