@@ -541,6 +541,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 service.setTaxonomies(existingService.getTaxonomies());
                 service.setLocations(existingService.getLocations());
                 service.setEligibility(existingService.getEligibility());
+                service.setDocs(existingService.getDocs());
             }
             service.setProviderName(SERVICE_PROVIDER);
             service.setOrganization(organization);
