@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.dto.provider;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Data;
 
@@ -23,4 +24,6 @@ public class SimpleServiceDTO implements Serializable {
     private String eligibilityCriteria;
 
     private List<Integer> locationIndexes;
+
+    private Set<SimpleRequiredDocumentDTO> docs;
 }

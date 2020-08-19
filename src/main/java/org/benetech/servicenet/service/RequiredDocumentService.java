@@ -23,6 +23,14 @@ public interface RequiredDocumentService {
     RequiredDocumentDTO save(RequiredDocumentDTO requiredDocumentDTO);
 
     /**
+     * Save a requiredDocument.
+     *
+     * @param requiredDocument the entity to save
+     * @return the persisted entity
+     */
+    RequiredDocument save(RequiredDocument requiredDocument);
+
+    /**
      * Get all the requiredDocuments.
      *
      * @return the list of entities

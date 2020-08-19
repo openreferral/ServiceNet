@@ -15,6 +15,7 @@ import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
@@ -30,6 +31,7 @@ import org.benetech.servicenet.service.DailyUpdateService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
@@ -39,6 +41,7 @@ import org.benetech.servicenet.service.UserGroupService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleRequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
@@ -95,6 +98,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final UserGroupService userGroupService;
 
+    private final RequiredDocumentService requiredDocumentService;
+
     @SuppressWarnings("checkstyle:ParameterNumber")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
@@ -102,8 +107,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
         TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
-        UserProfileRepository userProfileRepository,
-        UserGroupService userGroupService) {
+        UserProfileRepository userProfileRepository, UserGroupService userGroupService,
+        RequiredDocumentService requiredDocumentService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -119,6 +124,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.eligibilityService = eligibilityService;
         this.userProfileRepository = userProfileRepository;
         this.userGroupService = userGroupService;
+        this.requiredDocumentService = requiredDocumentService;
     }
 
     /**
@@ -535,6 +541,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 service.setTaxonomies(existingService.getTaxonomies());
                 service.setLocations(existingService.getLocations());
                 service.setEligibility(existingService.getEligibility());
+                service.setDocs(existingService.getDocs());
             }
             service.setProviderName(SERVICE_PROVIDER);
             service.setOrganization(organization);
@@ -547,6 +554,9 @@ public class OrganizationServiceImpl implements OrganizationService {
             );
             service.setEligibility(
                 saveEligibility(service, serviceDTO)
+            );
+            service.setDocs(
+                saveDocs(serviceDTO, service)
             );
             services.add(service);
         }
@@ -660,6 +670,32 @@ public class OrganizationServiceImpl implements OrganizationService {
             }
         }
         return dailyUpdates;
+    }
+
+    private Set<RequiredDocument> saveDocs(SimpleServiceDTO serviceDTO, Service service) {
+        Set<RequiredDocument> docs = new HashSet<>();
+        for (SimpleRequiredDocumentDTO docDto : serviceDTO.getDocs()) {
+            Optional<RequiredDocument> existingDocOptional = service.getDocs().stream()
+                .filter(doc -> doc.getId().equals(docDto.getId())).findFirst();
+            if (existingDocOptional.isPresent()) {
+                RequiredDocument requiredDocument = existingDocOptional.get();
+                requiredDocument.setDocument(docDto.getDocument());
+                docs.add(requiredDocumentService.save(requiredDocument));
+            } else {
+                RequiredDocument requiredDocument = new RequiredDocument();
+                requiredDocument.setDocument(docDto.getDocument());
+                requiredDocument.setSrvc(service);
+                requiredDocument.setProviderName(SERVICE_PROVIDER);
+                docs.add(requiredDocumentService.save(requiredDocument));
+            }
+        }
+        Set<UUID> docIds = docs.stream().map(AbstractEntity::getId).collect(Collectors.toSet());
+        Set<RequiredDocument> docsToRemove = service.getDocs().stream()
+            .filter(doc -> !docIds.contains(doc.getId())).collect(Collectors.toSet());
+        for (RequiredDocument doc : docsToRemove) {
+            requiredDocumentService.delete(doc.getId());
+        }
+        return docs;
     }
 
     private Eligibility saveEligibility(Service service, SimpleServiceDTO serviceDTO) {
