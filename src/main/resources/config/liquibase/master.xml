@@ -195,4 +195,5 @@
     <include file="config/liquibase/changelog/20200701164350_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200708141530_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200713110246_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200820170744_remove_duplicate_geocoding_results.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

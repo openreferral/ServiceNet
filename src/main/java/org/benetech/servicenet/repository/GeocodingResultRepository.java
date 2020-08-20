@@ -25,27 +25,21 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
 
     String ADDRESS_CACHE = "addressCache";
 
-    @Cacheable(ADDRESS_CACHE)
     List<GeocodingResult> findAllByAddress(String address);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     <S extends GeocodingResult> S save(S var1);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     <S extends GeocodingResult> List<S> saveAll(Iterable<S> var1);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     <S extends GeocodingResult> S saveAndFlush(S var1);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     void deleteInBatch(Iterable<GeocodingResult> var1);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     void deleteAllInBatch();
 
     Page<GeocodingResult> findAll(Pageable pageable);
