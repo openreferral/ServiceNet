@@ -3,11 +3,15 @@ package org.benetech.servicenet.repository;
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
@@ -15,9 +19,12 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.LocationExclusion;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
@@ -25,6 +32,7 @@ import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -50,6 +58,7 @@ public class ProviderRecordsRepository {
     private static final String POSTAL_CODE = "postalCode";
     private static final String GEOCODING_RESULTS = "geocodingResults";
     private static final String LOCATIONS = "locations";
+    private static final String ORGANIZATION = "organization";
 
     private static final String SERVICES = "services";
     private static final String ELIGIBILITY = "eligibility";
@@ -123,38 +132,68 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
-    public Page<Organization> findAllWithFiltersForMap(UserProfile userProfile, ProviderFilterDTO providerFilterDTO,
-        String search) {
+    public Page<ProviderRecordForMapDTO> findAllWithFiltersForMap(Silo silo, ProviderFilterDTO providerFilterDTO,
+        String search, List<ExclusionsConfig> exclusions) {
 
-        CriteriaQuery<Organization> queryCriteria = cb.createQuery(Organization.class);
-        Root<Organization> selectRoot = queryCriteria.from(Organization.class);
-        queryCriteria.select(selectRoot);
+        CriteriaQuery<ProviderRecordForMapDTO> queryCriteria = cb.createQuery(ProviderRecordForMapDTO.class);
+        Root<GeocodingResult> selectRoot = queryCriteria.from(GeocodingResult.class);
 
-        addFilters(queryCriteria, selectRoot, userProfile, providerFilterDTO, search);
-        queryCriteria.groupBy(selectRoot.get(ID));
+        addFiltersAndSelect(queryCriteria, selectRoot, providerFilterDTO, search, exclusions, null, silo);
 
         Query query = em.createQuery(queryCriteria);
 
-        List<Organization> results = query.getResultList();
+        List<ProviderRecordForMapDTO> results = query.getResultList();
 
         return new PageImpl<>(results);
     }
 
-    public Page<Organization> findAllWithFiltersForMap(Silo silo, ProviderFilterDTO providerFilterDTO,
-        String search) {
+    public Page<ProviderRecordForMapDTO> findProviderRecordsForMap(UserProfile userProfile,
+        ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions) {
 
-        CriteriaQuery<Organization> queryCriteria = cb.createQuery(Organization.class);
-        Root<Organization> selectRoot = queryCriteria.from(Organization.class);
-        queryCriteria.select(selectRoot);
+        CriteriaQuery<ProviderRecordForMapDTO> queryCriteria = cb.createQuery(ProviderRecordForMapDTO.class);
+        Root<GeocodingResult> selectRoot = queryCriteria.from(GeocodingResult.class);
 
-        addFilters(queryCriteria, selectRoot, silo, providerFilterDTO, search);
-        queryCriteria.groupBy(selectRoot.get(ID));
+        addFiltersAndSelect(queryCriteria, selectRoot, providerFilterDTO, search, exclusions, userProfile, null);
 
         Query query = em.createQuery(queryCriteria);
 
-        List<Organization> results = query.getResultList();
+        List<ProviderRecordForMapDTO> results = query.getResultList();
 
         return new PageImpl<>(results);
+    }
+
+    private <T> void addFiltersAndSelect(CriteriaQuery<ProviderRecordForMapDTO> query, Root<GeocodingResult> root,
+        ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions, UserProfile userProfile, Silo silo) {
+        Predicate predicate = cb.conjunction();
+
+        Join<GeocodingResult, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
+        Join<Location, Organization> organizationJoin = locationJoin.join(ORGANIZATION, JoinType.LEFT);
+        Join<Organization, SystemAccount> systemAccountJoin = organizationJoin.join(ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = organizationJoin.join(USER_PROFILES, JoinType.LEFT);
+        Join<Organization, Service> serviceJoin = organizationJoin.join(SERVICES, JoinType.LEFT);
+        Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(ELIGIBILITY, JoinType.LEFT);
+
+        predicate = getCommonPredicate(
+            organizationJoin,
+            (silo != null) ? silo : userProfile.getSilo(),
+            search,
+            systemAccountJoin,
+            userProfileJoin,
+            serviceJoin, eligibilityJoin
+        );
+
+        if (userProfile != null) {
+            predicate = cb
+                .and(predicate, cb.notEqual(userProfileJoin.get(ID), userProfile.getId()));
+        }
+
+        predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
+
+        predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin, exclusions);
+
+        query.where(predicate);
+        query.select(cb.construct(ProviderRecordForMapDTO.class, organizationJoin.get("id"), root));
+        query.groupBy(root.get(ID), organizationJoin.get(ID));
     }
 
     private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, UserProfile userProfile,
@@ -177,7 +216,7 @@ public class ProviderRecordsRepository {
 
         predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
-        predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin);
+        predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin, null);
 
         query.where(predicate);
     }
@@ -233,36 +272,36 @@ public class ProviderRecordsRepository {
 
         predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
-        predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin);
+        predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin, null);
 
         query.where(predicate);
     }
 
-    private Predicate getCommonPredicate(Root<Organization> root, Silo silo, String search,
+    private Predicate getCommonPredicate(From<? extends AbstractEntity, Organization> from, Silo silo, String search,
         Join<Organization, SystemAccount> systemAccountJoin,
         Join<Organization, UserProfile> userProfileJoin, Join<Organization, Service> serviceJoin,
         Join<Service, Eligibility> eligibilityJoin) {
         Predicate predicate;
-        predicate = cb.equal(root.get(ACTIVE), true);
+        predicate = cb.equal(from.get(ACTIVE), true);
 
         predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
 
         predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
 
-        predicate = this.addSearch(predicate, search, root, serviceJoin, eligibilityJoin);
+        predicate = this.addSearch(predicate, search, from, serviceJoin, eligibilityJoin);
         return predicate;
     }
 
     private Predicate addSearch(Predicate predicate, String search,
-        Root<Organization> root, Join<Organization, Service> serviceJoin,
+        From<? extends AbstractEntity, Organization> from, Join<Organization, Service> serviceJoin,
         Join<Service, Eligibility> eligibilityJoin
     ) {
         Predicate predicateResult = predicate;
         if (StringUtils.isNotBlank(search)) {
             String searchQuery = '%' + search.toUpperCase() + '%';
             Predicate searchPredicate = cb.or(
-                cb.like(cb.upper(root.get(NAME)), searchQuery),
-                cb.like(cb.upper(root.get(DESCRIPTION)), searchQuery),
+                cb.like(cb.upper(from.get(NAME)), searchQuery),
+                cb.like(cb.upper(from.get(DESCRIPTION)), searchQuery),
                 cb.like(cb.upper(serviceJoin.get(NAME)), searchQuery),
                 cb.like(cb.upper(eligibilityJoin.get(ELIGIBILITY)), searchQuery)
             );
@@ -272,11 +311,23 @@ public class ProviderRecordsRepository {
     }
 
     private Predicate addLocationFilters(Predicate predicate, ProviderFilterDTO providerFilterDTO,
-        Join<Organization, Location> locationJoin) {
+        Join<? extends AbstractEntity, Location> locationJoin, List<ExclusionsConfig> exclusions) {
+        Set<LocationExclusion> locationExclusions = (exclusions != null) ? exclusions.stream()
+            .flatMap(e -> e.getLocationExclusions().stream()).collect(Collectors.toSet()) : Collections.emptySet();
+
+        Set<String> excludedRegions = locationExclusions.stream()
+            .filter(le -> StringUtils.isNotBlank(le.getRegion()))
+            .map(LocationExclusion::getRegion)
+            .collect(Collectors.toSet());
+        Set<String> excludedCities = locationExclusions.stream()
+            .filter(le -> StringUtils.isNotBlank(le.getCity()))
+            .map(LocationExclusion::getCity)
+            .collect(Collectors.toSet());
 
         if (StringUtils.isNotEmpty(providerFilterDTO.getCity())
             || StringUtils.isNotEmpty(providerFilterDTO.getRegion())
-            || StringUtils.isNotEmpty(providerFilterDTO.getZip())) {
+            || StringUtils.isNotEmpty(providerFilterDTO.getZip())
+            || !excludedRegions.isEmpty() || !excludedCities.isEmpty()) {
 
             Join<Location, GeocodingResult> geocodingResultJoin = locationJoin.join(GEOCODING_RESULTS, JoinType.LEFT);
 
@@ -297,6 +348,21 @@ public class ProviderRecordsRepository {
                 updatedPredicate = cb.and(updatedPredicate,
                     geocodingResultJoin.get(POSTAL_CODE).in(providerFilterDTO.getZip())
                 );
+            }
+
+            if (!excludedRegions.isEmpty()) {
+                for (String excludedRegion : excludedRegions) {
+                    updatedPredicate = cb.and(updatedPredicate,
+                        cb.notLike(cb.lower(geocodingResultJoin.get(REGION)), '%' + excludedRegion.toLowerCase() + '%'));
+                }
+            }
+
+
+            if (!excludedCities.isEmpty()) {
+                for (String excludedCity : excludedCities) {
+                    updatedPredicate = cb.and(updatedPredicate,
+                        cb.notLike(cb.lower(geocodingResultJoin.get(CITY)), '%' + excludedCity.toLowerCase() + '%'));
+                }
             }
 
             return updatedPredicate;

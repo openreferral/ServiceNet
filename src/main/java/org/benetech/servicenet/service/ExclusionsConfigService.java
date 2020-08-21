@@ -39,6 +39,8 @@ public interface ExclusionsConfigService {
 
     Map<UUID, ExclusionsConfig> getAllBySystemAccountId();
 
+    List<ExclusionsConfig> findAllBySystemAccountName(String systemAccountName);
+
     /**
      * Get the "id" exclusionsConfig.
      *
