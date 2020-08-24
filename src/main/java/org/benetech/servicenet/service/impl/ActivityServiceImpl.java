@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -192,23 +194,18 @@ public class ActivityServiceImpl implements ActivityService {
     public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO,
         String search) {
         UserProfile userProfile = userService.getCurrentUserProfile();
-        Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
-            .findAllWithFiltersForMap(userProfile, providerFilterDTO, search)
-            .map(org -> this.filterLocations(org, providerFilterDTO))
-            .map(this::getProviderRecordDTO)
-            .map(this::toProviderRecordForMapDTO);
-        return providerRecordForMapDTOList;
+        List<ExclusionsConfig> exclusions = exclusionsConfigService.findAllBySystemAccountName(SERVICE_PROVIDER);
+        return providerRecordsRepository
+            .findProviderRecordsForMap(userProfile, providerFilterDTO, search, exclusions);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO,
         String search, Silo silo) {
-        Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
-            .findAllWithFiltersForMap(silo, providerFilterDTO, search)
-            .map(this::getProviderRecordDTO)
-            .map(this::toProviderRecordForMapDTO);
-        return providerRecordForMapDTOList;
+        List<ExclusionsConfig> exclusions = exclusionsConfigService.findAllBySystemAccountName(SERVICE_PROVIDER);
+        return providerRecordsRepository
+            .findAllWithFiltersForMap(silo, providerFilterDTO, search, exclusions);
     }
 
     @Override
@@ -276,29 +273,6 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (IllegalAccessException e) {
             return null;
         }
-    }
-
-    private ProviderRecordForMapDTO toProviderRecordForMapDTO(ProviderRecordDTO providerRecordDTO) {
-        Set<LocationRecordDTO> locationRecordDTOS = providerRecordDTO.getLocations();
-        Set<GeocodingResultDTO> geocodingResultDTOS = new HashSet<>();
-        locationRecordDTOS.forEach(locationRecordDTO -> geocodingResultDTOS
-            .addAll(locationRecordDTO.getLocation().getGeocodingResults())
-        );
-        return new ProviderRecordForMapDTO(
-            providerRecordDTO.getOrganization().getId(), geocodingResultDTOS
-        );
-    }
-
-    private Organization filterLocations(Organization organization, ProviderFilterDTO providerFilterDTO) {
-        Set<Location> locations = organization.getLocations().stream()
-            .peek(location -> location.setGeocodingResults(
-                location.getGeocodingResults().stream()
-                    .filter(Objects::nonNull)
-                    .filter(geo -> this.filterLocation(geo, providerFilterDTO))
-                    .collect(Collectors.toCollection(ArrayList::new))))
-            .collect(Collectors.toCollection(HashSet::new));
-        organization.setLocations(locations);
-        return organization;
     }
 
     private boolean filterLocation(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {

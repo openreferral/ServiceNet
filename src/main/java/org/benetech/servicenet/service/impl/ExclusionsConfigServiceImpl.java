@@ -84,6 +84,11 @@ public class ExclusionsConfigServiceImpl implements ExclusionsConfigService {
             config -> config));
     }
 
+    @Override
+    public List<ExclusionsConfig> findAllBySystemAccountName(String systemAccountName) {
+        return exclusionsConfigRepository.findAllByAccountName(systemAccountName);
+    }
+
     /**
      * Get one exclusionsConfig by id.
      *

@@ -1,16 +1,24 @@
 package org.benetech.servicenet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.AddressType;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.LocationType;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -85,6 +93,10 @@ public class GeocodingResult extends AbstractEntity implements Serializable {
 
     @Column(name = "partial_match")
     private Boolean partialMatch;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="geocodingResults")
+    @JsonIgnore
+    private List<Location> locations = new ArrayList<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
