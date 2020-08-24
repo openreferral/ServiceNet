@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20200525155552-1" author="jkondrat">
+        <sql dbms="postgresql">
+-- remove duplicates without location if any
+DELETE FROM geocoding_result gr
+WHERE  id IN (SELECT id
+              FROM   (SELECT gr.id,
+                             Row_number()
+                               OVER (
+                                 partition BY address
+                                 ORDER BY id DESC)
+                      FROM   geocoding_result gr
+                             LEFT JOIN location_geocoding_results lgr
+                                    ON lgr.geocoding_results_id = gr.id
+                      WHERE  location_id IS NULL) duplicates
+              WHERE  duplicates.row_number > 1);
+-- remove duplicates with location
+DELETE FROM location_geocoding_results gr
+WHERE geocoding_results_id IN (SELECT id
+              FROM   (SELECT gr.id,
+                             Row_number()
+                               OVER (
+                                 partition BY address
+                                 ORDER BY id DESC)
+                      FROM   geocoding_result gr) duplicates
+              WHERE  duplicates.row_number > 1);
+DELETE FROM geocoding_result gr
+WHERE  id IN (SELECT id
+              FROM   (SELECT gr.id,
+                             Row_number()
+                               OVER (
+                                 partition BY address
+                                 ORDER BY id DESC)
+                      FROM   geocoding_result gr) duplicates
+              WHERE  duplicates.row_number > 1);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
