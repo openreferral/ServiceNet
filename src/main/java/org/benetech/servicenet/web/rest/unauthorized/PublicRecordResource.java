@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.repository.ActivityFilterCityRepository;
 import org.benetech.servicenet.service.ActivityFilterService;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -65,6 +66,9 @@ public class PublicRecordResource {
 
     @Autowired
     private SystemAccountService systemAccountService;
+
+    @Autowired
+    private ActivityFilterCityRepository activityFilterCityRepository;
 
     @PostMapping("/all-provider-records/{silo}")
     @Timed
@@ -166,7 +170,7 @@ public class PublicRecordResource {
     public Set<String> getCitiesForServiceProviders(@RequestParam String siloName) {
         Optional<Silo> optSilo = siloService.getOneByName(siloName);
         this.checkSilo(optSilo);
-        return activityFilterService.getCitiesForServiceProviders(optSilo.get());
+        return activityFilterCityRepository.getCities(null, optSilo.get());
     }
 
     /**
