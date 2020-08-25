@@ -69,4 +69,14 @@
         <resetJUL>true</resetJUL>
     </contextListener>
 
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="Sentry" />
+    </root>
+
 </configuration>
