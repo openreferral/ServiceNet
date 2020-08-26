@@ -78,7 +78,7 @@ public class OptionResourceIntTest {
     private static UUID id = UUID.randomUUID();
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final OptionResource optionResource = new OptionResource(optionRepository);
         this.restOptionMockMvc = MockMvcBuilders.standaloneSetup(optionResource)

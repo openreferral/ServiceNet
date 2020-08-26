@@ -79,7 +79,7 @@ public class ServiceFieldsValueResourceIntTest {
     private ServiceFieldsValue serviceFieldsValue;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ServiceFieldsValueResource serviceFieldsValueResource = new ServiceFieldsValueResource(
             serviceFieldsValueService

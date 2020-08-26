@@ -21,9 +21,8 @@ import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
-import org.benetech.servicenet.service.dto.external.RecordRequest;
 import org.benetech.servicenet.service.dto.external.RecordDto;
-import org.benetech.servicenet.service.mapper.OrganizationMapper;
+import org.benetech.servicenet.service.dto.external.RecordRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +50,6 @@ public class RecordsResource {
 
     @Autowired
     private RecordsService recordsService;
-
-    @Autowired
-    private OrganizationMapper organizationMapper;
 
     @Autowired
     private OrganizationMatchService organizationMatchService;

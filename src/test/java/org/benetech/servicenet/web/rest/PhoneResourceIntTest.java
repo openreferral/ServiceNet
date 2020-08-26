@@ -103,7 +103,7 @@ public class PhoneResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final PhoneResource phoneResource = new PhoneResource(phoneService);
         this.restPhoneMockMvc = MockMvcBuilders.standaloneSetup(phoneResource)

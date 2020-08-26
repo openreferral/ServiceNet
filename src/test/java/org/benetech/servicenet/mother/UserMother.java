@@ -5,7 +5,6 @@ import org.benetech.servicenet.domain.UserProfile;
 
 import javax.persistence.EntityManager;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class UserMother {
     private static final String DEFAULT_LOGIN = "johndoe";
 
@@ -63,5 +62,8 @@ public class UserMother {
         em.persist(userProfile);
         em.flush();
         return userProfile;
+    }
+
+    private UserMother() {
     }
 }

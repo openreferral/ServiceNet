@@ -11,6 +11,8 @@ import org.benetech.servicenet.domain.enumeration.ContactDetailsFields;
  */
 public class ContactDetailsFieldsValueDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

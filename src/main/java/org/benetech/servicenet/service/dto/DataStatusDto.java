@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 public class DataStatusDto implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String providerName;
 
     private LocalDateTime lastUpdateDateTime;

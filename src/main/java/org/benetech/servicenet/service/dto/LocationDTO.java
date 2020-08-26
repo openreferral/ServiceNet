@@ -16,6 +16,8 @@ import lombok.Setter;
  */
 public class LocationDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     @Setter
     private UUID id;

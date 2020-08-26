@@ -23,6 +23,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 /**
  * A ActivityFilter.
  */
+@SuppressWarnings("PMD.ExcessivePublicCount")
 @Entity
 @Table(name = "activity_filter")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -367,6 +368,7 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
         return 31;
     }
 
+    @SuppressWarnings("CPD-START")
     @Override
     public String toString() {
         return "ActivityFilter{" +

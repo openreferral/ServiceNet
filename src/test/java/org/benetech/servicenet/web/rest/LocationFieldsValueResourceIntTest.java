@@ -79,7 +79,7 @@ public class LocationFieldsValueResourceIntTest {
     private LocationFieldsValue locationFieldsValue;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final LocationFieldsValueResource locationFieldsValueResource = new LocationFieldsValueResource(
             locationFieldsValueService);

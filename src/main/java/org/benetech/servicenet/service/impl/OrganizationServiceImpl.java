@@ -4,11 +4,15 @@ import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DailyUpdate;
@@ -37,13 +41,12 @@ import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
-import org.benetech.servicenet.service.UserGroupService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleRequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
@@ -52,12 +55,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Organization.
@@ -96,18 +93,16 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final UserProfileRepository userProfileRepository;
 
-    private final UserGroupService userGroupService;
-
     private final RequiredDocumentService requiredDocumentService;
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
         ServiceMapper serviceMapper, LocationMapper locationMapper, LocationService locationService,
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
         TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
-        UserProfileRepository userProfileRepository, UserGroupService userGroupService,
+        UserProfileRepository userProfileRepository,
         RequiredDocumentService requiredDocumentService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
@@ -123,7 +118,6 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.dailyUpdateService = dailyUpdateService;
         this.eligibilityService = eligibilityService;
         this.userProfileRepository = userProfileRepository;
-        this.userGroupService = userGroupService;
         this.requiredDocumentService = requiredDocumentService;
     }
 

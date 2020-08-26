@@ -20,6 +20,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ConflictDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     private String currentValue;

@@ -11,6 +11,8 @@ import org.benetech.servicenet.domain.enumeration.PhysicalAddressFields;
  */
 public class PhysicalAddressFieldsValueDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

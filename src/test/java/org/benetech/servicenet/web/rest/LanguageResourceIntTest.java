@@ -87,7 +87,7 @@ public class LanguageResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final LanguageResource languageResource = new LanguageResource(languageService);
         this.restLanguageMockMvc = MockMvcBuilders.standaloneSetup(languageResource)

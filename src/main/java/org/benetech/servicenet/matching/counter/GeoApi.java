@@ -31,10 +31,9 @@ public class GeoApi {
 
     public GeocodingResult[] geocode(String address) {
         try {
-            return GeocodingApi.geocode(context,
-                address).await();
+            return GeocodingApi.geocode(context, address).await();
         } catch (ApiException | InterruptedException | IOException e) {
-            throw new IllegalStateException(String.format(CONNECTION_ERROR, address, e.getMessage()));
+            throw new IllegalStateException(String.format(CONNECTION_ERROR, address, e.getMessage()), e);
         }
     }
 }

@@ -1,14 +1,27 @@
 package org.benetech.servicenet.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.repository.PostalAddressRepository;
 import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.dto.PostalAddressDTO;
 import org.benetech.servicenet.service.mapper.PostalAddressMapper;
-import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,25 +36,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 /**
  * Test class for the PostalAddressResource REST controller.
  *
  * @see PostalAddressResource
  */
+@SuppressWarnings("CPD-START")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class PostalAddressResourceIntTest {
@@ -111,7 +111,7 @@ public class PostalAddressResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final PostalAddressResource postalAddressResource = new PostalAddressResource(postalAddressService);
         this.restPostalAddressMockMvc = MockMvcBuilders.standaloneSetup(postalAddressResource)

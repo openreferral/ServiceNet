@@ -13,7 +13,6 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;

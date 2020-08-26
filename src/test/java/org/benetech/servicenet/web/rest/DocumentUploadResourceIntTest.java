@@ -1,17 +1,34 @@
 package org.benetech.servicenet.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
+import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
+import javax.persistence.EntityManager;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
-import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
-import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,25 +43,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
-import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the DocumentUploadResource REST controller.
@@ -70,9 +68,6 @@ public class DocumentUploadResourceIntTest {
 
     @Autowired
     private DocumentUploadMapper documentUploadMapper;
-
-    @Autowired
-    private DocumentUploadService documentUploadService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -114,7 +109,7 @@ public class DocumentUploadResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.restDocumentUploadMockMvc = MockMvcBuilders.standaloneSetup(documentUploadResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

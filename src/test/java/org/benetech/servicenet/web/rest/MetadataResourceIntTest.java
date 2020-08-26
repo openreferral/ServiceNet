@@ -127,7 +127,7 @@ public class MetadataResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final MetadataResource metadataResource = new MetadataResource(metadataService);
         this.restMetadataMockMvc = MockMvcBuilders.standaloneSetup(metadataResource)

@@ -8,7 +8,6 @@ import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,9 +16,6 @@ public class OrganizationMatchDiscoveryJob extends BaseJob {
     private static final String NAME = "Organization Match Discovery Job";
     private static final String DESCRIPTION = "Discover and update Matches for all Organizations";
     private final Logger log = LoggerFactory.getLogger(OrganizationMatchDiscoveryJob.class);
-
-    @Value("${similarity-ratio.credentials.google-api}")
-    private String googleApiKey;
 
     @Autowired
     private OrganizationService organizationService;

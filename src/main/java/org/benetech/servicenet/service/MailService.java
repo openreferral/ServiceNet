@@ -1,17 +1,14 @@
 package org.benetech.servicenet.service;
 
 import io.github.jhipster.config.JHipsterProperties;
+import java.nio.charset.StandardCharsets;
+import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-
-import javax.mail.internet.MimeMessage;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Service for sending emails.
@@ -21,27 +18,16 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class MailService {
 
-    private static final String USER = "user";
-
-    private static final String BASE_URL = "baseUrl";
-
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private final JHipsterProperties jHipsterProperties;
 
     private final JavaMailSender javaMailSender;
 
-    private final MessageSource messageSource;
-
-    private final SpringTemplateEngine templateEngine;
-
-    public MailService(JHipsterProperties jHipsterProperties, JavaMailSender javaMailSender,
-                       MessageSource messageSource, SpringTemplateEngine templateEngine) {
+    public MailService(JHipsterProperties jHipsterProperties, JavaMailSender javaMailSender) {
 
         this.jHipsterProperties = jHipsterProperties;
         this.javaMailSender = javaMailSender;
-        this.messageSource = messageSource;
-        this.templateEngine = templateEngine;
     }
 
     @Async

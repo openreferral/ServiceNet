@@ -6,7 +6,6 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import org.benetech.servicenet.adapter.sheltertech.ShelterTechCollector;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
@@ -30,9 +29,6 @@ public class ShelterTechDataUpdateJob extends BaseJob {
 
     @Autowired
     private DocumentUploadService documentUploadService;
-
-    @Autowired
-    private DataImportReportService dataImportReportService;
 
     @Override
     public Date getStartTime() {

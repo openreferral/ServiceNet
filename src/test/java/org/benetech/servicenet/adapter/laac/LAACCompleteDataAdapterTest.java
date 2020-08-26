@@ -16,16 +16,13 @@ import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.LocationService;
-import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.PhysicalAddressService;
-import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.EligibilityDTO;
@@ -59,9 +56,6 @@ public class LAACCompleteDataAdapterTest {
     private EligibilityService eligibilityService;
 
     @Autowired
-    private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
-
-    @Autowired
     private OrganizationService organizationService;
 
     @Autowired
@@ -71,16 +65,10 @@ public class LAACCompleteDataAdapterTest {
     private ServiceService serviceService;
 
     @Autowired
-    private OpeningHoursService openingHoursService;
-
-    @Autowired
     private PhysicalAddressService physicalAddressService;
 
     @Autowired
     private ContactService contactService;
-
-    @Autowired
-    private PostalAddressService postalAddressService;
 
     @Autowired
     private LocationService locationService;

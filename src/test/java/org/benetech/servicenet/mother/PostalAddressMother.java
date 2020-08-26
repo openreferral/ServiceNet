@@ -2,7 +2,6 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.PostalAddress;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class PostalAddressMother {
 
     public static final String ADDRESS_1 = "Postal Address";
@@ -22,5 +21,8 @@ public class PostalAddressMother {
             .stateProvince(STATE_PROVINCE)
             .postalCode(POSTAL_CODE)
             .country(COUNTRY);
+    }
+
+    private PostalAddressMother() {
     }
 }

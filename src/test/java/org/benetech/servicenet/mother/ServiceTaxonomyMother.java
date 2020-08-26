@@ -2,7 +2,6 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class ServiceTaxonomyMother {
 
     public static final String DEFAULT_TAXONOMY_DETAILS = "Service taxonomy details";
@@ -16,5 +15,8 @@ public final class ServiceTaxonomyMother {
     public static ServiceTaxonomy createDifferent() {
         return new ServiceTaxonomy()
             .taxonomyDetails(DIFFERENT_TAXONOMY_DETAILS);
+    }
+
+    private ServiceTaxonomyMother() {
     }
 }

@@ -16,6 +16,7 @@ import java.util.Objects;
 /**
  * A PostalAddress.
  */
+@SuppressWarnings("CPD-START")
 @Entity
 @Table(name = "postal_address")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

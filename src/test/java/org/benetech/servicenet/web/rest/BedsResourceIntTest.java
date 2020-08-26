@@ -76,7 +76,7 @@ public class BedsResourceIntTest {
     private static UUID id = UUID.randomUUID();
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final BedsResource bedsResource = new BedsResource(bedsRepository);
         this.restBedsMockMvc = MockMvcBuilders.standaloneSetup(bedsResource)

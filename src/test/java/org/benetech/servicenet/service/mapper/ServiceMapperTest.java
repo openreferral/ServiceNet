@@ -1,28 +1,5 @@
 package org.benetech.servicenet.service.mapper;
 
-import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.domain.Funding;
-import org.benetech.servicenet.domain.HolidaySchedule;
-import org.benetech.servicenet.domain.Language;
-import org.benetech.servicenet.domain.PaymentAccepted;
-import org.benetech.servicenet.domain.RegularSchedule;
-import org.benetech.servicenet.domain.RequiredDocument;
-import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.mother.ContactMother;
-import org.benetech.servicenet.mother.EligibilityMother;
-import org.benetech.servicenet.mother.FundingMother;
-import org.benetech.servicenet.mother.HolidayScheduleMother;
-import org.benetech.servicenet.mother.PhoneMother;
-import org.benetech.servicenet.mother.RegularScheduleMother;
-import org.benetech.servicenet.mother.ServiceMother;
-import org.benetech.servicenet.mother.ServiceTaxonomyMother;
-import org.benetech.servicenet.service.dto.ServiceRecordDTO;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Set;
-
 import static org.benetech.servicenet.mother.RegularScheduleMother.CLOSES_AT_1;
 import static org.benetech.servicenet.mother.RegularScheduleMother.CLOSES_AT_2;
 import static org.benetech.servicenet.mother.RegularScheduleMother.OPENS_AT_1;
@@ -46,6 +23,28 @@ import static org.benetech.servicenet.mother.ServiceTaxonomyMother.DEFAULT_TAXON
 import static org.benetech.servicenet.mother.ServiceTaxonomyMother.DIFFERENT_TAXONOMY_DETAILS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.Set;
+import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.Funding;
+import org.benetech.servicenet.domain.HolidaySchedule;
+import org.benetech.servicenet.domain.Language;
+import org.benetech.servicenet.domain.PaymentAccepted;
+import org.benetech.servicenet.domain.RegularSchedule;
+import org.benetech.servicenet.domain.RequiredDocument;
+import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.mother.ContactMother;
+import org.benetech.servicenet.mother.EligibilityMother;
+import org.benetech.servicenet.mother.FundingMother;
+import org.benetech.servicenet.mother.HolidayScheduleMother;
+import org.benetech.servicenet.mother.PhoneMother;
+import org.benetech.servicenet.mother.RegularScheduleMother;
+import org.benetech.servicenet.mother.ServiceMother;
+import org.benetech.servicenet.mother.ServiceTaxonomyMother;
+import org.benetech.servicenet.service.dto.ServiceRecordDTO;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class ServiceMapperTest {
 
@@ -98,15 +97,15 @@ public class ServiceMapperTest {
         RegularSchedule schedule = RegularScheduleMother.createWithTwoOpeningHours();
         Service entry = new Service().regularSchedule(schedule);
 
-        ServiceRecordDTO result = mapper.toRecord(entry);
+        ServiceRecordDTO serviceRecordDTO = mapper.toRecord(entry);
 
-        assertTrue(result.getRegularScheduleOpeningHours().stream()
+        assertTrue(serviceRecordDTO.getRegularScheduleOpeningHours().stream()
             .anyMatch(x ->
                 x.getWeekday().equals(WEEKDAY_1)
                     && x.getOpensAt().equals(OPENS_AT_1)
                     && x.getClosesAt().equals(CLOSES_AT_1)));
 
-        assertTrue(result.getRegularScheduleOpeningHours().stream()
+        assertTrue(serviceRecordDTO.getRegularScheduleOpeningHours().stream()
             .anyMatch(x ->
                 x.getWeekday().equals(WEEKDAY_2)
                     && x.getOpensAt().equals(OPENS_AT_2)
@@ -119,13 +118,13 @@ public class ServiceMapperTest {
         HolidaySchedule schedule = HolidayScheduleMother.createDefault();
         Service entry = new Service().holidaySchedules(Collections.singleton(schedule));
 
-        ServiceRecordDTO result = mapper.toRecord(entry);
+        ServiceRecordDTO serviceRecordDTO = mapper.toRecord(entry);
 
-        assertEquals(HolidayScheduleMother.START_DATE, result.getHolidaySchedules().iterator().next().getStartDate());
-        assertEquals(HolidayScheduleMother.END_DATE, result.getHolidaySchedules().iterator().next().getEndDate());
-        assertEquals(HolidayScheduleMother.OPENS_AT, result.getHolidaySchedules().iterator().next().getOpensAt());
-        assertEquals(HolidayScheduleMother.CLOSES_AT, result.getHolidaySchedules().iterator().next().getClosesAt());
-        assertEquals(HolidayScheduleMother.CLOSED, result.getHolidaySchedules().iterator().next().isClosed());
+        assertEquals(HolidayScheduleMother.START_DATE, serviceRecordDTO.getHolidaySchedules().iterator().next().getStartDate());
+        assertEquals(HolidayScheduleMother.END_DATE, serviceRecordDTO.getHolidaySchedules().iterator().next().getEndDate());
+        assertEquals(HolidayScheduleMother.OPENS_AT, serviceRecordDTO.getHolidaySchedules().iterator().next().getOpensAt());
+        assertEquals(HolidayScheduleMother.CLOSES_AT, serviceRecordDTO.getHolidaySchedules().iterator().next().getClosesAt());
+        assertEquals(HolidayScheduleMother.CLOSED, serviceRecordDTO.getHolidaySchedules().iterator().next().isClosed());
     }
 
     @Test

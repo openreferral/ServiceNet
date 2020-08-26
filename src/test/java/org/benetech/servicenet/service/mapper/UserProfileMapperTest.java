@@ -1,24 +1,21 @@
 package org.benetech.servicenet.service.mapper;
 
-import java.util.UUID;
-import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.domain.UserProfile;
-import org.benetech.servicenet.service.UserService;
-import org.benetech.servicenet.service.dto.UserDTO;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.service.dto.UserDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link UserMapper}.
@@ -29,12 +26,6 @@ public class UserProfileMapperTest {
 
     private static final String DEFAULT_LOGIN = "johndoe";
     private static final UUID DEFAULT_ID = UUID.randomUUID();
-
-    @Mock
-    private UserService userService;
-
-    @Autowired
-    private SystemAccountMapper systemAccountMapper;
 
     @Autowired
     @InjectMocks

@@ -135,7 +135,7 @@ public class ServiceResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ServiceResource serviceResource = new ServiceResource(serviceService);
         this.restServiceMockMvc = MockMvcBuilders.standaloneSetup(serviceResource)

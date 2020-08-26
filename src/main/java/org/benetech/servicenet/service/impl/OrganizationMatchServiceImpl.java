@@ -390,22 +390,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             .findAllByPartnerVersionIdAndDismissed(organization.getId(), false);
     }
 
-    private List<Organization> findNotMatchedOrgs(List<UUID> currentMatchesIds, String providerName) {
-        return organizationService.findAllOthersExcept(providerName, currentMatchesIds);
-    }
-
     private List<Organization> findOrganizationsExcept(String providerName) {
         return organizationService.findAllOthersExcept(providerName, new ArrayList<>());
-    }
-
-    private List<OrganizationMatch> findNotHiddenMatches(Organization organization) {
-        return organizationMatchRepository
-            .findAllByOrganizationRecordIdAndHidden(organization.getId(), false);
-    }
-
-    private List<OrganizationMatch> findHiddenMatches(Organization organization) {
-        return organizationMatchRepository
-            .findAllByOrganizationRecordIdAndHidden(organization.getId(), true);
     }
 
     private List<OrganizationMatch> findAndPersistMatches(Organization organization,

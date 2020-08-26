@@ -1,5 +1,12 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.benetech.servicenet.service.util.EntityManagerUtils.updateCollection;
+import static org.benetech.servicenet.validator.EntityValidator.isValid;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.persistence.EntityManager;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
@@ -11,7 +18,6 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
-import org.benetech.servicenet.repository.RegularScheduleRepository;
 import org.benetech.servicenet.service.LocationBasedImportService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
@@ -19,22 +25,11 @@ import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
-import javax.persistence.EntityManager;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.benetech.servicenet.service.util.EntityManagerUtils.updateCollection;
-import static org.benetech.servicenet.validator.EntityValidator.isValid;
-
 @Component
 public class LocationBasedImportServiceImpl implements LocationBasedImportService {
 
     @Autowired
     private EntityManager em;
-
-    @Autowired
-    private RegularScheduleRepository regularScheduleRepository;
 
     @Autowired
     private SharedImportService sharedImportService;

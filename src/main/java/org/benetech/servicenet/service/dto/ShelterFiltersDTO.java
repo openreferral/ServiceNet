@@ -8,21 +8,23 @@ import lombok.Data;
 @Data
 public class ShelterFiltersDTO implements Serializable {
 
-  private List<String> definedCoverageAreas = new ArrayList<>();
+    private static final long serialVersionUID = 1L;
 
-  private List<String> tags = new ArrayList<>();
+    private List<String> definedCoverageAreas = new ArrayList<>();
 
-  private String searchQuery;
+    private List<String> tags = new ArrayList<>();
 
-  private String userId;
+    private String searchQuery;
 
-  private boolean showOnlyAvailableBeds;
+    private String userId;
 
-  private boolean applyLocationSearch;
+    private boolean showOnlyAvailableBeds;
 
-  private Double latitude;
+    private boolean applyLocationSearch;
 
-  private Double longitude;
+    private Double latitude;
 
-  private Double radius;
+    private Double longitude;
+
+    private Double radius;
 }

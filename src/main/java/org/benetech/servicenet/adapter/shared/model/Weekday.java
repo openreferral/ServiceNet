@@ -15,12 +15,9 @@ public enum Weekday {
 
     private String[] weekdays;
 
+    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
     Weekday(String... weekdays) {
         this.weekdays = weekdays;
-    }
-
-    public String[] getWeekdays() {
-        return weekdays;
     }
 
     public static Weekday getWeekday(String weekday) {

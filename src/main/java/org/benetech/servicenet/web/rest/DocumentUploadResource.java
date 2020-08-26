@@ -86,6 +86,7 @@ public class DocumentUploadResource {
      * @throws java.io.IOException if there's problem with reading the file
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @SuppressWarnings("PMD.PreserveStackTrace")
     @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/file")
     @Timed
@@ -111,6 +112,7 @@ public class DocumentUploadResource {
      * or with status 400 (Bad Request) if file is of wrong type
      * @throws JsonSyntaxException if something is wrong with JSON documents
      */
+    @SuppressWarnings("PMD.PreserveStackTrace")
     @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/map")
     @Timed

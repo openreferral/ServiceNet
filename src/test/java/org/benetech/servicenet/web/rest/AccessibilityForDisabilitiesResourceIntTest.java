@@ -91,7 +91,7 @@ public class AccessibilityForDisabilitiesResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final AccessibilityForDisabilitiesResource accessibilityForDisabilitiesResource =
             new AccessibilityForDisabilitiesResource(accessibilityForDisabilitiesService);

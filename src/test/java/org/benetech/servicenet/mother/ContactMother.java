@@ -2,7 +2,6 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.Contact;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class ContactMother {
 
     public static final String DEFAULT_EMAIL = "Contact email";
@@ -28,5 +27,8 @@ public final class ContactMother {
             .title(DIFFERENT_TITLE)
             .department(DIFFERENT_DEPARTMENT)
             .email(DIFFERENT_EMAIL);
+    }
+
+    private ContactMother() {
     }
 }

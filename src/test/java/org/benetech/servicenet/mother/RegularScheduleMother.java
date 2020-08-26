@@ -5,7 +5,6 @@ import org.benetech.servicenet.domain.RegularSchedule;
 
 import java.util.Set;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class RegularScheduleMother {
 
     public static final int WEEKDAY_1 = 0;
@@ -24,5 +23,8 @@ public final class RegularScheduleMother {
         return Set.of(
             new OpeningHours().weekday(WEEKDAY_1).opensAt(OPENS_AT_1).closesAt(CLOSES_AT_1),
             new OpeningHours().weekday(WEEKDAY_2).opensAt(OPENS_AT_2).closesAt(CLOSES_AT_2));
+    }
+
+    private RegularScheduleMother() {
     }
 }

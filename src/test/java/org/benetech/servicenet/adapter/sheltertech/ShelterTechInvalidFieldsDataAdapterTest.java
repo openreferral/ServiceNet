@@ -5,7 +5,6 @@ import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
 
 import java.io.IOException;
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -55,13 +54,11 @@ public class ShelterTechInvalidFieldsDataAdapterTest {
     private PostalAddressService postalAddressService;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
     private static SingleImportData importData;
 
+    @SuppressWarnings("PMD.JUnit4TestShouldUseBeforeAnnotation")
     @BeforeClass
     public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(INVALID_FIELDS_JSON);

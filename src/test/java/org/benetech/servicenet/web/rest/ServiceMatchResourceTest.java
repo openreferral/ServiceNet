@@ -60,7 +60,7 @@ public class ServiceMatchResourceTest {
     private Validator validator;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ServiceMatchResource serviceMatchResource = new ServiceMatchResource(serviceMatchService);
         this.restServiceFieldsValueMockMvc = MockMvcBuilders.standaloneSetup(serviceMatchResource)
@@ -78,13 +78,7 @@ public class ServiceMatchResourceTest {
 
         int databaseSizeBeforeSave = serviceMatchService.findAll().size();
 
-        restServiceFieldsValueMockMvc.perform(post("/api/service-matches")
-            .contentType(TestUtil.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(serviceMatchDto)))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.service").value(SERVICE_UUID.toString()))
-            .andExpect(jsonPath("$.matchingService").value(MATCHING_SERVICE_UUID.toString()));
+        saveServiceMatch(serviceMatchDto);
 
         int databaseSizeAfterSave = serviceMatchService.findAll().size();
 
@@ -98,23 +92,11 @@ public class ServiceMatchResourceTest {
 
         int databaseSizeBeforeSave = serviceMatchService.findAll().size();
 
-        restServiceFieldsValueMockMvc.perform(post("/api/service-matches")
-            .contentType(TestUtil.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(serviceMatchDto)))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.service").value(SERVICE_UUID.toString()))
-            .andExpect(jsonPath("$.matchingService").value(MATCHING_SERVICE_UUID.toString()));
+        saveServiceMatch(serviceMatchDto);
 
         int databaseSizeAfterSave = serviceMatchService.findAll().size();
 
-        restServiceFieldsValueMockMvc.perform(post("/api/service-matches")
-            .contentType(TestUtil.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(serviceMatchDto)))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.service").value(SERVICE_UUID.toString()))
-            .andExpect(jsonPath("$.matchingService").value(MATCHING_SERVICE_UUID.toString()));
+        saveServiceMatch(serviceMatchDto);
 
         int databaseSizeAfterSecondSave = serviceMatchService.findAll().size();
 
@@ -179,5 +161,15 @@ public class ServiceMatchResourceTest {
         serviceMatch.setService(service);
         serviceMatch.setMatchingService(matchingService);
         return serviceMatch;
+    }
+
+    private void saveServiceMatch(ServiceMatchDto serviceMatchDto) throws Exception {
+        restServiceFieldsValueMockMvc.perform(post("/api/service-matches")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(serviceMatchDto)))
+            .andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.service").value(SERVICE_UUID.toString()))
+            .andExpect(jsonPath("$.matchingService").value(MATCHING_SERVICE_UUID.toString()));
     }
 }

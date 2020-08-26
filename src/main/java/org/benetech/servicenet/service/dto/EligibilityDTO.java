@@ -10,6 +10,8 @@ import java.util.UUID;
  */
 public class EligibilityDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

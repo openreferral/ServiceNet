@@ -87,7 +87,7 @@ public class ServiceAreaResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ServiceAreaResource serviceAreaResource = new ServiceAreaResource(serviceAreaService);
         this.restServiceAreaMockMvc = MockMvcBuilders.standaloneSetup(serviceAreaResource)

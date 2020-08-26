@@ -19,6 +19,8 @@ import org.benetech.servicenet.domain.UserProfile;
 @Data
 public class OrganizationDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

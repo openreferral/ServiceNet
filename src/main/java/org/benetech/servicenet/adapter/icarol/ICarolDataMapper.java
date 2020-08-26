@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
  *            Each mapping method should use auto-generated version, or should set this information manually.
  *            @see ICarolConfidentialFieldsMapper for mapping fields that might be confidential as well as the whole object.
  */
+@SuppressWarnings("CPD-START")
 @Mapper(unmappedTargetPolicy = IGNORE)
 public interface ICarolDataMapper extends ICarolConfidentialFieldsMapper {
 

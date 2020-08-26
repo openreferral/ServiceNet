@@ -63,7 +63,7 @@ public abstract class AbstractICarolTaxonomyUpdateJob extends BaseJob {
         try {
             response = HttpUtils.executeGET(url, headers);
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot connect with iCarol API");
+            throw new IllegalStateException("Cannot connect with iCarol API", e);
         }
 
         return getTaxonomiesFromJson(response);

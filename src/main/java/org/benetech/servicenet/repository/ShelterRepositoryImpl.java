@@ -170,7 +170,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
         query.groupBy(root.get(ID), root.get(AGENCY_NAME), root.get(PROGRAM_NAME),
             root.get(ALTERNATE_NAME), root.get(BEDS), bedsJoin.get(AVAILABLE_BEDS));
 
-        query.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+        query.where(cb.and(predicates.toArray(new Predicate[0])));
     }
 
     private void addSorting(CriteriaQuery<Shelter> queryCriteria, Sort sort, Root<Shelter> root) {
@@ -186,13 +186,11 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
 
         Sort.Order order = sort.getOrderFor(field);
 
-        if (order != null) {
-            if (BEDS.equals(field)) {
-                if (order.isAscending()) {
-                    orderList.add(cb.asc(cb.coalesce(root.get(BEDS).get(AVAILABLE_BEDS), 0)));
-                } else {
-                    orderList.add(cb.desc(cb.coalesce(root.get(BEDS).get(AVAILABLE_BEDS), 0)));
-                }
+        if (order != null && BEDS.equals(field)) {
+            if (order.isAscending()) {
+                orderList.add(cb.asc(cb.coalesce(root.get(BEDS).get(AVAILABLE_BEDS), 0)));
+            } else {
+                orderList.add(cb.desc(cb.coalesce(root.get(BEDS).get(AVAILABLE_BEDS), 0)));
             }
         }
     }

@@ -35,7 +35,7 @@ final class ICarolDataCollector {
         try {
             response = HttpUtils.executeGET(uri + params, headers);
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot connect with iCarol API");
+            throw new IllegalStateException("Cannot connect with iCarol API", e);
         }
         return getICarolGson().fromJson(response, JsonArray.class);
     }

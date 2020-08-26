@@ -22,6 +22,7 @@ public class ZonedDateTimeDeserializer implements JsonDeserializer<ZonedDateTime
         this.dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormat, Locale.ENGLISH);
     }
 
+    @SuppressWarnings("PMD.PreserveStackTrace")
     @Override
     public ZonedDateTime deserialize(JsonElement jsonElement, Type type,
         JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {

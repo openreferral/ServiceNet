@@ -99,7 +99,7 @@ public class DataImportReportResourceIntTest {
     private DataImportReport dataImportReport;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final DataImportReportResource dataImportReportResource = new DataImportReportResource(dataImportReportService);
         this.restDataImportReportMockMvc = MockMvcBuilders.standaloneSetup(dataImportReportResource)

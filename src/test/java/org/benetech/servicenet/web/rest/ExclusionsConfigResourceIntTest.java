@@ -71,7 +71,7 @@ public class ExclusionsConfigResourceIntTest {
     private ExclusionsConfig exclusionsConfig;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ExclusionsConfigResource exclusionsConfigResource = new ExclusionsConfigResource(exclusionsConfigService);
         this.restExclusionsConfigMockMvc = MockMvcBuilders.standaloneSetup(exclusionsConfigResource)

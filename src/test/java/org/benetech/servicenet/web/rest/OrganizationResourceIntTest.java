@@ -100,7 +100,7 @@ public class OrganizationResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final OrganizationResource organizationResource = new OrganizationResource(
             organizationService, userService, activityService

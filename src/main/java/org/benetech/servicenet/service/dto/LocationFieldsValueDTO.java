@@ -11,6 +11,8 @@ import org.benetech.servicenet.domain.enumeration.LocationFields;
  */
 public class LocationFieldsValueDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

@@ -87,12 +87,7 @@ public class ProviderRecordsRepository {
         queryCriteria.groupBy(selectRoot.get(ID));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
-        Query query = em.createQuery(queryCriteria);
-        if (pageable.isPaged()) {
-            query
-                .setFirstResult((int) pageable.getOffset())
-                .setMaxResults(pageable.getPageSize());
-        }
+        Query query = createQueryWithPageable(queryCriteria, pageable);
 
         List<Organization> results = query.getResultList();
 
@@ -115,12 +110,7 @@ public class ProviderRecordsRepository {
         queryCriteria.groupBy(selectRoot.get(ID));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
-        Query query = em.createQuery(queryCriteria);
-        if (pageable.isPaged()) {
-            query
-                .setFirstResult((int) pageable.getOffset())
-                .setMaxResults(pageable.getPageSize());
-        }
+        Query query = createQueryWithPageable(queryCriteria, pageable);
 
         List<Organization> results = query.getResultList();
 
@@ -162,6 +152,17 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results);
     }
 
+    private Query createQueryWithPageable(CriteriaQuery<Organization> queryCriteria, Pageable pageable) {
+        Query query = em.createQuery(queryCriteria);
+        if (pageable.isPaged()) {
+            query
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize());
+        }
+
+        return query;
+    }
+
     private <T> void addFiltersAndSelect(CriteriaQuery<ProviderRecordForMapDTO> query, Root<GeocodingResult> root,
         ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions, UserProfile userProfile, Silo silo) {
         Predicate predicate = cb.conjunction();
@@ -198,7 +199,6 @@ public class ProviderRecordsRepository {
 
     private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, UserProfile userProfile,
         ProviderFilterDTO providerFilterDTO, String search) {
-        Predicate predicate = cb.conjunction();
 
         Join<Organization, SystemAccount> systemAccountJoin = root.join(ACCOUNT, JoinType.LEFT);
         Join<Organization, UserProfile> userProfileJoin = root.join(USER_PROFILES, JoinType.LEFT);
@@ -208,7 +208,7 @@ public class ProviderRecordsRepository {
 
         Silo silo = userProfile.getSilo();
 
-        predicate = getCommonPredicate(root, silo, search, systemAccountJoin,
+        Predicate predicate = getCommonPredicate(root, silo, search, systemAccountJoin,
             userProfileJoin,
             serviceJoin, eligibilityJoin);
 
@@ -221,44 +221,8 @@ public class ProviderRecordsRepository {
         query.where(predicate);
     }
 
-    private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, UserProfile userProfile) {
-        Predicate predicate = cb.conjunction();
-
-        Join<Organization, SystemAccount> systemAccountJoin = root.join(ACCOUNT, JoinType.LEFT);
-        Join<Organization, UserProfile> userProfileJoin = root.join(USER_PROFILES, JoinType.LEFT);
-        Join<Organization, Service> serviceJoin = root.join(SERVICES, JoinType.LEFT);
-
-        Silo silo = userProfile.getSilo();
-
-        predicate = cb.equal(root.get(ACTIVE), true);
-
-        predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
-
-        predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
-
-        predicate = cb.and(predicate, cb.notEqual(userProfileJoin.get(ID), userProfile.getId()));
-
-        query.where(predicate);
-    }
-
-    private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, Silo silo) {
-        Predicate predicate = cb.conjunction();
-
-        Join<Organization, SystemAccount> systemAccountJoin = root.join(ACCOUNT, JoinType.LEFT);
-        Join<Organization, UserProfile> userProfileJoin = root.join(USER_PROFILES, JoinType.LEFT);
-
-        predicate = cb.equal(root.get(ACTIVE), true);
-
-        predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
-
-        predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
-
-        query.where(predicate);
-    }
-
     private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, Silo silo,
         ProviderFilterDTO providerFilterDTO, String search) {
-        Predicate predicate = cb.conjunction();
 
         Join<Organization, SystemAccount> systemAccountJoin = root.join(ACCOUNT, JoinType.LEFT);
         Join<Organization, UserProfile> userProfileJoin = root.join(USER_PROFILES, JoinType.LEFT);
@@ -266,7 +230,7 @@ public class ProviderRecordsRepository {
         Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(ELIGIBILITY, JoinType.LEFT);
         Join<Organization, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
 
-        predicate = getCommonPredicate(root, silo, search, systemAccountJoin, userProfileJoin,
+        Predicate predicate = getCommonPredicate(root, silo, search, systemAccountJoin, userProfileJoin,
             serviceJoin,
             eligibilityJoin);
 
@@ -310,6 +274,7 @@ public class ProviderRecordsRepository {
         return predicateResult;
     }
 
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     private Predicate addLocationFilters(Predicate predicate, ProviderFilterDTO providerFilterDTO,
         Join<? extends AbstractEntity, Location> locationJoin, List<ExclusionsConfig> exclusions) {
         Set<LocationExclusion> locationExclusions = (exclusions != null) ? exclusions.stream()

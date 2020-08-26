@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
@@ -15,11 +14,7 @@ import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.manager.ImportManager;
-import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
-import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.EligibilityService;
-import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -58,16 +53,7 @@ public class ShelterTechCompleteDataAdapterTest {
     private ShelterTechDataAdapter adapter;
 
     @Autowired
-    private ImportManager importManager;
-
-    @Autowired
-    private LanguageService languageService;
-
-    @Autowired
     private EligibilityService eligibilityService;
-
-    @Autowired
-    private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
 
     @Autowired
     private OrganizationService organizationService;
@@ -85,9 +71,6 @@ public class ShelterTechCompleteDataAdapterTest {
     private PhysicalAddressService physicalAddressService;
 
     @Autowired
-    private ContactService contactService;
-
-    @Autowired
     private PostalAddressService postalAddressService;
 
     @Autowired
@@ -100,13 +83,11 @@ public class ShelterTechCompleteDataAdapterTest {
     private RegularScheduleService regularScheduleService;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
     private static SingleImportData importData;
 
+    @SuppressWarnings("PMD.JUnit4TestShouldUseBeforeAnnotation")
     @BeforeClass
     public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);

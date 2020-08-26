@@ -84,7 +84,7 @@ public class GeocodingResultResourceIntTest {
     private GeocodingResult geocodingResult;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final GeocodingResultResource geocodingResultResource = new GeocodingResultResource(geocodingResultService);
         this.restGeocodingResultMockMvc = MockMvcBuilders.standaloneSetup(geocodingResultResource)

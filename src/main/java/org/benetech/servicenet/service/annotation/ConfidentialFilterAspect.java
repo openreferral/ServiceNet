@@ -29,10 +29,9 @@ public class ConfidentialFilterAspect {
         boolean result = true;
 
         for (Object param : methodParams) {
-            if (param instanceof AbstractEntity) {
-                if (BooleanUtils.isTrue(((AbstractEntity) param).getIsConfidential())) {
-                    result = false;
-                }
+            if (param instanceof AbstractEntity
+                && BooleanUtils.isTrue(((AbstractEntity) param).getIsConfidential())) {
+                result = false;
             }
         }
         return result;

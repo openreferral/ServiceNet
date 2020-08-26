@@ -1,6 +1,5 @@
 package org.benetech.servicenet.matching;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 class MatchingTestConstants {
     static final String HEALTHLEADS_DIR = "healthleads/bad_matches/";
     static final String LAAC_DIR = "laac/";
@@ -28,4 +27,7 @@ class MatchingTestConstants {
     static final String PROGRAMS = "programs";
     static final String REGULAR_SCHEDULES = "regular_schedules";
     static final String METADATA = "metadata";
+
+    private MatchingTestConstants() {
+    }
 }

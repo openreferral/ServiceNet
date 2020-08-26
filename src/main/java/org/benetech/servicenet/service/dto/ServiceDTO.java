@@ -15,6 +15,8 @@ import java.util.UUID;
 @Data
 public class ServiceDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull
@@ -88,6 +90,7 @@ public class ServiceDTO implements Serializable {
         return Objects.hashCode(getId());
     }
 
+    @SuppressWarnings("CPD-START")
     @Override
     public String toString() {
         return "ServiceDTO{" +

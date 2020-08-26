@@ -1,23 +1,5 @@
 package org.benetech.servicenet.service.mapper;
 
-import org.benetech.servicenet.domain.HolidaySchedule;
-import org.benetech.servicenet.domain.Language;
-import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.domain.PostalAddress;
-import org.benetech.servicenet.domain.RegularSchedule;
-import org.benetech.servicenet.mother.AccessibilityForDisabilitiesMother;
-import org.benetech.servicenet.mother.HolidayScheduleMother;
-import org.benetech.servicenet.mother.LocationMother;
-import org.benetech.servicenet.mother.PhysicalAddressMother;
-import org.benetech.servicenet.mother.PostalAddressMother;
-import org.benetech.servicenet.mother.RegularScheduleMother;
-import org.benetech.servicenet.service.dto.LocationRecordDTO;
-import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Set;
-
 import static org.benetech.servicenet.mother.AccessibilityForDisabilitiesMother.DEFAULT_ACCESSIBILITY;
 import static org.benetech.servicenet.mother.AccessibilityForDisabilitiesMother.DEFAULT_DETAILS;
 import static org.benetech.servicenet.mother.AccessibilityForDisabilitiesMother.DIFFERENT_ACCESSIBILITY;
@@ -36,6 +18,23 @@ import static org.benetech.servicenet.mother.RegularScheduleMother.WEEKDAY_1;
 import static org.benetech.servicenet.mother.RegularScheduleMother.WEEKDAY_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.Set;
+import org.benetech.servicenet.domain.HolidaySchedule;
+import org.benetech.servicenet.domain.Language;
+import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.RegularSchedule;
+import org.benetech.servicenet.mother.AccessibilityForDisabilitiesMother;
+import org.benetech.servicenet.mother.HolidayScheduleMother;
+import org.benetech.servicenet.mother.LocationMother;
+import org.benetech.servicenet.mother.PhysicalAddressMother;
+import org.benetech.servicenet.mother.PostalAddressMother;
+import org.benetech.servicenet.mother.RegularScheduleMother;
+import org.benetech.servicenet.service.dto.LocationRecordDTO;
+import org.junit.Test;
 
 public class LocationMapperTest {
 
@@ -92,15 +91,15 @@ public class LocationMapperTest {
         RegularSchedule schedule = RegularScheduleMother.createWithTwoOpeningHours();
         Location entry = new Location().regularSchedule(schedule);
 
-        LocationRecordDTO result = locationMapper.toRecord(entry);
+        LocationRecordDTO locationRecordDTO = locationMapper.toRecord(entry);
 
-        assertTrue(result.getRegularScheduleOpeningHours().stream()
+        assertTrue(locationRecordDTO.getRegularScheduleOpeningHours().stream()
             .anyMatch(x ->
                 x.getWeekday().equals(WEEKDAY_1)
                     && x.getOpensAt().equals(OPENS_AT_1)
                     && x.getClosesAt().equals(CLOSES_AT_1)));
 
-        assertTrue(result.getRegularScheduleOpeningHours().stream()
+        assertTrue(locationRecordDTO.getRegularScheduleOpeningHours().stream()
             .anyMatch(x ->
                 x.getWeekday().equals(WEEKDAY_2)
                     && x.getOpensAt().equals(OPENS_AT_2)
@@ -113,13 +112,13 @@ public class LocationMapperTest {
         HolidaySchedule schedule = HolidayScheduleMother.createDefault();
         Location entry = new Location().holidaySchedules(Collections.singleton(schedule));
 
-        LocationRecordDTO result = locationMapper.toRecord(entry);
+        LocationRecordDTO locationRecordDTO = locationMapper.toRecord(entry);
 
-        assertEquals(HolidayScheduleMother.START_DATE, result.getHolidaySchedules().iterator().next().getStartDate());
-        assertEquals(HolidayScheduleMother.END_DATE, result.getHolidaySchedules().iterator().next().getEndDate());
-        assertEquals(HolidayScheduleMother.OPENS_AT, result.getHolidaySchedules().iterator().next().getOpensAt());
-        assertEquals(HolidayScheduleMother.CLOSES_AT, result.getHolidaySchedules().iterator().next().getClosesAt());
-        assertEquals(HolidayScheduleMother.CLOSED, result.getHolidaySchedules().iterator().next().isClosed());
+        assertEquals(HolidayScheduleMother.START_DATE, locationRecordDTO.getHolidaySchedules().iterator().next().getStartDate());
+        assertEquals(HolidayScheduleMother.END_DATE, locationRecordDTO.getHolidaySchedules().iterator().next().getEndDate());
+        assertEquals(HolidayScheduleMother.OPENS_AT, locationRecordDTO.getHolidaySchedules().iterator().next().getOpensAt());
+        assertEquals(HolidayScheduleMother.CLOSES_AT, locationRecordDTO.getHolidaySchedules().iterator().next().getClosesAt());
+        assertEquals(HolidayScheduleMother.CLOSED, locationRecordDTO.getHolidaySchedules().iterator().next().isClosed());
     }
 
     @Test
