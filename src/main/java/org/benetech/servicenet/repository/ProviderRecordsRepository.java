@@ -303,6 +303,7 @@ public class ProviderRecordsRepository {
                 cb.like(cb.upper(from.get(NAME)), searchQuery),
                 cb.like(cb.upper(from.get(DESCRIPTION)), searchQuery),
                 cb.like(cb.upper(serviceJoin.get(NAME)), searchQuery),
+                cb.like(cb.upper(serviceJoin.get(DESCRIPTION)), searchQuery),
                 cb.like(cb.upper(eligibilityJoin.get(ELIGIBILITY)), searchQuery)
             );
             predicateResult = cb.and(predicate, searchPredicate);
