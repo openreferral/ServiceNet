@@ -1,18 +1,17 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import javax.persistence.PrePersist;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Beds.
@@ -33,7 +32,8 @@ public class Beds extends AbstractEntity implements Serializable {
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
-    @ManyToOne
+    @OneToOne
+    @JoinColumn(name = "shelter_id")
     @JsonIgnoreProperties("beds")
     private Shelter shelter;
 
