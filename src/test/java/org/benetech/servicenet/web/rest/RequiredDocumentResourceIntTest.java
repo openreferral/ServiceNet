@@ -87,7 +87,7 @@ public class RequiredDocumentResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final RequiredDocumentResource requiredDocumentResource = new RequiredDocumentResource(requiredDocumentService);
         this.restRequiredDocumentMockMvc = MockMvcBuilders.standaloneSetup(requiredDocumentResource)

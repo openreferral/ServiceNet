@@ -90,7 +90,7 @@ public class ProgramResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ProgramResource programResource = new ProgramResource(programService);
         this.restProgramMockMvc = MockMvcBuilders.standaloneSetup(programResource)

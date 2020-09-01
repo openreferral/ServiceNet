@@ -71,7 +71,7 @@ public class SiloResourceIT {
     private Silo silo;
 
     @BeforeEach
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final SiloResource siloResource = new SiloResource(siloService);
         this.restSiloMockMvc = MockMvcBuilders.standaloneSetup(siloResource)

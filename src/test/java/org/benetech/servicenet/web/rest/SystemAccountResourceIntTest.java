@@ -83,7 +83,7 @@ public class SystemAccountResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final SystemAccountResource systemAccountResource = new SystemAccountResource(systemAccountService);
         this.restSystemAccountMockMvc = MockMvcBuilders.standaloneSetup(systemAccountResource)

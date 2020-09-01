@@ -18,6 +18,8 @@ import java.util.UUID;
 @Component
 public class HibernatePostUpdateListener extends AbstractHibernateListener implements PostUpdateEventListener {
 
+    private static final long serialVersionUID = 1L;
+
     private static final long MINUTE_IN_SECONDS = 60;
 
     @Autowired

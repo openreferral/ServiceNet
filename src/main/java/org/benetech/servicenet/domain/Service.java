@@ -30,6 +30,7 @@ import java.util.Set;
 /**
  * A Service.
  */
+@SuppressWarnings("PMD.ExcessivePublicCount")
 @Data
 @Entity
 @Table(name = "service", uniqueConstraints = {
@@ -494,7 +495,7 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
             "}";
     }
 
-    @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
+    @SuppressWarnings({"PMD.NPathComplexity", "checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
     @Override
     public boolean deepEquals(Object o) {
         if (o == null || getClass() != o.getClass()) {

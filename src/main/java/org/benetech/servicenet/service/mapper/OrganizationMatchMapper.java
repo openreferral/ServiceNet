@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.mapper;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.LocationMatch;
@@ -15,7 +18,6 @@ import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
 import org.benetech.servicenet.repository.MetadataRepository;
 import org.benetech.servicenet.service.LocationMatchService;
@@ -28,12 +30,7 @@ import org.benetech.servicenet.service.dto.ServiceMatchDto;
 import org.benetech.servicenet.util.CollectionUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
-import static org.mapstruct.ReportingPolicy.IGNORE;
 
 /**
  * Mapper for the entity OrganizationMatch and its DTO OrganizationMatchDTO.
@@ -58,12 +55,6 @@ public abstract class OrganizationMatchMapper {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private GeoApi geoApi;
-
-    @Value("${similarity-ratio.credentials.google-api}")
-    private String googleApiKey;
 
     @Mapping(source = "organizationRecord.id", target = "organizationRecordId")
     @Mapping(source = "organizationRecord.name", target = "organizationRecordName")

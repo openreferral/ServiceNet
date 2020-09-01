@@ -1,5 +1,9 @@
 package org.benetech.servicenet.adapter.anonymous;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.util.List;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
@@ -26,7 +30,6 @@ import org.benetech.servicenet.service.dto.PostalAddressDTO;
 import org.benetech.servicenet.service.dto.ProgramDTO;
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
-import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,11 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
@@ -89,9 +87,6 @@ public class AnonymousDataAdapterIntTest {
 
     @Autowired
     private RegularScheduleService regularScheduleService;
-
-    @Autowired
-    private LocationMapper locationMapper;
 
     @Before
     public void persistData() throws IOException {

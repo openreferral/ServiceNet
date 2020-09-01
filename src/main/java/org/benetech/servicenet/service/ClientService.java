@@ -49,6 +49,7 @@ public class ClientService {
      * @param clientDto client to create
      * @return created client
      */
+    @SuppressWarnings("PMD.PreserveStackTrace")
     public ClientDTO createClient(ClientDTO clientDto) throws BadRequestAlertException {
         try {
             ClientDTO result = authClient.createClient(clientDto);

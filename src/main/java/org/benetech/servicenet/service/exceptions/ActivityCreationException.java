@@ -2,6 +2,8 @@ package org.benetech.servicenet.service.exceptions;
 
 public class ActivityCreationException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public ActivityCreationException() {
         super();
     }

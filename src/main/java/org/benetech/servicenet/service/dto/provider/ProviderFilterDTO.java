@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 public class ProviderFilterDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String city;
 
     private String region;

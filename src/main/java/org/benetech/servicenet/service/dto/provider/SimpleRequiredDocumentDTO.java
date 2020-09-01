@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 public class SimpleRequiredDocumentDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

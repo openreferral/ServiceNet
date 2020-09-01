@@ -91,7 +91,7 @@ public class TaxonomyResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final TaxonomyResource taxonomyResource = new TaxonomyResource(taxonomyService);
         this.restTaxonomyMockMvc = MockMvcBuilders.standaloneSetup(taxonomyResource)

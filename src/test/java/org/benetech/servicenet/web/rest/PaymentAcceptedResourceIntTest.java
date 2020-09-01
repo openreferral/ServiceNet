@@ -87,7 +87,7 @@ public class PaymentAcceptedResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final PaymentAcceptedResource paymentAcceptedResource = new PaymentAcceptedResource(paymentAcceptedService);
         this.restPaymentAcceptedMockMvc = MockMvcBuilders.standaloneSetup(paymentAcceptedResource)

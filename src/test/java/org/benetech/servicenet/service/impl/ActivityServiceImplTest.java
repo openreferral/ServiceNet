@@ -92,7 +92,7 @@ public class ActivityServiceImplTest {
     private OrganizationMapper organizationMapper;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         activityService = new ActivityServiceImpl(activityRepository, recordsService,
             exclusionsConfigService, organizationMatchService, organizationService, userService,
@@ -144,22 +144,8 @@ public class ActivityServiceImplTest {
         assertNotNull(actualAct);
         assertEquals(1, actualAct.getConflicts().size());
         ConflictDTO actualConflict = actualAct.getConflicts().get(0);
-        assertEquals(conflict.getId(), actualConflict.getId());
-        assertEquals(conflict.getCurrentValue(), actualConflict.getCurrentValue());
-        assertEquals(conflict.getCurrentValueDate(), actualConflict.getCurrentValueDate());
-        assertEquals(conflict.getOfferedValue(), actualConflict.getOfferedValue());
-        assertEquals(conflict.getOfferedValueDate(), actualConflict.getOfferedValueDate());
-        assertEquals(conflict.getFieldName(), actualConflict.getFieldName());
-        assertEquals(conflict.getEntityPath(), actualConflict.getEntityPath());
-        assertEquals(conflict.getState(), actualConflict.getState());
-        assertEquals(conflict.getStateDate(), actualConflict.getStateDate());
-        assertEquals(conflict.getCreatedDate(), actualConflict.getCreatedDate());
-        assertEquals(conflict.getResourceId(), actualConflict.getResourceId());
-        assertEquals(conflict.getPartnerResourceId(), actualConflict.getPartnerResourceId());
-        assertEquals(conflict.getOwner().getId(), actualConflict.getOwnerId());
-        assertEquals(conflict.getOwner().getName(), actualConflict.getOwnerName());
-        assertEquals(conflict.getPartner().getId(), actualConflict.getPartnerId());
-        assertEquals(conflict.getPartner().getName(), actualConflict.getPartnerName());
+
+        checkConflict(conflict, actualConflict);
     }
 
     @Test
@@ -202,6 +188,11 @@ public class ActivityServiceImplTest {
         assertNotNull(actualAct);
         assertEquals(1, actualAct.getConflicts().size());
         ConflictDTO actualConflict = actualAct.getConflicts().get(0);
+
+        checkConflict(conflict, actualConflict);
+    }
+
+    private void checkConflict(Conflict conflict, ConflictDTO actualConflict) {
         assertEquals(conflict.getId(), actualConflict.getId());
         assertEquals(conflict.getCurrentValue(), actualConflict.getCurrentValue());
         assertEquals(conflict.getCurrentValueDate(), actualConflict.getCurrentValueDate());

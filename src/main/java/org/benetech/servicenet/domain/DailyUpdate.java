@@ -21,6 +21,8 @@ import java.time.ZonedDateTime;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DailyUpdate extends AbstractEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "update", nullable = false, columnDefinition = "clob")

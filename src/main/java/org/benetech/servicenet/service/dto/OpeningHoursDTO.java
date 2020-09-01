@@ -10,6 +10,8 @@ import java.util.UUID;
  */
 public class OpeningHoursDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

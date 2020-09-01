@@ -2,7 +2,6 @@ package org.benetech.servicenet.service.impl;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
-import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.MongoDbService;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -21,9 +20,6 @@ public class MongoDbServiceImpl implements MongoDbService {
 
     @Autowired
     private MongoDbFactory mongoDbFactory;
-
-    @Autowired
-    private DocumentUploadService documentUploadService;
 
     @Override
     public String saveParsedDocument(String file) {

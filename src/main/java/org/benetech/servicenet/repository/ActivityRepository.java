@@ -158,6 +158,7 @@ public class ActivityRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     private Path getFieldPath(From from, SearchField searchField) {
         if (searchField.equals(SearchField.PHONE)) {
             return from.join(PHONES, JoinType.LEFT).get(NUMBER);

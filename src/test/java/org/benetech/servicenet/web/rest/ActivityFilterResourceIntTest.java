@@ -121,7 +121,7 @@ public class ActivityFilterResourceIntTest {
     private ActivityFilter activityFilter;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ActivityFilterResource activityFilterResource = new ActivityFilterResource(activityFilterService, userService);
         this.restActivityFilterMockMvc = MockMvcBuilders.standaloneSetup(activityFilterResource)

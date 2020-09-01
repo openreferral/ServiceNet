@@ -52,6 +52,7 @@ public class ExceptionTranslatorTestController {
         throw new TestResponseStatusException();
     }
 
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     @GetMapping("/internal-server-error")
     public void internalServerError() {
         throw new RuntimeException();

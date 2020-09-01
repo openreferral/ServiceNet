@@ -81,6 +81,7 @@ public class SMCConnectDataAdapterInvalidFieldsTest {
     @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
+    @SuppressWarnings("CPD-START")
     @Before
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setUp() throws IOException {
@@ -102,6 +103,7 @@ public class SMCConnectDataAdapterInvalidFieldsTest {
         adapter.importData(importData);
     }
 
+    @SuppressWarnings("CPD-END")
     @Test
     public void testAfterGetPhoneFromJsonWithInvalidFields() {
         assertEquals(1, phoneService.findAll().size());

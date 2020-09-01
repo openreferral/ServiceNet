@@ -99,7 +99,7 @@ public class ContactResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ContactResource contactResource = new ContactResource(contactService);
         this.restContactMockMvc = MockMvcBuilders.standaloneSetup(contactResource)

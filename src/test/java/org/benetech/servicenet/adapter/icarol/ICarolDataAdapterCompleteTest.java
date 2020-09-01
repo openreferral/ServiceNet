@@ -200,6 +200,7 @@ public class ICarolDataAdapterCompleteTest {
                 "Low-income family, elderly (age 62 or over), persons with disabilities, or other persons.")));
     }
 
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     @Test
     public void shouldImportOpeningHours() {
         adapter.importData(importData);

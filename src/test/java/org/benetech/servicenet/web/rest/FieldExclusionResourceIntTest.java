@@ -79,7 +79,7 @@ public class FieldExclusionResourceIntTest {
     private FieldExclusion fieldExclusion;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final FieldExclusionResource fieldExclusionResource = new FieldExclusionResource(fieldExclusionService);
         this.restFieldExclusionMockMvc = MockMvcBuilders.standaloneSetup(fieldExclusionResource)

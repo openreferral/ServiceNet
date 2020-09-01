@@ -105,7 +105,7 @@ public class HolidayScheduleResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final HolidayScheduleResource holidayScheduleResource = new HolidayScheduleResource(holidayScheduleService);
         this.restHolidayScheduleMockMvc = MockMvcBuilders.standaloneSetup(holidayScheduleResource)

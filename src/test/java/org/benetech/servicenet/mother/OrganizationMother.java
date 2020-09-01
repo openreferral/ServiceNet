@@ -6,7 +6,6 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class OrganizationMother {
 
     public static final String DEFAULT_NAME = "AAAAAAAAAA";
@@ -104,4 +103,6 @@ public class OrganizationMother {
         return org;
     }
 
+    private OrganizationMother() {
+    }
 }

@@ -9,6 +9,8 @@ import java.util.UUID;
  */
 public class ExclusionsConfigDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     private UUID accountId;

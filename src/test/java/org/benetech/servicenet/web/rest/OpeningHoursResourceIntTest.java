@@ -82,7 +82,7 @@ public class OpeningHoursResourceIntTest {
     private OpeningHours openingHours;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final OpeningHoursResource openingHoursResource = new OpeningHoursResource(openingHoursService);
         this.restOpeningHoursMockMvc = MockMvcBuilders.standaloneSetup(openingHoursResource)

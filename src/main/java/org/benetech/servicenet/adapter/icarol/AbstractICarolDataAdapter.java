@@ -6,7 +6,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import org.apache.http.Header;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.icarol.model.ICarolAgency;
@@ -23,10 +25,6 @@ import org.benetech.servicenet.util.HttpUtils;
 import org.benetech.servicenet.util.ZonedDateTimeDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import java.lang.reflect.Type;
-import java.util.Collection;
-
 public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
 
     private static final String AGENCY = "Agency";
@@ -36,9 +34,6 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
     private static final String TYPE = "type";
 
     private static final Gson GSON = getICarolGson();
-
-    @Autowired
-    private EntityManager em;
 
     @Autowired
     private ImportManager importManager;

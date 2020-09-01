@@ -4,7 +4,6 @@ import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -13,10 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.ExclusionsConfig;
-import org.benetech.servicenet.domain.GeocodingResult;
-import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserGroup;
@@ -34,8 +30,6 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.GeocodingResultDTO;
-import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
@@ -147,7 +141,7 @@ public class ActivityServiceImpl implements ActivityService {
                 } catch (IllegalAccessException | NoSuchElementException e) {
                     throw new ActivityCreationException(
                         String.format("Activity record couldn't be created for organization: %s",
-                            match.getPartnerVersionId()));
+                            match.getPartnerVersionId()), e);
                 }
             })
             .collect(Collectors.toList());
@@ -273,32 +267,5 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (IllegalAccessException e) {
             return null;
         }
-    }
-
-    private boolean filterLocation(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {
-        return this.compareCity(geocodingResult, providerFilterDTO)
-            && this.compareRegion(geocodingResult, providerFilterDTO)
-            && this.comparePostalCode(geocodingResult, providerFilterDTO);
-    }
-
-    private boolean compareCity(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {
-        if (StringUtils.isEmpty(geocodingResult.getLocality()) || StringUtils.isEmpty(providerFilterDTO.getCity())) {
-            return true;
-        }
-        return geocodingResult.getLocality().equals(providerFilterDTO.getCity());
-    }
-
-    private boolean compareRegion(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {
-        if (StringUtils.isEmpty(geocodingResult.getAdministrativeAreaLevel2()) || StringUtils.isEmpty(providerFilterDTO.getRegion())) {
-            return true;
-        }
-        return geocodingResult.getAdministrativeAreaLevel2().equals(providerFilterDTO.getRegion());
-    }
-
-    private boolean comparePostalCode(GeocodingResult geocodingResult, ProviderFilterDTO providerFilterDTO) {
-        if (StringUtils.isEmpty(geocodingResult.getPostalCode()) || StringUtils.isEmpty(providerFilterDTO.getZip())) {
-            return true;
-        }
-        return geocodingResult.getPostalCode().equals(providerFilterDTO.getZip());
     }
 }

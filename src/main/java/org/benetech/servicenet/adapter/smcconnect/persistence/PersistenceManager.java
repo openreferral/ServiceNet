@@ -25,7 +25,6 @@ import org.benetech.servicenet.adapter.smcconnect.model.SmcService;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
@@ -154,10 +153,6 @@ class PersistenceManager {
             .map(a -> mapper.extractPostalAddress(a)).findFirst().orElse(Optional.empty());
     }
 
-    private Funding getFundingToPersist(SmcService smcService) {
-        return mapper.extractFunding(smcService).orElse(null);
-    }
-
     private Set<Contact> getServiceBasedContactsToPersist(String relatedTo) {
         return storage.getRelatedEntities(SmcContact.class, relatedTo, SmcService.class).stream()
             .map(c -> mapper.extractContact(c)).collect(Collectors.toSet());
@@ -188,10 +183,6 @@ class PersistenceManager {
     private Set<Contact> getOrgBasedContactsToPersist(String relatedTo) {
         return storage.getRelatedEntities(SmcContact.class, relatedTo, SmcOrganization.class).stream()
             .map(c -> mapper.extractContact(c)).collect(Collectors.toSet());
-    }
-
-    private Funding getFundingToPersist(SmcOrganization smcOrganization) {
-        return mapper.extractFunding(smcOrganization).orElse(null);
     }
 
     private Set<ServiceTaxonomy> getServiceTaxonomiesToPersist(SmcService smcService) {

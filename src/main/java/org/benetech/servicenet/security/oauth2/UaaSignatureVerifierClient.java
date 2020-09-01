@@ -49,7 +49,7 @@ public class UaaSignatureVerifierClient implements OAuth2SignatureVerifierClient
      * @return the public key used to verify JWT tokens; or {@code null}.
      */
     @Override
-    public SignatureVerifier getSignatureVerifier() throws Exception {
+    public SignatureVerifier getSignatureVerifier() {
         try {
             HttpEntity<Void> request = new HttpEntity<Void>(new HttpHeaders());
             String key = (String) restTemplate

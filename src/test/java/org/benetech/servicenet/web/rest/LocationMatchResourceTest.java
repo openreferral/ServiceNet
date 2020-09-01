@@ -60,7 +60,7 @@ public class LocationMatchResourceTest {
     private Validator validator;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final LocationMatchResource locationMatchResource = new LocationMatchResource(locationMatchService);
         this.restLocationFieldsValueMockMvc = MockMvcBuilders.standaloneSetup(locationMatchResource)
@@ -78,13 +78,7 @@ public class LocationMatchResourceTest {
 
         int databaseSizeBeforeSave = locationMatchService.findAll().size();
 
-        restLocationFieldsValueMockMvc.perform(post("/api/location-matches")
-            .contentType(TestUtil.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(locationMatchDto)))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.location").value(LOCATION_UUID.toString()))
-            .andExpect(jsonPath("$.matchingLocation").value(MATCHING_LOCATION_UUID.toString()));
+        saveLocationMatch(locationMatchDto);
 
         int databaseSizeAfterSave = locationMatchService.findAll().size();
 
@@ -98,23 +92,11 @@ public class LocationMatchResourceTest {
 
         int databaseSizeBeforeSave = locationMatchService.findAll().size();
 
-        restLocationFieldsValueMockMvc.perform(post("/api/location-matches")
-            .contentType(TestUtil.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(locationMatchDto)))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.location").value(LOCATION_UUID.toString()))
-            .andExpect(jsonPath("$.matchingLocation").value(MATCHING_LOCATION_UUID.toString()));
+        saveLocationMatch(locationMatchDto);
 
         int databaseSizeAfterSave = locationMatchService.findAll().size();
 
-        restLocationFieldsValueMockMvc.perform(post("/api/location-matches")
-            .contentType(TestUtil.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(locationMatchDto)))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.location").value(LOCATION_UUID.toString()))
-            .andExpect(jsonPath("$.matchingLocation").value(MATCHING_LOCATION_UUID.toString()));
+        saveLocationMatch(locationMatchDto);
 
         int databaseSizeAfterSecondSave = locationMatchService.findAll().size();
 
@@ -181,4 +163,13 @@ public class LocationMatchResourceTest {
         return locationMatch;
     }
 
+    private void saveLocationMatch(LocationMatchDto locationMatchDto) throws Exception {
+        restLocationFieldsValueMockMvc.perform(post("/api/location-matches")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(locationMatchDto)))
+            .andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.location").value(LOCATION_UUID.toString()))
+            .andExpect(jsonPath("$.matchingLocation").value(MATCHING_LOCATION_UUID.toString()));
+    }
 }

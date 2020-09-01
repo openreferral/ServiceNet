@@ -578,10 +578,10 @@
                 <executions>
                     <execution>
                         <phase>compile</phase>
-                        <!--                        <goals>-->
-                        <!--                            <goal>check</goal>-->
-                        <!--                            <goal>cpd-check</goal>-->
-                        <!--                        </goals>-->
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
                     </execution>
                 </executions>
                 <configuration>
@@ -595,6 +595,9 @@
                     <targetJdk>${java.version}</targetJdk>
                     <printFailingErrors>true</printFailingErrors>
                     <failOnViolation>true</failOnViolation>
+                    <excludeRoots>
+                        <excludeRoot>target/generated-sources</excludeRoot>
+                    </excludeRoots>
                 </configuration>
             </plugin>
             <plugin>

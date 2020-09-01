@@ -20,6 +20,8 @@ import org.benetech.servicenet.domain.OrganizationError;
 @Data
 public class DataImportReportDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

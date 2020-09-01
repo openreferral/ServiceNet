@@ -1,7 +1,5 @@
 package org.benetech.servicenet.service.dto;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

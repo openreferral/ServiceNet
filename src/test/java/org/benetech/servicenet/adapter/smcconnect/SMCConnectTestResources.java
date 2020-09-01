@@ -3,7 +3,6 @@ package org.benetech.servicenet.adapter.smcconnect;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 final class SMCConnectTestResources {
 
     static final String SMCCONNECT = "smcconnect/";
@@ -29,4 +28,6 @@ final class SMCConnectTestResources {
         "13:00", "21:00");
     static final List<String> CLOSES_AT = Arrays.asList("03:00", "14:00", "16:30", "17:00", "test wrong value");
 
+    private SMCConnectTestResources() {
+    }
 }

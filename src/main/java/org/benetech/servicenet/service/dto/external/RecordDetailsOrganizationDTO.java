@@ -26,6 +26,8 @@ import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 @AllArgsConstructor
 public class RecordDetailsOrganizationDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

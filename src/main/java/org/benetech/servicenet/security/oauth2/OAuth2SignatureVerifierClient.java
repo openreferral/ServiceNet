@@ -17,7 +17,6 @@ public interface OAuth2SignatureVerifierClient {
      *
      * @return the new verifier used to verify JWT signatures.
      * Will be null if we cannot contact the token endpoint.
-     * @throws Exception if we could not create a {@link SignatureVerifier} or contact the token endpoint.
      */
-    SignatureVerifier getSignatureVerifier() throws Exception;
+    SignatureVerifier getSignatureVerifier();
 }

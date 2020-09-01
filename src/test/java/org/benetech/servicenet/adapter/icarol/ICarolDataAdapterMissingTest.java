@@ -102,11 +102,7 @@ public class ICarolDataAdapterMissingTest {
         ICarolAgency agency = data.getAgencies().get(0);
         Set<OpeningHours> hours = mapper.extractOpeningHours(agency.getHours());
 
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == MONDAY));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == TUESDAY));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == WEDNESDAY));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == THURSDAY));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == FRIDAY));
+        checkWeekdays(hours);
     }
 
     @Test
@@ -138,11 +134,7 @@ public class ICarolDataAdapterMissingTest {
         ICarolProgram program = data.getPrograms().get(0);
         Set<OpeningHours> hours = mapper.extractOpeningHours(program.getHours());
 
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == MONDAY));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == TUESDAY));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == WEDNESDAY));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == THURSDAY));
-        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == FRIDAY));
+        checkWeekdays(hours);
     }
 
     @Test
@@ -178,5 +170,13 @@ public class ICarolDataAdapterMissingTest {
         assertTrue(accessibilityOpt.isPresent());
         AccessibilityForDisabilities result = accessibilityOpt.get();
         assertEquals("Wheelchair accessible/Ramp/Special parking/Restroom", result.getAccessibility());
+    }
+
+    private void checkWeekdays(Set<OpeningHours> hours) {
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == MONDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == TUESDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == WEDNESDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == THURSDAY));
+        assertTrue(hours.stream().anyMatch(x -> x.getWeekday() == FRIDAY));
     }
 }

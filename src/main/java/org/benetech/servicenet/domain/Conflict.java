@@ -83,6 +83,7 @@ public class Conflict extends AbstractEntity implements Serializable {
     @ManyToOne
     private SystemAccount partner;
 
+    @SuppressWarnings("PMD.ShortMethodName")
     public Conflict id(UUID id) {
         this.setId(id);
         return this;

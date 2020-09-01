@@ -14,17 +14,13 @@ import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.manager.ImportManager;
-import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
 import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.LocationService;
-import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.PhysicalAddressService;
-import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.LanguageDTO;
@@ -72,16 +68,10 @@ public class LAACDataAdapterTest {
     private LAACDataAdapter adapter;
 
     @Autowired
-    private ImportManager importManager;
-
-    @Autowired
     private LanguageService languageService;
 
     @Autowired
     private EligibilityService eligibilityService;
-
-    @Autowired
-    private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
 
     @Autowired
     private OrganizationService organizationService;
@@ -93,16 +83,10 @@ public class LAACDataAdapterTest {
     private ServiceService serviceService;
 
     @Autowired
-    private OpeningHoursService openingHoursService;
-
-    @Autowired
     private PhysicalAddressService physicalAddressService;
 
     @Autowired
     private ContactService contactService;
-
-    @Autowired
-    private PostalAddressService postalAddressService;
 
     @Autowired
     private LocationService locationService;

@@ -24,6 +24,8 @@ import org.benetech.servicenet.domain.Phone;
  */
 public class ShelterDTO implements Serializable, Address {
 
+    private static final long serialVersionUID = 1L;
+
     @Getter
     @Setter
     private UUID id;
@@ -113,7 +115,7 @@ public class ShelterDTO implements Serializable, Address {
     @Getter
     @Setter
     private Set<Phone> phones = new HashSet<>();
-    
+
     @JsonIgnoreProperties("shelter")
     @Getter
     @Setter
@@ -154,6 +156,7 @@ public class ShelterDTO implements Serializable, Address {
         return Objects.hashCode(getId());
     }
 
+    @SuppressWarnings("CPD-START")
     @Override
     public String toString() {
         return "ShelterDTO{" +
@@ -182,6 +185,7 @@ public class ShelterDTO implements Serializable, Address {
             "}";
     }
 
+    @SuppressWarnings("CPD-END")
     @Override
     public String getAddress() {
         return Stream.of(getAddress1(), getAddress2(), getCity(), getZipcode())

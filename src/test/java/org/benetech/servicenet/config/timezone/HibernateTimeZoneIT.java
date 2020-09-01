@@ -1,5 +1,8 @@
 package org.benetech.servicenet.config.timezone;
 
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,6 +12,7 @@ import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.repository.timezone.DateTimeWrapper;
@@ -20,11 +24,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.format.DateTimeFormatter;
-
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests for the UTC Hibernate configuration.
@@ -45,7 +44,7 @@ public class HibernateTimeZoneIT {
     private DateTimeFormatter dateFormatter;
 
     @BeforeEach
-    public void setup() {
+    public void setUp() {
         dateTimeWrapper = new DateTimeWrapper();
         dateTimeWrapper.setInstant(Instant.parse("2014-11-12T05:50:00.0Z"));
         dateTimeWrapper.setLocalDateTime(LocalDateTime.parse("2014-11-12T07:50:00.0"));

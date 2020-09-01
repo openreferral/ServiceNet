@@ -17,6 +17,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class ActivityRecordDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private OrganizationDTO organization;
 
     private ZonedDateTime lastUpdated;

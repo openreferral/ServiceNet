@@ -95,7 +95,7 @@ public class OrganizationMatchResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final OrganizationMatchResource organizationMatchResource = new OrganizationMatchResource(organizationMatchService);
         this.restOrganizationMatchMockMvc = MockMvcBuilders.standaloneSetup(organizationMatchResource)

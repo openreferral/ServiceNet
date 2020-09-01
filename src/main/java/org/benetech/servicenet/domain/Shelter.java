@@ -31,6 +31,7 @@ import org.hibernate.annotations.Type;
 /**
  * A Shelter.
  */
+@SuppressWarnings("PMD.ExcessivePublicCount")
 @Entity
 @Table(name = "shelter")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

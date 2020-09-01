@@ -84,7 +84,7 @@ public class MatchSimilarityResourceIntTest {
     private MatchSimilarity matchSimilarity;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final MatchSimilarityResource matchSimilarityResource = new MatchSimilarityResource(matchSimilarityService);
         this.restMatchSimilarityMockMvc = MockMvcBuilders.standaloneSetup(matchSimilarityResource)

@@ -13,6 +13,8 @@ import lombok.Data;
 @Data
 public class ClientDTO {
 
+    private static final long serialVersionUID = 1L;
+
     @NotBlank
     @Size(min = 1, max = 50)
     private String clientId;

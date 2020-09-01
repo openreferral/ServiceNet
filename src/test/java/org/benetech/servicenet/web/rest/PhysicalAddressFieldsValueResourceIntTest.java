@@ -79,7 +79,7 @@ public class PhysicalAddressFieldsValueResourceIntTest {
     private PhysicalAddressFieldsValue physicalAddressFieldsValue;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final PhysicalAddressFieldsValueResource physicalAddressFieldsValueResource =
             new PhysicalAddressFieldsValueResource(physicalAddressFieldsValueService);

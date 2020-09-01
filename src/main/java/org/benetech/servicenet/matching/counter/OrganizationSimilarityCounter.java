@@ -72,10 +72,9 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
             .divide(totalWeight, 2, RoundingMode.FLOOR)
             : BigDecimal.ZERO;
 
-        if (BooleanUtils.isTrue(alwaysCompareLocations) || currentResult.compareTo(BigDecimal.ZERO) > 0) {
-            if (!org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
-                similarityDtos.add(getLocationSimilarity(org1, org2));
-            }
+        if ((BooleanUtils.isTrue(alwaysCompareLocations) || currentResult.compareTo(BigDecimal.ZERO) > 0)
+            && !org1.getLocations().isEmpty() && !org2.getLocations().isEmpty()) {
+            similarityDtos.add(getLocationSimilarity(org1, org2));
         }
         return similarityDtos;
     }

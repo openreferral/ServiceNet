@@ -79,7 +79,7 @@ public class PostalAddressFieldsValueResourceIntTest {
     private PostalAddressFieldsValue postalAddressFieldsValue;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final PostalAddressFieldsValueResource postalAddressFieldsValueResource = new PostalAddressFieldsValueResource(
             postalAddressFieldsValueService);

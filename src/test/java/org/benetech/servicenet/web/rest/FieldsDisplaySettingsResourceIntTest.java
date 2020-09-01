@@ -107,7 +107,7 @@ public class FieldsDisplaySettingsResourceIntTest {
     private UserService mockUserService;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final FieldsDisplaySettingsResource fieldsDisplaySettingsResource = new FieldsDisplaySettingsResource(
             fieldsDisplaySettingsService, mockUserService);

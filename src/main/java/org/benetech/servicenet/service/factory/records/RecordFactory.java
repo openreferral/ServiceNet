@@ -61,9 +61,9 @@ public class RecordFactory {
     public Optional<ActivityRecordDTO> getFilteredRecord(Organization organization) {
         List<ConflictDTO> conflicts = getBaseConflicts(organization.getId());
 
-        Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
+        Map<UUID, ExclusionsConfig> exclusions = exclusionsConfigService.getAllBySystemAccountId();
 
-        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusionsMap);
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusions);
         Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
             .flatMap(e -> e.getExclusions().stream())
             .collect(Collectors.toSet());
@@ -72,7 +72,7 @@ public class RecordFactory {
             .flatMap(e -> e.getLocationExclusions().stream())
             .collect(Collectors.toSet());
 
-        List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, fieldExclusions, exclusionsMap);
+        List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, fieldExclusions, exclusions);
 
         return filterRecord(organization, filteredConflicts, fieldExclusions, locationExclusions);
     }

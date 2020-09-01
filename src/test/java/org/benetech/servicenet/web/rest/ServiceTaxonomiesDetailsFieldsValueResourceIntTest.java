@@ -81,7 +81,7 @@ public class ServiceTaxonomiesDetailsFieldsValueResourceIntTest {
     private ServiceTaxonomiesDetailsFieldsValue serviceTaxonomiesDetailsFieldsValue;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ServiceTaxonomiesDetailsFieldsValueResource serviceTaxonomiesDetailsFieldsValueResource =
             new ServiceTaxonomiesDetailsFieldsValueResource(serviceTaxonomiesDetailsFieldsValueService);

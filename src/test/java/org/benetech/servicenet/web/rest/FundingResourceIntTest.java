@@ -87,7 +87,7 @@ public class FundingResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final FundingResource fundingResource = new FundingResource(fundingService);
         this.restFundingMockMvc = MockMvcBuilders.standaloneSetup(fundingResource)

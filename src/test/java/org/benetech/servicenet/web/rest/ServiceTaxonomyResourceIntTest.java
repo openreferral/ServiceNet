@@ -86,7 +86,7 @@ public class ServiceTaxonomyResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ServiceTaxonomyResource serviceTaxonomyResource = new ServiceTaxonomyResource(serviceTaxonomyService);
         this.restServiceTaxonomyMockMvc = MockMvcBuilders.standaloneSetup(serviceTaxonomyResource)

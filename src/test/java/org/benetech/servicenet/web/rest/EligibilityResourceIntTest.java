@@ -87,7 +87,7 @@ public class EligibilityResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final EligibilityResource eligibilityResource = new EligibilityResource(eligibilityService);
         this.restEligibilityMockMvc = MockMvcBuilders.standaloneSetup(eligibilityResource)

@@ -8,7 +8,10 @@ import java.util.UUID;
 /**
  * A DTO for the PhysicalAddress entity.
  */
+@SuppressWarnings("CPD-START")
 public class PhysicalAddressDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
 

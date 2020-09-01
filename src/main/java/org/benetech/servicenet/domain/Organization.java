@@ -362,7 +362,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.userProfiles = userProfiles;
     }
 
-    @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "checkstyle:booleanExpressionComplexity"})
     @Override
     public boolean deepEquals(Object o) {
         if (o == null || getClass() != o.getClass()) {

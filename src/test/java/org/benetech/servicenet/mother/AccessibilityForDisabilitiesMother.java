@@ -2,7 +2,6 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class AccessibilityForDisabilitiesMother {
 
     public static final String DEFAULT_DETAILS = "Accessibility Details";
@@ -20,5 +19,8 @@ public final class AccessibilityForDisabilitiesMother {
         return new AccessibilityForDisabilities()
             .details(DIFFERENT_DETAILS)
             .accessibility(DIFFERENT_ACCESSIBILITY);
+    }
+
+    private AccessibilityForDisabilitiesMother() {
     }
 }

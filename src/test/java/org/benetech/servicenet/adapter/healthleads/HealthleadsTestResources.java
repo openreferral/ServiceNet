@@ -1,6 +1,5 @@
 package org.benetech.servicenet.adapter.healthleads;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 final class HealthleadsTestResources {
 
     static final String HEALTHLEADS = "healthleads/";
@@ -17,4 +16,7 @@ final class HealthleadsTestResources {
     static final String SERVICES_TAXONOMY = "services_taxonomy";
     static final String TAXONOMY = "taxonomy";
     static final String METADATA = "metadata";
+
+    private HealthleadsTestResources() {
+    }
 }

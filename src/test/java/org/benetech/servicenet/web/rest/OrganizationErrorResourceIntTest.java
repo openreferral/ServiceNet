@@ -83,7 +83,7 @@ public class OrganizationErrorResourceIntTest {
     private OrganizationError organizationError;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final OrganizationErrorResource organizationErrorResource = new OrganizationErrorResource(
             organizationErrorRepository);

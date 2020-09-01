@@ -1,10 +1,9 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.Location;
-import org.benetech.servicenet.repository.OrganizationRepository;
-import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.LocationBasedImportService;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.LocationService;
@@ -13,27 +12,15 @@ import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
-import java.util.Optional;
-
 @Slf4j
 @Component
 public class LocationImportServiceImpl implements LocationImportService {
-
-    @Autowired
-    private EntityManager em;
 
     @Autowired
     private LocationService locationService;
 
     @Autowired
     private LocationBasedImportService locationBasedImportService;
-
-    @Autowired
-    private OrganizationRepository organizationRepository;
-
-    @Autowired
-    private GeocodingResultService geocodingResultService;
 
     @Override
     @ConfidentialFilter

@@ -11,6 +11,8 @@ import javax.persistence.Lob;
  */
 public class DailyUpdateDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @Lob

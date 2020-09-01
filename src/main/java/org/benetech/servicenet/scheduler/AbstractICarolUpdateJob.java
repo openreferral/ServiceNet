@@ -50,7 +50,7 @@ public abstract class AbstractICarolUpdateJob extends BaseJob {
         try {
             response = HttpUtils.executePOST(URL, body, headers);
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot connect with iCarol API");
+            throw new IllegalStateException("Cannot connect with iCarol API", e);
         }
 
         documentUploadService.uploadApiData(response, getSystemAccount(), report);

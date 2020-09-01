@@ -1,14 +1,31 @@
 package org.benetech.servicenet.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import javax.persistence.EntityManager;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.TaxonomyGroup;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.repository.TaxonomyGroupRepository;
 import org.benetech.servicenet.service.TaxonomyGroupService;
 import org.benetech.servicenet.service.dto.TaxonomyGroupDTO;
 import org.benetech.servicenet.service.mapper.TaxonomyGroupMapper;
-import org.benetech.servicenet.errors.ExceptionTranslator;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,26 +43,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
-import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 /**
  * Integration tests for the {@link TaxonomyGroupResource} REST controller.
  */
@@ -55,9 +52,6 @@ public class TaxonomyGroupResourceIT {
 
     @Autowired
     private TaxonomyGroupRepository taxonomyGroupRepository;
-
-    @Mock
-    private TaxonomyGroupRepository taxonomyGroupRepositoryMock;
 
     @Autowired
     private TaxonomyGroupMapper taxonomyGroupMapper;
@@ -92,7 +86,7 @@ public class TaxonomyGroupResourceIT {
     private static UUID anotherId = UUID.randomUUID();
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final TaxonomyGroupResource taxonomyGroupResource = new TaxonomyGroupResource(taxonomyGroupService);
         this.restTaxonomyGroupMockMvc = MockMvcBuilders.standaloneSetup(taxonomyGroupResource)
@@ -110,8 +104,7 @@ public class TaxonomyGroupResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static TaxonomyGroup createEntity(EntityManager em) {
-        TaxonomyGroup taxonomyGroup = new TaxonomyGroup();
-        return taxonomyGroup;
+        return new TaxonomyGroup();
     }
 
     /**
@@ -121,8 +114,7 @@ public class TaxonomyGroupResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static TaxonomyGroup createUpdatedEntity(EntityManager em) {
-        TaxonomyGroup taxonomyGroup = new TaxonomyGroup();
-        return taxonomyGroup;
+        return new TaxonomyGroup();
     }
 
     @Before
@@ -181,7 +173,7 @@ public class TaxonomyGroupResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(taxonomyGroup.getId().toString())));
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked", "CPD-START"})
     public void getAllTaxonomyGroupsWithEagerRelationshipsIsEnabled() throws Exception {
         TaxonomyGroupResource taxonomyGroupResource = new TaxonomyGroupResource(taxonomyGroupServiceMock);
         when(taxonomyGroupServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
@@ -211,9 +203,10 @@ public class TaxonomyGroupResourceIT {
         restTaxGroupMockMvc.perform(get("/api/taxonomy-groups?eagerload=true"))
         .andExpect(status().isOk());
 
-            verify(taxonomyGroupServiceMock, times(1)).findAllWithEagerRelationships(any());
+        verify(taxonomyGroupServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
+    @SuppressWarnings("CPD-END")
     @Test
     @Transactional
     public void getTaxonomyGroup() throws Exception {

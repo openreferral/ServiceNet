@@ -17,6 +17,8 @@ import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 @AllArgsConstructor
 public class RecordDetailsDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private RecordDetailsOrganizationDTO organization;
 
     private Set<RecordDetailsOrganizationDTO> partnerOrganizations;

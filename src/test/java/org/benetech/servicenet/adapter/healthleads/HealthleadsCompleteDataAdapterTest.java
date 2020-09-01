@@ -35,18 +35,13 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.ServiceMetadata;
-import org.benetech.servicenet.manager.ImportManager;
 import org.benetech.servicenet.repository.ServiceMetadataRepository;
-import org.benetech.servicenet.service.AccessibilityForDisabilitiesService;
-import org.benetech.servicenet.service.ContactService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LanguageService;
 import org.benetech.servicenet.service.LocationService;
-import org.benetech.servicenet.service.OpeningHoursService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.PhysicalAddressService;
-import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.RegularScheduleService;
 import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
@@ -88,13 +83,7 @@ public class HealthleadsCompleteDataAdapterTest {
     private HealthleadsDataAdapter adapter;
 
     @Autowired
-    private ImportManager importManager;
-
-    @Autowired
     private EligibilityService eligibilityService;
-
-    @Autowired
-    private AccessibilityForDisabilitiesService accessibilityForDisabilitiesService;
 
     @Autowired
     private OrganizationService organizationService;
@@ -106,16 +95,7 @@ public class HealthleadsCompleteDataAdapterTest {
     private ServiceService serviceService;
 
     @Autowired
-    private OpeningHoursService openingHoursService;
-
-    @Autowired
     private PhysicalAddressService physicalAddressService;
-
-    @Autowired
-    private ContactService contactService;
-
-    @Autowired
-    private PostalAddressService postalAddressService;
 
     @Autowired
     private LocationService locationService;
@@ -144,6 +124,7 @@ public class HealthleadsCompleteDataAdapterTest {
     @Autowired
     private ServiceMetadataRepository serviceMetadataRepository;
 
+    @SuppressWarnings("CPD-START")
     @Before
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setUp() throws IOException {
@@ -169,6 +150,7 @@ public class HealthleadsCompleteDataAdapterTest {
         adapter.importData(importData);
     }
 
+    @SuppressWarnings("CPD-END")
     @Test
     public void shouldImportCompleteOrganization() {
         assertEquals(1, organizationService.findAll().size());

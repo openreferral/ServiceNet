@@ -15,33 +15,26 @@ import java.lang.reflect.Type;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.UUID;
-import org.apache.http.client.HttpClient;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.icarol.model.ICarolComplexResponseElement;
 import org.benetech.servicenet.adapter.icarol.model.ICarolSimpleResponseElement;
 import org.benetech.servicenet.domain.DataImportReport;
-import org.benetech.servicenet.repository.DocumentUploadRepository;
-import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.MongoDbService;
-import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.impl.DocumentUploadServiceImpl;
-import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockserver.client.MockServerClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -62,26 +55,8 @@ public class AbstractDataAdapterDocumentUploadTest {
     private static final int PORT = 1080;
     private static final int FOUR = 4;
 
-    @Mock
-    private HttpClient client;
-
-    @Mock
-    private DocumentUploadRepository documentUploadRepository;
-
-    @Mock
-    private DocumentUploadMapper documentUploadMapper;
-
-    @Mock
-    private DataImportReportService dataImportReportService;
-
-    @Mock
-    private UserService userService;
-
     @MockBean
     private MongoDbService mongoDbService;
-
-    @Mock
-    private ApplicationContext applicationContext;
 
     @Autowired
     @InjectMocks
@@ -109,12 +84,7 @@ public class AbstractDataAdapterDocumentUploadTest {
         String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
-        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
-        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
-        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
-        mockEndpointWithBatch(
-            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
-        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
+        mockICarolEndpoint(allIds);
 
         DocumentUploadDTO document = documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
 
@@ -126,12 +96,7 @@ public class AbstractDataAdapterDocumentUploadTest {
         String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
-        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
-        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
-        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
-        mockEndpointWithBatch(
-            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
-        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
+        mockICarolEndpoint(allIds);
 
         documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
 
@@ -144,12 +109,7 @@ public class AbstractDataAdapterDocumentUploadTest {
         String allIds = AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE);
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now());
 
-        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
-        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
-        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
-        mockEndpointWithBatch(
-            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
-        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
+        mockICarolEndpoint(allIds);
 
         documentUploadService.uploadApiData(allIds, EDEN_PROVIDER, report);
 
@@ -184,4 +144,12 @@ public class AbstractDataAdapterDocumentUploadTest {
         return new ICarolComplexResponseElement(responseElements);
     }
 
+    private void mockICarolEndpoint(String allIds) throws IOException {
+        ICarolComplexResponseElement data = getAllIdsInBatches(allIds);
+        mockEndpointWithBatch(data.getProgramBatches().get(0), ICAROL_CATALOG + PROGRAMS_FILE, mockServer);
+        mockEndpointWithBatch(data.getSiteBatches().get(0), ICAROL_CATALOG + SITES_FILE, mockServer);
+        mockEndpointWithBatch(
+            data.getServiceSiteBatches().get(0), ICAROL_CATALOG + SERVICE_SITES_FILE, mockServer);
+        mockEndpointWithBatch(data.getAgencyBatches().get(0), ICAROL_CATALOG + AGENCIES_FILE, mockServer);
+    }
 }

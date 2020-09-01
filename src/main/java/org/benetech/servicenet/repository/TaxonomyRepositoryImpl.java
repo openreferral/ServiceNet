@@ -25,7 +25,6 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepositoryCustom {
     private static final String TAXONOMIES = "taxonomies";
     private static final String TAXONOMY = "taxonomy";
     private static final String ACTIVE = "active";
-    private static final String ORGANIZATION = "organizationRecord";
 
     private final EntityManager em;
     private final CriteriaBuilder cb;

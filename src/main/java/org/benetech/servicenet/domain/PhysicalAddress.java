@@ -19,6 +19,7 @@ import java.util.Objects;
 /**
  * A PhysicalAddress.
  */
+@SuppressWarnings("CPD-START")
 @Entity
 @Table(name = "physical_address")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

@@ -11,7 +11,6 @@ import org.benetech.servicenet.service.GeocodingResultService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,9 +22,6 @@ public abstract class ShelterMapper {
 
     @Autowired
     private GeocodingResultService geocodingResultService;
-
-    @Value("${similarity-ratio.credentials.google-api}")
-    private String googleApiKey;
 
     public abstract ShelterDTO toDto(Shelter shelter);
 

@@ -2,7 +2,6 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.Phone;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class PhoneMother {
 
     public static final String DEFAULT_NUMBER = "Phone number";
@@ -32,5 +31,8 @@ public final class PhoneMother {
             .type(DIFFERENT_TYPE)
             .language(DIFFERENT_LANGUAGE)
             .description(DIFFERENT_DESCRIPTION);
+    }
+
+    private PhoneMother() {
     }
 }

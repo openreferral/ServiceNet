@@ -128,6 +128,7 @@ public class SMCConnectDataAdapterCompleteTest {
     @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
+    @SuppressWarnings("CPD-START")
     @Before
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setUp() throws IOException {
@@ -149,16 +150,17 @@ public class SMCConnectDataAdapterCompleteTest {
         adapter.importData(importData);
     }
 
+    @SuppressWarnings("CPD-END")
     @Test
     public void testRelationsAfterGetLanguageFromJsonServiceBased() {
         // Language has a reference to the Service and Location
-        List<LanguageDTO> results = languageService.findAll();
-        assertEquals(2, results.size());
+        List<LanguageDTO> languageDTOS = languageService.findAll();
+        assertEquals(2, languageDTOS.size());
 
         List<ServiceDTO> services = serviceService.findAll();
         List<LocationDTO> locations = locationService.findAll();
 
-        results.forEach(r -> {
+        languageDTOS.forEach(r -> {
             if (r.getSrvcId() != null) {
                 assertEquals(services.get(0).getId(), r.getSrvcId());
             } else {
@@ -171,7 +173,7 @@ public class SMCConnectDataAdapterCompleteTest {
     public void testRelationsAfterGetLanguageFromJsonLocationBased() {
         // Language has a reference to the Service and Location
         List<LanguageDTO> results = languageService.findAll();
-         assertEquals(2, results.size());
+        assertEquals(2, results.size());
 
         List<ServiceDTO> services = serviceService.findAll();
         List<LocationDTO> locations = locationService.findAll();
@@ -256,13 +258,13 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testRelationsAfterGetRegularScheduleFromJson() {
         // RegularSchedule has a reference to the Service and Location
-        List<RegularScheduleDTO> results = regularScheduleService.findAll();
-         assertEquals(2, results.size());
+        List<RegularScheduleDTO> scheduleDTOS = regularScheduleService.findAll();
+         assertEquals(2, scheduleDTOS.size());
 
         List<ServiceDTO> services = serviceService.findAll();
         List<LocationDTO> locations = locationService.findAll();
 
-        results.forEach(r -> {
+        scheduleDTOS.forEach(r -> {
             if (r.getSrvcId() != null) {
                 assertEquals(services.get(0).getId(), r.getSrvcId());
             } else {
@@ -275,13 +277,13 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testRelationsAfterGetFundingFromJson() {
         // Funding has a reference to the Service or Organization
-        List<FundingDTO> results = fundingService.findAll();
-         assertEquals(2, results.size());
+        List<FundingDTO> fundingDTOS = fundingService.findAll();
+         assertEquals(2, fundingDTOS.size());
 
         List<ServiceDTO> services = serviceService.findAll();
         List<OrganizationDTO> organizations = organizationService.findAllDTOs();
 
-        results.forEach(r -> {
+        fundingDTOS.forEach(r -> {
             if (r.getSrvcId() != null) {
                 assertEquals(services.get(0).getId(), r.getSrvcId());
             } else {
@@ -293,13 +295,13 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testRelationsAfterGetContactFromJson() {
         // Contact has a reference to the Service and Organization
-        List<ContactDTO> results = contactService.findAll();
-         assertEquals(2, results.size());
+        List<ContactDTO> contactDTOS = contactService.findAll();
+         assertEquals(2, contactDTOS.size());
 
         List<ServiceDTO> services = serviceService.findAll();
         List<OrganizationDTO> organizations = organizationService.findAllDTOs();
 
-        results.forEach(r -> {
+        contactDTOS.forEach(r -> {
             if (r.getSrvcId() != null) {
                 assertEquals(services.get(0).getId(), r.getSrvcId());
             } else {
@@ -321,13 +323,13 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testRelationsAfterGetHolidayScheduleFromJson() {
         // HolidaySchedule has a reference to the Service and Location
-        List<HolidayScheduleDTO> results = holidayScheduleService.findAll();
-         assertEquals(2, results.size());
+        List<HolidayScheduleDTO> holidayScheduleDTOS = holidayScheduleService.findAll();
+         assertEquals(2, holidayScheduleDTOS.size());
 
         List<ServiceDTO> services = serviceService.findAll();
         List<LocationDTO> locations = locationService.findAll();
 
-        results.forEach(r -> {
+        holidayScheduleDTOS.forEach(r -> {
             if (r.getSrvcId() != null) {
                 assertEquals(services.get(0).getId(), r.getSrvcId());
             } else {
