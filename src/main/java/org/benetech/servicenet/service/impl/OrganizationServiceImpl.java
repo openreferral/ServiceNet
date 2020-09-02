@@ -133,6 +133,11 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to save Organization : {}", organizationDTO);
 
         Organization organization = organizationMapper.toEntity(organizationDTO);
+        if (!organizationDTO.getUserProfiles().isEmpty()) {
+            UserProfile userProfile = organizationDTO.getUserProfiles().iterator().next();
+            userProfile = userProfileRepository.findOneByLogin(userProfile.getLogin()).orElse(userProfile);
+            organization.setUserProfiles(Collections.singleton(userProfile));
+        }
         organization = organizationRepository.save(organization);
         return organizationMapper.toDto(organization);
     }
@@ -479,6 +484,17 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
 
         return organizations;
+    }
+
+    @Override
+    public Page<OrganizationDTO> findAllByNameLikeAndAccountNameWithUserProfile(
+        String name, String accountName, Pageable pageable) {
+        return organizationRepository.findAllByNameLikeAndAccountNameWithUserProfile(
+            StringUtils.isEmpty(name) ? null : '%' + name.toLowerCase() + '%',
+            StringUtils.isEmpty(accountName) ? null : accountName,
+            pageable
+        )
+        .map(organizationMapper::toDto);
     }
 
     private Organization getProvidersOrganization(List<Organization> organizations, UUID id) {
