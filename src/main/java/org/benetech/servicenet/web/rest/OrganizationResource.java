@@ -191,6 +191,25 @@ public class OrganizationResource {
     }
 
     /**
+     * GET  /organizations/search : search organizations.
+     *
+     * @param name name of the organization
+     * @param systemAccount the system account
+     * @return the ResponseEntity with status 200 (OK) and the list of organizations
+     */
+    @GetMapping("/organizations/search")
+    @Timed
+    public ResponseEntity<List<OrganizationDTO>> searchOrganizations(
+        @RequestParam(required = false) String name, @RequestParam(required = false) String systemAccount,
+        Pageable pageable) {
+        Page<OrganizationDTO> page = organizationService.findAllByNameLikeAndAccountNameWithUserProfile(
+            name, systemAccount, pageable
+        );
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations/search");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
      * GET  /organizations/:id : get the "id" organization.
      *
      * @param id the id of the organizationDTO to retrieve

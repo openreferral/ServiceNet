@@ -145,4 +145,16 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         + "org.active = true AND "
         + "profile.silo = :silo")
     Optional<Organization> findByIdAndSilo(@Param("id") UUID id,  @Param("silo") Silo silo);
+
+    @Query("SELECT org FROM Organization org "
+        + "LEFT JOIN org.userProfiles profile "
+        + "WHERE (:name IS NULL OR LOWER(org.name) LIKE :name) "
+        + "AND (:accountName IS NULL OR org.account.name = :accountName) "
+        + "AND org.active = true "
+        + "AND org.userProfiles.size > 0")
+    Page<Organization> findAllByNameLikeAndAccountNameWithUserProfile(
+        @Param("name") String name,
+        @Param("accountName") String accountName,
+        Pageable pageable
+    );
 }

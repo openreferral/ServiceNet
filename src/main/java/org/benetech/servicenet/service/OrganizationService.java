@@ -141,4 +141,7 @@ public interface OrganizationService {
     Optional<Organization> findOneWithIdAndUserProfileInUserGroupsAndNotActive(UUID id, UserProfile userProfile);
 
     Optional<Organization> findOneWithIdAndUserProfileAndNotActive(UUID id, UserProfile userProfile);
+
+    Page<OrganizationDTO> findAllByNameLikeAndAccountNameWithUserProfile(
+        String name, String accountName, Pageable pageable);
 }
