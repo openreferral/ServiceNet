@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -38,6 +39,7 @@ public class Beds extends AbstractEntity implements Serializable {
     private Shelter shelter;
 
     @PrePersist
+    @PreUpdate
     public void addTimestamp() {
         updatedAt = ZonedDateTime.now();
     }
