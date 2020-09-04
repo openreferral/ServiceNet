@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -134,8 +135,8 @@ public class UserResource {
      */
     @GetMapping("/users/search")
     public Set<UserDTO> searchUsers(@RequestParam(required = false) String systemAccount) {
-        return userService.getAllManagedUsers(Pageable.unpaged()).stream().filter(
-            u -> systemAccount.equals(u.getSystemAccountName())
+        return userService.getAllManagedUsers(PageRequest.of(0, Integer.MAX_VALUE)).stream()
+            .filter(u -> systemAccount.equals(u.getSystemAccountName())
         ).collect(Collectors.toSet());
     }
 
