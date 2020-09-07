@@ -123,12 +123,13 @@ public class PublicRecordResource {
     @Timed
     public ResponseEntity<List<ProviderRecordForMapDTO>> getAllProviderActivitiesForMap(
         @RequestParam String siloName, @RequestBody ProviderFilterDTO providerFilterDTO,
-        @RequestParam(required = false) String search
+        @RequestParam(required = false) String search,
+        @RequestParam(required = false) List<Double> boundaries, Pageable pageable
     ) {
         Optional<Silo> optSilo = siloService.getOneByName(siloName);
         this.checkSilo(optSilo);
         Page<ProviderRecordForMapDTO> page = activityService.getAllPartnerActivitiesForMap(
-            providerFilterDTO, search, optSilo.get());
+            pageable, providerFilterDTO, search, optSilo.get(), boundaries);
         HttpHeaders headers = PaginationUtil
             .generatePaginationHttpHeaders(page, "/public-api/all-provider-records-map");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);

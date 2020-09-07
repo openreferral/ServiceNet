@@ -103,16 +103,17 @@ public class ActivityResource {
     @PostMapping("/all-provider-records-map")
     @Timed
     public ResponseEntity<List<ProviderRecordForMapDTO>> getAllProviderActivitiesForMap(
-        @RequestBody ProviderFilterDTO providerFilterDTO, @RequestParam(required = false) String search) {
+        @RequestBody ProviderFilterDTO providerFilterDTO, @RequestParam(required = false) String search,
+        @RequestParam(required = false) List<Double> boundaries, Pageable pageable) {
         Page<ProviderRecordForMapDTO> page = activityService
-            .getAllPartnerActivitiesForMap(providerFilterDTO, search);
+            .getAllPartnerActivitiesForMap(pageable, providerFilterDTO, search, boundaries);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records-map");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/select-record/{orgId}")
     @Timed
-    public ResponseEntity<ProviderRecordDTO> getSelectedRecord(@PathVariable UUID orgId) {
+    public ResponseEntity<ProviderRecordDTO> getsSelectedRecord(@PathVariable UUID orgId) {
         return ResponseEntity.ok().body(activityService.getPartnerActivityById(orgId));
     }
 

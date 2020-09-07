@@ -122,37 +122,40 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
-    public Page<ProviderRecordForMapDTO> findAllWithFiltersForMap(Silo silo, ProviderFilterDTO providerFilterDTO,
-        String search, List<ExclusionsConfig> exclusions) {
+    public Page<ProviderRecordForMapDTO> findAllWithFiltersForMap(
+        Pageable pageable, Silo silo,
+        ProviderFilterDTO providerFilterDTO,
+        String search, List<ExclusionsConfig> exclusions,
+        List<Double> boundaries) {
 
         CriteriaQuery<ProviderRecordForMapDTO> queryCriteria = cb.createQuery(ProviderRecordForMapDTO.class);
         Root<GeocodingResult> selectRoot = queryCriteria.from(GeocodingResult.class);
 
-        addFiltersAndSelect(queryCriteria, selectRoot, providerFilterDTO, search, exclusions, null, silo);
-
-        Query query = em.createQuery(queryCriteria);
+        Query query = addFiltersAndSelect(pageable, queryCriteria, selectRoot, providerFilterDTO, search, exclusions,
+            null, boundaries, silo);
 
         List<ProviderRecordForMapDTO> results = query.getResultList();
 
         return new PageImpl<>(results);
     }
 
-    public Page<ProviderRecordForMapDTO> findProviderRecordsForMap(UserProfile userProfile,
-        ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions) {
+    public Page<ProviderRecordForMapDTO> findProviderRecordsForMap(Pageable pageable, UserProfile userProfile,
+        ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions,
+        List<Double> boundaries) {
 
         CriteriaQuery<ProviderRecordForMapDTO> queryCriteria = cb.createQuery(ProviderRecordForMapDTO.class);
         Root<GeocodingResult> selectRoot = queryCriteria.from(GeocodingResult.class);
 
-        addFiltersAndSelect(queryCriteria, selectRoot, providerFilterDTO, search, exclusions, userProfile, null);
-
-        Query query = em.createQuery(queryCriteria);
+        Query query = addFiltersAndSelect(pageable, queryCriteria, selectRoot, providerFilterDTO, search,
+            exclusions,
+            userProfile, boundaries, null);
 
         List<ProviderRecordForMapDTO> results = query.getResultList();
 
         return new PageImpl<>(results);
     }
 
-    private Query createQueryWithPageable(CriteriaQuery<Organization> queryCriteria, Pageable pageable) {
+    private Query createQueryWithPageable(CriteriaQuery<?> queryCriteria, Pageable pageable) {
         Query query = em.createQuery(queryCriteria);
         if (pageable.isPaged()) {
             query
@@ -163,10 +166,11 @@ public class ProviderRecordsRepository {
         return query;
     }
 
-    private <T> void addFiltersAndSelect(CriteriaQuery<ProviderRecordForMapDTO> query, Root<GeocodingResult> root,
-        ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions, UserProfile userProfile, Silo silo) {
-        Predicate predicate = cb.conjunction();
-
+    private <T> Query addFiltersAndSelect(Pageable pageable,
+        CriteriaQuery<ProviderRecordForMapDTO> query, Root<GeocodingResult> root,
+        ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions,
+        UserProfile userProfile,
+        List<Double> boundaries, Silo silo) {
         Join<GeocodingResult, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
         Join<Location, Organization> organizationJoin = locationJoin.join(ORGANIZATION, JoinType.LEFT);
         Join<Organization, SystemAccount> systemAccountJoin = organizationJoin.join(ACCOUNT, JoinType.LEFT);
@@ -174,7 +178,7 @@ public class ProviderRecordsRepository {
         Join<Organization, Service> serviceJoin = organizationJoin.join(SERVICES, JoinType.LEFT);
         Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(ELIGIBILITY, JoinType.LEFT);
 
-        predicate = getCommonPredicate(
+        Predicate predicate = getCommonPredicate(
             organizationJoin,
             (silo != null) ? silo : userProfile.getSilo(),
             search,
@@ -188,6 +192,24 @@ public class ProviderRecordsRepository {
                 .and(predicate, cb.notEqual(userProfileJoin.get(ID), userProfile.getId()));
         }
 
+        if (boundaries != null && boundaries.size() == 4) {
+            // boundaries come in lat_lo,lng_lo,lat_hi,lng_hi format
+            if (boundaries.get(1) > boundaries.get(3)) {
+                predicate = cb.and(predicate, cb.or(
+                    cb.ge(root.get("longitude"), boundaries.get(1)),
+                    cb.le(root.get("longitude"), boundaries.get(3))
+                ));
+            } else {
+                predicate = cb.and(predicate, cb.and(
+                    cb.ge(root.get("longitude"), boundaries.get(1)),
+                    cb.le(root.get("longitude"), boundaries.get(3))
+                ));
+            }
+            predicate = cb.and(predicate, cb.and(
+                cb.ge(root.get("latitude"), boundaries.get(0)),
+                cb.le(root.get("latitude"), boundaries.get(2))));
+        }
+
         predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
         predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin, exclusions);
@@ -195,6 +217,7 @@ public class ProviderRecordsRepository {
         query.where(predicate);
         query.select(cb.construct(ProviderRecordForMapDTO.class, organizationJoin.get("id"), root));
         query.groupBy(root.get(ID), organizationJoin.get(ID));
+        return createQueryWithPageable(query, pageable);
     }
 
     private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, UserProfile userProfile,
