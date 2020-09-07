@@ -36,6 +36,8 @@ public interface ConflictRepository extends JpaRepository<Conflict, UUID> {
         UUID resourceId, UUID partnerResourceId, ConflictStateEnum state);
 
     List<Conflict> findAll();
-    
+
     Page<Conflict> findAll(Pageable pageable);
+
+    void deleteByResourceIdOrPartnerResourceId(UUID resourceId, UUID partnerResourceId);
 }

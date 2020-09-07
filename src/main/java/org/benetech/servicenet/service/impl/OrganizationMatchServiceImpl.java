@@ -364,6 +364,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         }
     }
 
+    @Override
+    public void deleteByOrganizationRecordOrPartnerVersionId(UUID organizationId) {
+        organizationMatchRepository.deleteByOrganizationRecordIdOrPartnerVersionId(organizationId, organizationId);
+    }
+
     private void detectConflictsForCurrentMatches(Organization organization) {
         List<OrganizationMatch> matches = findNotDismissedMatches(organization);
         matches.addAll(findNotDismissedPartnersMatches(organization));

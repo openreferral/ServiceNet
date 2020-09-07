@@ -29,8 +29,10 @@ import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
+import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.DailyUpdateService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LocationService;
@@ -95,6 +97,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final RequiredDocumentService requiredDocumentService;
 
+    private final OrganizationMatchRepository organizationMatchRepository;
+
+    private final ConflictService conflictService;
+
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
@@ -102,8 +108,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
         TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
-        UserProfileRepository userProfileRepository,
-        RequiredDocumentService requiredDocumentService) {
+        UserProfileRepository userProfileRepository, RequiredDocumentService requiredDocumentService,
+        OrganizationMatchRepository organizationMatchRepository, ConflictService conflictService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -119,6 +125,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.eligibilityService = eligibilityService;
         this.userProfileRepository = userProfileRepository;
         this.requiredDocumentService = requiredDocumentService;
+        this.organizationMatchRepository = organizationMatchRepository;
+        this.conflictService = conflictService;
     }
 
     /**
@@ -433,6 +441,8 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Organization : {}", id);
+        organizationMatchRepository.deleteByOrganizationRecordIdOrPartnerVersionId(id, id);
+        conflictService.deleteByResourceOrPartnerResourceId(id);
         organizationRepository.deleteById(id);
     }
 

@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.UniqueConstraint;
@@ -63,7 +64,7 @@ public class Contact extends AbstractEntity implements Serializable, DeepCompara
     @JsonIgnoreProperties("")
     private Service srvc;
 
-    @OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contact", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
 
