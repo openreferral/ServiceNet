@@ -127,11 +127,16 @@ public class TestDatabaseManagement {
         serviceFieldsValueRepository.deleteAll();
         serviceTaxonomiesDetailsFieldsValueRepository.deleteAll();
         fieldsDisplaySettingsRepository.deleteAll();
-        serviceMetadataRepository.deleteAll();
+
+        organizationRepository.deleteAll();
+        locationRepository.deleteAll();
+        programRepository.deleteAll();
+        serviceRepository.deleteAll();
         contactRepository.deleteAll();
+        regularScheduleRepository.deleteAll();
+        serviceMetadataRepository.deleteAll();
         requiredDocumentRepository.deleteAll();
         openingHoursRepository.deleteAll();
-        regularScheduleRepository.deleteAll();
         holidayScheduleRepository.deleteAll();
         languageRepository.deleteAll();
         eligibilityRepository.deleteAll();
@@ -141,11 +146,7 @@ public class TestDatabaseManagement {
         serviceTaxonomyRepository.deleteAll();
         taxonomyRepository.deleteAll();
         fundingRepository.deleteAll();
-        programRepository.deleteAll();
         serviceAtLocationRepository.deleteAll();
-        serviceRepository.deleteAll();
         accessibilityForDisabilitiesRepository.deleteAll();
-        locationRepository.deleteAll();
-        organizationRepository.deleteAll();
     }
 }

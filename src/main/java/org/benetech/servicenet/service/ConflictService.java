@@ -53,6 +53,8 @@ public interface ConflictService {
      */
     void delete(UUID id);
 
+    void deleteByResourceOrPartnerResourceId(UUID resourceId);
+
     /**
      * Get all the Conflict with resourceId and ownerId.
      *

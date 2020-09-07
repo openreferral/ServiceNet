@@ -1,18 +1,20 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
 import java.math.BigDecimal;
-import lombok.Data;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import java.time.ZonedDateTime;
+import java.util.Objects;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.Objects;
+import lombok.Data;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A OrganizationMatch.
@@ -59,6 +61,9 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
 
     @Column(name = "similarity")
     private BigDecimal similarity;
+
+    @OneToMany(mappedBy = "organizationMatch", cascade = CascadeType.REMOVE)
+    private Set<MatchSimilarity> matchSimilarities;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 

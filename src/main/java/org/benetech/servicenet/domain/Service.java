@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.CascadeType;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
@@ -131,55 +132,55 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @JsonIgnoreProperties("services")
     private Program program;
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Set<ServiceAtLocation> locations;
 
-    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Set<HolidaySchedule> holidaySchedules;
 
-    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Funding funding;
 
-    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Eligibility eligibility;
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceArea> areas = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceMetadata> metadata = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RequiredDocument> docs = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<PaymentAccepted> paymentsAccepteds = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceTaxonomy> taxonomies = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Contact> contacts = new HashSet<>();
 

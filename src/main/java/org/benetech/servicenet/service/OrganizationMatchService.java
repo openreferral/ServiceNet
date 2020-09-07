@@ -89,4 +89,6 @@ public interface OrganizationMatchService {
 
     List<OrganizationMatch> createOrganizationMatches(Organization organization, Organization partner,
         List<MatchSimilarityDTO> similarityDTOS);
+
+    void deleteByOrganizationRecordOrPartnerVersionId(UUID organizationId);
 }

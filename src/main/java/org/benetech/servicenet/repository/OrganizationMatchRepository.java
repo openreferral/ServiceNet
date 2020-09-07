@@ -44,4 +44,6 @@ public interface OrganizationMatchRepository extends JpaRepository<OrganizationM
 
     List<OrganizationMatch> findByOrganizationRecordAndPartnerVersion(
         Organization organizationRecord, Organization partnerVersion);
+
+    void deleteByOrganizationRecordIdOrPartnerVersionId(UUID organizationRecordId, UUID partnerVersionId);
 }
