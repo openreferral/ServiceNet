@@ -69,7 +69,10 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete UserGroup : {}", id);
-        userGroupRepository.deleteById(id);
+        userGroupRepository.findById(id).ifPresent(userGroup -> {
+            userGroup.getUserProfiles().forEach(userProfile -> userProfile.getUserGroups().remove(userGroup));
+            userGroupRepository.delete(userGroup);
+        });
     }
 
     public Optional<UserGroupDTO> findOneByName(String name) {

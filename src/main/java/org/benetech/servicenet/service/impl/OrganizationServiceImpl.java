@@ -145,6 +145,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             UserProfile userProfile = organizationDTO.getUserProfiles().iterator().next();
             userProfile = userProfileRepository.findOneByLogin(userProfile.getLogin()).orElse(userProfile);
             organization.setUserProfiles(Collections.singleton(userProfile));
+            userProfile.getOrganizations().add(organization);
         }
         organization = organizationRepository.save(organization);
         return organizationMapper.toDto(organization);
@@ -178,6 +179,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         UserProfile userProfile = userService.getCurrentUserProfile();
         organization.setAccount(userProfile.getSystemAccount());
         organization.setUserProfiles(Collections.singleton(userProfile));
+        userProfile.getOrganizations().add(organization);
 
         if (organization.getId() != null) {
             Organization existingOrganization = findOne(organization.getId()).get();
@@ -443,7 +445,10 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to delete Organization : {}", id);
         organizationMatchRepository.deleteByOrganizationRecordIdOrPartnerVersionId(id, id);
         conflictService.deleteByResourceOrPartnerResourceId(id);
-        organizationRepository.deleteById(id);
+        organizationRepository.findById(id).ifPresent(org -> {
+            org.getUserProfiles().forEach(userProfile -> userProfile.getOrganizations().remove(org));
+            organizationRepository.delete(org);
+        });
     }
 
     /**
