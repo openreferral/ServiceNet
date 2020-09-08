@@ -185,21 +185,23 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO,
-        String search) {
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
+        Pageable pageable, ProviderFilterDTO providerFilterDTO,
+        String search, List<Double> boundaries) {
         UserProfile userProfile = userService.getCurrentUserProfile();
         List<ExclusionsConfig> exclusions = exclusionsConfigService.findAllBySystemAccountName(SERVICE_PROVIDER);
         return providerRecordsRepository
-            .findProviderRecordsForMap(userProfile, providerFilterDTO, search, exclusions);
+            .findProviderRecordsForMap(pageable, userProfile, providerFilterDTO, search, exclusions, boundaries);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(ProviderFilterDTO providerFilterDTO,
-        String search, Silo silo) {
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
+        Pageable pageable, ProviderFilterDTO providerFilterDTO,
+        String search, Silo silo, List<Double> boundaries) {
         List<ExclusionsConfig> exclusions = exclusionsConfigService.findAllBySystemAccountName(SERVICE_PROVIDER);
         return providerRecordsRepository
-            .findAllWithFiltersForMap(silo, providerFilterDTO, search, exclusions);
+            .findAllWithFiltersForMap(pageable, silo, providerFilterDTO, search, exclusions, boundaries);
     }
 
     @Override
