@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
 
@@ -63,7 +64,7 @@ public class OrganizationDTO implements Serializable {
 
     private String externalDbId;
 
-    private Set<UserProfile> userProfiles;
+    private Set<UserProfile> userProfiles = new HashSet<>();
 
     public Boolean isActive() {
         return active;

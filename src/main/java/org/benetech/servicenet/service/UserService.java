@@ -143,6 +143,12 @@ public class UserService {
                     meta.setUserProfile(system.get());
                     metadataRepository.save(meta);
                 });
+                user.getOrganizations().forEach(org -> org.getUserProfiles().remove(user));
+                user.getOrganizations().clear();
+                user.getShelters().forEach(shelter -> shelter.getUserProfiles().remove(user));
+                user.getShelters().clear();
+                user.getUserGroups().forEach(userGroup -> userGroup.getUserProfiles().remove(user));
+                user.getUserGroups().clear();
                 userProfileRepository.delete(user);
                 this.clearUserCaches(user);
                 log.debug("Deleted User: {}", user);
@@ -369,6 +375,7 @@ public class UserService {
         userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
         userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
         userProfile.setUserGroups(userGroupsFromUUIDs(userDTO.getUserGroups()));
+        userProfile.getUserGroups().forEach(userGroup -> userGroup.getUserProfiles().add(userProfile));
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);
