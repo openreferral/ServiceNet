@@ -146,7 +146,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         inverseJoinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"))
     private Set<UserProfile> userProfiles;
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<DailyUpdate> dailyUpdates = new HashSet<>();
 

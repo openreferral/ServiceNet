@@ -7,12 +7,14 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.Contact;
+import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Language;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.OrganizationError;
 import org.benetech.servicenet.domain.PaymentAccepted;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
@@ -41,12 +43,14 @@ import org.benetech.servicenet.mother.ServiceMother;
 import org.benetech.servicenet.mother.ServiceTaxonomyMother;
 import org.benetech.servicenet.repository.AccessibilityForDisabilitiesRepository;
 import org.benetech.servicenet.repository.ContactRepository;
+import org.benetech.servicenet.repository.DailyUpdateRepository;
 import org.benetech.servicenet.repository.EligibilityRepository;
 import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.repository.HolidayScheduleRepository;
 import org.benetech.servicenet.repository.LanguageRepository;
 import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.repository.OpeningHoursRepository;
+import org.benetech.servicenet.repository.OrganizationErrorRepository;
 import org.benetech.servicenet.repository.PaymentAcceptedRepository;
 import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
@@ -140,6 +144,12 @@ public class OrganizationServiceImplTest {
     private PaymentAcceptedRepository paymentAcceptedRepository;
 
     @Autowired
+    private DailyUpdateRepository dailyUpdateRepository;
+
+    @Autowired
+    private OrganizationErrorRepository organizationErrorRepository;
+
+    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -155,6 +165,12 @@ public class OrganizationServiceImplTest {
     @Transactional
     public void shouldDeleteOrganizationAndAllRelatedEntities() {
         Organization org = OrganizationMother.createDefaultAndPersist(em);
+
+        DailyUpdate dailyUpdate = new DailyUpdate().update("update").organization(org);
+        em.persist(dailyUpdate);
+
+        OrganizationError organizationError = new OrganizationError().cause("error").organization(org);
+        em.persist(organizationError);
 
         Funding orgFunding = FundingMother.createDefault();
         orgFunding.setOrganization(org);
@@ -272,6 +288,8 @@ public class OrganizationServiceImplTest {
         em.refresh(org);
 
         assertEquals(1, organizationService.findAll().size());
+        assertEquals(1, dailyUpdateRepository.findAll().size());
+        assertEquals(1, organizationErrorRepository.findAll().size());
         assertEquals(2, fundingRepository.findAll().size());
         assertEquals(4, phoneRepository.findAll().size());
         assertEquals(1, programRepository.findAll().size());
@@ -298,6 +316,8 @@ public class OrganizationServiceImplTest {
         organizationService.delete(org.getId());
 
         assertEquals(0, organizationService.findAll().size());
+        assertEquals(0, dailyUpdateRepository.findAll().size());
+        assertEquals(0, organizationErrorRepository.findAll().size());
         assertEquals(0, fundingRepository.findAll().size());
         assertEquals(0, phoneRepository.findAll().size());
         assertEquals(0, programRepository.findAll().size());

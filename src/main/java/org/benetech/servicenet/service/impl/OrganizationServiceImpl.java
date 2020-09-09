@@ -29,6 +29,7 @@ import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.repository.OrganizationErrorRepository;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
@@ -101,6 +102,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final ConflictService conflictService;
 
+    private final OrganizationErrorRepository organizationErrorRepository;
+
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
@@ -109,7 +112,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
         UserProfileRepository userProfileRepository, RequiredDocumentService requiredDocumentService,
-        OrganizationMatchRepository organizationMatchRepository, ConflictService conflictService) {
+        OrganizationMatchRepository organizationMatchRepository, ConflictService conflictService,
+        OrganizationErrorRepository organizationErrorRepository) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -127,6 +131,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.requiredDocumentService = requiredDocumentService;
         this.organizationMatchRepository = organizationMatchRepository;
         this.conflictService = conflictService;
+        this.organizationErrorRepository = organizationErrorRepository;
     }
 
     /**
@@ -445,6 +450,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to delete Organization : {}", id);
         organizationMatchRepository.deleteByOrganizationRecordIdOrPartnerVersionId(id, id);
         conflictService.deleteByResourceOrPartnerResourceId(id);
+        organizationErrorRepository.findAllByOrganizationId(id).forEach(organizationError -> {
+            if (organizationError.getDataImportReport() != null) {
+                organizationError.getDataImportReport().getOrganizationErrors().remove(organizationError);
+            }
+            organizationErrorRepository.delete(organizationError);
+        });
         organizationRepository.findById(id).ifPresent(org -> {
             org.getUserProfiles().forEach(userProfile -> userProfile.getOrganizations().remove(org));
             organizationRepository.delete(org);
