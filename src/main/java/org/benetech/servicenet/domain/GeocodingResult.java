@@ -18,6 +18,8 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
@@ -29,7 +31,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "geocoding_result")
+@Builder
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class GeocodingResult extends AbstractEntity implements Serializable {
 

@@ -6,6 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.benetech.servicenet.util.CompareUtils;
@@ -38,7 +40,9 @@ import java.util.Set;
     @UniqueConstraint(columnNames = {"external_db_id", "provider_name"})
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Service extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;

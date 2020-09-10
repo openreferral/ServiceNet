@@ -9,6 +9,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.benetech.servicenet.util.CompareUtils;
@@ -38,11 +40,13 @@ import java.util.Set;
  */
 @Data
 @Entity
+@Builder
 @Table(name = "organization", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"external_db_id", "account_id"})
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NoArgsConstructor
+@AllArgsConstructor
 public class Organization extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
