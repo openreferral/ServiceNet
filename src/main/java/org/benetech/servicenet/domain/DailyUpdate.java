@@ -6,6 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -18,6 +21,9 @@ import java.time.ZonedDateTime;
  */
 @Entity
 @Table(name = "daily_update")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DailyUpdate extends AbstractEntity implements Serializable {
 
