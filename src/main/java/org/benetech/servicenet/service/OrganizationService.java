@@ -57,7 +57,7 @@ public interface OrganizationService {
 
     List<Organization> findAllOthers(String providerName);
 
-    List<Organization> findAllByUserProfile(UserProfile userProfile);
+    Page<Organization> findAllByUserProfile(Pageable pageable, UserProfile userProfile);
 
     List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds);
 
@@ -134,7 +134,8 @@ public interface OrganizationService {
 
     List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser();
 
-    List<Organization> findAllByUserGroups(List<UserGroup> userGroups);
+    Page<Organization> findAllByUserGroups(Pageable pageable,
+        List<UserGroup> userGroups);
 
     Optional<Organization> findOneWithIdAndUserProfileInUserGroups(UUID id, UserProfile userProfile);
 

@@ -85,9 +85,9 @@ public class ActivityResource {
 
     @GetMapping("/provider-records")
     @Timed
-    public ResponseEntity<List<ProviderRecordDTO>> getProviderActivities() {
+    public ResponseEntity<Page<ProviderRecordDTO>> getProviderActivities(Pageable pageable) {
         return ResponseEntity.ok().body(
-            activityService.getPartnerActivitiesForCurrentUser()
+            activityService.getPartnerActivitiesForCurrentUser(pageable)
         );
     }
 

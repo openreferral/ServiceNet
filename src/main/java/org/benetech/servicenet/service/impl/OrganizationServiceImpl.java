@@ -247,15 +247,16 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public List<Organization> findAllByUserProfile(UserProfile userProfile) {
+    public Page<Organization> findAllByUserProfile(Pageable pageable, UserProfile userProfile) {
         log.debug("Request to get all Organizations which are associated with userProfile: {}", userProfile);
-        return organizationRepository.findAllWithUserProfile(userProfile);
+        return organizationRepository.findAllWithUserProfile(pageable, userProfile);
     }
 
     @Override
-    public List<Organization> findAllByUserGroups(List<UserGroup> userGroups) {
+    public Page<Organization> findAllByUserGroups(Pageable pageable,
+        List<UserGroup> userGroups) {
         List<UserProfile> userProfiles = userProfileRepository.findAllWithUserGroups(userGroups);
-        return organizationRepository.findAllWithUserProfiles(userProfiles);
+        return organizationRepository.findAllWithUserProfiles(pageable, userProfiles);
     }
 
     @Override

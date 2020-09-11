@@ -25,12 +25,12 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     List<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId);
 
     @Query("SELECT org FROM Organization org WHERE :userProfile MEMBER OF org.userProfiles AND org.active = true")
-    List<Organization> findAllWithUserProfile(@Param("userProfile") UserProfile userProfile);
+    Page<Organization> findAllWithUserProfile(Pageable pageable, @Param("userProfile") UserProfile userProfile);
 
     @Query(value = "SELECT org FROM Organization org "
-        + "LEFT JOIN FETCH org.userProfiles profile "
+        + "LEFT JOIN org.userProfiles profile "
         + "WHERE profile IN (:userProfiles) AND org.active = true")
-    List<Organization> findAllWithUserProfiles(@Param("userProfiles") List<UserProfile> userProfiles);
+    Page<Organization> findAllWithUserProfiles(Pageable pageable, @Param("userProfiles") List<UserProfile> userProfiles);
 
     @Query(value = "SELECT org FROM Organization org "
         + "LEFT JOIN FETCH org.userProfiles profile "
