@@ -27,7 +27,7 @@ public interface ActivityService {
 
     List<ActivityRecordDTO> getPartnerActivitiesByOrganizationId(UUID orgId);
 
-    List<ProviderRecordDTO> getPartnerActivitiesForCurrentUser();
+    Page<ProviderRecordDTO> getPartnerActivitiesForCurrentUser(Pageable pageable);
 
     Suggestions getNameSuggestions(ActivityFilterDTO activityFilterDTO, UUID systemAccountId, String search);
 

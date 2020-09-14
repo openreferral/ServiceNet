@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -149,19 +148,16 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProviderRecordDTO> getPartnerActivitiesForCurrentUser() {
+    public Page<ProviderRecordDTO> getPartnerActivitiesForCurrentUser(Pageable pageable) {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Set<UserGroup> userGroups = userProfile.getUserGroups();
-        List<Organization> organizations;
+        Page<Organization> organizations;
         if (userGroups == null || userGroups.isEmpty()) {
-            organizations = organizationService.findAllByUserProfile(userProfile);
+            organizations = organizationService.findAllByUserProfile(pageable, userProfile);
         } else {
-            organizations = organizationService.findAllByUserGroups(new ArrayList<>(userGroups));
+            organizations = organizationService.findAllByUserGroups(pageable, new ArrayList<>(userGroups));
         }
-        return organizations.stream()
-            .map(this::getProviderRecordDTO)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        return organizations.map(this::getProviderRecordDTO);
     }
 
     @Override
