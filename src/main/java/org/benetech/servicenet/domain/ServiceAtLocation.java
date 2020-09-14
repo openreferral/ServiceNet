@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.FetchType;
 import javax.persistence.UniqueConstraint;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
@@ -35,11 +36,11 @@ public class ServiceAtLocation extends AbstractEntity implements Serializable, D
     @Column(name = "description", columnDefinition = "clob")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Service srvc;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Location location;
 

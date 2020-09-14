@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -32,7 +33,7 @@ public class MatchSimilarity extends AbstractEntity implements Serializable {
     @Column(name = "field_name")
     private String fieldName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     @JsonIgnoreProperties("matchSimilarities")
     private OrganizationMatch organizationMatch;

@@ -125,7 +125,7 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
                        inverseJoinColumns = @JoinColumn(name = "geocoding_results_id", referencedColumnName = "id"))
     private List<GeocodingResult> geocodingResults = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("locations")
     private Organization organization;
 

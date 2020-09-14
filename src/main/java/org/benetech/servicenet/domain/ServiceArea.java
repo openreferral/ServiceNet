@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.FetchType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -28,7 +29,7 @@ public class ServiceArea extends AbstractEntity implements Serializable, DeepCom
     @Column(name = "description", nullable = false, columnDefinition = "clob")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("areas")
     private Service srvc;
 

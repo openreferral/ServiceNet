@@ -128,11 +128,11 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @Column(name = "successful_referrals")
     private Integer successfulReferrals;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("services")
     private Organization organization;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("services")
     private Program program;
 

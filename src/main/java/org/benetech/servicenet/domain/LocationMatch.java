@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Data;
@@ -22,11 +23,11 @@ public class LocationMatch extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonIgnoreProperties("")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Location location;
 
     @JsonIgnoreProperties("")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Location matchingLocation;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

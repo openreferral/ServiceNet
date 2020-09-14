@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.FetchType;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -37,7 +38,7 @@ public class AccessibilityForDisabilities extends AbstractEntity implements Seri
     @Size(max = 255, message = "Field value is too long.")
     private String details;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("accessibilities")
     private Location location;
 

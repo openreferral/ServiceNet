@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.FetchType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -35,7 +36,7 @@ public class OpeningHours extends AbstractEntity implements Serializable, DeepCo
     @Size(max = 255, message = "Field value is too long.")
     private String closesAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("openingHours")
     private RegularSchedule regularSchedule;
 

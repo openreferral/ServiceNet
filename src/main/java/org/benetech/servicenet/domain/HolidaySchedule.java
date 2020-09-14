@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain;
 
+import javax.persistence.FetchType;
 import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -55,11 +56,11 @@ public class HolidaySchedule extends AbstractEntity implements Serializable, Dee
     @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "srvc_id")
     private Service srvc;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
 

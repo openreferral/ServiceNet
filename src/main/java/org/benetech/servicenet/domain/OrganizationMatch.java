@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -36,7 +37,7 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
     @Column(name = "dismiss_comment")
     private String dismissComment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserProfile dismissedBy;
 
     @Column(name = "dismiss_date")
@@ -45,17 +46,17 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
     @Column(name = "hidden")
     private Boolean hidden = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserProfile hiddenBy;
 
     @Column(name = "hidden_date")
     private ZonedDateTime hiddenDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Organization organizationRecord;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Organization partnerVersion;
 
