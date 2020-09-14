@@ -136,7 +136,7 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @JsonIgnoreProperties("services")
     private Program program;
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Set<ServiceAtLocation> locations;
 
@@ -156,35 +156,35 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @JsonIgnore
     private Eligibility eligibility;
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceArea> areas = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceMetadata> metadata = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RequiredDocument> docs = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<PaymentAccepted> paymentsAccepteds = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceTaxonomy> taxonomies = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Contact> contacts = new HashSet<>();
 

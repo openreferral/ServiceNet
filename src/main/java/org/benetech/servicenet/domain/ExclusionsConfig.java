@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain;
 
+import javax.persistence.FetchType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -29,11 +30,11 @@ public class ExclusionsConfig extends AbstractEntity implements Serializable {
     @JoinColumn(unique = true)
     private SystemAccount account;
 
-    @OneToMany(mappedBy = "config")
+    @OneToMany(mappedBy = "config", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<FieldExclusion> exclusions = new HashSet<>();
 
-    @OneToMany(mappedBy = "config")
+    @OneToMany(mappedBy = "config", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<LocationExclusion> locationExclusions = new HashSet<>();
 

@@ -63,7 +63,7 @@ public class OrganizationMatch extends AbstractEntity implements Serializable {
     @Column(name = "similarity")
     private BigDecimal similarity;
 
-    @OneToMany(mappedBy = "organizationMatch", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "organizationMatch", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<MatchSimilarity> matchSimilarities;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

@@ -106,11 +106,11 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
     @JsonIgnore
     private Set<HolidaySchedule> holidaySchedules;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
 

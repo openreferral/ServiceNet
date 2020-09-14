@@ -41,7 +41,7 @@ public class Program extends AbstractEntity implements Serializable, DeepCompara
     @JsonIgnoreProperties("programs")
     private Organization organization;
 
-    @OneToMany(mappedBy = "program", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "program", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Service> services = new HashSet<>();
 

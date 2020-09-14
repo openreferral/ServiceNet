@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import org.benetech.servicenet.util.CompareUtils;
 import org.hibernate.annotations.Cache;
@@ -36,7 +37,7 @@ public class RegularSchedule extends AbstractEntity implements Serializable, Dee
     @JoinColumn(unique = true)
     private Location location;
 
-    @OneToMany(mappedBy = "regularSchedule", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "regularSchedule", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<OpeningHours> openingHours = new HashSet<>();
 
