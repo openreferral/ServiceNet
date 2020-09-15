@@ -2,6 +2,7 @@ package org.benetech.servicenet.generator;
 
 import com.github.javafaker.Faker;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import javax.persistence.EntityManager;
@@ -59,31 +60,40 @@ public class OrganizationMother implements BaseMother<Organization> {
 
     private void addRandomNumberOfLocations(EntityManager em, Organization org) {
         int amount = RANDOM.nextInt(MAX_LOCATIONS_OR_SERVICES) + 1;
+        Set<Location> locations = new HashSet<>();
         for (int i = 0; i < amount; i++) {
             Location loc = LocationMother.INSTANCE.generate(em);
             loc.setOrganization(org);
             em.persist(loc);
+            locations.add(loc);
             log.debug("Fake location created: " + loc.getName());
         }
+        org.setLocations(locations);
     }
 
     private void addRandomNumberOfServices(EntityManager em, Organization org) {
         int amount = RANDOM.nextInt(MAX_LOCATIONS_OR_SERVICES) + 1;
+        Set<Service> services = new HashSet<>();
         for (int i = 0; i < amount; i++) {
             Service service = ServiceMother.INSTANCE.generate(em);
             service.setOrganization(org);
             em.persist(service);
+            services.add(service);
             log.debug("Fake service created: " + service.getName());
         }
+        org.setServices(services);
     }
 
     private void addRandomNumberOfDailyUpdates(EntityManager em, Organization org) {
         int amount = RANDOM.nextInt(MAX_LOCATIONS_OR_SERVICES) + 1;
+        Set<DailyUpdate> dailyUpdates = new HashSet<>();
         for (int i = 0; i < amount; i++) {
             DailyUpdate update = DailyUpdateMother.INSTANCE.generate(em);
             update.setOrganization(org);
             em.persist(update);
+            dailyUpdates.add(update);
             log.debug("Fake daily update created: " + update.getUpdate());
         }
+        org.setDailyUpdates(dailyUpdates);
     }
 }

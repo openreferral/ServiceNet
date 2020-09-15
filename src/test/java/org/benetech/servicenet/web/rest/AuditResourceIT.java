@@ -2,12 +2,14 @@ package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
 import org.benetech.servicenet.domain.PersistentAuditEvent;
 import org.benetech.servicenet.repository.PersistenceAuditEventRepository;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @AutoConfigureMockMvc
 @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 @SpringBootTest(classes = {ServiceNetApp.class})
 @Transactional
 public class AuditResourceIT {
