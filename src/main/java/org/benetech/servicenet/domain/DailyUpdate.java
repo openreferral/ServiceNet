@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -40,7 +41,7 @@ public class DailyUpdate extends AbstractEntity implements Serializable {
     @Column(name = "created_at")
     private ZonedDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("dailyUpdates")
     private Organization organization;
 

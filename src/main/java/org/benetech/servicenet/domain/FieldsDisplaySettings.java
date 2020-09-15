@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Cache;
@@ -78,7 +79,7 @@ public class FieldsDisplaySettings implements Serializable {
     @Column(name = "field_name")
     private List<String> contactDetailsFields;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("fieldsDisplaySettings")
     private UserProfile userProfile;
 

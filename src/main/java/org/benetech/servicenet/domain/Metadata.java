@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.FetchType;
 import org.benetech.servicenet.domain.enumeration.ActionType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -60,7 +61,7 @@ public class Metadata extends AbstractEntity implements Serializable {
     @Column(name = "resource_class", nullable = false)
     private String resourceClass;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties("")
     private UserProfile userProfile;

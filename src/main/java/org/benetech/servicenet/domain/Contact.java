@@ -56,11 +56,11 @@ public class Contact extends AbstractEntity implements Serializable, DeepCompara
     @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Organization organization;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Service srvc;
 

@@ -83,7 +83,7 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     @JoinColumn(name = "filter_id")
     private ActivityFilter filter;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Silo silo;
 

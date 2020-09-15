@@ -3,6 +3,7 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -37,13 +38,13 @@ public class OrganizationError extends AbstractEntity {
     @Column(name = "cause")
     private String cause;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
 
     @Getter
     @Setter
     @JsonIgnoreProperties({"documentUpload", "organizationErrors"})
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DataImportReport dataImportReport;
 
     public String getEntityName() {

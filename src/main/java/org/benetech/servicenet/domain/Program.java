@@ -2,6 +2,7 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -36,11 +37,11 @@ public class Program extends AbstractEntity implements Serializable, DeepCompara
     @Size(max = 255, message = "Field value is too long.")
     private String alternateName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("programs")
     private Organization organization;
 
-    @OneToMany(mappedBy = "program", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "program", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Service> services = new HashSet<>();
 

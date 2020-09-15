@@ -14,6 +14,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -133,7 +134,7 @@ public class Shelter extends AbstractEntity implements Serializable, Address {
     @Column(name = "disability_access", columnDefinition = "clob")
     private String disabilityAccess;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "shelter")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "shelter", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JsonIgnoreProperties("shelter")
     private Set<Phone> phones = new HashSet<>();

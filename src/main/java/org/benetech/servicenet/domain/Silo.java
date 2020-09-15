@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -45,7 +46,7 @@ public class Silo implements Serializable {
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic = false;
 
-    @OneToMany(mappedBy = "silo")
+    @OneToMany(mappedBy = "silo", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<UserProfile> userProfiles = new HashSet<>();
 
