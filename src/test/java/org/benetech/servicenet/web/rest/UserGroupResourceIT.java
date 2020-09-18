@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
 import org.benetech.servicenet.config.SecurityBeanOverrideConfiguration;
 import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.repository.UserGroupRepository;
@@ -22,6 +23,7 @@ import org.benetech.servicenet.service.dto.UserGroupDTO;
 import org.benetech.servicenet.service.mapper.UserGroupMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Integration tests for the {@link UserGroupResource} REST controller.
  */
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 @SpringBootTest(classes = { SecurityBeanOverrideConfiguration.class, ServiceNetApp.class })
 @AutoConfigureMockMvc
 @WithMockUser

@@ -4,6 +4,7 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,13 @@ public class TestUserService extends UserService {
     @Transactional(readOnly = true)
     public Optional<UserProfile> getCurrentUserProfileOptional() {
         return userProfileRepository.findOneByLogin(ADMIN_LOGIN);
+    }
+
+    @Override
+    public UserDTO getUser(String login) {
+        UserProfile currentProfile = getCurrentUserProfile();
+        UserDTO userDTO = new UserDTO();
+        return getCompleteUserDto(userDTO, currentProfile);
     }
 
     @Override

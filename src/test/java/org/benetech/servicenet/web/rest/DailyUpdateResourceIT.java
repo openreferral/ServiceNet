@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
 import org.benetech.servicenet.config.SecurityBeanOverrideConfiguration;
 import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.repository.DailyUpdateRepository;
@@ -27,6 +28,7 @@ import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 import org.benetech.servicenet.service.mapper.DailyUpdateMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @AutoConfigureMockMvc
 @WithMockUser
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 public class DailyUpdateResourceIT {
 
     private static final String DEFAULT_UPDATE = "AAAAAAAAAA";

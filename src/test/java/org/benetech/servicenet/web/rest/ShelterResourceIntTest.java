@@ -43,7 +43,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +54,7 @@ import org.springframework.validation.Validator;
  *
  * @see ShelterResource
  */
-@RunWith(SpringRunner.class)
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class ShelterResourceIntTest {
 
