@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import java.util.HashSet;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
@@ -131,6 +132,7 @@ public class ServiceResourceIntTest {
             .accreditations(DEFAULT_ACCREDITATIONS)
             .licenses(DEFAULT_LICENSES)
             .type(DEFAULT_TYPE);
+        service.setLocations(new HashSet<>());
         return service;
     }
 

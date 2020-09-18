@@ -1,5 +1,6 @@
 package org.benetech.servicenet.mother;
 
+import java.util.HashSet;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
 
@@ -41,6 +42,9 @@ public class UserMother {
         SystemAccount account = SystemAccountMother.createDefaultAndPersist(em);
         UserProfile userProfile = createDefault();
         userProfile.setSystemAccount(account);
+        userProfile.setOrganizations(new HashSet<>());
+        userProfile.setShelters(new HashSet<>());
+        userProfile.setUserGroups(new HashSet<>());
         em.persist(userProfile);
         em.flush();
         return userProfile;

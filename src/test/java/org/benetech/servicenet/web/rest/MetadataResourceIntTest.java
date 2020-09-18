@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.TestConstants.MAX_PAGE_SIZE;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
@@ -286,7 +287,7 @@ public class MetadataResourceIntTest {
         metadataRepository.saveAndFlush(metadata);
 
         // Get all the metadataList
-        restMetadataMockMvc.perform(get("/api/metadata?sort=id,desc"))
+        restMetadataMockMvc.perform(get("/api/metadata?sort=id,desc&size=" + MAX_PAGE_SIZE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(metadata.getId().toString())))

@@ -192,6 +192,7 @@ public class ShelterResourceIntTest {
             .busService(DEFAULT_BUS_SERVICE)
             .transportation(DEFAULT_TRANSPORTATION)
             .disabilityAccess(DEFAULT_DISABILITY_ACCESS);
+        shelter.setUserProfiles(new HashSet<>());
         return shelter;
     }
 
