@@ -151,14 +151,15 @@ public class ActivityServiceImpl implements ActivityService {
     public Page<ProviderRecordDTO> getPartnerActivitiesForCurrentUser(Pageable pageable) {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Set<UserGroup> userGroups = userProfile.getUserGroups();
-        Page<Organization> organizations;
         if (userGroups == null || userGroups.isEmpty()) {
-            organizations = providerRecordsRepository
+            return providerRecordsRepository
                 .findAllWithFilters(userProfile, null, new ProviderFilterDTO(), null, pageable);
         } else {
-            organizations = organizationService.findAllByUserGroups(pageable, new ArrayList<>(userGroups));
+            return filterProviderRecords(
+                organizationService.findAllByUserGroups(pageable, new ArrayList<>(userGroups))
+                .map(this::getProviderRecordDTO)
+            );
         }
-        return organizations.map(this::getProviderRecordDTO);
     }
 
     @Override
@@ -166,18 +167,18 @@ public class ActivityServiceImpl implements ActivityService {
     public Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO,
         String search, Pageable pageable) {
         UserProfile userProfile = userService.getCurrentUserProfile();
-        Page<Organization> organizations = providerRecordsRepository
+        Page<ProviderRecordDTO> providerRecords = providerRecordsRepository
             .findAllWithFilters(null, userProfile, providerFilterDTO, search, pageable);
-        return organizations.map(this::getProviderRecordDTO);
+        return filterProviderRecords(providerRecords);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProviderRecordDTO> getAllPartnerActivitiesPublic(ProviderFilterDTO providerFilterDTO,
         Silo silo, String search, Pageable pageable) {
-        Page<Organization> organizations = providerRecordsRepository
+        Page<ProviderRecordDTO> providerRecords = providerRecordsRepository
             .findAllWithFiltersPublic(providerFilterDTO, silo, search, pageable);
-        return organizations.map(this::getProviderRecordDTO);
+        return filterProviderRecords(providerRecords);
     }
 
     @Override
@@ -266,5 +267,9 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (IllegalAccessException e) {
             return null;
         }
+    }
+
+    private Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords) {
+        return recordsService.filterProviderRecords(providerRecords);
     }
 }

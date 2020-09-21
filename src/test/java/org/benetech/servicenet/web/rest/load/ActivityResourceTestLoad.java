@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith({ParallelLoadExtension.class})
-public class ActivityResourceLoadTest {
+public class ActivityResourceTestLoad {
     @Test
     @DisplayName("Test parallel load for ActivityResource")
     @LoadWith("config/load_config_5_users.properties")
