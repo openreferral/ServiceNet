@@ -153,7 +153,8 @@ public class ActivityServiceImpl implements ActivityService {
         Set<UserGroup> userGroups = userProfile.getUserGroups();
         Page<Organization> organizations;
         if (userGroups == null || userGroups.isEmpty()) {
-            organizations = organizationService.findAllByUserProfile(pageable, userProfile);
+            organizations = providerRecordsRepository
+                .findAllWithFilters(userProfile, null, new ProviderFilterDTO(), null, pageable);
         } else {
             organizations = organizationService.findAllByUserGroups(pageable, new ArrayList<>(userGroups));
         }
@@ -166,7 +167,7 @@ public class ActivityServiceImpl implements ActivityService {
         String search, Pageable pageable) {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Page<Organization> organizations = providerRecordsRepository
-            .findAllWithFilters(userProfile, providerFilterDTO, search, pageable);
+            .findAllWithFilters(null, userProfile, providerFilterDTO, search, pageable);
         return organizations.map(this::getProviderRecordDTO);
     }
 

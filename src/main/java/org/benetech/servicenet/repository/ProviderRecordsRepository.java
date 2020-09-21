@@ -76,14 +76,14 @@ public class ProviderRecordsRepository {
         this.cb = em.getCriteriaBuilder();
     }
 
-    public Page<Organization> findAllWithFilters(UserProfile userProfile,
+    public Page<Organization> findAllWithFilters(UserProfile userProfile, UserProfile excludedUserProfile,
         ProviderFilterDTO providerFilterDTO, String search, Pageable pageable) {
 
         CriteriaQuery<Organization> queryCriteria = cb.createQuery(Organization.class);
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
         queryCriteria.select(selectRoot);
 
-        addFilters(queryCriteria, selectRoot, userProfile, providerFilterDTO, search);
+        addFilters(queryCriteria, selectRoot, userProfile, excludedUserProfile, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(ID));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
@@ -93,7 +93,7 @@ public class ProviderRecordsRepository {
 
         Long total = 0L;
         if (results != null && results.size() > 0) {
-            total = this.getTotal(providerFilterDTO, userProfile, search);
+            total = this.getTotal(providerFilterDTO, userProfile, excludedUserProfile, search);
         }
 
         return new PageImpl<>(results, pageable, total.intValue());
@@ -220,8 +220,9 @@ public class ProviderRecordsRepository {
         return createQueryWithPageable(query, pageable);
     }
 
-    private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root, UserProfile userProfile,
-        ProviderFilterDTO providerFilterDTO, String search) {
+    private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root,
+        UserProfile userProfile,
+        UserProfile excludedUserProfile, ProviderFilterDTO providerFilterDTO, String search) {
 
         Join<Organization, SystemAccount> systemAccountJoin = root.join(ACCOUNT, JoinType.LEFT);
         Join<Organization, UserProfile> userProfileJoin = root.join(USER_PROFILES, JoinType.LEFT);
@@ -229,17 +230,23 @@ public class ProviderRecordsRepository {
         Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(ELIGIBILITY, JoinType.LEFT);
         Join<Organization, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
 
-        Silo silo = userProfile.getSilo();
+        Silo silo = (userProfile != null) ? userProfile.getSilo() : excludedUserProfile.getSilo();
 
         Predicate predicate = getCommonPredicate(root, silo, search, systemAccountJoin,
             userProfileJoin,
             serviceJoin, eligibilityJoin);
 
-        predicate = cb.and(predicate, cb.notEqual(userProfileJoin.get(ID), userProfile.getId()));
+        if (userProfile != null) {
+            predicate = cb.and(predicate, cb.equal(userProfileJoin.get(ID), userProfile.getId()));
+        }
+        else {
+            predicate = cb.and(cb.notEqual(userProfileJoin.get(ID), excludedUserProfile.getId()));
 
-        predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
+            predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
-        predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin, null);
+            predicate = this
+                .addLocationFilters(predicate, providerFilterDTO, locationJoin, null);
+        }
 
         query.where(predicate);
     }
@@ -273,7 +280,9 @@ public class ProviderRecordsRepository {
 
         predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
 
-        predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
+        if (silo != null) {
+            predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
+        }
 
         predicate = this.addSearch(predicate, search, from, serviceJoin, eligibilityJoin);
         return predicate;
@@ -369,10 +378,11 @@ public class ProviderRecordsRepository {
         return predicate;
     }
 
-    private Long getTotal(ProviderFilterDTO providerFilterDTO, UserProfile userProfile, String search) {
+    private Long getTotal(ProviderFilterDTO providerFilterDTO, UserProfile userProfile,
+        UserProfile excludedUserProfile, String search) {
         CriteriaQuery<Long> countCriteria = cb.createQuery(Long.class);
         Root<Organization> selectRoot = countCriteria.from(Organization.class);
-        this.addFilters(countCriteria, selectRoot, userProfile, providerFilterDTO, search);
+        this.addFilters(countCriteria, selectRoot, userProfile, excludedUserProfile, providerFilterDTO, search);
         countCriteria.select(cb.countDistinct(selectRoot));
         return em.createQuery(countCriteria).getSingleResult();
     }
