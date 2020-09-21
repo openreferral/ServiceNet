@@ -15,9 +15,10 @@ public class ZeroCodeSpringJUnit5Extension implements BeforeEachCallback, AfterE
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
         builder.setDescription(Description.createTestDescription(
-            extensionContext.getRequiredTestClass(), extensionContext.getRequiredTestMethod().getName()));
+            extensionContext.getRequiredTestClass().getName(),
+            extensionContext.getRequiredTestMethod().getName(),
+            extensionContext.getUniqueId()));
         builder.prepareRequestReport();
-        builder.testRunStarted();
     }
 
     @Override
@@ -25,7 +26,6 @@ public class ZeroCodeSpringJUnit5Extension implements BeforeEachCallback, AfterE
         builder.setPassed(extensionContext.getExecutionException().isEmpty());
         builder.prepareResponseReport();
         builder.buildReportAndPrintToFile();
-        builder.testRunFinished();
     }
 
     @Override
