@@ -24,7 +24,35 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     List<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId);
 
-    @Query("SELECT org FROM Organization org WHERE :userProfile MEMBER OF org.userProfiles AND org.active = true")
+    @Query(value = "SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.userProfiles profiles "
+        + "LEFT JOIN FETCH org.account "
+        + "LEFT JOIN FETCH org.locations locs "
+        + "LEFT JOIN FETCH org.services srvs "
+        + "LEFT JOIN FETCH org.contacts "
+        + "LEFT JOIN FETCH org.phones "
+        + "LEFT JOIN FETCH org.programs "
+        + "LEFT JOIN FETCH locs.regularSchedule lRS "
+        + "LEFT JOIN FETCH lRS.openingHours "
+        + "LEFT JOIN FETCH locs.holidaySchedules "
+        + "LEFT JOIN FETCH locs.langs "
+        + "LEFT JOIN FETCH locs.accessibilities "
+        + "LEFT JOIN FETCH srvs.regularSchedule sRS "
+        + "LEFT JOIN FETCH sRS.openingHours "
+        + "LEFT JOIN FETCH srvs.holidaySchedules "
+        + "LEFT JOIN FETCH srvs.funding "
+        + "LEFT JOIN FETCH srvs.eligibility "
+        + "LEFT JOIN FETCH srvs.docs "
+        + "LEFT JOIN FETCH srvs.paymentsAccepteds "
+        + "LEFT JOIN FETCH srvs.langs "
+        + "LEFT JOIN FETCH srvs.taxonomies "
+        + "LEFT JOIN FETCH srvs.phones "
+        + "LEFT JOIN FETCH srvs.contacts "
+        + "WHERE :userProfile MEMBER OF org.userProfiles "
+        + "AND org.active = true",
+    countQuery = "SELECT COUNT(org) FROM Organization org "
+        + "WHERE :userProfile MEMBER OF org.userProfiles "
+        + "AND org.active = true")
     Page<Organization> findAllWithUserProfile(Pageable pageable, @Param("userProfile") UserProfile userProfile);
 
     @Query(value = "SELECT org FROM Organization org "
