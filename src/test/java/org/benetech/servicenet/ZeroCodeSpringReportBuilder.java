@@ -13,7 +13,6 @@ import org.jsmart.zerocode.core.logbuilder.LogCorrelationshipPrinter;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGenerator;
 import org.jsmart.zerocode.core.report.ZeroCodeReportGeneratorImpl;
 import org.junit.runner.Description;
-import org.junit.runner.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +79,8 @@ public class ZeroCodeSpringReportBuilder {
     }
 
     public void testRunFinished() {
-        testReportListener.testRunFinished(new Result());
+        // testReportListener.testRunFinished(new Result());
+        injectedReportGenerator.generateCsvReport();
     }
 
     public boolean isPassed() {

@@ -2,9 +2,10 @@ package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
 import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
+import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
 import org.benetech.servicenet.config.SecurityBeanOverrideConfiguration;
 import org.benetech.servicenet.domain.Silo;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.service.dto.SiloDTO;
@@ -12,13 +13,14 @@ import org.benetech.servicenet.service.mapper.SiloMapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Integration tests for the {@link SiloResource} REST controller.
  */
-@RunWith(ZeroCodeSpringJUnit4Runner.class)
+@ExtendWith({ SpringExtension.class, ZeroCodeSpringJUnit5Extension.class })
 @SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, ServiceNetApp.class})
 public class SiloResourceIT {
 
@@ -69,6 +71,9 @@ public class SiloResourceIT {
     @Autowired
     private Validator validator;
 
+    @Autowired
+    private ExceptionTranslator exceptionTranslator;
+
     private MockMvc restSiloMockMvc;
 
     private Silo silo;
@@ -79,6 +84,7 @@ public class SiloResourceIT {
         final SiloResource siloResource = new SiloResource(siloService);
         this.restSiloMockMvc = MockMvcBuilders.standaloneSetup(siloResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter)
             .setValidator(validator).build();
@@ -161,8 +167,8 @@ public class SiloResourceIT {
         // Get all the siloList
         restSiloMockMvc.perform(get("/api/silos?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(silo.getId())))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(silo.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
 
@@ -175,8 +181,8 @@ public class SiloResourceIT {
         // Get the silo
         restSiloMockMvc.perform(get("/api/silos/{id}", silo.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(silo.getId()))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(silo.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
     }
 
@@ -184,7 +190,7 @@ public class SiloResourceIT {
     @Transactional
     public void getNonExistingSilo() throws Exception {
         // Get the silo
-        restSiloMockMvc.perform(get("/api/silos/{id}", Long.MAX_VALUE))
+        restSiloMockMvc.perform(get("/api/silos/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 

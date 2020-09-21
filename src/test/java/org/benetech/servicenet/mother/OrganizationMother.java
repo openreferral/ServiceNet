@@ -1,5 +1,6 @@
 package org.benetech.servicenet.mother;
 
+import java.util.HashSet;
 import org.benetech.servicenet.domain.Organization;
 
 import javax.persistence.EntityManager;
@@ -52,6 +53,8 @@ public class OrganizationMother {
             .legalStatus(DEFAULT_LEGAL_STATUS)
             .active(active);
         org.setAccount(SystemAccountMother.createDefault());
+        org.setDailyUpdates(new HashSet<>());
+        org.setUserProfiles(new HashSet<>());
         return org;
     }
 

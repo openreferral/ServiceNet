@@ -25,6 +25,8 @@ public class TestConstants {
     public static final Integer EXISTING_INT = 3;
     public static final String SYSTEM = "system";
 
+    public static final Integer MAX_PAGE_SIZE = 2000;
+
     private TestConstants() {
     }
 }

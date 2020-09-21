@@ -30,10 +30,14 @@ public class ZeroCodeSpringJUnit4Runner extends SpringJUnit4ClassRunner {
             notifier.fireTestIgnored(builder.getDescription());
             return;
         }
-
-        notifier.addListener(builder.getTestReportListener());
-
+        // notifier.addListener(builder.getTestReportListener());
+        try {
+            builder.testRunStarted();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
         super.run(notifier);
+        builder.testRunFinished();
     }
 
     @SuppressWarnings("PMD")
