@@ -46,10 +46,10 @@ import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleRequiredDocumentDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderLocationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRequiredDocumentDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderServiceDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
@@ -177,7 +177,7 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Transactional
     @Override
-    public OrganizationDTO saveWithUser(SimpleOrganizationDTO organizationDTO) {
+    public OrganizationDTO saveWithUser(ProviderOrganizationDTO organizationDTO) {
         log.debug("Request to save Organization : {}", organizationDTO);
 
         Organization organization = organizationMapper.toEntity(organizationDTO);
@@ -349,7 +349,7 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id) {
+    public Optional<ProviderOrganizationDTO> findOneDTOForProvider(UUID id) {
         log.debug("Request to get Organization : {}", id);
         return findOne(id).map(this::mapToSimpleDto);
     }
@@ -362,7 +362,7 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<SimpleOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo) {
+    public Optional<ProviderOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo) {
         log.debug("Request to get Organization : {}", id);
         Optional<Organization> optionalOrganization = findOneByIdAndSilo(id, silo);
         if (optionalOrganization.isEmpty()) {
@@ -541,12 +541,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
     }
 
-    private List<Location> saveLocations(Organization organization, List<SimpleLocationDTO> dtos) {
+    private List<Location> saveLocations(Organization organization, List<ProviderLocationDTO> dtos) {
         List<Location> locations = new ArrayList<>();
-        Set<UUID> locationsToKeep = dtos.stream().map(SimpleLocationDTO::getId).collect(Collectors.toSet());
+        Set<UUID> locationsToKeep = dtos.stream().map(ProviderLocationDTO::getId).collect(Collectors.toSet());
         Set<Location> locationsToRemove = organization.getLocations().stream()
             .filter(l -> !locationsToKeep.contains(l.getId())).collect(Collectors.toSet());
-        for (SimpleLocationDTO locationDTO : dtos) {
+        for (ProviderLocationDTO locationDTO : dtos) {
             Location location = locationMapper.toEntity(locationDTO);
             Location existingLocation = (location.getId() != null) ?
                 locationService.findById(location.getId()).get() : null;
@@ -563,13 +563,13 @@ public class OrganizationServiceImpl implements OrganizationService {
         return locations;
     }
 
-    private Set<Service> saveServices(Organization organization, List<SimpleServiceDTO> dtos,
+    private Set<Service> saveServices(Organization organization, List<ProviderServiceDTO> dtos,
         List<Location> locations) {
         Set<Service> services = new HashSet<>();
-        Set<UUID> servicesToKeep = dtos.stream().map(SimpleServiceDTO::getId).collect(Collectors.toSet());
+        Set<UUID> servicesToKeep = dtos.stream().map(ProviderServiceDTO::getId).collect(Collectors.toSet());
         Set<Service> servicesToRemove = organization.getServices().stream()
             .filter(s -> !servicesToKeep.contains(s.getId())).collect(Collectors.toSet());
-        for (SimpleServiceDTO serviceDTO : dtos) {
+        for (ProviderServiceDTO serviceDTO : dtos) {
             Service service = serviceMapper.toEntity(serviceDTO);
             UUID id = service.getId();
             if (id != null) {
@@ -604,8 +604,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         return services;
     }
 
-    private SimpleOrganizationDTO mapToSimpleDto(Organization org) {
-        SimpleOrganizationDTO organizationDto = organizationMapper.toSimpleDto(org);
+    private ProviderOrganizationDTO mapToSimpleDto(Organization org) {
+        ProviderOrganizationDTO organizationDto = organizationMapper.toSimpleDto(org);
         organizationDto.getServices().forEach(dto -> {
             Service service = org.getServices().stream()
                 .filter(s -> s.getId().equals(dto.getId())).findAny().get();
@@ -613,7 +613,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 service.getLocations().stream()
                     .map(ServiceAtLocation::getLocation)
                     .map(loc -> organizationDto.getLocations().stream()
-                        .map(SimpleLocationDTO::getId).collect(Collectors.toList())
+                        .map(ProviderLocationDTO::getId).collect(Collectors.toList())
                         .indexOf(loc.getId()))
                     .collect(Collectors.toList())
             );
@@ -626,7 +626,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationDto;
     }
 
-    private Set<ServiceTaxonomy> saveTaxonomies(SimpleServiceDTO serviceDTO, Service service) {
+    private Set<ServiceTaxonomy> saveTaxonomies(ProviderServiceDTO serviceDTO, Service service) {
         HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
         Set<UUID> existingTaxonomies = (service.getTaxonomies() != null)
             ? service.getTaxonomies().stream()
@@ -658,7 +658,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return taxonomies;
     }
 
-    private Set<ServiceAtLocation> saveLocations(SimpleServiceDTO serviceDTO, Service service,
+    private Set<ServiceAtLocation> saveLocations(ProviderServiceDTO serviceDTO, Service service,
         List<Location> locations) {
         Set<Location> serviceLocations = serviceDTO.getLocationIndexes().stream().map(
             locations::get
@@ -685,7 +685,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return servicesAtLocation;
     }
 
-    private Set<DailyUpdate> saveDailyUpdates(Organization organization, SimpleOrganizationDTO organizationDTO) {
+    private Set<DailyUpdate> saveDailyUpdates(Organization organization, ProviderOrganizationDTO organizationDTO) {
         Set<DailyUpdate> dailyUpdates = organization.getDailyUpdates();
         if (organizationDTO.getUpdate() != null) {
             ZonedDateTime now = ZonedDateTime.now();
@@ -709,9 +709,9 @@ public class OrganizationServiceImpl implements OrganizationService {
         return dailyUpdates;
     }
 
-    private Set<RequiredDocument> saveDocs(SimpleServiceDTO serviceDTO, Service service) {
+    private Set<RequiredDocument> saveDocs(ProviderServiceDTO serviceDTO, Service service) {
         Set<RequiredDocument> docs = new HashSet<>();
-        for (SimpleRequiredDocumentDTO docDto : serviceDTO.getDocs()) {
+        for (ProviderRequiredDocumentDTO docDto : serviceDTO.getDocs()) {
             Optional<RequiredDocument> existingDocOptional = service.getDocs().stream()
                 .filter(doc -> doc.getId().equals(docDto.getId())).findFirst();
             if (existingDocOptional.isPresent()) {
@@ -735,7 +735,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return docs;
     }
 
-    private Eligibility saveEligibility(Service service, SimpleServiceDTO serviceDTO) {
+    private Eligibility saveEligibility(Service service, ProviderServiceDTO serviceDTO) {
         Eligibility existingEligibility = service.getEligibility();
         Eligibility eligibility = (existingEligibility != null) ? existingEligibility : new Eligibility();
         if (StringUtils.isNotBlank(serviceDTO.getEligibilityCriteria())) {

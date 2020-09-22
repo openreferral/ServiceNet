@@ -5,8 +5,8 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.dto.ServiceDTO;
-import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderServiceDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -24,11 +24,10 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
     ServiceDTO toDto(Service service);
 
     @Mapping(target = "service", source = "service")
-    @Mapping(target = "regularScheduleOpeningHours", source = "regularSchedule.openingHours")
-    ServiceRecordDTO toRecord(Service service);
+    SimpleServiceDTO toSimpleDto(Service service);
 
     @Mapping(source = "eligibility.eligibility", target = "eligibilityCriteria")
-    SimpleServiceDTO toSimpleDto(Service service);
+    ProviderServiceDTO toProviderService(Service service);
 
     @SuppressWarnings("CPD-START")
     @Mapping(source = "organizationId", target = "organization")
@@ -58,7 +57,7 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
     @Mapping(target = "langs", ignore = true)
     @Mapping(target = "taxonomies", ignore = true)
     @Mapping(target = "phones", ignore = true)
-    Service toEntity(SimpleServiceDTO serviceDTO);
+    Service toEntity(ProviderServiceDTO serviceDTO);
 
     @SuppressWarnings("CPD-END")
     default Service fromId(UUID id) {

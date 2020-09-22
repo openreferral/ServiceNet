@@ -39,10 +39,10 @@ import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
-import org.benetech.servicenet.service.dto.LocationRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
-import org.benetech.servicenet.service.dto.ServiceRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -123,8 +123,8 @@ public class ProviderRecordsRepository {
 
             List<UUID> orgIds = results.stream().map(it -> it.getOrganization().getId()).collect(Collectors.toList());
 
-            Map<UUID, Set<ServiceRecordDTO>> services = getServicesMap(orgIds);
-            Map<UUID, Set<LocationRecordDTO>> locations = getLocationsMap(orgIds);
+            Map<UUID, Set<SimpleServiceDTO>> services = getServicesMap(orgIds);
+            Map<UUID, Set<SimpleLocationDTO>> locations = getLocationsMap(orgIds);
             Map<UUID, Set<DailyUpdateDTO>> dailyUpdates = getDailyUpdatesMap(orgIds);
 
             results.forEach(result -> {
@@ -137,36 +137,36 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
-    private Map<UUID, Set<ServiceRecordDTO>> getServicesMap(List<UUID> orgIds) {
-        CriteriaQuery<ServiceRecordDTO> queryCriteria = cb.createQuery(ServiceRecordDTO.class);
+    private Map<UUID, Set<SimpleServiceDTO>> getServicesMap(List<UUID> orgIds) {
+        CriteriaQuery<SimpleServiceDTO> queryCriteria = cb.createQuery(SimpleServiceDTO.class);
         Root<Service> root = queryCriteria.from(Service.class);
         Join<Service, Organization> orgJoin = root.join(ORGANIZATION, JoinType.LEFT);
 
-        queryCriteria.select(cb.construct(ServiceRecordDTO.class, root.get(ID), root.get(NAME), orgJoin.get(ID)));
+        queryCriteria.select(cb.construct(SimpleServiceDTO.class, root.get(ID), root.get(NAME), orgJoin.get(ID)));
 
         queryCriteria.where(orgJoin.get(ID).in(orgIds));
 
-        TypedQuery<ServiceRecordDTO> query = em.createQuery(queryCriteria);
-        List<ServiceRecordDTO> results = query.getResultList();
+        TypedQuery<SimpleServiceDTO> query = em.createQuery(queryCriteria);
+        List<SimpleServiceDTO> results = query.getResultList();
 
         return results.stream().collect(Collectors.groupingBy(service -> service.getService().getOrganizationId(), Collectors.toSet()));
     }
 
-    private Map<UUID, Set<LocationRecordDTO>> getLocationsMap(List<UUID> orgIds) {
-        CriteriaQuery<LocationRecordDTO> queryCriteria = cb.createQuery(LocationRecordDTO.class);
+    private Map<UUID, Set<SimpleLocationDTO>> getLocationsMap(List<UUID> orgIds) {
+        CriteriaQuery<SimpleLocationDTO> queryCriteria = cb.createQuery(SimpleLocationDTO.class);
         Root<Location> root = queryCriteria.from(Location.class);
         Join<Location, Organization> orgJoin = root.join(ORGANIZATION, JoinType.LEFT);
         Join<Location, PhysicalAddress> addressJoin = root.join(PHYSICAL_ADDRESS, JoinType.LEFT);
 
-        queryCriteria.select(cb.construct(LocationRecordDTO.class, addressJoin.get(ID), addressJoin.get(ADDRESS_CITY),
+        queryCriteria.select(cb.construct(SimpleLocationDTO.class, addressJoin.get(ID), addressJoin.get(ADDRESS_CITY),
             addressJoin.get(STATE_PROVINCE), addressJoin.get(ADDRESS_REGION), orgJoin.get(ID)));
 
         queryCriteria.where(orgJoin.get(ID).in(orgIds));
 
-        TypedQuery<LocationRecordDTO> query = em.createQuery(queryCriteria);
-        List<LocationRecordDTO> results = query.getResultList();
+        TypedQuery<SimpleLocationDTO> query = em.createQuery(queryCriteria);
+        List<SimpleLocationDTO> results = query.getResultList();
 
-        return results.stream().collect(Collectors.groupingBy(location -> location.getLocation().getOrganizationId(), Collectors.toSet()));
+        return results.stream().collect(Collectors.groupingBy(location -> location.getOrganizationId(), Collectors.toSet()));
     }
 
     private Map<UUID, Set<DailyUpdateDTO>> getDailyUpdatesMap(List<UUID> orgIds) {

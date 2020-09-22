@@ -25,14 +25,14 @@ import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
-import org.benetech.servicenet.service.dto.LocationRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.OwnerDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
-import org.benetech.servicenet.service.dto.ServiceRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
 import org.benetech.servicenet.service.mapper.ContactMapper;
 import org.benetech.servicenet.service.mapper.DailyUpdateMapper;
@@ -156,7 +156,7 @@ public class RecordBuilder {
         return providerRecord;
     }
 
-    private Set<LocationRecordDTO> filterLocationRecords(Set<LocationRecordDTO> locations, Set<LocationExclusion> locationExclusions) {
+    private Set<SimpleLocationDTO> filterLocationRecords(Set<SimpleLocationDTO> locations, Set<LocationExclusion> locationExclusions) {
         if (locationExclusions == null || locationExclusions.isEmpty()) {
             return locations;
         }
@@ -166,7 +166,7 @@ public class RecordBuilder {
             .collect(Collectors.toSet());
     }
 
-    private boolean isExcluded(LocationRecordDTO location, LocationExclusion exclusion) {
+    private boolean isExcluded(SimpleLocationDTO location, LocationExclusion exclusion) {
         return Optional.ofNullable(location.getPhysicalAddress())
             .map(address -> (StringUtils.isNotBlank(exclusion.getRegion())
                 && StringUtils.containsIgnoreCase(address.getRegion(), exclusion.getRegion()))
@@ -205,15 +205,15 @@ public class RecordBuilder {
             .map(exclusionMapper::toDto).collect(Collectors.toSet());
     }
 
-    private Set<LocationRecordDTO> mapLocations(Set<Location> locations) {
+    private Set<SimpleLocationDTO> mapLocations(Set<Location> locations) {
         return locations.stream()
-            .map(locationMapper::toRecord)
+            .map(locationMapper::toSimpleDto)
             .collect(Collectors.toSet());
     }
 
-    private Set<ServiceRecordDTO> mapServices(Set<Service> services) {
+    private Set<SimpleServiceDTO> mapServices(Set<Service> services) {
         return services.stream()
-            .map(serviceMapper::toRecord)
+            .map(serviceMapper::toSimpleDto)
             .collect(Collectors.toSet());
     }
 

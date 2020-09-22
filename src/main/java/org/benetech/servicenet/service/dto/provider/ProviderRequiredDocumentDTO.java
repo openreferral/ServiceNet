@@ -10,7 +10,7 @@ import lombok.Data;
  * A DTO for the SimpleRequiredDocument entity.
  */
 @Data
-public class SimpleRequiredDocumentDTO implements Serializable {
+public class ProviderRequiredDocumentDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,7 +28,7 @@ public class SimpleRequiredDocumentDTO implements Serializable {
             return false;
         }
 
-        SimpleRequiredDocumentDTO requiredDocumentDTO = (SimpleRequiredDocumentDTO) o;
+        ProviderRequiredDocumentDTO requiredDocumentDTO = (ProviderRequiredDocumentDTO) o;
         if (requiredDocumentDTO.getId() == null || getId() == null) {
             return false;
         }

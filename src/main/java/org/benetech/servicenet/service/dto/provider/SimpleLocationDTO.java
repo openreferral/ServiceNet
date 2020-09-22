@@ -1,23 +1,25 @@
 package org.benetech.servicenet.service.dto.provider;
 
-import java.io.Serializable;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 
 @Data
-public class SimpleLocationDTO implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+public class SimpleLocationDTO {
 
-    private static final long serialVersionUID = 1L;
+    private PhysicalAddressDTO physicalAddress;
 
-    private UUID id;
+    private UUID organizationId;
 
-    private String address1;
-
-    private String address2;
-
-    private String city;
-
-    private String ca;
-
-    private String zipcode;
+    public SimpleLocationDTO(UUID physicalAddressId, String physicalAddressCity,
+        String physicalAddressStateProvince, String physicalAddressStateRegion, UUID orgId) {
+        this.physicalAddress = new PhysicalAddressDTO(physicalAddressId, physicalAddressCity,
+            physicalAddressStateProvince, physicalAddressStateRegion);
+        this.organizationId = orgId;
+    }
 }
