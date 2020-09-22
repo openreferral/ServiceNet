@@ -120,18 +120,7 @@ public class ProviderRecordsRepository {
         Long total = 0L;
         if (results != null && results.size() > 0) {
             total = this.getTotal(providerFilterDTO, userProfiles, excludedUserProfile, search);
-
-            List<UUID> orgIds = results.stream().map(it -> it.getOrganization().getId()).collect(Collectors.toList());
-
-            Map<UUID, Set<SimpleServiceDTO>> services = getServicesMap(orgIds);
-            Map<UUID, Set<SimpleLocationDTO>> locations = getLocationsMap(orgIds);
-            Map<UUID, Set<DailyUpdateDTO>> dailyUpdates = getDailyUpdatesMap(orgIds);
-
-            results.forEach(result -> {
-                result.setServices(services.getOrDefault(result.getOrganization().getId(), new HashSet<>()));
-                result.setLocations(locations.getOrDefault(result.getOrganization().getId(), new HashSet<>()));
-                result.setDailyUpdates(dailyUpdates.getOrDefault(result.getOrganization().getId(), new HashSet<>()));
-            });
+            fetchRelatedEntities(results);
         }
 
         return new PageImpl<>(results, pageable, total.intValue());
@@ -208,6 +197,7 @@ public class ProviderRecordsRepository {
         Long total = 0L;
         if (results != null && results.size() > 0) {
             total = this.getTotal(providerFilterDTO, silo, search);
+            fetchRelatedEntities(results);
         }
 
         return new PageImpl<>(results, pageable, total.intValue());
@@ -511,5 +501,19 @@ public class ProviderRecordsRepository {
                 orderList.add(cb.desc(root.get(field)));
             }
         }
+    }
+
+    private void fetchRelatedEntities(List<ProviderRecordDTO> results) {
+        List<UUID> orgIds = results.stream().map(it -> it.getOrganization().getId()).collect(Collectors.toList());
+
+        Map<UUID, Set<SimpleServiceDTO>> services = getServicesMap(orgIds);
+        Map<UUID, Set<SimpleLocationDTO>> locations = getLocationsMap(orgIds);
+        Map<UUID, Set<DailyUpdateDTO>> dailyUpdates = getDailyUpdatesMap(orgIds);
+
+        results.forEach(result -> {
+            result.setServices(services.getOrDefault(result.getOrganization().getId(), new HashSet<>()));
+            result.setLocations(locations.getOrDefault(result.getOrganization().getId(), new HashSet<>()));
+            result.setDailyUpdates(dailyUpdates.getOrDefault(result.getOrganization().getId(), new HashSet<>()));
+        });
     }
 }
