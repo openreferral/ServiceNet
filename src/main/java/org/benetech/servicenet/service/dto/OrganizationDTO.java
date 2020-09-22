@@ -12,12 +12,14 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.NoArgsConstructor;
 import org.benetech.servicenet.domain.UserProfile;
 
 /**
  * A DTO for the Organization entity.
  */
 @Data
+@NoArgsConstructor
 public class OrganizationDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +67,12 @@ public class OrganizationDTO implements Serializable {
     private String externalDbId;
 
     private Set<UserProfile> userProfiles = new HashSet<>();
+
+    public OrganizationDTO(UUID id, String name, UUID accountId) {
+        this.id = id;
+        this.name = name;
+        this.accountId = accountId;
+    }
 
     public Boolean isActive() {
         return active;

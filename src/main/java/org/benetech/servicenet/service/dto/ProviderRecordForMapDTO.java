@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.benetech.servicenet.domain.GeocodingResult;
 
 @Data
 @Builder
@@ -17,9 +16,8 @@ public class ProviderRecordForMapDTO {
 
     private GeocodingResultDTO location;
 
-    public ProviderRecordForMapDTO(UUID id, GeocodingResult geocodingResult) {
-        this.id = id;
-        this.location = new GeocodingResultDTO(geocodingResult.getId(), geocodingResult.getAddress(),
-            geocodingResult.getLatitude(), geocodingResult.getLongitude());
+    public ProviderRecordForMapDTO(UUID orgId, UUID id, String address, Double latitude, Double longitude) {
+        this.id = orgId;
+        this.location = new GeocodingResultDTO(id, address, latitude, longitude);
     }
 }

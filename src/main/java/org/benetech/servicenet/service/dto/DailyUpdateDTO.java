@@ -5,10 +5,12 @@ import java.util.UUID;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Lob;
+import lombok.NoArgsConstructor;
 
 /**
  * A DTO for the {@link org.benetech.servicenet.domain.DailyUpdate} entity.
  */
+@NoArgsConstructor
 public class DailyUpdateDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,6 +74,15 @@ public class DailyUpdateDTO implements Serializable {
 
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
+    }
+
+    public DailyUpdateDTO(UUID id, String update, ZonedDateTime expiry, ZonedDateTime createdAt,
+        UUID organizationId) {
+        this.id = id;
+        this.update = update;
+        this.expiry = expiry;
+        this.createdAt = createdAt;
+        this.organizationId = organizationId;
     }
 
     @Override

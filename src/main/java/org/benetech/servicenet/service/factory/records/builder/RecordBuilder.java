@@ -136,6 +136,45 @@ public class RecordBuilder {
         );
     }
 
+    public ProviderRecordDTO filterProviderRecord(ProviderRecordDTO providerRecord,
+        Set<FieldExclusion> baseExclusions, Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
+        UserDTO user = userService.getUser(providerRecord.getUserLogin());
+
+        providerRecord.setOwner(user);
+        providerRecord.setLocations(filterLocationRecords(providerRecord.getLocations(), locationExclusions));
+
+        return buildObject(providerRecord, ProviderRecordDTO.class, Organization.class, baseExclusions);
+    }
+
+    public ProviderRecordDTO filterProviderRecord(ProviderRecordDTO providerRecord,
+        Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
+        UserDTO user = userService.getUser(providerRecord.getUserLogin());
+
+        providerRecord.setOwner(user);
+        providerRecord.setLocations(filterLocationRecords(providerRecord.getLocations(), locationExclusions));
+
+        return providerRecord;
+    }
+
+    private Set<LocationRecordDTO> filterLocationRecords(Set<LocationRecordDTO> locations, Set<LocationExclusion> locationExclusions) {
+        if (locationExclusions == null || locationExclusions.isEmpty()) {
+            return locations;
+        }
+
+        return locations.stream()
+            .filter(location -> locationExclusions.stream().noneMatch(exclusion -> isExcluded(location, exclusion)))
+            .collect(Collectors.toSet());
+    }
+
+    private boolean isExcluded(LocationRecordDTO location, LocationExclusion exclusion) {
+        return Optional.ofNullable(location.getPhysicalAddress())
+            .map(address -> (StringUtils.isNotBlank(exclusion.getRegion())
+                && StringUtils.containsIgnoreCase(address.getRegion(), exclusion.getRegion()))
+                || (StringUtils.isNotBlank(exclusion.getCity())
+                && StringUtils.containsIgnoreCase(address.getCity(), exclusion.getCity())))
+            .orElse(false);
+    }
+
     private Set<Location> filterLocations(Set<Location> locations, Set<LocationExclusion> locationExclusions) {
         if (locationExclusions == null || locationExclusions.isEmpty()) {
             return locations;
