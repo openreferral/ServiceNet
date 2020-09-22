@@ -96,6 +96,5 @@ public class ZeroCodeSpringJUnit4Runner extends SpringJUnit4ClassRunner {
 
             eachNotifier.fireTestFinished();
         }
-
     }
 }

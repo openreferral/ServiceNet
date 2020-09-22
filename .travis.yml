@@ -24,7 +24,7 @@ install:
   - ./mvnw dependency:go-offline --no-transfer-progress
 script:
   - ./mvnw clean --no-transfer-progress
-  - ./mvnw integration-test --no-transfer-progress jacoco:report coveralls:report
+  - ./mvnw verify --no-transfer-progress jacoco:report coveralls:report
 notifications:
   webhooks:
     on_success: change  # options: [always|never|change] default: always
