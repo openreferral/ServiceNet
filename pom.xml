@@ -689,7 +689,10 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <jacocoReports>${project.build.directory}/jacoco/test/jacoco.xml</jacocoReports>
+                    <jacocoReports>
+                        <jacocoReport>${project.build.directory}/jacoco/test/jacoco.xml</jacocoReport>
+                        <jacocoReport>${project.build.directory}/jacoco/integrationTest/jacoco.xml</jacocoReport>
+                    </jacocoReports>
                 </configuration>
             </plugin>
             <!-- jhipster-needle-maven-add-plugin -->
@@ -1052,6 +1055,7 @@
                         <excludes>
                             <exclude>**/*IT*</exclude>
                             <exclude>**/*IntTest*</exclude>
+                            <exclude>**/*LoadTest*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>

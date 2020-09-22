@@ -371,7 +371,11 @@ public class ProviderRecordsRepository {
 
         predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
 
-        predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
+        if (silo != null) {
+            predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
+        } else {
+            predicate = cb.and(predicate, cb.isNull(userProfileJoin.get(SILO)));
+        }
 
         predicate = this.addSearch(predicate, search, from, serviceJoin, eligibilityJoin);
         return predicate;
