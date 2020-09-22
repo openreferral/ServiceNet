@@ -5,7 +5,7 @@ import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -40,7 +40,7 @@ public interface OrganizationService {
      * @param organizationDTO the entity to save
      * @return the persisted entity
      */
-    OrganizationDTO saveWithUser(SimpleOrganizationDTO organizationDTO);
+    OrganizationDTO saveWithUser(ProviderOrganizationDTO organizationDTO);
 
     /**
      * Get all the organizations.
@@ -126,9 +126,9 @@ public interface OrganizationService {
      */
     void reactivate(UUID id);
 
-    Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id);
+    Optional<ProviderOrganizationDTO> findOneDTOForProvider(UUID id);
 
-    Optional<SimpleOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo);
+    Optional<ProviderOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo);
 
     Optional<Organization> findOneWithIdAndUserProfile(UUID id, UserProfile userProfile);
 

@@ -15,10 +15,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ContactDTO;
-import org.benetech.servicenet.service.dto.LocationRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.dto.ProgramDTO;
-import org.benetech.servicenet.service.dto.ServiceRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
 
 @Data
 @Builder
@@ -72,9 +72,9 @@ public class RecordDetailsOrganizationDTO implements Serializable {
 
     private ZonedDateTime lastUpdated;
 
-    private Set<LocationRecordDTO> locations;
+    private Set<SimpleLocationDTO> locations;
 
-    private Set<ServiceRecordDTO> services;
+    private Set<SimpleServiceDTO> services;
 
     private Set<ContactDTO> contacts;
 

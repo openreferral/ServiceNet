@@ -12,7 +12,7 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.OwnerDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 import org.benetech.servicenet.service.factory.records.RecordFactory;
 import org.springframework.beans.factory.annotation.Autowired;

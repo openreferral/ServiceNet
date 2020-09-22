@@ -1,10 +1,11 @@
-package org.benetech.servicenet.service.dto;
+package org.benetech.servicenet.service.dto.provider;
 
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.benetech.servicenet.service.dto.GeocodingResultDTO;
 
 @Data
 @Builder

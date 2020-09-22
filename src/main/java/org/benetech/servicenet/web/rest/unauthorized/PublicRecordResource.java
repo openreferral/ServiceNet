@@ -16,12 +16,12 @@ import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.TaxonomyService;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.SystemAccountDTO;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.benetech.servicenet.web.rest.TaxonomyFilterDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -93,12 +93,12 @@ public class PublicRecordResource {
      */
     @GetMapping("/provider-organization/{id}")
     @Timed
-    public ResponseEntity<SimpleOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id,
+    public ResponseEntity<ProviderOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id,
         @RequestParam String siloName) {
         Optional<Silo> optSilo = siloService.getOneByName(siloName);
         this.checkSilo(optSilo);
         log.debug("REST request to get Organization : {}", id);
-        Optional<SimpleOrganizationDTO> organizationDTO = organizationService
+        Optional<ProviderOrganizationDTO> organizationDTO = organizationService
             .findOneDTOForProviderAndSilo(id, optSilo.get());
         return ResponseUtil.wrapOrNotFound(organizationDTO);
     }

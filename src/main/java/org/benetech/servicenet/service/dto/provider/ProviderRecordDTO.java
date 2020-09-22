@@ -1,4 +1,4 @@
-package org.benetech.servicenet.service.dto;
+package org.benetech.servicenet.service.dto.provider;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.benetech.servicenet.service.dto.DailyUpdateDTO;
+import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.UserDTO;
 
 @Data
 @Builder
@@ -18,9 +21,9 @@ public class ProviderRecordDTO {
 
     private ZonedDateTime lastUpdated;
 
-    private Set<LocationRecordDTO> locations;
+    private Set<SimpleLocationDTO> locations;
 
-    private Set<ServiceRecordDTO> services;
+    private Set<SimpleServiceDTO> services;
 
     private String userLogin;
 
@@ -29,7 +32,7 @@ public class ProviderRecordDTO {
     private Set<DailyUpdateDTO> dailyUpdates;
 
     public ProviderRecordDTO(OrganizationDTO organization, ZonedDateTime lastUpdated,
-        Set<LocationRecordDTO> locations, Set<ServiceRecordDTO> services, UserDTO owner,
+        Set<SimpleLocationDTO> locations, Set<SimpleServiceDTO> services, UserDTO owner,
         Set<DailyUpdateDTO> dailyUpdates) {
         this.organization = organization;
         this.lastUpdated = lastUpdated;
