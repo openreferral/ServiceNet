@@ -20,6 +20,7 @@ import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.repository.ProviderRecordsRepository;
+import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -70,11 +71,13 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final OrganizationMapper organizationMapper;
 
+    private final UserProfileRepository userProfileRepository;
+
     public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
         ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService,
         OrganizationService organizationService, UserService userService,
         ProviderRecordsRepository providerRecordsRepository,
-        OrganizationMapper organizationMapper) {
+        OrganizationMapper organizationMapper, UserProfileRepository userProfileRepository) {
         this.activityRepository = activityRepository;
         this.recordsService = recordsService;
         this.exclusionsConfigService = exclusionsConfigService;
@@ -83,6 +86,7 @@ public class ActivityServiceImpl implements ActivityService {
         this.userService = userService;
         this.providerRecordsRepository = providerRecordsRepository;
         this.organizationMapper = organizationMapper;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Override
@@ -151,24 +155,24 @@ public class ActivityServiceImpl implements ActivityService {
     public Page<ProviderRecordDTO> getPartnerActivitiesForCurrentUser(Pageable pageable) {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Set<UserGroup> userGroups = userProfile.getUserGroups();
+        List<UserProfile> userProfiles;
         if (userGroups == null || userGroups.isEmpty()) {
-            return providerRecordsRepository
-                .findAllWithFilters(userProfile, null, new ProviderFilterDTO(), null, pageable);
+            userProfiles = Collections.singletonList(userProfile);
         } else {
-            return filterProviderRecords(
-                organizationService.findAllByUserGroups(pageable, new ArrayList<>(userGroups))
-                .map(this::getProviderRecordDTO)
-            );
+            userProfiles = userProfileRepository.findAllWithUserGroups(new ArrayList<>(userGroups));
         }
+        return providerRecordsRepository
+            .findAllWithFilters(userProfiles,
+                null, new ProviderFilterDTO(), null, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO,
         String search, Pageable pageable) {
-        UserProfile userProfile = userService.getCurrentUserProfile();
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
         Page<ProviderRecordDTO> providerRecords = providerRecordsRepository
-            .findAllWithFilters(null, userProfile, providerFilterDTO, search, pageable);
+            .findAllWithFilters(null, currentUserProfile, providerFilterDTO, search, pageable);
         return filterProviderRecords(providerRecords);
     }
 
