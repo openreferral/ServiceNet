@@ -17,9 +17,14 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.domain.Beds_;
 import org.benetech.servicenet.domain.GeocodingResult;
+import org.benetech.servicenet.domain.GeocodingResult_;
 import org.benetech.servicenet.domain.Option;
+import org.benetech.servicenet.domain.Option_;
 import org.benetech.servicenet.domain.Shelter;
+import org.benetech.servicenet.domain.Shelter_;
+import org.benetech.servicenet.domain.UserProfile_;
 import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,24 +32,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
-    private static final String BEDS = "beds";
+
     private static final String DISTANCE = "distance";
-    private static final String AVAILABLE_BEDS = "availableBeds";
-    private static final String AGENCY_NAME = "agencyName";
-    private static final String PROGRAM_NAME = "programName";
-    private static final String ALTERNATE_NAME = "alternateName";
-    private static final String DEFINED_COVERAGE_AREAS = "definedCoverageAreas";
-    private static final String USER_PROFILES = "userProfiles";
-    private static final String TAGS = "tags";
-    private static final String VALUE = "value";
-    private static final String ID = "id";
-    private static final String LATITUDE = "latitude";
-    private static final String LONGITUDE = "longitude";
-    private static final String ADDRESS = "address";
-    private static final String ADDRESS_1 = "address1";
-    private static final String ADDRESS_2 = "address2";
-    private static final String CITY = "city";
-    private static final String ZIPCODE = "zipcode";
 
     private final EntityManager em;
     private final CriteriaBuilder cb;
@@ -111,64 +100,64 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
     private <T> void addFilters(CriteriaQuery<T> query, Root<Shelter> root, ShelterFiltersDTO filters) {
 
         List<Predicate> predicates = new ArrayList<>();
-        Join<Shelter, Option> bedsJoin = root.join(BEDS, JoinType.LEFT);
+        Join<Shelter, Option> bedsJoin = root.join(Shelter_.BEDS, JoinType.LEFT);
 
         if (StringUtils.isNotBlank(filters.getSearchQuery())) {
             String sq = filters.getSearchQuery().trim().toUpperCase();
             predicates.add(cb.or(
-                cb.like(cb.upper(root.get(AGENCY_NAME)), '%' + sq + '%'),
-                cb.like(cb.upper(root.get(PROGRAM_NAME)), '%' + sq + '%'),
-                cb.like(cb.upper(root.get(ALTERNATE_NAME)), '%' + sq + '%')
+                cb.like(cb.upper(root.join(Shelter_.AGENCY_NAME)), '%' + sq + '%'),
+                cb.like(cb.upper(root.join(Shelter_.PROGRAM_NAME)), '%' + sq + '%'),
+                cb.like(cb.upper(root.join(Shelter_.ALTERNATE_NAME)), '%' + sq + '%')
             ));
         }
         if (filters.isShowOnlyAvailableBeds()) {
-            predicates.add(cb.greaterThan(bedsJoin.get(AVAILABLE_BEDS), 0));
+            predicates.add(cb.greaterThan(bedsJoin.get(Beds_.AVAILABLE_BEDS), 0));
         }
         if (CollectionUtils.isNotEmpty(filters.getDefinedCoverageAreas())) {
-            Join<Shelter, Option> join = root.join(DEFINED_COVERAGE_AREAS, JoinType.LEFT);
-            predicates.add(join.get(VALUE).in(filters.getDefinedCoverageAreas()));
+            Join<Shelter, Option> join = root.join(Shelter_.DEFINED_COVERAGE_AREAS, JoinType.LEFT);
+            predicates.add(join.get(Option_.VALUE).in(filters.getDefinedCoverageAreas()));
         }
         if (CollectionUtils.isNotEmpty(filters.getTags())) {
             for (Serializable conditionColumnValue : filters.getTags()) {
-                Join<Shelter, Option> join = root.join(TAGS, JoinType.LEFT);
+                Join<Shelter, Option> join = root.join(Shelter_.TAGS, JoinType.LEFT);
                 Subquery<Option> optionSubquery = query.subquery(Option.class);
                 Root<Option> optionRoot = optionSubquery.from(Option.class);
                 predicates.add(cb.exists(optionSubquery.select(optionRoot).where(cb.and(
-                    cb.equal(optionRoot.get(ID), join.get(ID)),
-                    cb.equal(optionRoot.get(VALUE), conditionColumnValue)
+                    cb.equal(optionRoot.get(Option_.ID), join.get(Option_.ID)),
+                    cb.equal(optionRoot.get(Option_.VALUE), conditionColumnValue)
                 ))));
             }
         }
         if (filters.getUserId() != null) {
-            Join<Shelter, Option> join = root.join(USER_PROFILES, JoinType.LEFT);
-            predicates.add(cb.equal(join.get(ID), UUID.fromString(filters.getUserId())));
+            Join<Shelter, Option> join = root.join(Shelter_.USER_PROFILES, JoinType.LEFT);
+            predicates.add(cb.equal(join.get(UserProfile_.ID), UUID.fromString(filters.getUserId())));
         }
         if (applyPositionFiltering(filters)) {
             Expression<String> address = cb.function(
                 "get_address",
                 String.class,
-                root.get(ADDRESS_1),
-                root.get(ADDRESS_2),
-                root.get(CITY),
-                root.get(ZIPCODE)
+                root.join(Shelter_.ADDRESS1),
+                root.join(Shelter_.ADDRESS2),
+                root.join(Shelter_.CITY),
+                root.join(Shelter_.ZIPCODE)
             );
             Root<GeocodingResult> geocodingResultRoot = query.from(GeocodingResult.class);
-            predicates.add(cb.equal(geocodingResultRoot.get(ADDRESS), address));
+            predicates.add(cb.equal(geocodingResultRoot.get(GeocodingResult_.ADDRESS), address));
 
             Expression<Double> distance = cb.function(
                 "calculate_distance",
                 Double.class,
                 cb.parameter(Double.class, "lat"),
                 cb.parameter(Double.class, "lon"),
-                geocodingResultRoot.get(LATITUDE),
-                geocodingResultRoot.get(LONGITUDE)
+                geocodingResultRoot.get(GeocodingResult_.LATITUDE),
+                geocodingResultRoot.get(GeocodingResult_.LONGITUDE)
             );
             predicates.add(cb.lessThanOrEqualTo(distance, filters.getRadius()));
             cb.asc(distance);
         }
 
-        query.groupBy(root.get(ID), root.get(AGENCY_NAME), root.get(PROGRAM_NAME),
-            root.get(ALTERNATE_NAME), root.get(BEDS), bedsJoin.get(AVAILABLE_BEDS));
+        query.groupBy(root.join(Shelter_.ID), root.join(Shelter_.AGENCY_NAME), root.join(Shelter_.PROGRAM_NAME),
+            root.join(Shelter_.ALTERNATE_NAME), root.join(Shelter_.BEDS), bedsJoin.get(Beds_.AVAILABLE_BEDS));
 
         query.where(cb.and(predicates.toArray(new Predicate[0])));
     }
@@ -176,8 +165,8 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
     private void addSorting(CriteriaQuery<Shelter> queryCriteria, Sort sort, Root<Shelter> root) {
         List<Order> orderList = new ArrayList<>();
         addOrder(orderList, root, sort, DISTANCE);
-        addOrder(orderList, root, sort, BEDS);
-        orderList.add(cb.desc(root.get(AGENCY_NAME)));
+        addOrder(orderList, root, sort, Shelter_.BEDS);
+        orderList.add(cb.desc(root.join(Shelter_.AGENCY_NAME)));
         queryCriteria.orderBy(orderList);
     }
 
@@ -186,11 +175,11 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
 
         Sort.Order order = sort.getOrderFor(field);
 
-        if (order != null && BEDS.equals(field)) {
+        if (order != null && Shelter_.BEDS.equals(field)) {
             if (order.isAscending()) {
-                orderList.add(cb.asc(cb.coalesce(root.get(BEDS).get(AVAILABLE_BEDS), 0)));
+                orderList.add(cb.asc(cb.coalesce(root.join(Shelter_.BEDS).get(Beds_.AVAILABLE_BEDS), 0)));
             } else {
-                orderList.add(cb.desc(cb.coalesce(root.get(BEDS).get(AVAILABLE_BEDS), 0)));
+                orderList.add(cb.desc(cb.coalesce(root.join(Shelter_.BEDS).get(Beds_.AVAILABLE_BEDS), 0)));
             }
         }
     }

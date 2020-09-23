@@ -25,19 +25,30 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DailyUpdate;
+import org.benetech.servicenet.domain.DailyUpdate_;
 import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.Eligibility_;
 import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.GeocodingResult;
+import org.benetech.servicenet.domain.GeocodingResult_;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.LocationExclusion;
+import org.benetech.servicenet.domain.Location_;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Organization_;
 import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PhysicalAddress_;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.ServiceTaxonomy_;
+import org.benetech.servicenet.domain.Service_;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.SystemAccount_;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.domain.Taxonomy_;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.domain.UserProfile_;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
@@ -53,42 +64,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("CPD-START")
 @Repository
 public class ProviderRecordsRepository {
-
-    private static final String ID = "id";
-
-    private static final String NAME = "name";
-    private static final String DESCRIPTION = "description";
-    private static final String ACTIVE = "active";
-
-    private static final String ACCOUNT = "account";
-    private static final String USER_PROFILES = "userProfiles";
-    private static final String SILO = "silo";
-
-    private static final String CITY = "locality";
-    private static final String REGION = "administrativeAreaLevel2";
-    private static final String POSTAL_CODE = "postalCode";
-    private static final String GEOCODING_RESULTS = "geocodingResults";
-    private static final String LOCATIONS = "locations";
-    private static final String ORGANIZATION = "organization";
-
-    private static final String SERVICES = "services";
-    private static final String ELIGIBILITY = "eligibility";
-    private static final String TAXONOMIES = "taxonomies";
-    private static final String TAXONOMY = "taxonomy";
-
-    private static final String SORT_NAME = "name";
-    private static final String UPDATED_AT = "updatedAt";
-
-    private static final String LOGIN = "login";
-    private static final String UPDATE = "update";
-    private static final String EXPIRY = "expiry";
-    private static final String CREATED_AT = "createdAt";
-
-    private static final String PHYSICAL_ADDRESS = "physicalAddress";
-    private static final String ADDRESS_CITY = "city";
-    private static final String STATE_PROVINCE = "stateProvince";
-    private static final String ADDRESS_REGION = "region";
-
     private final EntityManager em;
     private final CriteriaBuilder cb;
 
@@ -102,15 +77,15 @@ public class ProviderRecordsRepository {
 
         CriteriaQuery<ProviderRecordDTO> queryCriteria = cb.createQuery(ProviderRecordDTO.class);
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
-        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(ACCOUNT, JoinType.LEFT);
-        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(USER_PROFILES, JoinType.LEFT);
+        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
 
-        queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(ID), selectRoot.get(NAME),
-            systemAccountJoin.get(ID), userProfileJoin.get(LOGIN), selectRoot.get(UPDATED_AT)));
+        queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
+            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, userProfiles, excludedUserProfile, providerFilterDTO, search);
-        queryCriteria.groupBy(selectRoot.get(ID), selectRoot.get(NAME),
-            systemAccountJoin.get(ID), userProfileJoin.get(LOGIN), selectRoot.get(UPDATED_AT));
+        queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
+            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
         Query query = createQueryWithPageable(queryCriteria, pageable);
@@ -129,11 +104,11 @@ public class ProviderRecordsRepository {
     private Map<UUID, Set<SimpleServiceDTO>> getServicesMap(List<UUID> orgIds) {
         CriteriaQuery<SimpleServiceDTO> queryCriteria = cb.createQuery(SimpleServiceDTO.class);
         Root<Service> root = queryCriteria.from(Service.class);
-        Join<Service, Organization> orgJoin = root.join(ORGANIZATION, JoinType.LEFT);
+        Join<Service, Organization> orgJoin = root.join(Service_.ORGANIZATION, JoinType.LEFT);
 
-        queryCriteria.select(cb.construct(SimpleServiceDTO.class, root.get(ID), root.get(NAME), orgJoin.get(ID)));
+        queryCriteria.select(cb.construct(SimpleServiceDTO.class, root.get(Service_.ID), root.get(Service_.NAME), orgJoin.get(Organization_.ID)));
 
-        queryCriteria.where(orgJoin.get(ID).in(orgIds));
+        queryCriteria.where(orgJoin.get(Organization_.ID).in(orgIds));
 
         TypedQuery<SimpleServiceDTO> query = em.createQuery(queryCriteria);
         List<SimpleServiceDTO> results = query.getResultList();
@@ -144,13 +119,13 @@ public class ProviderRecordsRepository {
     private Map<UUID, Set<SimpleLocationDTO>> getLocationsMap(List<UUID> orgIds) {
         CriteriaQuery<SimpleLocationDTO> queryCriteria = cb.createQuery(SimpleLocationDTO.class);
         Root<Location> root = queryCriteria.from(Location.class);
-        Join<Location, Organization> orgJoin = root.join(ORGANIZATION, JoinType.LEFT);
-        Join<Location, PhysicalAddress> addressJoin = root.join(PHYSICAL_ADDRESS, JoinType.LEFT);
+        Join<Location, Organization> orgJoin = root.join(Location_.ORGANIZATION, JoinType.LEFT);
+        Join<Location, PhysicalAddress> addressJoin = root.join(Location_.PHYSICAL_ADDRESS, JoinType.LEFT);
 
-        queryCriteria.select(cb.construct(SimpleLocationDTO.class, addressJoin.get(ID), addressJoin.get(ADDRESS_CITY),
-            addressJoin.get(STATE_PROVINCE), addressJoin.get(ADDRESS_REGION), orgJoin.get(ID)));
+        queryCriteria.select(cb.construct(SimpleLocationDTO.class, addressJoin.get(PhysicalAddress_.ID), addressJoin.get(PhysicalAddress_.CITY),
+            addressJoin.get(PhysicalAddress_.STATE_PROVINCE), addressJoin.get(PhysicalAddress_.REGION), orgJoin.get(Organization_.ID)));
 
-        queryCriteria.where(orgJoin.get(ID).in(orgIds));
+        queryCriteria.where(orgJoin.get(Organization_.ID).in(orgIds));
 
         TypedQuery<SimpleLocationDTO> query = em.createQuery(queryCriteria);
         List<SimpleLocationDTO> results = query.getResultList();
@@ -161,12 +136,12 @@ public class ProviderRecordsRepository {
     private Map<UUID, Set<DailyUpdateDTO>> getDailyUpdatesMap(List<UUID> orgIds) {
         CriteriaQuery<DailyUpdateDTO> queryCriteria = cb.createQuery(DailyUpdateDTO.class);
         Root<DailyUpdate> root = queryCriteria.from(DailyUpdate.class);
-        Join<DailyUpdate, Organization> orgJoin = root.join(ORGANIZATION, JoinType.LEFT);
+        Join<DailyUpdate, Organization> orgJoin = root.join(DailyUpdate_.ORGANIZATION, JoinType.LEFT);
 
-        queryCriteria.select(cb.construct(DailyUpdateDTO.class, root.get(ID), root.get(UPDATE),
-            root.get(EXPIRY), root.get(CREATED_AT), orgJoin.get(ID)));
+        queryCriteria.select(cb.construct(DailyUpdateDTO.class, root.get(DailyUpdate_.ID), root.get(DailyUpdate_.UPDATE),
+            root.get(DailyUpdate_.EXPIRY), root.get(DailyUpdate_.CREATED_AT), orgJoin.get(Organization_.ID)));
 
-        queryCriteria.where(orgJoin.get(ID).in(orgIds));
+        queryCriteria.where(orgJoin.get(Organization_.ID).in(orgIds));
 
         TypedQuery<DailyUpdateDTO> query = em.createQuery(queryCriteria);
         List<DailyUpdateDTO> results = query.getResultList();
@@ -179,15 +154,15 @@ public class ProviderRecordsRepository {
 
         CriteriaQuery<ProviderRecordDTO> queryCriteria = cb.createQuery(ProviderRecordDTO.class);
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
-        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(ACCOUNT, JoinType.LEFT);
-        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(USER_PROFILES, JoinType.LEFT);
+        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
 
-        queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(ID), selectRoot.get(NAME),
-            systemAccountJoin.get(ID), userProfileJoin.get(LOGIN), selectRoot.get(UPDATED_AT)));
+        queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
+            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, providerFilterDTO, search);
-        queryCriteria.groupBy(selectRoot.get(ID), selectRoot.get(NAME),
-            systemAccountJoin.get(ID), userProfileJoin.get(LOGIN), selectRoot.get(UPDATED_AT));
+        queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
+            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
         Query query = createQueryWithPageable(queryCriteria, pageable);
@@ -252,12 +227,12 @@ public class ProviderRecordsRepository {
         ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions,
         UserProfile userProfile,
         List<Double> boundaries, Silo silo) {
-        Join<GeocodingResult, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
-        Join<Location, Organization> organizationJoin = locationJoin.join(ORGANIZATION, JoinType.LEFT);
-        Join<Organization, SystemAccount> systemAccountJoin = organizationJoin.join(ACCOUNT, JoinType.LEFT);
-        Join<Organization, UserProfile> userProfileJoin = organizationJoin.join(USER_PROFILES, JoinType.LEFT);
-        Join<Organization, Service> serviceJoin = organizationJoin.join(SERVICES, JoinType.LEFT);
-        Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(ELIGIBILITY, JoinType.LEFT);
+        Join<GeocodingResult, Location> locationJoin = root.join(GeocodingResult_.LOCATIONS, JoinType.LEFT);
+        Join<Location, Organization> organizationJoin = locationJoin.join(Location_.ORGANIZATION, JoinType.LEFT);
+        Join<Organization, SystemAccount> systemAccountJoin = organizationJoin.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = organizationJoin.join(Organization_.USER_PROFILES, JoinType.LEFT);
+        Join<Organization, Service> serviceJoin = organizationJoin.join(Organization_.SERVICES, JoinType.LEFT);
+        Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(Service_.ELIGIBILITY, JoinType.LEFT);
 
         Predicate predicate = getCommonPredicate(
             organizationJoin,
@@ -270,25 +245,25 @@ public class ProviderRecordsRepository {
 
         if (userProfile != null) {
             predicate = cb
-                .and(predicate, cb.notEqual(userProfileJoin.get(ID), userProfile.getId()));
+                .and(predicate, cb.notEqual(userProfileJoin.get(UserProfile_.ID), userProfile.getId()));
         }
 
         if (boundaries != null && boundaries.size() == 4) {
             // boundaries come in lat_lo,lng_lo,lat_hi,lng_hi format
             if (boundaries.get(1) > boundaries.get(3)) {
                 predicate = cb.and(predicate, cb.or(
-                    cb.ge(root.get("longitude"), boundaries.get(1)),
-                    cb.le(root.get("longitude"), boundaries.get(3))
+                    cb.ge(root.get(GeocodingResult_.LONGITUDE), boundaries.get(1)),
+                    cb.le(root.get(GeocodingResult_.LONGITUDE), boundaries.get(3))
                 ));
             } else {
                 predicate = cb.and(predicate, cb.and(
-                    cb.ge(root.get("longitude"), boundaries.get(1)),
-                    cb.le(root.get("longitude"), boundaries.get(3))
+                    cb.ge(root.get(GeocodingResult_.LONGITUDE), boundaries.get(1)),
+                    cb.le(root.get(GeocodingResult_.LONGITUDE), boundaries.get(3))
                 ));
             }
             predicate = cb.and(predicate, cb.and(
-                cb.ge(root.get("latitude"), boundaries.get(0)),
-                cb.le(root.get("latitude"), boundaries.get(2))));
+                cb.ge(root.get(GeocodingResult_.LATITUDE), boundaries.get(0)),
+                cb.le(root.get(GeocodingResult_.LATITUDE), boundaries.get(2))));
         }
 
         predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
@@ -296,9 +271,9 @@ public class ProviderRecordsRepository {
         predicate = this.addLocationFilters(predicate, providerFilterDTO, locationJoin, exclusions);
 
         query.where(predicate);
-        query.select(cb.construct(ProviderRecordForMapDTO.class, organizationJoin.get("id"),
-            root.get("id"), root.get("address"), root.get("latitude"), root.get("longitude")));
-        query.groupBy(root.get(ID), organizationJoin.get(ID));
+        query.select(cb.construct(ProviderRecordForMapDTO.class, organizationJoin.get(Organization_.ID),
+            root.get(GeocodingResult_.ID), root.get(GeocodingResult_.ADDRESS), root.get(GeocodingResult_.LATITUDE), root.get(GeocodingResult_.LONGITUDE)));
+        query.groupBy(root.get(GeocodingResult_.ID), organizationJoin.get(Organization_.ID));
         return createQueryWithPageable(query, pageable);
     }
 
@@ -307,9 +282,9 @@ public class ProviderRecordsRepository {
         List<UserProfile> userProfiles, UserProfile excludedUserProfile, ProviderFilterDTO providerFilterDTO, String search) {
         boolean userProfilesNotEmpty = userProfiles != null && userProfiles.size() > 0;
 
-        Join<Organization, Service> serviceJoin = root.join(SERVICES, JoinType.LEFT);
-        Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(ELIGIBILITY, JoinType.LEFT);
-        Join<Organization, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
+        Join<Organization, Service> serviceJoin = root.join(Organization_.SERVICES, JoinType.LEFT);
+        Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(Service_.ELIGIBILITY, JoinType.LEFT);
+        Join<Organization, Location> locationJoin = root.join(Organization_.LOCATIONS, JoinType.LEFT);
 
         Silo silo = (userProfilesNotEmpty) ? userProfiles.get(0).getSilo() : excludedUserProfile.getSilo();
 
@@ -318,12 +293,12 @@ public class ProviderRecordsRepository {
             serviceJoin, eligibilityJoin);
 
         if (userProfilesNotEmpty) {
-            predicate = cb.and(predicate, userProfileJoin.get(ID).in(
+            predicate = cb.and(predicate, userProfileJoin.get(UserProfile_.ID).in(
                 userProfiles.stream().map(UserProfile::getId).collect(Collectors.toList()))
             );
         }
         else {
-            predicate = cb.and(cb.notEqual(userProfileJoin.get(ID), excludedUserProfile.getId()));
+            predicate = cb.and(cb.notEqual(userProfileJoin.get(UserProfile_.ID), excludedUserProfile.getId()));
 
             predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
@@ -338,9 +313,9 @@ public class ProviderRecordsRepository {
         Join<Organization, SystemAccount> systemAccountJoin, Join<Organization, UserProfile> userProfileJoin,
         Silo silo, ProviderFilterDTO providerFilterDTO, String search) {
 
-        Join<Organization, Service> serviceJoin = root.join(SERVICES, JoinType.LEFT);
-        Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(ELIGIBILITY, JoinType.LEFT);
-        Join<Organization, Location> locationJoin = root.join(LOCATIONS, JoinType.LEFT);
+        Join<Organization, Service> serviceJoin = root.join(Organization_.SERVICES, JoinType.LEFT);
+        Join<Service, Eligibility> eligibilityJoin = serviceJoin.join(Service_.ELIGIBILITY, JoinType.LEFT);
+        Join<Organization, Location> locationJoin = root.join(Organization_.LOCATIONS, JoinType.LEFT);
 
         Predicate predicate = getCommonPredicate(root, silo, search, systemAccountJoin,
             userProfileJoin, serviceJoin, eligibilityJoin);
@@ -357,14 +332,14 @@ public class ProviderRecordsRepository {
         Join<Organization, UserProfile> userProfileJoin, Join<Organization, Service> serviceJoin,
         Join<Service, Eligibility> eligibilityJoin) {
         Predicate predicate;
-        predicate = cb.equal(from.get(ACTIVE), true);
+        predicate = cb.equal(from.get(Organization_.ACTIVE), true);
 
-        predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(NAME), SERVICE_PROVIDER));
+        predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(SystemAccount_.NAME), SERVICE_PROVIDER));
 
         if (silo != null) {
-            predicate = cb.and(predicate, cb.equal(userProfileJoin.get(SILO), silo));
+            predicate = cb.and(predicate, cb.equal(userProfileJoin.get(UserProfile_.SILO), silo));
         } else {
-            predicate = cb.and(predicate, cb.isNull(userProfileJoin.get(SILO)));
+            predicate = cb.and(predicate, cb.isNull(userProfileJoin.get(UserProfile_.SILO)));
         }
 
         predicate = this.addSearch(predicate, search, from, serviceJoin, eligibilityJoin);
@@ -379,11 +354,11 @@ public class ProviderRecordsRepository {
         if (StringUtils.isNotBlank(search)) {
             String searchQuery = '%' + search.toUpperCase() + '%';
             Predicate searchPredicate = cb.or(
-                cb.like(cb.upper(from.get(NAME)), searchQuery),
-                cb.like(cb.upper(from.get(DESCRIPTION)), searchQuery),
-                cb.like(cb.upper(serviceJoin.get(NAME)), searchQuery),
-                cb.like(cb.upper(serviceJoin.get(DESCRIPTION)), searchQuery),
-                cb.like(cb.upper(eligibilityJoin.get(ELIGIBILITY)), searchQuery)
+                cb.like(cb.upper(from.get(Organization_.NAME)), searchQuery),
+                cb.like(cb.upper(from.get(Organization_.DESCRIPTION)), searchQuery),
+                cb.like(cb.upper(serviceJoin.get(Service_.NAME)), searchQuery),
+                cb.like(cb.upper(serviceJoin.get(Service_.DESCRIPTION)), searchQuery),
+                cb.like(cb.upper(eligibilityJoin.get(Eligibility_.ELIGIBILITY)), searchQuery)
             );
             predicateResult = cb.and(predicate, searchPredicate);
         }
@@ -410,31 +385,31 @@ public class ProviderRecordsRepository {
             || StringUtils.isNotEmpty(providerFilterDTO.getZip())
             || !excludedRegions.isEmpty() || !excludedCities.isEmpty()) {
 
-            Join<Location, GeocodingResult> geocodingResultJoin = locationJoin.join(GEOCODING_RESULTS, JoinType.LEFT);
+            Join<Location, GeocodingResult> geocodingResultJoin = locationJoin.join(Location_.GEOCODING_RESULTS, JoinType.LEFT);
 
             Predicate updatedPredicate = predicate;
             if (StringUtils.isNotEmpty(providerFilterDTO.getCity())) {
                 updatedPredicate = cb.and(updatedPredicate,
-                    geocodingResultJoin.get(CITY).in(providerFilterDTO.getCity())
+                    geocodingResultJoin.get(GeocodingResult_.LOCALITY).in(providerFilterDTO.getCity())
                 );
             }
 
             if (StringUtils.isNotEmpty(providerFilterDTO.getRegion())) {
                 updatedPredicate = cb.and(updatedPredicate,
-                    geocodingResultJoin.get(REGION).in(providerFilterDTO.getRegion())
+                    geocodingResultJoin.get(GeocodingResult_.ADMINISTRATIVE_AREA_LEVEL2).in(providerFilterDTO.getRegion())
                 );
             }
 
             if (StringUtils.isNotEmpty(providerFilterDTO.getZip())) {
                 updatedPredicate = cb.and(updatedPredicate,
-                    geocodingResultJoin.get(POSTAL_CODE).in(providerFilterDTO.getZip())
+                    geocodingResultJoin.get(GeocodingResult_.POSTAL_CODE).in(providerFilterDTO.getZip())
                 );
             }
 
             if (!excludedRegions.isEmpty()) {
                 for (String excludedRegion : excludedRegions) {
                     updatedPredicate = cb.and(updatedPredicate,
-                        cb.notLike(cb.lower(geocodingResultJoin.get(REGION)), '%' + excludedRegion.toLowerCase() + '%'));
+                        cb.notLike(cb.lower(geocodingResultJoin.get(GeocodingResult_.ADMINISTRATIVE_AREA_LEVEL2)), '%' + excludedRegion.toLowerCase() + '%'));
                 }
             }
 
@@ -442,7 +417,7 @@ public class ProviderRecordsRepository {
             if (!excludedCities.isEmpty()) {
                 for (String excludedCity : excludedCities) {
                     updatedPredicate = cb.and(updatedPredicate,
-                        cb.notLike(cb.lower(geocodingResultJoin.get(CITY)), '%' + excludedCity.toLowerCase() + '%'));
+                        cb.notLike(cb.lower(geocodingResultJoin.get(GeocodingResult_.LOCALITY)), '%' + excludedCity.toLowerCase() + '%'));
                 }
             }
 
@@ -454,9 +429,9 @@ public class ProviderRecordsRepository {
     private Predicate addTaxonomiesFilter(Predicate predicate, ProviderFilterDTO providerFilterDTO, Join<Organization,
         Service> serviceJoin) {
         if (CollectionUtils.isNotEmpty(providerFilterDTO.getServiceTypes())) {
-            Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(TAXONOMIES, JoinType.LEFT);
-            Join<ServiceTaxonomy, Taxonomy> taxonomyJoin = taxonomiesJoin.join(TAXONOMY, JoinType.LEFT);
-            return cb.and(predicate, taxonomyJoin.get(NAME).in(providerFilterDTO.getServiceTypes()));
+            Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(Service_.TAXONOMIES, JoinType.LEFT);
+            Join<ServiceTaxonomy, Taxonomy> taxonomyJoin = taxonomiesJoin.join(ServiceTaxonomy_.TAXONOMY, JoinType.LEFT);
+            return cb.and(predicate, taxonomyJoin.get(Taxonomy_.NAME).in(providerFilterDTO.getServiceTypes()));
         }
         return predicate;
     }
@@ -465,8 +440,8 @@ public class ProviderRecordsRepository {
         UserProfile excludedUserProfile, String search) {
         CriteriaQuery<Long> countCriteria = cb.createQuery(Long.class);
         Root<Organization> selectRoot = countCriteria.from(Organization.class);
-        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(ACCOUNT, JoinType.LEFT);
-        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(USER_PROFILES, JoinType.LEFT);
+        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
 
         this.addFilters(countCriteria, selectRoot, systemAccountJoin, userProfileJoin, userProfiles, excludedUserProfile, providerFilterDTO, search);
         countCriteria.select(cb.countDistinct(selectRoot));
@@ -476,8 +451,8 @@ public class ProviderRecordsRepository {
     private Long getTotal(ProviderFilterDTO providerFilterDTO, Silo silo, String search) {
         CriteriaQuery<Long> countCriteria = cb.createQuery(Long.class);
         Root<Organization> selectRoot = countCriteria.from(Organization.class);
-        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(ACCOUNT, JoinType.LEFT);
-        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(USER_PROFILES, JoinType.LEFT);
+        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
 
         this.addFilters(countCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, providerFilterDTO, search);
         countCriteria.select(cb.countDistinct(selectRoot));
@@ -487,8 +462,8 @@ public class ProviderRecordsRepository {
     private void addSorting(CriteriaQuery<?> queryCriteria, Sort sort,
         Root<Organization> root) {
         List<Order> orderList = new ArrayList<>();
-        addOrder(root, orderList, sort, SORT_NAME);
-        addOrder(root, orderList, sort, UPDATED_AT);
+        addOrder(root, orderList, sort, Organization_.NAME);
+        addOrder(root, orderList, sort, Organization_.UPDATED_AT);
         queryCriteria.orderBy(orderList);
     }
 
