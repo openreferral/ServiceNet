@@ -10,8 +10,6 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
-import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
 
 @Data
 @Builder
@@ -25,9 +23,9 @@ public class ActivityRecordDTO implements Serializable {
 
     private ZonedDateTime lastUpdated;
 
-    private Set<SimpleLocationDTO> locations;
+    private Set<LocationRecordDTO> locations;
 
-    private Set<SimpleServiceDTO> services;
+    private Set<ServiceRecordDTO> services;
 
     private Set<ContactDTO> contacts;
 

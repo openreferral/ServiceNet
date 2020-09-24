@@ -25,6 +25,8 @@ import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
+import org.benetech.servicenet.service.dto.LocationRecordDTO;
+import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
@@ -114,8 +116,8 @@ public class RecordBuilder {
         return new ProviderRecordDTO(
             mapOrganization(organization),
             lastUpdated,
-            mapLocations(filterLocations(organization.getLocations(), locationExclusions)),
-            mapServices(organization.getServices()),
+            mapProviderLocations(filterLocations(organization.getLocations(), locationExclusions)),
+            mapProviderServices(organization.getServices()),
             user,
             mapDailyUpdates(organization.getDailyUpdates())
         );
@@ -128,9 +130,9 @@ public class RecordBuilder {
         return new ProviderRecordDTO(
             mapOrganization(buildObject(organization, Organization.class, baseExclusions)),
             lastUpdated,
-            mapLocations(buildCollection(filterLocations(organization.getLocations(), locationExclusions),
+            mapProviderLocations(buildCollection(filterLocations(organization.getLocations(), locationExclusions),
                 Location.class, baseExclusions)),
-            mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
+            mapProviderServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
             user,
             mapDailyUpdates(organization.getDailyUpdates())
         );
@@ -205,13 +207,25 @@ public class RecordBuilder {
             .map(exclusionMapper::toDto).collect(Collectors.toSet());
     }
 
-    private Set<SimpleLocationDTO> mapLocations(Set<Location> locations) {
+    private Set<LocationRecordDTO> mapLocations(Set<Location> locations) {
+        return locations.stream()
+            .map(locationMapper::toRecord)
+            .collect(Collectors.toSet());
+    }
+
+    private Set<ServiceRecordDTO> mapServices(Set<Service> services) {
+        return services.stream()
+            .map(serviceMapper::toRecord)
+            .collect(Collectors.toSet());
+    }
+
+    private Set<SimpleLocationDTO> mapProviderLocations(Set<Location> locations) {
         return locations.stream()
             .map(locationMapper::toSimpleDto)
             .collect(Collectors.toSet());
     }
 
-    private Set<SimpleServiceDTO> mapServices(Set<Service> services) {
+    private Set<SimpleServiceDTO> mapProviderServices(Set<Service> services) {
         return services.stream()
             .map(serviceMapper::toSimpleDto)
             .collect(Collectors.toSet());
