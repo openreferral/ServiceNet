@@ -8,6 +8,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.service.dto.LocationDTO;
 
+import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderLocationDTO;
 import org.mapstruct.Mapper;
@@ -50,6 +51,11 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
     @Mapping(target = "ca", source = "physicalAddress.stateProvince")
     @Mapping(target = "zipcode", source = "physicalAddress.postalCode")
     ProviderLocationDTO toProviderLocation(Location location);
+
+    @Mapping(target = "location", source = "location")
+    @Mapping(target = "regularScheduleOpeningHours", source = "regularSchedule.openingHours")
+    @Mapping(target = "regularScheduleNotes", source = "regularSchedule.notes")
+    LocationRecordDTO toRecord(Location location);
 
     default Location fromId(UUID id) {
         if (id == null) {
