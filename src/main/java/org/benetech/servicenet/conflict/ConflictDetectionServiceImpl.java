@@ -59,6 +59,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
 
     @Async
     @Override
+    @Transactional
     public void detectAsynchronously(Organization organization, List<OrganizationMatch> matches) {
         detect(organization, matches);
     }
