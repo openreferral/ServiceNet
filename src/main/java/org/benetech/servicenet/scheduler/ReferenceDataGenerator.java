@@ -2,9 +2,11 @@ package org.benetech.servicenet.scheduler;
 
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.generator.OrganizationMother;
@@ -30,14 +32,17 @@ public class ReferenceDataGenerator {
     @Autowired
     private EntityManager em;
 
-    public void createReferenceData(String login, int numberOfOrganizationsToCreate) {
+    public List<Organization> createReferenceData(String login, int numberOfOrganizationsToCreate) {
         SystemAccount serviceProviderAcc = systemAccountService.findByName(SERVICE_PROVIDER).get();
+        List<Organization> createdOrganizations = new ArrayList<>();
         if (login != null) {
             Optional<UserProfile> userProfileOpt = userProfileRepository.findOneByLogin(login);
             if (userProfileOpt.isPresent()) {
                 for (int i = 1; i <= numberOfOrganizationsToCreate; i++) {
                     LOG.info("Start creating " + i + "/" + numberOfOrganizationsToCreate + " organization");
-                    this.createSingleDataSet(serviceProviderAcc, userProfileOpt.get());
+                    createdOrganizations.add(
+                        this.createSingleDataSet(serviceProviderAcc, userProfileOpt.get())
+                    );
                 }
             }
         } else {
@@ -46,13 +51,16 @@ public class ReferenceDataGenerator {
                 LOG.info("Start creating user for user " + userProfile.getLogin());
                 for (int i = 1; i <= numberOfOrganizationsToCreate; i++) {
                     LOG.info("Start creating " + i + "/" + numberOfOrganizationsToCreate + " organization");
-                    this.createSingleDataSet(serviceProviderAcc, userProfile);
+                    createdOrganizations.add(
+                        this.createSingleDataSet(serviceProviderAcc, userProfile)
+                    );
                 }
             }
         }
+        return createdOrganizations;
     }
 
-    protected void createSingleDataSet(SystemAccount serviceProviderAcc, UserProfile userProfile) {
-        OrganizationMother.INSTANCE.generate(em, serviceProviderAcc, userProfile);
+    protected Organization createSingleDataSet(SystemAccount serviceProviderAcc, UserProfile userProfile) {
+        return OrganizationMother.INSTANCE.generate(em, serviceProviderAcc, userProfile);
     }
 }

@@ -1,12 +1,15 @@
 package org.benetech.servicenet.web.rest;
 
+import java.util.List;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.scheduler.ReferenceDataGenerator;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.errors.ExceptionTranslator;
+import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,8 +27,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,10 +64,11 @@ public class ActivityResourceIntTest {
 
     final static int PAGE_SIZE = 20;
     final static int ORG_COUNT = PAGE_SIZE;
+    static List<Organization> createdOrganizations;
 
     @BeforeAll
     public static void loadData(@Autowired ReferenceDataGenerator referenceDataGenerator) {
-        referenceDataGenerator.createReferenceData("admin", ORG_COUNT);
+        createdOrganizations = referenceDataGenerator.createReferenceData("admin", ORG_COUNT);
     }
 
     @BeforeEach
@@ -85,5 +91,31 @@ public class ActivityResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.content", hasSize(PAGE_SIZE)));
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(username = "user")
+    public void getAPageOfAllActivityRecords() throws Exception {
+        restActivityMockMvc.perform(post("/api/all-provider-records?size=" + PAGE_SIZE)
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(new ProviderFilterDTO())))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$", hasSize(PAGE_SIZE)));
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser(username = "user")
+    public void searchASpecificRecordFromAllActivityRecords() throws Exception {
+        Organization org = createdOrganizations.get(0);
+        restActivityMockMvc.perform(post("/api/all-provider-records?search=" + org.getName())
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(new ProviderFilterDTO())))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$.[*].organization.id").value(hasItem(org.getId().toString())));
     }
 }
