@@ -84,4 +84,12 @@ public interface ConflictService {
      * @param partnerResourceId system account name
      */
     List<Conflict> findAllPendingWithResourceIdAndPartnerResourceId(UUID resourceId, UUID partnerResourceId);
+
+    /**
+     * Get removed Conflicts
+     *
+     * @param resourceId the id of the resource entity
+     * @param partnerResourceId system account name
+     */
+    List<Conflict> findAllRemovedWithResourceIdAndPartnerResourceId(UUID resourceId, UUID partnerResourceId);
 }

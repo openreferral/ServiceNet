@@ -111,10 +111,32 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         }
     }
 
+    @Override
+    @Transactional
+    public void reinstate(OrganizationMatch match) {
+        OrganizationEquivalent orgEquivalent = organizationEquivalentsService.generateEquivalent(
+            match.getOrganizationRecord(), match.getPartnerVersion());
+
+        List<EntityEquivalent> equivalents = gatherAllEquivalents(orgEquivalent);
+
+        for (EntityEquivalent eq : equivalents) {
+            List<Conflict> conflicts = conflictService.findAllRemovedWithResourceIdAndPartnerResourceId(
+                eq.getBaseResourceId(), eq.getPartnerResourceId());
+
+            conflicts.forEach(this::reinstateConflict);
+        }
+    }
+
     private void removeConflict(Conflict outdated) {
         outdated.setState(ConflictStateEnum.REMOVED);
         outdated.setStateDate(ZonedDateTime.now());
         em.persist(outdated);
+    }
+
+    private void reinstateConflict(Conflict removed) {
+        removed.setState(ConflictStateEnum.PENDING);
+        removed.setStateDate(ZonedDateTime.now());
+        em.persist(removed);
     }
 
     private List<EntityEquivalent> gatherAllEquivalents(OrganizationEquivalent orgEquivalent) {

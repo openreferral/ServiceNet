@@ -31,7 +31,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -318,7 +317,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
             organizationMatchRepository.save(match);
 
-            conflictDetectionService.detectAsynchronously(match.getOrganizationRecord(), Collections.singletonList(match));
+            conflictDetectionService.reinstate(match);
         });
     }
 

@@ -29,4 +29,11 @@ public interface ConflictDetectionService {
      * @param match organization match
      */
     void remove(OrganizationMatch match);
+
+    /**
+     * Reinstate conflicts for organization match.
+     *
+     * @param match organization match
+     */
+    void reinstate(OrganizationMatch match);
 }

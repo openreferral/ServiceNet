@@ -166,8 +166,15 @@ public class ConflictServiceImpl implements ConflictService {
 
     @Override
     public List<Conflict> findAllPendingWithResourceIdAndPartnerResourceId(UUID resourceId, UUID partnerResourceId) {
-        log.debug("Request to get all Conflicts with resourceId: {}.", resourceId);
+        log.debug("Request to get pending Conflicts with resourceId: {}.", resourceId);
         return conflictRepository.findByResourceIdAndPartnerResourceIdAndState(
             resourceId, partnerResourceId, ConflictStateEnum.PENDING);
+    }
+
+    @Override
+    public List<Conflict> findAllRemovedWithResourceIdAndPartnerResourceId(UUID resourceId, UUID partnerResourceId) {
+        log.debug("Request to get removed Conflicts with resourceId: {}.", resourceId);
+        return conflictRepository.findByResourceIdAndPartnerResourceIdAndState(
+            resourceId, partnerResourceId, ConflictStateEnum.REMOVED);
     }
 }
