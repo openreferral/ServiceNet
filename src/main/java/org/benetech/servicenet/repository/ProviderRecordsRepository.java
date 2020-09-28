@@ -298,7 +298,7 @@ public class ProviderRecordsRepository {
             );
         }
         else {
-            predicate = cb.and(cb.notEqual(userProfileJoin.get(UserProfile_.ID), excludedUserProfile.getId()));
+            predicate = cb.and(predicate, cb.notEqual(userProfileJoin.get(UserProfile_.ID), excludedUserProfile.getId()));
 
             predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
