@@ -1,0 +1,48 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "ServiceNet",
+    "relationships": [
+      {
+        "relationshipType": "many-to-one",
+        "relationshipName": "from",
+        "otherEntityName": "organization",
+        "otherEntityField": "name"
+      },
+      {
+        "relationshipType": "many-to-one",
+        "relationshipName": "to",
+        "otherEntityName": "organization",
+        "otherEntityField": "name"
+      },
+      {
+        "relationshipType": "many-to-one",
+        "relationshipName": "beneficiary",
+        "otherEntityName": "beneficiary",
+        "otherEntityField": "id"
+      }
+    ],
+    "fields": [
+        {
+            "fieldName": "shortcode",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "sentAt",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "fulfilledAt",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "changelogDate": "20200929114837",
+    "dto": "mapstruct",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "referral",
+    "databaseType": "sql",
+    "readOnly": false,
+    "jpaMetamodelFiltering": false,
+    "pagination": "infinite-scroll",
+    "microserviceName": "ServiceNet"
+}

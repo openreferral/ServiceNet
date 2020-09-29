@@ -67,6 +67,8 @@
     <include file="config/liquibase/changelog/20200127211935_added_entity_ServiceTaxonomiesDetailsFieldsValue.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200127211936_added_entity_ContactDetailsFieldsValue.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200513104705_added_entity_DailyUpdate.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200929113613_added_entity_Beneficiary.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200929114837_added_entity_Referral.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20181119125354_added_entity_constraints_Organization.xml"
              relativeToChangelogFile="false"/>
@@ -131,6 +133,7 @@
     <include file="config/liquibase/changelog/20191218120000_added_entity_constraints_TaxonomyGroup.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200127211929_added_entity_constraints_FieldsDisplaySettings.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200513104705_added_entity_constraints_DailyUpdate.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200929114837_added_entity_constraints_Referral.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <include file="config/liquibase/changelog/20181220100327_insert_initial_SystemAccounts.xml"
              relativeToChangelogFile="false"/>
