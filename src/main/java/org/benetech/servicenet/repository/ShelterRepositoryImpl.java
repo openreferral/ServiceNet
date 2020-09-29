@@ -105,9 +105,9 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
         if (StringUtils.isNotBlank(filters.getSearchQuery())) {
             String sq = filters.getSearchQuery().trim().toUpperCase();
             predicates.add(cb.or(
-                cb.like(cb.upper(root.join(Shelter_.AGENCY_NAME)), '%' + sq + '%'),
-                cb.like(cb.upper(root.join(Shelter_.PROGRAM_NAME)), '%' + sq + '%'),
-                cb.like(cb.upper(root.join(Shelter_.ALTERNATE_NAME)), '%' + sq + '%')
+                cb.like(cb.upper(root.get(Shelter_.AGENCY_NAME)), '%' + sq + '%'),
+                cb.like(cb.upper(root.get(Shelter_.PROGRAM_NAME)), '%' + sq + '%'),
+                cb.like(cb.upper(root.get(Shelter_.ALTERNATE_NAME)), '%' + sq + '%')
             ));
         }
         if (filters.isShowOnlyAvailableBeds()) {
@@ -136,10 +136,10 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
             Expression<String> address = cb.function(
                 "get_address",
                 String.class,
-                root.join(Shelter_.ADDRESS1),
-                root.join(Shelter_.ADDRESS2),
-                root.join(Shelter_.CITY),
-                root.join(Shelter_.ZIPCODE)
+                root.get(Shelter_.ADDRESS1),
+                root.get(Shelter_.ADDRESS2),
+                root.get(Shelter_.CITY),
+                root.get(Shelter_.ZIPCODE)
             );
             Root<GeocodingResult> geocodingResultRoot = query.from(GeocodingResult.class);
             predicates.add(cb.equal(geocodingResultRoot.get(GeocodingResult_.ADDRESS), address));
@@ -156,8 +156,8 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
             cb.asc(distance);
         }
 
-        query.groupBy(root.join(Shelter_.ID), root.join(Shelter_.AGENCY_NAME), root.join(Shelter_.PROGRAM_NAME),
-            root.join(Shelter_.ALTERNATE_NAME), root.join(Shelter_.BEDS), bedsJoin.get(Beds_.AVAILABLE_BEDS));
+        query.groupBy(root.get(Shelter_.ID), root.get(Shelter_.AGENCY_NAME), root.get(Shelter_.PROGRAM_NAME),
+            root.get(Shelter_.ALTERNATE_NAME), root.get(Shelter_.BEDS), bedsJoin.get(Beds_.AVAILABLE_BEDS));
 
         query.where(cb.and(predicates.toArray(new Predicate[0])));
     }
@@ -166,7 +166,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
         List<Order> orderList = new ArrayList<>();
         addOrder(orderList, root, sort, DISTANCE);
         addOrder(orderList, root, sort, Shelter_.BEDS);
-        orderList.add(cb.desc(root.join(Shelter_.AGENCY_NAME)));
+        orderList.add(cb.desc(root.get(Shelter_.AGENCY_NAME)));
         queryCriteria.orderBy(orderList);
     }
 
@@ -177,9 +177,9 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
 
         if (order != null && Shelter_.BEDS.equals(field)) {
             if (order.isAscending()) {
-                orderList.add(cb.asc(cb.coalesce(root.join(Shelter_.BEDS).get(Beds_.AVAILABLE_BEDS), 0)));
+                orderList.add(cb.asc(cb.coalesce(root.get(Shelter_.BEDS).get(Beds_.AVAILABLE_BEDS), 0)));
             } else {
-                orderList.add(cb.desc(cb.coalesce(root.join(Shelter_.BEDS).get(Beds_.AVAILABLE_BEDS), 0)));
+                orderList.add(cb.desc(cb.coalesce(root.get(Shelter_.BEDS).get(Beds_.AVAILABLE_BEDS), 0)));
             }
         }
     }
