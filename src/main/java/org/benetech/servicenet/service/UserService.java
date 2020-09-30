@@ -372,10 +372,22 @@ public class UserService {
         userProfile.setOrganizationUrl(userDTO.getOrganizationUrl());
         userProfile.setPhoneNumber(userDTO.getPhoneNumber());
         userProfile.setSystemAccount(getSystemAccount(userDTO));
-        userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
+
+        Set<Shelter> shelters = sheltersFromUUIDs(userDTO.getShelters());
+        Set<Shelter> removedShelters = userProfile.getShelters();
+        removedShelters.removeIf(shelters::contains);
+        userProfile.setShelters(shelters);
+        shelters.forEach(shelter -> shelter.getUserProfiles().add(userProfile));
+        removedShelters.forEach(shelter -> shelter.getUserProfiles().remove(userProfile));
+
+        Set<UserGroup> userGroups = userGroupsFromUUIDs(userDTO.getUserGroups());
+        Set<UserGroup> removedUserGroups = userProfile.getUserGroups();
+        removedUserGroups.removeIf(userGroups::contains);
+        userProfile.setUserGroups(userGroups);
+        userGroups.forEach(userGroup -> userGroup.getUserProfiles().add(userProfile));
+        removedUserGroups.forEach(userGroup -> userGroup.getUserProfiles().remove(userProfile));
+
         userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
-        userProfile.setUserGroups(userGroupsFromUUIDs(userDTO.getUserGroups()));
-        userProfile.getUserGroups().forEach(userGroup -> userGroup.getUserProfiles().add(userProfile));
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);
