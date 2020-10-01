@@ -1,0 +1,31 @@
+name: Run performance tests and archive CSV report
+
+on:
+  push:
+    branches: [ dev, staging, master ]
+
+jobs:
+  run-archive-perf-tests:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Cache Maven dependencies
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-maven-dep
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Run performance tests
+      run: ./mvnw verify
+    - name: Upload performance tests report as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: performance-tests-report
+        path: target/zerocode-junit-granular-report.csv
