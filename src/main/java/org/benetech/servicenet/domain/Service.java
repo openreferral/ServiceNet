@@ -188,6 +188,14 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Contact> contacts = new HashSet<>();
 
+    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<ServiceMatch> serviceMatches = new HashSet<>();
+
+    @OneToMany(mappedBy = "matchingService", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<ServiceMatch> mirrorServiceMatches = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     @PrePersist
