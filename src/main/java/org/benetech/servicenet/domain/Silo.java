@@ -1,5 +1,6 @@
 package org.benetech.servicenet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -7,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -49,6 +51,11 @@ public class Silo implements Serializable {
     @OneToMany(mappedBy = "silo", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<UserProfile> userProfiles = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "additionalSilos", fetch = FetchType.LAZY)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Organization> organizations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public UUID getId() {
@@ -128,5 +135,13 @@ public class Silo implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             "}";
+    }
+
+    public Set<Organization> getOrganizations() {
+        return organizations;
+    }
+
+    public void setOrganizations(Set<Organization> organizations) {
+        this.organizations = organizations;
     }
 }
