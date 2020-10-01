@@ -161,9 +161,10 @@ public class ActivityServiceImpl implements ActivityService {
         } else {
             userProfiles = userProfileRepository.findAllWithUserGroups(new ArrayList<>(userGroups));
         }
-        return providerRecordsRepository
+        Page<ProviderRecordDTO> providerRecords = providerRecordsRepository
             .findAllWithFilters(userProfiles,
                 null, new ProviderFilterDTO(), null, pageable);
+        return filterProviderRecords(providerRecords);
     }
 
     @Override
