@@ -49,6 +49,7 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
 
     RecordDetailsOrganizationDTO toRecordDetailsDto(Organization organization);
 
+    @Mapping(source = "account.name", target = "accountName")
     ProviderOrganizationDTO toSimpleDto(Organization organization);
 
     default Organization fromId(UUID id) {

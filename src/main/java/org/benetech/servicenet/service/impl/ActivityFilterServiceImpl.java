@@ -9,12 +9,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ActivityFilter;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.ActivityFilterCityRepository;
 import org.benetech.servicenet.repository.ActivityFilterRepository;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
+import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
 import org.benetech.servicenet.service.ActivityFilterService;
 import org.benetech.servicenet.service.UserService;
@@ -46,18 +48,23 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     private final UserService userService;
 
+    private final SiloRepository siloRepository;
+
     private final ActivityFilterCityRepository activityFilterCityRepository;
+
+    private static final String SILO_TAXONOMIES = "silo";
 
     public ActivityFilterServiceImpl(GeocodingResultRepository geocodingResultRepository, UserService userService,
         TaxonomyRepository taxonomyRepository, ActivityFilterRepository activityFilterRepository,
-        ActivityFilterMapper activityFilterMapper,
-        ActivityFilterCityRepository activityFilterCityRepository) {
+        ActivityFilterMapper activityFilterMapper, ActivityFilterCityRepository activityFilterCityRepository,
+        SiloRepository siloRepository) {
         this.geocodingResultRepository = geocodingResultRepository;
         this.taxonomyRepository = taxonomyRepository;
         this.activityFilterRepository = activityFilterRepository;
         this.activityFilterMapper = activityFilterMapper;
         this.userService = userService;
         this.activityFilterCityRepository = activityFilterCityRepository;
+        this.siloRepository = siloRepository;
     }
 
     @Override
@@ -106,9 +113,16 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     }
 
     @Override
-    public Map<String, Set<String>> getTaxonomies() {
+    public Map<String, Set<String>> getTaxonomies(UUID siloId) {
         List<Taxonomy> taxonomies = taxonomyRepository.findAssociatedTaxonomies();
         Map<String, Set<String>> taxonomiesByProvider = new HashMap<>();
+        if (siloId != null) {
+            Silo silo = siloRepository.getOne(siloId);
+            Set<Organization> organizations = silo.getOrganizations();
+            Set<String> taxonomyNames = taxonomyRepository.findAssociatedTaxonomies(organizations).stream()
+                .map(Taxonomy::getName).collect(Collectors.toSet());
+            taxonomiesByProvider.put(SILO_TAXONOMIES, taxonomyNames);
+        }
         for (Taxonomy taxonomy : taxonomies) {
             Set<String> providersTaxonomies = taxonomiesByProvider.getOrDefault(taxonomy.getProviderName(), new HashSet<>());
             providersTaxonomies.add(taxonomy.getName());

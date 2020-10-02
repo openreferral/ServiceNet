@@ -37,6 +37,8 @@ public class ProviderOrganizationDTO implements Serializable {
 
     private ZonedDateTime updatedAt;
 
+    private String accountName;
+
     @Getter
     private List<ProviderLocationDTO> locations;
 

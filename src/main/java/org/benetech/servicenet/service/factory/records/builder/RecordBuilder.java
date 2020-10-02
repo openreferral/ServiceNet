@@ -150,9 +150,10 @@ public class RecordBuilder {
 
     public ProviderRecordDTO filterProviderRecord(ProviderRecordDTO providerRecord,
         Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
-        UserDTO user = userService.getUser(providerRecord.getUserLogin());
-
-        providerRecord.setOwner(user);
+        if (providerRecord.getUserLogin() != null) {
+            UserDTO user = userService.getUser(providerRecord.getUserLogin());
+            providerRecord.setOwner(user);
+        }
         providerRecord.setLocations(filterLocationRecords(providerRecord.getLocations(), locationExclusions));
 
         return providerRecord;

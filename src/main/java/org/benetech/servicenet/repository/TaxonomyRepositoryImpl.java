@@ -1,7 +1,10 @@
 package org.benetech.servicenet.repository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,6 +13,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
+import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Organization_;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
@@ -44,6 +48,22 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepositoryCustom {
             .getResultList();
     }
 
+    public List<Taxonomy> findAssociatedTaxonomies(Set<Organization> organizations) {
+        if (organizations != null && !organizations.isEmpty()) {
+            CriteriaQuery<Taxonomy> queryCriteria = cb.createQuery(Taxonomy.class);
+            Root<Taxonomy> selectRoot = queryCriteria.from(Taxonomy.class);
+
+            queryCriteria.select(selectRoot);
+
+            addFilters(queryCriteria, selectRoot,
+                organizations.stream().map(AbstractEntity::getId).collect(Collectors.toSet()));
+
+            return em.createQuery(queryCriteria)
+                .getResultList();
+        }
+        return Collections.emptyList();
+    }
+
     public Page<Taxonomy> findAssociatedTaxonomies(Pageable pageable) {
 
         CriteriaQuery<Taxonomy> queryCriteria = cb.createQuery(Taxonomy.class);
@@ -76,6 +96,19 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepositoryCustom {
         Join<Organization, Service> serviceJoin = subRoot.join(Organization_.SERVICES, JoinType.LEFT);
         Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(Service_.TAXONOMIES, JoinType.LEFT);
         subquery.select(taxonomiesJoin.get(ServiceTaxonomy_.TAXONOMY).get(Taxonomy_.ID)).where(subRoot.get(Organization_.ACTIVE));
+
+        Predicate predicate = cb.in(root.get(Taxonomy_.ID)).value(subquery);
+        query.where(predicate);
+    }
+
+    private <T> void addFilters(CriteriaQuery<T> query, Root<Taxonomy> root, Set<UUID> orgIds) {
+        Subquery<UUID> subquery = query.subquery(UUID.class);
+        Root<Organization> subRoot = subquery.from(Organization.class);
+        Join<Organization, Service> serviceJoin = subRoot.join(Organization_.SERVICES, JoinType.LEFT);
+        Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(Service_.TAXONOMIES, JoinType.LEFT);
+        subquery.select(taxonomiesJoin.get(ServiceTaxonomy_.TAXONOMY).get(Taxonomy_.ID)).where(
+            subRoot.get(Organization_.ID).in(orgIds)
+        );
 
         Predicate predicate = cb.in(root.get(Taxonomy_.ID)).value(subquery);
         query.where(predicate);

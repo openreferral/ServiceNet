@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -108,10 +109,10 @@ public class ActivityFilterResource {
      * GET getTaxonomies
      */
     @GetMapping("/activity-filter/get-taxonomies")
-    public TaxonomyFilterDTO getTaxonomies() {
+    public TaxonomyFilterDTO getTaxonomies(@RequestParam(required = false) UUID siloId) {
         TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
         taxonomyFilterDTO.setTaxonomiesByProvider(
-            activityFilterService.getTaxonomies()
+            activityFilterService.getTaxonomies(siloId)
         );
         taxonomyFilterDTO.setCurrentProvider(
             userService.getCurrentSystemAccountName()

@@ -190,10 +190,10 @@ public class PublicRecordResource {
      * GET getTaxonomies
      */
     @GetMapping("/activity-filter/get-taxonomies")
-    public TaxonomyFilterDTO getTaxonomies() {
+    public TaxonomyFilterDTO getTaxonomies(@RequestParam(required = false) UUID siloId) {
         TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
         taxonomyFilterDTO.setTaxonomiesByProvider(
-            activityFilterService.getTaxonomies()
+            activityFilterService.getTaxonomies(siloId)
         );
         taxonomyFilterDTO.setCurrentProvider(
             Constants.SERVICE_PROVIDER
