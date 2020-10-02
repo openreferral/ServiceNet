@@ -150,6 +150,14 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         inverseJoinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"))
     private Set<UserProfile> userProfiles;
 
+    @JsonIgnore
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "silo_organizations",
+        joinColumns = @JoinColumn(name = "organization_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "silo_id", referencedColumnName = "id"))
+    private Set<Silo> additionalSilos;
+
     @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<DailyUpdate> dailyUpdates = new HashSet<>();
@@ -365,6 +373,19 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
 
     public void setUserProfiles(Set<UserProfile> userProfiles) {
         this.userProfiles = userProfiles;
+    }
+
+    public Organization additionalSilos(Set<Silo> silos) {
+        this.additionalSilos = silos;
+        return this;
+    }
+
+    public Set<Silo> getAdditionalSilos() {
+        return additionalSilos;
+    }
+
+    public void setAdditionalSilos(Set<Silo> additionalSilos) {
+        this.additionalSilos = additionalSilos;
     }
 
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "checkstyle:booleanExpressionComplexity"})
