@@ -1115,6 +1115,19 @@
                                 <goal>verify</goal>
                             </goals>
                         </execution>
+                        <execution>
+                            <id>perf-test</id>
+                            <configuration>
+                                <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                                <runOrder>alphabetical</runOrder>
+                                <reportsDirectory>${junit.itReportFolder}</reportsDirectory>
+                                <includes>
+                                    <include>**/*IT*</include>
+                                    <include>**/*IntTest*</include>
+                                    <include>**/*LoadTest*</include>
+                                </includes>
+                            </configuration>
+                        </execution>
                     </executions>
                 </plugin>
                 <plugin>

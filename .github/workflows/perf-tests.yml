@@ -23,7 +23,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Run performance tests
-      run: ./mvnw verify
+      run: ./mvnw test-compile failsafe:integration-test@perf-test failsafe:verify
     - name: Upload performance tests report as artifact
       uses: actions/upload-artifact@v2
       with:
