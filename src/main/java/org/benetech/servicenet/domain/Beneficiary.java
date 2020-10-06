@@ -1,9 +1,14 @@
 package org.benetech.servicenet.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
 
 import java.io.Serializable;
 
@@ -20,6 +25,10 @@ public class Beneficiary extends AbstractEntity implements Serializable {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @OneToMany(mappedBy = "beneficiary", fetch = FetchType.LAZY)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Referral> referrals = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public String getPhoneNumber() {
@@ -33,6 +42,14 @@ public class Beneficiary extends AbstractEntity implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Set<Referral> getReferrals() {
+        return referrals;
+    }
+
+    public void setReferrals(Set<Referral> referrals) {
+        this.referrals = referrals;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
