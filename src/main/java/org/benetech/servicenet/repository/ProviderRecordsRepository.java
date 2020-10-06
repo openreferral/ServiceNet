@@ -43,6 +43,7 @@ import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.ServiceTaxonomy_;
 import org.benetech.servicenet.domain.Service_;
 import org.benetech.servicenet.domain.Silo;
+import org.benetech.servicenet.domain.Silo_;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.SystemAccount_;
 import org.benetech.servicenet.domain.Taxonomy;
@@ -81,7 +82,8 @@ public class ProviderRecordsRepository {
         Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
-            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
+            systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, userProfiles, excludedUserProfile, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
@@ -158,7 +160,8 @@ public class ProviderRecordsRepository {
         Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
-            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
+            systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
@@ -245,7 +248,11 @@ public class ProviderRecordsRepository {
 
         if (userProfile != null) {
             predicate = cb
-                .and(predicate, cb.notEqual(userProfileJoin.get(UserProfile_.ID), userProfile.getId()));
+                .and(predicate,
+                    cb.or(cb.notEqual(userProfileJoin.get(UserProfile_.ID), userProfile.getId()),
+                        cb.isNull(userProfileJoin.get(UserProfile_.ID))
+                    )
+                );
         }
 
         if (boundaries != null && boundaries.size() == 4) {
@@ -298,7 +305,12 @@ public class ProviderRecordsRepository {
             );
         }
         else {
-            predicate = cb.and(predicate, cb.notEqual(userProfileJoin.get(UserProfile_.ID), excludedUserProfile.getId()));
+            predicate = cb
+                .and(predicate,
+                    cb.or(cb.notEqual(userProfileJoin.get(UserProfile_.ID), excludedUserProfile.getId()),
+                        cb.isNull(userProfileJoin.get(UserProfile_.ID))
+                    )
+                );
 
             predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
 
@@ -333,13 +345,21 @@ public class ProviderRecordsRepository {
         Join<Service, Eligibility> eligibilityJoin) {
         Predicate predicate;
         predicate = cb.equal(from.get(Organization_.ACTIVE), true);
-
-        predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(SystemAccount_.NAME), SERVICE_PROVIDER));
+        Join<Organization, Silo> siloJoin = from.join(Organization_.ADDITIONAL_SILOS, JoinType.LEFT);
 
         if (silo != null) {
-            predicate = cb.and(predicate, cb.equal(userProfileJoin.get(UserProfile_.SILO), silo));
+            predicate = cb.and(predicate,
+                cb.or(
+                    cb.and(
+                        cb.equal(systemAccountJoin.get(SystemAccount_.NAME), SERVICE_PROVIDER),
+                        cb.equal(userProfileJoin.get(UserProfile_.SILO), silo)
+                    ),
+                    cb.equal(siloJoin.get(Silo_.ID), silo.getId())
+                )
+            );
         } else {
             predicate = cb.and(predicate, cb.isNull(userProfileJoin.get(UserProfile_.SILO)));
+            predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(SystemAccount_.NAME), SERVICE_PROVIDER));
         }
 
         predicate = this.addSearch(predicate, search, from, serviceJoin, eligibilityJoin);

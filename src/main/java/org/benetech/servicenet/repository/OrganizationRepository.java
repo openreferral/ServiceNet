@@ -169,9 +169,10 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
 
     @Query("SELECT org from Organization org "
         + "LEFT JOIN FETCH org.userProfiles profile "
+        + "LEFT JOIN FETCH org.additionalSilos additionalSilos "
         + "WHERE org.id = :id AND "
         + "org.active = true AND "
-        + "profile.silo = :silo")
+        + "(profile.silo = :silo OR additionalSilos = :silo)")
     Optional<Organization> findByIdAndSilo(@Param("id") UUID id,  @Param("silo") Silo silo);
 
     @Query("SELECT org FROM Organization org "

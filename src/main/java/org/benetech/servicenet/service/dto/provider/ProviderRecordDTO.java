@@ -42,10 +42,10 @@ public class ProviderRecordDTO {
         this.dailyUpdates = dailyUpdates;
     }
 
-    public ProviderRecordDTO(UUID orgId, String orgName, UUID orgAccountId,
+    public ProviderRecordDTO(UUID orgId, String orgName, UUID orgAccountId, String orgAccountName,
         String userLogin, ZonedDateTime lastUpdated) {
         this.lastUpdated = lastUpdated;
         this.userLogin = userLogin;
-        this.organization = new OrganizationDTO(orgId, orgName, orgAccountId);
+        this.organization = new OrganizationDTO(orgId, orgName, orgAccountId, orgAccountName);
     }
 }
