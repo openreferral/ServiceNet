@@ -68,6 +68,7 @@ public class ShelterTechDataRelationshipsTest {
 
     private static SingleImportData importData;
 
+    @SuppressWarnings("PMD.JUnit4TestShouldUseBeforeAnnotation")
     @BeforeClass
     public static void setUp() throws IOException {
         String json = AdapterTestsUtils.readResourceAsString(COMPLETE_JSON);

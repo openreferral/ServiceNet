@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.FetchType;
 import javax.persistence.UniqueConstraint;
 import lombok.Data;
 import org.benetech.servicenet.util.CompareUtils;
@@ -35,7 +36,7 @@ public class ServiceTaxonomy extends AbstractEntity implements Serializable, Dee
     @Column(name = "taxonomy_details", columnDefinition = "clob")
     private String taxonomyDetails;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("taxonomies")
     private Service srvc;
 
@@ -47,7 +48,7 @@ public class ServiceTaxonomy extends AbstractEntity implements Serializable, Dee
     @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Taxonomy taxonomy;
 

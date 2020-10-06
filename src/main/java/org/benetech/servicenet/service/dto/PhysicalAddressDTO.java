@@ -4,11 +4,16 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.NoArgsConstructor;
 
 /**
  * A DTO for the PhysicalAddress entity.
  */
+@SuppressWarnings("CPD-START")
+@NoArgsConstructor
 public class PhysicalAddressDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
 
@@ -36,6 +41,13 @@ public class PhysicalAddressDTO implements Serializable {
     private UUID locationId;
 
     private String locationName;
+
+    public PhysicalAddressDTO(UUID id, String city, String stateProvince, String region) {
+        this.id = id;
+        this.city = city;
+        this.stateProvince = stateProvince;
+        this.region = region;
+    }
 
     public UUID getId() {
         return id;

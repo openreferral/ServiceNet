@@ -1,10 +1,11 @@
 package org.benetech.servicenet.service;
 
-import org.benetech.servicenet.service.dto.LocationExclusionDTO;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.benetech.servicenet.service.dto.LocationExclusionDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing {@link org.benetech.servicenet.domain.LocationExclusion}.
@@ -26,6 +27,13 @@ public interface LocationExclusionService {
      */
     List<LocationExclusionDTO> findAll();
 
+    /**
+     * Get all the locationExclusions.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    Page<LocationExclusionDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" locationExclusion.

@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see HolidayScheduleResource
  */
-@RunWith(SpringRunner.class)
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class HolidayScheduleResourceIntTest {
 
@@ -105,7 +105,7 @@ public class HolidayScheduleResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final HolidayScheduleResource holidayScheduleResource = new HolidayScheduleResource(holidayScheduleService);
         this.restHolidayScheduleMockMvc = MockMvcBuilders.standaloneSetup(holidayScheduleResource)

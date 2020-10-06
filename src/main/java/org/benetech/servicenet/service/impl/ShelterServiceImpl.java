@@ -1,6 +1,5 @@
 package org.benetech.servicenet.service.impl;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +11,7 @@ import org.benetech.servicenet.domain.Beds;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.repository.BedsRepository;
-import org.benetech.servicenet.repository.PhoneRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
-import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.dto.ShelterDTO;
 import org.benetech.servicenet.service.dto.ShelterFiltersDTO;
@@ -43,17 +40,11 @@ public class ShelterServiceImpl implements ShelterService {
 
     private final BedsRepository bedsRepository;
 
-    private final PhoneRepository phoneRepository;
-
-    private final UserProfileRepository userProfileRepository;
-
     public ShelterServiceImpl(ShelterRepository shelterRepository, ShelterMapper shelterMapper,
-        BedsRepository bedsRepository, PhoneRepository phoneRepository, UserProfileRepository userProfileRepository) {
+        BedsRepository bedsRepository) {
         this.shelterRepository = shelterRepository;
         this.shelterMapper = shelterMapper;
         this.bedsRepository = bedsRepository;
-        this.phoneRepository = phoneRepository;
-        this.userProfileRepository = userProfileRepository;
     }
 
     /**
@@ -164,20 +155,9 @@ public class ShelterServiceImpl implements ShelterService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Shelter : {}", id);
-        Shelter shelterToDelete = shelterRepository.getOne(id);
-        Beds beds = shelterToDelete.getBeds();
-        shelterToDelete.setBeds(null);
-        beds.setShelter(null);
-        shelterRepository.delete(shelterToDelete);
-    }
-
-    private Set<Shelter> sheltersFromUUIDs(List<UUID> uuids) {
-        if (uuids != null) {
-            return uuids.stream()
-                .map(uuid -> shelterRepository.getOne(uuid))
-                .collect(Collectors.toSet());
-        } else {
-            return Collections.emptySet();
-        }
+        shelterRepository.findById(id).ifPresent(shelter -> {
+            shelter.getUserProfiles().forEach(userProfile -> userProfile.getShelters().remove(shelter));
+            shelterRepository.delete(shelter);
+        });
     }
 }

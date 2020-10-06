@@ -9,12 +9,16 @@ import java.util.UUID;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
  * A DTO for the {@link org.benetech.servicenet.domain.Location} entity.
  */
+@NoArgsConstructor
 public class LocationDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Getter
     @Setter
@@ -73,6 +77,10 @@ public class LocationDTO implements Serializable {
     @Getter
     @Setter
     private List<GeocodingResultDTO> geocodingResults = new ArrayList<>();
+
+    public LocationDTO(UUID organizationId) {
+        this.organizationId = organizationId;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,10 +1,11 @@
 package org.benetech.servicenet.service;
 
-import org.benetech.servicenet.service.dto.ProgramDTO;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.benetech.servicenet.service.dto.ProgramDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing Program.
@@ -26,6 +27,13 @@ public interface ProgramService {
      */
     List<ProgramDTO> findAll();
 
+    /**
+     * Get all the programs.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<ProgramDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" program.

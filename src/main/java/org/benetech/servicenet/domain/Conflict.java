@@ -1,6 +1,7 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -75,14 +76,15 @@ public class Conflict extends AbstractEntity implements Serializable {
     @Column(name = "partner_resource_id")
     private UUID partnerResourceId;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties("")
     private SystemAccount owner;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private SystemAccount partner;
 
+    @SuppressWarnings("PMD.ShortMethodName")
     public Conflict id(UUID id) {
         this.setId(id);
         return this;

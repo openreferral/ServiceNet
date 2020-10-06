@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
@@ -72,7 +73,7 @@ public class DataImportReport extends AbstractEntity implements Serializable {
     private String systemAccount;
 
     @Getter
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataImportReport")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dataImportReport", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JsonIgnoreProperties("dataImportReport")
     private Set<OrganizationError> organizationErrors = new HashSet<>();

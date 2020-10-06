@@ -1,5 +1,17 @@
 package org.benetech.servicenet.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
@@ -9,9 +21,6 @@ import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
-import org.benetech.servicenet.listener.HibernatePostCreateListener;
-import org.benetech.servicenet.listener.HibernatePostDeleteListener;
-import org.benetech.servicenet.listener.HibernatePostUpdateListener;
 import org.benetech.servicenet.mother.DocumentUploadMother;
 import org.benetech.servicenet.mother.MetadataMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
@@ -36,19 +45,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 /**
  * Test class for the UserResource REST controller.
  *
@@ -62,23 +58,8 @@ public class UserProfileServiceIntTest {
     @Mock
     private DateTimeProvider dateTimeProvider;
 
-    @Mock
-    private MetadataService metadataService;
-
     @MockBean
     private ServiceNetAuthClient authClient;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostUpdateListener hibernatePostUpdateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostCreateListener hibernatePostCreateListener;
-
-    @Autowired
-    @InjectMocks
-    private HibernatePostDeleteListener hibernatePostDeleteListener;
 
     @Autowired
     private UserProfileRepository userProfileRepository;

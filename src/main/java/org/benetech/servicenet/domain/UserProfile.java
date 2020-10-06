@@ -2,9 +2,22 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -16,21 +29,6 @@ import org.benetech.servicenet.config.Constants;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import org.hibernate.annotations.Type;
 
 /**
@@ -71,19 +69,13 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     private SystemAccount systemAccount;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "userProfiles", fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @JoinTable(name = "user_profile_shelters",
-        joinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "shelter_id", referencedColumnName = "id"))
     private Set<Shelter> shelters;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "userProfiles", fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @JoinTable(name = "user_profile_organizations",
-        joinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "organization_id", referencedColumnName = "id"))
     private Set<Organization> organizations;
 
     @JsonIgnore
@@ -91,15 +83,12 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     @JoinColumn(name = "filter_id")
     private ActivityFilter filter;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Silo silo;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_profile_user_groups",
-        joinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "user_group_id", referencedColumnName = "id"))
+    @ManyToMany(mappedBy = "userProfiles", fetch = FetchType.EAGER)
     private Set<UserGroup> userGroups = new HashSet<>();
 
     @Lob

@@ -1,21 +1,21 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import org.benetech.servicenet.service.ServiceTaxonomiesDetailsFieldsValueService;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.ServiceTaxonomiesDetailsFieldsValue;
 import org.benetech.servicenet.repository.ServiceTaxonomiesDetailsFieldsValueRepository;
+import org.benetech.servicenet.service.ServiceTaxonomiesDetailsFieldsValueService;
 import org.benetech.servicenet.service.dto.ServiceTaxonomiesDetailsFieldsValueDTO;
 import org.benetech.servicenet.service.mapper.ServiceTaxonomiesDetailsFieldsValueMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link ServiceTaxonomiesDetailsFieldsValue}.
@@ -70,6 +70,19 @@ public class ServiceTaxonomiesDetailsFieldsValueServiceImpl implements ServiceTa
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Get all the serviceTaxonomiesDetailsFieldsValues.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ServiceTaxonomiesDetailsFieldsValueDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all ServiceTaxonomiesDetailsFieldsValues");
+        return serviceTaxonomiesDetailsFieldsValueRepository.findAll(pageable)
+            .map(serviceTaxonomiesDetailsFieldsValueMapper::toDto);
+    }
 
     /**
      * Get one serviceTaxonomiesDetailsFieldsValue by id.

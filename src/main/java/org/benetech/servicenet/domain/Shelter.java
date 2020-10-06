@@ -2,35 +2,35 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Objects;
 import org.hibernate.annotations.Type;
 
 /**
  * A Shelter.
  */
+@SuppressWarnings("PMD.ExcessivePublicCount")
 @Entity
 @Table(name = "shelter")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -134,12 +134,12 @@ public class Shelter extends AbstractEntity implements Serializable, Address {
     @Column(name = "disability_access", columnDefinition = "clob")
     private String disabilityAccess;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "shelter")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "shelter", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JsonIgnoreProperties("shelter")
     private Set<Phone> phones = new HashSet<>();
 
-    @ManyToOne
+    @OneToOne(mappedBy = "shelter", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties("shelters")
     private Beds beds;
 

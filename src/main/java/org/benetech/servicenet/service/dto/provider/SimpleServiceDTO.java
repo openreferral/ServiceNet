@@ -1,26 +1,19 @@
 package org.benetech.servicenet.service.dto.provider;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.benetech.servicenet.service.dto.ServiceDTO;
 
 @Data
-public class SimpleServiceDTO implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+public class SimpleServiceDTO {
 
-    private UUID id;
+    private ServiceDTO service;
 
-    private String name;
-
-    private String type;
-
-    private List<String> taxonomyIds;
-
-    private String description;
-
-    private String applicationProcess;
-
-    private String eligibilityCriteria;
-
-    private List<Integer> locationIndexes;
+    public SimpleServiceDTO(UUID serviceId, String serviceName, UUID orgId) {
+        this.service = new ServiceDTO(serviceId, serviceName, orgId);
+    }
 }

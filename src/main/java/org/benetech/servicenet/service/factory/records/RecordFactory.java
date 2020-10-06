@@ -1,5 +1,12 @@
 package org.benetech.servicenet.service.factory.records;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.domain.ExclusionsConfig;
 import org.benetech.servicenet.domain.FieldExclusion;
@@ -17,21 +24,14 @@ import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
 import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
 import org.benetech.servicenet.service.factory.records.builder.RecordBuilder;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -58,12 +58,18 @@ public class RecordFactory {
     @Autowired
     private RecordBuilder recordBuilder;
 
+    public Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords) {
+        Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
+
+        return providerRecords.map(providerRecord -> filterProviderRecord(providerRecord, exclusionsMap));
+    }
+
     public Optional<ActivityRecordDTO> getFilteredRecord(Organization organization) {
         List<ConflictDTO> conflicts = getBaseConflicts(organization.getId());
 
-        Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
+        Map<UUID, ExclusionsConfig> exclusions = exclusionsConfigService.getAllBySystemAccountId();
 
-        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusionsMap);
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusions);
         Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
             .flatMap(e -> e.getExclusions().stream())
             .collect(Collectors.toSet());
@@ -72,7 +78,7 @@ public class RecordFactory {
             .flatMap(e -> e.getLocationExclusions().stream())
             .collect(Collectors.toSet());
 
-        List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, fieldExclusions, exclusionsMap);
+        List<ConflictDTO> filteredConflicts = filterConflicts(conflicts, fieldExclusions, exclusions);
 
         return filterRecord(organization, filteredConflicts, fieldExclusions, locationExclusions);
     }
@@ -176,6 +182,28 @@ public class RecordFactory {
         } catch (IllegalAccessException e) {
             log.error("Unable to filter record.");
             return Optional.empty();
+        }
+    }
+
+    private ProviderRecordDTO filterProviderRecord(ProviderRecordDTO providerRecord, Map<UUID, ExclusionsConfig> exclusionsMap) {
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(providerRecord.getOrganization().getAccountId(), exclusionsMap);
+        Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
+            .flatMap(e -> e.getExclusions().stream())
+            .collect(Collectors.toSet());
+
+        Set<LocationExclusion> locationExclusions = baseExclusions.stream()
+            .flatMap(e -> e.getLocationExclusions().stream())
+            .collect(Collectors.toSet());
+
+        try {
+            if (fieldExclusions.isEmpty()) {
+                return recordBuilder.filterProviderRecord(providerRecord, locationExclusions);
+            } else {
+                return recordBuilder.filterProviderRecord(providerRecord, fieldExclusions, locationExclusions);
+            }
+        } catch (IllegalAccessException e) {
+            log.error("Unable to filter record.");
+            return null;
         }
     }
 

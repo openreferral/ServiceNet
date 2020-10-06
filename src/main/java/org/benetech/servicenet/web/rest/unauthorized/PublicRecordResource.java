@@ -9,18 +9,19 @@ import java.util.UUID;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.repository.ActivityFilterCityRepository;
 import org.benetech.servicenet.service.ActivityFilterService;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.TaxonomyService;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.SystemAccountDTO;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.benetech.servicenet.web.rest.TaxonomyFilterDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -66,6 +67,9 @@ public class PublicRecordResource {
     @Autowired
     private SystemAccountService systemAccountService;
 
+    @Autowired
+    private ActivityFilterCityRepository activityFilterCityRepository;
+
     @PostMapping("/all-provider-records/{silo}")
     @Timed
     public ResponseEntity<List<ProviderRecordDTO>> getProviderActivitiesPublic(
@@ -89,12 +93,12 @@ public class PublicRecordResource {
      */
     @GetMapping("/provider-organization/{id}")
     @Timed
-    public ResponseEntity<SimpleOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id,
+    public ResponseEntity<ProviderOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id,
         @RequestParam String siloName) {
         Optional<Silo> optSilo = siloService.getOneByName(siloName);
         this.checkSilo(optSilo);
         log.debug("REST request to get Organization : {}", id);
-        Optional<SimpleOrganizationDTO> organizationDTO = organizationService
+        Optional<ProviderOrganizationDTO> organizationDTO = organizationService
             .findOneDTOForProviderAndSilo(id, optSilo.get());
         return ResponseUtil.wrapOrNotFound(organizationDTO);
     }
@@ -115,14 +119,17 @@ public class PublicRecordResource {
         return new ResponseEntity<>(taxonomies, HttpStatus.OK);
     }
 
-    @GetMapping("/all-provider-records-map")
+    @PostMapping("/all-provider-records-map")
     @Timed
     public ResponseEntity<List<ProviderRecordForMapDTO>> getAllProviderActivitiesForMap(
-        @RequestParam String siloName
+        @RequestParam String siloName, @RequestBody ProviderFilterDTO providerFilterDTO,
+        @RequestParam(required = false) String search,
+        @RequestParam(required = false) List<Double> boundaries, Pageable pageable
     ) {
         Optional<Silo> optSilo = siloService.getOneByName(siloName);
         this.checkSilo(optSilo);
-        Page<ProviderRecordForMapDTO> page = activityService.getAllPartnerActivitiesForMap(optSilo.get());
+        Page<ProviderRecordForMapDTO> page = activityService.getAllPartnerActivitiesForMap(
+            pageable, providerFilterDTO, search, optSilo.get(), boundaries);
         HttpHeaders headers = PaginationUtil
             .generatePaginationHttpHeaders(page, "/public-api/all-provider-records-map");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -164,7 +171,7 @@ public class PublicRecordResource {
     public Set<String> getCitiesForServiceProviders(@RequestParam String siloName) {
         Optional<Silo> optSilo = siloService.getOneByName(siloName);
         this.checkSilo(optSilo);
-        return activityFilterService.getCitiesForServiceProviders(optSilo.get());
+        return activityFilterCityRepository.getCities(null, optSilo.get());
     }
 
     /**

@@ -10,15 +10,12 @@ import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.matching.counter.GeoApi;
 import org.benetech.servicenet.matching.counter.GeocodeUtils;
 import org.benetech.servicenet.matching.counter.LocationSimilarityCounter;
-import org.benetech.servicenet.service.GeocodingResultService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,12 +55,6 @@ public class LocationSimilarityCounterIntTest {
 
     private static final BigDecimal SIMILARITY_04 = BigDecimal.valueOf(0.4);
     private static final BigDecimal SIMILARITY_08 = BigDecimal.valueOf(0.8);
-
-    @Mock
-    private GeoApi geoApiMock;
-
-    @Mock
-    private GeocodingResultService geocodingResultService;
 
     @Autowired
     @InjectMocks

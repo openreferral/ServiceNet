@@ -11,6 +11,8 @@ import org.benetech.servicenet.domain.enumeration.ServiceFields;
  */
 public class ServiceFieldsValueDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

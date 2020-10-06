@@ -4,17 +4,22 @@ import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
@@ -24,23 +29,27 @@ import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.repository.OrganizationErrorRepository;
+import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
+import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.DailyUpdateService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
-import org.benetech.servicenet.service.UserGroupService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderLocationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRequiredDocumentDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderServiceDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
@@ -49,12 +58,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Organization.
@@ -93,17 +96,24 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final UserProfileRepository userProfileRepository;
 
-    private final UserGroupService userGroupService;
+    private final RequiredDocumentService requiredDocumentService;
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
+    private final OrganizationMatchRepository organizationMatchRepository;
+
+    private final ConflictService conflictService;
+
+    private final OrganizationErrorRepository organizationErrorRepository;
+
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
         ServiceMapper serviceMapper, LocationMapper locationMapper, LocationService locationService,
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
         TaxonomyService taxonomyService, ServiceTaxonomyService serviceTaxonomyService,
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
-        UserProfileRepository userProfileRepository,
-        UserGroupService userGroupService) {
+        UserProfileRepository userProfileRepository, RequiredDocumentService requiredDocumentService,
+        OrganizationMatchRepository organizationMatchRepository, ConflictService conflictService,
+        OrganizationErrorRepository organizationErrorRepository) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -118,7 +128,10 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.dailyUpdateService = dailyUpdateService;
         this.eligibilityService = eligibilityService;
         this.userProfileRepository = userProfileRepository;
-        this.userGroupService = userGroupService;
+        this.requiredDocumentService = requiredDocumentService;
+        this.organizationMatchRepository = organizationMatchRepository;
+        this.conflictService = conflictService;
+        this.organizationErrorRepository = organizationErrorRepository;
     }
 
     /**
@@ -133,6 +146,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to save Organization : {}", organizationDTO);
 
         Organization organization = organizationMapper.toEntity(organizationDTO);
+        if (!organizationDTO.getUserProfiles().isEmpty()) {
+            UserProfile userProfile = organizationDTO.getUserProfiles().iterator().next();
+            userProfile = userProfileRepository.findOneByLogin(userProfile.getLogin()).orElse(userProfile);
+            organization.setUserProfiles(Collections.singleton(userProfile));
+            userProfile.getOrganizations().add(organization);
+        }
         organization = organizationRepository.save(organization);
         return organizationMapper.toDto(organization);
     }
@@ -158,13 +177,14 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Transactional
     @Override
-    public OrganizationDTO saveWithUser(SimpleOrganizationDTO organizationDTO) {
+    public OrganizationDTO saveWithUser(ProviderOrganizationDTO organizationDTO) {
         log.debug("Request to save Organization : {}", organizationDTO);
 
         Organization organization = organizationMapper.toEntity(organizationDTO);
         UserProfile userProfile = userService.getCurrentUserProfile();
         organization.setAccount(userProfile.getSystemAccount());
         organization.setUserProfiles(Collections.singleton(userProfile));
+        userProfile.getOrganizations().add(organization);
 
         if (organization.getId() != null) {
             Organization existingOrganization = findOne(organization.getId()).get();
@@ -227,15 +247,16 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public List<Organization> findAllByUserProfile(UserProfile userProfile) {
+    public Page<Organization> findAllByUserProfile(Pageable pageable, UserProfile userProfile) {
         log.debug("Request to get all Organizations which are associated with userProfile: {}", userProfile);
-        return organizationRepository.findAllWithUserProfile(userProfile);
+        return organizationRepository.findAllWithUserProfile(pageable, userProfile);
     }
 
     @Override
-    public List<Organization> findAllByUserGroups(List<UserGroup> userGroups) {
+    public Page<Organization> findAllByUserGroups(Pageable pageable,
+        List<UserGroup> userGroups) {
         List<UserProfile> userProfiles = userProfileRepository.findAllWithUserGroups(userGroups);
-        return organizationRepository.findAllWithUserProfiles(userProfiles);
+        return organizationRepository.findAllWithUserProfiles(pageable, userProfiles);
     }
 
     @Override
@@ -328,7 +349,7 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id) {
+    public Optional<ProviderOrganizationDTO> findOneDTOForProvider(UUID id) {
         log.debug("Request to get Organization : {}", id);
         return findOne(id).map(this::mapToSimpleDto);
     }
@@ -341,7 +362,7 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<SimpleOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo) {
+    public Optional<ProviderOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo) {
         log.debug("Request to get Organization : {}", id);
         Optional<Organization> optionalOrganization = findOneByIdAndSilo(id, silo);
         if (optionalOrganization.isEmpty()) {
@@ -428,7 +449,18 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Organization : {}", id);
-        organizationRepository.deleteById(id);
+        organizationMatchRepository.deleteByOrganizationRecordIdOrPartnerVersionId(id, id);
+        conflictService.deleteByResourceOrPartnerResourceId(id);
+        organizationErrorRepository.findAllByOrganizationId(id).forEach(organizationError -> {
+            if (organizationError.getDataImportReport() != null) {
+                organizationError.getDataImportReport().getOrganizationErrors().remove(organizationError);
+            }
+            organizationErrorRepository.delete(organizationError);
+        });
+        organizationRepository.findById(id).ifPresent(org -> {
+            org.getUserProfiles().forEach(userProfile -> userProfile.getOrganizations().remove(org));
+            organizationRepository.delete(org);
+        });
     }
 
     /**
@@ -481,6 +513,17 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizations;
     }
 
+    @Override
+    public Page<OrganizationDTO> findAllByNameLikeAndAccountNameWithUserProfile(
+        String name, String accountName, Pageable pageable) {
+        return organizationRepository.findAllByNameLikeAndAccountNameWithUserProfile(
+            StringUtils.isEmpty(name) ? null : '%' + name.toLowerCase() + '%',
+            StringUtils.isEmpty(accountName) ? null : accountName,
+            pageable
+        )
+        .map(organizationMapper::toDto);
+    }
+
     private Organization getProvidersOrganization(List<Organization> organizations, UUID id) {
         for (Organization organization : organizations) {
             if (organization.getAccount().getId().equals(id)) {
@@ -498,12 +541,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
     }
 
-    private List<Location> saveLocations(Organization organization, List<SimpleLocationDTO> dtos) {
+    private List<Location> saveLocations(Organization organization, List<ProviderLocationDTO> dtos) {
         List<Location> locations = new ArrayList<>();
-        Set<UUID> locationsToKeep = dtos.stream().map(SimpleLocationDTO::getId).collect(Collectors.toSet());
+        Set<UUID> locationsToKeep = dtos.stream().map(ProviderLocationDTO::getId).collect(Collectors.toSet());
         Set<Location> locationsToRemove = organization.getLocations().stream()
             .filter(l -> !locationsToKeep.contains(l.getId())).collect(Collectors.toSet());
-        for (SimpleLocationDTO locationDTO : dtos) {
+        for (ProviderLocationDTO locationDTO : dtos) {
             Location location = locationMapper.toEntity(locationDTO);
             Location existingLocation = (location.getId() != null) ?
                 locationService.findById(location.getId()).get() : null;
@@ -520,13 +563,13 @@ public class OrganizationServiceImpl implements OrganizationService {
         return locations;
     }
 
-    private Set<Service> saveServices(Organization organization, List<SimpleServiceDTO> dtos,
+    private Set<Service> saveServices(Organization organization, List<ProviderServiceDTO> dtos,
         List<Location> locations) {
         Set<Service> services = new HashSet<>();
-        Set<UUID> servicesToKeep = dtos.stream().map(SimpleServiceDTO::getId).collect(Collectors.toSet());
+        Set<UUID> servicesToKeep = dtos.stream().map(ProviderServiceDTO::getId).collect(Collectors.toSet());
         Set<Service> servicesToRemove = organization.getServices().stream()
             .filter(s -> !servicesToKeep.contains(s.getId())).collect(Collectors.toSet());
-        for (SimpleServiceDTO serviceDTO : dtos) {
+        for (ProviderServiceDTO serviceDTO : dtos) {
             Service service = serviceMapper.toEntity(serviceDTO);
             UUID id = service.getId();
             if (id != null) {
@@ -535,6 +578,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 service.setTaxonomies(existingService.getTaxonomies());
                 service.setLocations(existingService.getLocations());
                 service.setEligibility(existingService.getEligibility());
+                service.setDocs(existingService.getDocs());
             }
             service.setProviderName(SERVICE_PROVIDER);
             service.setOrganization(organization);
@@ -548,6 +592,9 @@ public class OrganizationServiceImpl implements OrganizationService {
             service.setEligibility(
                 saveEligibility(service, serviceDTO)
             );
+            service.setDocs(
+                saveDocs(serviceDTO, service)
+            );
             services.add(service);
         }
         for (Service service : servicesToRemove) {
@@ -557,8 +604,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         return services;
     }
 
-    private SimpleOrganizationDTO mapToSimpleDto(Organization org) {
-        SimpleOrganizationDTO organizationDto = organizationMapper.toSimpleDto(org);
+    private ProviderOrganizationDTO mapToSimpleDto(Organization org) {
+        ProviderOrganizationDTO organizationDto = organizationMapper.toSimpleDto(org);
         organizationDto.getServices().forEach(dto -> {
             Service service = org.getServices().stream()
                 .filter(s -> s.getId().equals(dto.getId())).findAny().get();
@@ -566,7 +613,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 service.getLocations().stream()
                     .map(ServiceAtLocation::getLocation)
                     .map(loc -> organizationDto.getLocations().stream()
-                        .map(SimpleLocationDTO::getId).collect(Collectors.toList())
+                        .map(ProviderLocationDTO::getId).collect(Collectors.toList())
                         .indexOf(loc.getId()))
                     .collect(Collectors.toList())
             );
@@ -579,7 +626,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationDto;
     }
 
-    private Set<ServiceTaxonomy> saveTaxonomies(SimpleServiceDTO serviceDTO, Service service) {
+    private Set<ServiceTaxonomy> saveTaxonomies(ProviderServiceDTO serviceDTO, Service service) {
         HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
         Set<UUID> existingTaxonomies = (service.getTaxonomies() != null)
             ? service.getTaxonomies().stream()
@@ -611,7 +658,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return taxonomies;
     }
 
-    private Set<ServiceAtLocation> saveLocations(SimpleServiceDTO serviceDTO, Service service,
+    private Set<ServiceAtLocation> saveLocations(ProviderServiceDTO serviceDTO, Service service,
         List<Location> locations) {
         Set<Location> serviceLocations = serviceDTO.getLocationIndexes().stream().map(
             locations::get
@@ -638,7 +685,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return servicesAtLocation;
     }
 
-    private Set<DailyUpdate> saveDailyUpdates(Organization organization, SimpleOrganizationDTO organizationDTO) {
+    private Set<DailyUpdate> saveDailyUpdates(Organization organization, ProviderOrganizationDTO organizationDTO) {
         Set<DailyUpdate> dailyUpdates = organization.getDailyUpdates();
         if (organizationDTO.getUpdate() != null) {
             ZonedDateTime now = ZonedDateTime.now();
@@ -662,7 +709,33 @@ public class OrganizationServiceImpl implements OrganizationService {
         return dailyUpdates;
     }
 
-    private Eligibility saveEligibility(Service service, SimpleServiceDTO serviceDTO) {
+    private Set<RequiredDocument> saveDocs(ProviderServiceDTO serviceDTO, Service service) {
+        Set<RequiredDocument> docs = new HashSet<>();
+        for (ProviderRequiredDocumentDTO docDto : serviceDTO.getDocs()) {
+            Optional<RequiredDocument> existingDocOptional = service.getDocs().stream()
+                .filter(doc -> doc.getId().equals(docDto.getId())).findFirst();
+            if (existingDocOptional.isPresent()) {
+                RequiredDocument requiredDocument = existingDocOptional.get();
+                requiredDocument.setDocument(docDto.getDocument());
+                docs.add(requiredDocumentService.save(requiredDocument));
+            } else {
+                RequiredDocument requiredDocument = new RequiredDocument();
+                requiredDocument.setDocument(docDto.getDocument());
+                requiredDocument.setSrvc(service);
+                requiredDocument.setProviderName(SERVICE_PROVIDER);
+                docs.add(requiredDocumentService.save(requiredDocument));
+            }
+        }
+        Set<UUID> docIds = docs.stream().map(AbstractEntity::getId).collect(Collectors.toSet());
+        Set<RequiredDocument> docsToRemove = service.getDocs().stream()
+            .filter(doc -> !docIds.contains(doc.getId())).collect(Collectors.toSet());
+        for (RequiredDocument doc : docsToRemove) {
+            requiredDocumentService.delete(doc.getId());
+        }
+        return docs;
+    }
+
+    private Eligibility saveEligibility(Service service, ProviderServiceDTO serviceDTO) {
         Eligibility existingEligibility = service.getEligibility();
         Eligibility eligibility = (existingEligibility != null) ? existingEligibility : new Eligibility();
         if (StringUtils.isNotBlank(serviceDTO.getEligibilityCriteria())) {

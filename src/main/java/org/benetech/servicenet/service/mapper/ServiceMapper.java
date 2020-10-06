@@ -1,15 +1,15 @@
 package org.benetech.servicenet.service.mapper;
 
+import static org.mapstruct.ReportingPolicy.IGNORE;
+
+import java.util.UUID;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.dto.ServiceRecordDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderServiceDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.UUID;
-
-import static org.mapstruct.ReportingPolicy.IGNORE;
 
 /**
  * Mapper for the entity Service and its DTO ServiceDTO.
@@ -25,12 +25,12 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
     ServiceDTO toDto(Service service);
 
     @Mapping(target = "service", source = "service")
-    @Mapping(target = "regularScheduleOpeningHours", source = "regularSchedule.openingHours")
-    ServiceRecordDTO toRecord(Service service);
-
-    @Mapping(source = "eligibility.eligibility", target = "eligibilityCriteria")
     SimpleServiceDTO toSimpleDto(Service service);
 
+    @Mapping(source = "eligibility.eligibility", target = "eligibilityCriteria")
+    ProviderServiceDTO toProviderService(Service service);
+
+    @SuppressWarnings("CPD-START")
     @Mapping(source = "organizationId", target = "organization")
     @Mapping(source = "programId", target = "program")
     @Mapping(target = "locations", ignore = true)
@@ -58,8 +58,13 @@ public interface ServiceMapper extends EntityMapper<ServiceDTO, Service> {
     @Mapping(target = "langs", ignore = true)
     @Mapping(target = "taxonomies", ignore = true)
     @Mapping(target = "phones", ignore = true)
-    Service toEntity(SimpleServiceDTO serviceDTO);
+    Service toEntity(ProviderServiceDTO serviceDTO);
 
+    @Mapping(target = "service", source = "service")
+    @Mapping(target = "regularScheduleOpeningHours", source = "regularSchedule.openingHours")
+    ServiceRecordDTO toRecord(Service service);
+
+    @SuppressWarnings("CPD-END")
     default Service fromId(UUID id) {
         if (id == null) {
             return null;

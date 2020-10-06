@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.benetech.servicenet.converter.CSVFileConverter;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class MatchingTestUtils {
 
     public static String loadCsv(String fileName) throws IOException {
@@ -15,5 +14,8 @@ public class MatchingTestUtils {
         String res = csvFileConverter.convert(csvIs);
         csvIs.close();
         return res;
+    }
+
+    private MatchingTestUtils() {
     }
 }

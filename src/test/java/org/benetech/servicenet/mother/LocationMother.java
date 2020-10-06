@@ -2,7 +2,6 @@ package org.benetech.servicenet.mother;
 
 import org.benetech.servicenet.domain.Location;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public final class LocationMother {
 
     public static final String NAME = "Location name";
@@ -20,5 +19,8 @@ public final class LocationMother {
             .transportation(TRANSPORTATION)
             .latitude(LATITUDE)
             .longitude(LONGITUDE);
+    }
+
+    private LocationMother() {
     }
 }

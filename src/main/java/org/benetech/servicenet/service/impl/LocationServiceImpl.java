@@ -1,5 +1,11 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
@@ -14,16 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Service Implementation for managing Location.
@@ -43,9 +41,6 @@ public class LocationServiceImpl implements LocationService {
     private final PhysicalAddressService physicalAddressService;
 
     private final PostalAddressService postalAddressService;
-
-    @Value("${similarity-ratio.credentials.google-api}")
-    private String googleApiKey;
 
     public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper,
         GeocodingResultService geocodingResultService, PhysicalAddressService physicalAddressService,

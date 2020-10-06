@@ -1,10 +1,10 @@
 package org.benetech.servicenet.service.dto;
 
+import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -32,4 +32,8 @@ public class ServiceRecordDTO {
     private Set<PhoneDTO> phones;
 
     private Set<ContactDTO> contacts;
+
+    public ServiceRecordDTO(UUID serviceId, String serviceName, UUID orgId) {
+        this.service = new ServiceDTO(serviceId, serviceName, orgId);
+    }
 }

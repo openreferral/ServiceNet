@@ -2,9 +2,12 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.CascadeType;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.benetech.servicenet.util.CompareUtils;
@@ -30,13 +33,16 @@ import java.util.Set;
 /**
  * A Service.
  */
+@SuppressWarnings("PMD.ExcessivePublicCount")
 @Data
 @Entity
 @Table(name = "service", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"external_db_id", "provider_name"})
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Service extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
@@ -122,65 +128,73 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @Column(name = "successful_referrals")
     private Integer successfulReferrals;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("services")
     private Organization organization;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("services")
     private Program program;
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Set<ServiceAtLocation> locations;
 
-    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Set<HolidaySchedule> holidaySchedules;
 
-    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Funding funding;
 
-    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Eligibility eligibility;
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceArea> areas = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceMetadata> metadata = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<RequiredDocument> docs = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<PaymentAccepted> paymentsAccepteds = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ServiceTaxonomy> taxonomies = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
 
-    @OneToMany(mappedBy = "srvc")
+    @OneToMany(mappedBy = "srvc", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Contact> contacts = new HashSet<>();
+
+    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<ServiceMatch> serviceMatches = new HashSet<>();
+
+    @OneToMany(mappedBy = "matchingService", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<ServiceMatch> mirrorServiceMatches = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
@@ -494,7 +508,7 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
             "}";
     }
 
-    @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
+    @SuppressWarnings({"PMD.NPathComplexity", "checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
     @Override
     public boolean deepEquals(Object o) {
         if (o == null || getClass() != o.getClass()) {

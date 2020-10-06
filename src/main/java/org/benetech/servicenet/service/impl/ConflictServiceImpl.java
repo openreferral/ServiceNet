@@ -117,6 +117,11 @@ public class ConflictServiceImpl implements ConflictService {
         conflictRepository.deleteById(id);
     }
 
+    @Override
+    public void deleteByResourceOrPartnerResourceId(UUID resourceId) {
+        conflictRepository.deleteByResourceIdOrPartnerResourceId(resourceId, resourceId);
+    }
+
     /**
      * Get all the Conflict with resourceId and ownerId.
      *

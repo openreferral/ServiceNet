@@ -2,6 +2,9 @@ package org.benetech.servicenet.domain;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -19,7 +22,11 @@ import java.util.Objects;
 /**
  * A PhysicalAddress.
  */
+@SuppressWarnings("CPD-START")
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "physical_address")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PhysicalAddress extends AbstractEntity implements Serializable, Address, DeepComparable {

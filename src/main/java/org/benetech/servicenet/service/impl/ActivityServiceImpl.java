@@ -1,12 +1,12 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -20,6 +20,7 @@ import org.benetech.servicenet.domain.view.ActivityInfo;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.repository.ProviderRecordsRepository;
+import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -29,14 +30,12 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.GeocodingResultDTO;
-import org.benetech.servicenet.service.dto.LocationRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
+import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.service.exceptions.ActivityCreationException;
-import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,11 +71,13 @@ public class ActivityServiceImpl implements ActivityService {
 
     private final OrganizationMapper organizationMapper;
 
+    private final UserProfileRepository userProfileRepository;
+
     public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
         ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService,
         OrganizationService organizationService, UserService userService,
         ProviderRecordsRepository providerRecordsRepository,
-        OrganizationMapper organizationMapper) {
+        OrganizationMapper organizationMapper, UserProfileRepository userProfileRepository) {
         this.activityRepository = activityRepository;
         this.recordsService = recordsService;
         this.exclusionsConfigService = exclusionsConfigService;
@@ -85,6 +86,7 @@ public class ActivityServiceImpl implements ActivityService {
         this.userService = userService;
         this.providerRecordsRepository = providerRecordsRepository;
         this.organizationMapper = organizationMapper;
+        this.userProfileRepository = userProfileRepository;
     }
 
     @Override
@@ -142,7 +144,7 @@ public class ActivityServiceImpl implements ActivityService {
                 } catch (IllegalAccessException | NoSuchElementException e) {
                     throw new ActivityCreationException(
                         String.format("Activity record couldn't be created for organization: %s",
-                            match.getPartnerVersionId()));
+                            match.getPartnerVersionId()), e);
                 }
             })
             .collect(Collectors.toList());
@@ -150,59 +152,59 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProviderRecordDTO> getPartnerActivitiesForCurrentUser() {
+    public Page<ProviderRecordDTO> getPartnerActivitiesForCurrentUser(Pageable pageable) {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Set<UserGroup> userGroups = userProfile.getUserGroups();
-        List<Organization> organizations;
+        List<UserProfile> userProfiles;
         if (userGroups == null || userGroups.isEmpty()) {
-            organizations = organizationService.findAllByUserProfile(userProfile);
+            userProfiles = Collections.singletonList(userProfile);
         } else {
-            organizations = organizationService.findAllByUserGroups(new ArrayList<>(userGroups));
+            userProfiles = userProfileRepository.findAllWithUserGroups(new ArrayList<>(userGroups));
         }
-        return organizations.stream()
-            .map(this::getProviderRecordDTO)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        Page<ProviderRecordDTO> providerRecords = providerRecordsRepository
+            .findAllWithFilters(userProfiles,
+                null, new ProviderFilterDTO(), null, pageable);
+        return filterProviderRecords(providerRecords);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO,
         String search, Pageable pageable) {
-        UserProfile userProfile = userService.getCurrentUserProfile();
-        Page<Organization> organizations = providerRecordsRepository
-            .findAllWithFilters(userProfile, providerFilterDTO, search, pageable);
-        return organizations.map(this::getProviderRecordDTO);
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
+        Page<ProviderRecordDTO> providerRecords = providerRecordsRepository
+            .findAllWithFilters(null, currentUserProfile, providerFilterDTO, search, pageable);
+        return filterProviderRecords(providerRecords);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProviderRecordDTO> getAllPartnerActivitiesPublic(ProviderFilterDTO providerFilterDTO,
         Silo silo, String search, Pageable pageable) {
-        Page<Organization> organizations = providerRecordsRepository
+        Page<ProviderRecordDTO> providerRecords = providerRecordsRepository
             .findAllWithFiltersPublic(providerFilterDTO, silo, search, pageable);
-        return organizations.map(this::getProviderRecordDTO);
+        return filterProviderRecords(providerRecords);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap() {
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
+        Pageable pageable, ProviderFilterDTO providerFilterDTO,
+        String search, List<Double> boundaries) {
         UserProfile userProfile = userService.getCurrentUserProfile();
-        Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
-            .findAllWithFiltersForMap(userProfile)
-            .map(this::getProviderRecordDTO)
-            .map(this::toProviderRecordForMapDTO);
-        return providerRecordForMapDTOList;
+        List<ExclusionsConfig> exclusions = exclusionsConfigService.findAllBySystemAccountName(SERVICE_PROVIDER);
+        return providerRecordsRepository
+            .findProviderRecordsForMap(pageable, userProfile, providerFilterDTO, search, exclusions, boundaries);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(Silo silo) {
-        Page<ProviderRecordForMapDTO> providerRecordForMapDTOList = providerRecordsRepository
-            .findAllWithFiltersForMap(silo)
-            .map(this::getProviderRecordDTO)
-            .map(this::toProviderRecordForMapDTO);
-        return providerRecordForMapDTOList;
+    public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
+        Pageable pageable, ProviderFilterDTO providerFilterDTO,
+        String search, Silo silo, List<Double> boundaries) {
+        List<ExclusionsConfig> exclusions = exclusionsConfigService.findAllBySystemAccountName(SERVICE_PROVIDER);
+        return providerRecordsRepository
+            .findAllWithFiltersForMap(pageable, silo, providerFilterDTO, search, exclusions, boundaries);
     }
 
     @Override
@@ -272,14 +274,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
-    private ProviderRecordForMapDTO toProviderRecordForMapDTO(ProviderRecordDTO providerRecordDTO) {
-        Set<LocationRecordDTO> locationRecordDTOS = providerRecordDTO.getLocations();
-        Set<GeocodingResultDTO> geocodingResultDTOS = new HashSet<>();
-        locationRecordDTOS.forEach(locationRecordDTO -> geocodingResultDTOS
-            .addAll(locationRecordDTO.getLocation().getGeocodingResults())
-        );
-        return new ProviderRecordForMapDTO(
-            providerRecordDTO.getOrganization().getId(), geocodingResultDTOS
-        );
+    private Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords) {
+        return recordsService.filterProviderRecords(providerRecords);
     }
 }

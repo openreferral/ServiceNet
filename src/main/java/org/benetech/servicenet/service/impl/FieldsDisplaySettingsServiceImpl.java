@@ -1,21 +1,21 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import org.benetech.servicenet.service.FieldsDisplaySettingsService;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.domain.FieldsDisplaySettings;
 import org.benetech.servicenet.repository.FieldsDisplaySettingsRepository;
+import org.benetech.servicenet.service.FieldsDisplaySettingsService;
 import org.benetech.servicenet.service.dto.FieldsDisplaySettingsDTO;
 import org.benetech.servicenet.service.mapper.FieldsDisplaySettingsMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link FieldsDisplaySettings}.
@@ -64,6 +64,20 @@ public class FieldsDisplaySettingsServiceImpl implements FieldsDisplaySettingsSe
         return fieldsDisplaySettingsRepository.findAll().stream()
             .map(fieldsDisplaySettingsMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Get all the fieldsDisplaySettings.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<FieldsDisplaySettingsDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all FieldsDisplaySettings");
+        return fieldsDisplaySettingsRepository.findAll(pageable)
+            .map(fieldsDisplaySettingsMapper::toDto);
     }
 
     @Override

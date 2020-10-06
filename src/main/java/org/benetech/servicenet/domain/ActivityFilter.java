@@ -12,6 +12,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -23,6 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 /**
  * A ActivityFilter.
  */
+@SuppressWarnings("PMD.ExcessivePublicCount")
 @Entity
 @Table(name = "activity_filter")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -86,7 +88,7 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
     @Column(name = "show_highly_matched")
     private boolean showOnlyHighlyMatched;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("filters")
     private UserProfile userProfile;
 
@@ -367,6 +369,7 @@ public class ActivityFilter extends AbstractEntity implements Serializable {
         return 31;
     }
 
+    @SuppressWarnings("CPD-START")
     @Override
     public String toString() {
         return "ActivityFilter{" +

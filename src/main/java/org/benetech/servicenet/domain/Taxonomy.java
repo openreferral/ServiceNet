@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -53,7 +54,7 @@ public class Taxonomy extends AbstractEntity implements Serializable, DeepCompar
     @Size(max = 255, message = "Field value is too long.")
     private String providerName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private Taxonomy parent;
 

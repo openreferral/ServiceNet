@@ -1,26 +1,5 @@
 package org.benetech.servicenet.web.rest;
 
-import java.util.UUID;
-import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.config.SecurityBeanOverrideConfiguration;
-import org.benetech.servicenet.domain.UserGroup;
-import org.benetech.servicenet.repository.UserGroupRepository;
-import org.benetech.servicenet.service.UserGroupService;
-import org.benetech.servicenet.service.dto.UserGroupDTO;
-import org.benetech.servicenet.service.mapper.UserGroupMapper;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -32,9 +11,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+import javax.persistence.EntityManager;
+import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
+import org.benetech.servicenet.config.SecurityBeanOverrideConfiguration;
+import org.benetech.servicenet.domain.UserGroup;
+import org.benetech.servicenet.repository.UserGroupRepository;
+import org.benetech.servicenet.service.dto.UserGroupDTO;
+import org.benetech.servicenet.service.mapper.UserGroupMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Integration tests for the {@link UserGroupResource} REST controller.
  */
+@ExtendWith({ SpringExtension.class, ZeroCodeSpringJUnit5Extension.class })
 @SpringBootTest(classes = { SecurityBeanOverrideConfiguration.class, ServiceNetApp.class })
 @AutoConfigureMockMvc
 @WithMockUser
@@ -48,9 +51,6 @@ public class UserGroupResourceIT {
 
     @Autowired
     private UserGroupMapper userGroupMapper;
-
-    @Autowired
-    private UserGroupService userGroupService;
 
     @Autowired
     private EntityManager em;
@@ -69,6 +69,7 @@ public class UserGroupResourceIT {
     public static UserGroup createEntity(EntityManager em) {
         UserGroup userGroup = new UserGroup()
             .name(DEFAULT_NAME);
+        userGroup.setUserProfiles(new HashSet<>());
         return userGroup;
     }
 
@@ -137,7 +138,7 @@ public class UserGroupResourceIT {
         restUserGroupMockMvc.perform(get("/api/user-groups?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(userGroup.getId())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(userGroup.getId().toString())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
 
@@ -151,7 +152,7 @@ public class UserGroupResourceIT {
         restUserGroupMockMvc.perform(get("/api/user-groups/{id}", userGroup.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(userGroup.getId()))
+            .andExpect(jsonPath("$.id").value(userGroup.getId().toString()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
     }
 
@@ -159,7 +160,7 @@ public class UserGroupResourceIT {
     @Transactional
     public void getNonExistingUserGroup() throws Exception {
         // Get the userGroup
-        restUserGroupMockMvc.perform(get("/api/user-groups/{id}", Long.MAX_VALUE))
+        restUserGroupMockMvc.perform(get("/api/user-groups/{id}", UUID.randomUUID()))
             .andExpect(status().isNotFound());
     }
 

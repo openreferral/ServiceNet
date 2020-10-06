@@ -1,18 +1,16 @@
 package org.benetech.servicenet.mother;
 
-import org.benetech.servicenet.domain.Conflict;
-import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
+import static org.benetech.servicenet.TestConstants.UUID_1;
+import static org.benetech.servicenet.TestConstants.UUID_2;
 
-import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import javax.persistence.EntityManager;
+import org.benetech.servicenet.domain.Conflict;
+import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 
-import static org.benetech.servicenet.TestConstants.UUID_1;
-import static org.benetech.servicenet.TestConstants.UUID_2;
-
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class ConflictMother {
 
     public static final String DEFAULT_CURRENT_VALUE = "AAAAAAAAAA";
@@ -98,4 +96,6 @@ public class ConflictMother {
         return conflict;
     }
 
+    private ConflictMother() {
+    }
 }

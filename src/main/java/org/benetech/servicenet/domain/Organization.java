@@ -2,12 +2,15 @@ package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.CascadeType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.benetech.servicenet.util.CompareUtils;
@@ -37,11 +40,13 @@ import java.util.Set;
  */
 @Data
 @Entity
+@Builder
 @Table(name = "organization", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"external_db_id", "account_id"})
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NoArgsConstructor
+@AllArgsConstructor
 public class Organization extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
@@ -113,27 +118,27 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @JsonIgnoreProperties("")
     private SystemAccount account;
 
-    @OneToOne(mappedBy = "organization", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Funding funding;
 
-    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Location> locations = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Program> programs = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Service> services = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Contact> contacts = new HashSet<>();
 
-    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
 
@@ -145,7 +150,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         inverseJoinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "id"))
     private Set<UserProfile> userProfiles;
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<DailyUpdate> dailyUpdates = new HashSet<>();
 
@@ -362,7 +367,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.userProfiles = userProfiles;
     }
 
-    @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "checkstyle:booleanExpressionComplexity"})
     @Override
     public boolean deepEquals(Object o) {
         if (o == null || getClass() != o.getClass()) {

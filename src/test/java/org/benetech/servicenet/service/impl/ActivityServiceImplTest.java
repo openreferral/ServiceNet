@@ -19,6 +19,7 @@ import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.ActivityRepository;
 import org.benetech.servicenet.repository.ProviderRecordsRepository;
+import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ExclusionsConfigService;
 import org.benetech.servicenet.service.OrganizationMatchService;
@@ -91,12 +92,15 @@ public class ActivityServiceImplTest {
     @Autowired
     private OrganizationMapper organizationMapper;
 
+    @Autowired
+    private UserProfileRepository userProfileRepository;
+
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         activityService = new ActivityServiceImpl(activityRepository, recordsService,
             exclusionsConfigService, organizationMatchService, organizationService, userService,
-            providerRecordsRepository, organizationMapper);
+            providerRecordsRepository, organizationMapper, userProfileRepository);
     }
 
     @Before
@@ -144,22 +148,8 @@ public class ActivityServiceImplTest {
         assertNotNull(actualAct);
         assertEquals(1, actualAct.getConflicts().size());
         ConflictDTO actualConflict = actualAct.getConflicts().get(0);
-        assertEquals(conflict.getId(), actualConflict.getId());
-        assertEquals(conflict.getCurrentValue(), actualConflict.getCurrentValue());
-        assertEquals(conflict.getCurrentValueDate(), actualConflict.getCurrentValueDate());
-        assertEquals(conflict.getOfferedValue(), actualConflict.getOfferedValue());
-        assertEquals(conflict.getOfferedValueDate(), actualConflict.getOfferedValueDate());
-        assertEquals(conflict.getFieldName(), actualConflict.getFieldName());
-        assertEquals(conflict.getEntityPath(), actualConflict.getEntityPath());
-        assertEquals(conflict.getState(), actualConflict.getState());
-        assertEquals(conflict.getStateDate(), actualConflict.getStateDate());
-        assertEquals(conflict.getCreatedDate(), actualConflict.getCreatedDate());
-        assertEquals(conflict.getResourceId(), actualConflict.getResourceId());
-        assertEquals(conflict.getPartnerResourceId(), actualConflict.getPartnerResourceId());
-        assertEquals(conflict.getOwner().getId(), actualConflict.getOwnerId());
-        assertEquals(conflict.getOwner().getName(), actualConflict.getOwnerName());
-        assertEquals(conflict.getPartner().getId(), actualConflict.getPartnerId());
-        assertEquals(conflict.getPartner().getName(), actualConflict.getPartnerName());
+
+        checkConflict(conflict, actualConflict);
     }
 
     @Test
@@ -202,6 +192,11 @@ public class ActivityServiceImplTest {
         assertNotNull(actualAct);
         assertEquals(1, actualAct.getConflicts().size());
         ConflictDTO actualConflict = actualAct.getConflicts().get(0);
+
+        checkConflict(conflict, actualConflict);
+    }
+
+    private void checkConflict(Conflict conflict, ConflictDTO actualConflict) {
         assertEquals(conflict.getId(), actualConflict.getId());
         assertEquals(conflict.getCurrentValue(), actualConflict.getCurrentValue());
         assertEquals(conflict.getCurrentValueDate(), actualConflict.getCurrentValueDate());

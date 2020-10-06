@@ -4,7 +4,6 @@ import org.benetech.servicenet.domain.SystemAccount;
 
 import javax.persistence.EntityManager;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class SystemAccountMother {
 
     public static final String DEFAULT_NAME = "AAAAAAAAAA";
@@ -30,5 +29,8 @@ public class SystemAccountMother {
         em.persist(account);
         em.flush();
         return account;
+    }
+
+    private SystemAccountMother() {
     }
 }

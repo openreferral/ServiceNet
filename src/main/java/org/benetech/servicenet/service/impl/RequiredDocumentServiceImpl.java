@@ -53,6 +53,19 @@ public class RequiredDocumentServiceImpl implements RequiredDocumentService {
     }
 
     /**
+     * Save a requiredDocument.
+     *
+     * @param requiredDocument the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public RequiredDocument save(RequiredDocument requiredDocument) {
+        log.debug("Request to save RequiredDocument : {}", requiredDocument);
+
+        return requiredDocumentRepository.save(requiredDocument);
+    }
+
+    /**
      * Get all the requiredDocuments.
      *
      * @return the list of entities

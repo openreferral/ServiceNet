@@ -21,6 +21,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.benetech.servicenet.util.CompareUtils;
@@ -40,6 +42,8 @@ import java.util.Set;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "location", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"external_db_id", "provider_name"})
 })
@@ -86,33 +90,41 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
-    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private PhysicalAddress physicalAddress;
 
-    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private PostalAddress postalAddress;
 
-    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private RegularSchedule regularSchedule;
 
-    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Set<HolidaySchedule> holidaySchedules;
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Language> langs = new HashSet<>();
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Phone> phones = new HashSet<>();
 
-    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
+
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<LocationMatch> locationMatches = new HashSet<>();
+
+    @OneToMany(mappedBy = "matchingLocation", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<LocationMatch> mirrorLocationMatches = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -121,7 +133,7 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
                        inverseJoinColumns = @JoinColumn(name = "geocoding_results_id", referencedColumnName = "id"))
     private List<GeocodingResult> geocodingResults = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("locations")
     private Organization organization;
 

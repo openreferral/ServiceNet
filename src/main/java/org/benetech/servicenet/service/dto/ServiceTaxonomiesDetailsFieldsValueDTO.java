@@ -11,6 +11,8 @@ import org.benetech.servicenet.domain.enumeration.ServiceTaxonomiesDetailsFields
  */
 public class ServiceTaxonomiesDetailsFieldsValueDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     @NotNull

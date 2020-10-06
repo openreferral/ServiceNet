@@ -13,7 +13,7 @@ public final class ShelterTechCollector {
         try {
             response = HttpUtils.executeGET(URL, HttpUtils.getStandardHeaders());
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot connect with ShelterTech API");
+            throw new IllegalStateException("Cannot connect with ShelterTech API", e);
         }
         return response;
     }

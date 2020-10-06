@@ -1,14 +1,12 @@
 package org.benetech.servicenet.matching.service;
 
-import org.benetech.servicenet.matching.model.EntityEquivalent;
-import org.benetech.servicenet.matching.model.WrappedEquivalent;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 import java.util.UUID;
+import org.benetech.servicenet.matching.model.EntityEquivalent;
+import org.benetech.servicenet.matching.model.WrappedEquivalent;
 
-import static org.junit.Assert.assertTrue;
-
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 class EntityEquivalentTestUtils {
 
     static<V extends EntityEquivalent> boolean isMatchBetweenEntities(Set<V> set, UUID baseID, UUID partnerId) {
@@ -34,5 +32,8 @@ class EntityEquivalentTestUtils {
         assertTrue(firstValueNullResult.getEntitiesByClass(clazz).isEmpty());
         assertTrue(secondValueNullResult.getEntitiesByClass(clazz).isEmpty());
         assertTrue(bothValuesNullResult.getEntitiesByClass(clazz).isEmpty());
+    }
+
+    private EntityEquivalentTestUtils() {
     }
 }

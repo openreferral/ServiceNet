@@ -14,6 +14,8 @@ import java.util.UUID;
 @Component
 public class HibernatePostDeleteListener extends AbstractHibernateListener implements PostDeleteEventListener {
 
+    private static final long serialVersionUID = 1L;
+
     @Autowired
     private MetadataService metadataService;
 

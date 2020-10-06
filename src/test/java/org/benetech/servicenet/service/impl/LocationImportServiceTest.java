@@ -1,5 +1,22 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.benetech.servicenet.TestConstants.EXISTING_EXTERNAL_ID;
+import static org.benetech.servicenet.TestConstants.EXISTING_INT;
+import static org.benetech.servicenet.TestConstants.EXISTING_STRING;
+import static org.benetech.servicenet.TestConstants.NEW_EXTERNAL_ID;
+import static org.benetech.servicenet.TestConstants.NEW_INT;
+import static org.benetech.servicenet.TestConstants.NEW_STRING;
+import static org.benetech.servicenet.TestConstants.OTHER_INT;
+import static org.benetech.servicenet.TestConstants.OTHER_STRING;
+import static org.benetech.servicenet.TestConstants.PROVIDER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
@@ -43,24 +60,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-
-import static org.benetech.servicenet.TestConstants.EXISTING_EXTERNAL_ID;
-import static org.benetech.servicenet.TestConstants.EXISTING_INT;
-import static org.benetech.servicenet.TestConstants.EXISTING_STRING;
-import static org.benetech.servicenet.TestConstants.NEW_EXTERNAL_ID;
-import static org.benetech.servicenet.TestConstants.NEW_INT;
-import static org.benetech.servicenet.TestConstants.NEW_STRING;
-import static org.benetech.servicenet.TestConstants.OTHER_INT;
-import static org.benetech.servicenet.TestConstants.OTHER_STRING;
-import static org.benetech.servicenet.TestConstants.PROVIDER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class, MockedGeocodingConfiguration.class})
@@ -429,17 +428,10 @@ public class LocationImportServiceTest {
 
         assertEquals(1, regularScheduleService.findAll().size());
         assertEquals(1, openingHoursService.findAll().size());
+
         importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
-        List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
-        List<OpeningHoursDTO> allHours = openingHoursService.findAll();
-        assertEquals(1, allSchedules.size());
-        assertEquals(location.getId(), allSchedules.get(0).getLocationId());
-        assertEquals(1, allHours.size());
-        OpeningHoursDTO hoursDTO = allHours.get(0);
-        assertEquals(NEW_INT, hoursDTO.getWeekday());
-        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
-        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
+        checkOpeningHours(location);
     }
 
     @Test
@@ -468,15 +460,7 @@ public class LocationImportServiceTest {
 
         importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
-        List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
-        List<OpeningHoursDTO> allHours = openingHoursService.findAll();
-        assertEquals(1, allSchedules.size());
-        assertEquals(location.getId(), allSchedules.get(0).getLocationId());
-        assertEquals(1, allHours.size());
-        OpeningHoursDTO hoursDTO = allHours.get(0);
-        assertEquals(NEW_INT, hoursDTO.getWeekday());
-        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
-        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
+        checkOpeningHours(location);
     }
 
     @Test
@@ -605,5 +589,17 @@ public class LocationImportServiceTest {
         assertEquals(1, all.size());
         assertEquals(location.getId(), all.get(0).getLocationId());
         assertEquals(NEW_STRING, all.get(0).getNumber());
+    }
+
+    private void checkOpeningHours(Location location) {
+        List<RegularScheduleDTO> allSchedules = regularScheduleService.findAll();
+        List<OpeningHoursDTO> allHours = openingHoursService.findAll();
+        assertEquals(1, allSchedules.size());
+        assertEquals(location.getId(), allSchedules.get(0).getLocationId());
+        assertEquals(1, allHours.size());
+        OpeningHoursDTO hoursDTO = allHours.get(0);
+        assertEquals(NEW_INT, hoursDTO.getWeekday());
+        assertEquals(NEW_STRING, hoursDTO.getOpensAt());
+        assertEquals(NEW_STRING, hoursDTO.getClosesAt());
     }
 }

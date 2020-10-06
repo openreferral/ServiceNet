@@ -5,11 +5,17 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * A DTO for the HolidaySchedule entity.
  */
+@Getter
+@Setter
 public class HolidayScheduleDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
 
@@ -34,84 +40,8 @@ public class HolidayScheduleDTO implements Serializable {
 
     private String locationName;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public Boolean isClosed() {
         return closed;
-    }
-
-    public void setClosed(Boolean closed) {
-        this.closed = closed;
-    }
-
-    public String getOpensAt() {
-        return opensAt;
-    }
-
-    public void setOpensAt(String opensAt) {
-        this.opensAt = opensAt;
-    }
-
-    public String getClosesAt() {
-        return closesAt;
-    }
-
-    public void setClosesAt(String closesAt) {
-        this.closesAt = closesAt;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public UUID getSrvcId() {
-        return srvcId;
-    }
-
-    public void setSrvcId(UUID serviceId) {
-        this.srvcId = serviceId;
-    }
-
-    public String getSrvcName() {
-        return srvcName;
-    }
-
-    public void setSrvcName(String serviceName) {
-        this.srvcName = serviceName;
-    }
-
-    public UUID getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(UUID locationId) {
-        this.locationId = locationId;
-    }
-
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
     }
 
     @Override

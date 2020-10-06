@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class RecordDto implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID serviceNetId;
 
     private String externalDbId;

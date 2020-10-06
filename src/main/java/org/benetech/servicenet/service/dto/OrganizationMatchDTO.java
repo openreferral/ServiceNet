@@ -16,6 +16,8 @@ import java.util.UUID;
 @Data
 public class OrganizationMatchDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     private ZonedDateTime timestamp;

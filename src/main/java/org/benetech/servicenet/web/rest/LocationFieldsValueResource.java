@@ -1,24 +1,26 @@
 package org.benetech.servicenet.web.rest;
 
-import java.util.UUID;
-import org.benetech.servicenet.service.LocationFieldsValueService;
-import org.benetech.servicenet.errors.BadRequestAlertException;
-import org.benetech.servicenet.service.dto.LocationFieldsValueDTO;
-
-import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import org.benetech.servicenet.security.AuthoritiesConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import javax.validation.Valid;
+import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.security.AuthoritiesConstants;
+import org.benetech.servicenet.service.LocationFieldsValueService;
+import org.benetech.servicenet.service.dto.LocationFieldsValueDTO;
+import org.benetech.servicenet.web.rest.util.HeaderUtil;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,13 +101,15 @@ public class LocationFieldsValueResource {
     /**
      * {@code GET  /location-fields-values} : get all the locationFieldsValues.
      *
-
+     * @param pageable the pagination information
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of locationFieldsValues in body.
      */
     @GetMapping("/location-fields-values")
-    public List<LocationFieldsValueDTO> getAllLocationFieldsValues() {
+    public ResponseEntity<List<LocationFieldsValueDTO>> getAllLocationFieldsValues(Pageable pageable) {
         log.debug("REST request to get all LocationFieldsValues");
-        return locationFieldsValueService.findAll();
+        Page<LocationFieldsValueDTO> page = locationFieldsValueService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/location-fields-values");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**

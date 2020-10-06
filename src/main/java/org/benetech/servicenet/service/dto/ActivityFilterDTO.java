@@ -18,6 +18,8 @@ import org.benetech.servicenet.domain.enumeration.SearchOn;
 @Setter
 public class ActivityFilterDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private UUID id;
 
     private String name;

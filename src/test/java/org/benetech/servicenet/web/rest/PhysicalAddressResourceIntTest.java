@@ -1,31 +1,5 @@
 package org.benetech.servicenet.web.rest;
 
-import org.benetech.servicenet.MockedUserTestConfiguration;
-import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.TestConstants;
-import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.repository.PhysicalAddressRepository;
-import org.benetech.servicenet.service.PhysicalAddressService;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
-import org.benetech.servicenet.service.mapper.PhysicalAddressMapper;
-import org.benetech.servicenet.errors.ExceptionTranslator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.hamcrest.Matchers.hasItem;
@@ -37,12 +11,38 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+import javax.persistence.EntityManager;
+import org.benetech.servicenet.MockedUserTestConfiguration;
+import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
+import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.errors.ExceptionTranslator;
+import org.benetech.servicenet.repository.PhysicalAddressRepository;
+import org.benetech.servicenet.service.PhysicalAddressService;
+import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.mapper.PhysicalAddressMapper;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Test class for the PhysicalAddressResource REST controller.
  *
  * @see PhysicalAddressResource
  */
-@RunWith(SpringRunner.class)
+@SuppressWarnings("CPD-START")
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class PhysicalAddressResourceIntTest {
 
@@ -111,7 +111,7 @@ public class PhysicalAddressResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final PhysicalAddressResource physicalAddressResource = new PhysicalAddressResource(physicalAddressService);
         this.restPhysicalAddressMockMvc = MockMvcBuilders.standaloneSetup(physicalAddressResource)

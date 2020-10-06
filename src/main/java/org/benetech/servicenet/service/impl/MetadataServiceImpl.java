@@ -1,5 +1,12 @@
 package org.benetech.servicenet.service.impl;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.UserProfile;
@@ -12,17 +19,11 @@ import org.benetech.servicenet.service.mapper.MetadataMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Metadata.
@@ -72,6 +73,14 @@ public class MetadataServiceImpl implements MetadataService {
         return metadataRepository.findAll().stream()
             .map(metadataMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MetadataDTO> findAll(Pageable pageable) {
+        log.debug("Request to get all Metadata");
+        return metadataRepository.findAll(pageable)
+            .map(metadataMapper::toDto);
     }
 
     @Override

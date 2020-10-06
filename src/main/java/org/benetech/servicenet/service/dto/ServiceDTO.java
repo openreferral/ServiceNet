@@ -8,12 +8,16 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.NoArgsConstructor;
 
 /**
  * A DTO for the Service entity.
  */
 @Data
+@NoArgsConstructor
 public class ServiceDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
 
@@ -67,6 +71,12 @@ public class ServiceDTO implements Serializable {
 
     private String providerName;
 
+    public ServiceDTO(UUID id, String name, UUID organizationId) {
+        this.id = id;
+        this.name = name;
+        this.organizationId = organizationId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -88,6 +98,7 @@ public class ServiceDTO implements Serializable {
         return Objects.hashCode(getId());
     }
 
+    @SuppressWarnings("CPD-START")
     @Override
     public String toString() {
         return "ServiceDTO{" +

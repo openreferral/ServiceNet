@@ -5,7 +5,7 @@ import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -40,7 +40,7 @@ public interface OrganizationService {
      * @param organizationDTO the entity to save
      * @return the persisted entity
      */
-    OrganizationDTO saveWithUser(SimpleOrganizationDTO organizationDTO);
+    OrganizationDTO saveWithUser(ProviderOrganizationDTO organizationDTO);
 
     /**
      * Get all the organizations.
@@ -57,7 +57,7 @@ public interface OrganizationService {
 
     List<Organization> findAllOthers(String providerName);
 
-    List<Organization> findAllByUserProfile(UserProfile userProfile);
+    Page<Organization> findAllByUserProfile(Pageable pageable, UserProfile userProfile);
 
     List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds);
 
@@ -126,19 +126,23 @@ public interface OrganizationService {
      */
     void reactivate(UUID id);
 
-    Optional<SimpleOrganizationDTO> findOneDTOForProvider(UUID id);
+    Optional<ProviderOrganizationDTO> findOneDTOForProvider(UUID id);
 
-    Optional<SimpleOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo);
+    Optional<ProviderOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo);
 
     Optional<Organization> findOneWithIdAndUserProfile(UUID id, UserProfile userProfile);
 
     List<Organization> findAllByAccountNameAndNotActiveAndCurrentUser();
 
-    List<Organization> findAllByUserGroups(List<UserGroup> userGroups);
+    Page<Organization> findAllByUserGroups(Pageable pageable,
+        List<UserGroup> userGroups);
 
     Optional<Organization> findOneWithIdAndUserProfileInUserGroups(UUID id, UserProfile userProfile);
 
     Optional<Organization> findOneWithIdAndUserProfileInUserGroupsAndNotActive(UUID id, UserProfile userProfile);
 
     Optional<Organization> findOneWithIdAndUserProfileAndNotActive(UUID id, UserProfile userProfile);
+
+    Page<OrganizationDTO> findAllByNameLikeAndAccountNameWithUserProfile(
+        String name, String accountName, Pageable pageable);
 }

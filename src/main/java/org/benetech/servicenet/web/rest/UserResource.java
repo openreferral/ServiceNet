@@ -2,6 +2,8 @@ package org.benetech.servicenet.web.rest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.errors.BadRequestAlertException;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -121,6 +125,19 @@ public class UserResource {
         HttpHeaders headers = PaginationUtil
             .generatePaginationHttpHeaders(page, "/api/users");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * {@code GET /users/search} : search for users
+     *
+     * @param systemAccount the system account of a user
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
+     */
+    @GetMapping("/users/search")
+    public Set<UserDTO> searchUsers(@RequestParam(required = false) String systemAccount) {
+        return userService.getAllManagedUsers(PageRequest.of(0, Integer.MAX_VALUE)).stream()
+            .filter(u -> systemAccount.equals(u.getSystemAccountName())
+        ).collect(Collectors.toSet());
     }
 
     /**

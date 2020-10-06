@@ -1,41 +1,43 @@
 package org.benetech.servicenet.web.rest;
 
-import java.util.UUID;
-import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.config.SecurityBeanOverrideConfiguration;
-import org.benetech.servicenet.domain.DailyUpdate;
-import org.benetech.servicenet.repository.DailyUpdateRepository;
-import org.benetech.servicenet.service.DailyUpdateService;
-import org.benetech.servicenet.service.dto.DailyUpdateDTO;
-import org.benetech.servicenet.service.mapper.DailyUpdateMapper;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
-import java.util.List;
-
-import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.TestConstants.MAX_PAGE_SIZE;
+import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
+import javax.persistence.EntityManager;
+import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
+import org.benetech.servicenet.config.SecurityBeanOverrideConfiguration;
+import org.benetech.servicenet.domain.DailyUpdate;
+import org.benetech.servicenet.repository.DailyUpdateRepository;
+import org.benetech.servicenet.service.dto.DailyUpdateDTO;
+import org.benetech.servicenet.service.mapper.DailyUpdateMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Integration tests for the {@link DailyUpdateResource} REST controller.
@@ -44,6 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @WithMockUser
+@ExtendWith({ SpringExtension.class, ZeroCodeSpringJUnit5Extension.class })
 public class DailyUpdateResourceIT {
 
     private static final String DEFAULT_UPDATE = "AAAAAAAAAA";
@@ -63,9 +66,6 @@ public class DailyUpdateResourceIT {
 
     @Autowired
     private DailyUpdateMapper dailyUpdateMapper;
-
-    @Autowired
-    private DailyUpdateService dailyUpdateService;
 
     @Autowired
     private EntityManager em;
@@ -156,7 +156,7 @@ public class DailyUpdateResourceIT {
         dailyUpdateRepository.saveAndFlush(dailyUpdate);
 
         // Get all the dailyUpdateList
-        restDailyUpdateMockMvc.perform(get("/api/daily-updates?sort=id,desc"))
+        restDailyUpdateMockMvc.perform(get("/api/daily-updates?sort=id,desc&size=" + MAX_PAGE_SIZE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(dailyUpdate.getId().toString())))

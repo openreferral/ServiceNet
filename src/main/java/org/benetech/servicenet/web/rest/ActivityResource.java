@@ -12,14 +12,12 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -39,8 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class ActivityResource {
-
-    private final Logger log = LoggerFactory.getLogger(ActivityResource.class);
 
     private final ActivityService activityService;
 
@@ -89,9 +85,9 @@ public class ActivityResource {
 
     @GetMapping("/provider-records")
     @Timed
-    public ResponseEntity<List<ProviderRecordDTO>> getProviderActivities() {
+    public ResponseEntity<Page<ProviderRecordDTO>> getProviderActivities(Pageable pageable) {
         return ResponseEntity.ok().body(
-            activityService.getPartnerActivitiesForCurrentUser()
+            activityService.getPartnerActivitiesForCurrentUser(pageable)
         );
     }
 
@@ -104,17 +100,20 @@ public class ActivityResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    @GetMapping("/all-provider-records-map")
+    @PostMapping("/all-provider-records-map")
     @Timed
-    public ResponseEntity<List<ProviderRecordForMapDTO>> getAllProviderActivitiesForMap() {
-        Page<ProviderRecordForMapDTO> page = activityService.getAllPartnerActivitiesForMap();
+    public ResponseEntity<List<ProviderRecordForMapDTO>> getAllProviderActivitiesForMap(
+        @RequestBody ProviderFilterDTO providerFilterDTO, @RequestParam(required = false) String search,
+        @RequestParam(required = false) List<Double> boundaries, Pageable pageable) {
+        Page<ProviderRecordForMapDTO> page = activityService
+            .getAllPartnerActivitiesForMap(pageable, providerFilterDTO, search, boundaries);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records-map");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/select-record/{orgId}")
     @Timed
-    public ResponseEntity<ProviderRecordDTO> getSelectedRecord(@PathVariable UUID orgId) {
+    public ResponseEntity<ProviderRecordDTO> getsSelectedRecord(@PathVariable UUID orgId) {
         return ResponseEntity.ok().body(activityService.getPartnerActivityById(orgId));
     }
 

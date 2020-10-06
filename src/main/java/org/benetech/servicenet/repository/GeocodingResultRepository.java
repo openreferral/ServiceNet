@@ -8,8 +8,6 @@ import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,27 +23,21 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
 
     String ADDRESS_CACHE = "addressCache";
 
-    @Cacheable(ADDRESS_CACHE)
     List<GeocodingResult> findAllByAddress(String address);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     <S extends GeocodingResult> S save(S var1);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     <S extends GeocodingResult> List<S> saveAll(Iterable<S> var1);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     <S extends GeocodingResult> S saveAndFlush(S var1);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     void deleteInBatch(Iterable<GeocodingResult> var1);
 
     @Override
-    @CacheEvict(value = ADDRESS_CACHE, allEntries = true)
     void deleteAllInBatch();
 
     Page<GeocodingResult> findAll(Pageable pageable);

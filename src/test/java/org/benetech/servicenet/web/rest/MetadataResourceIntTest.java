@@ -21,7 +21,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.TestConstants.MAX_PAGE_SIZE;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
 import static org.hamcrest.Matchers.hasItem;
@@ -51,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see MetadataResource
  */
-@RunWith(SpringRunner.class)
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class MetadataResourceIntTest {
 
@@ -127,7 +128,7 @@ public class MetadataResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final MetadataResource metadataResource = new MetadataResource(metadataService);
         this.restMetadataMockMvc = MockMvcBuilders.standaloneSetup(metadataResource)
@@ -286,7 +287,7 @@ public class MetadataResourceIntTest {
         metadataRepository.saveAndFlush(metadata);
 
         // Get all the metadataList
-        restMetadataMockMvc.perform(get("/api/metadata?sort=id,desc"))
+        restMetadataMockMvc.perform(get("/api/metadata?sort=id,desc&size=" + MAX_PAGE_SIZE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(metadata.getId().toString())))

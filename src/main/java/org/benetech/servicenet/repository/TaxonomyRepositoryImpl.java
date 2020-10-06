@@ -10,23 +10,19 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
-import org.benetech.servicenet.domain.OrganizationMatch;
+import org.benetech.servicenet.domain.Organization_;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.ServiceTaxonomy_;
+import org.benetech.servicenet.domain.Service_;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.domain.Taxonomy_;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 public class TaxonomyRepositoryImpl implements TaxonomyRepositoryCustom {
-    private static final String ID = "id";
-
-    private static final String SERVICES = "services";
-    private static final String TAXONOMIES = "taxonomies";
-    private static final String TAXONOMY = "taxonomy";
-    private static final String ACTIVE = "active";
-    private static final String ORGANIZATION = "organizationRecord";
 
     private final EntityManager em;
     private final CriteriaBuilder cb;
@@ -76,13 +72,12 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepositoryCustom {
 
     private <T> void addFilters(CriteriaQuery<T> query, Root<Taxonomy> root) {
         Subquery<UUID> subquery = query.subquery(UUID.class);
-        Root<OrganizationMatch> subRoot = subquery.from(OrganizationMatch.class);
-        Join<OrganizationMatch, Organization> organizationJoin = subRoot.join(ORGANIZATION, JoinType.LEFT);
-        Join<Organization, Service> serviceJoin = organizationJoin.join(SERVICES, JoinType.LEFT);
-        Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(TAXONOMIES, JoinType.LEFT);
-        subquery.select(taxonomiesJoin.get(TAXONOMY).get(ID)).where(organizationJoin.get(ACTIVE));
+        Root<Organization> subRoot = subquery.from(Organization.class);
+        Join<Organization, Service> serviceJoin = subRoot.join(Organization_.SERVICES, JoinType.LEFT);
+        Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(Service_.TAXONOMIES, JoinType.LEFT);
+        subquery.select(taxonomiesJoin.get(ServiceTaxonomy_.TAXONOMY).get(Taxonomy_.ID)).where(subRoot.get(Organization_.ACTIVE));
 
-        Predicate predicate = cb.in(root.get(ID)).value(subquery);
+        Predicate predicate = cb.in(root.get(Taxonomy_.ID)).value(subquery);
         query.where(predicate);
     }
 

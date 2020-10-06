@@ -66,7 +66,7 @@ public class SMCConnectTaxonomyUpdateJob extends BaseJob {
         try {
             response = HttpUtils.executeGET(URL, HttpUtils.getStandardHeaders());
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot connect with SMC API");
+            throw new IllegalStateException("Cannot connect with SMC API", e);
         }
 
         List<Taxonomy> taxonomies = getTaxonomiesFromJson(response).stream()

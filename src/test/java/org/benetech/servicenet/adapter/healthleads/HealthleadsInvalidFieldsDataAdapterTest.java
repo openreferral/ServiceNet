@@ -29,7 +29,6 @@ import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.manager.ImportManager;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.PhoneService;
@@ -62,9 +61,6 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
     private HealthleadsDataAdapter adapter;
 
     @Autowired
-    private ImportManager importManager;
-
-    @Autowired
     private OrganizationService organizationService;
 
     @Autowired
@@ -85,6 +81,7 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
     @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
+    @SuppressWarnings("CPD-START")
     @Before
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setUp() throws IOException {
@@ -110,6 +107,7 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
         adapter.importData(importData);
     }
 
+    @SuppressWarnings("CPD-END")
     @Test
     public void shouldImportOrganizationWithInvalidFields() {
         assertEquals(1, organizationService.findAll().size());

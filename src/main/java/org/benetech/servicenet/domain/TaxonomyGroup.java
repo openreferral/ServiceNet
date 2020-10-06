@@ -20,6 +20,8 @@ import java.util.Set;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class TaxonomyGroup extends AbstractEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "taxonomy_group_taxonomies",

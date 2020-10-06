@@ -66,6 +66,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Autowired
     private GeocodingResultUpdateJob geocodingResultUpdateJob;
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     @PostConstruct
     private void loadJobsAndTriggersOnStartupIfNeeded() {
 
@@ -119,7 +120,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
             scheduler.rescheduleJob(trigger.getKey(), getBeanTrigger(trigger.getJobKey().getName()));
         } catch (SchedulerException e) {
-            throw new IllegalStateException("Cannot reschedule job " + trigger.getJobKey().getName());
+            throw new IllegalStateException("Cannot reschedule job " + trigger.getJobKey().getName(), e);
         }
     }
 
@@ -129,7 +130,7 @@ public class SchedulerServiceImpl implements SchedulerService {
             scheduler.pauseTrigger(trigger.getKey());
             scheduler.pauseJob(trigger.getJobKey());
         } catch (SchedulerException e) {
-            throw new IllegalStateException("Cannot pause job " + trigger.getJobKey().getName());
+            throw new IllegalStateException("Cannot pause job " + trigger.getJobKey().getName(), e);
         }
     }
 
@@ -168,7 +169,7 @@ public class SchedulerServiceImpl implements SchedulerService {
                 (trigger != null) ? schedulerFactoryBean.getScheduler().getTriggerState(trigger.getKey()).name() : null,
                 (report != null) ? report.getId() : null);
         } catch (SchedulerException e) {
-            throw new IllegalStateException("Cannot get details of " + jobDetail.getKey());
+            throw new IllegalStateException("Cannot get details of " + jobDetail.getKey(), e);
         }
     }
 

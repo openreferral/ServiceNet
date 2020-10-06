@@ -16,7 +16,9 @@ import org.benetech.servicenet.service.dto.DailyUpdateDTO;
  * A DTO for the Organization entity.
  */
 @Data
-public class SimpleOrganizationDTO implements Serializable {
+public class ProviderOrganizationDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
 
@@ -36,10 +38,10 @@ public class SimpleOrganizationDTO implements Serializable {
     private ZonedDateTime updatedAt;
 
     @Getter
-    private List<SimpleLocationDTO> locations;
+    private List<ProviderLocationDTO> locations;
 
     @Getter
-    private List<SimpleServiceDTO> services;
+    private List<ProviderServiceDTO> services;
 
     @Getter
     private List<DailyUpdateDTO> dailyUpdates;
@@ -53,7 +55,7 @@ public class SimpleOrganizationDTO implements Serializable {
             return false;
         }
 
-        SimpleOrganizationDTO organizationDTO = (SimpleOrganizationDTO) o;
+        ProviderOrganizationDTO organizationDTO = (ProviderOrganizationDTO) o;
         if (organizationDTO.getId() == null || getId() == null) {
             return false;
         }

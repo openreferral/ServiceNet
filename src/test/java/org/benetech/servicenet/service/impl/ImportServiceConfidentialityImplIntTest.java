@@ -1,5 +1,10 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.benetech.servicenet.TestConstants.PROVIDER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.Set;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
@@ -30,9 +35,7 @@ import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.PhysicalAddressService;
 import org.benetech.servicenet.service.PostalAddressService;
 import org.benetech.servicenet.service.RegularScheduleService;
-import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.ServiceService;
-import org.benetech.servicenet.service.SharedImportService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,13 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.Set;
-
-import static org.benetech.servicenet.TestConstants.PROVIDER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class, MockedGeocodingConfiguration.class})
@@ -64,9 +60,6 @@ public class ImportServiceConfidentialityImplIntTest {
     private static final ImportData IMPORT_DATA = new ImportData(new DataImportReport(), PROVIDER, true);
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private LocationService locationService;
 
     @Autowired
@@ -80,12 +73,6 @@ public class ImportServiceConfidentialityImplIntTest {
 
     @Autowired
     private LocationImportService locationImportService;
-
-    @Autowired
-    private ServiceImportService serviceImportService;
-
-    @Autowired
-    private SharedImportService sharedImportService;
 
     @Autowired
     private PhysicalAddressService physicalAddressService;

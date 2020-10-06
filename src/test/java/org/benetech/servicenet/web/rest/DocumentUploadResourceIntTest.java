@@ -1,39 +1,5 @@
 package org.benetech.servicenet.web.rest;
 
-import java.util.UUID;
-import org.benetech.servicenet.MockedUserTestConfiguration;
-import org.benetech.servicenet.ServiceNetApp;
-import org.benetech.servicenet.TestConstants;
-import org.benetech.servicenet.domain.DocumentUpload;
-import org.benetech.servicenet.domain.UserProfile;
-import org.benetech.servicenet.repository.DocumentUploadRepository;
-import org.benetech.servicenet.security.AuthoritiesConstants;
-import org.benetech.servicenet.service.DocumentUploadService;
-import org.benetech.servicenet.service.dto.DocumentUploadDTO;
-import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
-import org.benetech.servicenet.errors.ExceptionTranslator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
@@ -46,12 +12,44 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
+import javax.persistence.EntityManager;
+import org.benetech.servicenet.MockedUserTestConfiguration;
+import org.benetech.servicenet.ServiceNetApp;
+import org.benetech.servicenet.TestConstants;
+import org.benetech.servicenet.domain.DocumentUpload;
+import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.errors.ExceptionTranslator;
+import org.benetech.servicenet.repository.DocumentUploadRepository;
+import org.benetech.servicenet.security.AuthoritiesConstants;
+import org.benetech.servicenet.service.dto.DocumentUploadDTO;
+import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Test class for the DocumentUploadResource REST controller.
  *
  * @see DocumentUploadResource
  */
-@RunWith(SpringRunner.class)
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class DocumentUploadResourceIntTest {
 
@@ -70,9 +68,6 @@ public class DocumentUploadResourceIntTest {
 
     @Autowired
     private DocumentUploadMapper documentUploadMapper;
-
-    @Autowired
-    private DocumentUploadService documentUploadService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -114,7 +109,7 @@ public class DocumentUploadResourceIntTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.restDocumentUploadMockMvc = MockMvcBuilders.standaloneSetup(documentUploadResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

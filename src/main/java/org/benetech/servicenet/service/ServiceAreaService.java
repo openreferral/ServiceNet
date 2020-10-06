@@ -1,10 +1,11 @@
 package org.benetech.servicenet.service;
 
-import org.benetech.servicenet.service.dto.ServiceAreaDTO;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.benetech.servicenet.service.dto.ServiceAreaDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing ServiceArea.
@@ -26,6 +27,13 @@ public interface ServiceAreaService {
      */
     List<ServiceAreaDTO> findAll();
 
+    /**
+     * Get all the serviceAreas.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<ServiceAreaDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" serviceArea.

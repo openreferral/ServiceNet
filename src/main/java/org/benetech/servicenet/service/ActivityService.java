@@ -7,8 +7,8 @@ import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordForMapDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
@@ -27,15 +27,20 @@ public interface ActivityService {
 
     List<ActivityRecordDTO> getPartnerActivitiesByOrganizationId(UUID orgId);
 
-    List<ProviderRecordDTO> getPartnerActivitiesForCurrentUser();
+    Page<ProviderRecordDTO> getPartnerActivitiesForCurrentUser(Pageable pageable);
 
     Suggestions getNameSuggestions(ActivityFilterDTO activityFilterDTO, UUID systemAccountId, String search);
 
     Page<ProviderRecordDTO> getAllPartnerActivities(ProviderFilterDTO providerFilterDTO, String search, Pageable pageable);
 
-    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap();
+    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
+        Pageable pageable, ProviderFilterDTO providerFilterDTO,
+        String search,
+        List<Double> boundaries);
 
-    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(Silo silo);
+    Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
+        Pageable pageable, ProviderFilterDTO providerFilterDTO,
+        String search, Silo silo, List<Double> boundaries);
 
     List<DeactivatedOrganizationDTO> getAllDeactivatedRecords();
 

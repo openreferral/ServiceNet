@@ -1,10 +1,18 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
+import org.benetech.servicenet.domain.MatchSimilarity;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
@@ -33,14 +41,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
@@ -184,5 +184,39 @@ public class OrganizationMatchServiceImplTest {
         organizationMatchService.createOrUpdateOrganizationMatches(org1);
 
         assertEquals(0, organizationMatchService.findAll().size());
+    }
+
+    @Test
+    @Transactional
+    public void shouldDeleteOrganizationMatchAndAllRelatedMatchSimilarities() {
+        Organization org1 = OrganizationMother.createDefaultAndPersist(em);
+        org1.setName(ORG_1);
+        org1.setActive(true);
+        Organization org2 = OrganizationMother.createSimiliarAndPersist(em);
+        org2.setName(ORG_2);
+        org2.setActive(true);
+        em.persist(org1);
+        em.persist(org2);
+
+        OrganizationMatch organizationMatch = new OrganizationMatch().organizationRecord(org1).partnerVersion(org2);
+        OrganizationMatch organizationMatchMirror = new OrganizationMatch().organizationRecord(org1).partnerVersion(org2);
+        em.persist(organizationMatch);
+        em.persist(organizationMatchMirror);
+
+        em.persist(new MatchSimilarity().similarity(BigDecimal.ONE).organizationMatch(organizationMatch));
+        em.persist(new MatchSimilarity().similarity(BigDecimal.ONE).organizationMatch(organizationMatchMirror));
+
+        em.flush();
+
+        em.refresh(organizationMatch);
+        em.refresh(organizationMatchMirror);
+
+        assertEquals(2, organizationMatchService.findAll().size());
+        assertEquals(2, matchSimilarityService.findAll().size());
+
+        organizationMatchService.deleteByOrganizationRecordOrPartnerVersionId(org1.getId());
+
+        assertEquals(0, organizationMatchService.findAll().size());
+        assertEquals(0, matchSimilarityService.findAll().size());
     }
 }

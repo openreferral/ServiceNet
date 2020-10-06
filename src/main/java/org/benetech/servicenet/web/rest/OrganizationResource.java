@@ -11,7 +11,7 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
-import org.benetech.servicenet.service.dto.provider.SimpleOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public class OrganizationResource {
     @PostMapping("/organizations/user-owned")
     @Timed
     public ResponseEntity<OrganizationDTO> createOrganizationOwnedByUser(
-        @Valid @RequestBody SimpleOrganizationDTO organizationDTO) throws URISyntaxException {
+        @Valid @RequestBody ProviderOrganizationDTO organizationDTO) throws URISyntaxException {
         log.debug("REST request to save Organization : {}", organizationDTO);
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
@@ -140,7 +140,7 @@ public class OrganizationResource {
     @PutMapping("/organizations/user-owned")
     @Timed
     public ResponseEntity<OrganizationDTO> updateOrganizationOwnedByUser(
-        @Valid @RequestBody SimpleOrganizationDTO organizationDTO) throws URISyntaxException {
+        @Valid @RequestBody ProviderOrganizationDTO organizationDTO) throws URISyntaxException {
         log.debug("REST request to update Organization : {}", organizationDTO);
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -191,6 +191,25 @@ public class OrganizationResource {
     }
 
     /**
+     * GET  /organizations/search : search organizations.
+     *
+     * @param name name of the organization
+     * @param systemAccount the system account
+     * @return the ResponseEntity with status 200 (OK) and the list of organizations
+     */
+    @GetMapping("/organizations/search")
+    @Timed
+    public ResponseEntity<List<OrganizationDTO>> searchOrganizations(
+        @RequestParam(required = false) String name, @RequestParam(required = false) String systemAccount,
+        Pageable pageable) {
+        Page<OrganizationDTO> page = organizationService.findAllByNameLikeAndAccountNameWithUserProfile(
+            name, systemAccount, pageable
+        );
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations/search");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
      * GET  /organizations/:id : get the "id" organization.
      *
      * @param id the id of the organizationDTO to retrieve
@@ -213,9 +232,9 @@ public class OrganizationResource {
      */
     @GetMapping("/provider-organization/{id}")
     @Timed
-    public ResponseEntity<SimpleOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id) {
+    public ResponseEntity<ProviderOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id) {
         log.debug("REST request to get Organization : {}", id);
-        Optional<SimpleOrganizationDTO> organizationDTO = organizationService.findOneDTOForProvider(id);
+        Optional<ProviderOrganizationDTO> organizationDTO = organizationService.findOneDTOForProvider(id);
         return ResponseUtil.wrapOrNotFound(organizationDTO);
     }
 

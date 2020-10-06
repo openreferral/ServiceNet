@@ -3,7 +3,13 @@ package org.benetech.servicenet.service;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Organization;
@@ -15,7 +21,6 @@ import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.errors.HystrixBadRequestAlertException;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.MetadataRepository;
-import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
@@ -35,13 +40,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service class for managing users.
@@ -74,9 +72,6 @@ public class UserService {
 
     @Autowired
     private MetadataRepository metadataRepository;
-
-    @Autowired
-    private OrganizationRepository organizationRepository;
 
     @Autowired
     private SiloRepository siloRepository;
@@ -148,6 +143,12 @@ public class UserService {
                     meta.setUserProfile(system.get());
                     metadataRepository.save(meta);
                 });
+                user.getOrganizations().forEach(org -> org.getUserProfiles().remove(user));
+                user.getOrganizations().clear();
+                user.getShelters().forEach(shelter -> shelter.getUserProfiles().remove(user));
+                user.getShelters().clear();
+                user.getUserGroups().forEach(userGroup -> userGroup.getUserProfiles().remove(user));
+                user.getUserGroups().clear();
                 userProfileRepository.delete(user);
                 this.clearUserCaches(user);
                 log.debug("Deleted User: {}", user);
@@ -364,16 +365,6 @@ public class UserService {
         }
     }
 
-    private Set<Organization> organizationsFromUUIDs(List<UUID> uuids) {
-        if (uuids != null) {
-            return uuids.stream()
-                .map(uuid -> organizationRepository.getOne(uuid))
-                .collect(Collectors.toSet());
-        } else {
-            return Collections.emptySet();
-        }
-    }
-
     private UserDTO createOrUpdateUserProfile(UserDTO authUser, UserDTO userDTO) {
         UserProfile userProfile = getOrCreateUserProfile(authUser.getId(), userDTO.getLogin());
         userProfile.setLogin(userDTO.getLogin().toLowerCase(Locale.ROOT));
@@ -381,9 +372,22 @@ public class UserService {
         userProfile.setOrganizationUrl(userDTO.getOrganizationUrl());
         userProfile.setPhoneNumber(userDTO.getPhoneNumber());
         userProfile.setSystemAccount(getSystemAccount(userDTO));
-        userProfile.setShelters(sheltersFromUUIDs(userDTO.getShelters()));
+
+        Set<Shelter> shelters = sheltersFromUUIDs(userDTO.getShelters());
+        Set<Shelter> removedShelters = userProfile.getShelters();
+        removedShelters.removeIf(shelters::contains);
+        userProfile.setShelters(shelters);
+        shelters.forEach(shelter -> shelter.getUserProfiles().add(userProfile));
+        removedShelters.forEach(shelter -> shelter.getUserProfiles().remove(userProfile));
+
+        Set<UserGroup> userGroups = userGroupsFromUUIDs(userDTO.getUserGroups());
+        Set<UserGroup> removedUserGroups = userProfile.getUserGroups();
+        removedUserGroups.removeIf(userGroups::contains);
+        userProfile.setUserGroups(userGroups);
+        userGroups.forEach(userGroup -> userGroup.getUserProfiles().add(userProfile));
+        removedUserGroups.forEach(userGroup -> userGroup.getUserProfiles().remove(userProfile));
+
         userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
-        userProfile.setUserGroups(userGroupsFromUUIDs(userDTO.getUserGroups()));
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);

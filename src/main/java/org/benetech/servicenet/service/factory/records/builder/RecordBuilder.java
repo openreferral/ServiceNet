@@ -26,13 +26,15 @@ import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 import org.benetech.servicenet.service.dto.FieldExclusionDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
+import org.benetech.servicenet.service.dto.ServiceRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.dto.OwnerDTO;
-import org.benetech.servicenet.service.dto.ProviderRecordDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
-import org.benetech.servicenet.service.dto.ServiceRecordDTO;
+import org.benetech.servicenet.service.dto.provider.SimpleServiceDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
 import org.benetech.servicenet.service.mapper.ContactMapper;
 import org.benetech.servicenet.service.mapper.DailyUpdateMapper;
@@ -114,8 +116,8 @@ public class RecordBuilder {
         return new ProviderRecordDTO(
             mapOrganization(organization),
             lastUpdated,
-            mapLocations(filterLocations(organization.getLocations(), locationExclusions)),
-            mapServices(organization.getServices()),
+            mapProviderLocations(filterLocations(organization.getLocations(), locationExclusions)),
+            mapProviderServices(organization.getServices()),
             user,
             mapDailyUpdates(organization.getDailyUpdates())
         );
@@ -128,12 +130,51 @@ public class RecordBuilder {
         return new ProviderRecordDTO(
             mapOrganization(buildObject(organization, Organization.class, baseExclusions)),
             lastUpdated,
-            mapLocations(buildCollection(filterLocations(organization.getLocations(), locationExclusions),
+            mapProviderLocations(buildCollection(filterLocations(organization.getLocations(), locationExclusions),
                 Location.class, baseExclusions)),
-            mapServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
+            mapProviderServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
             user,
             mapDailyUpdates(organization.getDailyUpdates())
         );
+    }
+
+    public ProviderRecordDTO filterProviderRecord(ProviderRecordDTO providerRecord,
+        Set<FieldExclusion> baseExclusions, Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
+        UserDTO user = userService.getUser(providerRecord.getUserLogin());
+
+        providerRecord.setOwner(user);
+        providerRecord.setLocations(filterLocationRecords(providerRecord.getLocations(), locationExclusions));
+
+        return buildObject(providerRecord, ProviderRecordDTO.class, Organization.class, baseExclusions);
+    }
+
+    public ProviderRecordDTO filterProviderRecord(ProviderRecordDTO providerRecord,
+        Set<LocationExclusion> locationExclusions) throws IllegalAccessException {
+        UserDTO user = userService.getUser(providerRecord.getUserLogin());
+
+        providerRecord.setOwner(user);
+        providerRecord.setLocations(filterLocationRecords(providerRecord.getLocations(), locationExclusions));
+
+        return providerRecord;
+    }
+
+    private Set<SimpleLocationDTO> filterLocationRecords(Set<SimpleLocationDTO> locations, Set<LocationExclusion> locationExclusions) {
+        if (locationExclusions == null || locationExclusions.isEmpty()) {
+            return locations;
+        }
+
+        return locations.stream()
+            .filter(location -> locationExclusions.stream().noneMatch(exclusion -> isExcluded(location, exclusion)))
+            .collect(Collectors.toSet());
+    }
+
+    private boolean isExcluded(SimpleLocationDTO location, LocationExclusion exclusion) {
+        return Optional.ofNullable(location.getPhysicalAddress())
+            .map(address -> (StringUtils.isNotBlank(exclusion.getRegion())
+                && StringUtils.containsIgnoreCase(address.getRegion(), exclusion.getRegion()))
+                || (StringUtils.isNotBlank(exclusion.getCity())
+                && StringUtils.containsIgnoreCase(address.getCity(), exclusion.getCity())))
+            .orElse(false);
     }
 
     private Set<Location> filterLocations(Set<Location> locations, Set<LocationExclusion> locationExclusions) {
@@ -175,6 +216,18 @@ public class RecordBuilder {
     private Set<ServiceRecordDTO> mapServices(Set<Service> services) {
         return services.stream()
             .map(serviceMapper::toRecord)
+            .collect(Collectors.toSet());
+    }
+
+    private Set<SimpleLocationDTO> mapProviderLocations(Set<Location> locations) {
+        return locations.stream()
+            .map(locationMapper::toSimpleDto)
+            .collect(Collectors.toSet());
+    }
+
+    private Set<SimpleServiceDTO> mapProviderServices(Set<Service> services) {
+        return services.stream()
+            .map(serviceMapper::toSimpleDto)
             .collect(Collectors.toSet());
     }
 

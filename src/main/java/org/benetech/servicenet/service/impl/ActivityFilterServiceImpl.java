@@ -12,6 +12,7 @@ import org.benetech.servicenet.domain.ActivityFilter;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.repository.ActivityFilterCityRepository;
 import org.benetech.servicenet.repository.ActivityFilterRepository;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
@@ -45,14 +46,18 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     private final UserService userService;
 
+    private final ActivityFilterCityRepository activityFilterCityRepository;
+
     public ActivityFilterServiceImpl(GeocodingResultRepository geocodingResultRepository, UserService userService,
         TaxonomyRepository taxonomyRepository, ActivityFilterRepository activityFilterRepository,
-        ActivityFilterMapper activityFilterMapper) {
+        ActivityFilterMapper activityFilterMapper,
+        ActivityFilterCityRepository activityFilterCityRepository) {
         this.geocodingResultRepository = geocodingResultRepository;
         this.taxonomyRepository = taxonomyRepository;
         this.activityFilterRepository = activityFilterRepository;
         this.activityFilterMapper = activityFilterMapper;
         this.userService = userService;
+        this.activityFilterCityRepository = activityFilterCityRepository;
     }
 
     @Override
@@ -92,12 +97,12 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     @Override
     public Set<String> getCitiesForServiceProviders(UserProfile currentUserProfile) {
-        return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders(currentUserProfile);
+        return this.activityFilterCityRepository.getCities(currentUserProfile, null);
     }
 
     @Override
     public Set<String> getCitiesForServiceProviders(Silo silo) {
-        return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders(silo);
+        return this.activityFilterCityRepository.getCities(null, silo);
     }
 
     @Override

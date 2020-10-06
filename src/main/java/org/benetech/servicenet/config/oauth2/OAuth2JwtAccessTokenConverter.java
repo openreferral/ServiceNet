@@ -75,7 +75,7 @@ public class OAuth2JwtAccessTokenConverter extends JwtAccessTokenConverter {
                 log.debug("Public key retrieved from OAuth2 server to create SignatureVerifier");
                 return true;
             }
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             log.error("could not get public key from OAuth2 server to create SignatureVerifier", ex);
         }
         return false;

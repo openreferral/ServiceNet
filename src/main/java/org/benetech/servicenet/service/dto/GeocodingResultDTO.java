@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -8,7 +10,11 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class GeocodingResultDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private UUID id;
 

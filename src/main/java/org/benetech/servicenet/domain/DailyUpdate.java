@@ -3,9 +3,13 @@ package org.benetech.servicenet.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -18,8 +22,13 @@ import java.time.ZonedDateTime;
  */
 @Entity
 @Table(name = "daily_update")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DailyUpdate extends AbstractEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Lob
     @Type(type = "org.hibernate.type.TextType")
@@ -32,7 +41,7 @@ public class DailyUpdate extends AbstractEntity implements Serializable {
     @Column(name = "created_at")
     private ZonedDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("dailyUpdates")
     private Organization organization;
 

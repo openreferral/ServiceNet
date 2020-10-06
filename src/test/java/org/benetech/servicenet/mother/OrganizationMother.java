@@ -1,12 +1,12 @@
 package org.benetech.servicenet.mother;
 
+import java.util.HashSet;
 import org.benetech.servicenet.domain.Organization;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class OrganizationMother {
 
     public static final String DEFAULT_NAME = "AAAAAAAAAA";
@@ -53,6 +53,8 @@ public class OrganizationMother {
             .legalStatus(DEFAULT_LEGAL_STATUS)
             .active(active);
         org.setAccount(SystemAccountMother.createDefault());
+        org.setDailyUpdates(new HashSet<>());
+        org.setUserProfiles(new HashSet<>());
         return org;
     }
 
@@ -104,4 +106,6 @@ public class OrganizationMother {
         return org;
     }
 
+    private OrganizationMother() {
+    }
 }

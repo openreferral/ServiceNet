@@ -2,7 +2,6 @@ package org.benetech.servicenet;
 
 import java.util.UUID;
 
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 public class TestConstants {
 
     public static final UUID UUID_1 = UUID.fromString("C56A4180-65AA-42EC-A945-5FD21DEC0538");
@@ -25,4 +24,9 @@ public class TestConstants {
     public static final Integer OTHER_INT = 2;
     public static final Integer EXISTING_INT = 3;
     public static final String SYSTEM = "system";
+
+    public static final Integer MAX_PAGE_SIZE = 2000;
+
+    private TestConstants() {
+    }
 }

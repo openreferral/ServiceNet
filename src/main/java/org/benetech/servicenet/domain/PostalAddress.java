@@ -1,5 +1,8 @@
 package org.benetech.servicenet.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -16,8 +19,12 @@ import java.util.Objects;
 /**
  * A PostalAddress.
  */
+@SuppressWarnings("CPD-START")
 @Entity
 @Table(name = "postal_address")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PostalAddress extends AbstractEntity implements Serializable, DeepComparable {
 

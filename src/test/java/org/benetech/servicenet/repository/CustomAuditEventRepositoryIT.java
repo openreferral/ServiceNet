@@ -1,5 +1,14 @@
 package org.benetech.servicenet.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.repository.CustomAuditEventRepository.EVENT_DATA_COLUMN_MAX_LENGTH;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpSession;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.config.audit.AuditEventConverter;
@@ -13,16 +22,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpSession;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.benetech.servicenet.repository.CustomAuditEventRepository.EVENT_DATA_COLUMN_MAX_LENGTH;
 
 /**
  * Integration tests for {@link CustomAuditEventRepository}.
@@ -46,7 +45,7 @@ public class CustomAuditEventRepositoryIT {
     private static final int TEN = 10;
 
     @BeforeEach
-    public void setup() {
+    public void setUp() {
         customAuditEventRepository = new CustomAuditEventRepository(persistenceAuditEventRepository, auditEventConverter);
         persistenceAuditEventRepository.deleteAll();
         Instant oneHourAgo = Instant.now().minusSeconds(SECONDS_1);

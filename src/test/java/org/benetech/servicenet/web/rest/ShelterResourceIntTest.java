@@ -1,18 +1,34 @@
 package org.benetech.servicenet.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.EntityManager;
 import org.benetech.servicenet.ServiceNetApp;
-
 import org.benetech.servicenet.domain.Shelter;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.service.ShelterService;
 import org.benetech.servicenet.service.UserService;
-import org.benetech.servicenet.errors.ExceptionTranslator;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,37 +43,18 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
-
-import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the ShelterResource REST controller.
  *
  * @see ShelterResource
  */
-@RunWith(SpringRunner.class)
+@RunWith(ZeroCodeSpringJUnit4Runner.class)
 @SpringBootTest(classes = ServiceNetApp.class)
 public class ShelterResourceIntTest {
 
@@ -92,7 +89,6 @@ public class ShelterResourceIntTest {
     private static final String UPDATED_HOLIDAY_SCHEDULE = "BBBBBBBBBB";
 
     private static final String DEFAULT_EMAIL = "AAAAAAAAAA";
-    private static final String UPDATED_EMAIL = "BBBBBBBBBB";
 
     private static final String DEFAULT_ADDRESS_1 = "AAAAAAAAAA";
     private static final String UPDATED_ADDRESS_1 = "BBBBBBBBBB";
@@ -158,7 +154,7 @@ public class ShelterResourceIntTest {
     private Shelter shelter;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ShelterResource shelterResource = new ShelterResource(shelterService, userService);
         this.restShelterMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
@@ -196,6 +192,7 @@ public class ShelterResourceIntTest {
             .busService(DEFAULT_BUS_SERVICE)
             .transportation(DEFAULT_TRANSPORTATION)
             .disabilityAccess(DEFAULT_DISABILITY_ACCESS);
+        shelter.setUserProfiles(new HashSet<>());
         return shelter;
     }
 
@@ -294,7 +291,7 @@ public class ShelterResourceIntTest {
             .andExpect(jsonPath("$.[*].disabilityAccess").value(hasItem(DEFAULT_DISABILITY_ACCESS.toString())));
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked", "CPD-START"})
     public void getAllSheltersWithEagerRelationshipsIsEnabled() throws Exception {
         ShelterResource shelterResource = new ShelterResource(shelterServiceMock, userServiceMock);
         when(shelterRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
@@ -314,8 +311,9 @@ public class ShelterResourceIntTest {
     @SuppressWarnings({"unchecked"})
     public void getAllSheltersWithEagerRelationshipsIsNotEnabled() throws Exception {
         ShelterResource shelterResource = new ShelterResource(shelterServiceMock, userServiceMock);
-            when(shelterRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-            MockMvc restSTMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
+        when(shelterRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        MockMvc restSTMockMvc = MockMvcBuilders.standaloneSetup(shelterResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
@@ -324,9 +322,10 @@ public class ShelterResourceIntTest {
         restSTMockMvc.perform(get("/api/shelters?eagerload=true"))
         .andExpect(status().isOk());
 
-            verify(shelterRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+        verify(shelterRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
+    @SuppressWarnings("CPD-END")
     @Test
     @Transactional
     public void getShelter() throws Exception {
