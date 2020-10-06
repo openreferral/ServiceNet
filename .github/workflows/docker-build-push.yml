@@ -22,6 +22,15 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Cache Maven dependencies
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-maven-dep
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: Build with Google Jib
       run: ./mvnw -Pprod package jib:dockerBuild --no-transfer-progress
     - name: Docker tag appropriately
