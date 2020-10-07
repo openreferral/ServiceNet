@@ -40,7 +40,7 @@ public class BeneficiaryResource {
 
     private final Logger log = LoggerFactory.getLogger(BeneficiaryResource.class);
 
-    private static final String ENTITY_NAME = "serviceNetBeneficiary";
+    private static final String ENTITY_NAME = "beneficiary";
 
     private final BeneficiaryService beneficiaryService;
 

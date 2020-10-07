@@ -84,6 +84,15 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Override
     public void delete(UUID id) {
         log.debug("Request to delete Beneficiary : {}", id);
+        Beneficiary beneficiary = beneficiaryRepository.getOne(id);
+        if (beneficiary.getReferrals() != null) {
+            beneficiary.getReferrals().forEach(
+                referral -> {
+                    referral.setBeneficiary(null);
+                }
+
+            );
+        }
         beneficiaryRepository.deleteById(id);
     }
 }

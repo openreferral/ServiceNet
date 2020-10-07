@@ -40,7 +40,7 @@ public class ReferralResource {
 
     private final Logger log = LoggerFactory.getLogger(ReferralResource.class);
 
-    private static final String ENTITY_NAME = "serviceNetReferral";
+    private static final String ENTITY_NAME = "referral";
 
     private final ReferralService referralService;
 
