@@ -77,6 +77,19 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     /**
+     * Get one beneficiary by id.
+     *
+     * @param id the id of the entity.
+     * @return the entity.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Beneficiary> getOne(UUID id) {
+        log.debug("Request to get Beneficiary : {}", id);
+        return beneficiaryRepository.findById(id);
+    }
+
+    /**
      * Delete the beneficiary by id.
      *
      * @param id the id of the entity.

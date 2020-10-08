@@ -1,6 +1,9 @@
 package org.benetech.servicenet.service;
 
+import java.util.List;
 import java.util.UUID;
+import org.benetech.servicenet.domain.Beneficiary;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 
 import org.springframework.data.domain.Page;
@@ -45,4 +48,6 @@ public interface ReferralService {
     void delete(UUID id);
 
     void checkIn(UUID beneficiaryId, UUID cboId);
+
+    void refer(Beneficiary beneficiary, Organization cbo, List<UUID> organizationIds);
 }
