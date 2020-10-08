@@ -43,4 +43,6 @@ public interface ReferralService {
      * @param id the id of the entity.
      */
     void delete(UUID id);
+
+    void checkIn(UUID beneficiaryId, UUID cboId);
 }

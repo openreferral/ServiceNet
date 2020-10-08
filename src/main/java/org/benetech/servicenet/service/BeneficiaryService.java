@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service;
 
 import java.util.UUID;
+import org.benetech.servicenet.domain.Beneficiary;
 import org.benetech.servicenet.service.dto.BeneficiaryDTO;
 
 import org.springframework.data.domain.Page;
@@ -43,4 +44,6 @@ public interface BeneficiaryService {
      * @param id the id of the entity.
      */
     void delete(UUID id);
+
+    Beneficiary findOrCreateByPhoneNumber(String phoneNumber);
 }
