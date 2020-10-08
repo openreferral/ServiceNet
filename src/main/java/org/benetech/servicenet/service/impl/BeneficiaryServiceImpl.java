@@ -95,4 +95,16 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         }
         beneficiaryRepository.deleteById(id);
     }
+
+    @Override
+    public Beneficiary findOrCreateByPhoneNumber(String phoneNumber) {
+        Optional<Beneficiary> beneficiary = beneficiaryRepository.findByPhoneNumber(phoneNumber);
+        if (beneficiary.isEmpty()) {
+            Beneficiary newBeneficiary = new Beneficiary();
+            newBeneficiary.setPhoneNumber(phoneNumber);
+            newBeneficiary = beneficiaryRepository.save(newBeneficiary);
+            return newBeneficiary;
+        }
+        return beneficiary.get();
+    }
 }

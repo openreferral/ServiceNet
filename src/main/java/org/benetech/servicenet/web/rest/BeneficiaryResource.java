@@ -1,13 +1,18 @@
 package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
+import org.benetech.servicenet.domain.Beneficiary;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.BeneficiaryService;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.service.dto.BeneficiaryDTO;
 
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.service.dto.CheckInDTO;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +46,16 @@ public class BeneficiaryResource {
     private final Logger log = LoggerFactory.getLogger(BeneficiaryResource.class);
 
     private static final String ENTITY_NAME = "beneficiary";
+    private static final String ORG_ENTITY_NAME = "organization";
 
     private final BeneficiaryService beneficiaryService;
+    private final ReferralService referralService;
+    private final OrganizationService organizationService;
 
-    public BeneficiaryResource(BeneficiaryService beneficiaryService) {
+    public BeneficiaryResource(BeneficiaryService beneficiaryService, ReferralService referralService, OrganizationService organizationService) {
         this.beneficiaryService = beneficiaryService;
+        this.referralService = referralService;
+        this.organizationService = organizationService;
     }
 
     /**
@@ -129,5 +139,35 @@ public class BeneficiaryResource {
         log.debug("REST request to delete Beneficiary : {}", id);
         beneficiaryService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * {@code POST  /beneficiaries/check-in} : Get or Create a beneficiary and then make a check in.
+     *
+     * @param checkInDTO the checkInDTO to find or create beneficiary and make check in.
+     * @return the {@link ResponseEntity} with status {@code 200 (Ok)}, or with status {@code 400 (Bad Request)} if the beneficiary Id or Organization Id not found
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/beneficiaries/check-in")
+    public ResponseEntity<Void> checkIn(@RequestBody CheckInDTO checkInDTO) throws URISyntaxException {
+        log.debug("REST request to Check In Beneficiary : {}", checkInDTO);
+        UUID beneficiaryId = null;
+        Optional<Organization> cbo = organizationService.findOne(checkInDTO.getCboId());
+        if (!checkInDTO.getPhoneNumber().isBlank()) {
+            Beneficiary beneficiary = beneficiaryService.findOrCreateByPhoneNumber(checkInDTO.getPhoneNumber());
+            beneficiaryId = beneficiary.getId();
+        } else if (checkInDTO.getBeneficiaryId() != null) {
+            Optional<BeneficiaryDTO> beneficiaryOpt = beneficiaryService.findOne(checkInDTO.getBeneficiaryId());
+            if (beneficiaryOpt.isEmpty()) {
+                throw new BadRequestAlertException("Can not find beneficiary with provided ID", ENTITY_NAME, "idnotfound");
+            }
+            beneficiaryId = beneficiaryOpt.get().getId();
+        }
+        if (cbo.isEmpty()) {
+            throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
+        }
+
+        referralService.checkIn(beneficiaryId, cbo.get().getId());
+        return ResponseEntity.ok().build();
     }
 }

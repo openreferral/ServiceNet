@@ -1,6 +1,12 @@
 package org.benetech.servicenet.service.impl;
 
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
+import org.benetech.servicenet.domain.Beneficiary;
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.repository.BeneficiaryRepository;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.domain.Referral;
 import org.benetech.servicenet.repository.ReferralRepository;
@@ -29,9 +35,19 @@ public class ReferralServiceImpl implements ReferralService {
 
     private final ReferralMapper referralMapper;
 
-    public ReferralServiceImpl(ReferralRepository referralRepository, ReferralMapper referralMapper) {
+    private final BeneficiaryRepository beneficiaryRepository;
+
+    private final OrganizationRepository organizationRepository;
+
+    public ReferralServiceImpl(ReferralRepository referralRepository,
+        ReferralMapper referralMapper,
+        BeneficiaryRepository beneficiaryRepository,
+        OrganizationRepository organizationRepository
+    ) {
         this.referralRepository = referralRepository;
         this.referralMapper = referralMapper;
+        this.beneficiaryRepository = beneficiaryRepository;
+        this.organizationRepository = organizationRepository;
     }
 
     /**
@@ -85,5 +101,30 @@ public class ReferralServiceImpl implements ReferralService {
     public void delete(UUID id) {
         log.debug("Request to delete Referral : {}", id);
         referralRepository.deleteById(id);
+    }
+
+    @Override
+    public void checkIn(UUID beneficiaryId, UUID cboId) {
+        List<Referral> referrals = referralRepository
+            .findAllByBeneficiaryIdAndReferredTo(beneficiaryId, cboId);
+        ZonedDateTime now = ZonedDateTime.now();
+        if (referrals.isEmpty()) {
+            Beneficiary beneficiary = beneficiaryRepository.getOne(beneficiaryId);
+            Organization cbo = organizationRepository.getOne(cboId);
+
+            Referral referral = new Referral();
+            referral.setBeneficiary(beneficiary);
+            referral.setFrom(cbo);
+            referral.setTo(cbo);
+            referral.sentAt(now);
+            referral.setFulfilledAt(now);
+
+            referralRepository.save(referral);
+        } else {
+            for (Referral referral : referrals) {
+                referral.fulfilledAt(now);
+                referralRepository.save(referral);
+            }
+        }
     }
 }
