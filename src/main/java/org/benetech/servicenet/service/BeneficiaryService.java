@@ -39,6 +39,14 @@ public interface BeneficiaryService {
     Optional<BeneficiaryDTO> findOne(UUID id);
 
     /**
+     * Get the "id" beneficiary.
+     *
+     * @param id the id of the entity.
+     * @return the entity.
+     */
+    Optional<Beneficiary> getOne(UUID id);
+
+    /**
      * Delete the "id" beneficiary.
      *
      * @param id the id of the entity.

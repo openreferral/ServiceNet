@@ -1,6 +1,8 @@
 package org.benetech.servicenet.web.rest;
 
 import java.util.UUID;
+import javax.websocket.server.PathParam;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Beneficiary;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.security.AuthoritiesConstants;
@@ -168,6 +170,36 @@ public class BeneficiaryResource {
         }
 
         referralService.checkIn(beneficiaryId, cbo.get().getId());
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * {@code POST  /beneficiaries/refer} : Get or Create a beneficiary and refer him to provided organizations.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (Ok)}, or with status {@code 400 (Bad Request)} if the beneficiary Id or Organization Id not found
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/beneficiaries/refer")
+    public ResponseEntity<Void> refer(@RequestBody List<UUID> organizationIds, @PathParam("referringOrganizationId") String referringOrganizationId,
+        @PathParam("beneficiaryId") String beneficiaryId, @PathParam("phoneNumber") String phoneNumber) throws URISyntaxException {
+        log.debug("REST request to Refer Beneficiary {} from {} to: {}",
+            beneficiaryId, referringOrganizationId, organizationIds);
+        Beneficiary beneficiary = null;
+        Optional<Organization> cbo = organizationService.findOne(UUID.fromString(referringOrganizationId));
+        if (StringUtils.isNotBlank(phoneNumber)) {
+            beneficiary = beneficiaryService.findOrCreateByPhoneNumber(phoneNumber);
+        } else if (StringUtils.isNotBlank(beneficiaryId)) {
+            Optional<Beneficiary> beneficiaryOpt = beneficiaryService.getOne(UUID.fromString(beneficiaryId));
+            if (beneficiaryOpt.isEmpty()) {
+                throw new BadRequestAlertException("Can not find beneficiary with provided ID", ENTITY_NAME, "idnotfound");
+            }
+            beneficiary = beneficiaryOpt.get();
+        }
+        if (cbo.isEmpty()) {
+            throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
+        }
+
+        referralService.refer(beneficiary, cbo.get(), organizationIds);
         return ResponseEntity.ok().build();
     }
 }

@@ -127,4 +127,19 @@ public class ReferralServiceImpl implements ReferralService {
             }
         }
     }
+
+    @Override
+    public void refer(Beneficiary beneficiary, Organization cbo, List<UUID> organizationIds) {
+        ZonedDateTime now = ZonedDateTime.now();
+        for (UUID orgId : organizationIds) {
+            Organization organization = organizationRepository.getOne(orgId);
+            Referral referral = new Referral();
+            referral.setBeneficiary(beneficiary);
+            referral.setFrom(cbo);
+            referral.setTo(organization);
+            referral.sentAt(now);
+
+            referralRepository.save(referral);
+        }
+    }
 }
