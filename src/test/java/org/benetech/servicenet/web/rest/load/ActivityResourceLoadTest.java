@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class ActivityResourceLoadTest {
     @Test
     @DisplayName("Test parallel load for ActivityResource")
-    @LoadWith("config/load_config_5_users.properties")
+    @LoadWith("config/activity_load_test_config.properties")
     @TestMappings({
         @TestMapping(testClass = ActivityResourceIntTest.class, testMethod = "getAPageOfUsersActivityRecords")
     })
