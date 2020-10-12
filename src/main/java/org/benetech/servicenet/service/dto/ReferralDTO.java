@@ -30,6 +30,16 @@ public class ReferralDTO implements Serializable {
 
     private UUID beneficiaryId;
 
+    private String beneficiaryPhoneNumber;
+
+    public String getBeneficiaryPhoneNumber() {
+        return beneficiaryPhoneNumber;
+    }
+
+    public void setBeneficiaryPhoneNumber(String beneficiaryPhoneNumber) {
+        this.beneficiaryPhoneNumber = beneficiaryPhoneNumber;
+    }
+
     public UUID getId() {
         return id;
     }

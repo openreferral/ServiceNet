@@ -2,14 +2,17 @@ package org.benetech.servicenet.service.impl;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beneficiary;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.BeneficiaryRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.domain.Referral;
 import org.benetech.servicenet.repository.ReferralRepository;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 import org.benetech.servicenet.service.mapper.ReferralMapper;
 import org.slf4j.Logger;
@@ -39,15 +42,19 @@ public class ReferralServiceImpl implements ReferralService {
 
     private final OrganizationRepository organizationRepository;
 
+    private final UserService userService;
+
     public ReferralServiceImpl(ReferralRepository referralRepository,
         ReferralMapper referralMapper,
         BeneficiaryRepository beneficiaryRepository,
-        OrganizationRepository organizationRepository
+        OrganizationRepository organizationRepository,
+        UserService userService
     ) {
         this.referralRepository = referralRepository;
         this.referralMapper = referralMapper;
         this.beneficiaryRepository = beneficiaryRepository;
         this.organizationRepository = organizationRepository;
+        this.userService = userService;
     }
 
     /**
@@ -141,5 +148,15 @@ public class ReferralServiceImpl implements ReferralService {
 
             referralRepository.save(referral);
         }
+    }
+
+    @Override
+    public Page<ReferralDTO> findCurrentUsersReferrals(ZonedDateTime since, String status, Pageable pageable) {
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        return referralRepository.findByUserProfileSince(currentUser,
+            since,
+            Objects.equals(status, Referral.SENT),
+            Objects.equals(status, Referral.FULFILLED), pageable)
+            .map(referralMapper::toDto);
     }
 }

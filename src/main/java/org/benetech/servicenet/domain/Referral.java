@@ -20,6 +20,8 @@ import java.time.ZonedDateTime;
 public class Referral extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String FULFILLED = "fulfilled";
+    public static final String SENT = "sent";
 
     @Column(name = "shortcode")
     private String shortcode;

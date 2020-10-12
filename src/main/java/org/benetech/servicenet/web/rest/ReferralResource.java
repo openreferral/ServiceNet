@@ -1,6 +1,8 @@
 package org.benetech.servicenet.web.rest;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
+import javax.websocket.server.PathParam;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.errors.BadRequestAlertException;
@@ -129,5 +131,20 @@ public class ReferralResource {
         log.debug("REST request to delete Referral : {}", id);
         referralService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * {@code GET  /referrals/search} : search the referrals.
+     *
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of referrals in body.
+     */
+    @GetMapping("/referrals/search")
+    public ResponseEntity<List<ReferralDTO>> searchReferrals(Pageable pageable,
+        @PathParam("since") ZonedDateTime since, @PathParam("status") String status) {
+        log.debug("REST request to get a page of Referrals");
+        Page<ReferralDTO> page = referralService.findCurrentUsersReferrals(since, status, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 }
