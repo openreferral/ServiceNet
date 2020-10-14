@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beneficiary;
@@ -50,4 +51,12 @@ public interface ReferralService {
     void checkIn(UUID beneficiaryId, UUID cboId);
 
     void refer(Beneficiary beneficiary, Organization cbo, List<UUID> organizationIds);
+
+    /**
+     * Search for curent user's referrals.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<ReferralDTO> findCurrentUsersReferrals(ZonedDateTime since, String status, Pageable pageable);
 }
