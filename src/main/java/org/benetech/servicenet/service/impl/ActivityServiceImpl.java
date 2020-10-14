@@ -30,6 +30,7 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
@@ -166,6 +167,21 @@ public class ActivityServiceImpl implements ActivityService {
                 null, new ProviderFilterDTO(), null, pageable);
         return filterProviderRecords(providerRecords);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationOptionDTO> getOrganizationOptionsForCurrentUser() {
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        Set<UserGroup> userGroups = userProfile.getUserGroups();
+        List<UserProfile> userProfiles;
+        if (userGroups == null || userGroups.isEmpty()) {
+            userProfiles = Collections.singletonList(userProfile);
+        } else {
+            userProfiles = userProfileRepository.findAllWithUserGroups(new ArrayList<>(userGroups));
+        }
+        return providerRecordsRepository
+            .findAllOptions(userProfiles);
+    };
 
     @Override
     @Transactional(readOnly = true)

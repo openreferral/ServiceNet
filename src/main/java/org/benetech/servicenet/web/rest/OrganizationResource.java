@@ -10,6 +10,7 @@ import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
@@ -188,6 +189,19 @@ public class OrganizationResource {
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /organization-options : get all the organization options.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of organizations in body
+     */
+    @GetMapping("/organization-options")
+    @Timed
+    public ResponseEntity<List<OrganizationOptionDTO>> getOrganizationOptions() {
+        return ResponseEntity.ok().body(
+            organizationService.findAllOptions()
+        );
     }
 
     /**

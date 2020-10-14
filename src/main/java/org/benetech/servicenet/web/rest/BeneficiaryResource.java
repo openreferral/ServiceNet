@@ -43,6 +43,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
+@SuppressWarnings("PMD.PreserveStackTrace")
 public class BeneficiaryResource {
 
     private final Logger log = LoggerFactory.getLogger(BeneficiaryResource.class);
@@ -159,11 +160,17 @@ public class BeneficiaryResource {
             Beneficiary beneficiary = beneficiaryService.findOrCreateByPhoneNumber(checkInDTO.getPhoneNumber());
             beneficiaryId = beneficiary.getId();
         } else if (checkInDTO.getBeneficiaryId() != null) {
-            Optional<BeneficiaryDTO> beneficiaryOpt = beneficiaryService.findOne(checkInDTO.getBeneficiaryId());
-            if (beneficiaryOpt.isEmpty()) {
-                throw new BadRequestAlertException("Can not find beneficiary with provided ID", ENTITY_NAME, "idnotfound");
+            try {
+                Optional<BeneficiaryDTO> beneficiaryOpt = beneficiaryService
+                    .findOne(UUID.fromString(checkInDTO.getBeneficiaryId()));
+                if (beneficiaryOpt.isEmpty()) {
+                    throw new BadRequestAlertException("Can not find beneficiary with provided ID",
+                        ENTITY_NAME, "idnotfound");
+                }
+                beneficiaryId = beneficiaryOpt.get().getId();
+            } catch (IllegalArgumentException iae) {
+                throw new BadRequestAlertException("The provided Unique Identifier is invalid", ENTITY_NAME, "idinvalid");
             }
-            beneficiaryId = beneficiaryOpt.get().getId();
         }
         if (cbo.isEmpty()) {
             throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
@@ -189,11 +196,17 @@ public class BeneficiaryResource {
         if (StringUtils.isNotBlank(phoneNumber)) {
             beneficiary = beneficiaryService.findOrCreateByPhoneNumber(phoneNumber);
         } else if (StringUtils.isNotBlank(beneficiaryId)) {
-            Optional<Beneficiary> beneficiaryOpt = beneficiaryService.getOne(UUID.fromString(beneficiaryId));
-            if (beneficiaryOpt.isEmpty()) {
-                throw new BadRequestAlertException("Can not find beneficiary with provided ID", ENTITY_NAME, "idnotfound");
+            try {
+                Optional<Beneficiary> beneficiaryOpt = beneficiaryService
+                    .getOne(UUID.fromString(beneficiaryId));
+                if (beneficiaryOpt.isEmpty()) {
+                    throw new BadRequestAlertException("Can not find beneficiary with provided ID",
+                        ENTITY_NAME, "idnotfound");
+                }
+                beneficiary = beneficiaryOpt.get();
+            } catch (IllegalArgumentException iae) {
+                throw new BadRequestAlertException("The provided Unique Identifier is invalid", ENTITY_NAME, "idinvalid");
             }
-            beneficiary = beneficiaryOpt.get();
         }
         if (cbo.isEmpty()) {
             throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
