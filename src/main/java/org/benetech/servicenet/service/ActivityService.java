@@ -7,6 +7,7 @@ import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
@@ -28,6 +29,8 @@ public interface ActivityService {
     List<ActivityRecordDTO> getPartnerActivitiesByOrganizationId(UUID orgId);
 
     Page<ProviderRecordDTO> getPartnerActivitiesForCurrentUser(Pageable pageable);
+
+    List<OrganizationOptionDTO> getOrganizationOptionsForCurrentUser();
 
     Suggestions getNameSuggestions(ActivityFilterDTO activityFilterDTO, UUID systemAccountId, String search);
 

@@ -51,6 +51,7 @@ import org.benetech.servicenet.domain.Taxonomy_;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.UserProfile_;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
@@ -101,6 +102,23 @@ public class ProviderRecordsRepository {
         }
 
         return new PageImpl<>(results, pageable, total.intValue());
+    }
+
+    public List<OrganizationOptionDTO> findAllOptions(List<UserProfile> userProfiles) {
+
+        CriteriaQuery<OrganizationOptionDTO> queryCriteria = cb.createQuery(OrganizationOptionDTO.class);
+        Root<Organization> selectRoot = queryCriteria.from(Organization.class);
+        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+
+        queryCriteria.select(cb.construct(OrganizationOptionDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME)));
+
+        addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, userProfiles, null, null, null);
+        queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME));
+
+        Query query = em.createQuery(queryCriteria);
+
+        return query.getResultList();
     }
 
     private Map<UUID, Set<SimpleServiceDTO>> getServicesMap(List<UUID> orgIds) {

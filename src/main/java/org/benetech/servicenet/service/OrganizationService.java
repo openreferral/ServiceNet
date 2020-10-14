@@ -5,6 +5,7 @@ import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +51,8 @@ public interface OrganizationService {
     List<org.benetech.servicenet.service.dto.OrganizationDTO> findAllDTOs();
 
     List<Organization> findAll();
+
+    List<OrganizationOptionDTO> findAllOptions();
 
     Page<Organization> findAllOrganizations(UserProfile userProfile, Pageable pageable);
 

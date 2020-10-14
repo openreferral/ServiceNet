@@ -46,6 +46,7 @@ import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderLocationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRequiredDocumentDTO;
@@ -230,6 +231,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<Organization> findAll() {
         log.debug("Request to get all Organizations");
         return organizationRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationOptionDTO> findAllOptions() {
+        log.debug("Request to get all Organizations");
+        return organizationRepository.findAll().stream()
+            .map(organizationMapper::toOptionDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override

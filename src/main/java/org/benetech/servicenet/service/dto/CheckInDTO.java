@@ -16,7 +16,7 @@ public class CheckInDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private UUID beneficiaryId;
+    private String beneficiaryId;
 
     private String phoneNumber;
 
