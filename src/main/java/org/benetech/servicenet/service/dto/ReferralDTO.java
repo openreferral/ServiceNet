@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+import org.benetech.servicenet.domain.Referral;
 
 /**
  * A DTO for the {@link org.benetech.servicenet.domain.Referral} entity.
@@ -110,6 +111,13 @@ public class ReferralDTO implements Serializable {
 
     public void setBeneficiaryId(UUID beneficiaryId) {
         this.beneficiaryId = beneficiaryId;
+    }
+
+    public String getStatus() {
+        if (this.fulfilledAt != null) {
+            return Referral.FULFILLED;
+        }
+        return Referral.SENT;
     }
 
     @Override
