@@ -10,6 +10,8 @@ import org.benetech.servicenet.service.dto.ReferralDTO;
 
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
+import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
@@ -144,6 +147,38 @@ public class ReferralResource {
         @PathParam("since") ZonedDateTime since, @PathParam("status") String status) {
         log.debug("REST request to get a page of Referrals");
         Page<ReferralDTO> page = referralService.findCurrentUsersReferrals(since, status, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /referrals/number-made-from-us?to=} : Gets number of made referrals from current user's organizations to other organizations
+     *
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of number of referrals made in body.
+     */
+    @GetMapping("/referrals/number-made-from-us")
+    public ResponseEntity<List<ReferralMadeFromUserDTO>> numberOfReferralsMadeFromUser(
+        Pageable pageable, @RequestParam(required = false) UUID to
+    ) {
+        log.debug("REST request to get a number of made Referrals from user");
+        Page<ReferralMadeFromUserDTO> page = referralService.getNumberOfReferralsMadeFromUser(to, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /referrals/made-to-us?status} : Gets status of made referrals to current user's organizations
+     *
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of status of referrals made in body.
+     */
+    @GetMapping("/referrals/made-to-us")
+    public ResponseEntity<List<ReferralMadeToUserDTO>> numberOfReferralsMadeToUser(
+        Pageable pageable, @RequestParam(required = false) String status
+    ) {
+        log.debug("REST request to get a status of made Referrals to user");
+        Page<ReferralMadeToUserDTO> page = referralService.getReferralsMadeToUser(status, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

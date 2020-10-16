@@ -7,6 +7,8 @@ import org.benetech.servicenet.domain.Beneficiary;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 
+import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
+import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -59,4 +61,8 @@ public interface ReferralService {
      * @return the list of entities.
      */
     Page<ReferralDTO> findCurrentUsersReferrals(ZonedDateTime since, String status, Pageable pageable);
+
+    Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(UUID to, Pageable pageable);
+
+    Page<ReferralMadeToUserDTO> getReferralsMadeToUser(String status, Pageable pageable);
 }

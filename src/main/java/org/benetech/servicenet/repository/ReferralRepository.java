@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.benetech.servicenet.domain.Referral;
 
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
+import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,4 +34,35 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL)")
     Page<Referral> findByUserProfileSince(@Param("fromUser") UserProfile fromUser, @Param("since")
         ZonedDateTime since, @Param("isSent") Boolean isSent, @Param("isFulfilled") Boolean isFulfilled, Pageable pageable);
+
+    @Query("SELECT new org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO("
+        + "toOrg.id, toOrg.name, count(toOrg)"
+        + ") FROM Referral referral "
+        + "JOIN referral.to toOrg "
+        + "JOIN referral.from fromOrg "
+        + "JOIN fromOrg.userProfiles userProfile "
+        + "WHERE userProfile = :currentUser "
+        + "GROUP BY toOrg")
+    Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(@Param("currentUser") UserProfile currentUser, Pageable pageable);
+
+    @Query("SELECT new org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO("
+        + "toOrg.id, toOrg.name, count(toOrg)"
+        + ") FROM Referral referral "
+        + "JOIN referral.to toOrg "
+        + "JOIN referral.from fromOrg "
+        + "JOIN fromOrg.userProfiles userProfile "
+        + "WHERE userProfile = :currentUser AND toOrg.id=:to "
+        + "GROUP BY toOrg")
+    Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(@Param("currentUser") UserProfile currentUser, @Param("to") UUID to, Pageable pageable);
+
+    @Query("SELECT new org.benetech.servicenet.service.dto.ReferralMadeToUserDTO("
+        + "fromOrg.id, fromOrg.name, referral.fulfilledAt"
+        + ") FROM Referral referral "
+        + "JOIN referral.to toOrg "
+        + "JOIN referral.from fromOrg "
+        + "JOIN toOrg.userProfiles userProfile "
+        + "WHERE userProfile = :currentUser "
+        + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
+        + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL)")
+    Page<ReferralMadeToUserDTO> getReferralsMadeToUser(@Param("currentUser") UserProfile currentUser, @Param("isSent") Boolean isSent, @Param("isFulfilled") Boolean isFulfilled, Pageable pageable);
 }
