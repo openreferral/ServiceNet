@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import java.io.File;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import javax.websocket.server.PathParam;
@@ -12,12 +13,15 @@ import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
+import org.benetech.servicenet.util.ReportUtils;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -152,6 +156,28 @@ public class ReferralResource {
     }
 
     /**
+     * {@code GET  /referrals/csv} : Gets current user's Referrals as CSV"
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a csv in the body
+     */
+    @GetMapping(value = "/referrals/csv", produces = "text/csv")
+    public ResponseEntity<FileSystemResource> getCurrentUsersReferralsCsv(
+        @PathParam("since") ZonedDateTime since, @PathParam("status") String status) {
+        log.debug("REST request to get current user's Referrals as CSV");
+        String[] headers = {"Beneficiary Phone Number", "Unique Identifier", "Date Stamp", "Referred From", "Referred To", "Status"};
+        String[] valueMappings = {"beneficiaryPhoneNumber", "id", "sentAt", "fromName", "toName", "status"};
+        List<ReferralDTO> referrals = referralService.findCurrentUsersReferrals(since, status, Pageable.unpaged()).toList();
+        File csvOutputFile = ReportUtils
+            .createCsvReport("users-referrals", referrals, headers, valueMappings);
+
+        return ResponseEntity.ok()
+            .header("Content-Disposition", "attachment; filename=" + csvOutputFile.getName())
+            .contentLength(csvOutputFile.length())
+            .contentType(MediaType.parseMediaType("text/csv"))
+            .body(new FileSystemResource(csvOutputFile));
+    }
+
+    /**
      * {@code GET  /referrals/number-made-from-us?to=} : Gets number of made referrals from current user's organizations to other organizations
      *
      * @param pageable the pagination information.
@@ -168,6 +194,27 @@ public class ReferralResource {
     }
 
     /**
+     * {@code GET  /referrals/number-made-from-us/csv} : Gets number of made referrals from current user's organizations to other organizations
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a csv in the body
+     */
+    @GetMapping(value = "/referrals/number-made-from-us/csv", produces = "text/csv")
+    public ResponseEntity<FileSystemResource> numberOfReferralsMadeFromUserCsv() {
+        log.debug("REST request to get a number of made Referrals from user as CSV");
+        String[] headers = {"Organization id", "Organization name", "Referral count"};
+        String[] valueMappings = {"orgId", "orgName", "referralCount"};
+        List<ReferralMadeFromUserDTO> referrals = referralService.getNumberOfReferralsMadeFromUser(null, Pageable.unpaged()).toList();
+        File csvOutputFile = ReportUtils
+            .createCsvReport("no-referrals-made-from-us", referrals, headers, valueMappings);
+
+        return ResponseEntity.ok()
+            .header("Content-Disposition", "attachment; filename=" + csvOutputFile.getName())
+            .contentLength(csvOutputFile.length())
+            .contentType(MediaType.parseMediaType("text/csv"))
+            .body(new FileSystemResource(csvOutputFile));
+    }
+
+    /**
      * {@code GET  /referrals/made-to-us?status} : Gets status of made referrals to current user's organizations
      *
      * @param pageable the pagination information.
@@ -181,5 +228,26 @@ public class ReferralResource {
         Page<ReferralMadeToUserDTO> page = referralService.getReferralsMadeToUser(status, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /referrals/made-to-us/csv} : Gets number of made referrals from current user's organizations to other organizations as CSV
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a csv in the body
+     */
+    @GetMapping(value = "/referrals/made-to-us/csv", produces = "text/csv")
+    public ResponseEntity<FileSystemResource> referralsMadeToUserCsv(@RequestParam(required = false) UUID to) {
+        log.debug("REST request to get a status of made Referrals to user as CSV");
+        String[] headers = {"Organization id", "Organization name", "Referral count"};
+        String[] valueMappings = {"orgId", "orgName", "referralCount"};
+        List<ReferralMadeFromUserDTO> referrals = referralService.getNumberOfReferralsMadeFromUser(null, Pageable.unpaged()).toList();
+        File csvOutputFile = ReportUtils
+            .createCsvReport("referrals-made-to-us", referrals, headers, valueMappings);
+
+        return ResponseEntity.ok()
+            .header("Content-Disposition", "attachment; filename=" + csvOutputFile.getName())
+            .contentLength(csvOutputFile.length())
+            .contentType(MediaType.parseMediaType("text/csv"))
+            .body(new FileSystemResource(csvOutputFile));
     }
 }
