@@ -14,6 +14,8 @@ import org.benetech.servicenet.domain.Referral;
 import org.benetech.servicenet.repository.ReferralRepository;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ReferralDTO;
+import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
+import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
 import org.benetech.servicenet.service.mapper.ReferralMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,5 +160,26 @@ public class ReferralServiceImpl implements ReferralService {
             Objects.equals(status, Referral.SENT),
             Objects.equals(status, Referral.FULFILLED), pageable)
             .map(referralMapper::toDto);
+    }
+
+    @Override
+    public Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(UUID to, Pageable pageable) {
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        if (to == null) {
+            return referralRepository.getNumberOfReferralsMadeFromUser(currentUser, pageable);
+        } else {
+            return referralRepository.getNumberOfReferralsMadeFromUser(currentUser, to, pageable);
+        }
+    }
+
+    @Override
+    public Page<ReferralMadeToUserDTO> getReferralsMadeToUser(String status, Pageable pageable) {
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        return referralRepository.getReferralsMadeToUser(
+            currentUser,
+            Objects.equals(status, Referral.SENT),
+            Objects.equals(status, Referral.FULFILLED),
+            pageable
+        );
     }
 }
