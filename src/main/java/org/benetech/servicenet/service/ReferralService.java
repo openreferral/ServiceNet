@@ -50,7 +50,7 @@ public interface ReferralService {
      */
     void delete(UUID id);
 
-    void checkIn(UUID beneficiaryId, UUID cboId);
+    void checkIn(Beneficiary beneficiary, boolean isBeneficiaryNew, UUID cboId);
 
     void refer(Beneficiary beneficiary, Organization cbo, List<UUID> organizationIds);
 

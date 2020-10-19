@@ -152,6 +152,11 @@
 
     <rule ref="category/java/bestpractices.xml/UnusedFormalParameter"/>
     <rule ref="category/java/bestpractices.xml/UnusedPrivateField"/>
-    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod"/>
+    <rule ref="rulesets/java/unusedcode.xml/UnusedPrivateMethod">
+        <properties>
+            <property name="violationSuppressXPath"
+                value="//ClassOrInterfaceBodyDeclaration/Annotation/MarkerAnnotation/Name[@Image='PostConstruct']" />
+        </properties>
+    </rule>
 
 </ruleset>

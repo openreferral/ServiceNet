@@ -149,25 +149,27 @@ public class BeneficiaryResource {
      *
      * @param checkInDTO the checkInDTO to find or create beneficiary and make check in.
      * @return the {@link ResponseEntity} with status {@code 200 (Ok)}, or with status {@code 400 (Bad Request)} if the beneficiary Id or Organization Id not found
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/beneficiaries/check-in")
-    public ResponseEntity<Void> checkIn(@RequestBody CheckInDTO checkInDTO) throws URISyntaxException {
+    public ResponseEntity<Void> checkIn(@RequestBody CheckInDTO checkInDTO) {
         log.debug("REST request to Check In Beneficiary : {}", checkInDTO);
-        UUID beneficiaryId = null;
+        Beneficiary beneficiary = null;
+        boolean isBeneficiaryNew = false;
         Optional<Organization> cbo = organizationService.findOne(checkInDTO.getCboId());
         if (!checkInDTO.getPhoneNumber().isBlank()) {
-            Beneficiary beneficiary = beneficiaryService.findOrCreateByPhoneNumber(checkInDTO.getPhoneNumber());
-            beneficiaryId = beneficiary.getId();
+            Optional<Beneficiary> beneficiaryOptional = beneficiaryService.findByPhoneNumber(checkInDTO.getPhoneNumber());
+            isBeneficiaryNew = beneficiaryOptional.isEmpty();
+            beneficiary = beneficiaryOptional
+                .orElseGet(() -> beneficiaryService.create(checkInDTO.getPhoneNumber()));
         } else if (checkInDTO.getBeneficiaryId() != null) {
             try {
-                Optional<BeneficiaryDTO> beneficiaryOpt = beneficiaryService
-                    .findOne(UUID.fromString(checkInDTO.getBeneficiaryId()));
+                Optional<Beneficiary> beneficiaryOpt = beneficiaryService
+                    .getOne(UUID.fromString(checkInDTO.getBeneficiaryId()));
                 if (beneficiaryOpt.isEmpty()) {
                     throw new BadRequestAlertException("Can not find beneficiary with provided ID",
                         ENTITY_NAME, "idnotfound");
                 }
-                beneficiaryId = beneficiaryOpt.get().getId();
+                beneficiary = beneficiaryOpt.get();
             } catch (IllegalArgumentException iae) {
                 throw new BadRequestAlertException("The provided Unique Identifier is invalid", ENTITY_NAME, "idinvalid");
             }
@@ -176,7 +178,7 @@ public class BeneficiaryResource {
             throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
         }
 
-        referralService.checkIn(beneficiaryId, cbo.get().getId());
+        referralService.checkIn(beneficiary, isBeneficiaryNew, cbo.get().getId());
         return ResponseEntity.ok().build();
     }
 
@@ -184,17 +186,18 @@ public class BeneficiaryResource {
      * {@code POST  /beneficiaries/refer} : Get or Create a beneficiary and refer him to provided organizations.
      *
      * @return the {@link ResponseEntity} with status {@code 200 (Ok)}, or with status {@code 400 (Bad Request)} if the beneficiary Id or Organization Id not found
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/beneficiaries/refer")
     public ResponseEntity<Void> refer(@RequestBody List<UUID> organizationIds, @PathParam("referringOrganizationId") String referringOrganizationId,
-        @PathParam("beneficiaryId") String beneficiaryId, @PathParam("phoneNumber") String phoneNumber) throws URISyntaxException {
+        @PathParam("beneficiaryId") String beneficiaryId, @PathParam("phoneNumber") String phoneNumber) {
         log.debug("REST request to Refer Beneficiary {} from {} to: {}",
             beneficiaryId, referringOrganizationId, organizationIds);
         Beneficiary beneficiary = null;
         Optional<Organization> cbo = organizationService.findOne(UUID.fromString(referringOrganizationId));
         if (StringUtils.isNotBlank(phoneNumber)) {
-            beneficiary = beneficiaryService.findOrCreateByPhoneNumber(phoneNumber);
+            Optional<Beneficiary> beneficiaryOptional = beneficiaryService.findByPhoneNumber(phoneNumber);
+            beneficiary = beneficiaryOptional
+                .orElseGet(() -> beneficiaryService.create(phoneNumber));
         } else if (StringUtils.isNotBlank(beneficiaryId)) {
             try {
                 Optional<Beneficiary> beneficiaryOpt = beneficiaryService

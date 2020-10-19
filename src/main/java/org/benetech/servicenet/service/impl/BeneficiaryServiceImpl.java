@@ -110,14 +110,15 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     @Override
-    public Beneficiary findOrCreateByPhoneNumber(String phoneNumber) {
-        Optional<Beneficiary> beneficiary = beneficiaryRepository.findByPhoneNumber(phoneNumber);
-        if (beneficiary.isEmpty()) {
-            Beneficiary newBeneficiary = new Beneficiary();
-            newBeneficiary.setPhoneNumber(phoneNumber);
-            newBeneficiary = beneficiaryRepository.save(newBeneficiary);
-            return newBeneficiary;
-        }
-        return beneficiary.get();
+    public Optional<Beneficiary> findByPhoneNumber(String phoneNumber) {
+        return beneficiaryRepository.findByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public Beneficiary create(String phoneNumber) {
+        Beneficiary newBeneficiary = new Beneficiary();
+        newBeneficiary.setPhoneNumber(phoneNumber);
+        newBeneficiary = beneficiaryRepository.save(newBeneficiary);
+        return newBeneficiary;
     }
 }
