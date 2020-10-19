@@ -53,5 +53,7 @@ public interface BeneficiaryService {
      */
     void delete(UUID id);
 
-    Beneficiary findOrCreateByPhoneNumber(String phoneNumber);
+    Optional<Beneficiary> findByPhoneNumber(String phoneNumber);
+
+    Beneficiary create(String phoneNumber);
 }

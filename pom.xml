@@ -72,11 +72,12 @@
         <lombok.version>1.18.2</lombok.version>
         <apache.commons-text.version>1.6</apache.commons-text.version>
         <quartz.version>2.3.2</quartz.version>
-        <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
+        <apache.httpcomponents.version>4.5.13</apache.httpcomponents.version>
         <fuzzywuzzy.version>1.2.0</fuzzywuzzy.version>
         <google-maps.version>0.9.1</google-maps.version>
         <slf4j-simple.version>1.7.25</slf4j-simple.version>
         <sendgrid.version>4.4.5</sendgrid.version>
+        <twilio.version>8.1.0</twilio.version>
 
         <!-- Plugin versions -->
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
@@ -543,6 +544,11 @@
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
             <version>${sentry-logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.twilio.sdk</groupId>
+            <artifactId>twilio</artifactId>
+            <version>${twilio.version}</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>

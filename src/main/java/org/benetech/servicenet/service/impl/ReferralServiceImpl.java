@@ -1,21 +1,24 @@
 package org.benetech.servicenet.service.impl;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beneficiary;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.UserProfile;
-import org.benetech.servicenet.repository.BeneficiaryRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.service.MessageService;
 import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.domain.Referral;
 import org.benetech.servicenet.repository.ReferralRepository;
+import org.benetech.servicenet.service.SmsService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
+import org.benetech.servicenet.service.dto.SmsMessage;
 import org.benetech.servicenet.service.mapper.ReferralMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,23 +43,27 @@ public class ReferralServiceImpl implements ReferralService {
 
     private final ReferralMapper referralMapper;
 
-    private final BeneficiaryRepository beneficiaryRepository;
-
     private final OrganizationRepository organizationRepository;
 
     private final UserService userService;
 
+    private final MessageService messageService;
+
+    private final SmsService smsService;
+
     public ReferralServiceImpl(ReferralRepository referralRepository,
         ReferralMapper referralMapper,
-        BeneficiaryRepository beneficiaryRepository,
         OrganizationRepository organizationRepository,
-        UserService userService
+        UserService userService,
+        MessageService messageService,
+        SmsService smsService
     ) {
         this.referralRepository = referralRepository;
         this.referralMapper = referralMapper;
-        this.beneficiaryRepository = beneficiaryRepository;
         this.organizationRepository = organizationRepository;
         this.userService = userService;
+        this.messageService = messageService;
+        this.smsService = smsService;
     }
 
     /**
@@ -113,14 +120,12 @@ public class ReferralServiceImpl implements ReferralService {
     }
 
     @Override
-    public void checkIn(UUID beneficiaryId, UUID cboId) {
+    public void checkIn(Beneficiary beneficiary, boolean isBeneficiaryNew, UUID cboId) {
+        Organization cbo = organizationRepository.getOne(cboId);
         List<Referral> referrals = referralRepository
-            .findAllByBeneficiaryIdAndReferredTo(beneficiaryId, cboId);
+            .findAllByBeneficiaryIdAndReferredTo(beneficiary.getId(), cboId);
         ZonedDateTime now = ZonedDateTime.now();
         if (referrals.isEmpty()) {
-            Beneficiary beneficiary = beneficiaryRepository.getOne(beneficiaryId);
-            Organization cbo = organizationRepository.getOne(cboId);
-
             Referral referral = new Referral();
             referral.setBeneficiary(beneficiary);
             referral.setFrom(cbo);
@@ -135,13 +140,25 @@ public class ReferralServiceImpl implements ReferralService {
                 referralRepository.save(referral);
             }
         }
+        SmsMessage smsMessage = new SmsMessage();
+        smsMessage.setTo(beneficiary.getPhoneNumber());
+        if (isBeneficiaryNew) {
+            smsMessage.setMessage(messageService.get("sms.checkin.new",
+                cbo.getName(), beneficiary.getId().toString()));
+        } else {
+            smsMessage.setMessage(messageService.get("sms.checkin.existing",
+                cbo.getName(), beneficiary.getId().toString()));
+        }
+        smsService.send(smsMessage);
     }
 
     @Override
     public void refer(Beneficiary beneficiary, Organization cbo, List<UUID> organizationIds) {
         ZonedDateTime now = ZonedDateTime.now();
+        List<String> orgNames = new ArrayList<>();
         for (UUID orgId : organizationIds) {
             Organization organization = organizationRepository.getOne(orgId);
+            orgNames.add(organization.getName());
             Referral referral = new Referral();
             referral.setBeneficiary(beneficiary);
             referral.setFrom(cbo);
@@ -150,6 +167,11 @@ public class ReferralServiceImpl implements ReferralService {
 
             referralRepository.save(referral);
         }
+        SmsMessage smsMessage = new SmsMessage();
+        smsMessage.setTo(beneficiary.getPhoneNumber());
+        smsMessage.setMessage(messageService.get("sms.referral.sent",
+            String.join(", ", orgNames), beneficiary.getId().toString()));
+        smsService.send(smsMessage);
     }
 
     @Override
