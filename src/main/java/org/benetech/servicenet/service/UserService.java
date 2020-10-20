@@ -375,17 +375,21 @@ public class UserService {
 
         Set<Shelter> shelters = sheltersFromUUIDs(userDTO.getShelters());
         Set<Shelter> removedShelters = userProfile.getShelters();
-        removedShelters.removeIf(shelters::contains);
+        if (removedShelters != null) {
+            removedShelters.removeIf(shelters::contains);
+            removedShelters.forEach(shelter -> shelter.getUserProfiles().remove(userProfile));
+        }
         userProfile.setShelters(shelters);
         shelters.forEach(shelter -> shelter.getUserProfiles().add(userProfile));
-        removedShelters.forEach(shelter -> shelter.getUserProfiles().remove(userProfile));
 
         Set<UserGroup> userGroups = userGroupsFromUUIDs(userDTO.getUserGroups());
         Set<UserGroup> removedUserGroups = userProfile.getUserGroups();
-        removedUserGroups.removeIf(userGroups::contains);
+        if (removedUserGroups != null) {
+            removedUserGroups.removeIf(userGroups::contains);
+            removedUserGroups.forEach(userGroup -> userGroup.getUserProfiles().remove(userProfile));
+        }
         userProfile.setUserGroups(userGroups);
         userGroups.forEach(userGroup -> userGroup.getUserProfiles().add(userProfile));
-        removedUserGroups.forEach(userGroup -> userGroup.getUserProfiles().remove(userProfile));
 
         userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
         userProfileRepository.save(userProfile);
