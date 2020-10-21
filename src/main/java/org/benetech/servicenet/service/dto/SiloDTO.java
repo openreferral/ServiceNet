@@ -17,6 +17,8 @@ public class SiloDTO implements Serializable {
 
     private boolean isPublic;
 
+    private boolean isReferralEnabled;
+
     public UUID getId() {
         return id;
     }
@@ -68,5 +70,13 @@ public class SiloDTO implements Serializable {
 
     public void setPublic(boolean isPublic) {
         this.isPublic = isPublic;
+    }
+
+    public boolean isReferralEnabled() {
+        return isReferralEnabled;
+    }
+
+    public void setReferralEnabled(boolean referralEnabled) {
+        this.isReferralEnabled = referralEnabled;
     }
 }

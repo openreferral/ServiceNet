@@ -293,6 +293,7 @@ public class UserService {
         }
         if (userProfile.getSilo() != null) {
             authUser.setSiloId(userProfile.getSilo().getId());
+            authUser.setSiloIsReferralEnabled(userProfile.getSilo().isReferralEnabled());
         }
         authUser.setOrganizationName(userProfile.getOrganizationName());
         authUser.setOrganizationUrl(userProfile.getOrganizationUrl());
