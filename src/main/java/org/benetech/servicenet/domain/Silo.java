@@ -48,6 +48,10 @@ public class Silo implements Serializable {
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic = false;
 
+    @NotNull
+    @Column(name = "is_referral_enabled", nullable = false)
+    private Boolean isReferralEnabled = false;
+
     @OneToMany(mappedBy = "silo", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<UserProfile> userProfiles = new HashSet<>();
@@ -94,6 +98,14 @@ public class Silo implements Serializable {
 
     public void setPublic(boolean isPublic) {
         this.isPublic = isPublic;
+    }
+
+    public boolean isReferralEnabled() {
+        return isReferralEnabled;
+    }
+
+    public void setReferralEnabled(boolean referralEnabled) {
+        this.isReferralEnabled = referralEnabled;
     }
 
     public Silo addUserProfiles(UserProfile userProfile) {

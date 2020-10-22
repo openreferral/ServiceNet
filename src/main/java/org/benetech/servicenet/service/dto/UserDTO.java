@@ -68,6 +68,8 @@ public class UserDTO {
 
     private UUID siloId;
 
+    private Boolean siloIsReferralEnabled;
+
     private String organizationName;
 
     private String organizationUrl;
@@ -89,6 +91,7 @@ public class UserDTO {
         this.lastModifiedDate = userProfile.getLastModifiedDate();
         if (userProfile.getSilo() != null) {
             this.siloId = userProfile.getSilo().getId();
+            this.siloIsReferralEnabled = userProfile.getSilo().isReferralEnabled();
         }
         if (userProfile.getSystemAccount() != null) {
             this.systemAccountId = userProfile.getSystemAccount().getId();
