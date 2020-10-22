@@ -115,9 +115,9 @@ public class ReferralDTO implements Serializable {
 
     public String getStatus() {
         if (this.fulfilledAt != null) {
-            return Referral.FULFILLED;
+            return Referral.ARRIVED;
         }
-        return Referral.SENT;
+        return Referral.WAITING;
     }
 
     @Override
