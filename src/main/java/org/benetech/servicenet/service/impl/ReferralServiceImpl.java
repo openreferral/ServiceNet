@@ -15,6 +15,7 @@ import org.benetech.servicenet.domain.Referral;
 import org.benetech.servicenet.repository.ReferralRepository;
 import org.benetech.servicenet.service.SmsService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
@@ -203,5 +204,11 @@ public class ReferralServiceImpl implements ReferralService {
             Objects.equals(status, Referral.FULFILLED),
             pageable
         );
+    }
+
+    @Override
+    public List<OrganizationOptionDTO> getOrganizationOptionsForCurrentUser() {
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        return referralRepository.getMadeToOptionsForCurrentUser(currentUser);
     }
 }
