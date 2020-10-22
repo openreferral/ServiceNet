@@ -22,6 +22,8 @@ public class Referral extends AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String FULFILLED = "fulfilled";
     public static final String SENT = "sent";
+    public static final String WAITING = "Waiting for arrival";
+    public static final String ARRIVED = "Arrived";
 
     @Column(name = "shortcode")
     private String shortcode;

@@ -1,5 +1,6 @@
 package org.benetech.servicenet.web.rest;
 
+import com.codahale.metrics.annotation.Timed;
 import java.io.File;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -7,6 +8,7 @@ import javax.websocket.server.PathParam;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 
 import io.github.jhipster.web.util.PaginationUtil;
@@ -236,11 +238,11 @@ public class ReferralResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a csv in the body
      */
     @GetMapping(value = "/referrals/made-to-us/csv", produces = "text/csv")
-    public ResponseEntity<FileSystemResource> referralsMadeToUserCsv(@RequestParam(required = false) UUID to) {
+    public ResponseEntity<FileSystemResource> referralsMadeToUserCsv() {
         log.debug("REST request to get a status of made Referrals to user as CSV");
         String[] headers = {"Organization id", "Organization name", "Referral count"};
-        String[] valueMappings = {"orgId", "orgName", "referralCount"};
-        List<ReferralMadeFromUserDTO> referrals = referralService.getNumberOfReferralsMadeFromUser(null, Pageable.unpaged()).toList();
+        String[] valueMappings = {"orgId", "orgName", "status"};
+        List<ReferralMadeToUserDTO> referrals = referralService.getReferralsMadeToUser(null, Pageable.unpaged()).toList();
         File csvOutputFile = ReportUtils
             .createCsvReport("referrals-made-to-us", referrals, headers, valueMappings);
 
@@ -249,5 +251,13 @@ public class ReferralResource {
             .contentLength(csvOutputFile.length())
             .contentType(MediaType.parseMediaType("text/csv"))
             .body(new FileSystemResource(csvOutputFile));
+    }
+
+    @GetMapping("/referrals/made-to-options")
+    @Timed
+    public ResponseEntity<List<OrganizationOptionDTO>> getReferralMadeToOptions() {
+        return ResponseEntity.ok().body(
+            referralService.getOrganizationOptionsForCurrentUser()
+        );
     }
 }

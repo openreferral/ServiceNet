@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.benetech.servicenet.domain.Referral;
 
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
 import org.springframework.data.domain.Page;
@@ -65,4 +66,15 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
         + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL)")
     Page<ReferralMadeToUserDTO> getReferralsMadeToUser(@Param("currentUser") UserProfile currentUser, @Param("isSent") Boolean isSent, @Param("isFulfilled") Boolean isFulfilled, Pageable pageable);
+
+    @Query("SELECT new org.benetech.servicenet.service.dto.OrganizationOptionDTO("
+        + "toOrg.id, toOrg.name"
+        + ") FROM Referral referral "
+        + "JOIN referral.to toOrg "
+        + "JOIN referral.from fromOrg "
+        + "JOIN fromOrg.userProfiles userProfile "
+        + "WHERE userProfile = :currentUser "
+        + "GROUP BY toOrg "
+        + "ORDER BY toOrg.name ASC")
+    List<OrganizationOptionDTO> getMadeToOptionsForCurrentUser(@Param("currentUser") UserProfile currentUser);
 }
