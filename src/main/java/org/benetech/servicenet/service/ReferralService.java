@@ -2,6 +2,7 @@ package org.benetech.servicenet.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beneficiary;
 import org.benetech.servicenet.domain.Organization;
@@ -51,9 +52,9 @@ public interface ReferralService {
      */
     void delete(UUID id);
 
-    void checkIn(Beneficiary beneficiary, boolean isBeneficiaryNew, UUID cboId);
+    void checkIn(Beneficiary beneficiary, boolean isBeneficiaryNew, UUID cboId, UUID locationId);
 
-    void refer(Beneficiary beneficiary, Organization cbo, List<UUID> organizationIds);
+    void refer(Beneficiary beneficiary, Organization cbo, UUID fromLocId, Map<UUID, UUID> organizationLocs);
 
     /**
      * Search for curent user's referrals.
@@ -67,5 +68,5 @@ public interface ReferralService {
 
     Page<ReferralMadeToUserDTO> getReferralsMadeToUser(String status, Pageable pageable);
 
-    List<OrganizationOptionDTO>  getOrganizationOptionsForCurrentUser();
+    List<OrganizationOptionDTO> getOrganizationOptionsForCurrentUser();
 }

@@ -19,6 +19,7 @@ import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
@@ -560,10 +561,13 @@ public class OrganizationServiceImpl implements OrganizationService {
             Location location = locationMapper.toEntity(locationDTO);
             Location existingLocation = (location.getId() != null) ?
                 locationService.findById(location.getId()).get() : null;
-            location.setPhysicalAddress(locationMapper.extractPhysicalAddress(locationDTO, existingLocation));
+            PhysicalAddress physicalAddress = locationMapper.extractPhysicalAddress(locationDTO, existingLocation);
+            location.setPhysicalAddress(physicalAddress);
             location.setPostalAddress(locationMapper.extractPostalAddress(locationDTO, existingLocation));
             location.providerName(SERVICE_PROVIDER);
             location.setOrganization(organization);
+            location.setName(String.join(physicalAddress.getCity(),
+                physicalAddress.getStateProvince(), physicalAddress.getAddress1()));
             locations.add(locationService.saveWithRelations(location));
         }
         for (Location location : locationsToRemove) {

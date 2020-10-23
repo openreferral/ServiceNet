@@ -3,11 +3,14 @@ package org.benetech.servicenet.service.impl;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beneficiary;
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.repository.LocationRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.MessageService;
 import org.benetech.servicenet.service.ReferralService;
@@ -52,12 +55,15 @@ public class ReferralServiceImpl implements ReferralService {
 
     private final SmsService smsService;
 
+    private final LocationRepository locationRepository;
+
     public ReferralServiceImpl(ReferralRepository referralRepository,
         ReferralMapper referralMapper,
         OrganizationRepository organizationRepository,
         UserService userService,
         MessageService messageService,
-        SmsService smsService
+        SmsService smsService,
+        LocationRepository locationRepository
     ) {
         this.referralRepository = referralRepository;
         this.referralMapper = referralMapper;
@@ -65,6 +71,7 @@ public class ReferralServiceImpl implements ReferralService {
         this.userService = userService;
         this.messageService = messageService;
         this.smsService = smsService;
+        this.locationRepository = locationRepository;
     }
 
     /**
@@ -121,15 +128,18 @@ public class ReferralServiceImpl implements ReferralService {
     }
 
     @Override
-    public void checkIn(Beneficiary beneficiary, boolean isBeneficiaryNew, UUID cboId) {
+    public void checkIn(Beneficiary beneficiary, boolean isBeneficiaryNew, UUID cboId, UUID locationId) {
         Organization cbo = organizationRepository.getOne(cboId);
         List<Referral> referrals = referralRepository
-            .findAllByBeneficiaryIdAndReferredTo(beneficiary.getId(), cboId);
+            .findAllByBeneficiaryIdAndReferredTo(beneficiary.getId(), cboId, locationId);
         ZonedDateTime now = ZonedDateTime.now();
         if (referrals.isEmpty()) {
             Referral referral = new Referral();
             referral.setBeneficiary(beneficiary);
             referral.setFrom(cbo);
+            Location location = (locationId != null) ? locationRepository.getOne(locationId)
+                : cbo.getLocations().stream().findFirst().orElse(null);
+            referral.setFromLocation(location);
             referral.setTo(cbo);
             referral.sentAt(now);
             referral.setFulfilledAt(now);
@@ -154,20 +164,26 @@ public class ReferralServiceImpl implements ReferralService {
     }
 
     @Override
-    public void refer(Beneficiary beneficiary, Organization cbo, List<UUID> organizationIds) {
+    public void refer(Beneficiary beneficiary, Organization cbo, UUID fromLocId, Map<UUID, UUID> organizationLocs) {
         ZonedDateTime now = ZonedDateTime.now();
         List<String> orgNames = new ArrayList<>();
-        for (UUID orgId : organizationIds) {
+        organizationLocs.forEach((UUID orgId, UUID locId) -> {
             Organization organization = organizationRepository.getOne(orgId);
             orgNames.add(organization.getName());
             Referral referral = new Referral();
             referral.setBeneficiary(beneficiary);
             referral.setFrom(cbo);
+            Location fromLocation = (fromLocId != null) ? locationRepository.getOne(fromLocId)
+                : cbo.getLocations().stream().findFirst().orElse(null);
+            referral.setFromLocation(fromLocation);
+            Location toLocation = (locId != null) ? locationRepository.getOne(locId)
+                : organization.getLocations().stream().findFirst().orElse(null);
+            referral.setToLocation(toLocation);
             referral.setTo(organization);
             referral.sentAt(now);
 
             referralRepository.save(referral);
-        }
+        });
         SmsMessage smsMessage = new SmsMessage();
         smsMessage.setTo(beneficiary.getPhoneNumber());
         smsMessage.setMessage(messageService.get("sms.referral.sent",

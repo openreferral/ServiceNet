@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.mapper;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
+import org.benetech.servicenet.service.dto.OrganizationWithLocationsOptionDTO;
 import org.benetech.servicenet.service.dto.external.RecordDetailsOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.DeactivatedOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
@@ -29,6 +30,8 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     OrganizationDTO toDto(Organization organization);
 
     OrganizationOptionDTO toOptionDto(Organization organization);
+
+    OrganizationWithLocationsOptionDTO toOptionWithLocationsDto(Organization organization);
 
     @Mapping(source = "replacedById", target = "replacedBy")
     @Mapping(source = "sourceDocumentId", target = "sourceDocument")

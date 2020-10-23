@@ -21,4 +21,6 @@ public class CheckInDTO implements Serializable {
     private String phoneNumber;
 
     private UUID cboId;
+
+    private UUID locationId;
 }

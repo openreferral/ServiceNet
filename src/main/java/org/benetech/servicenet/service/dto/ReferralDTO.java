@@ -25,9 +25,17 @@ public class ReferralDTO implements Serializable {
 
     private String fromName;
 
+    private UUID fromLocationId;
+
+    private String fromLocationName;
+
     private UUID toId;
 
     private String toName;
+
+    private UUID toLocationId;
+
+    private String toLocationName;
 
     private UUID beneficiaryId;
 
@@ -118,6 +126,38 @@ public class ReferralDTO implements Serializable {
             return Referral.ARRIVED;
         }
         return Referral.WAITING;
+    }
+
+    public UUID getFromLocationId() {
+        return fromLocationId;
+    }
+
+    public void setFromLocationId(UUID fromLocationId) {
+        this.fromLocationId = fromLocationId;
+    }
+
+    public String getFromLocationName() {
+        return fromLocationName;
+    }
+
+    public void setFromLocationName(String fromLocationName) {
+        this.fromLocationName = fromLocationName;
+    }
+
+    public UUID getToLocationId() {
+        return toLocationId;
+    }
+
+    public void setToLocationId(UUID toLocationId) {
+        this.toLocationId = toLocationId;
+    }
+
+    public String getToLocationName() {
+        return toLocationName;
+    }
+
+    public void setToLocationName(String toLocationName) {
+        this.toLocationName = toLocationName;
     }
 
     @Override

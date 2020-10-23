@@ -51,7 +51,8 @@ import org.benetech.servicenet.domain.Taxonomy_;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.UserProfile_;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
-import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
+import org.benetech.servicenet.service.dto.LocationOptionDTO;
+import org.benetech.servicenet.service.dto.OrganizationWithLocationsOptionDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
@@ -104,21 +105,42 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
-    public List<OrganizationOptionDTO> findAllOptions(List<UserProfile> userProfiles) {
-
-        CriteriaQuery<OrganizationOptionDTO> queryCriteria = cb.createQuery(OrganizationOptionDTO.class);
+    public List<OrganizationWithLocationsOptionDTO> findAllOptions(List<UserProfile> userProfiles) {
+        CriteriaQuery<OrganizationWithLocationsOptionDTO> queryCriteria = cb.createQuery(OrganizationWithLocationsOptionDTO.class);
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
         Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
         Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
 
-        queryCriteria.select(cb.construct(OrganizationOptionDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME)));
+        queryCriteria.select(cb.construct(OrganizationWithLocationsOptionDTO.class,
+            selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, userProfiles, null, null, null);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME));
 
         Query query = em.createQuery(queryCriteria);
+        List<OrganizationWithLocationsOptionDTO> results = query.getResultList();
 
-        return query.getResultList();
+        List<UUID> orgIds = results.stream().map(OrganizationWithLocationsOptionDTO::getId).collect(Collectors.toList());
+        Map<UUID, Set<LocationOptionDTO>> locations = getLocationOptionMap(orgIds);
+        results.forEach(result -> {
+            result.setLocations(locations.getOrDefault(result.getId(), new HashSet<>()));
+        });
+        return results;
+    }
+
+    private Map<UUID, Set<LocationOptionDTO>> getLocationOptionMap(List<UUID> orgIds) {
+        CriteriaQuery<LocationOptionDTO> queryCriteria = cb.createQuery(LocationOptionDTO.class);
+        Root<Location> root = queryCriteria.from(Location.class);
+        Join<Location, Organization> orgJoin = root.join(Location_.ORGANIZATION, JoinType.LEFT);
+
+        queryCriteria.select(cb.construct(LocationOptionDTO.class, root.get(Location_.ID), root.get(Location_.NAME),
+            orgJoin.get(Organization_.ID)));
+        queryCriteria.where(orgJoin.get(Organization_.ID).in(orgIds));
+
+        TypedQuery<LocationOptionDTO> query = em.createQuery(queryCriteria);
+        List<LocationOptionDTO> results = query.getResultList();
+
+        return results.stream().collect(Collectors.groupingBy(LocationOptionDTO::getOrganizationId, Collectors.toSet()));
     }
 
     private Map<UUID, Set<SimpleServiceDTO>> getServicesMap(List<UUID> orgIds) {
@@ -143,7 +165,8 @@ public class ProviderRecordsRepository {
         Join<Location, PhysicalAddress> addressJoin = root.join(Location_.PHYSICAL_ADDRESS, JoinType.LEFT);
 
         queryCriteria.select(cb.construct(SimpleLocationDTO.class, addressJoin.get(PhysicalAddress_.ID), addressJoin.get(PhysicalAddress_.CITY),
-            addressJoin.get(PhysicalAddress_.STATE_PROVINCE), addressJoin.get(PhysicalAddress_.REGION), orgJoin.get(Organization_.ID)));
+            addressJoin.get(PhysicalAddress_.STATE_PROVINCE), addressJoin.get(PhysicalAddress_.REGION), orgJoin.get(Organization_.ID),
+            root.get(Location_.ID), root.get(Location_.NAME)));
 
         queryCriteria.where(orgJoin.get(Organization_.ID).in(orgIds));
 
