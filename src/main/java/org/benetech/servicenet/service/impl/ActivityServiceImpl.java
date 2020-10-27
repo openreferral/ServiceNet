@@ -30,7 +30,7 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
+import org.benetech.servicenet.service.dto.OrganizationWithLocationsOptionDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
@@ -170,7 +170,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrganizationOptionDTO> getOrganizationOptionsForCurrentUser() {
+    public List<OrganizationWithLocationsOptionDTO> getOrganizationOptionsForCurrentUser() {
         UserProfile userProfile = userService.getCurrentUserProfile();
         Set<UserGroup> userGroups = userProfile.getUserGroups();
         List<UserProfile> userProfiles;

@@ -39,8 +39,14 @@ public class Referral extends AbstractEntity implements Serializable {
     private Organization from;
 
     @ManyToOne
+    private Location fromLocation;
+
+    @ManyToOne
     @JsonIgnoreProperties("referrals")
     private Organization to;
+
+    @ManyToOne
+    private Location toLocation;
 
     @ManyToOne
     @JsonIgnoreProperties("referrals")
@@ -125,6 +131,23 @@ public class Referral extends AbstractEntity implements Serializable {
 
     public void setBeneficiary(Beneficiary beneficiary) {
         this.beneficiary = beneficiary;
+    }
+
+
+    public Location getFromLocation() {
+        return fromLocation;
+    }
+
+    public void setFromLocation(Location fromLocation) {
+        this.fromLocation = fromLocation;
+    }
+
+    public Location getToLocation() {
+        return toLocation;
+    }
+
+    public void setToLocation(Location toLocation) {
+        this.toLocation = toLocation;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

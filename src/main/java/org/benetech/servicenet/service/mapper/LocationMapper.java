@@ -8,6 +8,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.service.dto.LocationDTO;
 
+import org.benetech.servicenet.service.dto.LocationOptionDTO;
 import org.benetech.servicenet.service.dto.LocationRecordDTO;
 import org.benetech.servicenet.service.dto.provider.SimpleLocationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderLocationDTO;
@@ -44,6 +45,9 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
 
     @Mapping(target = "organizationId", source = "organization.id")
     SimpleLocationDTO toSimpleDto(Location location);
+
+    @Mapping(target = "organizationId", source = "organization.id")
+    LocationOptionDTO toOptionDto(Location location);
 
     @Mapping(target = "address1", source = "physicalAddress.address1")
     @Mapping(target = "address2", source = "physicalAddress.address2")

@@ -12,14 +12,21 @@ import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
 @AllArgsConstructor
 public class SimpleLocationDTO {
 
+    private UUID id;
+
+    private String name;
+
     private PhysicalAddressDTO physicalAddress;
 
     private UUID organizationId;
 
     public SimpleLocationDTO(UUID physicalAddressId, String physicalAddressCity,
-        String physicalAddressStateProvince, String physicalAddressStateRegion, UUID orgId) {
+        String physicalAddressStateProvince, String physicalAddressStateRegion, UUID orgId,
+        UUID id, String name) {
         this.physicalAddress = new PhysicalAddressDTO(physicalAddressId, physicalAddressCity,
             physicalAddressStateProvince, physicalAddressStateRegion);
         this.organizationId = orgId;
+        this.id = id;
+        this.name = name;
     }
 }

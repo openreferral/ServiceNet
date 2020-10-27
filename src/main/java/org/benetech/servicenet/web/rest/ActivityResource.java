@@ -12,7 +12,7 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
 import org.benetech.servicenet.service.dto.ActivityFilterDTO;
 import org.benetech.servicenet.service.dto.ActivityRecordDTO;
-import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
+import org.benetech.servicenet.service.dto.OrganizationWithLocationsOptionDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.Suggestions;
@@ -94,7 +94,7 @@ public class ActivityResource {
 
     @GetMapping("/provider-record-options")
     @Timed
-    public ResponseEntity<List<OrganizationOptionDTO>> getProviderRecordOptions() {
+    public ResponseEntity<List<OrganizationWithLocationsOptionDTO>> getProviderRecordOptions() {
         return ResponseEntity.ok().body(
             activityService.getOrganizationOptionsForCurrentUser()
         );

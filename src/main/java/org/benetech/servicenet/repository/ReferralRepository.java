@@ -23,8 +23,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReferralRepository extends JpaRepository<Referral, UUID> {
 
-    @Query("SELECT referral FROM Referral referral WHERE referral.beneficiary.id = :beneficiaryId AND referral.to.id = :cboId")
-    List<Referral> findAllByBeneficiaryIdAndReferredTo(@Param("beneficiaryId") UUID beneficiaryId, @Param("cboId") UUID cboId);
+    @Query("SELECT referral FROM Referral referral "
+        + "JOIN referral.to org "
+        + "JOIN org.locations location "
+        + "WHERE referral.beneficiary.id = :beneficiaryId AND org.id = :cboId "
+        + "AND COALESCE(:locId, NULL) IS NULL OR :locId = location.id")
+    List<Referral> findAllByBeneficiaryIdAndReferredTo(@Param("beneficiaryId") UUID beneficiaryId, @Param("cboId") UUID cboId,
+        @Param("locId") UUID locId);
 
     @Query("SELECT referral FROM Referral referral "
         + "JOIN referral.from org "
