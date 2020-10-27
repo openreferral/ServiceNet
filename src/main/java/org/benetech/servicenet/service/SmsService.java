@@ -1,8 +1,10 @@
 package org.benetech.servicenet.service;
 
 import com.twilio.Twilio;
+import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.errors.InternalServerErrorException;
 import org.benetech.servicenet.service.dto.SmsMessage;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@SuppressWarnings("PMD.PreserveStackTrace")
 @Component
 public class SmsService {
     private final Logger log = LoggerFactory.getLogger(SmsService.class);
@@ -32,12 +35,19 @@ public class SmsService {
         }
         Twilio.init(acccountSid, authToken);
 
-        Message message = Message.creator(new PhoneNumber(sms.getTo()), new PhoneNumber(fromNumber), sms.getMessage())
-            .create();
-        if (StringUtils.isEmpty(message.getErrorMessage())) {
-            log.info("SMS Message sent to " + sms.getTo() + ", id: " + message.getSid());
-        } else {
-            throw new InternalServerErrorException("Could not send message: " + message.getErrorMessage());
+        try {
+            Message message = Message
+                .creator(new PhoneNumber(sms.getTo()), new PhoneNumber(fromNumber),
+                    sms.getMessage())
+                .create();
+            if (StringUtils.isEmpty(message.getErrorMessage())) {
+                log.info("SMS Message sent to " + sms.getTo() + ", id: " + message.getSid());
+            } else {
+                throw new InternalServerErrorException("Could not send message: " + message.getErrorMessage());
+            }
+        } catch (ApiException ex) {
+            log.debug(ex.getMessage(), ex);
+            throw new BadRequestAlertException(ex.getMessage(), "sms", "invalidphone");
         }
     }
 }
