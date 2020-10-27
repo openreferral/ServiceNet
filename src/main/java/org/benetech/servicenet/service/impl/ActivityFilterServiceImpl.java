@@ -13,7 +13,6 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
-import org.benetech.servicenet.repository.ActivityFilterCityRepository;
 import org.benetech.servicenet.repository.ActivityFilterRepository;
 import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.repository.SiloRepository;
@@ -50,20 +49,17 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     private final SiloRepository siloRepository;
 
-    private final ActivityFilterCityRepository activityFilterCityRepository;
-
     private static final String SILO_TAXONOMIES = "silo";
 
     public ActivityFilterServiceImpl(GeocodingResultRepository geocodingResultRepository, UserService userService,
         TaxonomyRepository taxonomyRepository, ActivityFilterRepository activityFilterRepository,
-        ActivityFilterMapper activityFilterMapper, ActivityFilterCityRepository activityFilterCityRepository,
+        ActivityFilterMapper activityFilterMapper,
         SiloRepository siloRepository) {
         this.geocodingResultRepository = geocodingResultRepository;
         this.taxonomyRepository = taxonomyRepository;
         this.activityFilterRepository = activityFilterRepository;
         this.activityFilterMapper = activityFilterMapper;
         this.userService = userService;
-        this.activityFilterCityRepository = activityFilterCityRepository;
         this.siloRepository = siloRepository;
     }
 
@@ -104,12 +100,12 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     @Override
     public Set<String> getCitiesForServiceProviders(UserProfile currentUserProfile) {
-        return this.activityFilterCityRepository.getCities(currentUserProfile, null);
+        return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders(currentUserProfile);
     }
 
     @Override
     public Set<String> getCitiesForServiceProviders(Silo silo) {
-        return this.activityFilterCityRepository.getCities(null, silo);
+        return geocodingResultRepository.getDistinctCityFromGeoResultsForServiceProviders(silo);
     }
 
     @Override

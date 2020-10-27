@@ -63,11 +63,11 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
     @Query("SELECT DISTINCT gr.postalCode FROM Location l "
         + "JOIN l.geocodingResults gr "
         + "JOIN l.organization org "
-        + "JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.additionalSilos additionalSilo "
         + "WHERE gr.postalCode != '' "
-        + "AND userProfile.id != :#{#currentUserProfile.id} "
-        + "AND userProfile.silo = :#{#currentUserProfile.silo} "
-        + "AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "AND (userProfile.id IS NULL OR userProfile.id != :#{#currentUserProfile.id}) "
+        + "AND (userProfile.silo = :#{#currentUserProfile.silo} OR additionalSilo = :#{#currentUserProfile.silo}) "
         + "ORDER BY gr.postalCode")
     SortedSet<String> getDistinctPostalCodesFromGeoResultsForServiceProviders(@Param("currentUserProfile")
         UserProfile currentUserProfile);
@@ -75,10 +75,10 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
     @Query("SELECT DISTINCT gr.postalCode FROM Location l "
         + "JOIN l.geocodingResults gr "
         + "JOIN l.organization org "
-        + "JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.additionalSilos additionalSilo "
         + "WHERE gr.postalCode != '' "
-        + "AND userProfile.silo = :silo "
-        + "AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "AND (userProfile.silo = :silo OR additionalSilo = :silo) "
         + "ORDER BY gr.postalCode")
     SortedSet<String> getDistinctPostalCodesFromGeoResultsForServiceProviders(@Param("silo")
         Silo silo);
@@ -86,11 +86,11 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
     @Query("SELECT DISTINCT gr.administrativeAreaLevel2 FROM Location l "
         + "JOIN l.geocodingResults gr "
         + "JOIN l.organization org "
-        + "JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.additionalSilos additionalSilo "
         + "WHERE gr.administrativeAreaLevel2 != '' "
-        + "AND userProfile.id != :#{#currentUserProfile.id} "
-        + "AND userProfile.silo = :#{#currentUserProfile.silo} "
-        + "AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "AND (userProfile.id IS NULL OR userProfile.id != :#{#currentUserProfile.id}) "
+        + "AND (userProfile.silo = :#{#currentUserProfile.silo} OR additionalSilo = :#{#currentUserProfile.silo}) "
         + "ORDER BY gr.administrativeAreaLevel2")
     SortedSet<String> getDistinctRegionsFromGeoResultsForServiceProviders(@Param("currentUserProfile")
         UserProfile currentUserProfile);
@@ -98,10 +98,10 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
     @Query("SELECT DISTINCT gr.administrativeAreaLevel2 FROM Location l "
         + "JOIN l.geocodingResults gr "
         + "JOIN l.organization org "
-        + "JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.additionalSilos additionalSilo "
         + "WHERE gr.administrativeAreaLevel2 != '' "
-        + "AND userProfile.silo = :silo "
-        + "AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "AND (userProfile.silo = :silo OR additionalSilo = :silo) "
         + "ORDER BY gr.administrativeAreaLevel2")
     SortedSet<String> getDistinctRegionsFromGeoResultsForServiceProviders(@Param("silo")
         Silo silo);
@@ -109,11 +109,11 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
     @Query("SELECT DISTINCT gr.locality FROM Location l "
         + "JOIN l.geocodingResults gr "
         + "JOIN l.organization org "
-        + "JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.additionalSilos additionalSilo "
         + "WHERE gr.locality != '' "
-        + "AND userProfile.id != :#{#currentUserProfile.id} "
-        + "AND userProfile.silo = :#{#currentUserProfile.silo} "
-        + "AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "AND (userProfile.id IS NULL OR userProfile.id != :#{#currentUserProfile.id}) "
+        + "AND (userProfile.silo = :#{#currentUserProfile.silo} OR additionalSilo = :#{#currentUserProfile.silo}) "
         + "ORDER BY gr.locality")
     SortedSet<String> getDistinctCityFromGeoResultsForServiceProviders(@Param("currentUserProfile")
         UserProfile currentUserProfile);
@@ -121,10 +121,10 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
     @Query("SELECT DISTINCT gr.locality FROM Location l "
         + "JOIN l.geocodingResults gr "
         + "JOIN l.organization org "
-        + "JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.userProfiles userProfile "
+        + "LEFT JOIN org.additionalSilos additionalSilo "
         + "WHERE gr.locality != '' "
-        + "AND userProfile.silo = :silo "
-        + "AND userProfile.systemAccount.name = 'ServiceProvider' "
+        + "AND (userProfile.silo = :silo OR additionalSilo = :silo) "
         + "ORDER BY gr.locality")
     SortedSet<String> getDistinctCityFromGeoResultsForServiceProviders(@Param("silo")
         Silo silo);
