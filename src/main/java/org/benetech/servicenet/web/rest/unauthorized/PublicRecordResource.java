@@ -15,6 +15,7 @@ import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.TaxonomyService;
+import org.benetech.servicenet.service.dto.SiloDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
 import org.benetech.servicenet.service.dto.SystemAccountDTO;
@@ -186,11 +187,22 @@ public class PublicRecordResource {
      * GET getTaxonomies
      */
     @GetMapping("/activity-filter/get-taxonomies")
-    public TaxonomyFilterDTO getTaxonomies(@RequestParam(required = false) UUID siloId) {
+    public TaxonomyFilterDTO getTaxonomies(@RequestParam(required = false) UUID siloId, @RequestParam(required = false) String siloName) {
         TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
-        taxonomyFilterDTO.setTaxonomiesByProvider(
-            activityFilterService.getTaxonomies(siloId)
-        );
+        if (siloId != null) {
+            taxonomyFilterDTO.setTaxonomiesByProvider(
+                activityFilterService.getTaxonomies(siloId)
+            );
+        } else {
+            Optional<SiloDTO> silo = siloService.findOneByName(siloName);
+            if (silo.isPresent()) {
+                taxonomyFilterDTO.setTaxonomiesByProvider(
+                    activityFilterService.getTaxonomies(silo.get().getId())
+                );
+            } else {
+                throw new BadRequestAlertException("There is no silo with such name", "providerRecord", "idnull");
+            }
+        }
         taxonomyFilterDTO.setCurrentProvider(
             Constants.SERVICE_PROVIDER
         );
