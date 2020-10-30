@@ -15,6 +15,7 @@ import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.TaxonomyService;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.SiloDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
@@ -66,6 +67,9 @@ public class PublicRecordResource {
 
     @Autowired
     private SystemAccountService systemAccountService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/all-provider-records/{silo}")
     @Timed
@@ -172,6 +176,33 @@ public class PublicRecordResource {
     }
 
     /**
+     * GET getTaxonomies
+     */
+    @GetMapping("/activity-filter/service-providers/get-taxonomies")
+    public TaxonomyFilterDTO getServiceProvidersTaxonomies(@RequestParam(required = false) String siloName) {
+        TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
+        if (siloName != null) {
+            Optional<SiloDTO> silo = siloService.findOneByName(siloName);
+            if (silo.isPresent()) {
+                taxonomyFilterDTO.setTaxonomiesByProvider(
+                    activityFilterService.getTaxonomies(silo.get().getId(), Constants.SERVICE_PROVIDER)
+                );
+            } else {
+                throw new BadRequestAlertException("There is no silo with such name", "providerRecord", "idnull");
+            }
+        } else {
+            Silo silo = userService.getCurrentUserProfile().getSilo();
+            taxonomyFilterDTO.setTaxonomiesByProvider(
+                activityFilterService.getTaxonomies(silo != null ? silo.getId() : null, Constants.SERVICE_PROVIDER)
+            );
+        }
+        taxonomyFilterDTO.setCurrentProvider(
+            Constants.SERVICE_PROVIDER
+        );
+        return taxonomyFilterDTO;
+    }
+
+    /**
      * GET  /system-accounts : get all the systemAccounts.
      *
      * @return the ResponseEntity with status 200 (OK) and the list of systemAccounts in body
@@ -181,32 +212,6 @@ public class PublicRecordResource {
     public List<SystemAccountDTO> getAllSystemAccounts() {
         log.debug("REST request to get all SystemAccounts");
         return systemAccountService.findAll();
-    }
-
-    /**
-     * GET getTaxonomies
-     */
-    @GetMapping("/activity-filter/get-taxonomies")
-    public TaxonomyFilterDTO getTaxonomies(@RequestParam(required = false) UUID siloId, @RequestParam(required = false) String siloName) {
-        TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
-        if (siloId != null) {
-            taxonomyFilterDTO.setTaxonomiesByProvider(
-                activityFilterService.getTaxonomies(siloId)
-            );
-        } else {
-            Optional<SiloDTO> silo = siloService.findOneByName(siloName);
-            if (silo.isPresent()) {
-                taxonomyFilterDTO.setTaxonomiesByProvider(
-                    activityFilterService.getTaxonomies(silo.get().getId())
-                );
-            } else {
-                throw new BadRequestAlertException("There is no silo with such name", "providerRecord", "idnull");
-            }
-        }
-        taxonomyFilterDTO.setCurrentProvider(
-            Constants.SERVICE_PROVIDER
-        );
-        return taxonomyFilterDTO;
     }
 
     private void checkSilo(Optional<Silo> optSilo) {

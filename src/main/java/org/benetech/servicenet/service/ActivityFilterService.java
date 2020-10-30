@@ -42,8 +42,9 @@ public interface ActivityFilterService {
      *
      * @return the list of Taxonomies
      * @param siloId
+     * @param providerName
      */
-    Map<String, Set<String>> getTaxonomies(UUID siloId);
+    Map<String, Set<String>> getTaxonomies(UUID siloId, String providerName);
 
     /**
      * Get all the Postal Codes

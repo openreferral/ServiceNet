@@ -1,6 +1,8 @@
 package org.benetech.servicenet.web.rest;
 
 import io.github.jhipster.web.util.ResponseUtil;
+import org.benetech.servicenet.config.Constants;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import java.net.URI;
@@ -108,11 +110,27 @@ public class ActivityFilterResource {
     /**
      * GET getTaxonomies
      */
+    @GetMapping("/activity-filter/service-providers/get-taxonomies")
+    public TaxonomyFilterDTO getServiceProvidersTaxonomies() {
+        TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
+        Silo silo = userService.getCurrentUserProfile().getSilo();
+        taxonomyFilterDTO.setTaxonomiesByProvider(
+            activityFilterService.getTaxonomies(silo != null ? silo.getId() : null, Constants.SERVICE_PROVIDER)
+        );
+        taxonomyFilterDTO.setCurrentProvider(
+            userService.getCurrentSystemAccountName()
+        );
+        return taxonomyFilterDTO;
+    }
+
+    /**
+     * GET getTaxonomies
+     */
     @GetMapping("/activity-filter/get-taxonomies")
     public TaxonomyFilterDTO getTaxonomies(@RequestParam(required = false) UUID siloId) {
         TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
         taxonomyFilterDTO.setTaxonomiesByProvider(
-            activityFilterService.getTaxonomies(siloId)
+            activityFilterService.getTaxonomies(siloId, null)
         );
         taxonomyFilterDTO.setCurrentProvider(
             userService.getCurrentSystemAccountName()
