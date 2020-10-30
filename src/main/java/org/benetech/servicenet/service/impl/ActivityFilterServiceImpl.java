@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 /**
  * Service Implementation for managing {@link ActivityFilter}.
@@ -109,20 +112,27 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     }
 
     @Override
-    public Map<String, Set<String>> getTaxonomies(UUID siloId) {
-        List<Taxonomy> taxonomies = taxonomyRepository.findAssociatedTaxonomies();
+    public Map<String, Set<String>> getTaxonomies(UUID siloId, String providerName) {
+        List<Taxonomy> taxonomies;
         Map<String, Set<String>> taxonomiesByProvider = new HashMap<>();
+        if (StringUtils.isEmpty(providerName)) {
+            taxonomies = taxonomyRepository.findAssociatedTaxonomies();
+            for (Taxonomy taxonomy : taxonomies) {
+                Set<String> providersTaxonomies = taxonomiesByProvider.getOrDefault(taxonomy.getProviderName(), new HashSet<>());
+                providersTaxonomies.add(taxonomy.getName());
+                taxonomiesByProvider.put(taxonomy.getProviderName(), providersTaxonomies);
+            }
+        } else {
+            taxonomies = taxonomyRepository.findAssociatedTaxonomies(providerName);
+            taxonomiesByProvider.put(SERVICE_PROVIDER,
+                taxonomies.stream().map(Taxonomy::getName).collect(Collectors.toSet()));
+        }
         if (siloId != null) {
             Silo silo = siloRepository.getOne(siloId);
             Set<Organization> organizations = silo.getOrganizations();
             Set<String> taxonomyNames = taxonomyRepository.findAssociatedTaxonomies(organizations).stream()
                 .map(Taxonomy::getName).collect(Collectors.toSet());
             taxonomiesByProvider.put(SILO_TAXONOMIES, taxonomyNames);
-        }
-        for (Taxonomy taxonomy : taxonomies) {
-            Set<String> providersTaxonomies = taxonomiesByProvider.getOrDefault(taxonomy.getProviderName(), new HashSet<>());
-            providersTaxonomies.add(taxonomy.getName());
-            taxonomiesByProvider.put(taxonomy.getProviderName(), providersTaxonomies);
         }
         return taxonomiesByProvider;
     }

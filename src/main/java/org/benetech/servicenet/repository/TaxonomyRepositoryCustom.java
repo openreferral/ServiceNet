@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 public interface TaxonomyRepositoryCustom {
     List<Taxonomy> findAssociatedTaxonomies();
 
+    List<Taxonomy> findAssociatedTaxonomies(String providerName);
+
     List<Taxonomy> findAssociatedTaxonomies(Set<Organization> organizations);
 
     Page<Taxonomy> findAssociatedTaxonomies(Pageable pageable);
