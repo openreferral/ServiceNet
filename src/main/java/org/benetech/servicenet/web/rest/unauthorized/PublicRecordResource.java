@@ -185,7 +185,7 @@ public class PublicRecordResource {
             Optional<SiloDTO> silo = siloService.findOneByName(siloName);
             if (silo.isPresent()) {
                 taxonomyFilterDTO.setTaxonomiesByProvider(
-                    activityFilterService.getTaxonomies(silo.get().getId(), Constants.SERVICE_PROVIDER)
+                    activityFilterService.getTaxonomies(silo.get().getId(), Constants.SERVICE_PROVIDER, null)
                 );
             } else {
                 throw new BadRequestAlertException("There is no silo with such name", "providerRecord", "idnull");
@@ -193,7 +193,7 @@ public class PublicRecordResource {
         } else {
             Silo silo = userService.getCurrentUserProfile().getSilo();
             taxonomyFilterDTO.setTaxonomiesByProvider(
-                activityFilterService.getTaxonomies(silo != null ? silo.getId() : null, Constants.SERVICE_PROVIDER)
+                activityFilterService.getTaxonomies(silo != null ? silo.getId() : null, Constants.SERVICE_PROVIDER, null)
             );
         }
         taxonomyFilterDTO.setCurrentProvider(

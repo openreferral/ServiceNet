@@ -20,9 +20,14 @@ import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.ServiceTaxonomy_;
 import org.benetech.servicenet.domain.Service_;
+import org.benetech.servicenet.domain.Silo;
+import org.benetech.servicenet.domain.Silo_;
+import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.SystemAccount_;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.Taxonomy_;
+import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.domain.UserProfile_;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -49,13 +54,13 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepositoryCustom {
             .getResultList();
     }
 
-    public List<Taxonomy> findAssociatedTaxonomies(String providerName) {
+    public List<Taxonomy> findAssociatedTaxonomies(UUID siloId, String providerName, UserProfile excludedUser) {
         CriteriaQuery<Taxonomy> queryCriteria = cb.createQuery(Taxonomy.class);
         Root<Taxonomy> selectRoot = queryCriteria.from(Taxonomy.class);
 
         queryCriteria.select(selectRoot);
 
-        addFilters(queryCriteria, selectRoot, Collections.singletonList(providerName));
+        addFilters(queryCriteria, selectRoot, siloId, providerName, excludedUser);
 
         return em.createQuery(queryCriteria)
             .getResultList();
@@ -127,17 +132,45 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepositoryCustom {
         query.where(predicate);
     }
 
-    private <T> void addFilters(CriteriaQuery<T> query, Root<Taxonomy> root, List<String> providerNames) {
+    private <T> void addFilters(CriteriaQuery<T> query, Root<Taxonomy> root, UUID siloId, String providerName, UserProfile excludedUser) {
         Subquery<UUID> subquery = query.subquery(UUID.class);
         Root<Organization> subRoot = subquery.from(Organization.class);
+        Join<Organization, SystemAccount> systemAccountJoin = subRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = subRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+        Join<Organization, Silo> siloJoin = subRoot.join(Organization_.ADDITIONAL_SILOS, JoinType.LEFT);
+        Predicate predicate = cb.isTrue(subRoot.get(Organization_.ACTIVE));
+        if (siloId != null) {
+            predicate = cb.and(predicate,
+                cb.or(
+                    cb.and(
+                        cb.equal(systemAccountJoin.get(SystemAccount_.NAME), providerName),
+                        cb.equal(userProfileJoin.get(UserProfile_.SILO).get(Silo_.ID), siloId)
+                    ),
+                    cb.equal(siloJoin.get(Silo_.ID), siloId)
+                )
+            );
+        } else {
+            predicate = cb.and(predicate, cb.isNull(userProfileJoin.get(UserProfile_.SILO)));
+            if (providerName != null) {
+                predicate = cb.and(predicate,
+                    cb.equal(systemAccountJoin.get(SystemAccount_.NAME), providerName));
+            }
+        }
+        if (excludedUser != null) {
+            predicate = cb
+                .and(predicate,
+                    cb.or(cb.notEqual(userProfileJoin.get(UserProfile_.ID), excludedUser.getId()),
+                        cb.isNull(userProfileJoin.get(UserProfile_.ID))
+                    )
+                );
+        }
         Join<Organization, Service> serviceJoin = subRoot.join(Organization_.SERVICES, JoinType.LEFT);
         Join<Service, ServiceTaxonomy> taxonomiesJoin = serviceJoin.join(Service_.TAXONOMIES, JoinType.LEFT);
-        subquery.select(taxonomiesJoin.get(ServiceTaxonomy_.TAXONOMY).get(Taxonomy_.ID)).where(
-            subRoot.get(Organization_.ACCOUNT).get(SystemAccount_.NAME).in(providerNames)
-        );
 
-        Predicate predicate = cb.in(root.get(Taxonomy_.ID)).value(subquery);
-        query.where(predicate);
+        subquery.select(taxonomiesJoin.get(ServiceTaxonomy_.TAXONOMY).get(Taxonomy_.ID)).where(predicate);
+
+        Predicate rootPredicate = cb.in(root.get(Taxonomy_.ID)).value(subquery);
+        query.where(rootPredicate);
     }
 
 }

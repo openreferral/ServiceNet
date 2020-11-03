@@ -112,7 +112,7 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
     }
 
     @Override
-    public Map<String, Set<String>> getTaxonomies(UUID siloId, String providerName) {
+    public Map<String, Set<String>> getTaxonomies(UUID siloId, String providerName, UserProfile excludedUser) {
         List<Taxonomy> taxonomies;
         Map<String, Set<String>> taxonomiesByProvider = new HashMap<>();
         if (StringUtils.isEmpty(providerName)) {
@@ -123,7 +123,7 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
                 taxonomiesByProvider.put(taxonomy.getProviderName(), providersTaxonomies);
             }
         } else {
-            taxonomies = taxonomyRepository.findAssociatedTaxonomies(providerName);
+            taxonomies = taxonomyRepository.findAssociatedTaxonomies(siloId, providerName, excludedUser);
             taxonomiesByProvider.put(SERVICE_PROVIDER,
                 taxonomies.stream().map(Taxonomy::getName).collect(Collectors.toSet()));
         }
