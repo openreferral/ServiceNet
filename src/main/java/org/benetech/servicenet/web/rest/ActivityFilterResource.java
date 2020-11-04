@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -114,8 +113,9 @@ public class ActivityFilterResource {
     public TaxonomyFilterDTO getServiceProvidersTaxonomies() {
         TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
         Silo silo = userService.getCurrentUserProfile().getSilo();
+        UserProfile currentUser = userService.getCurrentUserProfile();
         taxonomyFilterDTO.setTaxonomiesByProvider(
-            activityFilterService.getTaxonomies(silo != null ? silo.getId() : null, Constants.SERVICE_PROVIDER)
+            activityFilterService.getTaxonomies(silo != null ? silo.getId() : null, Constants.SERVICE_PROVIDER, currentUser)
         );
         taxonomyFilterDTO.setCurrentProvider(
             userService.getCurrentSystemAccountName()
@@ -127,10 +127,10 @@ public class ActivityFilterResource {
      * GET getTaxonomies
      */
     @GetMapping("/activity-filter/get-taxonomies")
-    public TaxonomyFilterDTO getTaxonomies(@RequestParam(required = false) UUID siloId) {
+    public TaxonomyFilterDTO getTaxonomies() {
         TaxonomyFilterDTO taxonomyFilterDTO = new TaxonomyFilterDTO();
         taxonomyFilterDTO.setTaxonomiesByProvider(
-            activityFilterService.getTaxonomies(siloId, null)
+            activityFilterService.getTaxonomies(null, null, null)
         );
         taxonomyFilterDTO.setCurrentProvider(
             userService.getCurrentSystemAccountName()
