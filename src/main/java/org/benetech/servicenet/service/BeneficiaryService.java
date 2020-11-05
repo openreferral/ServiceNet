@@ -47,6 +47,14 @@ public interface BeneficiaryService {
     Optional<Beneficiary> getOne(UUID id);
 
     /**
+     * Get the "base36Id" beneficiary.
+     *
+     * @param base36Id the identifier of the entity.
+     * @return the entity.
+     */
+    Optional<Beneficiary> getOne(String base36Id);
+
+    /**
      * Delete the "id" beneficiary.
      *
      * @param id the id of the entity.

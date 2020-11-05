@@ -15,4 +15,6 @@ import org.springframework.stereotype.Repository;
 public interface BeneficiaryRepository extends JpaRepository<Beneficiary, UUID> {
 
     Optional<Beneficiary> findByPhoneNumber(String phoneNumber);
+
+    Optional<Beneficiary> findByIdentifier(Integer identifier);
 }

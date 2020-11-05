@@ -22,6 +22,7 @@ public interface ReferralMapper extends EntityMapper<ReferralDTO, Referral> {
     @Mapping(source = "toLocation.id", target = "toLocationId")
     @Mapping(source = "toLocation.name", target = "toLocationName")
     @Mapping(source = "beneficiary.id", target = "beneficiaryId")
+    @Mapping(source = "beneficiary.identifier", target = "beneficiaryIdentifier")
     @Mapping(source = "beneficiary.phoneNumber", target = "beneficiaryPhoneNumber")
     ReferralDTO toDto(Referral referral);
 

@@ -24,6 +24,7 @@ import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeToUserDTO;
 import org.benetech.servicenet.service.dto.SmsMessage;
 import org.benetech.servicenet.service.mapper.ReferralMapper;
+import org.benetech.servicenet.util.IdentifierUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,10 +156,10 @@ public class ReferralServiceImpl implements ReferralService {
         smsMessage.setTo(beneficiary.getPhoneNumber());
         if (isBeneficiaryNew) {
             smsMessage.setMessage(messageService.get("sms.checkin.new",
-                cbo.getName(), beneficiary.getId().toString()));
+                cbo.getName(), IdentifierUtils.toBase36(beneficiary.getIdentifier())));
         } else {
             smsMessage.setMessage(messageService.get("sms.checkin.existing",
-                cbo.getName(), beneficiary.getId().toString()));
+                cbo.getName(), IdentifierUtils.toBase36(beneficiary.getIdentifier())));
         }
         smsService.send(smsMessage);
     }
@@ -187,7 +188,7 @@ public class ReferralServiceImpl implements ReferralService {
         SmsMessage smsMessage = new SmsMessage();
         smsMessage.setTo(beneficiary.getPhoneNumber());
         smsMessage.setMessage(messageService.get("sms.referral.sent",
-            String.join(", ", orgNames), beneficiary.getId().toString()));
+            String.join(", ", orgNames), IdentifierUtils.toBase36(beneficiary.getIdentifier())));
         smsService.send(smsMessage);
     }
 

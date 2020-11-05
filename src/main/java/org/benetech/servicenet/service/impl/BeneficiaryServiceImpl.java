@@ -90,6 +90,19 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     /**
+     * Get the "base36Id" beneficiary.
+     *
+     * @param base36Id the identifier of the entity.
+     * @return the entity.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Beneficiary> getOne(String base36Id) {
+        log.debug("Request to get Beneficiary : {}", base36Id);
+        int id = Integer.parseInt(base36Id, 36);
+        return beneficiaryRepository.findByIdentifier(id);
+    }
+
+    /**
      * Delete the beneficiary by id.
      *
      * @param id the id of the entity.
