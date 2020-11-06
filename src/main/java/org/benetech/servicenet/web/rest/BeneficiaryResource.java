@@ -188,6 +188,7 @@ public class BeneficiaryResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (Ok)}, or with status {@code 400 (Bad Request)} if the beneficiary Id or Organization Id not found
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     @PostMapping("/beneficiaries/refer")
     public ResponseEntity<Void> refer(
         @RequestBody Map<UUID, UUID> organizationLocs,
@@ -221,7 +222,12 @@ public class BeneficiaryResource {
             throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
         }
 
-        referralService.refer(beneficiary, cbo.get(), referringLocationId, organizationLocs);
+        referralService.refer(
+            beneficiary,
+            cbo.get().getId(),
+            StringUtils.isEmpty(referringLocationId) ? null : UUID.fromString(referringLocationId),
+            organizationLocs
+        );
         return ResponseEntity.ok().build();
     }
 }
