@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Referral;
+import org.benetech.servicenet.util.IdentifierUtils;
 
 /**
  * A DTO for the {@link org.benetech.servicenet.domain.Referral} entity.
@@ -38,6 +39,8 @@ public class ReferralDTO implements Serializable {
     private String toLocationName;
 
     private UUID beneficiaryId;
+
+    private Integer beneficiaryIdentifier;
 
     private String beneficiaryPhoneNumber;
 
@@ -158,6 +161,18 @@ public class ReferralDTO implements Serializable {
 
     public void setToLocationName(String toLocationName) {
         this.toLocationName = toLocationName;
+    }
+
+    public String getBeneficiaryIdentifier() {
+        return (beneficiaryIdentifier != null) ? IdentifierUtils.toBase36(beneficiaryIdentifier) : null;
+    }
+
+    public void setBeneficiaryIdentifier(Integer beneficiaryIdentifier) {
+        this.beneficiaryIdentifier = beneficiaryIdentifier;
+    }
+
+    public void setBeneficiaryIdentifier(String beneficiaryIdentifier) {
+        this.beneficiaryIdentifier = IdentifierUtils.toInteger(beneficiaryIdentifier);
     }
 
     @Override

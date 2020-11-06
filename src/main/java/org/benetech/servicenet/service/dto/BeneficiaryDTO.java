@@ -13,6 +13,8 @@ public class BeneficiaryDTO implements Serializable {
 
     private UUID id;
 
+    private Integer identifier;
+
     private String phoneNumber;
 
 
@@ -22,6 +24,14 @@ public class BeneficiaryDTO implements Serializable {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getIdentifier() {
+        return (identifier != null) ? Integer.toString(identifier, 36) : null;
+    }
+
+    public void setIdentifier(Integer identifier) {
+        this.identifier = identifier;
     }
 
     public String getPhoneNumber() {

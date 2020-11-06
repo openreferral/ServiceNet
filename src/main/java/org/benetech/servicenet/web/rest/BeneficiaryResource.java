@@ -165,7 +165,7 @@ public class BeneficiaryResource {
         } else if (checkInDTO.getBeneficiaryId() != null) {
             try {
                 Optional<Beneficiary> beneficiaryOpt = beneficiaryService
-                    .getOne(UUID.fromString(checkInDTO.getBeneficiaryId()));
+                    .getOne(checkInDTO.getBeneficiaryId());
                 if (beneficiaryOpt.isEmpty()) {
                     throw new BadRequestAlertException("Can not find beneficiary with provided ID",
                         ENTITY_NAME, "idnotfound");
@@ -207,7 +207,7 @@ public class BeneficiaryResource {
         } else if (StringUtils.isNotBlank(beneficiaryId)) {
             try {
                 Optional<Beneficiary> beneficiaryOpt = beneficiaryService
-                    .getOne(UUID.fromString(beneficiaryId));
+                    .getOne(beneficiaryId);
                 if (beneficiaryOpt.isEmpty()) {
                     throw new BadRequestAlertException("Can not find beneficiary with provided ID",
                         ENTITY_NAME, "idnotfound");

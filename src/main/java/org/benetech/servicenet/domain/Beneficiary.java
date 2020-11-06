@@ -11,6 +11,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.io.Serializable;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 /**
  * A Beneficiary.
@@ -21,6 +23,10 @@ import java.io.Serializable;
 public class Beneficiary extends AbstractEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @Generated(GenerationTime.INSERT)
+    @Column(name = "identifier", nullable = false, insertable = false)
+    private Integer identifier;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -50,6 +56,10 @@ public class Beneficiary extends AbstractEntity implements Serializable {
 
     public void setReferrals(Set<Referral> referrals) {
         this.referrals = referrals;
+    }
+
+    public Integer getIdentifier() {
+        return this.identifier;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
