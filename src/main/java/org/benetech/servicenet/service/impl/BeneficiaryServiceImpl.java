@@ -6,6 +6,7 @@ import org.benetech.servicenet.domain.Beneficiary;
 import org.benetech.servicenet.repository.BeneficiaryRepository;
 import org.benetech.servicenet.service.dto.BeneficiaryDTO;
 import org.benetech.servicenet.service.mapper.BeneficiaryMapper;
+import org.benetech.servicenet.util.IdentifierUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,8 +99,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Transactional(readOnly = true)
     public Optional<Beneficiary> getOne(String base36Id) {
         log.debug("Request to get Beneficiary : {}", base36Id);
-        int id = Integer.parseInt(base36Id, 36);
-        return beneficiaryRepository.findByIdentifier(id);
+        return beneficiaryRepository.findByIdentifier(
+            IdentifierUtils.toInteger(base36Id));
     }
 
     /**

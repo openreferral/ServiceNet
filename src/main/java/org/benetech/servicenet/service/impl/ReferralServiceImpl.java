@@ -165,7 +165,7 @@ public class ReferralServiceImpl implements ReferralService {
     }
 
     @Override
-    public void refer(Beneficiary beneficiary, Organization cbo, UUID fromLocId, Map<UUID, UUID> organizationLocs) {
+    public void refer(Beneficiary beneficiary, Organization cbo, String fromLocId, Map<UUID, UUID> organizationLocs) {
         ZonedDateTime now = ZonedDateTime.now();
         List<String> orgNames = new ArrayList<>();
         organizationLocs.forEach((UUID orgId, UUID locId) -> {
@@ -174,7 +174,7 @@ public class ReferralServiceImpl implements ReferralService {
             Referral referral = new Referral();
             referral.setBeneficiary(beneficiary);
             referral.setFrom(cbo);
-            Location fromLocation = (fromLocId != null) ? locationRepository.getOne(fromLocId)
+            Location fromLocation = (fromLocId != null) ? locationRepository.getOne(UUID.fromString(fromLocId))
                 : cbo.getLocations().stream().findFirst().orElse(null);
             referral.setFromLocation(fromLocation);
             Location toLocation = (locId != null) ? locationRepository.getOne(locId)
