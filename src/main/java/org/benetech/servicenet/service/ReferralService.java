@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beneficiary;
-import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 
@@ -54,7 +53,7 @@ public interface ReferralService {
 
     void checkIn(Beneficiary beneficiary, boolean isBeneficiaryNew, UUID cboId, UUID locationId);
 
-    void refer(Beneficiary beneficiary, Organization cbo, String fromLocId, Map<UUID, UUID> organizationLocs);
+    void refer(Beneficiary beneficiary, UUID cboId, UUID fromLocId, Map<UUID, UUID> organizationLocs);
 
     /**
      * Search for curent user's referrals.
