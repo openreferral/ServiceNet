@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.benetech.servicenet.util.IdentifierUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -56,6 +57,10 @@ public class Beneficiary extends AbstractEntity implements Serializable {
 
     public void setReferrals(Set<Referral> referrals) {
         this.referrals = referrals;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = IdentifierUtils.toInteger(identifier);
     }
 
     public Integer getIdentifier() {

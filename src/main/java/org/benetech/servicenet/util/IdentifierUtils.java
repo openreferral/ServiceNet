@@ -9,7 +9,7 @@ public class IdentifierUtils {
     }
 
     public static Integer toInteger(String paddedBase36) {
-        return Integer.valueOf(paddedBase36, 36);
+        return Integer.parseInt(paddedBase36, 36);
     }
 
     private IdentifierUtils() { }

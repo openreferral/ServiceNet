@@ -221,7 +221,7 @@ public class BeneficiaryResource {
             throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
         }
 
-        referralService.refer(beneficiary, cbo.get(), UUID.fromString(referringLocationId), organizationLocs);
+        referralService.refer(beneficiary, cbo.get(), referringLocationId, organizationLocs);
         return ResponseEntity.ok().build();
     }
 }

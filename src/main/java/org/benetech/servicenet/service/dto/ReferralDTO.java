@@ -40,7 +40,7 @@ public class ReferralDTO implements Serializable {
 
     private UUID beneficiaryId;
 
-    private Integer beneficiaryIdentifier;
+    private String beneficiaryIdentifier;
 
     private String beneficiaryPhoneNumber;
 
@@ -164,15 +164,19 @@ public class ReferralDTO implements Serializable {
     }
 
     public String getBeneficiaryIdentifier() {
-        return (beneficiaryIdentifier != null) ? IdentifierUtils.toBase36(beneficiaryIdentifier) : null;
+        return beneficiaryIdentifier;
     }
 
     public void setBeneficiaryIdentifier(Integer beneficiaryIdentifier) {
-        this.beneficiaryIdentifier = beneficiaryIdentifier;
+        this.beneficiaryIdentifier = IdentifierUtils.toBase36(beneficiaryIdentifier);
     }
 
     public void setBeneficiaryIdentifier(String beneficiaryIdentifier) {
-        this.beneficiaryIdentifier = IdentifierUtils.toInteger(beneficiaryIdentifier);
+        try {
+            this.setBeneficiaryIdentifier(Integer.parseInt(beneficiaryIdentifier));
+        } catch (NumberFormatException nfe) {
+            this.beneficiaryIdentifier = beneficiaryIdentifier;
+        }
     }
 
     @Override

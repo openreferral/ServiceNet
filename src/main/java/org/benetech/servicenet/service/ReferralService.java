@@ -54,7 +54,7 @@ public interface ReferralService {
 
     void checkIn(Beneficiary beneficiary, boolean isBeneficiaryNew, UUID cboId, UUID locationId);
 
-    void refer(Beneficiary beneficiary, Organization cbo, UUID fromLocId, Map<UUID, UUID> organizationLocs);
+    void refer(Beneficiary beneficiary, Organization cbo, String fromLocId, Map<UUID, UUID> organizationLocs);
 
     /**
      * Search for curent user's referrals.
