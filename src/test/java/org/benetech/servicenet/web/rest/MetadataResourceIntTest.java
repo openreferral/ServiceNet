@@ -3,6 +3,7 @@ package org.benetech.servicenet.web.rest;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
+import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
 import org.benetech.servicenet.domain.Metadata;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.domain.enumeration.ActionType;
@@ -11,9 +12,10 @@ import org.benetech.servicenet.service.MetadataService;
 import org.benetech.servicenet.service.dto.MetadataDTO;
 import org.benetech.servicenet.service.mapper.MetadataMapper;
 import org.benetech.servicenet.errors.ExceptionTranslator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,8 +54,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see MetadataResource
  */
-@RunWith(ZeroCodeSpringJUnit4Runner.class)
+@ExtendWith({ SpringExtension.class, ZeroCodeSpringJUnit5Extension.class })
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
+@WithMockUser(username = "admin", roles = {"ADMIN"})
 public class MetadataResourceIntTest {
 
     private static final UUID DEFAULT_RESOURCE_ID = TestConstants.UUID_1;
@@ -127,7 +130,13 @@ public class MetadataResourceIntTest {
         return metadata;
     }
 
-    @Before
+    @BeforeAll
+    static void beforeAll(@Autowired MetadataRepository repo) {
+        // clean existing metadata
+        repo.deleteAllInBatch();
+    }
+
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         final MetadataResource metadataResource = new MetadataResource(metadataService);
