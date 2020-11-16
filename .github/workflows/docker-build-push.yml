@@ -10,13 +10,13 @@ jobs:
     steps:
     - name: Set image tag variable to 'dev'
       if: endsWith(github.ref, '/dev')
-      run: echo "::set-env name=IMAGE_TAG::dev"
+      run: echo "IMAGE_TAG=dev" >> $GITHUB_ENV
     - name: Set image tag variable to 'staging'
       if: endsWith(github.ref, '/staging')
-      run: echo "::set-env name=IMAGE_TAG::staging"
+      run: echo "IMAGE_TAG=staging" >> $GITHUB_ENV
     - name: Set image tag variable to 'latest'
       if: endsWith(github.ref, '/master')
-      run: echo "::set-env name=IMAGE_TAG::latest"
+      run: echo "IMAGE_TAG=latest" >> $GITHUB_ENV
     - uses: actions/checkout@v2
     - name: Set up JDK 11
       uses: actions/setup-java@v1
