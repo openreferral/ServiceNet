@@ -85,6 +85,8 @@ public class OrganizationResourceIntTest {
 
     private Organization organization;
 
+    private Organization organizationWithAllRelations;
+
     private static final Boolean DEFAULT_ACTIVE = true;
 
     /**
@@ -97,6 +99,10 @@ public class OrganizationResourceIntTest {
         Organization result = OrganizationMother.createDefault(DEFAULT_ACTIVE);
         result.setAccount(SystemAccountMother.createDefaultAndPersist(em));
         return result;
+    }
+
+    public static Organization createEntityWithAllRelations(EntityManager em) {
+        return OrganizationMother.createDefaultWithAllRelationsAndPersist(em);
     }
 
     @Before
@@ -115,6 +121,7 @@ public class OrganizationResourceIntTest {
     @Before
     public void initTest() {
         organization = createEntity(em);
+        organizationWithAllRelations = createEntityWithAllRelations(em);
     }
 
     @Test
@@ -339,6 +346,21 @@ public class OrganizationResourceIntTest {
 
         // Get the organization
         restOrganizationMockMvc.perform(delete("/api/organizations/{id}", organization.getId())
+            .accept(TestUtil.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        // Validate the database is empty
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    public void deleteOrganizationWithAllRelations() throws Exception {
+        int databaseSizeBeforeDelete = organizationRepository.findAll().size();
+
+        // Get the organization
+        restOrganizationMockMvc.perform(delete("/api/organizations/{id}", organizationWithAllRelations.getId())
             .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 

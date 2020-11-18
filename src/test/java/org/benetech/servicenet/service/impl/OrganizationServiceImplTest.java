@@ -5,42 +5,8 @@ import static org.junit.Assert.assertEquals;
 import javax.persistence.EntityManager;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestDatabaseManagement;
-import org.benetech.servicenet.domain.AccessibilityForDisabilities;
-import org.benetech.servicenet.domain.Contact;
-import org.benetech.servicenet.domain.DailyUpdate;
-import org.benetech.servicenet.domain.Eligibility;
-import org.benetech.servicenet.domain.Funding;
-import org.benetech.servicenet.domain.HolidaySchedule;
-import org.benetech.servicenet.domain.Language;
-import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
-import org.benetech.servicenet.domain.OrganizationError;
-import org.benetech.servicenet.domain.PaymentAccepted;
-import org.benetech.servicenet.domain.Phone;
-import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.domain.PostalAddress;
-import org.benetech.servicenet.domain.Program;
-import org.benetech.servicenet.domain.RegularSchedule;
-import org.benetech.servicenet.domain.RequiredDocument;
-import org.benetech.servicenet.domain.Service;
-import org.benetech.servicenet.domain.ServiceArea;
-import org.benetech.servicenet.domain.ServiceAtLocation;
-import org.benetech.servicenet.domain.ServiceMetadata;
-import org.benetech.servicenet.domain.ServiceTaxonomy;
-import org.benetech.servicenet.domain.Taxonomy;
-import org.benetech.servicenet.mother.AccessibilityForDisabilitiesMother;
-import org.benetech.servicenet.mother.ContactMother;
-import org.benetech.servicenet.mother.EligibilityMother;
-import org.benetech.servicenet.mother.FundingMother;
-import org.benetech.servicenet.mother.HolidayScheduleMother;
-import org.benetech.servicenet.mother.LocationMother;
 import org.benetech.servicenet.mother.OrganizationMother;
-import org.benetech.servicenet.mother.PhoneMother;
-import org.benetech.servicenet.mother.PhysicalAddressMother;
-import org.benetech.servicenet.mother.PostalAddressMother;
-import org.benetech.servicenet.mother.RegularScheduleMother;
-import org.benetech.servicenet.mother.ServiceMother;
-import org.benetech.servicenet.mother.ServiceTaxonomyMother;
 import org.benetech.servicenet.repository.AccessibilityForDisabilitiesRepository;
 import org.benetech.servicenet.repository.ContactRepository;
 import org.benetech.servicenet.repository.DailyUpdateRepository;
@@ -63,7 +29,10 @@ import org.benetech.servicenet.repository.ServiceAtLocationRepository;
 import org.benetech.servicenet.repository.ServiceMetadataRepository;
 import org.benetech.servicenet.repository.ServiceRepository;
 import org.benetech.servicenet.repository.ServiceTaxonomyRepository;
+import org.benetech.servicenet.repository.SiloRepository;
+import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.repository.TaxonomyRepository;
+import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.OrganizationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -150,6 +119,15 @@ public class OrganizationServiceImplTest {
     private OrganizationErrorRepository organizationErrorRepository;
 
     @Autowired
+    private SiloRepository siloRepository;
+
+    @Autowired
+    private UserProfileRepository userProfileRepository;
+
+    @Autowired
+    private SystemAccountRepository systemAccountRepository;
+
+    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -164,136 +142,18 @@ public class OrganizationServiceImplTest {
     @Test
     @Transactional
     public void shouldDeleteOrganizationAndAllRelatedEntities() {
-        Organization org = OrganizationMother.createDefaultAndPersist(em);
-
-        DailyUpdate dailyUpdate = new DailyUpdate().update("update").organization(org);
-        em.persist(dailyUpdate);
-
-        OrganizationError organizationError = new OrganizationError().cause("error").organization(org);
-        em.persist(organizationError);
-
-        Funding orgFunding = FundingMother.createDefault();
-        orgFunding.setOrganization(org);
-        em.persist(orgFunding);
-
-        Phone orgPhone = PhoneMother.createDefault();
-        orgPhone.setOrganization(org);
-        em.persist(orgPhone);
-
-        Program program = new Program().name("program").organization(org);
-        em.persist(program);
-
-        Service programService = ServiceMother.createDefault();
-        programService.setProgram(program);
-        em.persist(programService);
-
-        Contact orgContact = ContactMother.createDefault();
-        orgContact.setOrganization(org);
-        em.persist(orgContact);
-
-        Phone contactPhone = PhoneMother.createDefault();
-        contactPhone.setContact(orgContact);
-        em.persist(contactPhone);
-
-        Location location = LocationMother.createDefault();
-        location.setOrganization(org);
-        em.persist(location);
-
-        AccessibilityForDisabilities accessibilityForDisabilities = AccessibilityForDisabilitiesMother.createDefault();
-        accessibilityForDisabilities.setLocation(location);
-        em.persist(accessibilityForDisabilities);
-
-        PostalAddress postalAddress = PostalAddressMother.createDefault();
-        postalAddress.setLocation(location);
-        em.persist(postalAddress);
-
-        PhysicalAddress physicalAddress = PhysicalAddressMother.createDefault();
-        physicalAddress.setLocation(location);
-        em.persist(physicalAddress);
-
-        createRegularSchedule(location, null);
-
-        HolidaySchedule locationHolidaySchedule = HolidayScheduleMother.createDefault();
-        locationHolidaySchedule.setLocation(location);
-        em.persist(locationHolidaySchedule);
-
-        Language locationLanguage = new Language().language("eng").location(location);
-        em.persist(locationLanguage);
-
-        Phone locationPhone = PhoneMother.createDefault();
-        locationPhone.setLocation(location);
-        em.persist(locationPhone);
-
-        Service service = ServiceMother.createDefault();
-        service.setOrganization(org);
-        em.persist(service);
-
-        Taxonomy taxonomy = new Taxonomy().name("taxonomy");
-        em.persist(taxonomy);
-
-        ServiceTaxonomy serviceTaxonomy = ServiceTaxonomyMother.createDefault();
-        serviceTaxonomy.setTaxonomy(taxonomy);
-        serviceTaxonomy.setSrvc(service);
-        em.persist(serviceTaxonomy);
-
-        ServiceAtLocation serviceAtLocation = new ServiceAtLocation().location(location).srvc(service);
-        em.persist(serviceAtLocation);
-
-        Eligibility eligibility = EligibilityMother.createDefault();
-        eligibility.setSrvc(service);
-        em.persist(eligibility);
-
-        Funding serviceFunding = FundingMother.createDefault();
-        serviceFunding.setSrvc(service);
-        em.persist(serviceFunding);
-
-        createRegularSchedule(null, service);
-
-        HolidaySchedule serviceHolidaySchedule = HolidayScheduleMother.createDefault();
-        serviceHolidaySchedule.setSrvc(service);
-        em.persist(serviceHolidaySchedule);
-
-        ServiceArea serviceArea = new ServiceArea().description("area").srvc(service);
-        em.persist(serviceArea);
-
-        ServiceMetadata serviceMetadata = new ServiceMetadata();
-        serviceMetadata.setSrvc(service);
-        serviceMetadata.setLastActionType("create");
-        serviceMetadata.setUpdatedBy("admin");
-        em.persist(serviceMetadata);
-
-        RequiredDocument requiredDocument = new RequiredDocument().document("doc").srvc(service);
-        em.persist(requiredDocument);
-
-        PaymentAccepted paymentAccepted = new PaymentAccepted().payment("payment").srvc(service);
-        em.persist(paymentAccepted);
-
-        Language serviceLanguage = new Language().language("eng").srvc(service);
-        em.persist(serviceLanguage);
-
-        Phone servicePhone = PhoneMother.createDefault();
-        servicePhone.setSrvc(service);
-        em.persist(servicePhone);
-
-        Contact serviceContact = ContactMother.createDefault();
-        serviceContact.setSrvc(service);
-        em.persist(serviceContact);
-
-        em.flush();
-
-        em.refresh(orgContact);
-        em.refresh(program);
-        em.refresh(service);
-        em.refresh(location);
-        em.refresh(org);
+        Organization org = OrganizationMother.createDefaultWithAllRelationsAndPersist(em);
+        int siloCount = siloRepository.findAll().size();
+        int userProfileCount = userProfileRepository.findAll().size();
+        int systemAccountCount = systemAccountRepository.findAll().size();
 
         assertEquals(1, organizationService.findAll().size());
         assertEquals(1, dailyUpdateRepository.findAll().size());
         assertEquals(1, organizationErrorRepository.findAll().size());
         assertEquals(2, fundingRepository.findAll().size());
-        assertEquals(4, phoneRepository.findAll().size());
-        assertEquals(1, programRepository.findAll().size());
-        assertEquals(2, serviceRepository.findAll().size());
+        assertEquals(5, phoneRepository.findAll().size());
+        assertEquals(2, programRepository.findAll().size());
+        assertEquals(1, serviceRepository.findAll().size());
         assertEquals(2, contactRepository.findAll().size());
         assertEquals(1, locationRepository.findAll().size());
         assertEquals(1, accessibilityForDisabilitiesRepository.findAll().size());
@@ -320,7 +180,6 @@ public class OrganizationServiceImplTest {
         assertEquals(0, organizationErrorRepository.findAll().size());
         assertEquals(0, fundingRepository.findAll().size());
         assertEquals(0, phoneRepository.findAll().size());
-        assertEquals(0, programRepository.findAll().size());
         assertEquals(0, serviceRepository.findAll().size());
         assertEquals(0, contactRepository.findAll().size());
         assertEquals(0, locationRepository.findAll().size());
@@ -337,22 +196,12 @@ public class OrganizationServiceImplTest {
         assertEquals(0, serviceMetadataRepository.findAll().size());
         assertEquals(0, requiredDocumentRepository.findAll().size());
         assertEquals(0, paymentAcceptedRepository.findAll().size());
-
         assertEquals(0, serviceTaxonomyRepository.findAll().size());
+
         assertEquals(1, taxonomyRepository.findAll().size());
-    }
-
-    private RegularSchedule createRegularSchedule(Location location, Service service) {
-        RegularSchedule regularSchedule = RegularScheduleMother.createWithTwoOpeningHours();
-        regularSchedule.setLocation(location);
-        regularSchedule.setSrvc(service);
-        em.persist(regularSchedule);
-
-        regularSchedule.getOpeningHours().forEach(openingHours -> {
-            openingHours.setRegularSchedule(regularSchedule);
-            em.persist(openingHours);
-        });
-
-        return regularSchedule;
+        assertEquals(1, programRepository.findAll().size());
+        assertEquals(siloCount, siloRepository.findAll().size());
+        assertEquals(userProfileCount, userProfileRepository.findAll().size());
+        assertEquals(systemAccountCount, systemAccountRepository.findAll().size());
     }
 }
