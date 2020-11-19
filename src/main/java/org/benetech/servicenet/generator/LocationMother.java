@@ -36,14 +36,17 @@ public class LocationMother implements BaseMother<Location> {
         PostalAddress postalAddress = POSTAL_ADDRESS_MOTHER.generate(em);
         postalAddress.setLocation(loc);
         em.persist(postalAddress);
+        loc = loc.postalAddress(postalAddress);
 
         GeocodingResult geocodingResult = GEOCODING_RESULT_MOTHER.generate(em);
         geocodingResult.setLocations(List.of(loc));
         em.persist(geocodingResult);
+        loc = loc.geocodingResults(List.of(geocodingResult));
 
         PhysicalAddress physicalAddress = PHYSICAL_ADDRESS_MOTHER.generate(em);
         physicalAddress.setLocation(loc);
         em.persist(physicalAddress);
+        loc = loc.physicalAddress(physicalAddress);
 
         return loc;
     }
