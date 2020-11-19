@@ -5,6 +5,7 @@ import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
 import org.benetech.servicenet.domain.Referral;
+import org.benetech.servicenet.mother.ReferralMother;
 import org.benetech.servicenet.repository.ReferralRepository;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 import org.benetech.servicenet.service.mapper.ReferralMapper;
@@ -21,10 +22,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
 import java.util.List;
 
 import static org.benetech.servicenet.web.rest.TestUtil.sameInstant;
@@ -43,15 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ReferralResourceIT {
 
-    private static final String DEFAULT_SHORTCODE = "AAAAAAAAAA";
-    private static final String UPDATED_SHORTCODE = "BBBBBBBBBB";
-
-    private static final ZonedDateTime DEFAULT_SENT_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_SENT_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
-    private static final ZonedDateTime DEFAULT_FULFILLED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_FULFILLED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
     @Autowired
     private ReferralRepository referralRepository;
 
@@ -66,6 +54,8 @@ public class ReferralResourceIT {
 
     private Referral referral;
 
+    private Referral referralWithAllRelations;
+
     UUID id = UUID.randomUUID();
 
     /**
@@ -75,12 +65,13 @@ public class ReferralResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Referral createEntity(EntityManager em) {
-        Referral referral = new Referral()
-            .shortcode(DEFAULT_SHORTCODE)
-            .sentAt(DEFAULT_SENT_AT)
-            .fulfilledAt(DEFAULT_FULFILLED_AT);
-        return referral;
+        return ReferralMother.createDefault();
     }
+
+    public static Referral createEntityWithAllRelations(EntityManager em) {
+        return ReferralMother.createDefaultWithAllRelationsAndPersist(em);
+    }
+
     /**
      * Create an updated entity for this test.
      *
@@ -88,16 +79,13 @@ public class ReferralResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Referral createUpdatedEntity(EntityManager em) {
-        Referral referral = new Referral()
-            .shortcode(UPDATED_SHORTCODE)
-            .sentAt(UPDATED_SENT_AT)
-            .fulfilledAt(UPDATED_FULFILLED_AT);
-        return referral;
+        return ReferralMother.createDifferent();
     }
 
     @BeforeEach
     public void initTest() {
         referral = createEntity(em);
+        referralWithAllRelations = createEntityWithAllRelations(em);
     }
 
     @Test
@@ -116,9 +104,9 @@ public class ReferralResourceIT {
         List<Referral> referralList = referralRepository.findAll();
         assertThat(referralList).hasSize(databaseSizeBeforeCreate + 1);
         Referral testReferral = referralList.get(referralList.size() - 1);
-        assertThat(testReferral.getShortcode()).isEqualTo(DEFAULT_SHORTCODE);
-        assertThat(testReferral.getSentAt()).isEqualTo(DEFAULT_SENT_AT);
-        assertThat(testReferral.getFulfilledAt()).isEqualTo(DEFAULT_FULFILLED_AT);
+        assertThat(testReferral.getShortcode()).isEqualTo(ReferralMother.DEFAULT_SHORTCODE);
+        assertThat(testReferral.getSentAt()).isEqualTo(ReferralMother.DEFAULT_SENT_AT);
+        assertThat(testReferral.getFulfilledAt()).isEqualTo(ReferralMother.DEFAULT_FULFILLED_AT);
     }
 
     @Test
@@ -153,9 +141,9 @@ public class ReferralResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(referral.getId().toString())))
-            .andExpect(jsonPath("$.[*].shortcode").value(hasItem(DEFAULT_SHORTCODE)))
-            .andExpect(jsonPath("$.[*].sentAt").value(hasItem(sameInstant(DEFAULT_SENT_AT))))
-            .andExpect(jsonPath("$.[*].fulfilledAt").value(hasItem(sameInstant(DEFAULT_FULFILLED_AT))));
+            .andExpect(jsonPath("$.[*].shortcode").value(hasItem(ReferralMother.DEFAULT_SHORTCODE)))
+            .andExpect(jsonPath("$.[*].sentAt").value(hasItem(sameInstant(ReferralMother.DEFAULT_SENT_AT))))
+            .andExpect(jsonPath("$.[*].fulfilledAt").value(hasItem(sameInstant(ReferralMother.DEFAULT_FULFILLED_AT))));
     }
 
     @Test
@@ -169,9 +157,9 @@ public class ReferralResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(referral.getId().toString()))
-            .andExpect(jsonPath("$.shortcode").value(DEFAULT_SHORTCODE))
-            .andExpect(jsonPath("$.sentAt").value(sameInstant(DEFAULT_SENT_AT)))
-            .andExpect(jsonPath("$.fulfilledAt").value(sameInstant(DEFAULT_FULFILLED_AT)));
+            .andExpect(jsonPath("$.shortcode").value(ReferralMother.DEFAULT_SHORTCODE))
+            .andExpect(jsonPath("$.sentAt").value(sameInstant(ReferralMother.DEFAULT_SENT_AT)))
+            .andExpect(jsonPath("$.fulfilledAt").value(sameInstant(ReferralMother.DEFAULT_FULFILLED_AT)));
     }
 
     @Test
@@ -195,9 +183,9 @@ public class ReferralResourceIT {
         // Disconnect from session so that the updates on updatedReferral are not directly saved in db
         em.detach(updatedReferral);
         updatedReferral
-            .shortcode(UPDATED_SHORTCODE)
-            .sentAt(UPDATED_SENT_AT)
-            .fulfilledAt(UPDATED_FULFILLED_AT);
+            .shortcode(ReferralMother.UPDATED_SHORTCODE)
+            .sentAt(ReferralMother.UPDATED_SENT_AT)
+            .fulfilledAt(ReferralMother.UPDATED_FULFILLED_AT);
         ReferralDTO referralDTO = referralMapper.toDto(updatedReferral);
 
         restReferralMockMvc.perform(put("/api/referrals").with(csrf())
@@ -209,9 +197,9 @@ public class ReferralResourceIT {
         List<Referral> referralList = referralRepository.findAll();
         assertThat(referralList).hasSize(databaseSizeBeforeUpdate);
         Referral testReferral = referralList.get(referralList.size() - 1);
-        assertThat(testReferral.getShortcode()).isEqualTo(UPDATED_SHORTCODE);
-        assertThat(testReferral.getSentAt()).isEqualTo(UPDATED_SENT_AT);
-        assertThat(testReferral.getFulfilledAt()).isEqualTo(UPDATED_FULFILLED_AT);
+        assertThat(testReferral.getShortcode()).isEqualTo(ReferralMother.UPDATED_SHORTCODE);
+        assertThat(testReferral.getSentAt()).isEqualTo(ReferralMother.UPDATED_SENT_AT);
+        assertThat(testReferral.getFulfilledAt()).isEqualTo(ReferralMother.UPDATED_FULFILLED_AT);
     }
 
     @Test
@@ -243,6 +231,21 @@ public class ReferralResourceIT {
 
         // Delete the referral
         restReferralMockMvc.perform(delete("/api/referrals/{id}", referral.getId()).with(csrf())
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent());
+
+        // Validate the database contains one less item
+        List<Referral> referralList = referralRepository.findAll();
+        assertThat(referralList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    public void deleteReferralWithAllRelations() throws Exception {
+        int databaseSizeBeforeDelete = referralRepository.findAll().size();
+
+        // Delete the referral
+        restReferralMockMvc.perform(delete("/api/referrals/{id}", referralWithAllRelations.getId()).with(csrf())
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 

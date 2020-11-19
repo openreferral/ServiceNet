@@ -1,11 +1,22 @@
 package org.benetech.servicenet.mother;
 
+import java.util.Collections;
 import java.util.HashSet;
+import org.benetech.servicenet.domain.Contact;
+import org.benetech.servicenet.domain.DailyUpdate;
+import org.benetech.servicenet.domain.Funding;
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import org.benetech.servicenet.domain.OrganizationError;
+import org.benetech.servicenet.domain.Phone;
+import org.benetech.servicenet.domain.Program;
+import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceAtLocation;
+import org.benetech.servicenet.domain.Silo;
 
 public class OrganizationMother {
 
@@ -55,6 +66,7 @@ public class OrganizationMother {
         org.setAccount(SystemAccountMother.createDefault());
         org.setDailyUpdates(new HashSet<>());
         org.setUserProfiles(new HashSet<>());
+        org.setAdditionalSilos(new HashSet<>());
         return org;
     }
 
@@ -71,7 +83,19 @@ public class OrganizationMother {
             .legalStatus(UPDATED_LEGAL_STATUS)
             .active(UPDATED_ACTIVE);
         org.setAccount(SystemAccountMother.createDifferent());
+        org.setDailyUpdates(new HashSet<>());
+        org.setUserProfiles(new HashSet<>());
+        org.setAdditionalSilos(new HashSet<>());
         return org;
+    }
+
+    public static Organization createDefaultForServiceProvider(Boolean active) {
+        return new Organization()
+            .name(DEFAULT_NAME)
+            .description(DEFAULT_DESCRIPTION)
+            .email(DEFAULT_EMAIL)
+            .url(DEFAULT_URL)
+            .active(active);
     }
 
     public static Organization createDefaultAndPersist(EntityManager em) {
@@ -101,6 +125,84 @@ public class OrganizationMother {
     public static Organization createInactiveAndPersist(EntityManager em) {
         Organization org = createDefault(DEFAULT_INACTIVE);
         org.setAccount(SystemAccountMother.createDefaultAndPersist(em));
+        em.persist(org);
+        em.flush();
+        return org;
+    }
+
+    public static Organization createDefaultWithAllRelationsAndPersist(EntityManager em) {
+        Organization org = createDefault(DEFAULT_ACTIVE);
+
+        org.setAccount(SystemAccountMother.createDefaultAndPersist(em));
+        org.setUserProfiles(Collections.singleton(UserMother.createDefaultAndPersist(em)));
+
+        Location loc = LocationMother.createDefaultWithAllRelationsAndPersist(em);
+        org.setLocations(Collections.singleton(loc));
+
+        Service srv = ServiceMother.createDefaultWithAllRelationsAndPersist(em);
+        org.setServices(Collections.singleton(srv));
+
+        ServiceAtLocation srvAtLoc = new ServiceAtLocation().srvc(srv).location(loc);
+        srv.setLocations(Collections.singleton(srvAtLoc));
+        em.persist(srvAtLoc);
+
+        Funding funding = FundingMother.createDefault();
+        em.persist(funding);
+        org.setFunding(funding);
+
+        Program program = ProgramMother.createDefault();
+        em.persist(program);
+        org.setPrograms(Collections.singleton(program));
+
+        Phone contactPhone = PhoneMother.createDefault();
+        em.persist(contactPhone);
+
+        Contact contact = ContactMother.createDefault();
+        contact.setPhones(Collections.singleton(contactPhone));
+        em.persist(contact);
+        org.setContacts(Collections.singleton(contact));
+
+        Phone orgPhone = PhoneMother.createDefault();
+        em.persist(orgPhone);
+        org.setPhones(Collections.singleton(orgPhone));
+
+        DailyUpdate du = DailyUpdateMother.createDefault();
+        em.persist(du);
+        org.setDailyUpdates(Collections.singleton(du));
+
+        Silo silo = SiloMother.createAdditionalDefault();
+        em.persist(silo);
+        org.setAdditionalSilos(Collections.singleton(silo));
+
+        OrganizationError organizationError = OrganizationErrorMother.createDefault();
+        organizationError.organization(org);
+        em.persist(organizationError);
+
+        em.persist(org);
+        em.flush();
+        return org;
+    }
+
+    public static Organization createForServiceProviderAndPersist(EntityManager em) {
+        Organization org = createDefaultForServiceProvider(DEFAULT_ACTIVE);
+
+        org.setAccount(SystemAccountMother.createServiceProviderAndPersist(em));
+        org.setUserProfiles(Collections.singleton(UserMother.createForServiceProviderAndPersist(em)));
+
+        Location loc = LocationMother.createForServiceProviderAndPersist(em);
+        org.setLocations(Collections.singleton(loc));
+
+        Service srv = ServiceMother.createForServiceProviderAndPersist(em);
+        org.setServices(Collections.singleton(srv));
+
+        ServiceAtLocation srvAtLoc = new ServiceAtLocation().srvc(srv).location(loc);
+        srv.setLocations(Collections.singleton(srvAtLoc));
+        em.persist(srvAtLoc);
+
+        DailyUpdate du = DailyUpdateMother.createDefault();
+        org.setDailyUpdates(Collections.singleton(du));
+        em.persist(du);
+
         em.persist(org);
         em.flush();
         return org;
