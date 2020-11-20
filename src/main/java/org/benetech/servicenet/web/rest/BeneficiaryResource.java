@@ -51,6 +51,7 @@ public class BeneficiaryResource {
 
     private static final String ENTITY_NAME = "beneficiary";
     private static final String ORG_ENTITY_NAME = "organization";
+    private static final String REFERRAL_ENTITY_NAME = "referral";
 
     private final BeneficiaryService beneficiaryService;
     private final ReferralService referralService;
@@ -221,6 +222,17 @@ public class BeneficiaryResource {
         if (cbo.isEmpty()) {
             throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
         }
+
+        organizationLocs.forEach((UUID orgId, UUID locId) -> {
+            Optional<Organization> org = organizationService.findOne(orgId);
+            if (org.isEmpty()) {
+                throw new BadRequestAlertException("Can not find organization referring to with provided ID",
+                    ORG_ENTITY_NAME, "toorgidnotfound");
+            }
+            if (locId == null && !org.get().getLocations().isEmpty()) {
+                throw new BadRequestAlertException("Location referring to has to be specified", REFERRAL_ENTITY_NAME, "tolocationidnotfound");
+            }
+        });
 
         referralService.refer(
             beneficiary,
