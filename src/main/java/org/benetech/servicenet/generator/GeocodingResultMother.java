@@ -54,6 +54,7 @@ public class GeocodingResultMother implements BaseMother<GeocodingResult> {
             .country("United States")
             .postalCode(FAKER.address().zipCode())
             .administrativeAreaLevel1(FAKER.address().state())
+            .administrativeAreaLevel2(FAKER.address().country())
             .build();
     }
 }

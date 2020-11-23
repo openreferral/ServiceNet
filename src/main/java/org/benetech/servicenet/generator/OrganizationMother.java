@@ -1,5 +1,7 @@
 package org.benetech.servicenet.generator;
 
+import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
+
 import com.github.javafaker.Faker;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -10,7 +12,10 @@ import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.ServiceTaxonomy;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +34,15 @@ public class OrganizationMother implements BaseMother<Organization> {
 
     private OrganizationMother() {}
 
-    public Organization generate(EntityManager em, SystemAccount systemAccount, UserProfile userProfile) {
+    public Organization generate(EntityManager em, SystemAccount systemAccount, UserProfile userProfile, Silo silo) {
         Organization org = this.generate(em);
         org.setAccount(systemAccount);
         org.setUserProfiles(Set.of(userProfile));
-
+        if (silo != null) {
+            Set<Silo> silos = new HashSet<>();
+            silos.add(silo);
+            org.setAdditionalSilos(silos);
+        }
         em.persist(org);
         log.debug("Fake organization created: " + org.getName());
 
@@ -78,6 +87,14 @@ public class OrganizationMother implements BaseMother<Organization> {
             Service service = ServiceMother.INSTANCE.generate(em);
             service.setOrganization(org);
             em.persist(service);
+            Taxonomy taxonomy = new Taxonomy()
+                .providerName(SERVICE_PROVIDER)
+                .name(FAKER.commerce().department());
+            em.persist(taxonomy);
+            ServiceTaxonomy st = new ServiceTaxonomy();
+            st.setSrvc(service);
+            st.setTaxonomy(taxonomy);
+            em.persist(st);
             services.add(service);
             log.debug("Fake service created: " + service.getName());
         }
