@@ -173,7 +173,7 @@ public class BeneficiaryResource {
                 }
                 beneficiary = beneficiaryOpt.get();
             } catch (IllegalArgumentException iae) {
-                throw new BadRequestAlertException("The provided Unique Identifier is invalid", ENTITY_NAME, "idinvalid");
+                throw new BadRequestAlertException("The provided Service Net ID is invalid", ENTITY_NAME, "idinvalid");
             }
         }
         if (cbo.isEmpty()) {
@@ -216,7 +216,7 @@ public class BeneficiaryResource {
                 }
                 beneficiary = beneficiaryOpt.get();
             } catch (IllegalArgumentException iae) {
-                throw new BadRequestAlertException("The provided Unique Identifier is invalid", ENTITY_NAME, "idinvalid");
+                throw new BadRequestAlertException("The provided Service Net ID is invalid", ENTITY_NAME, "idinvalid");
             }
         }
         if (cbo.isEmpty()) {
