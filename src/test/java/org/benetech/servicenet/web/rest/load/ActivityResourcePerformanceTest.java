@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({ SpringExtension.class, ZeroCodeSpringJUnit5Extension.class })
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 @WithMockUser(username = "admin", roles = {"ADMIN"})
+@SuppressWarnings("CPD-START")
 public class ActivityResourcePerformanceTest {
 
     @Autowired
