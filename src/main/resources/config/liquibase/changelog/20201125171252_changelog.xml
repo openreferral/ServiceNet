@@ -1,0 +1,25 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="jkondrat" id="20201125171252-1">
+        <sql dbms="postgresql">
+            UPDATE location SET name = NULL WHERE provider_name = 'ServiceProvider';
+        </sql>
+    </changeSet>
+    <changeSet author="jkondrat" id="20201125171252-2">
+        <sql dbms="postgresql">
+        UPDATE location updated_loc SET name = (
+            SELECT
+                CASE COALESCE(loc.name, '')
+                    WHEN '' THEN CONCAT_WS(', ', pa.address_1, pa.city, pa.state_province)
+                    ELSE loc.name
+                END
+            FROM
+                location loc
+            LEFT JOIN
+                physical_address pa ON loc.id = pa.location_id
+            WHERE
+                loc.id = updated_loc.id
+        )
+        </sql>
+    </changeSet>
+</databaseChangeLog>
