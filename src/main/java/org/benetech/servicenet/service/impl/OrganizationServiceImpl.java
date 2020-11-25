@@ -566,8 +566,8 @@ public class OrganizationServiceImpl implements OrganizationService {
             location.setPostalAddress(locationMapper.extractPostalAddress(locationDTO, existingLocation));
             location.providerName(SERVICE_PROVIDER);
             location.setOrganization(organization);
-            location.setName(String.join(physicalAddress.getCity(),
-                physicalAddress.getStateProvince(), physicalAddress.getAddress1()));
+            location.setName(String.join(", ", physicalAddress.getAddress1(),
+                physicalAddress.getCity(), physicalAddress.getStateProvince()));
             locations.add(locationService.saveWithRelations(location));
         }
         for (Location location : locationsToRemove) {
