@@ -2,6 +2,7 @@ package org.benetech.servicenet.mother;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Funding;
@@ -17,6 +18,7 @@ import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.Silo;
+import org.benetech.servicenet.domain.UserProfile;
 
 public class OrganizationMother {
 
@@ -134,16 +136,21 @@ public class OrganizationMother {
         Organization org = createDefault(DEFAULT_ACTIVE);
 
         org.setAccount(SystemAccountMother.createDefaultAndPersist(em));
-        org.setUserProfiles(Collections.singleton(UserMother.createDefaultAndPersist(em)));
+        Set<UserProfile> userProfiles = new HashSet<>();
+        userProfiles.add(UserMother.createDefaultAndPersist(em));
+        org.setUserProfiles(userProfiles);
 
         Location loc = LocationMother.createDefaultWithAllRelationsAndPersist(em);
-        org.setLocations(Collections.singleton(loc));
+        org.setLocations(new HashSet<>());
+        org.getLocations().add(loc);
 
         Service srv = ServiceMother.createDefaultWithAllRelationsAndPersist(em);
-        org.setServices(Collections.singleton(srv));
+        org.setServices(new HashSet<>());
+        org.getServices().add(srv);
 
         ServiceAtLocation srvAtLoc = new ServiceAtLocation().srvc(srv).location(loc);
-        srv.setLocations(Collections.singleton(srvAtLoc));
+        srv.setLocations(new HashSet<>());
+        srv.getLocations().add(srvAtLoc);
         em.persist(srvAtLoc);
 
         Funding funding = FundingMother.createDefault();
@@ -152,27 +159,33 @@ public class OrganizationMother {
 
         Program program = ProgramMother.createDefault();
         em.persist(program);
-        org.setPrograms(Collections.singleton(program));
+        org.setPrograms(new HashSet<>());
+        org.getPrograms().add(program);
 
         Phone contactPhone = PhoneMother.createDefault();
         em.persist(contactPhone);
 
         Contact contact = ContactMother.createDefault();
-        contact.setPhones(Collections.singleton(contactPhone));
+        contact.setPhones(new HashSet<>());
+        contact.getPhones().add(contactPhone);
         em.persist(contact);
-        org.setContacts(Collections.singleton(contact));
+        org.setContacts(new HashSet<>());
+        org.getContacts().add(contact);
 
         Phone orgPhone = PhoneMother.createDefault();
         em.persist(orgPhone);
-        org.setPhones(Collections.singleton(orgPhone));
+        org.setPhones(new HashSet<>());
+        org.getPhones().add(orgPhone);
 
         DailyUpdate du = DailyUpdateMother.createDefault();
         em.persist(du);
-        org.setDailyUpdates(Collections.singleton(du));
+        org.setDailyUpdates(new HashSet<>());
+        org.getDailyUpdates().add(du);
 
         Silo silo = SiloMother.createAdditionalDefault();
         em.persist(silo);
-        org.setAdditionalSilos(Collections.singleton(silo));
+        org.setAdditionalSilos(new HashSet<>());
+        org.getAdditionalSilos().add(silo);
 
         OrganizationError organizationError = OrganizationErrorMother.createDefault();
         organizationError.organization(org);
@@ -189,6 +202,19 @@ public class OrganizationMother {
         org.setAccount(SystemAccountMother.createServiceProviderAndPersist(em));
         org.setUserProfiles(Collections.singleton(UserMother.createForServiceProviderAndPersist(em)));
 
+        return populateServiceProviderRelations(org, em);
+    }
+
+    public static Organization createAnotherForServiceProviderAndPersist(EntityManager em) {
+        Organization org = createDifferentAndPersist(em);
+
+        org.setAccount(SystemAccountMother.createServiceProviderAndPersist(em));
+        org.setUserProfiles(Collections.singleton(UserMother.createDifferentForServiceProviderAndPersist(em, org.getAccount())));
+
+        return populateServiceProviderRelations(org, em);
+    }
+
+    private static Organization populateServiceProviderRelations(Organization org, EntityManager em) {
         Location loc = LocationMother.createForServiceProviderAndPersist(em);
         org.setLocations(Collections.singleton(loc));
 
