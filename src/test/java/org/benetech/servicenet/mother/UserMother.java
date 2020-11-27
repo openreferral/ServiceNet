@@ -13,9 +13,11 @@ public class UserMother {
     private static final String DEFAULT_ORG_URL = "organization.com";
     private static final String DEFAULT_PHONE_NR = "+12345678900";
     private static final String SERVICE_PROVIDER_LOGIN = "serviceProvider";
+    private static final String ANOTHER_SERVICE_PROVIDER_LOGIN = "serviceProvider2";
     private static final String SERVICE_PROVIDER_ORG_NAME = "Service Provider Org";
     private static final String SERVICE_PROVIDER_ORG_URL = "service-provider.com";
     private static final String SERVICE_PROVIDER_PHONE_NR = "+12345678901";
+    private static final String ANOTHER_SERVICE_PROVIDER_PHONE_NR = "+12345678905";
     private static final String UPDATED_LOGIN = "jhipster";
     private static final String DIFFERENT_ORG_NAME = "Different Org name";
     private static final String DIFFERENT_ORG_URL = "different.org";
@@ -43,6 +45,15 @@ public class UserMother {
             .organizationName(SERVICE_PROVIDER_ORG_NAME)
             .organizationUrl(SERVICE_PROVIDER_ORG_URL)
             .phoneNumber(SERVICE_PROVIDER_PHONE_NR)
+            .build();
+    }
+
+    public static UserProfile createDifferentServiceProvider() {
+        return UserProfile.builder()
+            .login(ANOTHER_SERVICE_PROVIDER_LOGIN)
+            .organizationName(SERVICE_PROVIDER_ORG_NAME)
+            .organizationUrl(SERVICE_PROVIDER_ORG_URL)
+            .phoneNumber(ANOTHER_SERVICE_PROVIDER_PHONE_NR)
             .build();
     }
 
@@ -96,6 +107,16 @@ public class UserMother {
         userProfile.setUserGroups(new HashSet<>());
         userProfile.setSilo(silo);
         em.persist(silo);
+        em.persist(userProfile);
+        em.flush();
+        return userProfile;
+    }
+
+    public static UserProfile createDifferentForServiceProviderAndPersist(EntityManager em, SystemAccount account) {
+        UserProfile userProfile = createDifferentServiceProvider();
+        userProfile.setSystemAccount(account);
+        userProfile.setOrganizations(new HashSet<>());
+        userProfile.setUserGroups(new HashSet<>());
         em.persist(userProfile);
         em.flush();
         return userProfile;

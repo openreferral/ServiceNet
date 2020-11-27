@@ -35,7 +35,7 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "JOIN referral.from org "
         + "JOIN org.userProfiles userProfile "
         + "WHERE userProfile = :fromUser "
-        + "AND (COALESCE(:since, NULL) IS NULL OR referral.sentAt > :since) "
+        + "AND (COALESCE(:since, NULL) IS NULL OR referral.sentAt >= :since) "
         + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
         + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL)")
     Page<Referral> findByUserProfileSince(@Param("fromUser") UserProfile fromUser, @Param("since")

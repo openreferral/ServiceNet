@@ -1,14 +1,25 @@
 package org.benetech.servicenet.web.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import org.benetech.servicenet.MockedSmsConfiguration;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
 import org.benetech.servicenet.domain.Beneficiary;
+import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Referral;
+import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.repository.BeneficiaryRepository;
+import org.benetech.servicenet.repository.ReferralRepository;
 import org.benetech.servicenet.service.dto.BeneficiaryDTO;
+import org.benetech.servicenet.service.dto.CheckInDTO;
 import org.benetech.servicenet.service.mapper.BeneficiaryMapper;
 
+import org.benetech.servicenet.util.IdentifierUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link BeneficiaryResource} REST controller.
  */
 @ExtendWith({ SpringExtension.class, ZeroCodeSpringJUnit5Extension.class })
-@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
+@SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class,
+    MockedSmsConfiguration.class})
 @WithMockUser(username = "admin", roles = {"ADMIN"})
 @AutoConfigureMockMvc
 public class BeneficiaryResourceIT {
@@ -43,6 +55,9 @@ public class BeneficiaryResourceIT {
 
     @Autowired
     private BeneficiaryRepository beneficiaryRepository;
+
+    @Autowired
+    private ReferralRepository referralRepository;
 
     @Autowired
     private BeneficiaryMapper beneficiaryMapper;
@@ -224,5 +239,98 @@ public class BeneficiaryResourceIT {
         // Validate the database contains one less item
         List<Beneficiary> beneficiaryList = beneficiaryRepository.findAll();
         assertThat(beneficiaryList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    public void checkIn() throws Exception {
+        // Initialize the database
+        beneficiaryRepository.saveAndFlush(beneficiary);
+        Organization org = OrganizationMother.createDefaultWithAllRelationsAndPersist(em);
+        Location loc = org.getLocations().stream().findFirst().get();
+        assertThat(referralRepository.findAll()).hasSize(0);
+
+        // Check in the beneficiary
+        CheckInDTO checkInDTO = new CheckInDTO();
+        checkInDTO.setPhoneNumber(beneficiary.getPhoneNumber());
+        checkInDTO.setCboId(org.getId());
+        checkInDTO.setLocationId(loc.getId());
+
+        restBeneficiaryMockMvc.perform(post("/api/beneficiaries/check-in").with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(checkInDTO)))
+            .andExpect(status().isOk());
+
+        // Validate the Check in in the database
+        List<Referral> referrals = referralRepository.findAll();
+        assertThat(referrals).hasSize(1);
+        Referral referral = referrals.get(0);
+        assertThat(referral.getBeneficiary()).isEqualTo(beneficiary);
+        assertThat(referral.getFrom()).isEqualTo(org);
+        assertThat(referral.getFromLocation()).isEqualTo(loc);
+        assertThat(referral.getTo()).isEqualTo(org);
+        assertThat(referral.getToLocation()).isNull();
+        assertThat(referral.getSentAt()).isNotNull();
+        assertThat(referral.getFulfilledAt()).isNotNull();
+        assertThat(referral.getShortcode()).isNull();
+    }
+
+    @Test
+    @Transactional
+    public void refer() throws Exception {
+        // Initialize the database
+        beneficiaryRepository.saveAndFlush(beneficiary);
+        Organization org = OrganizationMother.createDefaultWithAllRelationsAndPersist(em);
+        Organization anotherOrg = OrganizationMother.createForServiceProviderAndPersist(em);
+        Organization yetAnotherOrg = OrganizationMother.createAnotherForServiceProviderAndPersist(em);
+        Location loc = org.getLocations().stream().findFirst().get();
+        Location anotherLoc = anotherOrg.getLocations().stream().findFirst().get();
+        Location yetAnotherLoc = yetAnotherOrg.getLocations().stream().findFirst().get();
+        assertThat(referralRepository.findAll()).hasSize(0);
+
+        // Refer the beneficiary
+        Map<UUID, UUID> organizationLocs = new HashMap<>();
+        String referringOrganizationId = org.getId().toString();
+        String referringLocationId = loc.getId().toString();
+        String beneficiaryId = IdentifierUtils.toBase36(beneficiary.getIdentifier());
+        organizationLocs.put(anotherOrg.getId(), anotherLoc.getId());
+        organizationLocs.put(yetAnotherOrg.getId(), yetAnotherLoc.getId());
+
+        restBeneficiaryMockMvc.perform(post("/api/beneficiaries/refer"
+            + "?referringOrganizationId=" + referringOrganizationId
+            + "&referringLocationId=" + referringLocationId
+            + "&beneficiaryId=" + beneficiaryId
+        ).with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(organizationLocs)))
+            .andExpect(status().isOk());
+
+        // Validate Referrals in the database
+        List<Referral> referrals = referralRepository.findAll();
+        assertThat(referrals).hasSize(2);
+
+        Optional<Referral> referralOptional = referrals.stream().filter(ref -> ref.getTo().equals(anotherOrg)).findFirst();
+        assertThat(referralOptional.isPresent()).isTrue();
+        Referral referral = referralOptional.get();
+        assertThat(referral.getBeneficiary()).isEqualTo(beneficiary);
+        assertThat(referral.getFrom()).isEqualTo(org);
+        assertThat(referral.getFromLocation()).isEqualTo(loc);
+        assertThat(referral.getTo()).isEqualTo(anotherOrg);
+        assertThat(referral.getToLocation()).isEqualTo(anotherLoc);
+        assertThat(referral.getSentAt()).isNotNull();
+        assertThat(referral.getFulfilledAt()).isNull();
+        assertThat(referral.getShortcode()).isNull();
+
+        Optional<Referral> anotherReferralOptional = referrals.stream().filter(ref -> ref.getTo().equals(yetAnotherOrg)).findFirst();
+        assertThat(anotherReferralOptional.isPresent()).isTrue();
+        Referral anotherReferral = anotherReferralOptional.get();
+        assertThat(anotherReferral.getBeneficiary()).isEqualTo(beneficiary);
+        assertThat(anotherReferral.getFrom()).isEqualTo(org);
+        assertThat(anotherReferral.getFromLocation()).isEqualTo(loc);
+        assertThat(anotherReferral.getTo()).isEqualTo(yetAnotherOrg);
+        assertThat(anotherReferral.getToLocation()).isEqualTo(yetAnotherLoc);
+        assertThat(anotherReferral.getSentAt()).isNotNull();
+        assertThat(anotherReferral.getFulfilledAt()).isNull();
+        assertThat(anotherReferral.getShortcode()).isNull();
     }
 }
