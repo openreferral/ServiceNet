@@ -26,9 +26,6 @@ public interface TaxonomyRepository extends JpaRepository<Taxonomy, UUID>, Taxon
 
     Optional<Taxonomy> findOneByTaxonomyIdAndProviderName(String taxonomyId, String providerName);
 
-    @Query("SELECT DISTINCT tax.name FROM Taxonomy tax WHERE tax.providerName = :providerName ORDER BY tax.name")
-    SortedSet<String> getTaxonomyNamesForProviderName(@Param("providerName") String providerName);
-
     @Query("SELECT DISTINCT tax.name FROM Taxonomy tax "
         + "WHERE length(tax.taxonomyId) < 3 AND tax.providerName = :providerName ORDER BY tax.name")
     SortedSet<String> getICarolTaxonomyNamesForProviderName(@Param("providerName") String providerName);

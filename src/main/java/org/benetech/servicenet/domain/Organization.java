@@ -47,6 +47,7 @@ import java.util.Set;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NoArgsConstructor
 @AllArgsConstructor
+@SuppressWarnings("PMD.ExcessivePublicCount")
 public class Organization extends AbstractEntity implements Serializable, DeepComparable {
 
     private static final long serialVersionUID = 1L;
@@ -351,6 +352,11 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     public Organization removeDailyUpdates(DailyUpdate dailyUpdate) {
         this.dailyUpdates.remove(dailyUpdate);
         dailyUpdate.setOrganization(null);
+        return this;
+    }
+
+    public Organization userProfiles(Set<UserProfile> userProfiles) {
+        this.userProfiles = userProfiles;
         return this;
     }
 
