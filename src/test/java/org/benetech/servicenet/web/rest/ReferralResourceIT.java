@@ -299,6 +299,7 @@ public class ReferralResourceIT {
         beneficiary = beneficiaryRepository.save(beneficiary);
         referralWithAllRelations.setBeneficiary(beneficiary);
         anotherReferral.setBeneficiary(beneficiary);
+        anotherReferral.setSentAt(sentAt.minusHours(1));
         referralRepository.saveAndFlush(referralWithAllRelations);
         referralRepository.saveAndFlush(anotherReferral);
     }
@@ -332,8 +333,8 @@ public class ReferralResourceIT {
 
         // Get all the user's referrals
         String csv = "Beneficiary Phone Number,Service Net ID,Date Stamp,Referred From,Referred To,Status\n"
-            + "+123456789," + referralWithAllRelations.getId().toString() + "," + referralWithAllRelations.getSentAt().toString() + ",AAAAAAAAAA,AAAAAAAAAA,Arrived\n"
-            + "+123456789," + anotherReferral.getId().toString() + "," + anotherReferral.getSentAt().toString() + ",AAAAAAAAAA,AAAAAAAAAA,Arrived";
+            + "+123456789," + anotherReferral.getId().toString() + "," + anotherReferral.getSentAt().toString() + ",AAAAAAAAAA,AAAAAAAAAA,Arrived\n"
+            + "+123456789," + referralWithAllRelations.getId().toString() + "," + referralWithAllRelations.getSentAt().toString() + ",AAAAAAAAAA,AAAAAAAAAA,Arrived";
         restReferralMockMvc.perform(get("/api/referrals/csv"))
             .andExpect(status().isOk())
             .andExpect(content().string(equalToCompressingWhiteSpace(csv)));
@@ -371,8 +372,8 @@ public class ReferralResourceIT {
         createCurrentUsersReferrals();
 
         String csv = "Organization id,Organization name,Referral count\n"
-            + referralWithAllRelations.getTo().getId().toString() + ",AAAAAAAAAA,1\n"
-            + anotherReferral.getTo().getId().toString() + ",AAAAAAAAAA,1\n";
+            + anotherReferral.getTo().getId().toString() + ",AAAAAAAAAA,1\n"
+            + referralWithAllRelations.getTo().getId().toString() + ",AAAAAAAAAA,1\n";
         restReferralMockMvc.perform(get("/api/referrals/number-made-from-us/csv"))
             .andExpect(status().isOk())
             .andExpect(content().string(equalToCompressingWhiteSpace(csv)));

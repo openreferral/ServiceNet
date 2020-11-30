@@ -27,7 +27,8 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "JOIN referral.to org "
         + "JOIN org.locations location "
         + "WHERE referral.beneficiary.id = :beneficiaryId AND org.id = :cboId "
-        + "AND COALESCE(:locId, NULL) IS NULL OR :locId = location.id")
+        + "AND COALESCE(:locId, NULL) IS NULL OR :locId = location.id "
+        + "ORDER BY referral.sentAt ASC")
     List<Referral> findAllByBeneficiaryIdAndReferredTo(@Param("beneficiaryId") UUID beneficiaryId, @Param("cboId") UUID cboId,
         @Param("locId") UUID locId);
 
@@ -37,7 +38,8 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "WHERE userProfile = :fromUser "
         + "AND (COALESCE(:since, NULL) IS NULL OR referral.sentAt >= :since) "
         + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
-        + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL)")
+        + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL) "
+        + "ORDER BY referral.sentAt ASC")
     Page<Referral> findByUserProfileSince(@Param("fromUser") UserProfile fromUser, @Param("since")
         ZonedDateTime since, @Param("isSent") Boolean isSent, @Param("isFulfilled") Boolean isFulfilled, Pageable pageable);
 
@@ -48,7 +50,8 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "JOIN referral.from fromOrg "
         + "JOIN fromOrg.userProfiles userProfile "
         + "WHERE userProfile = :currentUser "
-        + "GROUP BY toOrg")
+        + "GROUP BY toOrg "
+        + "ORDER BY referral.sentAt ASC")
     Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(@Param("currentUser") UserProfile currentUser, Pageable pageable);
 
     @Query("SELECT new org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO("
@@ -58,7 +61,8 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "JOIN referral.from fromOrg "
         + "JOIN fromOrg.userProfiles userProfile "
         + "WHERE userProfile = :currentUser AND toOrg.id=:to "
-        + "GROUP BY toOrg")
+        + "GROUP BY toOrg "
+        + "ORDER BY referral.sentAt ASC")
     Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(@Param("currentUser") UserProfile currentUser, @Param("to") UUID to, Pageable pageable);
 
     @Query("SELECT new org.benetech.servicenet.service.dto.ReferralMadeToUserDTO("
@@ -69,7 +73,8 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "JOIN toOrg.userProfiles userProfile "
         + "WHERE userProfile = :currentUser "
         + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
-        + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL)")
+        + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL) "
+        + "ORDER BY referral.sentAt ASC")
     Page<ReferralMadeToUserDTO> getReferralsMadeToUser(@Param("currentUser") UserProfile currentUser, @Param("isSent") Boolean isSent, @Param("isFulfilled") Boolean isFulfilled, Pageable pageable);
 
     @Query("SELECT new org.benetech.servicenet.service.dto.OrganizationOptionDTO("
