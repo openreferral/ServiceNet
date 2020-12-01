@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 
 @Data
 @NoArgsConstructor
@@ -16,14 +16,14 @@ public class SimpleLocationDTO {
 
     private String name;
 
-    private PhysicalAddressDTO physicalAddress;
+    private AddressDTO physicalAddress;
 
     private UUID organizationId;
 
     public SimpleLocationDTO(UUID physicalAddressId, String physicalAddressCity,
         String physicalAddressStateProvince, String physicalAddressStateRegion, UUID orgId,
         UUID id, String name) {
-        this.physicalAddress = new PhysicalAddressDTO(physicalAddressId, physicalAddressCity,
+        this.physicalAddress = new AddressDTO(physicalAddressId, physicalAddressCity,
             physicalAddressStateProvince, physicalAddressStateRegion);
         this.organizationId = orgId;
         this.id = id;

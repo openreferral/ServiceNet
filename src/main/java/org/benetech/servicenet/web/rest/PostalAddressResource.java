@@ -4,7 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.PostalAddressService;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
@@ -58,13 +58,13 @@ public class PostalAddressResource {
     @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/postal-addresses")
     @Timed
-    public ResponseEntity<PostalAddressDTO> createPostalAddress(
-        @Valid @RequestBody PostalAddressDTO postalAddressDTO) throws URISyntaxException {
+    public ResponseEntity<AddressDTO> createPostalAddress(
+        @Valid @RequestBody AddressDTO postalAddressDTO) throws URISyntaxException {
         log.debug("REST request to save PostalAddress : {}", postalAddressDTO);
         if (postalAddressDTO.getId() != null) {
             throw new BadRequestAlertException("A new postalAddress cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        PostalAddressDTO result = postalAddressService.save(postalAddressDTO);
+        AddressDTO result = postalAddressService.save(postalAddressDTO);
         return ResponseEntity.created(new URI("/api/postal-addresses/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -82,13 +82,13 @@ public class PostalAddressResource {
     @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/postal-addresses")
     @Timed
-    public ResponseEntity<PostalAddressDTO> updatePostalAddress(
-        @Valid @RequestBody PostalAddressDTO postalAddressDTO) throws URISyntaxException {
+    public ResponseEntity<AddressDTO> updatePostalAddress(
+        @Valid @RequestBody AddressDTO postalAddressDTO) throws URISyntaxException {
         log.debug("REST request to update PostalAddress : {}", postalAddressDTO);
         if (postalAddressDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        PostalAddressDTO result = postalAddressService.save(postalAddressDTO);
+        AddressDTO result = postalAddressService.save(postalAddressDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, postalAddressDTO.getId().toString()))
             .body(result);
@@ -101,9 +101,9 @@ public class PostalAddressResource {
      */
     @GetMapping("/postal-addresses")
     @Timed
-    public ResponseEntity<List<PostalAddressDTO>> getAllPostalAddresses(Pageable pageable) {
+    public ResponseEntity<List<AddressDTO>> getAllPostalAddresses(Pageable pageable) {
         log.debug("REST request to get all PostalAddresses");
-        Page<PostalAddressDTO> page = postalAddressService.findAll(pageable);
+        Page<AddressDTO> page = postalAddressService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/postal-addresses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -116,9 +116,9 @@ public class PostalAddressResource {
      */
     @GetMapping("/postal-addresses/{id}")
     @Timed
-    public ResponseEntity<PostalAddressDTO> getPostalAddress(@PathVariable UUID id) {
+    public ResponseEntity<AddressDTO> getPostalAddress(@PathVariable UUID id) {
         log.debug("REST request to get PostalAddress : {}", id);
-        Optional<PostalAddressDTO> postalAddressDTO = postalAddressService.findOne(id);
+        Optional<AddressDTO> postalAddressDTO = postalAddressService.findOne(id);
         return ResponseUtil.wrapOrNotFound(postalAddressDTO);
     }
 

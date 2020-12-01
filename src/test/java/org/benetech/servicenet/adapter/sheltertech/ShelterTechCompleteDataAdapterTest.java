@@ -29,8 +29,7 @@ import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
@@ -160,17 +159,9 @@ public class ShelterTechCompleteDataAdapterTest {
         adapter.importData(importData);
         assertEquals(1, physicalAddressService.findAll().size());
 
-        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+        AddressDTO result = physicalAddressService.findAll().get(0);
 
-        assertEquals("Room 540", result.getAttention());
-        assertEquals("1233 90th St.", result.getAddress1());
-        assertEquals("#78", result.getAddress2());
-        assertEquals("San Francisco", result.getCity());
-        assertEquals("CA", result.getStateProvince());
-        assertEquals("65454", result.getPostalCode());
-        assertEquals("USA", result.getCountry());
-        assertEquals(locationService.findAll().get(0).getId(), result.getLocationId());
-        assertEquals("1233 90th St. - San Francisco (CA)", result.getLocationName());
+        assertAddress(result);
     }
 
     @Test
@@ -178,8 +169,12 @@ public class ShelterTechCompleteDataAdapterTest {
         adapter.importData(importData);
         assertEquals(1, postalAddressService.findAll().size());
 
-        PostalAddressDTO result = postalAddressService.findAll().get(0);
+        AddressDTO result = postalAddressService.findAll().get(0);
 
+        assertAddress(result);
+    }
+
+    private void assertAddress(AddressDTO result) {
         assertEquals("Room 540", result.getAttention());
         assertEquals("1233 90th St.", result.getAddress1());
         assertEquals("#78", result.getAddress2());

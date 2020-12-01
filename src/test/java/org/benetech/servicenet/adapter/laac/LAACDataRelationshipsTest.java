@@ -23,7 +23,7 @@ import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,7 +104,7 @@ public class LAACDataRelationshipsTest {
     @Test
     public void testRelationsAfterGetPhysicalAddressFromJson() {
         // Physical Address is related to Location
-        List<PhysicalAddressDTO> results = physicalAddressService.findAll();
+        List<AddressDTO> results = physicalAddressService.findAll();
         assertEquals(1, results.size());
 
         List<LocationDTO> locations = locationService.findAll();

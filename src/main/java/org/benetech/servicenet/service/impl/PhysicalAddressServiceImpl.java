@@ -3,7 +3,7 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
 import org.benetech.servicenet.service.PhysicalAddressService;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.mapper.PhysicalAddressMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class PhysicalAddressServiceImpl implements PhysicalAddressService {
      * @return the persisted entity
      */
     @Override
-    public PhysicalAddressDTO save(PhysicalAddressDTO physicalAddressDTO) {
+    public AddressDTO save(AddressDTO physicalAddressDTO) {
         log.debug("Request to save PhysicalAddress : {}", physicalAddressDTO);
 
         PhysicalAddress physicalAddress = physicalAddressMapper.toEntity(physicalAddressDTO);
@@ -71,7 +71,7 @@ public class PhysicalAddressServiceImpl implements PhysicalAddressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<PhysicalAddressDTO> findAll() {
+    public List<AddressDTO> findAll() {
         log.debug("Request to get all PhysicalAddresses");
         return physicalAddressRepository.findAll().stream()
             .map(physicalAddressMapper::toDto)
@@ -86,7 +86,7 @@ public class PhysicalAddressServiceImpl implements PhysicalAddressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<PhysicalAddressDTO> findAll(Pageable pageable) {
+    public Page<AddressDTO> findAll(Pageable pageable) {
         log.debug("Request to get all PhysicalAddresses");
         return physicalAddressRepository.findAll(pageable)
             .map(physicalAddressMapper::toDto);
@@ -100,7 +100,7 @@ public class PhysicalAddressServiceImpl implements PhysicalAddressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<PhysicalAddressDTO> findOne(UUID id) {
+    public Optional<AddressDTO> findOne(UUID id) {
         log.debug("Request to get PhysicalAddress : {}", id);
         return physicalAddressRepository.findById(id)
             .map(physicalAddressMapper::toDto);

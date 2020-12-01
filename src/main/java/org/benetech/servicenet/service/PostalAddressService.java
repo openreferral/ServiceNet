@@ -1,7 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.PostalAddress;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
@@ -19,7 +19,7 @@ public interface PostalAddressService {
      * @param postalAddressDTO the entity to save
      * @return the persisted entity
      */
-    PostalAddressDTO save(PostalAddressDTO postalAddressDTO);
+    AddressDTO save(AddressDTO postalAddressDTO);
 
     /**
      * Save a postalAddress.
@@ -34,7 +34,7 @@ public interface PostalAddressService {
      *
      * @return the list of entities
      */
-    List<PostalAddressDTO> findAll();
+    List<AddressDTO> findAll();
 
     /**
      * Get all the postalAddresses.
@@ -42,7 +42,7 @@ public interface PostalAddressService {
      * @param pageable the pagination information
      * @return the list of entities
      */
-    Page<PostalAddressDTO> findAll(Pageable pageable);
+    Page<AddressDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" postalAddress.
@@ -50,7 +50,7 @@ public interface PostalAddressService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<PostalAddressDTO> findOne(UUID id);
+    Optional<AddressDTO> findOne(UUID id);
 
     /**
      * Delete the "id" postalAddress.

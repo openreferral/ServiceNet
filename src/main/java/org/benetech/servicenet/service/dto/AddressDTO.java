@@ -7,11 +7,11 @@ import java.util.UUID;
 import lombok.NoArgsConstructor;
 
 /**
- * A DTO for the PhysicalAddress entity.
+ * A DTO for the PhysicalAddress and PostalAddress entities.
  */
 @SuppressWarnings("CPD-START")
 @NoArgsConstructor
-public class PhysicalAddressDTO implements Serializable {
+public class AddressDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,7 +42,7 @@ public class PhysicalAddressDTO implements Serializable {
 
     private String locationName;
 
-    public PhysicalAddressDTO(UUID id, String city, String stateProvince, String region) {
+    public AddressDTO(UUID id, String city, String stateProvince, String region) {
         this.id = id;
         this.city = city;
         this.stateProvince = stateProvince;
@@ -146,7 +146,7 @@ public class PhysicalAddressDTO implements Serializable {
             return false;
         }
 
-        PhysicalAddressDTO physicalAddressDTO = (PhysicalAddressDTO) o;
+        AddressDTO physicalAddressDTO = (AddressDTO) o;
         if (physicalAddressDTO.getId() == null || getId() == null) {
             return false;
         }
@@ -160,7 +160,7 @@ public class PhysicalAddressDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "PhysicalAddressDTO{" +
+        return "AddressDTO{" +
             "id=" + getId() +
             ", attention='" + getAttention() + "'" +
             ", address1='" + getAddress1() + "'" +

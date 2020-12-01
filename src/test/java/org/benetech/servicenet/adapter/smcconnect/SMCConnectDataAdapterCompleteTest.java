@@ -57,8 +57,7 @@ import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.ProgramDTO;
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
@@ -211,7 +210,7 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testRelationsAfterGetPhysicalAddressFromJson() {
         // PhysicalAddress has a reference to the Location
-        List<PhysicalAddressDTO> results = physicalAddressService.findAll();
+        List<AddressDTO> results = physicalAddressService.findAll();
 
         List<LocationDTO> locations = locationService.findAll();
 
@@ -221,7 +220,7 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testRelationsAfterGetPostalAddressFromJson() {
         // PostalAddress has a reference to the Location
-        List<PostalAddressDTO> results = postalAddressService.findAll();
+        List<AddressDTO> results = postalAddressService.findAll();
 
         List<LocationDTO> locations = locationService.findAll();
 
@@ -379,7 +378,7 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testAfterGetPhysicalAddressFromJson() {
         assertEquals(1, physicalAddressService.findAll().size());
-        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+        AddressDTO result = physicalAddressService.findAll().get(0);
 
         assertEquals("1111 Secret Street", result.getAddress1());
         assertEquals("City", result.getCity());
@@ -391,7 +390,7 @@ public class SMCConnectDataAdapterCompleteTest {
     @Test
     public void testAfterGetPostalAddressFromJson() {
         assertEquals(1, postalAddressService.findAll().size());
-        PostalAddressDTO result = postalAddressService.findAll().get(0);
+        AddressDTO result = postalAddressService.findAll().get(0);
 
         assertEquals("1st Address", result.getAddress1());
         assertEquals("2nd Address", result.getAddress2());

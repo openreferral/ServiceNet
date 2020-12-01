@@ -49,8 +49,7 @@ import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,9 +151,9 @@ public class LocationImportServiceTest {
         assertEquals(0, physicalAddressService.findAll().size());
         importService.createOrUpdateLocation(location, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
-        List<PhysicalAddressDTO> all = physicalAddressService.findAll();
+        List<AddressDTO> all = physicalAddressService.findAll();
         assertEquals(1, all.size());
-        PhysicalAddressDTO physicalAddressDTO = all.get(0);
+        AddressDTO physicalAddressDTO = all.get(0);
         assertNotNull(physicalAddressDTO.getLocationId());
         assertEquals(NEW_STRING, physicalAddressDTO.getAddress1());
         assertEquals(NEW_STRING, physicalAddressDTO.getCity());
@@ -184,9 +183,9 @@ public class LocationImportServiceTest {
 
         importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
-        List<PhysicalAddressDTO> all = physicalAddressService.findAll();
+        List<AddressDTO> all = physicalAddressService.findAll();
         assertEquals(1, all.size());
-        PhysicalAddressDTO physicalAddressDTO = all.get(0);
+        AddressDTO physicalAddressDTO = all.get(0);
         assertEquals(location.getId(), physicalAddressDTO.getLocationId());
         assertEquals(NEW_STRING, physicalAddressDTO.getAddress1());
         assertEquals(NEW_STRING, physicalAddressDTO.getCity());
@@ -210,9 +209,9 @@ public class LocationImportServiceTest {
         importService.createOrUpdateLocation(location, NEW_EXTERNAL_ID, IMPORT_DATA);
 
         assertEquals(1, locationService.findAll().size());
-        List<PostalAddressDTO> all = postalAddressService.findAll();
+        List<AddressDTO> all = postalAddressService.findAll();
         assertEquals(1, all.size());
-        PostalAddressDTO postalAddressDTO = all.get(0);
+        AddressDTO postalAddressDTO = all.get(0);
         assertNotNull(postalAddressDTO.getLocationId());
         assertEquals(NEW_STRING, postalAddressDTO.getAddress1());
         assertEquals(NEW_STRING, postalAddressDTO.getCity());
@@ -244,9 +243,9 @@ public class LocationImportServiceTest {
         importService.createOrUpdateLocation(locationToUpdate, EXISTING_EXTERNAL_ID, IMPORT_DATA);
 
         assertEquals(1, locationService.findAll().size());
-        List<PostalAddressDTO> all = postalAddressService.findAll();
+        List<AddressDTO> all = postalAddressService.findAll();
         assertEquals(1, all.size());
-        PostalAddressDTO postalAddressDTO = all.get(0);
+        AddressDTO postalAddressDTO = all.get(0);
         assertEquals(location.getId(), postalAddressDTO.getLocationId());
         assertEquals(NEW_STRING, postalAddressDTO.getAddress1());
         assertEquals(NEW_STRING, postalAddressDTO.getCity());

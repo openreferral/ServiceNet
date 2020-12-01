@@ -29,7 +29,7 @@ import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -150,7 +150,7 @@ public class LAACCompleteDataAdapterTest {
 
     @Test
     public void shouldImportCompletePhysicalAddress() {
-        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+        AddressDTO result = physicalAddressService.findAll().get(0);
 
         assertEquals("123 Street", result.getAddress1());
         assertEquals("Suite 500", result.getAttention());

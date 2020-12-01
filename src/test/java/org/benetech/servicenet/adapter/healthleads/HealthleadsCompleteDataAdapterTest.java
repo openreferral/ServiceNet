@@ -52,7 +52,7 @@ import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
@@ -256,7 +256,7 @@ public class HealthleadsCompleteDataAdapterTest {
     public void shouldImportCompletePhysicalAddress() {
         assertEquals(1, physicalAddressService.findAll().size());
 
-        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+        AddressDTO result = physicalAddressService.findAll().get(0);
 
         assertEquals("2332 Secret Street", result.getAddress1());
         assertEquals("Room 500", result.getAttention());
