@@ -161,6 +161,7 @@ public class HealthleadsCompleteDataAdapterTest {
         assertEquals("organization@org.com", result.getEmail());
         assertEquals("Organization Tax Status", result.getTaxStatus());
         assertEquals("taxId", result.getTaxId());
+        assertEquals("Organization Legal Status", result.getLegalStatus());
         assertEquals(LocalDate.of(YEAR, 1, 2), result.getYearIncorporated());
         assertEquals("The main purpose of the organization solutions to patients problems.",
             result.getDescription());
@@ -174,6 +175,7 @@ public class HealthleadsCompleteDataAdapterTest {
 
         EligibilityDTO result = eligibilityService.findAll().get(0);
 
+        assertEquals("Service Name", result.getSrvcName());
         assertEquals("Anyone", result.getEligibility());
     }
 
@@ -181,16 +183,22 @@ public class HealthleadsCompleteDataAdapterTest {
     public void shouldImportCompleteLocationBasedLangs() {
         Set<String> langs = languageService.findAll().stream().map(LanguageDTO::getLanguage).collect(Collectors.toSet());
 
+        assertEquals(4, langs.size());
         assertTrue(langs.contains("Polish"));
         assertTrue(langs.contains("German"));
+        assertTrue(langs.contains("English"));
+        assertTrue(langs.contains("Spanish"));
     }
 
     @Test
     public void shouldImportCompleteServiceBasedLangs() {
         Set<String> langs = languageService.findAll().stream().map(LanguageDTO::getLanguage).collect(Collectors.toSet());
 
+        assertEquals(4, langs.size());
         assertTrue(langs.contains("English"));
         assertTrue(langs.contains("Spanish"));
+        assertTrue(langs.contains("German"));
+        assertTrue(langs.contains("Polish"));
     }
 
     @Test
@@ -206,7 +214,11 @@ public class HealthleadsCompleteDataAdapterTest {
         assertEquals("Location Transportation", result.getTransportation());
         assertEquals(LNG, result.getLongitude());
         assertEquals(LAT, result.getLatitude());
+        assertEquals("locationId", result.getExternalDbId());
+        assertEquals("healthleads", result.getProviderName());
+        assertEquals("Organization Name", result.getOrganizationName());
 
+        assertEquals("Location Name", schedules.get(0).getLocationName());
         assertEquals("Mon-Fri 8:30am-5pm", schedules.get(0).getNotes());
     }
 
@@ -282,6 +294,7 @@ public class HealthleadsCompleteDataAdapterTest {
         assertEquals("Service Accreditations", result.getAccreditations());
         assertEquals("Service License", result.getLicenses());
         assertEquals("serviceId", result.getExternalDbId());
+        assertEquals("healthleads", result.getProviderName());
     }
 
     @Test

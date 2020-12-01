@@ -197,7 +197,6 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
                     providerName, isFileUpload));
                 long stopTime = System.currentTimeMillis();
                 long elapsedTime = stopTime - startTime;
-                //TODO: Remove time counting logic (#264)
                 log.info("Data upload for " + providerName + " took: " + elapsedTime + "ms");
                 return saveReport(importReport);
             })

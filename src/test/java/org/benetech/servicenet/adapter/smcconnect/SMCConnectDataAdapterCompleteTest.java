@@ -19,6 +19,7 @@ import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources
 import static org.benetech.servicenet.adapter.smcconnect.SMCConnectTestResources.SMCCONNECT;
 import static org.benetech.servicenet.config.Constants.SMC_CONNECT_PROVIDER;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -346,8 +347,12 @@ public class SMCConnectDataAdapterCompleteTest {
         results.forEach(r -> {
             if (r.getSrvcId() != null) {
                 assertEquals("Vietnamese", r.getLanguage());
+                assertEquals("Service Name", r.getSrvcName());
+                assertNull(r.getLocationName());
             } else {
                 assertEquals("French", r.getLanguage());
+                assertEquals("Name", r.getLocationName());
+                assertNull(r.getSrvcName());
             }
         });
     }
@@ -368,6 +373,7 @@ public class SMCConnectDataAdapterCompleteTest {
         assertEquals("(900) 500-9000", result.getNumber());
         assertEquals("500", result.getExtension().toString());
         assertEquals("voice", result.getType());
+        assertEquals("Service Name", result.getSrvcName());
     }
 
     @Test
@@ -388,11 +394,13 @@ public class SMCConnectDataAdapterCompleteTest {
         PostalAddressDTO result = postalAddressService.findAll().get(0);
 
         assertEquals("1st Address", result.getAddress1());
+        assertEquals("2nd Address", result.getAddress2());
         assertEquals("MailCity", result.getCity());
         assertEquals("MailSP", result.getStateProvince());
         assertEquals("Mail8490", result.getPostalCode());
         assertEquals("MailCountry", result.getCountry());
         assertEquals("Room 500", result.getAttention());
+        assertEquals("Name", result.getLocationName());
     }
 
     @Test
@@ -411,6 +419,9 @@ public class SMCConnectDataAdapterCompleteTest {
         assertEquals("1 hour", result.getWaitTime());
         assertEquals("Service Fee", result.getFees());
         assertEquals("www.service.com", result.getUrl());
+        assertEquals("serviceId", result.getExternalDbId());
+        assertEquals("SMCConnect", result.getProviderName());
+        assertEquals("Organization Name", result.getOrganizationName());
     }
 
     @Test
@@ -450,6 +461,16 @@ public class SMCConnectDataAdapterCompleteTest {
                 assertEquals("Contact Title", r.getTitle());
                 assertEquals("contact@email.com", r.getEmail());
                 assertEquals("Contact department", r.getDepartment());
+                assertEquals("SMCConnect", r.getProviderName());
+                if (r.getSrvcName() == null) {
+                    assertEquals("contactId1", r.getExternalDbId());
+                    assertEquals("Organization Name", r.getOrganizationName());
+                    assertNull(r.getSrvcName());
+                } else {
+                    assertEquals("contactId2", r.getExternalDbId());
+                    assertEquals("Service Name", r.getSrvcName());
+                    assertNull(r.getOrganizationName());
+                }
             }
         );
     }

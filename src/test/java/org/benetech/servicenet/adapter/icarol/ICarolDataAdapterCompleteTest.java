@@ -62,7 +62,6 @@ public class ICarolDataAdapterCompleteTest {
     private static final double LAT = 40.123456;
     private static final double LNG = -120.123456;
     private static final int THREE = 3;
-    private static final int FIVE = 5;
 
     @Autowired
     private EdenDataAdapter adapter;
@@ -143,6 +142,8 @@ public class ICarolDataAdapterCompleteTest {
         assertNull(result.getLicenses());
         assertEquals("Program", result.getType());
         assertEquals("3", result.getExternalDbId());
+        assertEquals("HOUSING AUTHORITY OF THE COUNTY OF Commoncounty (ABCD)", result.getOrganizationName());
+        assertEquals("Eden", result.getProviderName());
     }
 
     @Test
@@ -156,6 +157,7 @@ public class ICarolDataAdapterCompleteTest {
                 && x.getLatitude().equals(LAT)
                 && x.getLongitude().equals(LNG)
                 && x.getExternalDbId().equals("11")
+                && x.getProviderName().equals("Eden")
         ));
     }
 
@@ -187,6 +189,7 @@ public class ICarolDataAdapterCompleteTest {
         assertEquals("CA", result.getStateProvince());
         assertEquals("12345", result.getPostalCode());
         assertEquals("United States", result.getCountry());
+        assertEquals("12345 Cool Street - CarpetHanger (CA)", result.getLocationName());
     }
 
     @Test
@@ -207,7 +210,7 @@ public class ICarolDataAdapterCompleteTest {
 
         List<OpeningHoursDTO> result = openingHoursService.findAll();
 
-        for (int i = 0; i < FIVE; i++) {
+        for (int i = 0; i < 7; i++) {
             assertEquals((Integer) i, result.get(i).getWeekday());
         }
         for (OpeningHoursDTO hours : result) {
