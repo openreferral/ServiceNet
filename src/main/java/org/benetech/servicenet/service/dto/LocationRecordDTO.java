@@ -14,9 +14,9 @@ public class LocationRecordDTO {
 
     private LocationDTO location;
 
-    private PhysicalAddressDTO physicalAddress;
+    private AddressDTO physicalAddress;
 
-    private PostalAddressDTO postalAddress;
+    private AddressDTO postalAddress;
 
     private Set<OpeningHoursDTO> regularScheduleOpeningHours;
 
@@ -31,7 +31,7 @@ public class LocationRecordDTO {
     public LocationRecordDTO(UUID physicalAddressId, String physicalAddressCity,
         String physicalAddressStateProvince, String physicalAddressStateRegion, UUID orgId) {
         this.location = new LocationDTO(orgId);
-        this.physicalAddress = new PhysicalAddressDTO(physicalAddressId, physicalAddressCity,
+        this.physicalAddress = new AddressDTO(physicalAddressId, physicalAddressCity,
             physicalAddressStateProvince, physicalAddressStateRegion);
     }
 }

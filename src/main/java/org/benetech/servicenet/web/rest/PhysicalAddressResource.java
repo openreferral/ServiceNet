@@ -4,7 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.PhysicalAddressService;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
@@ -58,13 +58,13 @@ public class PhysicalAddressResource {
     @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PostMapping("/physical-addresses")
     @Timed
-    public ResponseEntity<PhysicalAddressDTO> createPhysicalAddress(
-        @Valid @RequestBody PhysicalAddressDTO physicalAddressDTO) throws URISyntaxException {
+    public ResponseEntity<AddressDTO> createPhysicalAddress(
+        @Valid @RequestBody AddressDTO physicalAddressDTO) throws URISyntaxException {
         log.debug("REST request to save PhysicalAddress : {}", physicalAddressDTO);
         if (physicalAddressDTO.getId() != null) {
             throw new BadRequestAlertException("A new physicalAddress cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        PhysicalAddressDTO result = physicalAddressService.save(physicalAddressDTO);
+        AddressDTO result = physicalAddressService.save(physicalAddressDTO);
         return ResponseEntity.created(new URI("/api/physical-addresses/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -82,13 +82,13 @@ public class PhysicalAddressResource {
     @PreAuthorize("hasRole('" + AuthoritiesConstants.ADMIN + "')")
     @PutMapping("/physical-addresses")
     @Timed
-    public ResponseEntity<PhysicalAddressDTO> updatePhysicalAddress(
-        @Valid @RequestBody PhysicalAddressDTO physicalAddressDTO) throws URISyntaxException {
+    public ResponseEntity<AddressDTO> updatePhysicalAddress(
+        @Valid @RequestBody AddressDTO physicalAddressDTO) throws URISyntaxException {
         log.debug("REST request to update PhysicalAddress : {}", physicalAddressDTO);
         if (physicalAddressDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        PhysicalAddressDTO result = physicalAddressService.save(physicalAddressDTO);
+        AddressDTO result = physicalAddressService.save(physicalAddressDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, physicalAddressDTO.getId().toString()))
             .body(result);
@@ -102,9 +102,9 @@ public class PhysicalAddressResource {
      */
     @GetMapping("/physical-addresses")
     @Timed
-    public ResponseEntity<List<PhysicalAddressDTO>> getAllPhysicalAddresses(Pageable pageable) {
+    public ResponseEntity<List<AddressDTO>> getAllPhysicalAddresses(Pageable pageable) {
         log.debug("REST request to get all PhysicalAddresses");
-        Page<PhysicalAddressDTO> page = physicalAddressService.findAll(pageable);
+        Page<AddressDTO> page = physicalAddressService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/physical-address");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -117,9 +117,9 @@ public class PhysicalAddressResource {
      */
     @GetMapping("/physical-addresses/{id}")
     @Timed
-    public ResponseEntity<PhysicalAddressDTO> getPhysicalAddress(@PathVariable UUID id) {
+    public ResponseEntity<AddressDTO> getPhysicalAddress(@PathVariable UUID id) {
         log.debug("REST request to get PhysicalAddress : {}", id);
-        Optional<PhysicalAddressDTO> physicalAddressDTO = physicalAddressService.findOne(id);
+        Optional<AddressDTO> physicalAddressDTO = physicalAddressService.findOne(id);
         return ResponseUtil.wrapOrNotFound(physicalAddressDTO);
     }
 

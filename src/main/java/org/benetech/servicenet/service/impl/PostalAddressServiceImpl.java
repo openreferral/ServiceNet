@@ -3,7 +3,7 @@ package org.benetech.servicenet.service.impl;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.repository.PostalAddressRepository;
 import org.benetech.servicenet.service.PostalAddressService;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.mapper.PostalAddressMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class PostalAddressServiceImpl implements PostalAddressService {
      * @return the persisted entity
      */
     @Override
-    public PostalAddressDTO save(PostalAddressDTO postalAddressDTO) {
+    public AddressDTO save(AddressDTO postalAddressDTO) {
         log.debug("Request to save PostalAddress : {}", postalAddressDTO);
 
         PostalAddress postalAddress = postalAddressMapper.toEntity(postalAddressDTO);
@@ -71,7 +71,7 @@ public class PostalAddressServiceImpl implements PostalAddressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<PostalAddressDTO> findAll() {
+    public List<AddressDTO> findAll() {
         log.debug("Request to get all PostalAddresses");
         return postalAddressRepository.findAll().stream()
             .map(postalAddressMapper::toDto)
@@ -86,7 +86,7 @@ public class PostalAddressServiceImpl implements PostalAddressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<PostalAddressDTO> findAll(Pageable pageable) {
+    public Page<AddressDTO> findAll(Pageable pageable) {
         log.debug("Request to get all PostalAddresses");
         return postalAddressRepository.findAll(pageable)
             .map(postalAddressMapper::toDto);
@@ -100,7 +100,7 @@ public class PostalAddressServiceImpl implements PostalAddressService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<PostalAddressDTO> findOne(UUID id) {
+    public Optional<AddressDTO> findOne(UUID id) {
         log.debug("Request to get PostalAddress : {}", id);
         return postalAddressRepository.findById(id)
             .map(postalAddressMapper::toDto);

@@ -26,7 +26,7 @@ import org.benetech.servicenet.service.dto.ContactDTO;
 import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,7 +132,7 @@ public class LAACDataAdapterTest {
     private void assertExtractedPhysicalAddress() {
         assertEquals(THREE, physicalAddressService.findAll().size());
 
-        PhysicalAddressDTO physicalAddress1 = physicalAddressService.findAll().get(0);
+        AddressDTO physicalAddress1 = physicalAddressService.findAll().get(0);
         assertEquals(String.format(CITY_FORMAT, 1), physicalAddress1.getCity());
         assertEquals(String.format(COUNTRY_FORMAT, 1), physicalAddress1.getCountry());
         assertEquals(String.format(POSTAL_CODE_FORMAT, 1), physicalAddress1.getPostalCode());
@@ -140,7 +140,7 @@ public class LAACDataAdapterTest {
         assertEquals(NOT_AVAILABLE, physicalAddress1.getAddress1());
         assertNull(physicalAddress1.getAttention());
 
-        PhysicalAddressDTO physicalAddress2 = physicalAddressService.findAll().get(1);
+        AddressDTO physicalAddress2 = physicalAddressService.findAll().get(1);
         assertEquals(String.format(CITY_FORMAT, TWO), physicalAddress2.getCity());
         assertEquals(String.format(COUNTRY_FORMAT, TWO), physicalAddress2.getCountry());
         assertEquals(String.format(POSTAL_CODE_FORMAT, TWO), physicalAddress2.getPostalCode());
@@ -148,7 +148,7 @@ public class LAACDataAdapterTest {
         assertEquals(String.format(ADDRESS_FORMAT, TWO), physicalAddress2.getAddress1());
         assertNull(physicalAddress2.getAttention());
 
-        PhysicalAddressDTO physicalAddress3 = physicalAddressService.findAll().get(TWO);
+        AddressDTO physicalAddress3 = physicalAddressService.findAll().get(TWO);
         assertEquals(String.format(CITY_FORMAT, THREE), physicalAddress3.getCity());
         assertEquals(String.format(COUNTRY_FORMAT, THREE), physicalAddress3.getCountry());
         assertEquals(String.format(POSTAL_CODE_FORMAT, THREE), physicalAddress3.getPostalCode());

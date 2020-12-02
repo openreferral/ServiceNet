@@ -37,7 +37,7 @@ import org.benetech.servicenet.service.ServiceService;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
 import org.junit.Before;
@@ -178,7 +178,7 @@ public class HealthleadsInvalidFieldsDataAdapterTest {
     @Test
     public void shouldImportPhysicalAddressWithInvalidFields() {
         assertEquals(1, physicalAddressService.findAll().size());
-        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+        AddressDTO result = physicalAddressService.findAll().get(0);
 
         // Fields with validation errors
         assertEquals("", result.getAddress1());

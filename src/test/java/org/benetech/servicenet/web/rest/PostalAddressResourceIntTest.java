@@ -20,7 +20,7 @@ import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.repository.PostalAddressRepository;
 import org.benetech.servicenet.service.PostalAddressService;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.mapper.PostalAddressMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,7 +132,7 @@ public class PostalAddressResourceIntTest {
         int databaseSizeBeforeCreate = postalAddressRepository.findAll().size();
 
         // Create the PostalAddress
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(postalAddressDTO)))
@@ -158,7 +158,7 @@ public class PostalAddressResourceIntTest {
 
         // Create the PostalAddress with an existing ID
         postalAddress.setId(TestConstants.UUID_1);
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
@@ -179,7 +179,7 @@ public class PostalAddressResourceIntTest {
         postalAddress.setAddress1(null);
 
         // Create the PostalAddress, which fails.
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -198,7 +198,7 @@ public class PostalAddressResourceIntTest {
         postalAddress.setCity(null);
 
         // Create the PostalAddress, which fails.
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -217,7 +217,7 @@ public class PostalAddressResourceIntTest {
         postalAddress.setStateProvince(null);
 
         // Create the PostalAddress, which fails.
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -236,7 +236,7 @@ public class PostalAddressResourceIntTest {
         postalAddress.setPostalCode(null);
 
         // Create the PostalAddress, which fails.
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -255,7 +255,7 @@ public class PostalAddressResourceIntTest {
         postalAddress.setCountry(null);
 
         // Create the PostalAddress, which fails.
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         restPostalAddressMockMvc.perform(post("/api/postal-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -334,7 +334,7 @@ public class PostalAddressResourceIntTest {
             .stateProvince(UPDATED_STATE_PROVINCE)
             .postalCode(UPDATED_POSTAL_CODE)
             .country(UPDATED_COUNTRY);
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(updatedPostalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(updatedPostalAddress);
 
         restPostalAddressMockMvc.perform(put("/api/postal-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -360,7 +360,7 @@ public class PostalAddressResourceIntTest {
         int databaseSizeBeforeUpdate = postalAddressRepository.findAll().size();
 
         // Create the PostalAddress
-        PostalAddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
+        AddressDTO postalAddressDTO = postalAddressMapper.toDto(postalAddress);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPostalAddressMockMvc.perform(put("/api/postal-addresses")
@@ -409,10 +409,10 @@ public class PostalAddressResourceIntTest {
     @Test
     @Transactional
     public void dtoEqualsVerifier() throws Exception {
-        TestUtil.equalsVerifier(PostalAddressDTO.class);
-        PostalAddressDTO postalAddressDTO1 = new PostalAddressDTO();
+        TestUtil.equalsVerifier(AddressDTO.class);
+        AddressDTO postalAddressDTO1 = new AddressDTO();
         postalAddressDTO1.setId(TestConstants.UUID_1);
-        PostalAddressDTO postalAddressDTO2 = new PostalAddressDTO();
+        AddressDTO postalAddressDTO2 = new AddressDTO();
         assertThat(postalAddressDTO1).isNotEqualTo(postalAddressDTO2);
         postalAddressDTO2.setId(postalAddressDTO1.getId());
         assertThat(postalAddressDTO1).isEqualTo(postalAddressDTO2);

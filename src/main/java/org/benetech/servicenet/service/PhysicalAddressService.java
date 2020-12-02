@@ -1,7 +1,7 @@
 package org.benetech.servicenet.service;
 
 import org.benetech.servicenet.domain.PhysicalAddress;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,7 +20,7 @@ public interface PhysicalAddressService {
      * @param physicalAddressDTO the entity to save
      * @return the persisted entity
      */
-    PhysicalAddressDTO save(PhysicalAddressDTO physicalAddressDTO);
+    AddressDTO save(AddressDTO physicalAddressDTO);
 
     /**
      * Save a physicalAddress.
@@ -35,7 +35,7 @@ public interface PhysicalAddressService {
      *
      * @return the list of entities
      */
-    List<PhysicalAddressDTO> findAll();
+    List<AddressDTO> findAll();
 
     /**
      * Get all the physicalAddresses.
@@ -43,7 +43,7 @@ public interface PhysicalAddressService {
      * @param pageable the pagination information
      * @return the list of entities
      */
-    Page<PhysicalAddressDTO> findAll(Pageable pageable);
+    Page<AddressDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" physicalAddress.
@@ -51,7 +51,7 @@ public interface PhysicalAddressService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<PhysicalAddressDTO> findOne(UUID id);
+    Optional<AddressDTO> findOne(UUID id);
 
     /**
      * Delete the "id" physicalAddress.

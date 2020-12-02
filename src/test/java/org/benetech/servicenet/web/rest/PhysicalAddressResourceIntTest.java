@@ -20,7 +20,7 @@ import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.benetech.servicenet.repository.PhysicalAddressRepository;
 import org.benetech.servicenet.service.PhysicalAddressService;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.mapper.PhysicalAddressMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,7 +132,7 @@ public class PhysicalAddressResourceIntTest {
         int databaseSizeBeforeCreate = physicalAddressRepository.findAll().size();
 
         // Create the PhysicalAddress
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(physicalAddressDTO)))
@@ -158,7 +158,7 @@ public class PhysicalAddressResourceIntTest {
 
         // Create the PhysicalAddress with an existing ID
         physicalAddress.setId(TestConstants.UUID_1);
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
@@ -179,7 +179,7 @@ public class PhysicalAddressResourceIntTest {
         physicalAddress.setAddress1(null);
 
         // Create the PhysicalAddress, which fails.
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -198,7 +198,7 @@ public class PhysicalAddressResourceIntTest {
         physicalAddress.setCity(null);
 
         // Create the PhysicalAddress, which fails.
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -217,7 +217,7 @@ public class PhysicalAddressResourceIntTest {
         physicalAddress.setStateProvince(null);
 
         // Create the PhysicalAddress, which fails.
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -236,7 +236,7 @@ public class PhysicalAddressResourceIntTest {
         physicalAddress.setPostalCode(null);
 
         // Create the PhysicalAddress, which fails.
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -255,7 +255,7 @@ public class PhysicalAddressResourceIntTest {
         physicalAddress.setCountry(null);
 
         // Create the PhysicalAddress, which fails.
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         restPhysicalAddressMockMvc.perform(post("/api/physical-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -334,7 +334,7 @@ public class PhysicalAddressResourceIntTest {
             .stateProvince(UPDATED_STATE_PROVINCE)
             .postalCode(UPDATED_POSTAL_CODE)
             .country(UPDATED_COUNTRY);
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(updatedPhysicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(updatedPhysicalAddress);
 
         restPhysicalAddressMockMvc.perform(put("/api/physical-addresses")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -360,7 +360,7 @@ public class PhysicalAddressResourceIntTest {
         int databaseSizeBeforeUpdate = physicalAddressRepository.findAll().size();
 
         // Create the PhysicalAddress
-        PhysicalAddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
+        AddressDTO physicalAddressDTO = physicalAddressMapper.toDto(physicalAddress);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPhysicalAddressMockMvc.perform(put("/api/physical-addresses")
@@ -409,10 +409,10 @@ public class PhysicalAddressResourceIntTest {
     @Test
     @Transactional
     public void dtoEqualsVerifier() throws Exception {
-        TestUtil.equalsVerifier(PhysicalAddressDTO.class);
-        PhysicalAddressDTO physicalAddressDTO1 = new PhysicalAddressDTO();
+        TestUtil.equalsVerifier(AddressDTO.class);
+        AddressDTO physicalAddressDTO1 = new AddressDTO();
         physicalAddressDTO1.setId(TestConstants.UUID_1);
-        PhysicalAddressDTO physicalAddressDTO2 = new PhysicalAddressDTO();
+        AddressDTO physicalAddressDTO2 = new AddressDTO();
         assertThat(physicalAddressDTO1).isNotEqualTo(physicalAddressDTO2);
         physicalAddressDTO2.setId(physicalAddressDTO1.getId());
         assertThat(physicalAddressDTO1).isEqualTo(physicalAddressDTO2);

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.benetech.servicenet.MockedGeocodingConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
@@ -28,8 +29,8 @@ import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
+import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.dto.RequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
@@ -112,6 +113,8 @@ public class ShelterTechCompleteDataAdapterTest {
         assertEquals("Non-profit", result.getLegalStatus());
         assertEquals("Health center offering Legal Help as well", result.getDescription());
         assertTrue(result.getActive());
+        assertEquals("2012-12-04T12:12:34.455Z", result.getLastVerifiedOn()
+            .withZoneSameInstant(ZoneOffset.UTC).toString());
         assertEquals("http://www.organization.org/xyz/", result.getUrl());
     }
 
@@ -130,6 +133,9 @@ public class ShelterTechCompleteDataAdapterTest {
         assertEquals("The Service Description", result.getDescription());
         assertEquals("http://www.service.org/", result.getUrl());
         assertEquals("15 minutes", result.getWaitTime());
+        assertEquals("Interpretation Services", result.getInterpretationServices());
+        assertEquals("Send email", result.getApplicationProcess());
+        assertEquals("ShelterTech", result.getProviderName());
     }
 
     @Test
@@ -143,6 +149,9 @@ public class ShelterTechCompleteDataAdapterTest {
         assertEquals(LAT, result.getLatitude());
         assertEquals(LNG, result.getLongitude());
         assertEquals("888", result.getExternalDbId());
+        assertEquals("ShelterTech", result.getProviderName());
+        assertEquals(organizationService.findAll().get(0).getId(), result.getOrganizationId());
+        assertEquals("The Organization", result.getOrganizationName());
     }
 
     @Test
@@ -150,15 +159,9 @@ public class ShelterTechCompleteDataAdapterTest {
         adapter.importData(importData);
         assertEquals(1, physicalAddressService.findAll().size());
 
-        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+        AddressDTO result = physicalAddressService.findAll().get(0);
 
-        assertEquals("Room 540", result.getAttention());
-        assertEquals("1233 90th St.", result.getAddress1());
-        assertEquals("#78", result.getAddress2());
-        assertEquals("San Francisco", result.getCity());
-        assertEquals("CA", result.getStateProvince());
-        assertEquals("65454", result.getPostalCode());
-        assertEquals("USA", result.getCountry());
+        assertAddress(result);
     }
 
     @Test
@@ -166,8 +169,12 @@ public class ShelterTechCompleteDataAdapterTest {
         adapter.importData(importData);
         assertEquals(1, postalAddressService.findAll().size());
 
-        PostalAddressDTO result = postalAddressService.findAll().get(0);
+        AddressDTO result = postalAddressService.findAll().get(0);
 
+        assertAddress(result);
+    }
+
+    private void assertAddress(AddressDTO result) {
         assertEquals("Room 540", result.getAttention());
         assertEquals("1233 90th St.", result.getAddress1());
         assertEquals("#78", result.getAddress2());
@@ -175,6 +182,8 @@ public class ShelterTechCompleteDataAdapterTest {
         assertEquals("CA", result.getStateProvince());
         assertEquals("65454", result.getPostalCode());
         assertEquals("USA", result.getCountry());
+        assertEquals(locationService.findAll().get(0).getId(), result.getLocationId());
+        assertEquals("1233 90th St. - San Francisco (CA)", result.getLocationName());
     }
 
     @Test
@@ -185,6 +194,8 @@ public class ShelterTechCompleteDataAdapterTest {
         EligibilityDTO result = eligibilityService.findAll().get(0);
 
         assertEquals("Adults", result.getEligibility());
+        assertEquals(serviceService.findAll().get(0).getId(), result.getSrvcId());
+        assertEquals("Service Name", result.getSrvcName());
     }
 
     @Test
@@ -192,18 +203,24 @@ public class ShelterTechCompleteDataAdapterTest {
         adapter.importData(importData);
         assertEquals(1, phoneService.findAll().size());
 
-        List<PhoneDTO> result = phoneService.findAll();
+        PhoneDTO result = phoneService.findAll().get(0);
 
-        assertEquals("(111) 222-3333", result.get(0).getNumber());
-        assertEquals((Integer) 32, result.get(0).getExtension());
-        assertEquals("fax: (663) 433-4324", result.get(0).getType());
-        assertEquals("en", result.get(0).getLanguage());
+        assertEquals("(111) 222-3333", result.getNumber());
+        assertEquals((Integer) 32, result.getExtension());
+        assertEquals("fax: (663) 433-4324", result.getType());
+        assertEquals("en", result.getLanguage());
+        assertEquals(locationService.findAll().get(0).getId(), result.getLocationId());
+        assertEquals("1233 90th St. - San Francisco (CA)", result.getLocationName());
     }
 
     @Test
     public void shouldImportCompleteRegularSchedule() {
         adapter.importData(importData);
         assertEquals(1, regularScheduleService.findAll().size());
+        RegularScheduleDTO result = regularScheduleService.findAll().get(0);
+        assertEquals(serviceService.findAll().get(0).getId(), result.getSrvcId());
+        assertEquals("Service Name", result.getSrvcName());
+        assertEquals("", result.getNotes());
     }
 
     @Test
@@ -214,6 +231,9 @@ public class ShelterTechCompleteDataAdapterTest {
         RequiredDocumentDTO result = requiredDocumentService.findAll().get(0);
 
         assertEquals("ID, or any other document with photo", result.getDocument());
+        assertEquals(serviceService.findAll().get(0).getId(), result.getSrvcId());
+        assertEquals("Service Name", result.getSrvcName());
+        assertEquals("ShelterTech", result.getProviderName());
     }
 
     @Test
@@ -229,5 +249,8 @@ public class ShelterTechCompleteDataAdapterTest {
         assertEquals((Integer) 2, result.get(1).getWeekday());
         assertEquals("22:00", result.get(1).getOpensAt());
         assertEquals("06:00", result.get(1).getClosesAt());
+        RegularScheduleDTO regularScheduleDTO = regularScheduleService.findAll().get(0);
+        assertEquals(regularScheduleDTO.getId(), result.get(0).getRegularScheduleId());
+        assertEquals(regularScheduleDTO.getId(), result.get(1).getRegularScheduleId());
     }
 }
