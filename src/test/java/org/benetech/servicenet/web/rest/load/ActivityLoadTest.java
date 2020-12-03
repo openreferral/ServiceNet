@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @ExtendWith({ParallelLoadExtension.class})
 @SpringBootTest(classes = {ServiceNetApp.class, MockedUserTestConfiguration.class})
 public class ActivityLoadTest {
-    final static int ORG_COUNT = 3000;
+    final static int ORG_COUNT = 2000;
 
     @BeforeAll
     public static void loadData(@Autowired ReferenceDataGenerator referenceDataGenerator,
