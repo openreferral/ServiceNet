@@ -3,8 +3,8 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
-                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog ../xml-schema/dbchangelog-3.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext ../xml-schema/dbchangelog-ext.xsd">
 
     <property name="now" value="now()" dbms="h2"/>
 
@@ -78,7 +78,7 @@
         <dropDefaultValue tableName="conflict" columnName="offered_value_date" columnDataType="datetime"/>
         <dropDefaultValue tableName="conflict" columnName="state_date" columnDataType="datetime"/>
         <dropDefaultValue tableName="conflict" columnName="created_date" columnDataType="datetime"/>
-        
+
         <createTable tableName="conflict_accepted_this_change">
             <column name="accepted_this_change_id" type="${uuidType}">
                 <constraints nullable="false"/>
@@ -89,7 +89,7 @@
         </createTable>
 
         <addPrimaryKey columnNames="conflicts_id, accepted_this_change_id" tableName="conflict_accepted_this_change"/>
-        
+
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
 </databaseChangeLog>

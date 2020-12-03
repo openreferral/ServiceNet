@@ -2,12 +2,12 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog ../xml-schema/dbchangelog-3.5.xsd">
     <!--
         Added the constraints for entity Conflict.
     -->
     <changeSet id="20181224110136-2" author="wojtekbu">
-        
+
         <addForeignKeyConstraint baseColumnNames="owner_id"
                                  baseTableName="conflict"
                                  constraintName="fk_conflict_owner_id"
@@ -24,6 +24,6 @@
                                  constraintName="fk_conflict_accepted_this_change_accepted_this_change_id"
                                  referencedColumnNames="id"
                                  referencedTableName="system_account"/>
-        
+
     </changeSet>
 </databaseChangeLog>
