@@ -18,10 +18,10 @@ public final class ReportUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ReportUtils.class);
 
     public static <T> File createCsvReport(String reportName, List<T> entities, String[] headers, String[] valueMappings) {
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
         String currentDateTime = dateFormatter.format(new Date());
 
-        String fileName = reportName + "-" + currentDateTime + ".csv";
+        String fileName = reportName + "_" + currentDateTime + ".csv";
         File csvOutputFile = new File(fileName);
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
             ICsvBeanWriter csvWriter = new CsvBeanWriter(pw, CsvPreference.STANDARD_PREFERENCE);

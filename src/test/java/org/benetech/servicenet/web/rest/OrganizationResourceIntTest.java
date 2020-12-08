@@ -1,10 +1,16 @@
 package org.benetech.servicenet.web.rest;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
+import org.benetech.servicenet.domain.DailyUpdate;
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Service;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.OrganizationRepository;
@@ -24,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +40,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -85,6 +93,8 @@ public class OrganizationResourceIntTest {
 
     private Organization organization;
 
+    private Organization organizationWithAllRelations;
+
     private static final Boolean DEFAULT_ACTIVE = true;
 
     /**
@@ -97,6 +107,10 @@ public class OrganizationResourceIntTest {
         Organization result = OrganizationMother.createDefault(DEFAULT_ACTIVE);
         result.setAccount(SystemAccountMother.createDefaultAndPersist(em));
         return result;
+    }
+
+    public static Organization createEntityWithAllRelations(EntityManager em) {
+        return OrganizationMother.createDefaultWithAllRelationsAndPersist(em);
     }
 
     @Before
@@ -115,6 +129,7 @@ public class OrganizationResourceIntTest {
     @Before
     public void initTest() {
         organization = createEntity(em);
+        organizationWithAllRelations = createEntityWithAllRelations(em);
     }
 
     @Test
@@ -331,14 +346,16 @@ public class OrganizationResourceIntTest {
     @Test
     @Transactional
     public void deleteOrganization() throws Exception {
-        // Initialize the database
-        systemAccountRepository.saveAndFlush(organization.getAccount());
-        organizationRepository.saveAndFlush(organization);
+        testDelete("/api/organizations");
+    }
 
+    @Test
+    @Transactional
+    public void deleteOrganizationWithAllRelations() throws Exception {
         int databaseSizeBeforeDelete = organizationRepository.findAll().size();
 
         // Get the organization
-        restOrganizationMockMvc.perform(delete("/api/organizations/{id}", organization.getId())
+        restOrganizationMockMvc.perform(delete("/api/organizations/{id}", organizationWithAllRelations.getId())
             .accept(TestUtil.APPLICATION_JSON))
             .andExpect(status().isOk());
 
@@ -383,5 +400,143 @@ public class OrganizationResourceIntTest {
     public void testEntityFromId() {
         assertThat(organizationMapper.fromId(TestConstants.UUID_42).getId()).isEqualTo(TestConstants.UUID_42);
         assertThat(organizationMapper.fromId(null)).isNull();
+    }
+
+    @Test
+    @Transactional
+    public void getProviderOrganization() throws Exception {
+        // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
+        organizationRepository.saveAndFlush(organization);
+
+        // Get provider's organization
+        restOrganizationMockMvc.perform(get("/api/provider-organization/{id}", organization.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.id").value(organization.getId().toString()))
+            .andExpect(jsonPath("$.name").value(OrganizationMother.DEFAULT_NAME))
+            .andExpect(jsonPath("$.services.[*].id").value(containsInAnyOrder(
+                organization.getServices().stream().map(Service::getId).toArray())))
+            .andExpect(jsonPath("$.locations.[*].id").value(containsInAnyOrder(
+                organization.getLocations().stream().map(Location::getId).toArray())))
+            .andExpect(jsonPath("$.dailyUpdates.[*].id").value(containsInAnyOrder(
+                organization.getDailyUpdates().stream().map(DailyUpdate::getId).toArray())));
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser
+    public void deactivateOrganization() throws Exception {
+        // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
+        Set<UserProfile> userProfiles = new HashSet<>();
+        userProfiles.add(userService.getCurrentUserProfile());
+        organization.setUserProfiles(userProfiles);
+        organizationRepository.saveAndFlush(organization);
+        assertThat(organization.isActive());
+
+        // Get the organization
+        restOrganizationMockMvc.perform(post("/api/organizations/deactivate/{id}", organization.getId())
+            .accept(TestUtil.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        // Validate that the org is inactive
+        List<Organization> organizationList = organizationRepository.findAll();
+        Organization testOrganization = organizationList.get(organizationList.size() - 1);
+        assertThat(!testOrganization.isActive());
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser
+    public void createUserOwnedOrganization() throws Exception {
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        currentUser.setSystemAccount(organization.getAccount());
+        userService.saveProfile(currentUser);
+        int databaseSizeBeforeCreate = organizationRepository.findAll().size();
+
+        // Create the user-owned Organization
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+        restOrganizationMockMvc.perform(post("/api/organizations/user-owned")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isCreated());
+
+        // Validate the Organization in the database
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeCreate + 1);
+        Organization testOrganization = organizationList.get(organizationList.size() - 1);
+        assertThat(testOrganization.getName()).isEqualTo(OrganizationMother.DEFAULT_NAME);
+        assertThat(testOrganization.getUserProfiles()).isNotEmpty();
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser
+    public void updateUserOwnedOrganization() throws Exception {
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        currentUser.setSystemAccount(organization.getAccount());
+        userService.saveProfile(currentUser);
+        Set<UserProfile> userProfiles = new HashSet<>();
+        userProfiles.add(userService.getCurrentUserProfile());
+        organization.setUserProfiles(userProfiles);
+        // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
+        organizationRepository.saveAndFlush(organization);
+
+        int databaseSizeBeforeUpdate = organizationRepository.findAll().size();
+
+        // Update the organization
+        Organization updatedOrganization = organizationRepository.findById(organization.getId()).get();
+        // Disconnect from session so that the updates on updatedOrganization are not directly saved in db
+        em.detach(updatedOrganization);
+        updatedOrganization
+            .name(OrganizationMother.UPDATED_NAME)
+            .description(OrganizationMother.UPDATED_DESCRIPTION)
+            .email(OrganizationMother.UPDATED_EMAIL)
+            .url(OrganizationMother.UPDATED_URL);
+        OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
+
+        restOrganizationMockMvc.perform(put("/api/organizations/user-owned")
+            .contentType(TestUtil.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isOk());
+
+        // Validate the Organization in the database
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeUpdate);
+        Organization testOrganization = organizationList.get(organizationList.size() - 1);
+        assertThat(testOrganization.getName()).isEqualTo(OrganizationMother.UPDATED_NAME);
+        assertThat(testOrganization.getDescription()).isEqualTo(OrganizationMother.UPDATED_DESCRIPTION);
+        assertThat(testOrganization.getEmail()).isEqualTo(OrganizationMother.UPDATED_EMAIL);
+        assertThat(testOrganization.getUrl()).isEqualTo(OrganizationMother.UPDATED_URL);
+        assertThat(testOrganization.getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser
+    public void deleteUserOwnedOrganization() throws Exception {
+        Set<UserProfile> userProfiles = new HashSet<>();
+        userProfiles.add(userService.getCurrentUserProfile());
+        organization.setUserProfiles(userProfiles);
+        testDelete("/api/organizations/user-owned");
+    }
+
+    private void testDelete(String url) throws Exception {
+        // Initialize the database
+        systemAccountRepository.saveAndFlush(organization.getAccount());
+        organizationRepository.saveAndFlush(organization);
+
+        int databaseSizeBeforeDelete = organizationRepository.findAll().size();
+
+        // Get the organization
+        restOrganizationMockMvc.perform(delete(url + "/{id}", organization.getId())
+            .accept(TestUtil.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        // Validate the database is empty
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeDelete - 1);
     }
 }

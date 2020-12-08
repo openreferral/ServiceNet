@@ -30,8 +30,7 @@ import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.RegularScheduleDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
@@ -146,7 +145,7 @@ public class ICarolDataRelationshipsTest {
         // PhysicalAddress has a reference to the Location
         List<LocationDTO> locations = locationService.findAll();
         assertEquals(1, locations.size());
-        List<PhysicalAddressDTO> result = physicalAddressService.findAll();
+        List<AddressDTO> result = physicalAddressService.findAll();
 
         assertEquals(locations.get(0).getId(), result.get(0).getLocationId());
     }
@@ -156,7 +155,7 @@ public class ICarolDataRelationshipsTest {
         // PostalAddress has a reference to the Location
         List<LocationDTO> locations = locationService.findAll();
         assertEquals(1, locations.size());
-        List<PostalAddressDTO> result = postalAddressService.findAll();
+        List<AddressDTO> result = postalAddressService.findAll();
 
         assertEquals(locations.get(0).getId(), result.get(0).getLocationId());
     }

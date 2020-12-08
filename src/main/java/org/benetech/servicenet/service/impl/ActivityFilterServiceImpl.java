@@ -1,7 +1,5 @@
 package org.benetech.servicenet.service.impl;
 
-import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,7 +50,7 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
 
     private final SiloRepository siloRepository;
 
-    private static final String SILO_TAXONOMIES = "silo";
+    protected static final String SILO_TAXONOMIES = "silo";
 
     public ActivityFilterServiceImpl(GeocodingResultRepository geocodingResultRepository, UserService userService,
         TaxonomyRepository taxonomyRepository, ActivityFilterRepository activityFilterRepository,
@@ -124,7 +122,7 @@ public class ActivityFilterServiceImpl implements ActivityFilterService {
             }
         } else {
             taxonomies = taxonomyRepository.findAssociatedTaxonomies(siloId, providerName, excludedUser);
-            taxonomiesByProvider.put(SERVICE_PROVIDER,
+            taxonomiesByProvider.put(providerName,
                 taxonomies.stream().map(Taxonomy::getName).collect(Collectors.toSet()));
         }
         if (siloId != null) {

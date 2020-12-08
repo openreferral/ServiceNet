@@ -2,8 +2,8 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
-                   http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext ../xml-schema/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog ../xml-schema/dbchangelog-3.6.xsd">
     <changeSet author="awalkowiak (generated)" id="1562067558280-1">
         <dropDefaultValue columnDataType="boolean" columnName="active" tableName="organization"/>
     </changeSet>

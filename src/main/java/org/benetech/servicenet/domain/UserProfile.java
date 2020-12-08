@@ -104,6 +104,11 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     @Pattern(regexp = Constants.PHONE_REGEX)
     private String phoneNumber;
 
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "avatar_base64", columnDefinition = "clob")
+    private String avatarBase64;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

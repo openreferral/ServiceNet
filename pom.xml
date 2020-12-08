@@ -1095,6 +1095,7 @@
                             <exclude>**/*IT*</exclude>
                             <exclude>**/*IntTest*</exclude>
                             <exclude>**/*LoadTest*</exclude>
+                            <exclude>**/*PerformanceTest*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>

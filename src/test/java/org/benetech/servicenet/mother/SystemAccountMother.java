@@ -8,6 +8,7 @@ public class SystemAccountMother {
 
     public static final String DEFAULT_NAME = "AAAAAAAAAA";
     public static final String UPDATED_NAME = "BBBBBBBBBB";
+    public static final String SERVICE_PROVIDER = "ServiceProvider";
 
     public static SystemAccount createDefault() {
         return new SystemAccount().name(DEFAULT_NAME);
@@ -15,6 +16,10 @@ public class SystemAccountMother {
 
     public static SystemAccount createDifferent() {
         return new SystemAccount().name(UPDATED_NAME);
+    }
+
+    public static SystemAccount createServiceProvider() {
+        return new SystemAccount().name(SERVICE_PROVIDER);
     }
 
     public static SystemAccount createDefaultAndPersist(EntityManager em) {
@@ -26,6 +31,13 @@ public class SystemAccountMother {
 
     public static SystemAccount createDifferentAndPersist(EntityManager em) {
         SystemAccount account = createDifferent();
+        em.persist(account);
+        em.flush();
+        return account;
+    }
+
+    public static SystemAccount createServiceProviderAndPersist(EntityManager em) {
+        SystemAccount account = createServiceProvider();
         em.persist(account);
         em.flush();
         return account;

@@ -2,7 +2,7 @@
 <databaseChangeLog
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog xml-schema/dbchangelog-3.5.xsd">
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20181119125352_added_entity_SystemAccount.xml"
@@ -205,4 +205,6 @@
     <include file="config/liquibase/changelog/20201021120120_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20201023151700_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20201105151535_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20201125171252_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20201208132520_changelog.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

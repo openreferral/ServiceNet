@@ -31,8 +31,7 @@ import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
-import org.benetech.servicenet.service.dto.PostalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +61,6 @@ public class ICarolDataAdapterCompleteTest {
     private static final double LAT = 40.123456;
     private static final double LNG = -120.123456;
     private static final int THREE = 3;
-    private static final int FIVE = 5;
 
     @Autowired
     private EdenDataAdapter adapter;
@@ -143,6 +141,8 @@ public class ICarolDataAdapterCompleteTest {
         assertNull(result.getLicenses());
         assertEquals("Program", result.getType());
         assertEquals("3", result.getExternalDbId());
+        assertEquals("HOUSING AUTHORITY OF THE COUNTY OF Commoncounty (ABCD)", result.getOrganizationName());
+        assertEquals("Eden", result.getProviderName());
     }
 
     @Test
@@ -156,6 +156,7 @@ public class ICarolDataAdapterCompleteTest {
                 && x.getLatitude().equals(LAT)
                 && x.getLongitude().equals(LNG)
                 && x.getExternalDbId().equals("11")
+                && x.getProviderName().equals("Eden")
         ));
     }
 
@@ -163,7 +164,7 @@ public class ICarolDataAdapterCompleteTest {
     public void shouldImportCompletePhysicalAddress() {
         adapter.importData(importData);
 
-        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+        AddressDTO result = physicalAddressService.findAll().get(0);
 
         assertNull(result.getAttention());
         assertEquals("12345 Cool Street", result.getAddress1());
@@ -178,7 +179,7 @@ public class ICarolDataAdapterCompleteTest {
     public void shouldImportCompletePostalAddress() {
         adapter.importData(importData);
 
-        PostalAddressDTO result = postalAddressService.findAll().get(0);
+        AddressDTO result = postalAddressService.findAll().get(0);
 
         assertNull(result.getAttention());
         assertEquals("12345 Cool Street", result.getAddress1());
@@ -187,6 +188,7 @@ public class ICarolDataAdapterCompleteTest {
         assertEquals("CA", result.getStateProvince());
         assertEquals("12345", result.getPostalCode());
         assertEquals("United States", result.getCountry());
+        assertEquals("12345 Cool Street - CarpetHanger (CA)", result.getLocationName());
     }
 
     @Test
@@ -207,7 +209,7 @@ public class ICarolDataAdapterCompleteTest {
 
         List<OpeningHoursDTO> result = openingHoursService.findAll();
 
-        for (int i = 0; i < FIVE; i++) {
+        for (int i = 0; i < 7; i++) {
             assertEquals((Integer) i, result.get(i).getWeekday());
         }
         for (OpeningHoursDTO hours : result) {

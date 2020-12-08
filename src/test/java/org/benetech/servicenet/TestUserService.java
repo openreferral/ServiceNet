@@ -3,6 +3,7 @@ package org.benetech.servicenet;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.repository.UserProfileRepository;
+import org.benetech.servicenet.security.SecurityUtils;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,8 @@ public class TestUserService extends UserService {
     @Override
     @Transactional(readOnly = true)
     public Optional<UserProfile> getCurrentUserProfileOptional() {
-        return userProfileRepository.findOneByLogin(ADMIN_LOGIN);
+        Optional<String> login = SecurityUtils.getCurrentUserLogin();
+        return userProfileRepository.findOneByLogin(login.orElse(ADMIN_LOGIN));
     }
 
     @Override
@@ -38,7 +40,8 @@ public class TestUserService extends UserService {
 
     @Override
     public Optional<SystemAccount> getCurrentSystemAccount() {
-        return userProfileRepository.findOneByLogin(ADMIN_LOGIN).map(UserProfile::getSystemAccount);
+        Optional<String> login = SecurityUtils.getCurrentUserLogin();
+        return userProfileRepository.findOneByLogin(login.orElse(ADMIN_LOGIN)).map(UserProfile::getSystemAccount);
     }
 }
 

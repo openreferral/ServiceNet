@@ -29,7 +29,7 @@ import org.benetech.servicenet.service.dto.EligibilityDTO;
 import org.benetech.servicenet.service.dto.LanguageDTO;
 import org.benetech.servicenet.service.dto.LocationDTO;
 import org.benetech.servicenet.service.dto.PhoneDTO;
-import org.benetech.servicenet.service.dto.PhysicalAddressDTO;
+import org.benetech.servicenet.service.dto.AddressDTO;
 import org.benetech.servicenet.service.dto.ServiceDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,6 +92,7 @@ public class LAACCompleteDataAdapterTest {
         assertEquals("Who we are, What are we doing?\n The description of the organization", result.getDescription());
         assertEquals("http:www.org.com/health", result.getUrl());
         assertEquals("626f8818-9d53-4b8b-8d72-d5b6980cacb4", result.getExternalDbId());
+        assertEquals(Boolean.TRUE, result.getActive());
     }
 
     @Test
@@ -101,6 +102,8 @@ public class LAACCompleteDataAdapterTest {
         assertEquals("The description of the Service Types", result.getDescription());
         assertEquals("Health-Clinic, Housing Service", result.getType());
         assertEquals("626f8818-9d53-4b8b-8d72-d5b6980cacb4", result.getExternalDbId());
+        assertEquals("LAAC", result.getProviderName());
+        assertEquals("Patients Health - health.com", result.getOrganizationName());
     }
 
     @Test
@@ -117,6 +120,8 @@ public class LAACCompleteDataAdapterTest {
         List<ContactDTO> result = contactService.findAll();
 
         assertEquals("Ben Smith", result.get(0).getName());
+        assertEquals("Patients Health - health.com", result.get(0).getOrganizationName());
+        assertEquals("LAAC", result.get(0).getProviderName());
         assertEquals("626f8818-9d53-4b8b-8d72-d5b6980cacb4", result.get(0).getExternalDbId());
     }
 
@@ -145,7 +150,7 @@ public class LAACCompleteDataAdapterTest {
 
     @Test
     public void shouldImportCompletePhysicalAddress() {
-        PhysicalAddressDTO result = physicalAddressService.findAll().get(0);
+        AddressDTO result = physicalAddressService.findAll().get(0);
 
         assertEquals("123 Street", result.getAddress1());
         assertEquals("Suite 500", result.getAttention());
@@ -153,5 +158,6 @@ public class LAACCompleteDataAdapterTest {
         assertEquals("STATE", result.getStateProvince());
         assertEquals("12341", result.getPostalCode());
         assertEquals("Country Name", result.getCountry());
+        assertEquals("Patients Health - health.com - Location", result.getLocationName());
     }
 }

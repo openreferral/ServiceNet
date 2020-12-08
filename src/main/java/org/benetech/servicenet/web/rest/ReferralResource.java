@@ -5,9 +5,11 @@ import java.io.File;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import javax.websocket.server.PathParam;
+import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 
@@ -55,8 +57,11 @@ public class ReferralResource {
 
     private final ReferralService referralService;
 
-    public ReferralResource(ReferralService referralService) {
+    private final UserService userService;
+
+    public ReferralResource(ReferralService referralService, UserService userService) {
         this.referralService = referralService;
+        this.userService = userService;
     }
 
     /**
@@ -166,11 +171,11 @@ public class ReferralResource {
     public ResponseEntity<FileSystemResource> getCurrentUsersReferralsCsv(
         @PathParam("since") ZonedDateTime since, @PathParam("status") String status) {
         log.debug("REST request to get current user's Referrals as CSV");
-        String[] headers = {"Beneficiary Phone Number", "Unique Identifier", "Date Stamp", "Referred From", "Referred To", "Status"};
+        String[] headers = {"Beneficiary Phone Number", "Service Net ID", "Date Stamp", "Referred From", "Referred To", "Status"};
         String[] valueMappings = {"beneficiaryPhoneNumber", "id", "sentAt", "fromName", "toName", "status"};
         List<ReferralDTO> referrals = referralService.findCurrentUsersReferrals(since, status, Pageable.unpaged()).toList();
         File csvOutputFile = ReportUtils
-            .createCsvReport("users-referrals", referrals, headers, valueMappings);
+            .createCsvReport("Beneficiary_Referral_History", referrals, headers, valueMappings);
 
         return ResponseEntity.ok()
             .header("Content-Disposition", "attachment; filename=" + csvOutputFile.getName())
@@ -206,8 +211,10 @@ public class ReferralResource {
         String[] headers = {"Organization id", "Organization name", "Referral count"};
         String[] valueMappings = {"orgId", "orgName", "referralCount"};
         List<ReferralMadeFromUserDTO> referrals = referralService.getNumberOfReferralsMadeFromUser(null, Pageable.unpaged()).toList();
+        UserProfile currentUser = userService.getCurrentUserProfile();
         File csvOutputFile = ReportUtils
-            .createCsvReport("no-referrals-made-from-us", referrals, headers, valueMappings);
+            .createCsvReport("#_Referrals_Made_From_" + currentUser.getLogin(),
+                referrals, headers, valueMappings);
 
         return ResponseEntity.ok()
             .header("Content-Disposition", "attachment; filename=" + csvOutputFile.getName())
@@ -244,7 +251,7 @@ public class ReferralResource {
         String[] valueMappings = {"orgId", "orgName", "status"};
         List<ReferralMadeToUserDTO> referrals = referralService.getReferralsMadeToUser(null, Pageable.unpaged()).toList();
         File csvOutputFile = ReportUtils
-            .createCsvReport("referrals-made-to-us", referrals, headers, valueMappings);
+            .createCsvReport("Referrals_Made_To_Us", referrals, headers, valueMappings);
 
         return ResponseEntity.ok()
             .header("Content-Disposition", "attachment; filename=" + csvOutputFile.getName())

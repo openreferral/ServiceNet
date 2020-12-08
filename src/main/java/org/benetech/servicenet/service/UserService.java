@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import liquibase.util.StringUtils;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Organization;
@@ -303,6 +304,7 @@ public class UserService {
                 .map(UserGroup::getId)
                 .collect(Collectors.toList()));
         }
+        authUser.setAvatarBase64(userProfile.getAvatarBase64());
         return authUser;
     }
 
@@ -393,6 +395,11 @@ public class UserService {
         userGroups.forEach(userGroup -> userGroup.getUserProfiles().add(userProfile));
 
         userProfile.setSilo(this.getSilo(userDTO.getSiloId()));
+
+        String avatarBase64 = userDTO.getAvatarBase64();
+        if (StringUtils.isNotEmpty(avatarBase64)) {
+            userProfile.setAvatarBase64(avatarBase64);
+        }
         userProfileRepository.save(userProfile);
         this.clearUserCaches(userProfile);
         return getCompleteUserDto(authUser, userProfile);
