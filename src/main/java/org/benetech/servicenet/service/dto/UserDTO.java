@@ -76,6 +76,8 @@ public class UserDTO {
 
     private String phoneNumber;
 
+    private String avatarBase64;
+
     private List<UUID> userGroups;
 
     public UserDTO() {
@@ -110,6 +112,7 @@ public class UserDTO {
         this.organizationName = userProfile.getOrganizationName();
         this.organizationUrl = userProfile.getOrganizationUrl();
         this.phoneNumber = userProfile.getPhoneNumber();
+        this.avatarBase64 = userProfile.getAvatarBase64();
         if (userProfile.getUserGroups() != null) {
             this.userGroups = userProfile.getUserGroups().stream()
             .map(UserGroup::getId)
