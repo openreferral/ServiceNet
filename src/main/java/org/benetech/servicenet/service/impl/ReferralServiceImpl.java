@@ -144,6 +144,7 @@ public class ReferralServiceImpl implements ReferralService {
             referral.setTo(cbo);
             referral.sentAt(now);
             referral.setFulfilledAt(now);
+            referral.setFromUser(userService.getCurrentUserProfile());
 
             referralRepository.save(referral);
         } else {
@@ -168,20 +169,23 @@ public class ReferralServiceImpl implements ReferralService {
     public void refer(Beneficiary beneficiary, UUID cboId, UUID fromLocId, Map<UUID, UUID> organizationLocs) {
         ZonedDateTime now = ZonedDateTime.now();
         List<String> orgNames = new ArrayList<>();
-        Organization cbo = organizationRepository.getOne(cboId);
+        Organization cbo = cboId != null ? organizationRepository.getOne(cboId) : null;
         organizationLocs.forEach((UUID orgId, UUID locId) -> {
             Organization organization = organizationRepository.getOne(orgId);
             orgNames.add(organization.getName());
             Referral referral = new Referral();
             referral.setBeneficiary(beneficiary);
             referral.setFrom(cbo);
-            Location fromLocation = (fromLocId != null) ? locationRepository.getOne(fromLocId)
-                : cbo.getLocations().stream().findFirst().orElse(null);
-            referral.setFromLocation(fromLocation);
+            if (cbo != null || fromLocId != null) {
+                Location fromLocation = (fromLocId != null) ? locationRepository.getOne(fromLocId)
+                    : cbo.getLocations().stream().findFirst().orElse(null);
+                referral.setFromLocation(fromLocation);
+            }
             Location toLocation = (locId != null) ? locationRepository.getOne(locId)
                 : organization.getLocations().stream().findFirst().orElse(null);
             referral.setToLocation(toLocation);
             referral.setTo(organization);
+            referral.setFromUser(userService.getCurrentUserProfile());
             referral.sentAt(now);
 
             referralRepository.save(referral);

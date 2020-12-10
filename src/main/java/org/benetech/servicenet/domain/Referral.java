@@ -35,6 +35,9 @@ public class Referral extends AbstractEntity implements Serializable {
     private ZonedDateTime fulfilledAt;
 
     @ManyToOne
+    private UserProfile fromUser;
+
+    @ManyToOne
     @JsonIgnoreProperties("referrals")
     private Organization from;
 
@@ -175,5 +178,13 @@ public class Referral extends AbstractEntity implements Serializable {
             ", sentAt='" + getSentAt() + "'" +
             ", fulfilledAt='" + getFulfilledAt() + "'" +
             "}";
+    }
+
+    public UserProfile getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(UserProfile fromUser) {
+        this.fromUser = fromUser;
     }
 }

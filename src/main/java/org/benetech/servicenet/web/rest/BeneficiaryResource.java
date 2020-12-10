@@ -201,7 +201,17 @@ public class BeneficiaryResource {
         log.debug("REST request to Refer Beneficiary {} from {} to: {}",
             beneficiaryId, referringOrganizationId, organizationLocs);
         Beneficiary beneficiary = null;
-        Optional<Organization> cbo = organizationService.findOne(UUID.fromString(referringOrganizationId));
+        UUID cboId = null;
+        if (StringUtils.isNotBlank(referringOrganizationId)) {
+            Optional<Organization> cboOptional = organizationService
+                .findOne(UUID.fromString(referringOrganizationId));
+            if (cboOptional.isEmpty()) {
+                throw new BadRequestAlertException("Can not find organization with provided ID",
+                    ORG_ENTITY_NAME, "idnotfound");
+            } else {
+                cboId = cboOptional.get().getId();
+            }
+        }
         if (StringUtils.isNotBlank(phoneNumber)) {
             Optional<Beneficiary> beneficiaryOptional = beneficiaryService.findByPhoneNumber(phoneNumber);
             beneficiary = beneficiaryOptional
@@ -219,9 +229,6 @@ public class BeneficiaryResource {
                 throw new BadRequestAlertException("The provided Service Net ID is invalid", ENTITY_NAME, "idinvalid");
             }
         }
-        if (cbo.isEmpty()) {
-            throw new BadRequestAlertException("Can not find organization with provided ID", ORG_ENTITY_NAME, "idnotfound");
-        }
 
         organizationLocs.forEach((UUID orgId, UUID locId) -> {
             Optional<Organization> org = organizationService.findOne(orgId);
@@ -236,7 +243,7 @@ public class BeneficiaryResource {
 
         referralService.refer(
             beneficiary,
-            cbo.get().getId(),
+            cboId,
             StringUtils.isEmpty(referringLocationId) ? null : UUID.fromString(referringLocationId),
             organizationLocs
         );
