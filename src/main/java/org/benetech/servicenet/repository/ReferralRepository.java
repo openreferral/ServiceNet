@@ -33,9 +33,9 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         @Param("locId") UUID locId);
 
     @Query("SELECT referral FROM Referral referral "
-        + "JOIN referral.from org "
-        + "JOIN org.userProfiles userProfile "
-        + "WHERE userProfile = :fromUser "
+        + "LEFT JOIN referral.from org "
+        + "LEFT JOIN org.userProfiles userProfile "
+        + "WHERE (userProfile = :fromUser OR referral.fromUser = :fromUser) "
         + "AND (COALESCE(:since, NULL) IS NULL OR referral.sentAt >= :since) "
         + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
         + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL) "
@@ -47,10 +47,10 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "toOrg.id, toOrg.name, count(toOrg)"
         + ") FROM Referral referral "
         + "JOIN referral.to toOrg "
-        + "JOIN referral.from fromOrg "
-        + "JOIN fromOrg.userProfiles userProfile "
-        + "WHERE userProfile = :currentUser "
-        + "GROUP BY toOrg "
+        + "LEFT JOIN referral.from fromOrg "
+        + "LEFT JOIN fromOrg.userProfiles userProfile "
+        + "WHERE (userProfile = :currentUser OR referral.fromUser = :currentUser) "
+        + "GROUP BY toOrg, referral.sentAt "
         + "ORDER BY referral.sentAt ASC")
     Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(@Param("currentUser") UserProfile currentUser, Pageable pageable);
 
@@ -58,10 +58,10 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "toOrg.id, toOrg.name, count(toOrg)"
         + ") FROM Referral referral "
         + "JOIN referral.to toOrg "
-        + "JOIN referral.from fromOrg "
-        + "JOIN fromOrg.userProfiles userProfile "
-        + "WHERE userProfile = :currentUser AND toOrg.id=:to "
-        + "GROUP BY toOrg "
+        + "LEFT JOIN referral.from fromOrg "
+        + "LEFT JOIN fromOrg.userProfiles userProfile "
+        + "WHERE (userProfile = :currentUser OR referral.fromUser = :currentUser) AND toOrg.id=:to "
+        + "GROUP BY toOrg, referral.sentAt "
         + "ORDER BY referral.sentAt ASC")
     Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(@Param("currentUser") UserProfile currentUser, @Param("to") UUID to, Pageable pageable);
 
@@ -69,9 +69,9 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "fromOrg.id, fromOrg.name, referral.fulfilledAt"
         + ") FROM Referral referral "
         + "JOIN referral.to toOrg "
-        + "JOIN referral.from fromOrg "
-        + "JOIN toOrg.userProfiles userProfile "
-        + "WHERE userProfile = :currentUser "
+        + "LEFT JOIN referral.from fromOrg "
+        + "LEFT JOIN toOrg.userProfiles userProfile "
+        + "WHERE (userProfile = :currentUser OR referral.fromUser = :currentUser) "
         + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
         + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL) "
         + "ORDER BY referral.sentAt ASC")
@@ -81,9 +81,9 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "toOrg.id, toOrg.name"
         + ") FROM Referral referral "
         + "JOIN referral.to toOrg "
-        + "JOIN referral.from fromOrg "
-        + "JOIN fromOrg.userProfiles userProfile "
-        + "WHERE userProfile = :currentUser "
+        + "LEFT JOIN referral.from fromOrg "
+        + "LEFT JOIN fromOrg.userProfiles userProfile "
+        + "WHERE (userProfile = :currentUser OR referral.fromUser = :currentUser) "
         + "GROUP BY toOrg "
         + "ORDER BY toOrg.name ASC")
     List<OrganizationOptionDTO> getMadeToOptionsForCurrentUser(@Param("currentUser") UserProfile currentUser);
