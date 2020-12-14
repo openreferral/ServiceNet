@@ -29,6 +29,9 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     @Mapping(source = "account.name", target = "accountName")
     OrganizationDTO toDto(Organization organization);
 
+    @Mapping(source = "account.name", target = "accountName")
+    ProviderOrganizationDTO toProviderDto(Organization organization);
+
     OrganizationOptionDTO toOptionDto(Organization organization);
 
     OrganizationWithLocationsOptionDTO toOptionWithLocationsDto(Organization organization);

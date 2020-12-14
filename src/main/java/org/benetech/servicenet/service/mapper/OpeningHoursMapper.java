@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.mapper;
 
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.service.dto.OpeningHoursDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOpeningHoursDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -17,6 +18,8 @@ public interface OpeningHoursMapper extends EntityMapper<OpeningHoursDTO, Openin
 
     @Mapping(source = "regularSchedule.id", target = "regularScheduleId")
     OpeningHoursDTO toDto(OpeningHours openingHours);
+
+    ProviderOpeningHoursDTO toProviderDto(OpeningHours openingHours);
 
     @Mapping(source = "regularScheduleId", target = "regularSchedule")
     OpeningHours toEntity(OpeningHoursDTO openingHoursDTO);

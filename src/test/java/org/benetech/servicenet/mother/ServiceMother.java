@@ -1,6 +1,7 @@
 package org.benetech.servicenet.mother;
 
-import java.util.Collections;
+import static org.benetech.servicenet.util.CollectionUtils.singletonSet;
+
 import javax.persistence.EntityManager;
 import org.benetech.servicenet.domain.Contact;
 import org.benetech.servicenet.domain.Eligibility;
@@ -86,23 +87,23 @@ public final class ServiceMother {
         Phone srvPhone = PhoneMother.createDefault();
         Phone contactPhone = PhoneMother.createDefault();
         Contact contact = ContactMother.createDefault();
-        contact.setPhones(Collections.singleton(contactPhone));
+        contact.setPhones(singletonSet(contactPhone));
         ServiceArea serviceArea = ServiceAreaMother.createDefault();
         ServiceMetadata serviceMetadata = ServiceMetadataMother.createDefault();
 
         srv.program(program);
         srv.regularSchedule(regularSchedule);
-        srv.holidaySchedules(Collections.singleton(holidaySchedule));
+        srv.holidaySchedules(singletonSet(holidaySchedule));
         srv.funding(funding);
         srv.eligibility(eligibility);
-        srv.docs(Collections.singleton(requiredDocument));
-        srv.paymentsAccepteds(Collections.singleton(paymentAccepted));
-        srv.langs(Collections.singleton(language));
-        srv.taxonomies(Collections.singleton(serviceTaxonomy));
-        srv.phones(Collections.singleton(srvPhone));
-        srv.contacts(Collections.singleton(contact));
-        srv.areas(Collections.singleton(serviceArea));
-        srv.metadata(Collections.singleton(serviceMetadata));
+        srv.docs(singletonSet(requiredDocument));
+        srv.paymentsAccepteds(singletonSet(paymentAccepted));
+        srv.langs(singletonSet(language));
+        srv.taxonomies(singletonSet(serviceTaxonomy));
+        srv.phones(singletonSet(srvPhone));
+        srv.contacts(singletonSet(contact));
+        srv.areas(singletonSet(serviceArea));
+        srv.metadata(singletonSet(serviceMetadata));
 
         em.persist(program);
         em.persist(regularSchedule);
@@ -130,7 +131,7 @@ public final class ServiceMother {
         Eligibility e = EligibilityMother.createDefault();
         RequiredDocument rd = new RequiredDocument().document(REQUIRED_DOCUMENT);
         srv.eligibility(e);
-        srv.docs(Collections.singleton(rd));
+        srv.docs(singletonSet(rd));
 
         em.persist(e);
         em.persist(rd);

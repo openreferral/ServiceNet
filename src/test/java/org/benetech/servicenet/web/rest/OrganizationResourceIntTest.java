@@ -1,16 +1,23 @@
 package org.benetech.servicenet.web.rest;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.TestConstants;
 import org.benetech.servicenet.ZeroCodeSpringJUnit4Runner;
 import org.benetech.servicenet.domain.DailyUpdate;
+import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.mother.LocationMother;
 import org.benetech.servicenet.mother.OrganizationMother;
 import org.benetech.servicenet.mother.SystemAccountMother;
 import org.benetech.servicenet.repository.OrganizationRepository;
@@ -18,7 +25,9 @@ import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.OpeningHoursRow;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
 import org.benetech.servicenet.errors.ExceptionTranslator;
 import org.junit.Before;
@@ -42,6 +51,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.benetech.servicenet.web.rest.TestUtil.createFormattingConversionService;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -95,6 +105,10 @@ public class OrganizationResourceIntTest {
 
     private Organization organizationWithAllRelations;
 
+    private Map<Integer, List<String>> datesClosedByLocation;
+
+    private Map<Integer, List<OpeningHoursRow>> openingHoursByLocation;
+
     private static final Boolean DEFAULT_ACTIVE = true;
 
     /**
@@ -130,6 +144,9 @@ public class OrganizationResourceIntTest {
     public void initTest() {
         organization = createEntity(em);
         organizationWithAllRelations = createEntityWithAllRelations(em);
+        datesClosedByLocation = new HashMap<>();
+        openingHoursByLocation = new HashMap<>();
+
     }
 
     @Test
@@ -454,9 +471,17 @@ public class OrganizationResourceIntTest {
         currentUser.setSystemAccount(organization.getAccount());
         userService.saveProfile(currentUser);
         int databaseSizeBeforeCreate = organizationRepository.findAll().size();
+        Set<Location> locations = new HashSet<>();
+        locations.add(LocationMother.createForServiceProviderWithRelations());
+        organization.setLocations(locations);
+        List<String> datesClosed = createDatesClosed();
+        List<OpeningHoursRow> openingHoursRows = createOpeningHours();
 
         // Create the user-owned Organization
-        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+        ProviderOrganizationDTO organizationDTO = organizationMapper.toProviderDto(organization);
+        organizationDTO.setDatesClosedByLocation(datesClosedByLocation);
+        organizationDTO.setOpeningHoursByLocation(openingHoursByLocation);
+
         restOrganizationMockMvc.perform(post("/api/organizations/user-owned")
             .contentType(TestUtil.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
@@ -468,6 +493,10 @@ public class OrganizationResourceIntTest {
         Organization testOrganization = organizationList.get(organizationList.size() - 1);
         assertThat(testOrganization.getName()).isEqualTo(OrganizationMother.DEFAULT_NAME);
         assertThat(testOrganization.getUserProfiles()).isNotEmpty();
+        assertEquals(testOrganization.getLocations().size(), organization.getLocations().size());
+
+        assertOpeningHours(testOrganization, openingHoursRows);
+        assertDatesClosed(testOrganization, datesClosed);
     }
 
     @Test
@@ -475,19 +504,19 @@ public class OrganizationResourceIntTest {
     @WithMockUser
     public void updateUserOwnedOrganization() throws Exception {
         UserProfile currentUser = userService.getCurrentUserProfile();
-        currentUser.setSystemAccount(organization.getAccount());
+        currentUser.setSystemAccount(organizationWithAllRelations.getAccount());
         userService.saveProfile(currentUser);
         Set<UserProfile> userProfiles = new HashSet<>();
         userProfiles.add(userService.getCurrentUserProfile());
-        organization.setUserProfiles(userProfiles);
+        organizationWithAllRelations.setUserProfiles(userProfiles);
         // Initialize the database
-        systemAccountRepository.saveAndFlush(organization.getAccount());
-        organizationRepository.saveAndFlush(organization);
+        systemAccountRepository.saveAndFlush(organizationWithAllRelations.getAccount());
+        organizationRepository.saveAndFlush(organizationWithAllRelations);
 
         int databaseSizeBeforeUpdate = organizationRepository.findAll().size();
 
         // Update the organization
-        Organization updatedOrganization = organizationRepository.findById(organization.getId()).get();
+        Organization updatedOrganization = organizationRepository.findById(organizationWithAllRelations.getId()).get();
         // Disconnect from session so that the updates on updatedOrganization are not directly saved in db
         em.detach(updatedOrganization);
         updatedOrganization
@@ -495,7 +524,11 @@ public class OrganizationResourceIntTest {
             .description(OrganizationMother.UPDATED_DESCRIPTION)
             .email(OrganizationMother.UPDATED_EMAIL)
             .url(OrganizationMother.UPDATED_URL);
-        OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
+        ProviderOrganizationDTO organizationDTO = organizationMapper.toProviderDto(updatedOrganization);
+        List<String> datesClosed = createDatesClosed();
+        List<OpeningHoursRow> openingHoursRows = createOpeningHours();
+        organizationDTO.setDatesClosedByLocation(datesClosedByLocation);
+        organizationDTO.setOpeningHoursByLocation(openingHoursByLocation);
 
         restOrganizationMockMvc.perform(put("/api/organizations/user-owned")
             .contentType(TestUtil.APPLICATION_JSON)
@@ -511,6 +544,8 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getEmail()).isEqualTo(OrganizationMother.UPDATED_EMAIL);
         assertThat(testOrganization.getUrl()).isEqualTo(OrganizationMother.UPDATED_URL);
         assertThat(testOrganization.getUpdatedAt()).isNotNull();
+        assertOpeningHours(testOrganization, openingHoursRows);
+        assertDatesClosed(testOrganization, datesClosed);
     }
 
     @Test
@@ -538,5 +573,53 @@ public class OrganizationResourceIntTest {
         // Validate the database is empty
         List<Organization> organizationList = organizationRepository.findAll();
         assertThat(organizationList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    private List<OpeningHoursRow> createOpeningHours() {
+        List<OpeningHoursRow> openingHoursRows = new ArrayList<>();
+        OpeningHoursRow openingHours = new OpeningHoursRow();
+        openingHours.setFrom("10:00");
+        openingHours.setTo("18:00");
+        openingHours.setActiveDays(new Integer[]{1, 2, 3, 4, 5});
+        OpeningHoursRow anotherOpeningHours = new OpeningHoursRow();
+        anotherOpeningHours.setFrom("9:00 AM");
+        anotherOpeningHours.setTo("2:00 PM");
+        anotherOpeningHours.setActiveDays(new Integer[]{6, 0});
+        openingHoursRows.add(openingHours);
+        openingHoursRows.add(anotherOpeningHours);
+        openingHoursByLocation.put(0, openingHoursRows);
+        return openingHoursRows;
+    }
+
+    private List<String> createDatesClosed() {
+        List<String> datesClosed = new ArrayList<>();
+        datesClosed.add("2020-05-07T00:00:00.000Z");
+        datesClosed.add("2020-05-08T00:00:00.000Z");
+        datesClosedByLocation.put(0, datesClosed);
+        return datesClosed;
+    }
+
+    private void assertOpeningHours(Organization testOrganization, List<OpeningHoursRow> openingHoursRows) {
+        Location testLocation = testOrganization.getLocations().stream().findFirst().get();
+        Set<OpeningHours> testOpeningHours = testLocation.getRegularSchedule().getOpeningHours();
+
+        for (OpeningHoursRow row : openingHoursRows) {
+            assertEquals(testOpeningHours.stream().filter(oh -> oh.getOpensAt().equals(row.getFrom())
+                    && oh.getClosesAt().equals(row.getTo()) && oh.getWeekday() != null).count(),
+                row.getActiveDays().length);
+        }
+    }
+
+    private void assertDatesClosed(Organization testOrganization, List<String> datesClosed) {
+        Location testLocation = testOrganization.getLocations().stream().findFirst().get();
+        Set<HolidaySchedule> holidaySchedules = testLocation.getHolidaySchedules();
+        assertEquals(holidaySchedules.size(), datesClosed.size());
+
+        for (String dateClosed : datesClosed) {
+            assertThat(
+                holidaySchedules.stream().anyMatch(hs -> hs.isClosed()
+                    && hs.getStartDate().equals(ZonedDateTime.parse(dateClosed).toLocalDate())
+                    && hs.getEndDate().equals(ZonedDateTime.parse(dateClosed).toLocalDate())));
+        }
     }
 }
