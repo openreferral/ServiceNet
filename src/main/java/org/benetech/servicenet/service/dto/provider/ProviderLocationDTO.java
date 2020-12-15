@@ -1,6 +1,7 @@
 package org.benetech.servicenet.service.dto.provider;
 
 import java.io.Serializable;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Data;
 
@@ -20,4 +21,8 @@ public class ProviderLocationDTO implements Serializable {
     private String ca;
 
     private String zipcode;
+
+    private ProviderRegularScheduleDTO regularSchedule;
+
+    private Set<ProviderHolidayScheduleDTO> holidaySchedules;
 }

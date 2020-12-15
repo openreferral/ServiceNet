@@ -1,6 +1,7 @@
 package org.benetech.servicenet.mother;
 
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import org.benetech.servicenet.domain.AccessibilityForDisabilities;
 import org.benetech.servicenet.domain.HolidaySchedule;
@@ -52,10 +53,18 @@ public final class LocationMother {
         loc.setPhysicalAddress(physicalAddress);
         loc.setPostalAddress(postalAddress);
         loc.setRegularSchedule(regularSchedule);
-        loc.setHolidaySchedules(Collections.singleton(holidaySchedule));
-        loc.setLangs(Collections.singleton(language));
-        loc.setPhones(Collections.singleton(phone));
-        loc.setAccessibilities(Collections.singleton(accessibilityForDisabilities));
+        Set<HolidaySchedule> holidaySchedules = new HashSet<>();
+        holidaySchedules.add(holidaySchedule);
+        loc.setHolidaySchedules(holidaySchedules);
+        Set<Language> languages = new HashSet<>();
+        languages.add(language);
+        loc.setLangs(languages);
+        Set<Phone> phones = new HashSet<>();
+        phones.add(phone);
+        loc.setPhones(phones);
+        Set<AccessibilityForDisabilities> accessibilities = new HashSet<>();
+        accessibilities.add(accessibilityForDisabilities);
+        loc.setAccessibilities(accessibilities);
 
         em.persist(physicalAddress);
         em.persist(postalAddress);
@@ -82,6 +91,18 @@ public final class LocationMother {
         em.persist(postalAddress);
         em.persist(loc);
         em.flush();
+        return loc;
+    }
+
+    public static Location createForServiceProviderWithRelations() {
+        Location loc = createForServiceProvider();
+        PhysicalAddress physicalAddress = PhysicalAddressMother.createForServiceProvider();
+        PostalAddress postalAddress = PostalAddressMother.createForServiceProvider();
+
+        loc.setName(String.join(physicalAddress.getCity(), physicalAddress.getStateProvince(), physicalAddress.getAddress1()));
+        loc.setPhysicalAddress(physicalAddress);
+        loc.setPostalAddress(postalAddress);
+
         return loc;
     }
 

@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.impl;
 
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,17 +10,22 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
@@ -46,6 +52,7 @@ import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.OpeningHoursRow;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderLocationDTO;
@@ -106,6 +113,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationErrorRepository organizationErrorRepository;
 
+    private final EntityManager em;
+
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
@@ -115,7 +124,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
         UserProfileRepository userProfileRepository, RequiredDocumentService requiredDocumentService,
         OrganizationMatchRepository organizationMatchRepository, ConflictService conflictService,
-        OrganizationErrorRepository organizationErrorRepository) {
+        OrganizationErrorRepository organizationErrorRepository, EntityManager em) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -134,6 +143,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.organizationMatchRepository = organizationMatchRepository;
         this.conflictService = conflictService;
         this.organizationErrorRepository = organizationErrorRepository;
+        this.em = em;
     }
 
     /**
@@ -206,6 +216,8 @@ public class OrganizationServiceImpl implements OrganizationService {
             locations
         );
         saveDailyUpdates(organization, organizationDTO);
+        saveOpeningHours(organizationDTO.getOpeningHoursByLocation(), locations);
+        saveDatesClosed(organizationDTO.getDatesClosedByLocation(), locations);
         // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
         //  For the independent user with Service Provider (not the external one) system account type, matching should look
         //  for all that kind of users. Issue: #957
@@ -568,6 +580,10 @@ public class OrganizationServiceImpl implements OrganizationService {
             location.setOrganization(organization);
             location.setName(String.join(", ", physicalAddress.getAddress1(),
                 physicalAddress.getCity(), physicalAddress.getStateProvince()));
+            if (existingLocation != null) {
+                location.setRegularSchedule(existingLocation.getRegularSchedule());
+                location.setHolidaySchedules(existingLocation.getHolidaySchedules());
+            }
             locations.add(locationService.saveWithRelations(location));
         }
         for (Location location : locationsToRemove) {
@@ -646,8 +662,8 @@ public class OrganizationServiceImpl implements OrganizationService {
             ? service.getTaxonomies().stream()
             .map(st -> st.getTaxonomy().getId()).collect(Collectors.toSet())
             : Collections.emptySet();
-        Set<UUID> dtoTaxonomies = serviceDTO.getTaxonomyIds().stream().map(UUID::fromString).collect(
-            Collectors.toSet());
+        Set<UUID> dtoTaxonomies = serviceDTO.getTaxonomyIds() != null ? serviceDTO.getTaxonomyIds().stream().map(UUID::fromString).collect(
+            Collectors.toSet()) : Collections.emptySet();
         Set<UUID> taxonomiesToAdd = dtoTaxonomies.stream().filter(id -> !existingTaxonomies.contains(id)).collect(
             Collectors.toSet());
         Set<UUID> serviceTaxonomiesToRemove = (service.getTaxonomies() != null)
@@ -674,9 +690,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private Set<ServiceAtLocation> saveLocations(ProviderServiceDTO serviceDTO, Service service,
         List<Location> locations) {
-        Set<Location> serviceLocations = serviceDTO.getLocationIndexes().stream().map(
-            locations::get
-        ).collect(Collectors.toSet());
+        Set<Location> serviceLocations = serviceDTO.getLocationIndexes() != null
+            ? serviceDTO.getLocationIndexes().stream().map(
+                locations::get
+            ).collect(Collectors.toSet()) : Collections.emptySet();
         Set<ServiceAtLocation> servicesAtLocation = new HashSet<>();
         Set<UUID> existingLocations = (service.getLocations() != null) ? service.getLocations().stream()
             .map(sat -> sat.getLocation().getId()).collect(Collectors.toSet())
@@ -760,5 +777,82 @@ public class OrganizationServiceImpl implements OrganizationService {
             eligibilityService.delete(existingEligibility.getId());
         }
         return null;
+    }
+
+    private void saveOpeningHours(Map<Integer, List<OpeningHoursRow>> openingHoursByLocation, List<Location> locations) {
+        if (openingHoursByLocation != null) {
+            openingHoursByLocation.forEach((idx, rows) -> {
+                Location location = locations.get(idx);
+                RegularSchedule regularSchedule = location.getRegularSchedule() != null ? location.getRegularSchedule() : new RegularSchedule();
+                regularSchedule.setLocation(location);
+                Set<OpeningHours> existingOpeningHours = regularSchedule.getOpeningHours() != null ? regularSchedule.getOpeningHours() : new HashSet<>();
+                Set<OpeningHours> openingHoursSet = new HashSet<>();
+                rows.forEach(row -> {
+                    if (row.getActiveDays() != null && row.getFrom() != null && row.getTo() != null) {
+                        for (Integer day : row.getActiveDays()) {
+                            OpeningHours openingHours = existingOpeningHours.stream()
+                                .filter(oh -> oh.getWeekday().equals(day))
+                                .findFirst().orElse(new OpeningHours());
+                            openingHours.setOpensAt(row.getFrom());
+                            openingHours.setClosesAt(row.getTo());
+                            openingHours.setWeekday(day);
+                            openingHours.setRegularSchedule(regularSchedule);
+                            em.persist(openingHours);
+                            openingHoursSet.add(openingHours);
+                        }
+                    }
+                });
+                regularSchedule.setOpeningHours(openingHoursSet);
+                Set<OpeningHours> openingHoursToRemove = existingOpeningHours.stream().filter(
+                    eoh -> !openingHoursSet.contains(eoh)
+                ).collect(Collectors.toSet());
+                for (OpeningHours openingHourToRemove : openingHoursToRemove) {
+                    em.remove(openingHourToRemove);
+                }
+                em.persist(regularSchedule);
+
+                location.setRegularSchedule(regularSchedule);
+            });
+        }
+    }
+
+    private void saveDatesClosed(Map<Integer, List<String>> datesClosedByLocation, List<Location> locations) {
+        if (datesClosedByLocation != null) {
+            datesClosedByLocation.forEach((idx, dateStrings) -> {
+                Location location = locations.get(idx);
+                Set<HolidaySchedule> existingHolidaySchedules = location.getHolidaySchedules() != null ? location.getHolidaySchedules() : new HashSet<>();
+                Set<HolidaySchedule> holidaySchedules = new HashSet<>();
+                dateStrings.forEach(dateString -> {
+                    if (StringUtils.isNotBlank(dateString)) {
+                        LocalDate date = ZonedDateTime.parse(dateString).toLocalDate();
+                        Optional<HolidaySchedule> existingSchedule = existingHolidaySchedules
+                            .stream().filter(
+                                hs -> hs.isClosed() && date.equals(hs.getStartDate()) && date
+                                    .equals(hs.getEndDate()))
+                            .findFirst();
+                        HolidaySchedule holidaySchedule;
+                        if (existingSchedule.isPresent()) {
+                            holidaySchedule = existingSchedule.get();
+                        } else {
+                            holidaySchedule = new HolidaySchedule();
+                            holidaySchedule.setClosed(true);
+                            holidaySchedule.setStartDate(date);
+                            holidaySchedule.setEndDate(date);
+                            holidaySchedule.setLocation(location);
+                            holidaySchedule.setProviderName(location.getProviderName());
+                            em.persist(holidaySchedule);
+                        }
+                        holidaySchedules.add(holidaySchedule);
+                    }
+                });
+                Set<HolidaySchedule> schedulesToRemove = existingHolidaySchedules.stream().filter(
+                    ehs -> !holidaySchedules.contains(ehs)
+                ).collect(Collectors.toSet());
+                for (HolidaySchedule scheduleToRemove : schedulesToRemove) {
+                    em.remove(scheduleToRemove);
+                }
+                location.setHolidaySchedules(holidaySchedules);
+            });
+        }
     }
 }
