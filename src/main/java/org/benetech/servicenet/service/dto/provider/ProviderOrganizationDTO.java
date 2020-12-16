@@ -56,6 +56,9 @@ public class ProviderOrganizationDTO implements Serializable {
     @Getter
     private Map<Integer, List<OpeningHoursRow>> openingHoursByLocation;
 
+    // If service provider's record has this, that means it is claimed record
+    private UUID replacedById;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

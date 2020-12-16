@@ -204,6 +204,12 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ProviderRecordDTO> getRecordsToClaim(Pageable pageable) {
+        return providerRecordsRepository.findRecordsToClaim(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
         Pageable pageable, ProviderFilterDTO providerFilterDTO,
         String search, List<Double> boundaries) {

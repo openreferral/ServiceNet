@@ -128,6 +128,49 @@ public class ProviderRecordsRepository {
         return results;
     }
 
+    public Page<ProviderRecordDTO> findRecordsToClaim(Pageable pageable) {
+        CriteriaQuery<ProviderRecordDTO> queryCriteria = cb.createQuery(ProviderRecordDTO.class);
+        Root<Organization> selectRoot = queryCriteria.from(Organization.class);
+        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+
+        queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
+            systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
+
+        Predicate predicate = cb.equal(selectRoot.get(Organization_.ACTIVE), true);
+        predicate = cb.and(predicate, cb.isNull(selectRoot.get(Organization_.REPLACED_BY)));
+        predicate = cb.and(predicate, cb.notEqual(selectRoot.get(Organization_.ACCOUNT).get(SystemAccount_.NAME), SERVICE_PROVIDER));
+
+        addSorting(queryCriteria, pageable.getSort(), selectRoot);
+
+        queryCriteria.where(predicate);
+
+        Query query = createQueryWithPageable(queryCriteria, pageable);
+
+        List<ProviderRecordDTO> results = query.getResultList();
+
+        Long total = 0L;
+        if (results != null && results.size() > 0) {
+
+            CriteriaQuery<Long> countCriteria = cb.createQuery(Long.class);
+            Root<Organization> countRoot = countCriteria.from(Organization.class);
+            Join<Organization, SystemAccount> countSystemAccountJoin = countRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+            Join<Organization, UserProfile> countUserProfileJoin = countRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+
+            queryCriteria.select(cb.construct(ProviderRecordDTO.class, countRoot.get(Organization_.ID), countRoot.get(Organization_.NAME),
+                countSystemAccountJoin.get(SystemAccount_.ID), countSystemAccountJoin.get(SystemAccount_.NAME),
+                countUserProfileJoin.get(UserProfile_.LOGIN), countRoot.get(Organization_.UPDATED_AT)));
+
+            countCriteria.where(predicate);
+            countCriteria.select(cb.countDistinct(countRoot));
+            total = em.createQuery(countCriteria).getSingleResult();
+            fetchRelatedEntities(results);
+        }
+
+        return new PageImpl<>(results, pageable, total.intValue());
+    }
+
     private Map<UUID, Set<LocationOptionDTO>> getLocationOptionMap(List<UUID> orgIds) {
         CriteriaQuery<LocationOptionDTO> queryCriteria = cb.createQuery(LocationOptionDTO.class);
         Root<Location> root = queryCriteria.from(Location.class);
@@ -339,6 +382,8 @@ public class ProviderRecordsRepository {
         Predicate predicate = getCommonPredicate(root, silo, search, systemAccountJoin,
             userProfileJoin,
             serviceJoin, eligibilityJoin);
+
+        cb.and(predicate, cb.isNull(root.get(Organization_.REPLACED_BY)));
 
         if (userProfilesNotEmpty) {
             predicate = cb.and(predicate, userProfileJoin.get(UserProfile_.ID).in(
