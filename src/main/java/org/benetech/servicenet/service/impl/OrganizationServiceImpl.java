@@ -591,7 +591,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         recordsToClaim.forEach((UUID recordId) -> cloneOrganizationForServiceProvider(recordId, currentUserProfile));
 
-        currentUserProfile.setClaimedRecords(true);
+        currentUserProfile.setHasClaimedRecords(true);
         userService.saveProfile(currentUserProfile);
     }
 
