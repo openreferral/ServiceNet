@@ -52,6 +52,7 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
     @Mapping(target = "services", ignore = true)
     @Mapping(target = "userProfiles", ignore = true)
     @Mapping(target = "dailyUpdates", ignore = true)
+    @Mapping(source = "replacedById", target = "replacedBy")
     Organization toEntity(ProviderOrganizationDTO organizationDTO);
 
     DeactivatedOrganizationDTO toDeactivatedOrganizationDto(Organization organization);
