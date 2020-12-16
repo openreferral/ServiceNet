@@ -710,6 +710,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             );
             dto.setTaxonomyIds(
                 service.getTaxonomies().stream()
+                    .filter(st -> st.getTaxonomy() != null)
                     .map(st -> st.getTaxonomy().getId().toString())
                     .collect(Collectors.toList())
             );
@@ -721,6 +722,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
         Set<UUID> existingTaxonomies = (service.getTaxonomies() != null)
             ? service.getTaxonomies().stream()
+            .filter(st -> st.getTaxonomy() != null)
             .map(st -> st.getTaxonomy().getId()).collect(Collectors.toSet())
             : Collections.emptySet();
         Set<UUID> dtoTaxonomies = serviceDTO.getTaxonomyIds() != null ? serviceDTO.getTaxonomyIds().stream().map(UUID::fromString).collect(
@@ -729,7 +731,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             Collectors.toSet());
         Set<UUID> serviceTaxonomiesToRemove = (service.getTaxonomies() != null)
             ? service.getTaxonomies().stream()
-            .filter(st -> !dtoTaxonomies.contains(st.getTaxonomy().getId()))
+            .filter(st -> st.getTaxonomy() != null && !dtoTaxonomies.contains(st.getTaxonomy().getId()))
             .map(AbstractEntity::getId).collect(Collectors.toSet())
             : Collections.emptySet();
         for (UUID taxonomyId : taxonomiesToAdd) {
@@ -973,6 +975,8 @@ public class OrganizationServiceImpl implements OrganizationService {
             locationService.save(locClone);
 
             PhysicalAddress physicalAddress = location.getPhysicalAddress();
+            PostalAddress postalAddress = location.getPostalAddress();
+
             if (physicalAddress != null) {
                 PhysicalAddress physicalClone = new PhysicalAddress()
                     .attention(physicalAddress.getAttention())
@@ -986,9 +990,21 @@ public class OrganizationServiceImpl implements OrganizationService {
                     .location(locClone);
                 em.persist(physicalClone);
                 locClone.setPhysicalAddress(physicalClone);
+            } else if (postalAddress != null) {
+                PhysicalAddress physicalClone = new PhysicalAddress()
+                    .attention(postalAddress.getAttention())
+                    .address1(postalAddress.getAddress1())
+                    .address2(postalAddress.getAddress2())
+                    .city(postalAddress.getCity())
+                    .region(postalAddress.getRegion())
+                    .stateProvince(postalAddress.getStateProvince())
+                    .postalCode(postalAddress.getPostalCode())
+                    .country(postalAddress.getCountry())
+                    .location(locClone);
+                em.persist(physicalClone);
+                locClone.setPhysicalAddress(physicalClone);
             }
 
-            PostalAddress postalAddress = location.getPostalAddress();
             if (postalAddress != null) {
                 PostalAddress postalClone = new PostalAddress()
                     .attention(postalAddress.getAttention())
@@ -999,6 +1015,19 @@ public class OrganizationServiceImpl implements OrganizationService {
                     .stateProvince(postalAddress.getStateProvince())
                     .postalCode(postalAddress.getPostalCode())
                     .country(postalAddress.getCountry())
+                    .location(locClone);
+                em.persist(postalClone);
+                locClone.setPostalAddress(postalClone);
+            } else if (physicalAddress != null) {
+                PostalAddress postalClone = new PostalAddress()
+                    .attention(physicalAddress.getAttention())
+                    .address1(physicalAddress.getAddress1())
+                    .address2(physicalAddress.getAddress2())
+                    .city(physicalAddress.getCity())
+                    .region(physicalAddress.getRegion())
+                    .stateProvince(physicalAddress.getStateProvince())
+                    .postalCode(physicalAddress.getPostalCode())
+                    .country(physicalAddress.getCountry())
                     .location(locClone);
                 em.persist(postalClone);
                 locClone.setPostalAddress(postalClone);
