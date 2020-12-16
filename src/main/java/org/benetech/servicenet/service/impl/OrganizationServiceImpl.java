@@ -20,11 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
@@ -547,6 +549,65 @@ public class OrganizationServiceImpl implements OrganizationService {
         .map(organizationMapper::toDto);
     }
 
+    @Override
+    public Organization cloneOrganizationForServiceProvider(UUID orgId, UserProfile user) {
+        Organization organization = organizationRepository.findOneWithAllEagerAssociationsByIdOrExternalDbId(orgId, null);
+        Set<Service> services = organization.getServices();
+        Set<Location> locations = organization.getLocations();
+        Set<DailyUpdate> dailyUpdates = organization.getDailyUpdates();
+
+        Organization orgClone = new Organization(organization);
+        orgClone.setUserProfiles(Collections.singleton(user));
+        orgClone.setAccount(user.getSystemAccount());
+        user.getOrganizations().add(orgClone);
+        organizationRepository.save(orgClone);
+
+        Set<Service> clonedServices = cloneServices(services, orgClone);
+
+        Set<Location> clonedLocations = cloneLocations(locations, orgClone);
+
+        HashSet<DailyUpdate> clonedDailyUpdate = new HashSet<>();
+        dailyUpdates.forEach((DailyUpdate dailyUpdate) -> {
+            DailyUpdate duClone = new DailyUpdate()
+                .update(dailyUpdate.getUpdate())
+                .createdAt(dailyUpdate.getCreatedAt())
+                .expiry(dailyUpdate.getExpiry())
+                .organization(orgClone);
+            clonedDailyUpdate.add(dailyUpdateService.save(duClone));
+        });
+
+        orgClone.setServices(clonedServices);
+        orgClone.setLocations(clonedLocations);
+        orgClone.setDailyUpdates(clonedDailyUpdate);
+
+        organization.setReplacedBy(orgClone);
+        orgClone.setReplacedBy(organization);
+        return orgClone;
+    }
+
+    @Override
+    public void claimRecords(List<UUID> recordsToClaim) {
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
+
+        recordsToClaim.forEach((UUID recordId) -> cloneOrganizationForServiceProvider(recordId, currentUserProfile));
+
+        currentUserProfile.setClaimedRecords(true);
+        userService.saveProfile(currentUserProfile);
+    }
+
+    @Override
+    public void unclaimRecord(UUID recordToUnclaim) {
+        Organization orgToUnclaim = organizationRepository.getOne(recordToUnclaim);
+        Organization originalOrg = organizationRepository.getOne(orgToUnclaim.getReplacedBy().getId());
+        originalOrg.setReplacedBy(null);
+
+        UserProfile userProfile = userService.getCurrentUserProfile();
+        userProfile.getOrganizations().remove(orgToUnclaim);
+
+        organizationRepository.save(originalOrg);
+        organizationRepository.delete(orgToUnclaim);
+    }
+
     private Organization getProvidersOrganization(List<Organization> organizations, UUID id) {
         for (Organization organization : organizations) {
             if (organization.getAccount().getId().equals(id)) {
@@ -854,5 +915,138 @@ public class OrganizationServiceImpl implements OrganizationService {
                 location.setHolidaySchedules(holidaySchedules);
             });
         }
+    }
+
+    private Set<Service> cloneServices(Set<Service> services, Organization orgClone) {
+        Set<Service> clonedServices = new HashSet<>();
+        services.forEach((Service service) -> {
+            Service srvClone = new Service(service);
+            srvClone.setProviderName(SERVICE_PROVIDER);
+            srvClone.setOrganization(orgClone);
+            serviceService.save(srvClone);
+
+            HashSet<ServiceTaxonomy> clonedTaxonomies = new HashSet<>();
+            service.getTaxonomies().forEach((ServiceTaxonomy taxonomy) -> {
+                ServiceTaxonomy taxonomyClone = new ServiceTaxonomy()
+                    .taxonomyDetails(taxonomy.getTaxonomyDetails())
+                    .externalDbId(taxonomy.getExternalDbId())
+                    .taxonomy(taxonomy.getTaxonomy())
+                    .providerName(SERVICE_PROVIDER)
+                    .srvc(srvClone);
+                serviceTaxonomyService.save(taxonomyClone);
+                clonedTaxonomies.add(taxonomyClone);
+            });
+            srvClone.setTaxonomies(clonedTaxonomies);
+
+            HashSet<RequiredDocument> clonedDocs = new HashSet<>();
+            service.getDocs().forEach((RequiredDocument doc) -> {
+                RequiredDocument docClone = new RequiredDocument()
+                    .document(doc.getDocument())
+                    .externalDbId(doc.getExternalDbId())
+                    .providerName(SERVICE_PROVIDER)
+                    .srvc(srvClone);
+                requiredDocumentService.save(docClone);
+                clonedDocs.add(docClone);
+            });
+            srvClone.setDocs(clonedDocs);
+
+            Eligibility eligibility = service.getEligibility();
+            if (eligibility != null) {
+                Eligibility clonedEligibility = new Eligibility()
+                    .eligibility(eligibility.getEligibility())
+                    .srvc(srvClone);
+                eligibilityService.save(clonedEligibility);
+                srvClone.setEligibility(clonedEligibility);
+            }
+            clonedServices.add(serviceService.save(srvClone));
+        });
+        return clonedServices;
+    }
+
+    private Set<Location> cloneLocations(Set<Location> locations, Organization orgClone) {
+        Set<Location> clonedLocations = new HashSet<>();
+
+        locations.forEach((Location location) -> {
+            Location locClone = new Location(location);
+            locClone.setProviderName(SERVICE_PROVIDER);
+            locClone.setOrganization(orgClone);
+            locationService.save(locClone);
+
+            PhysicalAddress physicalAddress = location.getPhysicalAddress();
+            if (physicalAddress != null) {
+                PhysicalAddress physicalClone = new PhysicalAddress()
+                    .attention(physicalAddress.getAttention())
+                    .address1(physicalAddress.getAddress1())
+                    .address2(physicalAddress.getAddress2())
+                    .city(physicalAddress.getCity())
+                    .region(physicalAddress.getRegion())
+                    .stateProvince(physicalAddress.getStateProvince())
+                    .postalCode(physicalAddress.getPostalCode())
+                    .country(physicalAddress.getCountry())
+                    .location(locClone);
+                em.persist(physicalClone);
+                locClone.setPhysicalAddress(physicalClone);
+            }
+
+            PostalAddress postalAddress = location.getPostalAddress();
+            if (postalAddress != null) {
+                PostalAddress postalClone = new PostalAddress()
+                    .attention(postalAddress.getAttention())
+                    .address1(postalAddress.getAddress1())
+                    .address2(postalAddress.getAddress2())
+                    .city(postalAddress.getCity())
+                    .region(postalAddress.getRegion())
+                    .stateProvince(postalAddress.getStateProvince())
+                    .postalCode(postalAddress.getPostalCode())
+                    .country(postalAddress.getCountry())
+                    .location(locClone);
+                em.persist(postalClone);
+                locClone.setPostalAddress(postalClone);
+            }
+
+            RegularSchedule regularSchedule = location.getRegularSchedule();
+            if (regularSchedule != null) {
+                RegularSchedule rsClone = new RegularSchedule()
+                    .notes(regularSchedule.getNotes())
+                    .location(locClone);
+                em.persist(rsClone);
+                Set<OpeningHours> clonedOpeningHours = new HashSet<>();
+                regularSchedule.getOpeningHours().forEach((OpeningHours oh) -> {
+                    OpeningHours ohClone = new OpeningHours()
+                        .weekday(oh.getWeekday())
+                        .opensAt(oh.getOpensAt())
+                        .closesAt(oh.getClosesAt())
+                        .regularSchedule(rsClone);
+                    em.persist(ohClone);
+                    clonedOpeningHours.add(ohClone);
+                });
+                rsClone.setOpeningHours(clonedOpeningHours);
+                locClone.setRegularSchedule(rsClone);
+            }
+
+            HashSet<HolidaySchedule> clonedHs = new HashSet<>();
+            location.getHolidaySchedules().forEach(((HolidaySchedule hs) -> {
+                HolidaySchedule hsClone = new HolidaySchedule()
+                    .closed(hs.isClosed())
+                    .opensAt(hs.getOpensAt())
+                    .closesAt(hs.getClosesAt())
+                    .startDate(hs.getStartDate())
+                    .endDate(hs.getEndDate())
+                    .externalDbId(hs.getExternalDbId())
+                    .providerName(SERVICE_PROVIDER)
+                    .location(locClone);
+                em.persist(hsClone);
+                clonedHs.add(hsClone);
+            }));
+            locClone.setHolidaySchedules(clonedHs);
+
+            location.getGeocodingResults().forEach((GeocodingResult gr) -> {
+                gr.getLocations().add(locClone);
+                em.persist(gr);
+            });
+
+            clonedLocations.add(locClone);
+        });
+        return clonedLocations;
     }
 }

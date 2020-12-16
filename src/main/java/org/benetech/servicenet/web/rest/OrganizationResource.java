@@ -353,4 +353,22 @@ public class OrganizationResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, id.toString()))
             .body(activityService.getAllDeactivatedRecords());
     }
+
+    @PostMapping("/claim-records")
+    @Timed
+    public ResponseEntity<Void> claimRecords(@RequestBody List<UUID> recordsToClaim) {
+        log.debug("REST request to clone and claim records : {}", recordsToClaim);
+
+        organizationService.claimRecords(recordsToClaim);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/unclaim-record")
+    @Timed
+    public ResponseEntity<Void> unclaimRecord(@RequestParam(required = false) UUID recordId) {
+        log.debug("REST request to delete and unclaim records : {}", recordId);
+
+        organizationService.unclaimRecord(recordId);
+        return ResponseEntity.ok().headers(HeaderUtil.createAlert(HeaderUtil.APPLICATION_NAME + "." + ENTITY_NAME + ".unclaimed", "")).build();
+    }
 }

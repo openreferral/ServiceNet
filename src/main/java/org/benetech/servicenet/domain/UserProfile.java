@@ -109,6 +109,8 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     @Column(name = "avatar_base64", columnDefinition = "clob")
     private String avatarBase64;
 
+    private Boolean claimedRecords = false;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
