@@ -305,7 +305,7 @@ public class UserService {
                 .collect(Collectors.toList()));
         }
         authUser.setAvatarBase64(userProfile.getAvatarBase64());
-        authUser.setClaimedRecords(userProfile.getClaimedRecords());
+        authUser.setHasClaimedRecords(userProfile.getHasClaimedRecords());
         return authUser;
     }
 
