@@ -31,4 +31,6 @@ public interface TaxonomyRepository extends JpaRepository<Taxonomy, UUID>, Taxon
     SortedSet<String> getICarolTaxonomyNamesForProviderName(@Param("providerName") String providerName);
 
     Page<Taxonomy> findAll(Pageable pageable);
+
+    Taxonomy findByNameAndProviderName(String name, String providerName);
 }
