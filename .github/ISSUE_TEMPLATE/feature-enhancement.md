@@ -2,21 +2,26 @@
 name: Feature Enhancement
 about: Suggest an idea for this project
 title: As a [persona] i want to be able to [purpose] so that I can [value]
-labels: ''
+labels: 'enhancement'
 assignees: ''
 
 ---
 
 User Story (encompasses persona, purpose, value) - e.g. As a [persona] i want to be able to [purpose] so that I can [value]:
 
+
 Description:
+
 
 Scope (includes UI mockups, user flow, and out of scope):
 
+
 Acceptance criteria (includes edge cases):
 *
-Dependencies (links to other tasks):
+
+Dependencies (links to other related tasks):
 *
+
 Any required analytics for task:
 *
 
