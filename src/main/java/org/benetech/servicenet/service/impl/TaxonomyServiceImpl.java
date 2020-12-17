@@ -157,4 +157,9 @@ public class TaxonomyServiceImpl implements TaxonomyService {
         log.debug("Request to delete Taxonomy : {}", id);
         taxonomyRepository.deleteById(id);
     }
+
+    @Override
+    public Taxonomy findByNameAndProviderName(String name, String providerName) {
+        return taxonomyRepository.findByNameAndProviderName(name, providerName);
+    }
 }

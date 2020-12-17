@@ -560,6 +560,9 @@ public class OrganizationServiceImpl implements OrganizationService {
         orgClone.setUserProfiles(Collections.singleton(user));
         orgClone.setAccount(user.getSystemAccount());
         user.getOrganizations().add(orgClone);
+        orgClone.setServices(Collections.emptySet());
+        orgClone.setLocations(Collections.emptySet());
+        orgClone.setDailyUpdates(Collections.emptySet());
         organizationRepository.save(orgClone);
 
         Set<Service> clonedServices = cloneServices(services, orgClone);
@@ -928,15 +931,31 @@ public class OrganizationServiceImpl implements OrganizationService {
             serviceService.save(srvClone);
 
             HashSet<ServiceTaxonomy> clonedTaxonomies = new HashSet<>();
-            service.getTaxonomies().forEach((ServiceTaxonomy taxonomy) -> {
-                ServiceTaxonomy taxonomyClone = new ServiceTaxonomy()
-                    .taxonomyDetails(taxonomy.getTaxonomyDetails())
-                    .externalDbId(taxonomy.getExternalDbId())
-                    .taxonomy(taxonomy.getTaxonomy())
+            service.getTaxonomies().forEach((ServiceTaxonomy serviceTaxonomy) -> {
+                ServiceTaxonomy serviceTaxonomyClone = new ServiceTaxonomy()
+                    .taxonomyDetails(serviceTaxonomy.getTaxonomyDetails())
+                    .externalDbId(serviceTaxonomy.getExternalDbId())
                     .providerName(SERVICE_PROVIDER)
                     .srvc(srvClone);
-                serviceTaxonomyService.save(taxonomyClone);
-                clonedTaxonomies.add(taxonomyClone);
+
+                Taxonomy taxonomy = serviceTaxonomy.getTaxonomy();
+                Taxonomy spExistingTaxonomy = taxonomyService
+                    .findByNameAndProviderName(taxonomy.getName(), SERVICE_PROVIDER);
+                if (spExistingTaxonomy == null) {
+                    Taxonomy taxonomyClone = new Taxonomy()
+                    .name(taxonomy.getName())
+                    .taxonomyId(taxonomy.getTaxonomyId())
+                    .vocabulary(taxonomy.getVocabulary())
+                    .externalDbId(String.join(" - ", taxonomy.getExternalDbId(), SERVICE_PROVIDER))
+                    .providerName(SERVICE_PROVIDER);
+                    taxonomyService.save(taxonomyClone);
+                    serviceTaxonomyClone.taxonomy(taxonomyClone);
+                } else {
+                    serviceTaxonomyClone.taxonomy(spExistingTaxonomy);
+                }
+
+                serviceTaxonomyService.save(serviceTaxonomyClone);
+                clonedTaxonomies.add(serviceTaxonomyClone);
             });
             srvClone.setTaxonomies(clonedTaxonomies);
 
