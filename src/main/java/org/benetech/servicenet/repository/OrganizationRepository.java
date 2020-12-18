@@ -186,4 +186,6 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         @Param("accountName") String accountName,
         Pageable pageable
     );
+
+    List<Organization> findAllByAccountNameAndActive(String accountName, boolean active);
 }

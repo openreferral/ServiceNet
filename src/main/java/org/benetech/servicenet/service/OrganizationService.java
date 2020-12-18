@@ -54,6 +54,8 @@ public interface OrganizationService {
 
     List<OrganizationOptionDTO> findAllOptions();
 
+    List<OrganizationOptionDTO> findAllOptions(String providerName);
+
     Page<Organization> findAllOrganizations(UserProfile userProfile, Pageable pageable);
 
     List<Organization> findAllWithEagerAssociations();
