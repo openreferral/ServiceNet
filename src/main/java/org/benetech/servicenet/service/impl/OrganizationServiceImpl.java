@@ -163,8 +163,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (!organizationDTO.getUserProfiles().isEmpty()) {
             UserProfile userProfile = organizationDTO.getUserProfiles().iterator().next();
             userProfile = userProfileRepository.findOneByLogin(userProfile.getLogin()).orElse(userProfile);
-            organization.setUserProfiles(Collections.singleton(userProfile));
-            userProfile.getOrganizations().add(organization);
+            addUserProfile(organization, userProfile);
         }
         organization = organizationRepository.save(organization);
         return organizationMapper.toDto(organization);
@@ -197,8 +196,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationMapper.toEntity(organizationDTO);
         UserProfile userProfile = userService.getCurrentUserProfile();
         organization.setAccount(userProfile.getSystemAccount());
-        organization.setUserProfiles(Collections.singleton(userProfile));
-        userProfile.getOrganizations().add(organization);
+        addUserProfile(organization, userProfile);
 
         if (organization.getId() != null) {
             Organization existingOrganization = findOne(organization.getId()).get();
@@ -253,6 +251,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<OrganizationOptionDTO> findAllOptions() {
         log.debug("Request to get all Organizations");
         return organizationRepository.findAll().stream()
+            .map(organizationMapper::toOptionDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationOptionDTO> findAllOptions(String providerName) {
+        log.debug("Request to get Organization options for provider: " + providerName);
+        return organizationRepository.findAllByAccountNameAndActive(providerName, true).stream()
             .map(organizationMapper::toOptionDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }
@@ -1135,5 +1142,17 @@ public class OrganizationServiceImpl implements OrganizationService {
             clonedLocations.add(locClone);
         });
         return clonedLocations;
+    }
+
+    private void addUserProfile(Organization organization, UserProfile userProfile) {
+        if (organization.getId() != null) {
+            Organization existingOrganization = organizationRepository
+                .findOneWithEagerAssociations(organization.getId());
+            organization.setUserProfiles(existingOrganization.getUserProfiles());
+        }
+        Set<UserProfile> userProfiles = organization.getUserProfiles() != null ? organization.getUserProfiles() : new HashSet<>();
+        userProfiles.add(userProfile);
+        organization.setUserProfiles(userProfiles);
+        userProfile.getOrganizations().add(organization);
     }
 }
