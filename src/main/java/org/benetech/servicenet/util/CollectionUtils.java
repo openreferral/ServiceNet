@@ -18,7 +18,7 @@ public final class CollectionUtils {
         return entities.stream().map(AbstractEntity::getId).collect(Collectors.toSet());
     }
 
-    public static <V extends AbstractEntity> Set<V> singletonSet(V entity) {
+    public static <V> Set<V> singletonSet(V entity) {
         Set<V> set = new HashSet<>();
         set.add(entity);
         return set;

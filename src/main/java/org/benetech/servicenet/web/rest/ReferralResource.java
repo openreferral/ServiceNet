@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -154,7 +156,8 @@ public class ReferralResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of referrals in body.
      */
     @GetMapping("/referrals/search")
-    public ResponseEntity<List<ReferralDTO>> searchReferrals(Pageable pageable,
+    public ResponseEntity<List<ReferralDTO>> searchReferrals(
+        @PageableDefault(sort = "sentAt", direction = Direction.ASC) Pageable pageable,
         @PathParam("since") ZonedDateTime since, @PathParam("status") String status) {
         log.debug("REST request to get a page of Referrals");
         Page<ReferralDTO> page = referralService.findCurrentUsersReferrals(since, status, pageable);
@@ -169,11 +172,12 @@ public class ReferralResource {
      */
     @GetMapping(value = "/referrals/csv", produces = "text/csv")
     public ResponseEntity<FileSystemResource> getCurrentUsersReferralsCsv(
+        @PageableDefault(sort = "sentAt", direction = Direction.ASC, size = Integer.MAX_VALUE) Pageable pageable,
         @PathParam("since") ZonedDateTime since, @PathParam("status") String status) {
         log.debug("REST request to get current user's Referrals as CSV");
         String[] headers = {"Beneficiary Phone Number", "Service Net ID", "Date Stamp", "Referred From", "Referred To", "Status"};
         String[] valueMappings = {"beneficiaryPhoneNumber", "id", "sentAt", "fromName", "toName", "status"};
-        List<ReferralDTO> referrals = referralService.findCurrentUsersReferrals(since, status, Pageable.unpaged()).toList();
+        List<ReferralDTO> referrals = referralService.findCurrentUsersReferrals(since, status, pageable).toList();
         File csvOutputFile = ReportUtils
             .createCsvReport("Beneficiary_Referral_History", referrals, headers, valueMappings);
 
@@ -206,11 +210,13 @@ public class ReferralResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a csv in the body
      */
     @GetMapping(value = "/referrals/number-made-from-us/csv", produces = "text/csv")
-    public ResponseEntity<FileSystemResource> numberOfReferralsMadeFromUserCsv() {
+    public ResponseEntity<FileSystemResource> numberOfReferralsMadeFromUserCsv(
+        @PageableDefault(sort = "toOrg.id", direction = Direction.ASC, size = Integer.MAX_VALUE) Pageable pageable
+    ) {
         log.debug("REST request to get a number of made Referrals from user as CSV");
         String[] headers = {"Organization id", "Organization name", "Referral count"};
         String[] valueMappings = {"orgId", "orgName", "referralCount"};
-        List<ReferralMadeFromUserDTO> referrals = referralService.getNumberOfReferralsMadeFromUser(null, Pageable.unpaged()).toList();
+        List<ReferralMadeFromUserDTO> referrals = referralService.getNumberOfReferralsMadeFromUser(null, pageable).toList();
         UserProfile currentUser = userService.getCurrentUserProfile();
         File csvOutputFile = ReportUtils
             .createCsvReport("#_Referrals_Made_From_" + currentUser.getLogin(),
@@ -245,11 +251,12 @@ public class ReferralResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a csv in the body
      */
     @GetMapping(value = "/referrals/made-to-us/csv", produces = "text/csv")
-    public ResponseEntity<FileSystemResource> referralsMadeToUserCsv() {
+    public ResponseEntity<FileSystemResource> referralsMadeToUserCsv(
+        @PageableDefault(sort = "fulfilledAt", direction = Direction.ASC, size = Integer.MAX_VALUE) Pageable pageable) {
         log.debug("REST request to get a status of made Referrals to user as CSV");
         String[] headers = {"Organization id", "Organization name", "Referral count"};
         String[] valueMappings = {"orgId", "orgName", "status"};
-        List<ReferralMadeToUserDTO> referrals = referralService.getReferralsMadeToUser(null, Pageable.unpaged()).toList();
+        List<ReferralMadeToUserDTO> referrals = referralService.getReferralsMadeToUser(null, pageable).toList();
         File csvOutputFile = ReportUtils
             .createCsvReport("Referrals_Made_To_Us", referrals, headers, valueMappings);
 
