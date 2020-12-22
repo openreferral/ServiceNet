@@ -145,5 +145,6 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         newOrg.setFunding(orgFromDb.getFunding());
         newOrg.setContacts(orgFromDb.getContacts());
         newOrg.setPrograms(orgFromDb.getPrograms());
+        newOrg.setReplacedBy(orgFromDb.getReplacedBy());
     }
 }
