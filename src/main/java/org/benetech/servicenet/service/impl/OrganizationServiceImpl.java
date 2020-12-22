@@ -604,11 +604,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization originalOrg = organizationRepository.getOne(orgToUnclaim.getReplacedBy().getId());
         originalOrg.setReplacedBy(null);
 
-        UserProfile userProfile = userService.getCurrentUserProfile();
-        userProfile.getOrganizations().remove(orgToUnclaim);
-
         organizationRepository.save(originalOrg);
-        organizationRepository.delete(orgToUnclaim);
+        delete(recordToUnclaim);
     }
 
     private Organization getProvidersOrganization(List<Organization> organizations, UUID id) {
