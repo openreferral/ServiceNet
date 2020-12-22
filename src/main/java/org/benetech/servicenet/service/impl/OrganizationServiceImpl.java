@@ -564,9 +564,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         orgClone.setServices(Collections.emptySet());
         orgClone.setLocations(Collections.emptySet());
         orgClone.setDailyUpdates(Collections.emptySet());
-        orgClone.setExternalDbId(
-            String.join(" - ", organization.getExternalDbId(), organization.getAccount().getName())
-        );
+        if (organization.getExternalDbId() != null) {
+            orgClone.setExternalDbId(
+                String.join(" - ", organization.getExternalDbId(), organization.getAccount().getName())
+            );
+        }
+        orgClone.setReplacedBy(null);
         organizationRepository.save(orgClone);
 
         Set<Service> clonedServices = cloneServices(services, orgClone);
@@ -930,9 +933,11 @@ public class OrganizationServiceImpl implements OrganizationService {
             srvClone.setId(null);
             srvClone.setProviderName(SERVICE_PROVIDER);
             srvClone.setOrganization(orgClone);
-            srvClone.setExternalDbId(
-                String.join(" - ", service.getExternalDbId(), service.getProviderName())
-            );
+            if (service.getExternalDbId() != null) {
+                srvClone.setExternalDbId(
+                    String.join(" - ", service.getExternalDbId(), service.getProviderName())
+                );
+            }
             srvClone.setTaxonomies(Collections.emptySet());
             srvClone.setDocs(Collections.emptySet());
             serviceService.save(srvClone);
@@ -942,9 +947,13 @@ public class OrganizationServiceImpl implements OrganizationService {
             serviceTaxonomies.forEach((ServiceTaxonomy serviceTaxonomy) -> {
                 ServiceTaxonomy serviceTaxonomyClone = new ServiceTaxonomy()
                     .taxonomyDetails(serviceTaxonomy.getTaxonomyDetails())
-                    .externalDbId(String.join(" - ", serviceTaxonomy.getExternalDbId(), serviceTaxonomy.getProviderName()))
                     .providerName(SERVICE_PROVIDER)
                     .srvc(srvClone);
+                if (serviceTaxonomy.getExternalDbId() != null) {
+                    serviceTaxonomyClone.externalDbId(
+                        String.join(" - ", serviceTaxonomy.getExternalDbId(), serviceTaxonomy.getProviderName())
+                    );
+                }
 
                 Taxonomy taxonomy = serviceTaxonomy.getTaxonomy();
                 if (taxonomy != null) {
@@ -955,8 +964,12 @@ public class OrganizationServiceImpl implements OrganizationService {
                             .name(taxonomy.getName())
                             .taxonomyId(taxonomy.getTaxonomyId())
                             .vocabulary(taxonomy.getVocabulary())
-                            .externalDbId(String.join(" - ", taxonomy.getExternalDbId(), taxonomy.getProviderName()))
                             .providerName(SERVICE_PROVIDER);
+                        if (taxonomy.getExternalDbId() != null) {
+                            taxonomyClone.externalDbId(
+                                String.join(" - ", taxonomy.getExternalDbId(), taxonomy.getProviderName())
+                            );
+                        }
                         taxonomyService.save(taxonomyClone);
                         serviceTaxonomyClone.taxonomy(taxonomyClone);
                     } else {
@@ -974,9 +987,13 @@ public class OrganizationServiceImpl implements OrganizationService {
             docs.forEach((RequiredDocument doc) -> {
                 RequiredDocument docClone = new RequiredDocument()
                     .document(doc.getDocument())
-                    .externalDbId(String.join(" - ", doc.getExternalDbId(), doc.getProviderName()))
                     .providerName(SERVICE_PROVIDER)
                     .srvc(srvClone);
+                if (doc.getExternalDbId() != null) {
+                    docClone.externalDbId(
+                        String.join(" - ", doc.getExternalDbId(), doc.getProviderName())
+                    );
+                }
                 requiredDocumentService.save(docClone);
                 clonedDocs.add(docClone);
             });
@@ -1003,9 +1020,11 @@ public class OrganizationServiceImpl implements OrganizationService {
             locClone.setId(null);
             locClone.setProviderName(SERVICE_PROVIDER);
             locClone.setOrganization(orgClone);
-            locClone.setExternalDbId(
-                String.join(" - ", location.getExternalDbId(), location.getProviderName())
-            );
+            if (location.getExternalDbId() != null) {
+                locClone.setExternalDbId(
+                    String.join(" - ", location.getExternalDbId(), location.getProviderName())
+                );
+            }
             locClone.setHolidaySchedules(Collections.emptySet());
             locationService.save(locClone);
 
@@ -1097,9 +1116,12 @@ public class OrganizationServiceImpl implements OrganizationService {
                     .closesAt(hs.getClosesAt())
                     .startDate(hs.getStartDate())
                     .endDate(hs.getEndDate())
-                    .externalDbId(String.join(" - ", hs.getExternalDbId(), hs.getProviderName()))
+
                     .providerName(SERVICE_PROVIDER)
                     .location(locClone);
+                if (hs.getExternalDbId() != null) {
+                    hsClone.externalDbId(String.join(" - ", hs.getExternalDbId(), hs.getProviderName()));
+                }
                 em.persist(hsClone);
                 clonedHs.add(hsClone);
             }));
