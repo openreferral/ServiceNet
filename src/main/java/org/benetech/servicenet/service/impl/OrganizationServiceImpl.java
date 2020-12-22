@@ -557,12 +557,16 @@ public class OrganizationServiceImpl implements OrganizationService {
         Set<DailyUpdate> dailyUpdates = organization.getDailyUpdates();
 
         Organization orgClone = new Organization(organization);
+        orgClone.setId(null);
         orgClone.setUserProfiles(Collections.singleton(user));
         orgClone.setAccount(user.getSystemAccount());
         user.getOrganizations().add(orgClone);
         orgClone.setServices(Collections.emptySet());
         orgClone.setLocations(Collections.emptySet());
         orgClone.setDailyUpdates(Collections.emptySet());
+        orgClone.setExternalDbId(
+            String.join(" - ", organization.getExternalDbId(), organization.getAccount().getName())
+        );
         organizationRepository.save(orgClone);
 
         Set<Service> clonedServices = cloneServices(services, orgClone);
@@ -923,32 +927,41 @@ public class OrganizationServiceImpl implements OrganizationService {
         Set<Service> clonedServices = new HashSet<>();
         services.forEach((Service service) -> {
             Service srvClone = new Service(service);
+            srvClone.setId(null);
             srvClone.setProviderName(SERVICE_PROVIDER);
             srvClone.setOrganization(orgClone);
+            srvClone.setExternalDbId(
+                String.join(" - ", service.getExternalDbId(), service.getProviderName())
+            );
+            srvClone.setTaxonomies(Collections.emptySet());
+            srvClone.setDocs(Collections.emptySet());
             serviceService.save(srvClone);
 
+            Set<ServiceTaxonomy> serviceTaxonomies = service.getTaxonomies();
             HashSet<ServiceTaxonomy> clonedTaxonomies = new HashSet<>();
-            service.getTaxonomies().forEach((ServiceTaxonomy serviceTaxonomy) -> {
+            serviceTaxonomies.forEach((ServiceTaxonomy serviceTaxonomy) -> {
                 ServiceTaxonomy serviceTaxonomyClone = new ServiceTaxonomy()
                     .taxonomyDetails(serviceTaxonomy.getTaxonomyDetails())
-                    .externalDbId(serviceTaxonomy.getExternalDbId())
+                    .externalDbId(String.join(" - ", serviceTaxonomy.getExternalDbId(), serviceTaxonomy.getProviderName()))
                     .providerName(SERVICE_PROVIDER)
                     .srvc(srvClone);
 
                 Taxonomy taxonomy = serviceTaxonomy.getTaxonomy();
-                Taxonomy spExistingTaxonomy = taxonomyService
-                    .findByNameAndProviderName(taxonomy.getName(), SERVICE_PROVIDER);
-                if (spExistingTaxonomy == null) {
-                    Taxonomy taxonomyClone = new Taxonomy()
-                    .name(taxonomy.getName())
-                    .taxonomyId(taxonomy.getTaxonomyId())
-                    .vocabulary(taxonomy.getVocabulary())
-                    .externalDbId(String.join(" - ", taxonomy.getExternalDbId(), SERVICE_PROVIDER))
-                    .providerName(SERVICE_PROVIDER);
-                    taxonomyService.save(taxonomyClone);
-                    serviceTaxonomyClone.taxonomy(taxonomyClone);
-                } else {
-                    serviceTaxonomyClone.taxonomy(spExistingTaxonomy);
+                if (taxonomy != null) {
+                    Taxonomy spExistingTaxonomy = taxonomyService
+                        .findByNameAndProviderName(taxonomy.getName(), SERVICE_PROVIDER);
+                    if (spExistingTaxonomy == null) {
+                        Taxonomy taxonomyClone = new Taxonomy()
+                            .name(taxonomy.getName())
+                            .taxonomyId(taxonomy.getTaxonomyId())
+                            .vocabulary(taxonomy.getVocabulary())
+                            .externalDbId(String.join(" - ", taxonomy.getExternalDbId(), taxonomy.getProviderName()))
+                            .providerName(SERVICE_PROVIDER);
+                        taxonomyService.save(taxonomyClone);
+                        serviceTaxonomyClone.taxonomy(taxonomyClone);
+                    } else {
+                        serviceTaxonomyClone.taxonomy(spExistingTaxonomy);
+                    }
                 }
 
                 serviceTaxonomyService.save(serviceTaxonomyClone);
@@ -956,11 +969,12 @@ public class OrganizationServiceImpl implements OrganizationService {
             });
             srvClone.setTaxonomies(clonedTaxonomies);
 
+            Set<RequiredDocument> docs = service.getDocs();
             HashSet<RequiredDocument> clonedDocs = new HashSet<>();
-            service.getDocs().forEach((RequiredDocument doc) -> {
+            docs.forEach((RequiredDocument doc) -> {
                 RequiredDocument docClone = new RequiredDocument()
                     .document(doc.getDocument())
-                    .externalDbId(doc.getExternalDbId())
+                    .externalDbId(String.join(" - ", doc.getExternalDbId(), doc.getProviderName()))
                     .providerName(SERVICE_PROVIDER)
                     .srvc(srvClone);
                 requiredDocumentService.save(docClone);
@@ -986,8 +1000,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         locations.forEach((Location location) -> {
             Location locClone = new Location(location);
+            locClone.setId(null);
             locClone.setProviderName(SERVICE_PROVIDER);
             locClone.setOrganization(orgClone);
+            locClone.setExternalDbId(
+                String.join(" - ", location.getExternalDbId(), location.getProviderName())
+            );
+            locClone.setHolidaySchedules(Collections.emptySet());
             locationService.save(locClone);
 
             PhysicalAddress physicalAddress = location.getPhysicalAddress();
@@ -1069,15 +1088,16 @@ public class OrganizationServiceImpl implements OrganizationService {
                 locClone.setRegularSchedule(rsClone);
             }
 
+            Set<HolidaySchedule> holidaySchedules = location.getHolidaySchedules();
             HashSet<HolidaySchedule> clonedHs = new HashSet<>();
-            location.getHolidaySchedules().forEach(((HolidaySchedule hs) -> {
+            holidaySchedules.forEach(((HolidaySchedule hs) -> {
                 HolidaySchedule hsClone = new HolidaySchedule()
                     .closed(hs.isClosed())
                     .opensAt(hs.getOpensAt())
                     .closesAt(hs.getClosesAt())
                     .startDate(hs.getStartDate())
                     .endDate(hs.getEndDate())
-                    .externalDbId(hs.getExternalDbId())
+                    .externalDbId(String.join(" - ", hs.getExternalDbId(), hs.getProviderName()))
                     .providerName(SERVICE_PROVIDER)
                     .location(locClone);
                 em.persist(hsClone);
