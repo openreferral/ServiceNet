@@ -567,6 +567,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         orgClone.setExternalDbId(
             String.join(" - ", organization.getExternalDbId(), organization.getAccount().getName())
         );
+        orgClone.setReplacedBy(null);
         organizationRepository.save(orgClone);
 
         Set<Service> clonedServices = cloneServices(services, orgClone);
