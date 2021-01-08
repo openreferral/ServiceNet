@@ -74,6 +74,19 @@ public class Phone extends AbstractEntity implements Serializable, DeepComparabl
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
+    public Phone(Phone phone) {
+        this.number = phone.number;
+        this.extension = phone.extension;
+        this.type = phone.type;
+        this.language = phone.language;
+        this.description = phone.description;
+        this.location = phone.location;
+        this.srvc = phone.srvc;
+        this.organization = phone.organization;
+        this.contact = phone.contact;
+        this.shelter = phone.shelter;
+    }
+
     public Phone number(String number) {
         this.number = number;
         return this;

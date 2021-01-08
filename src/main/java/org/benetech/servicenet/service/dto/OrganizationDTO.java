@@ -68,6 +68,8 @@ public class OrganizationDTO implements Serializable {
 
     private Set<UserProfile> userProfiles = new HashSet<>();
 
+    private Set<PhoneDTO> phones;
+
     public OrganizationDTO(UUID id, String name, UUID accountId, String accountName) {
         this.id = id;
         this.name = name;
