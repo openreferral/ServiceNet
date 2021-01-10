@@ -1,9 +1,11 @@
 package org.benetech.servicenet.web.rest;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
@@ -371,9 +373,11 @@ public class ReferralResourceIT {
     public void numberOfReferralsMadeFromUserCsv() throws Exception {
         createCurrentUsersReferrals();
 
+        List<Referral> sortedReferrals = Arrays.asList(referralWithAllRelations, anotherReferral);
+        sortedReferrals.sort((r1, r2) -> r1.getTo().getId().compareTo(r2.getTo().getId()));
         String csv = "Organization id,Organization name,Referral count\n"
-            + anotherReferral.getTo().getId().toString() + ",AAAAAAAAAA,1\n"
-            + referralWithAllRelations.getTo().getId().toString() + ",AAAAAAAAAA,1\n";
+            + sortedReferrals.stream().map(r -> r.getTo().getId().toString() + "," + r.getTo().getName() + ",1\n").
+                collect(Collectors.joining());
         restReferralMockMvc.perform(get("/api/referrals/number-made-from-us/csv"))
             .andExpect(status().isOk())
             .andExpect(content().string(equalToCompressingWhiteSpace(csv)));

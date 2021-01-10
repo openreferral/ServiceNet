@@ -1,6 +1,5 @@
 package org.benetech.servicenet.mother;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.benetech.servicenet.domain.Contact;
@@ -19,6 +18,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.util.CollectionUtils;
 
 public class OrganizationMother {
 
@@ -200,7 +200,7 @@ public class OrganizationMother {
         Organization org = createDefaultForServiceProvider(DEFAULT_ACTIVE);
 
         org.setAccount(SystemAccountMother.createServiceProviderAndPersist(em));
-        org.setUserProfiles(Collections.singleton(UserMother.createForServiceProviderAndPersist(em)));
+        org.setUserProfiles(CollectionUtils.singletonSet(UserMother.createForServiceProviderAndPersist(em)));
 
         return populateServiceProviderRelations(org, em);
     }
@@ -209,24 +209,24 @@ public class OrganizationMother {
         Organization org = createDifferentAndPersist(em);
 
         org.setAccount(SystemAccountMother.createServiceProviderAndPersist(em));
-        org.setUserProfiles(Collections.singleton(UserMother.createDifferentForServiceProviderAndPersist(em, org.getAccount())));
+        org.setUserProfiles(CollectionUtils.singletonSet(UserMother.createDifferentForServiceProviderAndPersist(em, org.getAccount())));
 
         return populateServiceProviderRelations(org, em);
     }
 
     private static Organization populateServiceProviderRelations(Organization org, EntityManager em) {
         Location loc = LocationMother.createForServiceProviderAndPersist(em);
-        org.setLocations(Collections.singleton(loc));
+        org.setLocations(CollectionUtils.singletonSet(loc));
 
         Service srv = ServiceMother.createForServiceProviderAndPersist(em);
-        org.setServices(Collections.singleton(srv));
+        org.setServices(CollectionUtils.singletonSet(srv));
 
         ServiceAtLocation srvAtLoc = new ServiceAtLocation().srvc(srv).location(loc);
-        srv.setLocations(Collections.singleton(srvAtLoc));
+        srv.setLocations(CollectionUtils.singletonSet(srvAtLoc));
         em.persist(srvAtLoc);
 
         DailyUpdate du = DailyUpdateMother.createDefault();
-        org.setDailyUpdates(Collections.singleton(du));
+        org.setDailyUpdates(CollectionUtils.singletonSet(du));
         em.persist(du);
 
         em.persist(org);

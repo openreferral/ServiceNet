@@ -447,4 +447,12 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     public int hashCode() {
         return Objects.hashCode(getId());
     }
+
+
+    @Override
+    public String toString() {
+        return "Organization{" +
+            "id=" + getId() +
+            "}";
+    }
 }

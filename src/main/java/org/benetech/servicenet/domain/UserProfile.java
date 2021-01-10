@@ -109,6 +109,20 @@ public class UserProfile extends AbstractAuditingEntity implements Serializable 
     @Column(name = "avatar_base64", columnDefinition = "clob")
     private String avatarBase64;
 
+    private Boolean hasClaimedRecords = false;
+
+    @Column(name = "contact_first_name")
+    @Size(max = 255, message = "Field value is too long.")
+    private String contactFirstName;
+
+    @Column(name = "contact_last_name")
+    @Size(max = 255, message = "Field value is too long.")
+    private String contactLastName;
+
+    @Column(name = "contact_email")
+    @Size(max = 255, message = "Field value is too long.")
+    private String contactEmail;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

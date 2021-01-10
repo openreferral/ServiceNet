@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.impl;
 
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,17 +10,24 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
+import org.benetech.servicenet.domain.GeocodingResult;
+import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.PhysicalAddress;
+import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceAtLocation;
@@ -46,6 +54,7 @@ import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.OpeningHoursRow;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderLocationDTO;
@@ -106,6 +115,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationErrorRepository organizationErrorRepository;
 
+    private final EntityManager em;
+
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
@@ -115,7 +126,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
         UserProfileRepository userProfileRepository, RequiredDocumentService requiredDocumentService,
         OrganizationMatchRepository organizationMatchRepository, ConflictService conflictService,
-        OrganizationErrorRepository organizationErrorRepository) {
+        OrganizationErrorRepository organizationErrorRepository, EntityManager em) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
@@ -134,6 +145,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.organizationMatchRepository = organizationMatchRepository;
         this.conflictService = conflictService;
         this.organizationErrorRepository = organizationErrorRepository;
+        this.em = em;
     }
 
     /**
@@ -151,8 +163,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (!organizationDTO.getUserProfiles().isEmpty()) {
             UserProfile userProfile = organizationDTO.getUserProfiles().iterator().next();
             userProfile = userProfileRepository.findOneByLogin(userProfile.getLogin()).orElse(userProfile);
-            organization.setUserProfiles(Collections.singleton(userProfile));
-            userProfile.getOrganizations().add(organization);
+            addUserProfile(organization, userProfile);
         }
         organization = organizationRepository.save(organization);
         return organizationMapper.toDto(organization);
@@ -185,8 +196,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationMapper.toEntity(organizationDTO);
         UserProfile userProfile = userService.getCurrentUserProfile();
         organization.setAccount(userProfile.getSystemAccount());
-        organization.setUserProfiles(Collections.singleton(userProfile));
-        userProfile.getOrganizations().add(organization);
+        addUserProfile(organization, userProfile);
 
         if (organization.getId() != null) {
             Organization existingOrganization = findOne(organization.getId()).get();
@@ -206,6 +216,8 @@ public class OrganizationServiceImpl implements OrganizationService {
             locations
         );
         saveDailyUpdates(organization, organizationDTO);
+        saveOpeningHours(organizationDTO.getOpeningHoursByLocation(), locations);
+        saveDatesClosed(organizationDTO.getDatesClosedByLocation(), locations);
         // TODO: Currently the matches are discovered with different external service providers (UWBA, Eden, LAAC, etc).
         //  For the independent user with Service Provider (not the external one) system account type, matching should look
         //  for all that kind of users. Issue: #957
@@ -239,6 +251,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<OrganizationOptionDTO> findAllOptions() {
         log.debug("Request to get all Organizations");
         return organizationRepository.findAll().stream()
+            .map(organizationMapper::toOptionDto)
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizationOptionDTO> findAllOptions(String providerName) {
+        log.debug("Request to get Organization options for provider: " + providerName);
+        return organizationRepository.findAllByAccountNameAndActive(providerName, true).stream()
             .map(organizationMapper::toOptionDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }
@@ -535,6 +556,72 @@ public class OrganizationServiceImpl implements OrganizationService {
         .map(organizationMapper::toDto);
     }
 
+    @Override
+    public Organization cloneOrganizationForServiceProvider(UUID orgId, UserProfile user) {
+        Organization organization = organizationRepository.findOneWithAllEagerAssociationsByIdOrExternalDbId(orgId, null);
+        Set<Service> services = organization.getServices();
+        Set<Location> locations = organization.getLocations();
+        Set<DailyUpdate> dailyUpdates = organization.getDailyUpdates();
+
+        Organization orgClone = new Organization(organization);
+        orgClone.setId(null);
+        orgClone.setUserProfiles(Collections.singleton(user));
+        orgClone.setAccount(user.getSystemAccount());
+        user.getOrganizations().add(orgClone);
+        orgClone.setServices(Collections.emptySet());
+        orgClone.setLocations(Collections.emptySet());
+        orgClone.setDailyUpdates(Collections.emptySet());
+        if (organization.getExternalDbId() != null) {
+            orgClone.setExternalDbId(
+                String.join(" - ", organization.getExternalDbId(), organization.getAccount().getName())
+            );
+        }
+        orgClone.setReplacedBy(null);
+        organizationRepository.save(orgClone);
+
+        Set<Service> clonedServices = cloneServices(services, orgClone);
+
+        Set<Location> clonedLocations = cloneLocations(locations, orgClone);
+
+        HashSet<DailyUpdate> clonedDailyUpdate = new HashSet<>();
+        dailyUpdates.forEach((DailyUpdate dailyUpdate) -> {
+            DailyUpdate duClone = new DailyUpdate()
+                .update(dailyUpdate.getUpdate())
+                .createdAt(dailyUpdate.getCreatedAt())
+                .expiry(dailyUpdate.getExpiry())
+                .organization(orgClone);
+            clonedDailyUpdate.add(dailyUpdateService.save(duClone));
+        });
+
+        orgClone.setServices(clonedServices);
+        orgClone.setLocations(clonedLocations);
+        orgClone.setDailyUpdates(clonedDailyUpdate);
+
+        organization.setReplacedBy(orgClone);
+        orgClone.setReplacedBy(organization);
+        return orgClone;
+    }
+
+    @Override
+    public void claimRecords(List<UUID> recordsToClaim) {
+        UserProfile currentUserProfile = userService.getCurrentUserProfile();
+
+        recordsToClaim.forEach((UUID recordId) -> cloneOrganizationForServiceProvider(recordId, currentUserProfile));
+
+        currentUserProfile.setHasClaimedRecords(true);
+        userService.saveProfile(currentUserProfile);
+    }
+
+    @Override
+    public void unclaimRecord(UUID recordToUnclaim) {
+        Organization orgToUnclaim = organizationRepository.getOne(recordToUnclaim);
+        Organization originalOrg = organizationRepository.getOne(orgToUnclaim.getReplacedBy().getId());
+        originalOrg.setReplacedBy(null);
+
+        organizationRepository.save(originalOrg);
+        delete(recordToUnclaim);
+    }
+
     private Organization getProvidersOrganization(List<Organization> organizations, UUID id) {
         for (Organization organization : organizations) {
             if (organization.getAccount().getId().equals(id)) {
@@ -568,6 +655,10 @@ public class OrganizationServiceImpl implements OrganizationService {
             location.setOrganization(organization);
             location.setName(String.join(", ", physicalAddress.getAddress1(),
                 physicalAddress.getCity(), physicalAddress.getStateProvince()));
+            if (existingLocation != null) {
+                location.setRegularSchedule(existingLocation.getRegularSchedule());
+                location.setHolidaySchedules(existingLocation.getHolidaySchedules());
+            }
             locations.add(locationService.saveWithRelations(location));
         }
         for (Location location : locationsToRemove) {
@@ -633,6 +724,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             );
             dto.setTaxonomyIds(
                 service.getTaxonomies().stream()
+                    .filter(st -> st.getTaxonomy() != null)
                     .map(st -> st.getTaxonomy().getId().toString())
                     .collect(Collectors.toList())
             );
@@ -644,15 +736,16 @@ public class OrganizationServiceImpl implements OrganizationService {
         HashSet<ServiceTaxonomy> taxonomies = new HashSet<>();
         Set<UUID> existingTaxonomies = (service.getTaxonomies() != null)
             ? service.getTaxonomies().stream()
+            .filter(st -> st.getTaxonomy() != null)
             .map(st -> st.getTaxonomy().getId()).collect(Collectors.toSet())
             : Collections.emptySet();
-        Set<UUID> dtoTaxonomies = serviceDTO.getTaxonomyIds().stream().map(UUID::fromString).collect(
-            Collectors.toSet());
+        Set<UUID> dtoTaxonomies = serviceDTO.getTaxonomyIds() != null ? serviceDTO.getTaxonomyIds().stream().map(UUID::fromString).collect(
+            Collectors.toSet()) : Collections.emptySet();
         Set<UUID> taxonomiesToAdd = dtoTaxonomies.stream().filter(id -> !existingTaxonomies.contains(id)).collect(
             Collectors.toSet());
         Set<UUID> serviceTaxonomiesToRemove = (service.getTaxonomies() != null)
             ? service.getTaxonomies().stream()
-            .filter(st -> !dtoTaxonomies.contains(st.getTaxonomy().getId()))
+            .filter(st -> st.getTaxonomy() != null && !dtoTaxonomies.contains(st.getTaxonomy().getId()))
             .map(AbstractEntity::getId).collect(Collectors.toSet())
             : Collections.emptySet();
         for (UUID taxonomyId : taxonomiesToAdd) {
@@ -674,9 +767,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private Set<ServiceAtLocation> saveLocations(ProviderServiceDTO serviceDTO, Service service,
         List<Location> locations) {
-        Set<Location> serviceLocations = serviceDTO.getLocationIndexes().stream().map(
-            locations::get
-        ).collect(Collectors.toSet());
+        Set<Location> serviceLocations = serviceDTO.getLocationIndexes() != null
+            ? serviceDTO.getLocationIndexes().stream().map(
+                locations::get
+            ).collect(Collectors.toSet()) : Collections.emptySet();
         Set<ServiceAtLocation> servicesAtLocation = new HashSet<>();
         Set<UUID> existingLocations = (service.getLocations() != null) ? service.getLocations().stream()
             .map(sat -> sat.getLocation().getId()).collect(Collectors.toSet())
@@ -760,5 +854,305 @@ public class OrganizationServiceImpl implements OrganizationService {
             eligibilityService.delete(existingEligibility.getId());
         }
         return null;
+    }
+
+    private void saveOpeningHours(Map<Integer, List<OpeningHoursRow>> openingHoursByLocation, List<Location> locations) {
+        if (openingHoursByLocation != null) {
+            openingHoursByLocation.forEach((idx, rows) -> {
+                Location location = locations.get(idx);
+                RegularSchedule regularSchedule = location.getRegularSchedule() != null ? location.getRegularSchedule() : new RegularSchedule();
+                regularSchedule.setLocation(location);
+                Set<OpeningHours> existingOpeningHours = regularSchedule.getOpeningHours() != null ? regularSchedule.getOpeningHours() : new HashSet<>();
+                Set<OpeningHours> openingHoursSet = new HashSet<>();
+                rows.forEach(row -> {
+                    if (row.getActiveDays() != null && row.getFrom() != null && row.getTo() != null) {
+                        for (Integer day : row.getActiveDays()) {
+                            OpeningHours openingHours = existingOpeningHours.stream()
+                                .filter(oh -> oh.getWeekday().equals(day))
+                                .findFirst().orElse(new OpeningHours());
+                            openingHours.setOpensAt(row.getFrom());
+                            openingHours.setClosesAt(row.getTo());
+                            openingHours.setWeekday(day);
+                            openingHours.setRegularSchedule(regularSchedule);
+                            em.persist(openingHours);
+                            openingHoursSet.add(openingHours);
+                        }
+                    }
+                });
+                regularSchedule.setOpeningHours(openingHoursSet);
+                Set<OpeningHours> openingHoursToRemove = existingOpeningHours.stream().filter(
+                    eoh -> !openingHoursSet.contains(eoh)
+                ).collect(Collectors.toSet());
+                for (OpeningHours openingHourToRemove : openingHoursToRemove) {
+                    em.remove(openingHourToRemove);
+                }
+                em.persist(regularSchedule);
+
+                location.setRegularSchedule(regularSchedule);
+            });
+        }
+    }
+
+    private void saveDatesClosed(Map<Integer, List<String>> datesClosedByLocation, List<Location> locations) {
+        if (datesClosedByLocation != null) {
+            datesClosedByLocation.forEach((idx, dateStrings) -> {
+                Location location = locations.get(idx);
+                Set<HolidaySchedule> existingHolidaySchedules = location.getHolidaySchedules() != null ? location.getHolidaySchedules() : new HashSet<>();
+                Set<HolidaySchedule> holidaySchedules = new HashSet<>();
+                dateStrings.forEach(dateString -> {
+                    if (StringUtils.isNotBlank(dateString)) {
+                        LocalDate date = ZonedDateTime.parse(dateString).toLocalDate();
+                        Optional<HolidaySchedule> existingSchedule = existingHolidaySchedules
+                            .stream().filter(
+                                hs -> hs.isClosed() && date.equals(hs.getStartDate()) && date
+                                    .equals(hs.getEndDate()))
+                            .findFirst();
+                        HolidaySchedule holidaySchedule;
+                        if (existingSchedule.isPresent()) {
+                            holidaySchedule = existingSchedule.get();
+                        } else {
+                            holidaySchedule = new HolidaySchedule();
+                            holidaySchedule.setClosed(true);
+                            holidaySchedule.setStartDate(date);
+                            holidaySchedule.setEndDate(date);
+                            holidaySchedule.setLocation(location);
+                            holidaySchedule.setProviderName(location.getProviderName());
+                            em.persist(holidaySchedule);
+                        }
+                        holidaySchedules.add(holidaySchedule);
+                    }
+                });
+                Set<HolidaySchedule> schedulesToRemove = existingHolidaySchedules.stream().filter(
+                    ehs -> !holidaySchedules.contains(ehs)
+                ).collect(Collectors.toSet());
+                for (HolidaySchedule scheduleToRemove : schedulesToRemove) {
+                    em.remove(scheduleToRemove);
+                }
+                location.setHolidaySchedules(holidaySchedules);
+            });
+        }
+    }
+
+    private Set<Service> cloneServices(Set<Service> services, Organization orgClone) {
+        Set<Service> clonedServices = new HashSet<>();
+        services.forEach((Service service) -> {
+            Service srvClone = new Service(service);
+            srvClone.setId(null);
+            srvClone.setProviderName(SERVICE_PROVIDER);
+            srvClone.setOrganization(orgClone);
+            if (service.getExternalDbId() != null) {
+                srvClone.setExternalDbId(
+                    String.join(" - ", service.getExternalDbId(), service.getProviderName())
+                );
+            }
+            srvClone.setTaxonomies(Collections.emptySet());
+            srvClone.setDocs(Collections.emptySet());
+            serviceService.save(srvClone);
+
+            Set<ServiceTaxonomy> serviceTaxonomies = service.getTaxonomies();
+            HashSet<ServiceTaxonomy> clonedTaxonomies = new HashSet<>();
+            serviceTaxonomies.forEach((ServiceTaxonomy serviceTaxonomy) -> {
+                ServiceTaxonomy serviceTaxonomyClone = new ServiceTaxonomy()
+                    .taxonomyDetails(serviceTaxonomy.getTaxonomyDetails())
+                    .providerName(SERVICE_PROVIDER)
+                    .srvc(srvClone);
+                if (serviceTaxonomy.getExternalDbId() != null) {
+                    serviceTaxonomyClone.externalDbId(
+                        String.join(" - ", serviceTaxonomy.getExternalDbId(), serviceTaxonomy.getProviderName())
+                    );
+                }
+
+                Taxonomy taxonomy = serviceTaxonomy.getTaxonomy();
+                if (taxonomy != null) {
+                    Taxonomy spExistingTaxonomy = taxonomyService
+                        .findByNameAndProviderName(taxonomy.getName(), SERVICE_PROVIDER);
+                    if (spExistingTaxonomy == null) {
+                        Taxonomy taxonomyClone = new Taxonomy()
+                            .name(taxonomy.getName())
+                            .taxonomyId(taxonomy.getTaxonomyId())
+                            .vocabulary(taxonomy.getVocabulary())
+                            .providerName(SERVICE_PROVIDER);
+                        if (taxonomy.getExternalDbId() != null) {
+                            taxonomyClone.externalDbId(
+                                String.join(" - ", taxonomy.getExternalDbId(), taxonomy.getProviderName())
+                            );
+                        }
+                        taxonomyService.save(taxonomyClone);
+                        serviceTaxonomyClone.taxonomy(taxonomyClone);
+                    } else {
+                        serviceTaxonomyClone.taxonomy(spExistingTaxonomy);
+                    }
+                }
+
+                serviceTaxonomyService.save(serviceTaxonomyClone);
+                clonedTaxonomies.add(serviceTaxonomyClone);
+            });
+            srvClone.setTaxonomies(clonedTaxonomies);
+
+            Set<RequiredDocument> docs = service.getDocs();
+            HashSet<RequiredDocument> clonedDocs = new HashSet<>();
+            docs.forEach((RequiredDocument doc) -> {
+                RequiredDocument docClone = new RequiredDocument()
+                    .document(doc.getDocument())
+                    .providerName(SERVICE_PROVIDER)
+                    .srvc(srvClone);
+                if (doc.getExternalDbId() != null) {
+                    docClone.externalDbId(
+                        String.join(" - ", doc.getExternalDbId(), doc.getProviderName())
+                    );
+                }
+                requiredDocumentService.save(docClone);
+                clonedDocs.add(docClone);
+            });
+            srvClone.setDocs(clonedDocs);
+
+            Eligibility eligibility = service.getEligibility();
+            if (eligibility != null) {
+                Eligibility clonedEligibility = new Eligibility()
+                    .eligibility(eligibility.getEligibility())
+                    .srvc(srvClone);
+                eligibilityService.save(clonedEligibility);
+                srvClone.setEligibility(clonedEligibility);
+            }
+            clonedServices.add(serviceService.save(srvClone));
+        });
+        return clonedServices;
+    }
+
+    private Set<Location> cloneLocations(Set<Location> locations, Organization orgClone) {
+        Set<Location> clonedLocations = new HashSet<>();
+
+        locations.forEach((Location location) -> {
+            Location locClone = new Location(location);
+            locClone.setId(null);
+            locClone.setProviderName(SERVICE_PROVIDER);
+            locClone.setOrganization(orgClone);
+            if (location.getExternalDbId() != null) {
+                locClone.setExternalDbId(
+                    String.join(" - ", location.getExternalDbId(), location.getProviderName())
+                );
+            }
+            locClone.setHolidaySchedules(Collections.emptySet());
+            locationService.save(locClone);
+
+            PhysicalAddress physicalAddress = location.getPhysicalAddress();
+            PostalAddress postalAddress = location.getPostalAddress();
+
+            if (physicalAddress != null) {
+                PhysicalAddress physicalClone = new PhysicalAddress()
+                    .attention(physicalAddress.getAttention())
+                    .address1(physicalAddress.getAddress1())
+                    .address2(physicalAddress.getAddress2())
+                    .city(physicalAddress.getCity())
+                    .region(physicalAddress.getRegion())
+                    .stateProvince(physicalAddress.getStateProvince())
+                    .postalCode(physicalAddress.getPostalCode())
+                    .country(physicalAddress.getCountry())
+                    .location(locClone);
+                em.persist(physicalClone);
+                locClone.setPhysicalAddress(physicalClone);
+            } else if (postalAddress != null) {
+                PhysicalAddress physicalClone = new PhysicalAddress()
+                    .attention(postalAddress.getAttention())
+                    .address1(postalAddress.getAddress1())
+                    .address2(postalAddress.getAddress2())
+                    .city(postalAddress.getCity())
+                    .region(postalAddress.getRegion())
+                    .stateProvince(postalAddress.getStateProvince())
+                    .postalCode(postalAddress.getPostalCode())
+                    .country(postalAddress.getCountry())
+                    .location(locClone);
+                em.persist(physicalClone);
+                locClone.setPhysicalAddress(physicalClone);
+            }
+
+            if (postalAddress != null) {
+                PostalAddress postalClone = new PostalAddress()
+                    .attention(postalAddress.getAttention())
+                    .address1(postalAddress.getAddress1())
+                    .address2(postalAddress.getAddress2())
+                    .city(postalAddress.getCity())
+                    .region(postalAddress.getRegion())
+                    .stateProvince(postalAddress.getStateProvince())
+                    .postalCode(postalAddress.getPostalCode())
+                    .country(postalAddress.getCountry())
+                    .location(locClone);
+                em.persist(postalClone);
+                locClone.setPostalAddress(postalClone);
+            } else if (physicalAddress != null) {
+                PostalAddress postalClone = new PostalAddress()
+                    .attention(physicalAddress.getAttention())
+                    .address1(physicalAddress.getAddress1())
+                    .address2(physicalAddress.getAddress2())
+                    .city(physicalAddress.getCity())
+                    .region(physicalAddress.getRegion())
+                    .stateProvince(physicalAddress.getStateProvince())
+                    .postalCode(physicalAddress.getPostalCode())
+                    .country(physicalAddress.getCountry())
+                    .location(locClone);
+                em.persist(postalClone);
+                locClone.setPostalAddress(postalClone);
+            }
+
+            RegularSchedule regularSchedule = location.getRegularSchedule();
+            if (regularSchedule != null) {
+                RegularSchedule rsClone = new RegularSchedule()
+                    .notes(regularSchedule.getNotes())
+                    .location(locClone);
+                em.persist(rsClone);
+                Set<OpeningHours> clonedOpeningHours = new HashSet<>();
+                regularSchedule.getOpeningHours().forEach((OpeningHours oh) -> {
+                    OpeningHours ohClone = new OpeningHours()
+                        .weekday(oh.getWeekday())
+                        .opensAt(oh.getOpensAt())
+                        .closesAt(oh.getClosesAt())
+                        .regularSchedule(rsClone);
+                    em.persist(ohClone);
+                    clonedOpeningHours.add(ohClone);
+                });
+                rsClone.setOpeningHours(clonedOpeningHours);
+                locClone.setRegularSchedule(rsClone);
+            }
+
+            Set<HolidaySchedule> holidaySchedules = location.getHolidaySchedules();
+            HashSet<HolidaySchedule> clonedHs = new HashSet<>();
+            holidaySchedules.forEach(((HolidaySchedule hs) -> {
+                HolidaySchedule hsClone = new HolidaySchedule()
+                    .closed(hs.isClosed())
+                    .opensAt(hs.getOpensAt())
+                    .closesAt(hs.getClosesAt())
+                    .startDate(hs.getStartDate())
+                    .endDate(hs.getEndDate())
+
+                    .providerName(SERVICE_PROVIDER)
+                    .location(locClone);
+                if (hs.getExternalDbId() != null) {
+                    hsClone.externalDbId(String.join(" - ", hs.getExternalDbId(), hs.getProviderName()));
+                }
+                em.persist(hsClone);
+                clonedHs.add(hsClone);
+            }));
+            locClone.setHolidaySchedules(clonedHs);
+
+            location.getGeocodingResults().forEach((GeocodingResult gr) -> {
+                gr.getLocations().add(locClone);
+                em.persist(gr);
+            });
+
+            clonedLocations.add(locClone);
+        });
+        return clonedLocations;
+    }
+
+    private void addUserProfile(Organization organization, UserProfile userProfile) {
+        if (organization.getId() != null) {
+            Organization existingOrganization = organizationRepository
+                .findOneWithEagerAssociations(organization.getId());
+            organization.setUserProfiles(existingOrganization.getUserProfiles());
+        }
+        Set<UserProfile> userProfiles = organization.getUserProfiles() != null ? organization.getUserProfiles() : new HashSet<>();
+        userProfiles.add(userProfile);
+        organization.setUserProfiles(userProfiles);
+        userProfile.getOrganizations().add(organization);
     }
 }

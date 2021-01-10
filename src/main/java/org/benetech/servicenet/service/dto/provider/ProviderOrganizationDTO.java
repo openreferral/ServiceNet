@@ -3,6 +3,7 @@ package org.benetech.servicenet.service.dto.provider;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Lob;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
+import org.benetech.servicenet.service.dto.OpeningHoursRow;
 
 /**
  * A DTO for the Organization entity.
@@ -47,6 +49,15 @@ public class ProviderOrganizationDTO implements Serializable {
 
     @Getter
     private List<DailyUpdateDTO> dailyUpdates;
+
+    @Getter
+    private Map<Integer, List<String>> datesClosedByLocation;
+
+    @Getter
+    private Map<Integer, List<OpeningHoursRow>> openingHoursByLocation;
+
+    // If service provider's record has this, that means it is claimed record
+    private UUID replacedById;
 
     @Override
     public boolean equals(Object o) {

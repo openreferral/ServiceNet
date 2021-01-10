@@ -144,4 +144,11 @@ public class ActivityResource {
             activityService.getAllDeactivatedRecords()
         );
     }
+
+    @GetMapping("/records-to-claim")
+    @Timed
+    public ResponseEntity<Page<ProviderRecordDTO>> getRecordsToClaim(@PathParam("search") String search,
+        Pageable pageable) {
+        return ResponseEntity.ok().body(activityService.getRecordsToClaim(pageable, search));
+    }
 }

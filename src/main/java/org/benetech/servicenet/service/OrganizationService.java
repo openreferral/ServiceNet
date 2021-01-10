@@ -54,6 +54,8 @@ public interface OrganizationService {
 
     List<OrganizationOptionDTO> findAllOptions();
 
+    List<OrganizationOptionDTO> findAllOptions(String providerName);
+
     Page<Organization> findAllOrganizations(UserProfile userProfile, Pageable pageable);
 
     List<Organization> findAllWithEagerAssociations();
@@ -148,4 +150,10 @@ public interface OrganizationService {
 
     Page<OrganizationDTO> findAllByNameLikeAndAccountNameWithUserProfile(
         String name, String accountName, Pageable pageable);
+
+    Organization cloneOrganizationForServiceProvider(UUID orgId, UserProfile user);
+
+    void claimRecords(List<UUID> recordsToClaim);
+
+    void unclaimRecord(UUID recordToUnclaim);
 }

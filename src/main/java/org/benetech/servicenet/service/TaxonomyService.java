@@ -75,4 +75,6 @@ public interface TaxonomyService {
      * @param id the id of the entity
      */
     void delete(UUID id);
+
+    Taxonomy findByNameAndProviderName(String name, String providerName);
 }

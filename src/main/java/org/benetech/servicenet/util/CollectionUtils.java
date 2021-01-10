@@ -1,6 +1,7 @@
 package org.benetech.servicenet.util;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -15,6 +16,12 @@ public final class CollectionUtils {
 
     public static <V extends AbstractEntity> Set<UUID> getIds(Set<V> entities) {
         return entities.stream().map(AbstractEntity::getId).collect(Collectors.toSet());
+    }
+
+    public static <V> Set<V> singletonSet(V entity) {
+        Set<V> set = new HashSet<>();
+        set.add(entity);
+        return set;
     }
 
     private CollectionUtils() {

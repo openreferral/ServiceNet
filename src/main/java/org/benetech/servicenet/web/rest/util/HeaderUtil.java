@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
  */
 public final class HeaderUtil {
 
-    private static final String APPLICATION_NAME = "serviceNetApp";
+    public static final String APPLICATION_NAME = "serviceNetApp";
 
     private HeaderUtil() {
     }

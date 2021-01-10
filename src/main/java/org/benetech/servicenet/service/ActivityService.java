@@ -54,4 +54,5 @@ public interface ActivityService {
     Page<ProviderRecordDTO> getAllPartnerActivitiesPublic(ProviderFilterDTO providerFilterDTO,
         Silo silo, String search, Pageable pageable);
 
+    Page<ProviderRecordDTO> getRecordsToClaim(Pageable pageable, String search);
 }

@@ -30,8 +30,16 @@
     <rule ref="category/java/errorprone.xml/ProperCloneImplementation"/>
 
     <rule ref="category/java/design.xml/CyclomaticComplexity"/>
-    <rule ref="category/java/design.xml/ExcessiveClassLength"/>
-    <rule ref="category/java/design.xml/ExcessiveMethodLength"/>
+    <rule ref="category/java/design.xml/ExcessiveClassLength">
+        <properties>
+            <property name="minimum" value="1100.0" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/ExcessiveMethodLength">
+        <properties>
+            <property name="minimum" value="150.0" />
+        </properties>
+    </rule>
     <rule ref="category/java/design.xml/ExcessiveParameterList"/>
     <rule ref="category/java/design.xml/ExcessivePublicCount"/>
     <rule ref="category/java/design.xml/NcssConstructorCount"/>

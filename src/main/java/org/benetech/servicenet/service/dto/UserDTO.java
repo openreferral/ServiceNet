@@ -80,6 +80,8 @@ public class UserDTO {
 
     private List<UUID> userGroups;
 
+    private Boolean hasClaimedRecords;
+
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -118,5 +120,6 @@ public class UserDTO {
             .map(UserGroup::getId)
             .collect(Collectors.toList());
         }
+        this.hasClaimedRecords = userProfile.getHasClaimedRecords();
     }
 }
