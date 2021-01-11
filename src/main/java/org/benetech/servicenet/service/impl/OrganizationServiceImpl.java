@@ -655,6 +655,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             location.setOrganization(organization);
             location.setName(String.join(", ", physicalAddress.getAddress1(),
                 physicalAddress.getCity(), physicalAddress.getStateProvince()));
+            location.setOpen247(locationDTO.getOpen247());
             if (existingLocation != null) {
                 location.setRegularSchedule(existingLocation.getRegularSchedule());
                 location.setHolidaySchedules(existingLocation.getHolidaySchedules());

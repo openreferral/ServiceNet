@@ -90,6 +90,9 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
+    @Column(name = "open_247")
+    private boolean open247;
+
     @OneToOne(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private PhysicalAddress physicalAddress;
