@@ -45,6 +45,9 @@ public class ProviderOrganizationDTO implements Serializable {
 
     private String accountName;
 
+    @Lob
+    private String covidProtocols;
+
     @Getter
     private List<ProviderLocationDTO> locations;
 
