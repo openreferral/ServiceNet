@@ -66,7 +66,6 @@ import org.benetech.servicenet.service.dto.provider.ProviderRequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderServiceDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
-import org.benetech.servicenet.service.mapper.PhoneMapper;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

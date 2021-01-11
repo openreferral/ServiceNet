@@ -163,6 +163,11 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<DailyUpdate> dailyUpdates = new HashSet<>();
 
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "covidProtocols", columnDefinition = "clob")
+    private String covidProtocols;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     @PrePersist
@@ -187,6 +192,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.lastVerifiedOn = org.lastVerifiedOn;
         this.userProfiles = org.userProfiles;
         this.dailyUpdates = org.dailyUpdates;
+        this.covidProtocols = org.covidProtocols;
     }
 
     public Organization name(String name) {
@@ -392,6 +398,19 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
 
     public void setAdditionalSilos(Set<Silo> additionalSilos) {
         this.additionalSilos = additionalSilos;
+    }
+
+    public Organization covidProtocols(String covidProtocols) {
+        this.covidProtocols = covidProtocols;
+        return this;
+    }
+
+    public String getCovidProtocols() {
+        return covidProtocols;
+    }
+
+    public void setCovidProtocols(String covidProtocols) {
+        this.covidProtocols = covidProtocols;
     }
 
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "checkstyle:booleanExpressionComplexity"})

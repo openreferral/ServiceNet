@@ -492,6 +492,7 @@ public class OrganizationResourceIntTest {
         assertThat(organizationList).hasSize(databaseSizeBeforeCreate + 1);
         Organization testOrganization = organizationList.get(organizationList.size() - 1);
         assertThat(testOrganization.getName()).isEqualTo(OrganizationMother.DEFAULT_NAME);
+        assertThat(testOrganization.getCovidProtocols()).isEqualTo(OrganizationMother.DEFAULT_COVID_PROTOCOLS);
         assertThat(testOrganization.getUserProfiles()).isNotEmpty();
         assertEquals(testOrganization.getLocations().size(), organization.getLocations().size());
 
@@ -523,7 +524,8 @@ public class OrganizationResourceIntTest {
             .name(OrganizationMother.UPDATED_NAME)
             .description(OrganizationMother.UPDATED_DESCRIPTION)
             .email(OrganizationMother.UPDATED_EMAIL)
-            .url(OrganizationMother.UPDATED_URL);
+            .url(OrganizationMother.UPDATED_URL)
+            .covidProtocols(OrganizationMother.UPDATED_COVID_PROTOCOLS);
         ProviderOrganizationDTO organizationDTO = organizationMapper.toProviderDto(updatedOrganization);
         List<String> datesClosed = createDatesClosed();
         List<OpeningHoursRow> openingHoursRows = createOpeningHours();
@@ -543,6 +545,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getDescription()).isEqualTo(OrganizationMother.UPDATED_DESCRIPTION);
         assertThat(testOrganization.getEmail()).isEqualTo(OrganizationMother.UPDATED_EMAIL);
         assertThat(testOrganization.getUrl()).isEqualTo(OrganizationMother.UPDATED_URL);
+        assertThat(testOrganization.getCovidProtocols()).isEqualTo(OrganizationMother.UPDATED_COVID_PROTOCOLS);
         assertThat(testOrganization.getUpdatedAt()).isNotNull();
         assertOpeningHours(testOrganization, openingHoursRows);
         assertDatesClosed(testOrganization, datesClosed);
