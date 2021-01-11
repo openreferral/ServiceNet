@@ -25,6 +25,7 @@ import org.benetech.servicenet.domain.HolidaySchedule;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.OpeningHours;
 import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
 import org.benetech.servicenet.domain.RegularSchedule;
@@ -47,6 +48,7 @@ import org.benetech.servicenet.service.DailyUpdateService;
 import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.PhoneService;
 import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
@@ -57,12 +59,14 @@ import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.OpeningHoursRow;
 import org.benetech.servicenet.service.dto.OrganizationDTO;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
+import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderLocationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRequiredDocumentDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderServiceDTO;
 import org.benetech.servicenet.service.mapper.LocationMapper;
 import org.benetech.servicenet.service.mapper.OrganizationMapper;
+import org.benetech.servicenet.service.mapper.PhoneMapper;
 import org.benetech.servicenet.service.mapper.ServiceMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +119,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationErrorRepository organizationErrorRepository;
 
+    private final PhoneService phoneService;
+
     private final EntityManager em;
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -126,6 +132,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
         UserProfileRepository userProfileRepository, RequiredDocumentService requiredDocumentService,
         OrganizationMatchRepository organizationMatchRepository, ConflictService conflictService,
+        PhoneService phoneService,
         OrganizationErrorRepository organizationErrorRepository, EntityManager em) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
@@ -145,6 +152,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.organizationMatchRepository = organizationMatchRepository;
         this.conflictService = conflictService;
         this.organizationErrorRepository = organizationErrorRepository;
+        this.phoneService = phoneService;
         this.em = em;
     }
 
@@ -203,6 +211,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             organization.setLocations(existingOrganization.getLocations());
             organization.setServices(existingOrganization.getServices());
             organization.setDailyUpdates(existingOrganization.getDailyUpdates());
+            organization.setPhones(existingOrganization.getPhones());
         }
         organization = organizationRepository.save(organization);
 
@@ -215,6 +224,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             (organizationDTO.getServices()) != null ? organizationDTO.getServices() : Collections.emptyList(),
             locations
         );
+        savePhones(organizationDTO, organization);
         saveDailyUpdates(organization, organizationDTO);
         saveOpeningHours(organizationDTO.getOpeningHoursByLocation(), locations);
         saveDatesClosed(organizationDTO.getDatesClosedByLocation(), locations);
@@ -562,6 +572,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Set<Service> services = organization.getServices();
         Set<Location> locations = organization.getLocations();
         Set<DailyUpdate> dailyUpdates = organization.getDailyUpdates();
+        Set<Phone> phones = organization.getPhones();
 
         Organization orgClone = new Organization(organization);
         orgClone.setId(null);
@@ -571,6 +582,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         orgClone.setServices(Collections.emptySet());
         orgClone.setLocations(Collections.emptySet());
         orgClone.setDailyUpdates(Collections.emptySet());
+        orgClone.setPhones(Collections.emptySet());
         if (organization.getExternalDbId() != null) {
             orgClone.setExternalDbId(
                 String.join(" - ", organization.getExternalDbId(), organization.getAccount().getName())
@@ -593,13 +605,41 @@ public class OrganizationServiceImpl implements OrganizationService {
             clonedDailyUpdate.add(dailyUpdateService.save(duClone));
         });
 
+        Set<Phone> clonedPhones = new HashSet<>();
+        phones.forEach((Phone phone) -> {
+            Phone phoneClone = new Phone(phone);
+            phone.setOrganization(orgClone);
+            clonedPhones.add(phoneService.save(phoneClone));
+        });
+
         orgClone.setServices(clonedServices);
         orgClone.setLocations(clonedLocations);
         orgClone.setDailyUpdates(clonedDailyUpdate);
+        orgClone.setPhones(clonedPhones);
 
         organization.setReplacedBy(orgClone);
         orgClone.setReplacedBy(organization);
         return orgClone;
+    }
+
+    private void savePhones(ProviderOrganizationDTO organizationDTO, Organization organization) {
+        Set<Phone> phones = new HashSet<>();
+        if (organization.getPhones() != null) {
+            for (Phone phone : organization.getPhones()) {
+                if (phone.getId() != null ) {
+                    phoneService.delete(phone.getId());
+                }
+            }
+        }
+        if (organizationDTO.getPhones() != null) {
+            for (PhoneDTO p : organizationDTO.getPhones()) {
+                if (StringUtils.isNotEmpty(p.getNumber())) {
+                    p.setOrganizationId(organization.getId());
+                    phones.add(phoneService.saveEntity(p));
+                }
+            }
+        }
+        organization.setPhones(phones);
     }
 
     @Override
@@ -685,6 +725,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 service.setLocations(existingService.getLocations());
                 service.setEligibility(existingService.getEligibility());
                 service.setDocs(existingService.getDocs());
+                service.setPhones(existingService.getPhones());
             }
             service.setProviderName(SERVICE_PROVIDER);
             service.setOrganization(organization);
@@ -700,6 +741,9 @@ public class OrganizationServiceImpl implements OrganizationService {
             );
             service.setDocs(
                 saveDocs(serviceDTO, service)
+            );
+            service.setPhones(
+                savePhones(serviceDTO, service)
             );
             services.add(service);
         }
@@ -844,6 +888,26 @@ public class OrganizationServiceImpl implements OrganizationService {
         return docs;
     }
 
+    private Set<Phone> savePhones(ProviderServiceDTO providerServiceDTO, Service service) {
+        Set<Phone> phones = new HashSet<>();
+        if (service.getPhones() != null) {
+            for (Phone phone : service.getPhones()) {
+                if (phone.getId() != null ) {
+                    phoneService.delete(phone.getId());
+                }
+            }
+        }
+        if (providerServiceDTO.getPhones() != null) {
+            for (PhoneDTO p : providerServiceDTO.getPhones()) {
+                if (StringUtils.isNotEmpty(p.getNumber())) {
+                    p.setSrvcId(service.getId());
+                    phones.add(phoneService.saveEntity(p));
+                }
+            }
+        }
+        return phones;
+    }
+
     private Eligibility saveEligibility(Service service, ProviderServiceDTO serviceDTO) {
         Eligibility existingEligibility = service.getEligibility();
         Eligibility eligibility = (existingEligibility != null) ? existingEligibility : new Eligibility();
@@ -948,6 +1012,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             }
             srvClone.setTaxonomies(Collections.emptySet());
             srvClone.setDocs(Collections.emptySet());
+            srvClone.setPhones(Collections.emptySet());
             serviceService.save(srvClone);
 
             Set<ServiceTaxonomy> serviceTaxonomies = service.getTaxonomies();
@@ -1006,6 +1071,17 @@ public class OrganizationServiceImpl implements OrganizationService {
                 clonedDocs.add(docClone);
             });
             srvClone.setDocs(clonedDocs);
+
+            Set<Phone> phones = service.getPhones();
+            Set<Phone> clonedPhones = new HashSet<>();
+            if (phones != null) {
+                phones.forEach((Phone phone) -> {
+                    Phone phoneClone = new Phone(phone);
+                    phone.setSrvc(srvClone);
+                    clonedPhones.add(phoneService.save(phoneClone));
+                });
+                srvClone.setPhones(clonedPhones);
+            }
 
             Eligibility eligibility = service.getEligibility();
             if (eligibility != null) {

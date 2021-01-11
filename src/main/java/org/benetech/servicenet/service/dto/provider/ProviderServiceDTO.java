@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Data;
+import org.benetech.servicenet.service.dto.PhoneDTO;
 
 @Data
 public class ProviderServiceDTO implements Serializable {
@@ -16,6 +17,8 @@ public class ProviderServiceDTO implements Serializable {
     private String name;
 
     private String type;
+
+    private List<PhoneDTO> phones;
 
     private List<String> taxonomyIds;
 
