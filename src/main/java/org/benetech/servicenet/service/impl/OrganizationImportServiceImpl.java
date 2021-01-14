@@ -10,6 +10,7 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationError;
+import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.FundingRepository;
@@ -81,6 +82,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         createOrUpdateFundingForOrganization(filledOrganization.getFunding(), organization);
         createOrUpdateProgramsForOrganization(filledOrganization.getPrograms(), organization);
         createOrUpdateContactsForOrganization(filledOrganization.getContacts(), organization);
+        createOrUpdatePhonesForOrganization(filledOrganization.getPhones(), organization);
 
         organization.setUpdatedAt(ZonedDateTime.now());
         Organization org = em.merge(organization);
@@ -128,6 +130,14 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
             p.setOrganization(organization);
         });
         organization.setContacts(sharedImportService.createOrUpdateContacts(contacts));
+    }
+
+    private void createOrUpdatePhonesForOrganization(Set<Phone> phones, Organization organization) {
+        phones.forEach(p -> {
+            EntityValidator.validateAndFix(p, organization, null, "");
+            p.setOrganization(organization);
+        });
+        sharedImportService.persistPhones(organization.getPhones(), phones);
     }
 
     private void createOrUpdateFilteredProgramsForOrganization(Set<Program> programs, Organization organization) {

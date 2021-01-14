@@ -26,6 +26,8 @@ public final class Constants {
 
     public static final String LAAC_PROVIDER = "LAAC";
 
+    public static final String LINK_FOR_CARE_PROVIDER = "LinkForCare";
+
     public static final String SMC_CONNECT_PROVIDER = "SMCConnect";
 
     public static final String HEALTHLEADS_PROVIDER = "healthleads";

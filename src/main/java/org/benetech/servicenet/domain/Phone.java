@@ -29,6 +29,8 @@ import java.util.Objects;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Phone extends AbstractEntity implements Serializable, DeepComparable {
 
+    public static final String TYPE_PUBLIC = "PUBLIC";
+    public static final String TYPE_TOLL_FREE = "TOLL_FREE";
     private static final long serialVersionUID = 1L;
 
     @NotNull

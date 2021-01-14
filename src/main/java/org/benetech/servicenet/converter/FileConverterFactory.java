@@ -20,6 +20,8 @@ public final class FileConverterFactory {
                 return new CSVFileConverter(delimiter);
             case JSON:
                 return new JSONFileConverter();
+            case XLSX:
+                return new XlsxFileConverter();
             default:
                 throw new IllegalArgumentException("File type not supported");
         }
