@@ -213,4 +213,5 @@
     <include file="config/liquibase/changelog/20201218161139_update_user_profile.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210108164949_update_location.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210108140311_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210114193640_add_linkforcare_systemaccount.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
