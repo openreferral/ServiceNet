@@ -172,6 +172,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             userProfile = userProfileRepository.findOneByLogin(userProfile.getLogin()).orElse(userProfile);
             addUserProfile(organization, userProfile);
         }
+        organization.setUpdatedAt(ZonedDateTime.now());
         organization = organizationRepository.save(organization);
         return organizationMapper.toDto(organization);
     }
@@ -212,6 +213,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             organization.setDailyUpdates(existingOrganization.getDailyUpdates());
             organization.setPhones(existingOrganization.getPhones());
         }
+        organization.setUpdatedAt(ZonedDateTime.now());
         organization = organizationRepository.save(organization);
 
         List<Location> locations = saveLocations(
