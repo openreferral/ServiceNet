@@ -79,7 +79,7 @@ public class ImportServiceImplIntTest {
         org.setLocations(helper.mutableSet(location1, location2));
 
         when(organizationImportService.createOrUpdateOrganization(any(Organization.class), anyString(),
-            anyString(), any(DataImportReport.class))).thenReturn(org);
+            anyString(), any(DataImportReport.class), any())).thenReturn(org);
         when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), any()))
             .thenReturn(location1);
         when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), any()))
@@ -89,10 +89,10 @@ public class ImportServiceImplIntTest {
         when(serviceImportService.createOrUpdateService(any(Service.class), anyString(), anyString(),
             any(DataImportReport.class))).thenReturn(service2);
 
-        importService.createOrUpdateOrganization(org, ORG_ID, new ImportData(new DataImportReport(), PROVIDER, true));
+        importService.createOrUpdateOrganization(org, ORG_ID, new ImportData(new DataImportReport(), PROVIDER, true), true);
 
         verify(organizationImportService)
-            .createOrUpdateOrganization(any(Organization.class), anyString(), anyString(), any(DataImportReport.class));
+            .createOrUpdateOrganization(any(Organization.class), anyString(), anyString(), any(DataImportReport.class), any());
         verify(locationImportService, times(2))
             .createOrUpdateLocation(any(Location.class), anyString(), any());
         verify(serviceImportService, times(2))

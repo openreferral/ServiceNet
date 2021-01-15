@@ -21,9 +21,9 @@ public class ImportManagerImpl implements ImportManager {
 
     @Override
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
-                                                   ImportData importData) {
+                                                   ImportData importData, boolean overwriteLastUpdated) {
         try {
-            return importService.createOrUpdateOrganization(filledOrganization, externalDbId, importData);
+            return importService.createOrUpdateOrganization(filledOrganization, externalDbId, importData, overwriteLastUpdated);
         } catch (Exception e) {
             handleError(e, importData.getReport());
             return null;

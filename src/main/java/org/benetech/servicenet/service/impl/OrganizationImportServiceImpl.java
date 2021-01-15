@@ -53,7 +53,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     @Override
     @Transactional
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
-        String providerName, DataImportReport report) {
+        String providerName, DataImportReport report, boolean overwriteLastUpdated) {
         Organization organization = new Organization(filledOrganization);
         Optional<SystemAccount> systemAccount = systemAccountService.findByName(providerName);
 
@@ -84,7 +84,11 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         createOrUpdateContactsForOrganization(filledOrganization.getContacts(), organization);
         createOrUpdatePhonesForOrganization(filledOrganization.getPhones(), organization);
 
-        organization.setUpdatedAt(ZonedDateTime.now());
+        if (filledOrganization.getUpdatedAt() != null && !overwriteLastUpdated) {
+            organization.setUpdatedAt(filledOrganization.getUpdatedAt());
+        } else {
+            organization.setUpdatedAt(ZonedDateTime.now());
+        }
         Organization org = em.merge(organization);
 
         Set<OrganizationError> errors = new HashSet<>();

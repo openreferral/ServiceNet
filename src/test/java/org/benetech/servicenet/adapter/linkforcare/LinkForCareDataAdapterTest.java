@@ -8,6 +8,9 @@ import static org.benetech.servicenet.config.Constants.LINK_FOR_CARE_PROVIDER;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -75,6 +78,9 @@ public class LinkForCareDataAdapterTest {
             assertEquals("https://asdsdwdw.dwdwd/ddd", dto.getUrl());
             assertEquals("LinkForCare", dto.getAccountName());
             assertEquals("status details, status formula", dto.getCovidProtocols());
+            ZonedDateTime expectedUpdatedAt = ZonedDateTime.of(2019, 5, 3, 19, 19, 19, 0, ZoneId.of("UTC"));
+            assertEquals(expectedUpdatedAt.toInstant(), dto.getUpdatedAt().toInstant());
+            assertEquals(LocalDate.of(2019, 4, 3), organization.getYearIncorporated());
 
             assertEquals(1, dto.getLocations().size());
             ProviderLocationDTO location = dto.getLocations().get(0);

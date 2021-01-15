@@ -9,7 +9,8 @@ import org.benetech.servicenet.domain.Taxonomy;
 
 public interface ImportService {
 
-    Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId, ImportData importData);
+    Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
+        ImportData importData, boolean overwriteLastUpdated);
 
     Taxonomy createOrUpdateTaxonomy(Taxonomy taxonomy, String externalDbId, String providerName,
                                     DataImportReport report);

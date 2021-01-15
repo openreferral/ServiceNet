@@ -115,7 +115,7 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
     }
 
     private void importOrganization(Organization organization, String externalDbId, ImportData importData) {
-        importManager.createOrUpdateOrganization(organization, externalDbId, importData);
+        importManager.createOrUpdateOrganization(organization, externalDbId, importData, false);
     }
 
     private Set<ServiceTaxonomy> getServiceTaxonomiesToPersist(LinkForCareDataMapper mapper, LinkForCareData entity) {
