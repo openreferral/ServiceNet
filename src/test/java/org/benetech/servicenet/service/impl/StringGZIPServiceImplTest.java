@@ -1,7 +1,5 @@
 package org.benetech.servicenet.service.impl;
 
-import static org.apache.commons.codec.binary.Base64.decodeBase64;
-import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -20,9 +18,6 @@ public class StringGZIPServiceImplTest {
     @Autowired
     private StringGZIPService stringGZIPService;
 
-    @Autowired
-    private MongoDbServiceImpl mongoDbService;
-
     private static final String TEST_STRING = "AAAAAABBBBCCCCCC[]{},./;')(*&^%$#@!`~-_=+|\\;:'\",<.>/?";
 
     @Test
@@ -30,14 +25,5 @@ public class StringGZIPServiceImplTest {
         byte [] compressed = stringGZIPService.compress(TEST_STRING);
         String decompressed = stringGZIPService.decompress(compressed);
         assertEquals(TEST_STRING, decompressed);
-
-    }
-
-    @Test
-    public void shouldCompressAndDecompressUsingMongo() throws IOException {
-        byte [] compressed = stringGZIPService.compress(TEST_STRING);
-        String id = mongoDbService.saveParsedDocument(encodeBase64String(compressed));
-        String decompressed = mongoDbService.findParsedDocumentById(id);
-        assertEquals(TEST_STRING, stringGZIPService.decompress(decodeBase64(decompressed)));
     }
 }

@@ -105,7 +105,6 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             return true;
         }
 
-
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now()).systemAccount(providerName);
         List<String> parsedDocuments = new ArrayList<>();
         List<DocumentUpload> documentUploads = new ArrayList<>();
