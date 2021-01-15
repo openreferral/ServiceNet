@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -79,7 +80,7 @@ public class ImportServiceImplIntTest {
         org.setLocations(helper.mutableSet(location1, location2));
 
         when(organizationImportService.createOrUpdateOrganization(any(Organization.class), anyString(),
-            anyString(), any(DataImportReport.class), any())).thenReturn(org);
+            anyString(), any(DataImportReport.class), anyBoolean())).thenReturn(org);
         when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), any()))
             .thenReturn(location1);
         when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), any()))
@@ -92,7 +93,7 @@ public class ImportServiceImplIntTest {
         importService.createOrUpdateOrganization(org, ORG_ID, new ImportData(new DataImportReport(), PROVIDER, true), true);
 
         verify(organizationImportService)
-            .createOrUpdateOrganization(any(Organization.class), anyString(), anyString(), any(DataImportReport.class), any());
+            .createOrUpdateOrganization(any(Organization.class), anyString(), anyString(), any(DataImportReport.class), anyBoolean());
         verify(locationImportService, times(2))
             .createOrUpdateLocation(any(Location.class), anyString(), any());
         verify(serviceImportService, times(2))
