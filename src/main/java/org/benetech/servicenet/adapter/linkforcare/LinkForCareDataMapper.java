@@ -36,7 +36,7 @@ public interface LinkForCareDataMapper {
     Logger LOG = LoggerFactory.getLogger(LinkForCareDataMapper.class);
 
     String YES = "YES";
-    String TRUE = "1";
+    String[] TRUE_VALUES = {"TRUE", "1"};
     String AVAILABLE = "available";
     String SEMICOLON_REPLACEMENT = "__SEMICOLON__";
 
@@ -70,13 +70,13 @@ public interface LinkForCareDataMapper {
         String eligibilityString = Stream.of(
             data.getServiceEligibility(),
             StringUtils.isNotBlank(data.getServiceEligibilityMinAge()) ? "Minimum Age Accepted: " + data.getServiceEligibilityMinAge() : null,
-            StringUtils.equalsIgnoreCase(data.getServiceEligibilityMustBeAmbulatory(), TRUE) ? "Must be ambulatory" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceEligibilityMustMeetAge(), TRUE) ? "Must meet age guidelines" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceEligibilityMustMeetDisability(), TRUE) ? "Must meet disability guidelines" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceEligibilityMustMeetIncome(), TRUE) ? "Must meet income guidelines" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceEligibilityMustBeVeteran(), TRUE) ? "Must be a veteran" : null,
+            isTrue(data.getServiceEligibilityMustBeAmbulatory()) ? "Must be ambulatory" : null,
+            isTrue(data.getServiceEligibilityMustMeetAge()) ? "Must meet age guidelines" : null,
+            isTrue(data.getServiceEligibilityMustMeetDisability()) ? "Must meet disability guidelines" : null,
+            isTrue(data.getServiceEligibilityMustMeetIncome()) ? "Must meet income guidelines" : null,
+            isTrue(data.getServiceEligibilityMustBeVeteran()) ? "Must be a veteran" : null,
             data.getServiceEligibilityOtherRequirements(),
-            StringUtils.equalsIgnoreCase(data.getServiceEligibilitySocialSecurityCard(), TRUE) ? "Social Security Card Required" : null
+            isTrue(data.getServiceEligibilitySocialSecurityCard()) ? "Social Security Card Required" : null
         ).filter(StringUtils::isNotBlank).collect(Collectors.joining(", "));
         if (StringUtils.isBlank(eligibilityString)) {
             return Optional.empty();
@@ -203,15 +203,15 @@ public interface LinkForCareDataMapper {
             data.getServiceTypesProvided(),
             data.getServiceTypesProvidedHealthClinics(),
             data.getServiceTypesProvidedOmh(),
-            StringUtils.equalsIgnoreCase(data.getServiceTypeDialysis(), TRUE) ? "Renal Dialysis" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceTypeResidential(), TRUE) ? "Residential Health Care" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceTypeRespiratory(), TRUE) ? "Respiratory Therapists" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceTypeRespite(), TRUE) ? "Respite Care" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceTypeSkilledNursing(), TRUE) ? "Skilled Nursing and Therapy Services" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceTypeTransportation(), TRUE) ? "Transportation" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceTypeVeterans(), TRUE) ? "Veterans" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceTypeVocational(), TRUE) ? "Vocational Work Program" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceTypeWellness(), TRUE) ? "Wellness Facility" : null
+            isTrue(data.getServiceTypeDialysis()) ? "Renal Dialysis" : null,
+            isTrue(data.getServiceTypeResidential()) ? "Residential Health Care" : null,
+            isTrue(data.getServiceTypeRespiratory()) ? "Respiratory Therapists" : null,
+            isTrue(data.getServiceTypeRespite()) ? "Respite Care" : null,
+            isTrue(data.getServiceTypeSkilledNursing()) ? "Skilled Nursing and Therapy Services" : null,
+            isTrue(data.getServiceTypeTransportation()) ? "Transportation" : null,
+            isTrue(data.getServiceTypeVeterans()) ? "Veterans" : null,
+            isTrue(data.getServiceTypeVocational()) ? "Vocational Work Program" : null,
+            isTrue(data.getServiceTypeWellness()) ? "Wellness Facility" : null
         ).filter(StringUtils::isNotBlank)
             .flatMap(s -> Arrays.stream(s.split(";")))
             .filter(StringUtils::isNotBlank)
@@ -239,8 +239,8 @@ public interface LinkForCareDataMapper {
             availableIfNotBlank(data.getServiceDescriptionLiveInCare(), "Live In Care"),
             availableIfNotBlank(data.getServiceDescriptionMealsServed()),
             availableIfNotBlank(data.getServiceDescriptionMissouriCounties(), "Missouri Counties Served"),
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionMustSchedule24h(), TRUE) ? "Must Schedule 24 Hrs Or More In Advance" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionMustSchedule48h(), TRUE) ? "Must Schedule 48 Hrs Or More In Advance" : null,
+            isTrue(data.getServiceDescriptionMustSchedule24h()) ? "Must Schedule 24 Hrs Or More In Advance" : null,
+            isTrue(data.getServiceDescriptionMustSchedule48h()) ? "Must Schedule 48 Hrs Or More In Advance" : null,
             data.getServiceDescriptionOtherLanguages(),
             data.getServiceDescriptionOtherOptions(),
             data.getServiceDescriptionOtherProvidedSpecialityCare(),
@@ -255,39 +255,42 @@ public interface LinkForCareDataMapper {
             availableIfTrue(data.getServiceDescriptionPsychoanalyst(), "Psychoanalyst"),
             availableIfTrue(data.getServiceDescriptionPsychologist(), "Psychologist"),
             availableIfTrue(data.getServiceDescriptionPsychotherapist(), "Psychotherapist"),
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionDieticians(), TRUE) ? "Registered Dietitians" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionNurseOnCall(), TRUE) ? "Registered Nurse On Call" : null,
+            isTrue(data.getServiceDescriptionDieticians()) ? "Registered Dietitians" : null,
+            isTrue(data.getServiceDescriptionNurseOnCall()) ? "Registered Nurse On Call" : null,
             prefixIfNotBlank(data.getServiceDescriptionSatopClasses(), "Services Provided"),
             data.getServiceDescriptionAppointmentFormula(),
             data.getServiceDescriptionHoursDetails(),
             prefixIfNotBlank(data.getServiceDescriptionInhomeNonmedFormula(), "Services Provided"),
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionSingleFamily1Bedroom(), TRUE) ? "Single Family Homes/Villas 1 Bedroom" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionSingleFamily2Bedrooms(), TRUE) ? "Single Family Homes/Villas 2 Bedrooms" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionSingleFamily3Bedrooms(), TRUE) ? "Single Family Homes/Villas 3 Bedrooms" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionSkilledNursingFacility(), TRUE) ? "Skilled Nursing Facility" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionSnacks(), TRUE) ? "Snacks Provided" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionSocialWorkers(), TRUE) ? "Social Workers" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionSpanish(), TRUE) ? "Spanish" : null,
+            isTrue(data.getServiceDescriptionSingleFamily1Bedroom()) ? "Single Family Homes/Villas 1 Bedroom" : null,
+            isTrue(data.getServiceDescriptionSingleFamily2Bedrooms()) ? "Single Family Homes/Villas 2 Bedrooms" : null,
+            isTrue(data.getServiceDescriptionSingleFamily3Bedrooms()) ? "Single Family Homes/Villas 3 Bedrooms" : null,
+            isTrue(data.getServiceDescriptionSkilledNursingFacility()) ? "Skilled Nursing Facility" : null,
+            isTrue(data.getServiceDescriptionSnacks()) ? "Snacks Provided" : null,
+            isTrue(data.getServiceDescriptionSocialWorkers()) ? "Social Workers" : null,
+            isTrue(data.getServiceDescriptionSpanish()) ? "Spanish" : null,
             data.getServiceDescriptionSpecialityCareFormula(),
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionSpeechTherapists(), TRUE) ? "Speech Language Therapists" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionStateLicensed(), TRUE) ? "State Licensed" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionStress(), TRUE) ? "Stress and Trauma" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescriptionStroke(), TRUE) ? "Stroke Neurological Rehabilitation" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescription247MultipleShift(), TRUE) ? "24/7 Multiple Shift Care" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescription24HourCrisis(), TRUE) ? "24 Hour Crisis Services" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescription24HourPersonnel(), TRUE) ? "24 Hour Security Personnel" : null,
-            StringUtils.equalsIgnoreCase(data.getServiceDescription24HourSupportive(), TRUE) ? "24 Hour Supportive Services" : null,
+            isTrue(data.getServiceDescriptionSpeechTherapists()) ? "Speech Language Therapists" : null,
+            isTrue(data.getServiceDescriptionStateLicensed()) ? "State Licensed" : null,
+            isTrue(data.getServiceDescriptionStress()) ? "Stress and Trauma" : null,
+            isTrue(data.getServiceDescriptionStroke()) ? "Stroke Neurological Rehabilitation" : null,
+            isTrue(data.getServiceDescription247MultipleShift()) ? "24/7 Multiple Shift Care" : null,
+            isTrue(data.getServiceDescription24HourCrisis()) ? "24 Hour Crisis Services" : null,
+            isTrue(data.getServiceDescription24HourPersonnel()) ? "24 Hour Security Personnel" : null,
+            isTrue(data.getServiceDescription24HourSupportive()) ? "24 Hour Supportive Services" : null,
             StringUtils.isNotBlank(data.getServiceDescriptionVisitationRestrictions())
                 ? data.getServiceDescriptionVisitationRestrictions()
                 .replaceFirst(";", SEMICOLON_REPLACEMENT)
                 .replaceAll(";", ",")
                 .replaceFirst(SEMICOLON_REPLACEMENT, ";")
                 : null
-            ).filter(StringUtils::isNotBlank).collect(Collectors.joining(", "));
+            ).filter(StringUtils::isNotBlank)
+            // remove the leading ; and trim the section
+            .map(section -> section.startsWith(";") ? section.substring(1).trim() : section.trim())
+            .collect(Collectors.joining(", "));
     }
 
     private String availableIfTrue(String s, String label) {
-        return StringUtils.isNotBlank(s) ? StringUtils.join(label, " ", AVAILABLE) : null;
+        return isTrue(s) ? StringUtils.join(label, " ", AVAILABLE) : null;
     }
 
     private String availableIfNotBlank(String s) {
@@ -301,5 +304,9 @@ public interface LinkForCareDataMapper {
 
     private String prefixIfNotBlank(String s, String prefix) {
         return StringUtils.isNotBlank(s) ? StringUtils.join(prefix + ": ", s) : null;
+    }
+
+    private boolean isTrue(String value) {
+        return Arrays.stream(TRUE_VALUES).anyMatch(t -> t.equalsIgnoreCase(value));
     }
 }

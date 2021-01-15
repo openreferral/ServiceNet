@@ -14,7 +14,9 @@ import org.benetech.servicenet.adapter.AdapterTestsUtils;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.converter.XlsxFileConverter;
 import org.benetech.servicenet.domain.DataImportReport;
+import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.ServiceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +37,12 @@ public class LinkForCareDataAdapterTest {
     private OrganizationService organizationService;
 
     @Autowired
+    private ServiceService serviceService;
+
+    @Autowired
+    private LocationService locationService;
+
+    @Autowired
     private TestDatabaseManagement testDatabaseManagement;
 
     @Before
@@ -52,8 +60,11 @@ public class LinkForCareDataAdapterTest {
         adapter.importData(importData);
         assertExtractedOrganization();
     }
+
     private void assertExtractedOrganization() {
         assertEquals(1, organizationService.findAll().size());
+        assertEquals(1, serviceService.findAll().size());
+        assertEquals(1, locationService.findAll().size());
         // TODO: check all the fields
     }
 }
