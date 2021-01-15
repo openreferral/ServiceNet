@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.apache.commons.codec.binary.Base64.encodeBase64String;
+
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -23,6 +25,7 @@ import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.MongoDbService;
+import org.benetech.servicenet.service.StringGZIPService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
@@ -62,6 +65,9 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private StringGZIPService stringGZIPService;
+
     @Override
     public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter, String providerName)
         throws IllegalArgumentException, IOException {
@@ -69,7 +75,8 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .systemAccount(providerName);
 
         String parsedDocument = FileConverterFactory.getConverter(file, delimiter).convert(file);
-        String parsedDocumentId = mongoDbService.saveParsedDocument(parsedDocument);
+        byte[] parseDocumentBytes = stringGZIPService.compress(parsedDocument);
+        String parsedDocumentId = mongoDbService.saveParsedDocument(encodeBase64String(parseDocumentBytes));
         String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
 
         DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
@@ -91,13 +98,13 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
 
     @Override
     public boolean processFiles(final List<FileInfo> fileInfoList, final String providerName) {
-
         Optional<MultipleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getMultipleDataAdapter(providerName);
         if (adapter.isEmpty()) {
             // No need to process files again if provider is not of MultipleDataAdapter type
             return true;
         }
+
 
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now()).systemAccount(providerName);
         List<String> parsedDocuments = new ArrayList<>();

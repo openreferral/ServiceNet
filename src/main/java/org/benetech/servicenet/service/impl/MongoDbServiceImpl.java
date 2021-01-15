@@ -1,16 +1,25 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.apache.commons.codec.binary.Base64.decodeBase64;
+import static org.apache.commons.codec.binary.Base64.encodeBase64String;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
+import java.io.IOException;
 import org.benetech.servicenet.service.MongoDbService;
+import org.benetech.servicenet.service.StringGZIPService;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MongoDbServiceImpl implements MongoDbService {
+
+    private final Logger log = LoggerFactory.getLogger(ContactServiceImpl.class);
 
     private static final String DOCUMENTS_COLLECTION = "documents";
     private static final String DETAIL = "detail";
@@ -21,9 +30,18 @@ public class MongoDbServiceImpl implements MongoDbService {
     @Autowired
     private MongoDbFactory mongoDbFactory;
 
+    @Autowired
+    private StringGZIPService stringGZIPService;
+
     @Override
-    public String saveParsedDocument(String file) {
-        return saveDocument(file, true);
+    public String saveParsedDocument(String data)  {
+        try {
+            byte[] compressed = stringGZIPService.compress(data);
+            return saveDocument(encodeBase64String(compressed), true);
+        } catch (IOException e) {
+            log.debug("Error while saving parsed document", e);
+            return null;
+        }
     }
 
     @Override
@@ -38,7 +56,13 @@ public class MongoDbServiceImpl implements MongoDbService {
 
     @Override
     public String findParsedDocumentById(String id) {
-        return findDocumentById(id).toString();
+        String dataFromDb = findDocumentById(id).toString();
+        try {
+            return stringGZIPService.decompress(decodeBase64(dataFromDb));
+        } catch (IOException e) {
+            log.debug("Error while reading parsed document", e);
+            return null;
+        }
     }
 
     private Object findDocumentById(String id) {
