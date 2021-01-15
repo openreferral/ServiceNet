@@ -43,9 +43,9 @@ public class ImportServiceImpl implements ImportService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
-                                                   ImportData importData) {
+                                                   ImportData importData, boolean overwriteLastUpdated) {
         Organization organization = organizationImportService.createOrUpdateOrganization(
-            filledOrganization, externalDbId, importData.getProviderName(), importData.getReport());
+            filledOrganization, externalDbId, importData.getProviderName(), importData.getReport(), overwriteLastUpdated);
 
         if (organization != null) {
             importLocations(filledOrganization.getLocations(), organization, importData);
@@ -86,6 +86,7 @@ public class ImportServiceImpl implements ImportService {
             service.setOrganization(org);
             savedServices.add(createOrUpdateService(service, service.getExternalDbId(), providerName, report));
         }
+        org.setServices(savedServices);
         org.setServices(savedServices);
     }
 

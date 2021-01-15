@@ -96,7 +96,7 @@ public interface LinkForCareDataMapper {
             organization.setYearIncorporated(ZonedDateTime.parse(data.getOrganizationCreatedDate()).toLocalDate());
         }
         if (StringUtils.isNotBlank(data.getOrganizationModifiedDate())) {
-            organization.setUpdatedAt(ZonedDateTime.parse(data.getOrganizationCreatedDate()));
+            organization.setUpdatedAt(ZonedDateTime.parse(data.getOrganizationModifiedDate()));
         }
         organization.setUrl(data.getOrganizationWebsite());
         organization.setDescription(data.getOrganizationDescription());
@@ -285,7 +285,7 @@ public interface LinkForCareDataMapper {
                 : null
             ).filter(StringUtils::isNotBlank)
             // remove the leading ; and trim the section
-            .map(section -> section.startsWith(";") ? section.substring(1).trim() : section.trim())
+            .map(section -> section.charAt(0) == ';' ? section.substring(1).trim() : section.trim())
             .collect(Collectors.joining(", "));
     }
 

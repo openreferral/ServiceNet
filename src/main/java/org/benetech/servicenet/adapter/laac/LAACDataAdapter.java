@@ -85,7 +85,7 @@ public class LAACDataAdapter extends SingleDataAdapter {
     }
 
     private Organization importOrganization(Organization organization, String externalDbId, ImportData importData) {
-        return importManager.createOrUpdateOrganization(organization, externalDbId, importData);
+        return importManager.createOrUpdateOrganization(organization, externalDbId, importData, true);
     }
 
     private Set<ServiceTaxonomy> getServiceTaxonomiesToPersist(LAACData entity) {

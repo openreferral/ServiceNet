@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.CascadeType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -169,12 +167,6 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     private String covidProtocols;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-
-    @PrePersist
-    @PreUpdate
-    public void addTimestamp() {
-        updatedAt = ZonedDateTime.now();
-    }
 
     public Organization(Organization org) {
         this.name = org.name;
