@@ -37,6 +37,7 @@ public interface LinkForCareDataMapper {
 
     String YES = "YES";
     String[] TRUE_VALUES = {"TRUE", "1"};
+    String[] FALSE_VALUES = {"FALSE", "0"};
     String AVAILABLE = "available";
     String SEMICOLON_REPLACEMENT = "__SEMICOLON__";
 
@@ -257,10 +258,10 @@ public interface LinkForCareDataMapper {
             availableIfTrue(data.getServiceDescriptionPsychotherapist(), "Psychotherapist"),
             isTrue(data.getServiceDescriptionDieticians()) ? "Registered Dietitians" : null,
             isTrue(data.getServiceDescriptionNurseOnCall()) ? "Registered Nurse On Call" : null,
-            prefixIfNotBlank(data.getServiceDescriptionSatopClasses(), "Services Provided"),
+            prefixIfNotBlankOrFalse(data.getServiceDescriptionSatopClasses(), "Services Provided"),
             data.getServiceDescriptionAppointmentFormula(),
             data.getServiceDescriptionHoursDetails(),
-            prefixIfNotBlank(data.getServiceDescriptionInhomeNonmedFormula(), "Services Provided"),
+            prefixIfNotBlankOrFalse(data.getServiceDescriptionInhomeNonmedFormula(), "Services Provided"),
             isTrue(data.getServiceDescriptionSingleFamily1Bedroom()) ? "Single Family Homes/Villas 1 Bedroom" : null,
             isTrue(data.getServiceDescriptionSingleFamily2Bedrooms()) ? "Single Family Homes/Villas 2 Bedrooms" : null,
             isTrue(data.getServiceDescriptionSingleFamily3Bedrooms()) ? "Single Family Homes/Villas 3 Bedrooms" : null,
@@ -306,7 +307,15 @@ public interface LinkForCareDataMapper {
         return StringUtils.isNotBlank(s) ? StringUtils.join(prefix + ": ", s) : null;
     }
 
+    private String prefixIfNotBlankOrFalse(String s, String prefix) {
+        return StringUtils.isNotBlank(s) && !isFalse(s) ? StringUtils.join(prefix + ": ", s) : null;
+    }
+
     private boolean isTrue(String value) {
         return Arrays.stream(TRUE_VALUES).anyMatch(t -> t.equalsIgnoreCase(value));
+    }
+
+    private boolean isFalse(String value) {
+        return Arrays.stream(FALSE_VALUES).anyMatch(t -> t.equalsIgnoreCase(value));
     }
 }
