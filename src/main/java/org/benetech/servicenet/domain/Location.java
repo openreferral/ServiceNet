@@ -160,6 +160,7 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
         this.organization = loc.organization;
         this.lastVerifiedOn = loc.lastVerifiedOn;
         this.updatedAt = loc.updatedAt;
+        this.open247 = loc.open247;
     }
 
     public LatLng getCoordinates() {

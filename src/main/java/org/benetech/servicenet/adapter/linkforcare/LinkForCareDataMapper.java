@@ -119,6 +119,7 @@ public interface LinkForCareDataMapper {
 
         location.setExternalDbId(data.getOrganizationId());
         location.setProviderName(LINK_FOR_CARE_PROVIDER);
+        location.setOpen247(StringUtils.equalsIgnoreCase(YES, data.getService247()));
         RegularSchedule regularSchedule = extractRegularSchedule(data);
         location.setRegularSchedule(regularSchedule);
         // TODO: set location remote service checkbox once #1321 is done
@@ -177,7 +178,6 @@ public interface LinkForCareDataMapper {
 
         service.setName(data.getServiceName());
         service.setApplicationProcess(data.getServiceApplicationProcess());
-        location.setOpen247(data.getService247().equalsIgnoreCase(YES));
         service.setDocs(extractRequiredDocuments(data));
         service.setDescription(extractServiceDescription(data));
 
