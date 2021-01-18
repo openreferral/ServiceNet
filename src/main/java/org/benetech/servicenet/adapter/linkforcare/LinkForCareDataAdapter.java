@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.linkforcare.model.LinkForCareData;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
@@ -25,23 +26,24 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.type.ListType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component("LinkForCareDataAdapter")
 public class LinkForCareDataAdapter extends SingleDataAdapter {
-
-    private final Logger log = LoggerFactory.getLogger(LinkForCareDataAdapter.class);
 
     @Autowired
     private ImportManager importManager;
 
+    @Autowired private TransactionSynchronizationService transactionSynchronizationService;
+
     @Override
     public DataImportReport importData(SingleImportData data) {
         Gson gson = new Gson();
+        DataImportReport report;
         if (data.getData() != null) {
             try (JsonReader reader = new JsonReader(new FileReader(data.getData()))) {
                 reader.beginArray();
@@ -53,12 +55,14 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
-            return data.getReport();
+            report = data.getReport();
         } else {
             List<LinkForCareData> entities = gson.fromJson(data.getSingleObjectData(), new ListType<>(LinkForCareData.class));
 
-            return persistLinkForCareData(entities, data);
+            report = persistLinkForCareData(entities, data);
         }
+        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        return report;
     }
 
     private void persistLinkForCareData(LinkForCareData entity, ImportData importData) {

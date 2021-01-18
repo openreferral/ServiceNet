@@ -22,6 +22,7 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolComplexResponseElement
 import org.benetech.servicenet.adapter.icarol.model.ICarolSimpleResponseElement;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.service.MongoDbService;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.impl.DocumentUploadServiceImpl;
 import org.junit.AfterClass;
@@ -57,6 +58,10 @@ public class AbstractDataAdapterDocumentUploadTest {
 
     @MockBean
     private MongoDbService mongoDbService;
+
+    @SuppressWarnings("PMD.UnusedPrivateField")
+    @MockBean
+    private TransactionSynchronizationService transactionSynchronizationService;
 
     @Autowired
     @InjectMocks

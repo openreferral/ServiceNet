@@ -11,7 +11,6 @@ import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
-import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -50,9 +49,6 @@ public class ImportServiceImplIntTest {
 
     @Mock
     private ServiceImportService serviceImportService;
-
-    @Mock
-    private TransactionSynchronizationService transactionSynchronizationService;
 
     @Mock
     private TaxonomyImportService taxonomyImportService;
@@ -98,8 +94,6 @@ public class ImportServiceImplIntTest {
             .createOrUpdateLocation(any(Location.class), anyString(), any());
         verify(serviceImportService, times(2))
             .createOrUpdateService(any(Service.class), anyString(), anyString(), any(DataImportReport.class));
-        verify(transactionSynchronizationService)
-            .registerSynchronizationOfMatchingOrganizations(any(Organization.class));
     }
 
     @Test

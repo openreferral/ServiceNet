@@ -112,7 +112,7 @@ public class MatchingAccuracyIntTest {
         importShelterTechData();
         importSmcConnectData();
         for (Organization org : organizationService.findAll()) {
-            organizationMatchService.createOrUpdateOrganizationMatches(org);
+            organizationMatchService.createOrUpdateOrganizationMatches(org.getId());
         }
     }
 

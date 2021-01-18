@@ -14,8 +14,8 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.FundingRepository;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.OrganizationImportService;
-import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
@@ -39,7 +39,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     private EntityManager em;
 
     @Autowired
-    private OrganizationService organizationService;
+    private OrganizationRepository organizationRepository;
 
     @Autowired
     private SystemAccountService systemAccountService;
@@ -65,16 +65,18 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         EntityValidator.validateAndFix(organization, filledOrganization, report, externalDbId);
 
         Optional<Organization> organizationFromDb =
-            organizationService.findWithEagerAssociations(externalDbId, providerName);
+            organizationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, providerName);
         if (organizationFromDb.isPresent()) {
             if (organizationFromDb.get().deepEquals(filledOrganization)) {
                 log.info("Organization " + organization.getName() + " didn't change, skipping");
                 return null;
             }
             fillDataFromDb(organization, organizationFromDb.get());
+            organization.setNeedsMatching(true);
             em.merge(organization);
             report.incrementNumberOfUpdatedOrgs();
         } else {
+            organization.setNeedsMatching(true);
             em.persist(organization);
             report.incrementNumberOfCreatedOrgs();
         }
