@@ -249,13 +249,30 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Async
     @Override
-    public void createOrUpdateOrganizationMatches(Organization organization) {
-        createOrUpdateOrganizationMatchesSynchronously(organization);
+    public void createOrUpdateOrganizationMatches() {
+        Optional<Organization> organizationOptional = organizationService.findFirstThatNeedsMatching();
+        while (organizationOptional.isPresent()) {
+            Long total = organizationService.countOrganizationsByNeedsMatching();
+            createOrUpdateOrganizationMatchesSynchronously(organizationOptional.get().getId(), total);
+            organizationOptional = organizationService.findFirstThatNeedsMatching();
+        }
+    }
+
+    @Async
+    @Override
+    public void createOrUpdateOrganizationMatches(UUID organizationId) {
+        createOrUpdateOrganizationMatchesSynchronously(organizationId, null);
     }
 
     @Override
-    public void createOrUpdateOrganizationMatchesSynchronously(Organization organization) {
-        log.info(organization.getName() + ": Updating organization matches");
+    public void createOrUpdateOrganizationMatchesSynchronously(UUID organizationId, Long total) {
+        Organization organization = organizationService.findOneWithEagerAssociations(organizationId);
+        if (total != null) {
+            log.info(organization.getName() + ": Updating organization matches, " + total
+                + " remaining.");
+        } else {
+            log.info(organization.getName() + ": Updating organization matches");
+        }
         List<OrganizationMatch> matches = findCurrentMatches(organization);
         List<OrganizationMatch> partnerMatches = findCurrentPartnersMatches(organization);
         if (organization.getActive()) {
@@ -267,9 +284,11 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             for (UUID matchId : hiddenMatchesIds) {
                 revertHideOrganizationMatch(matchId);
             }
-            List<Organization> partnerOrganizations = findOrganizationsExcept(organization.getAccount().getName());
+            List<Organization> partnerOrganizations = findOrganizationsExcept(
+                organization.getAccount().getName());
 
-            List<OrganizationMatch> currentMatches = findAndPersistMatches(organization, partnerOrganizations);
+            List<OrganizationMatch> currentMatches = findAndPersistMatches(organization,
+                partnerOrganizations);
             removeObsoleteMatches(currentMatches, matches);
             removeObsoleteMatches(currentMatches, partnerMatches);
 
@@ -278,6 +297,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             removeMatches(matches);
             removeMatches(partnerMatches);
         }
+        organization.setNeedsMatching(false);
+        organizationService.save(organization);
     }
 
     private void removeObsoleteMatches(List<OrganizationMatch> matches, List<OrganizationMatch> previousMatches) {
@@ -396,7 +417,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     }
 
     private List<Organization> findOrganizationsExcept(String providerName) {
-        return organizationService.findAllOthersExcept(providerName, new ArrayList<>());
+        return organizationService.findAllOthers(providerName);
     }
 
     private List<OrganizationMatch> findAndPersistMatches(Organization organization,

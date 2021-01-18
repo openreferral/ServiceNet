@@ -7,7 +7,9 @@ import java.io.IOException;
 public class JSONFileConverter extends AbstractFileConverter {
 
     @Override
-    public String convert(MultipartFile file) throws IOException {
-        return new String(file.getBytes());
+    public ImportData convert(MultipartFile file) throws IOException {
+        ImportData conversionOutput = new ImportData();
+        conversionOutput.setJson(new String(file.getBytes()));
+        return conversionOutput;
     }
 }

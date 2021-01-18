@@ -30,6 +30,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +45,15 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
     @Autowired
     private ImportManager importManager;
 
+    @Autowired
+    private TransactionSynchronizationService transactionSynchronizationService;
+
     @Override
     @Transactional
     public DataImportReport importData(SingleImportData importData) {
         ShelterTechRawData data = ShelterTechParser.collectData(importData.getSingleObjectData());
         persistOrganizations(data, importData);
+        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
 
         return importData.getReport();
     }

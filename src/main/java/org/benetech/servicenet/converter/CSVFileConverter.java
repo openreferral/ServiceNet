@@ -66,7 +66,9 @@ public class CSVFileConverter extends AbstractFileConverter {
     }
 
     @Override
-    public String convert(MultipartFile file) throws IOException {
-        return convert(file.getInputStream());
+    public ImportData convert(MultipartFile file) throws IOException {
+        ImportData conversionOutput = new ImportData();
+        conversionOutput.setJson(convert(file.getInputStream()));
+        return conversionOutput;
     }
 }

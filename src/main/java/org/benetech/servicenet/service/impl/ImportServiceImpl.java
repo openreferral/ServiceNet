@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
@@ -11,7 +12,6 @@ import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
-import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,11 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Component
 public class ImportServiceImpl implements ImportService {
-
-    @Autowired
-    private TransactionSynchronizationService transactionSynchronizationService;
 
     @Autowired
     private OrganizationImportService organizationImportService;
@@ -51,8 +49,6 @@ public class ImportServiceImpl implements ImportService {
             importLocations(filledOrganization.getLocations(), organization, importData);
             importServices(filledOrganization.getServices(), organization,
                 importData.getProviderName(), importData.getReport());
-
-            registerSynchronizationOfMatchingOrganizations(organization);
         }
         return organization;
     }
@@ -97,9 +93,5 @@ public class ImportServiceImpl implements ImportService {
             savedLocations.add(createOrUpdateLocation(location, location.getExternalDbId(), importData));
         }
         org.setLocations(savedLocations);
-    }
-
-    private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
-        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
     }
 }

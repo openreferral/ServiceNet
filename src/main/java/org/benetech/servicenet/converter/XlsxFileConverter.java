@@ -24,11 +24,14 @@ public class XlsxFileConverter extends AbstractFileConverter {
         return convert(xlsx);
     }
 
-    public String convert(InputStream is) throws IOException, OpenXML4JException, SAXException {
+    public ImportData convert(InputStream is) throws IOException, OpenXML4JException, SAXException {
         File xlsx = StreamUtils.stream2file(is);
         is.close();
-        File json = convert(xlsx);
-        return Files.readString(Paths.get(json.getPath()));
+        File jsonFile = convert(xlsx);
+        ImportData conversionOutput = new ImportData();
+        conversionOutput.setTemporaryFile(jsonFile);
+        conversionOutput.setJson(Files.readString(Paths.get(jsonFile.getPath())));
+        return conversionOutput;
     }
 
     public File convert(File xlsx) throws IOException, OpenXML4JException, SAXException {
@@ -38,7 +41,7 @@ public class XlsxFileConverter extends AbstractFileConverter {
     }
 
     @Override
-    public String convert(MultipartFile file) throws IOException {
+    public ImportData convert(MultipartFile file) throws IOException {
         try {
             return convert(file.getInputStream());
         } catch (OpenXML4JException | SAXException e) {

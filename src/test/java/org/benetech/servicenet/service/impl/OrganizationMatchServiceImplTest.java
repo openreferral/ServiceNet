@@ -129,7 +129,7 @@ public class OrganizationMatchServiceImplTest {
         when(organizationSimilarityCounter.getTotalWeight(similarities)).thenReturn(totalWeight);
 
         int dbSize = organizationMatchService.findAll().size();
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1.getId());
         List<OrganizationMatchDTO> matches = organizationMatchService.findAll();
 
         assertEquals(dbSize + 2, matches.size());
@@ -161,7 +161,7 @@ public class OrganizationMatchServiceImplTest {
         when(organizationSimilarityCounter.getTotalWeight(any())).thenReturn(TOTAL_WEIGHT);
 
         int dbSize = organizationMatchService.findAll().size();
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1.getId());
 
         assertEquals(dbSize, organizationMatchService.findAll().size());
     }
@@ -181,7 +181,7 @@ public class OrganizationMatchServiceImplTest {
 
         when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(RATIO);
 
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1.getId());
 
         assertEquals(0, organizationMatchService.findAll().size());
     }

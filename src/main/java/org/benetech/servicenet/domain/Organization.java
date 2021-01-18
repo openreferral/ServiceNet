@@ -91,6 +91,10 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Column(name = "active", nullable = false)
     private Boolean active = true;
 
+    @NotNull
+    @Column(name = "needs_matching", nullable = false)
+    private Boolean needsMatching = true;
+
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 

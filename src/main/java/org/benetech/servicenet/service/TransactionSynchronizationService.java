@@ -1,8 +1,9 @@
 package org.benetech.servicenet.service;
 
-import org.benetech.servicenet.domain.Organization;
+import java.util.UUID;
 
 public interface TransactionSynchronizationService {
+    void updateOrganizationMatchesWithoutSynchronization();
 
-    void registerSynchronizationOfMatchingOrganizations(Organization organization);
+    void registerSynchronizationOfMatchingOrganizations(UUID organizationId);
 }

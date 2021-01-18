@@ -173,6 +173,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             addUserProfile(organization, userProfile);
         }
         organization.setUpdatedAt(ZonedDateTime.now());
+        organization.setNeedsMatching(true);
         organization = organizationRepository.save(organization);
         return organizationMapper.toDto(organization);
     }
@@ -259,6 +260,19 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<Organization> findFirstThatNeedsMatching() {
+        log.debug("Request to get all Organizations");
+        return organizationRepository.findFirstByNeedsMatchingIsTrue();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countOrganizationsByNeedsMatching() {
+        return organizationRepository.countOrganizationsByNeedsMatchingIsTrue();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<OrganizationOptionDTO> findAllOptions() {
         log.debug("Request to get all Organizations");
         return organizationRepository.findAll().stream()
@@ -313,6 +327,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         } else {
             return organizationRepository.findAllByProviderNameNot(providerName);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UUID> findAllOtherIds(String providerName) {
+        return organizationRepository.findAllIdsByProviderNameNot(providerName);
     }
 
     /**
@@ -677,7 +697,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
-        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization.getId());
     }
 
     private List<Location> saveLocations(Organization organization, List<ProviderLocationDTO> dtos) {
@@ -1225,7 +1245,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     private void addUserProfile(Organization organization, UserProfile userProfile) {
         if (organization.getId() != null) {
             Organization existingOrganization = organizationRepository
-                .findOneWithEagerAssociations(organization.getId());
+                .findOneWithEagerProfileAndLocations(organization.getId());
             organization.setUserProfiles(existingOrganization.getUserProfiles());
         }
         Set<UserProfile> userProfiles = organization.getUserProfiles() != null ? organization.getUserProfiles() : new HashSet<>();
