@@ -38,7 +38,6 @@ public interface LinkForCareDataMapper {
     String YES = "YES";
     String[] TRUE_VALUES = {"TRUE", "1"};
     String[] FALSE_VALUES = {"FALSE", "0"};
-    String AVAILABLE = "available";
     String SEMICOLON_REPLACEMENT = "__SEMICOLON__";
 
     default Optional<Phone> extractPhone(LinkForCareData data) {
@@ -225,37 +224,37 @@ public interface LinkForCareDataMapper {
             data.getServiceDescriptionAgeExceptions(),
             prefixIfNotBlank(data.getServiceDescriptionConditionsTreated(), "Conditions Treated"),
             prefixIfNotBlank(data.getServiceDescriptionContiesServed(), "Counties Served"),
-            availableIfTrue(data.getServiceDescriptionInCenterHemodialysis(), "In Center Hemodialysis"),
-            availableIfTrue(data.getServiceDescriptionInCenterNocturnalDialysis(), "In Center Nocturnal Dialysis"),
-            availableIfTrue(data.getServiceDescriptionInHome(), "In Home Non Medical Services"),
-            availableIfTrue(data.getServiceDescriptionInUnit(), "In Unit Washer and Dryer"),
+            labelIfTrue(data.getServiceDescriptionInCenterHemodialysis(), "In Center Hemodialysis"),
+            labelIfTrue(data.getServiceDescriptionInCenterNocturnalDialysis(), "In Center Nocturnal Dialysis"),
+            labelIfTrue(data.getServiceDescriptionInHome(), "In Home Non Medical Services"),
+            labelIfTrue(data.getServiceDescriptionInUnit(), "In Unit Washer and Dryer"),
             prefixIfNotBlank(data.getServiceDescriptionKansasCountiesServed(), "Kansas Counties Served"),
             prefixIfNotBlank(data.getServiceDescriptionLanguagesSpoken(), "Languages Spoken By Staff"),
-            availableIfNotBlank(data.getServiceDescriptionLaundry(), "Laundry Services"),
-            availableIfNotBlank(data.getServiceDescriptionLengthOfService()),
-            availableIfNotBlank(data.getServiceDescriptionLicensedNurses(), "Licensed Practical Nurses"),
-            availableIfNotBlank(data.getServiceDescriptionProfessionalCounselor(), "Licensed Professional Counselor"),
-            availableIfNotBlank(data.getServiceDescriptionLicensedStaff(), "Licensed Staff on Duty 24/7"),
-            availableIfNotBlank(data.getServiceDescriptionLightHousekeeping(), "Light Housekeeping"),
-            availableIfNotBlank(data.getServiceDescriptionLiveInCare(), "Live In Care"),
-            availableIfNotBlank(data.getServiceDescriptionMealsServed()),
-            availableIfNotBlank(data.getServiceDescriptionMissouriCounties(), "Missouri Counties Served"),
+            labelIfNotBlank(data.getServiceDescriptionLaundry(), "Laundry Services"),
+            ifNotBlank(data.getServiceDescriptionLengthOfService()),
+            labelIfNotBlank(data.getServiceDescriptionLicensedNurses(), "Licensed Practical Nurses"),
+            labelIfNotBlank(data.getServiceDescriptionProfessionalCounselor(), "Licensed Professional Counselor"),
+            labelIfNotBlank(data.getServiceDescriptionLicensedStaff(), "Licensed Staff on Duty 24/7"),
+            labelIfNotBlank(data.getServiceDescriptionLightHousekeeping(), "Light Housekeeping"),
+            labelIfNotBlank(data.getServiceDescriptionLiveInCare(), "Live In Care"),
+            ifNotBlank(data.getServiceDescriptionMealsServed()),
+            labelIfNotBlank(data.getServiceDescriptionMissouriCounties(), "Missouri Counties Served"),
             isTrue(data.getServiceDescriptionMustSchedule24h()) ? "Must Schedule 24 Hrs Or More In Advance" : null,
             isTrue(data.getServiceDescriptionMustSchedule48h()) ? "Must Schedule 48 Hrs Or More In Advance" : null,
             data.getServiceDescriptionOtherLanguages(),
             data.getServiceDescriptionOtherOptions(),
             data.getServiceDescriptionOtherProvidedSpecialityCare(),
             data.getServiceDescriptionOtherProvided(),
-            availableIfTrue(data.getServiceDescriptionPetCare(), "Pet Care"),
-            availableIfTrue(data.getServiceDescriptionPetTherapy(), "Pet Therapy"),
-            availableIfTrue(data.getServiceDescriptionPharmacyServices(), "Pharmacy Services"),
-            availableIfTrue(data.getServiceDescriptionPhysicalTherapists(), "Physical Therapists"),
-            availableIfTrue(data.getServiceDescriptionPhysicians(), "Physicians"),
-            availableIfTrue(data.getServiceDescriptionPsychiatricNurse(), "Psychiatric Nurse"),
-            availableIfTrue(data.getServiceDescriptionPsychiatrist(), "Psychiatrist"),
-            availableIfTrue(data.getServiceDescriptionPsychoanalyst(), "Psychoanalyst"),
-            availableIfTrue(data.getServiceDescriptionPsychologist(), "Psychologist"),
-            availableIfTrue(data.getServiceDescriptionPsychotherapist(), "Psychotherapist"),
+            labelIfTrue(data.getServiceDescriptionPetCare(), "Pet Care"),
+            labelIfTrue(data.getServiceDescriptionPetTherapy(), "Pet Therapy"),
+            labelIfTrue(data.getServiceDescriptionPharmacyServices(), "Pharmacy Services"),
+            labelIfTrue(data.getServiceDescriptionPhysicalTherapists(), "Physical Therapists"),
+            labelIfTrue(data.getServiceDescriptionPhysicians(), "Physicians"),
+            labelIfTrue(data.getServiceDescriptionPsychiatricNurse(), "Psychiatric Nurse"),
+            labelIfTrue(data.getServiceDescriptionPsychiatrist(), "Psychiatrist"),
+            labelIfTrue(data.getServiceDescriptionPsychoanalyst(), "Psychoanalyst"),
+            labelIfTrue(data.getServiceDescriptionPsychologist(), "Psychologist"),
+            labelIfTrue(data.getServiceDescriptionPsychotherapist(), "Psychotherapist"),
             isTrue(data.getServiceDescriptionDieticians()) ? "Registered Dietitians" : null,
             isTrue(data.getServiceDescriptionNurseOnCall()) ? "Registered Nurse On Call" : null,
             prefixIfNotBlankOrFalse(data.getServiceDescriptionSatopClasses(), "Services Provided"),
@@ -290,17 +289,16 @@ public interface LinkForCareDataMapper {
             .collect(Collectors.joining(", "));
     }
 
-    private String availableIfTrue(String s, String label) {
-        return isTrue(s) ? StringUtils.join(label, " ", AVAILABLE) : null;
+    private String labelIfTrue(String s, String label) {
+        return isTrue(s) ? label : null;
     }
 
-    private String availableIfNotBlank(String s) {
-        return StringUtils.isNotBlank(s) ? StringUtils.join(s, " ", AVAILABLE) : null;
+    private String ifNotBlank(String s) {
+        return StringUtils.isNotBlank(s) ? s : null;
     }
 
-    private String availableIfNotBlank(String s, String label) {
-        String l = StringUtils.isNotBlank(label) ? label : s;
-        return StringUtils.isNotBlank(s) ? StringUtils.join(l, " ", AVAILABLE) : null;
+    private String labelIfNotBlank(String s, String label) {
+        return StringUtils.isNotBlank(s) ? label : null;
     }
 
     private String prefixIfNotBlank(String s, String prefix) {
