@@ -11,6 +11,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
+import org.benetech.servicenet.repository.LocationMatchRepository;
 import org.benetech.servicenet.repository.MatchSimilarityRepository;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.MatchSimilarityService;
@@ -18,6 +19,7 @@ import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.DismissMatchDTO;
+import org.benetech.servicenet.service.dto.LocationMatchDto;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMatchMapper;
@@ -64,7 +66,9 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private final BigDecimal orgMatchThreshold;
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
+    private final LocationMatchRepository locationMatchRepository;
+
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
     public OrganizationMatchServiceImpl(OrganizationMatchRepository organizationMatchRepository,
                                         OrganizationMatchMapper organizationMatchMapper,
                                         OrganizationService organizationService,
@@ -73,6 +77,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
                                         UserService userService,
                                         MatchSimilarityService matchSimilarityService,
                                         MatchSimilarityRepository matchSimilarityRepository,
+                                        LocationMatchRepository locationMatchRepository,
                                         @Value("${similarity-ratio.config.organization-match-threshold}")
                                             BigDecimal orgMatchThreshold) {
         this.organizationMatchRepository = organizationMatchRepository;
@@ -84,6 +89,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         this.orgMatchThreshold = orgMatchThreshold;
         this.matchSimilarityService = matchSimilarityService;
         this.matchSimilarityRepository = matchSimilarityRepository;
+        this.locationMatchRepository = locationMatchRepository;
     }
 
     /**
@@ -428,13 +434,17 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         log.debug("Searching for matches for " + organization.getAccount().getName() + "'s organization '" +
             organization.getName() + "' has started. There are "
             + partnerOrganizations.size() + " organizations to compare with");
+        List<LocationMatchDto> locationMatchesToRemove = new ArrayList<>();
         for (Organization partner : partnerOrganizations) {
             List<MatchSimilarityDTO> similarityDTOs = organizationSimilarityCounter
                 .getMatchSimilarityDTOs(organization, partner);
+            similarityDTOs.stream().filter(dto -> dto.getMatchesToRemove() != null)
+                .forEach(dto -> locationMatchesToRemove.addAll(dto.getMatchesToRemove()));
             if (isSimilar(similarityDTOs)) {
                 matches.addAll(createOrganizationMatches(organization, partner, similarityDTOs));
             }
         }
+        locationMatchRepository.deleteInBatchByLocationAndMatchingLocationIds(locationMatchesToRemove);
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
         //TODO: Remove time counting logic (#264)
