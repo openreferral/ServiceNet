@@ -26,6 +26,7 @@ public class MongoDbServiceImpl implements MongoDbService {
     private static final String ID = "_id";
     private static final String DATA = "data";
     private static final String PARSED = "parsed";
+    private static final String COMPRESSED = "compressed";
 
     @Autowired
     private MongoDbFactory mongoDbFactory;
@@ -37,7 +38,7 @@ public class MongoDbServiceImpl implements MongoDbService {
     public String saveParsedDocument(String data)  {
         try {
             byte[] compressed = stringGZIPService.compress(data);
-            return saveDocument(encodeBase64String(compressed), true);
+            return saveDocument(encodeBase64String(compressed), true, true);
         } catch (IOException e) {
             log.debug("Error while saving parsed document", e);
             return null;
@@ -46,7 +47,7 @@ public class MongoDbServiceImpl implements MongoDbService {
 
     @Override
     public String saveOriginalDocument(byte[] bytes) {
-        return saveDocument(bytes, false);
+        return saveDocument(bytes, false, false);
     }
 
     @Override
@@ -74,12 +75,13 @@ public class MongoDbServiceImpl implements MongoDbService {
         return document.get(DATA);
     }
 
-    private String saveDocument(Object file, boolean isParsed) {
+    private String saveDocument(Object file, boolean isParsed, boolean isCompressed) {
         Document document = new Document();
 
         BasicDBObject documentDetail = new BasicDBObject();
         documentDetail.put(DATA, file);
         documentDetail.put(PARSED, isParsed);
+        documentDetail.put(COMPRESSED, isCompressed);
         document.put(DETAIL, documentDetail);
         ObjectId id = new ObjectId();
         document.put(ID, id);
