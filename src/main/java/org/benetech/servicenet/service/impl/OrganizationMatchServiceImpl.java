@@ -2,8 +2,12 @@ package org.benetech.servicenet.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
@@ -24,6 +28,7 @@ import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.benetech.servicenet.service.mapper.OrganizationMatchMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -68,6 +73,10 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     private final LocationMatchRepository locationMatchRepository;
 
+    private final EntityManager entityManager;
+
+    private final DataSource dataSource;
+
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
     public OrganizationMatchServiceImpl(OrganizationMatchRepository organizationMatchRepository,
                                         OrganizationMatchMapper organizationMatchMapper,
@@ -78,6 +87,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
                                         MatchSimilarityService matchSimilarityService,
                                         MatchSimilarityRepository matchSimilarityRepository,
                                         LocationMatchRepository locationMatchRepository,
+                                        EntityManager entityManager,
+                                        DataSource dataSource,
                                         @Value("${similarity-ratio.config.organization-match-threshold}")
                                             BigDecimal orgMatchThreshold) {
         this.organizationMatchRepository = organizationMatchRepository;
@@ -90,6 +101,8 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         this.matchSimilarityService = matchSimilarityService;
         this.matchSimilarityRepository = matchSimilarityRepository;
         this.locationMatchRepository = locationMatchRepository;
+        this.entityManager = entityManager;
+        this.dataSource = dataSource;
     }
 
     /**
@@ -256,11 +269,25 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
     @Async
     @Override
     public void createOrUpdateOrganizationMatches() {
-        Optional<Organization> organizationOptional = organizationService.findFirstThatNeedsMatching();
-        while (organizationOptional.isPresent()) {
-            Long total = organizationService.countOrganizationsByNeedsMatching();
-            createOrUpdateOrganizationMatchesSynchronously(organizationOptional.get().getId(), total);
-            organizationOptional = organizationService.findFirstThatNeedsMatching();
+        try (Connection connection = DataSourceUtils.getConnection(dataSource)) {
+            connection.setAutoCommit(false);
+            Optional<Organization> organizationOptional = organizationService
+                .findFirstThatNeedsMatching();
+            while (organizationOptional.isPresent()) {
+                Long total = organizationService.countOrganizationsByNeedsMatching();
+                try {
+                    createOrUpdateOrganizationMatchesSynchronously(
+                        organizationOptional.get().getId(),
+                        total);
+                    connection.commit();
+                } catch (SQLException matchingException) {
+                    connection.rollback();
+                    log.error(matchingException.getMessage(), matchingException);
+                }
+                organizationOptional = organizationService.findFirstThatNeedsMatching();
+            }
+        } catch (SQLException sqlEx) {
+            log.error(sqlEx.getMessage(), sqlEx);
         }
     }
 
@@ -305,6 +332,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         }
         organization.setNeedsMatching(false);
         organizationService.save(organization);
+        entityManager.flush();
     }
 
     private void removeObsoleteMatches(List<OrganizationMatch> matches, List<OrganizationMatch> previousMatches) {
