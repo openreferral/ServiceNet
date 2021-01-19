@@ -83,7 +83,6 @@ public class ImportServiceImpl implements ImportService {
             savedServices.add(createOrUpdateService(service, service.getExternalDbId(), providerName, report));
         }
         org.setServices(savedServices);
-        org.setServices(savedServices);
     }
 
     private void importLocations(Set<Location> locations, Organization org, ImportData importData) {

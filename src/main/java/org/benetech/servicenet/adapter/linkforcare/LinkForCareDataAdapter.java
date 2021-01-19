@@ -69,8 +69,8 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
         LinkForCareDataMapper mapper = LinkForCareDataMapper.INSTANCE;
         try {
             Location location = getLocationToPersist(mapper, entity);
-            Service service = getServiceToPersist(mapper, entity, location);
             Set<Phone> phones = getPhonesToPersist(mapper, entity);
+            Service service = getServiceToPersist(mapper, entity, location);
             Organization organization = getOrganizationToPersist(mapper, entity, location, service, phones);
             importOrganization(organization, entity.getOrganizationId(), importData);
         } catch (Exception e) {
@@ -115,6 +115,9 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
         Service service = mapper.extractService(entity, location);
         mapper.extractEligibility(entity).ifPresent(service::setEligibility);
         service.setTaxonomies(getServiceTaxonomiesToPersist(mapper, entity));
+        Set<Phone> servicePhones = getPhonesToPersist(mapper, entity);
+        servicePhones.forEach(phone -> phone.setSrvc(service));
+        service.setPhones(servicePhones);
         return service;
     }
 

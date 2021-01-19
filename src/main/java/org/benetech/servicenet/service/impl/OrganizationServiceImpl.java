@@ -612,9 +612,9 @@ public class OrganizationServiceImpl implements OrganizationService {
         orgClone.setReplacedBy(null);
         organizationRepository.save(orgClone);
 
-        Set<Service> clonedServices = cloneServices(services, orgClone);
-
         Set<Location> clonedLocations = cloneLocations(locations, orgClone);
+
+        Set<Service> clonedServices = cloneServices(services, orgClone, clonedLocations);
 
         HashSet<DailyUpdate> clonedDailyUpdate = new HashSet<>();
         dailyUpdates.forEach((DailyUpdate dailyUpdate) -> {
@@ -1019,7 +1019,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
     }
 
-    private Set<Service> cloneServices(Set<Service> services, Organization orgClone) {
+    @SuppressWarnings("PMD.NPathComplexity")
+    private Set<Service> cloneServices(Set<Service> services, Organization orgClone, Set<Location> locations) {
         Set<Service> clonedServices = new HashSet<>();
         services.forEach((Service service) -> {
             Service srvClone = new Service(service);
@@ -1112,7 +1113,24 @@ public class OrganizationServiceImpl implements OrganizationService {
                 eligibilityService.save(clonedEligibility);
                 srvClone.setEligibility(clonedEligibility);
             }
-            clonedServices.add(serviceService.save(srvClone));
+
+            Set<ServiceAtLocation> sats = new HashSet<>();
+            for (ServiceAtLocation sat : service.getLocations()) {
+                Optional<Location> loc = locations.stream()
+                    .filter(l -> l.getExternalDbId() != null
+                        && l.getExternalDbId().startsWith(sat.getLocation().getExternalDbId()))
+                    .findFirst();
+                if (loc.isPresent()) {
+                    ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
+                    serviceAtLocation.setProviderName(SERVICE_PROVIDER);
+                    serviceAtLocation.setLocation(loc.get());
+                    sats.add(serviceAtLocationService.save(serviceAtLocation));
+                }
+            }
+            srvClone.setLocations(sats);
+            Service savedSvc = serviceService.save(srvClone);
+            savedSvc.getLocations().forEach(sat -> sat.setSrvc(savedSvc));
+            clonedServices.add(savedSvc);
         });
         return clonedServices;
     }
@@ -1237,6 +1255,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 em.persist(gr);
             });
 
+            em.persist(locClone);
             clonedLocations.add(locClone);
         });
         return clonedLocations;
