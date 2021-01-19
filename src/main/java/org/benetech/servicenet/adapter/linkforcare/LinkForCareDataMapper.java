@@ -222,23 +222,23 @@ public interface LinkForCareDataMapper {
         return Stream.of(
             data.getServiceDescriptionAge(),
             data.getServiceDescriptionAgeExceptions(),
-            prefixIfNotBlank(data.getServiceDescriptionConditionsTreated(), "Conditions Treated"),
-            prefixIfNotBlank(data.getServiceDescriptionContiesServed(), "Counties Served"),
+            prefixIfNotBlankOrFalse(data.getServiceDescriptionConditionsTreated(), "Conditions Treated"),
+            prefixIfNotBlankOrFalse(data.getServiceDescriptionContiesServed(), "Counties Served"),
             labelIfTrue(data.getServiceDescriptionInCenterHemodialysis(), "In Center Hemodialysis"),
             labelIfTrue(data.getServiceDescriptionInCenterNocturnalDialysis(), "In Center Nocturnal Dialysis"),
             labelIfTrue(data.getServiceDescriptionInHome(), "In Home Non Medical Services"),
             labelIfTrue(data.getServiceDescriptionInUnit(), "In Unit Washer and Dryer"),
-            prefixIfNotBlank(data.getServiceDescriptionKansasCountiesServed(), "Kansas Counties Served"),
-            prefixIfNotBlank(data.getServiceDescriptionLanguagesSpoken(), "Languages Spoken By Staff"),
-            labelIfNotBlank(data.getServiceDescriptionLaundry(), "Laundry Services"),
-            ifNotBlank(data.getServiceDescriptionLengthOfService()),
-            labelIfNotBlank(data.getServiceDescriptionLicensedNurses(), "Licensed Practical Nurses"),
-            labelIfNotBlank(data.getServiceDescriptionProfessionalCounselor(), "Licensed Professional Counselor"),
-            labelIfNotBlank(data.getServiceDescriptionLicensedStaff(), "Licensed Staff on Duty 24/7"),
-            labelIfNotBlank(data.getServiceDescriptionLightHousekeeping(), "Light Housekeeping"),
-            labelIfNotBlank(data.getServiceDescriptionLiveInCare(), "Live In Care"),
-            ifNotBlank(data.getServiceDescriptionMealsServed()),
-            labelIfNotBlank(data.getServiceDescriptionMissouriCounties(), "Missouri Counties Served"),
+            prefixIfNotBlankOrFalse(data.getServiceDescriptionKansasCountiesServed(), "Kansas Counties Served"),
+            prefixIfNotBlankOrFalse(data.getServiceDescriptionLanguagesSpoken(), "Languages Spoken By Staff"),
+            labelIfNotBlankOrFalse(data.getServiceDescriptionLaundry(), "Laundry Services"),
+            ifNotBlankOrFalse(data.getServiceDescriptionLengthOfService()),
+            labelIfNotBlankOrFalse(data.getServiceDescriptionLicensedNurses(), "Licensed Practical Nurses"),
+            labelIfNotBlankOrFalse(data.getServiceDescriptionProfessionalCounselor(), "Licensed Professional Counselor"),
+            labelIfNotBlankOrFalse(data.getServiceDescriptionLicensedStaff(), "Licensed Staff on Duty 24/7"),
+            labelIfNotBlankOrFalse(data.getServiceDescriptionLightHousekeeping(), "Light Housekeeping"),
+            labelIfNotBlankOrFalse(data.getServiceDescriptionLiveInCare(), "Live In Care"),
+            ifNotBlankOrFalse(data.getServiceDescriptionMealsServed()),
+            labelIfNotBlankOrFalse(data.getServiceDescriptionMissouriCounties(), "Missouri Counties Served"),
             isTrue(data.getServiceDescriptionMustSchedule24h()) ? "Must Schedule 24 Hrs Or More In Advance" : null,
             isTrue(data.getServiceDescriptionMustSchedule48h()) ? "Must Schedule 48 Hrs Or More In Advance" : null,
             data.getServiceDescriptionOtherLanguages(),
@@ -293,27 +293,23 @@ public interface LinkForCareDataMapper {
         return isTrue(s) ? label : null;
     }
 
-    private String ifNotBlank(String s) {
-        return StringUtils.isNotBlank(s) ? s : null;
+    private String ifNotBlankOrFalse(String s) {
+        return StringUtils.isNotBlank(s) && isNotFalse(s) ? s : null;
     }
 
-    private String labelIfNotBlank(String s, String label) {
-        return StringUtils.isNotBlank(s) ? label : null;
-    }
-
-    private String prefixIfNotBlank(String s, String prefix) {
-        return StringUtils.isNotBlank(s) ? StringUtils.join(prefix + ": ", s) : null;
+    private String labelIfNotBlankOrFalse(String s, String label) {
+        return StringUtils.isNotBlank(s) && isNotFalse(s) ? label : null;
     }
 
     private String prefixIfNotBlankOrFalse(String s, String prefix) {
-        return StringUtils.isNotBlank(s) && !isFalse(s) ? StringUtils.join(prefix + ": ", s) : null;
+        return StringUtils.isNotBlank(s) ? StringUtils.join(prefix + ": ", s) : null;
     }
 
     private boolean isTrue(String value) {
         return Arrays.stream(TRUE_VALUES).anyMatch(t -> t.equalsIgnoreCase(value));
     }
 
-    private boolean isFalse(String value) {
-        return Arrays.stream(FALSE_VALUES).anyMatch(t -> t.equalsIgnoreCase(value));
+    private boolean isNotFalse(String value) {
+        return Arrays.stream(FALSE_VALUES).noneMatch(t -> t.equalsIgnoreCase(value));
     }
 }
