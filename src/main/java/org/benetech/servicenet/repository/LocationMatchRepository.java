@@ -16,13 +16,15 @@ import java.util.UUID;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface LocationMatchRepository extends JpaRepository<LocationMatch, UUID> {
+public interface LocationMatchRepository extends JpaRepository<LocationMatch, UUID>, LocationMatchRepositoryCustom {
     Set<LocationMatch> findByLocationId(UUID locationId);
 
     @Query("SELECT locationMatch FROM LocationMatch locationMatch "
         + "WHERE locationMatch.location.id = :locationId AND locationMatch.matchingLocation.id = :matchingLocationId")
     Optional<LocationMatch> findByLocationIdAndMatchingLocationId(@Param("locationId") UUID locationId,
         @Param("matchingLocationId") UUID matchingLocationId);
+
+    boolean existsByLocationIdAndMatchingLocationId(UUID locationId, UUID matchingLocationId);
 
     void deleteByLocationIdAndMatchingLocationId(UUID locationId, UUID matchingLocationId);
 

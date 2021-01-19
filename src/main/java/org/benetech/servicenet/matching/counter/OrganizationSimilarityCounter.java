@@ -3,12 +3,14 @@ package org.benetech.servicenet.matching.counter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.BooleanUtils;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.LocationMatch;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.LocationMatchService;
+import org.benetech.servicenet.service.dto.LocationMatchDto;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -172,8 +174,14 @@ public class OrganizationSimilarityCounter extends AbstractSimilarityCounter<Org
                     mirrorMatch.setMatchingLocation(location1);
                     locationMatchService.saveOrUpdate(mirrorMatch);
                 } else if (location1 != null && location2 != null) {
-                    locationMatchService.delete(location1.getId(), location2.getId());
-                    locationMatchService.delete(location2.getId(), location1.getId());
+
+                    LocationMatchDto match = new LocationMatchDto();
+                    match.setLocation(location1.getId());
+                    match.setMatchingLocation(location2.getId());
+                    LocationMatchDto mirrorMatch = new LocationMatchDto();
+                    mirrorMatch.setLocation(location2.getId());
+                    mirrorMatch.setMatchingLocation(location1.getId());
+                    similarityDto.setMatchesToRemove(Arrays.asList(match, mirrorMatch));
                 }
             }
         }

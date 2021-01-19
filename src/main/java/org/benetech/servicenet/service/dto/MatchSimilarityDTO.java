@@ -2,12 +2,15 @@ package org.benetech.servicenet.service.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.Data;
 
 /**
  * A DTO for the {@link org.benetech.servicenet.domain.MatchSimilarity} entity.
  */
+@Data
 public class MatchSimilarityDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -23,6 +26,8 @@ public class MatchSimilarityDTO implements Serializable {
     private UUID organizationMatchId;
 
     private BigDecimal weight;
+
+    List<LocationMatchDto> matchesToRemove;
 
     public UUID getId() {
         return id;

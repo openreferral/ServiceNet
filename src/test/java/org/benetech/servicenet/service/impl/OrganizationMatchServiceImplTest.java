@@ -17,6 +17,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.mother.OrganizationMother;
+import org.benetech.servicenet.repository.LocationMatchRepository;
 import org.benetech.servicenet.repository.MatchSimilarityRepository;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.MatchSimilarityService;
@@ -79,6 +80,9 @@ public class OrganizationMatchServiceImplTest {
     @Autowired
     private MatchSimilarityRepository matchSimilarityRepository;
 
+    @Autowired
+    private LocationMatchRepository locationMatchRepository;
+
     private OrganizationMatchService organizationMatchService;
 
     @Autowired
@@ -100,7 +104,7 @@ public class OrganizationMatchServiceImplTest {
         organizationMatchService = new OrganizationMatchServiceImpl(organizationMatchRepository,
             organizationMatchMapper, organizationService, organizationSimilarityCounter,
             conflictDetectionService, userService, matchSimilarityService,
-            matchSimilarityRepository, THRESHOLD);
+            matchSimilarityRepository, locationMatchRepository, THRESHOLD);
         MatchSimilarityDTO completeSimilarity = new MatchSimilarityDTO();
         completeSimilarity.setSimilarity(BigDecimal.ONE);
         MATCHING_SIMILARITY_DTOS.add(completeSimilarity);
