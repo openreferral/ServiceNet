@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.MatchSimilarity;
@@ -88,6 +89,9 @@ public class OrganizationMatchServiceImplTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private DataSource dataSource;
+
     @Configuration
     static class AsyncConfiguration {
         @Bean(name = "taskExecutor")
@@ -104,7 +108,7 @@ public class OrganizationMatchServiceImplTest {
         organizationMatchService = new OrganizationMatchServiceImpl(organizationMatchRepository,
             organizationMatchMapper, organizationService, organizationSimilarityCounter,
             conflictDetectionService, userService, matchSimilarityService,
-            matchSimilarityRepository, locationMatchRepository, THRESHOLD);
+            matchSimilarityRepository, locationMatchRepository, em, dataSource, THRESHOLD);
         MatchSimilarityDTO completeSimilarity = new MatchSimilarityDTO();
         completeSimilarity.setSimilarity(BigDecimal.ONE);
         MATCHING_SIMILARITY_DTOS.add(completeSimilarity);
