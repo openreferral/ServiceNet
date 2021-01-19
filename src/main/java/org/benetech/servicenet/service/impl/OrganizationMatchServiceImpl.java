@@ -281,7 +281,6 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
                         total);
                     connection.commit();
                 } catch (SQLException matchingException) {
-                    connection.rollback();
                     log.error(matchingException.getMessage(), matchingException);
                 }
                 organizationOptional = organizationService.findFirstThatNeedsMatching();

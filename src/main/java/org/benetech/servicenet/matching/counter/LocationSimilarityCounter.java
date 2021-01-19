@@ -70,10 +70,10 @@ public class LocationSimilarityCounter extends AbstractSimilarityCounter<Locatio
             || location1.getPhysicalAddress().getCity() == null && location2.getPhysicalAddress().getCity() == null) {
             return false;
         }
-        return location1.getPhysicalAddress().getPostalCode()
-            .equalsIgnoreCase(location2.getPhysicalAddress().getPostalCode()) ||
-            location1.getPhysicalAddress().getCity()
-            .equalsIgnoreCase(location2.getPhysicalAddress().getCity());
+        return StringUtils.equalsIgnoreCase(
+            location1.getPhysicalAddress().getPostalCode(), location2.getPhysicalAddress().getPostalCode())
+            || StringUtils.equalsIgnoreCase(
+                location1.getPhysicalAddress().getCity(), location2.getPhysicalAddress().getCity());
     }
 
     private BigDecimal countRatioBetweenGeocodingResults(List<GeocodingResult> baseGeocoding,
