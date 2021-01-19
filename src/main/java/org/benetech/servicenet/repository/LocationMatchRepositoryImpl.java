@@ -15,7 +15,7 @@ import org.benetech.servicenet.service.dto.LocationMatchDto;
 
 
 public class LocationMatchRepositoryImpl implements LocationMatchRepositoryCustom {
-    public static final Integer QUERY_PREDICATE_CHUNK_SIZE = 512;
+    public static final Integer QUERY_PREDICATE_CHUNK_SIZE = 256;
 
     private final EntityManager em;
     private final CriteriaBuilder cb;
