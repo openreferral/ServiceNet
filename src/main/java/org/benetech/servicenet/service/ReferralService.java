@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beneficiary;
+import org.benetech.servicenet.domain.Organization;
+import org.benetech.servicenet.service.dto.CheckInsAndReferralsMadeForRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 
@@ -68,4 +70,12 @@ public interface ReferralService {
     Page<ReferralMadeToUserDTO> getReferralsMadeToUser(String status, Pageable pageable);
 
     List<OrganizationOptionDTO> getOrganizationOptionsForCurrentUser();
+
+    Integer getCheckInsToRecordCount(Organization record);
+
+    Integer getReferralsToRecordCount(Organization record);
+
+    Integer getReferralsFromRecordCount(Organization record);
+
+    CheckInsAndReferralsMadeForRecordDTO getReferralsMadeForRecord(UUID recordId);
 }

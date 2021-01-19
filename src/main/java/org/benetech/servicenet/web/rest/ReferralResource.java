@@ -10,6 +10,7 @@ import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.CheckInsAndReferralsMadeForRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 
@@ -273,5 +274,17 @@ public class ReferralResource {
         return ResponseEntity.ok().body(
             referralService.getOrganizationOptionsForCurrentUser()
         );
+    }
+
+    /**
+     * {@code GET  /referrals/made-for-record} : Gets number of made referrals and check ins to/from given record
+     *
+     * @param recordId id of record.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and CheckInsAndReferralsMadeForRecordDTO in body.
+     */
+    @GetMapping("/referrals/made-for-record")
+    public ResponseEntity<CheckInsAndReferralsMadeForRecordDTO> numberOfCheckInsMadeForRecord(@RequestParam UUID recordId) {
+        CheckInsAndReferralsMadeForRecordDTO checkInsAndReferralsMadeForRecordDTO = referralService.getReferralsMadeForRecord(recordId);
+        return ResponseEntity.ok().body(checkInsAndReferralsMadeForRecordDTO);
     }
 }

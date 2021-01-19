@@ -18,6 +18,7 @@ import org.benetech.servicenet.domain.Referral;
 import org.benetech.servicenet.repository.ReferralRepository;
 import org.benetech.servicenet.service.SmsService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.CheckInsAndReferralsMadeForRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.ReferralDTO;
 import org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO;
@@ -232,5 +233,34 @@ public class ReferralServiceImpl implements ReferralService {
     public List<OrganizationOptionDTO> getOrganizationOptionsForCurrentUser() {
         UserProfile currentUser = userService.getCurrentUserProfile();
         return referralRepository.getMadeToOptionsForCurrentUser(currentUser);
+    }
+
+    @Override
+    public Integer getCheckInsToRecordCount(Organization record) {
+        List<Referral> checkIns = referralRepository.findAllToAndFrom(record);
+        return checkIns.size();
+    }
+
+    @Override
+    public Integer getReferralsToRecordCount(Organization record) {
+        List<Referral> referrals =  referralRepository.findAllToAndNotFrom(record);
+        return referrals.size();
+    }
+
+    @Override
+    public Integer getReferralsFromRecordCount(Organization record) {
+        List<Referral> referrals =  referralRepository.findAllFromAndNotTo(record);
+        return referrals.size();
+    }
+
+    @Override
+    public CheckInsAndReferralsMadeForRecordDTO getReferralsMadeForRecord(UUID recordId) {
+        Organization record = organizationRepository.getOne(recordId);
+        return new CheckInsAndReferralsMadeForRecordDTO(
+            recordId,
+            getCheckInsToRecordCount(record),
+            getReferralsToRecordCount(record),
+            getReferralsFromRecordCount(record)
+        );
     }
 }
