@@ -1,10 +1,9 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
@@ -58,9 +57,10 @@ public class ImportServiceImpl implements ImportService {
             organizationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, importData.getProviderName());
         Set<UUID> locIds = new HashSet<>();
         organizationFromDb.ifPresent(
-            organization -> organization.getLocations().stream().map(Location::getId).forEach(
-                locIds::add
-            ));
+            organization -> organization.getLocations().stream()
+                .map(Location::getId)
+                .filter(Objects::nonNull)
+                .forEach(locIds::add));
         Organization organization = organizationImportService.createOrUpdateOrganization(
             filledOrganization, organizationFromDb.orElse(null), externalDbId, importData.getProviderName(), importData.getReport(), overwriteLastUpdated);
 

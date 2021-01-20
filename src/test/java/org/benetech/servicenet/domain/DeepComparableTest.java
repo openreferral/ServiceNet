@@ -10,6 +10,7 @@ public class DeepComparableTest {
     private static final String LOC_1_NAME = "Location 1";
     private static final String LOC_2_NAME = "Location 1";
     private static final String LOC_3_NAME = "Location 3";
+    private static final String LOC_4_NAME = "Location 4";
     private static final String ORG_1_NAME = "Organization 1";
     private static final String ORG_2_NAME = "Organization 2";
 
@@ -35,8 +36,8 @@ public class DeepComparableTest {
     @Test
     public void organizationsWithTheSameNamesAndDifferentLocationsShouldNotBeDeepEqual() {
         Location loc1 = mockLocation(LOC_1_NAME);
-        Location loc2 = mockLocation(LOC_2_NAME);
-        Location loc3 = mockLocation(LOC_3_NAME);
+        Location loc2 = mockLocation(LOC_3_NAME);
+        Location loc3 = mockLocation(LOC_4_NAME);
 
         Organization org1 = mockOrganization(ORG_1_NAME, new Location[]{loc1, loc2});
         Organization org2 = mockOrganization(ORG_1_NAME, new Location[]{loc1, loc3});
