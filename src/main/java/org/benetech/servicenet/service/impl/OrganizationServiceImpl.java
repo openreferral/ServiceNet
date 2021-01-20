@@ -28,6 +28,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.PhysicalAddress;
 import org.benetech.servicenet.domain.PostalAddress;
+import org.benetech.servicenet.domain.Referral;
 import org.benetech.servicenet.domain.RegularSchedule;
 import org.benetech.servicenet.domain.RequiredDocument;
 import org.benetech.servicenet.domain.Service;
@@ -42,6 +43,7 @@ import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.OrganizationErrorRepository;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.repository.OrganizationRepository;
+import org.benetech.servicenet.repository.ReferralRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.DailyUpdateService;
@@ -84,6 +86,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationRepository organizationRepository;
 
+    private final ReferralRepository referralRepository;
+
     private final OrganizationMapper organizationMapper;
 
     private final ServiceMapper serviceMapper;
@@ -123,7 +127,8 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final EntityManager em;
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository, ReferralRepository referralRepository,
+        OrganizationMapper organizationMapper,
         UserService userService, TransactionSynchronizationService transactionSynchronizationService,
         ServiceMapper serviceMapper, LocationMapper locationMapper, LocationService locationService,
         ServiceService serviceService, ServiceAtLocationService serviceAtLocationService,
@@ -134,6 +139,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         PhoneService phoneService,
         OrganizationErrorRepository organizationErrorRepository, EntityManager em) {
         this.organizationRepository = organizationRepository;
+        this.referralRepository = referralRepository;
         this.organizationMapper = organizationMapper;
         this.userService = userService;
         this.transactionSynchronizationService = transactionSynchronizationService;
@@ -678,6 +684,25 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization orgToUnclaim = organizationRepository.getOne(recordToUnclaim);
         Organization originalOrg = organizationRepository.getOne(orgToUnclaim.getReplacedBy().getId());
         originalOrg.setReplacedBy(null);
+
+        List<Referral> checkIns = referralRepository.findAllToAndFrom(orgToUnclaim);
+        checkIns.forEach(checkIn -> {
+            checkIn.setFrom(originalOrg);
+            checkIn.setTo(originalOrg);
+            referralRepository.save(checkIn);
+        });
+
+        List<Referral> referralsTo = referralRepository.findAllToAndNotFrom(orgToUnclaim);
+        referralsTo.forEach(referral -> {
+            referral.setTo(originalOrg);
+            referralRepository.save(referral);
+        });
+
+        List<Referral> referralsFrom = referralRepository.findAllFromAndNotTo(orgToUnclaim);
+        referralsFrom.forEach(referral -> {
+            referral.setFrom(originalOrg);
+            referralRepository.save(referral);
+        });
 
         organizationRepository.save(originalOrg);
         delete(recordToUnclaim);
