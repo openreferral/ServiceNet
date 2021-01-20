@@ -302,7 +302,7 @@ public interface LinkForCareDataMapper {
     }
 
     private String prefixIfNotBlankOrFalse(String s, String prefix) {
-        return StringUtils.isNotBlank(s) ? StringUtils.join(prefix + ": ", s) : null;
+        return StringUtils.isNotBlank(s) && isNotFalse(s) ? StringUtils.join(prefix + ": ", s) : null;
     }
 
     private boolean isTrue(String value) {
