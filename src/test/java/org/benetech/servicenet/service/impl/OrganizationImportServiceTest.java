@@ -80,7 +80,7 @@ public class OrganizationImportServiceTest {
         assertEquals(0, organizationService.findAllDTOs().size());
 
         importService.createOrUpdateOrganization(organization,
-            EXISTING_EXTERNAL_ID, PROVIDER, report, true);
+            null, EXISTING_EXTERNAL_ID, PROVIDER, report, true);
 
         List<OrganizationDTO> all = organizationService.findAllDTOs();
         assertEquals(1, all.size());
@@ -107,7 +107,7 @@ public class OrganizationImportServiceTest {
         org.setName(updatedName);
         org.setActive(updatedActive);
         importService.createOrUpdateOrganization(org,
-            NEW_EXTERNAL_ID, PROVIDER, report, true);
+            null, NEW_EXTERNAL_ID, PROVIDER, report, true);
 
         all = organizationService.findAllDTOs();
         assertEquals(1, all.size());
@@ -124,7 +124,7 @@ public class OrganizationImportServiceTest {
         organization.setFunding(funding);
 
         assertEquals(0, fundingService.findAll().size());
-        importService.createOrUpdateOrganization(organization, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+        importService.createOrUpdateOrganization(organization, null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<FundingDTO> all = fundingService.findAll();
         assertEquals(1, all.size());
@@ -147,7 +147,7 @@ public class OrganizationImportServiceTest {
 
         assertEquals(1, fundingService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+            null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<FundingDTO> all = fundingService.findAll();
         assertEquals(1, all.size());
@@ -163,7 +163,7 @@ public class OrganizationImportServiceTest {
         organization.setPrograms(helper.mutableSet(program));
 
         assertEquals(0, programService.findAll().size());
-        importService.createOrUpdateOrganization(organization, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+        importService.createOrUpdateOrganization(organization, null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<ProgramDTO> all = programService.findAll();
         assertEquals(1, all.size());
@@ -186,7 +186,7 @@ public class OrganizationImportServiceTest {
 
         assertEquals(1, programService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+            null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<ProgramDTO> all = programService.findAll();
         assertEquals(1, all.size());
@@ -202,7 +202,7 @@ public class OrganizationImportServiceTest {
         organization.setContacts(helper.mutableSet(contact));
 
         assertEquals(0, contactsService.findAll().size());
-        importService.createOrUpdateOrganization(organization, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+        importService.createOrUpdateOrganization(organization, null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<ContactDTO> all = contactsService.findAll();
         assertEquals(1, all.size());
@@ -225,7 +225,7 @@ public class OrganizationImportServiceTest {
 
         assertEquals(1, contactsService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+            null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<ContactDTO> all = contactsService.findAll();
         assertEquals(1, all.size());
@@ -245,7 +245,7 @@ public class OrganizationImportServiceTest {
         assertEquals(1, organizationService.findAllDTOs().size());
 
         org = importService.createOrUpdateOrganization(newOrg,
-            NEW_EXTERNAL_ID, PROVIDER, report, true);
+            null, NEW_EXTERNAL_ID, PROVIDER, report, true);
         assertNull(org);
     }
 }

@@ -14,7 +14,6 @@ import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.FundingRepository;
-import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.SystemAccountService;
@@ -39,9 +38,6 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     private EntityManager em;
 
     @Autowired
-    private OrganizationRepository organizationRepository;
-
-    @Autowired
     private SystemAccountService systemAccountService;
 
     @Autowired
@@ -52,8 +48,8 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     @Override
     @Transactional
-    public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
-        String providerName, DataImportReport report, boolean overwriteLastUpdated) {
+    public Organization createOrUpdateOrganization(Organization filledOrganization, Organization organizationFromDb,
+        String externalDbId, String providerName, DataImportReport report, boolean overwriteLastUpdated) {
         Organization organization = new Organization(filledOrganization);
         Optional<SystemAccount> systemAccount = systemAccountService.findByName(providerName);
 
@@ -64,14 +60,12 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
         EntityValidator.validateAndFix(organization, filledOrganization, report, externalDbId);
 
-        Optional<Organization> organizationFromDb =
-            organizationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, providerName);
-        if (organizationFromDb.isPresent()) {
-            if (organizationFromDb.get().deepEquals(filledOrganization)) {
+        if (organizationFromDb != null) {
+            if (organizationFromDb.deepEquals(filledOrganization)) {
                 log.info("Organization " + organization.getName() + " didn't change, skipping");
                 return null;
             }
-            fillDataFromDb(organization, organizationFromDb.get());
+            fillDataFromDb(organization, organizationFromDb);
             organization.setNeedsMatching(true);
             em.merge(organization);
             report.incrementNumberOfUpdatedOrgs();

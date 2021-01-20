@@ -435,11 +435,11 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         )) {
             return false;
         }
-        return CompareUtils.oneSidedDeepEquals(this.funding, org.funding) &&
-            CompareUtils.oneSidedDeepEquals(this.locations, org.locations) &&
-            CompareUtils.oneSidedDeepEquals(this.programs, org.programs) &&
-            CompareUtils.oneSidedDeepEquals(this.services, org.services) &&
-            CompareUtils.oneSidedDeepEquals(this.contacts, org.contacts);
+        return CompareUtils.oneSidedDeepEquals(org.funding, this.funding) &&
+            CompareUtils.oneSidedDeepEquals(org.locations, this.locations) &&
+            CompareUtils.oneSidedDeepEquals(org.programs, this.programs) &&
+            CompareUtils.oneSidedDeepEquals(org.services, this.services) &&
+            CompareUtils.oneSidedDeepEquals(org.contacts, this.contacts);
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
