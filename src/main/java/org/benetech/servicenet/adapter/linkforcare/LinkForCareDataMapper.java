@@ -114,8 +114,11 @@ public interface LinkForCareDataMapper {
     default Location extractLocation(LinkForCareData data) {
         Location location = new Location();
 
-        location.name(String.join(", ", data.getLocationAddress1(),
-            data.getLocationCity(), data.getLocationState()));
+        String[] locationParts = {data.getLocationAddress1(), data.getLocationCity(), data.getLocationState()};
+        if (Arrays.stream(locationParts).noneMatch(StringUtils::isNotBlank)) {
+            return null;
+        }
+        location.setName(String.join(", ", locationParts));
 
         location.setExternalDbId(data.getOrganizationId());
         location.setProviderName(LINK_FOR_CARE_PROVIDER);
@@ -169,10 +172,12 @@ public interface LinkForCareDataMapper {
     default Service extractService(LinkForCareData data, Location location) {
         Service service = new Service();
 
-        ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
-        serviceAtLocation.setLocation(location);
-        serviceAtLocation.setProviderName(LINK_FOR_CARE_PROVIDER);
-        service.setLocations(Set.of(serviceAtLocation));
+        if (location != null) {
+            ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
+            serviceAtLocation.setLocation(location);
+            serviceAtLocation.setProviderName(LINK_FOR_CARE_PROVIDER);
+            service.setLocations(Set.of(serviceAtLocation));
+        }
         service.setExternalDbId(data.getOrganizationId());
         service.setProviderName(LINK_FOR_CARE_PROVIDER);
 

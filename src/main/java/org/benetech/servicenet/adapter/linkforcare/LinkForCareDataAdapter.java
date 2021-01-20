@@ -89,7 +89,7 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
     private Organization getOrganizationToPersist(LinkForCareDataMapper mapper, LinkForCareData entity,
         Location location, Service service, Set<Phone> phones) {
         Organization organization = mapper.extractOrganization(entity);
-        organization.setLocations(Set.of(location));
+        organization.setLocations(location != null ? Set.of(location) : new HashSet<>());
         organization.setServices(Set.of(service));
         phones.forEach(phone -> phone.setOrganization(organization));
         organization.setPhones(phones);
@@ -98,7 +98,9 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
 
     private Location getLocationToPersist(LinkForCareDataMapper mapper, LinkForCareData entity) {
         Location location = mapper.extractLocation(entity);
-        mapper.extractPhysicalAddress(entity).ifPresent(location::setPhysicalAddress);
+        if (location != null) {
+            mapper.extractPhysicalAddress(entity).ifPresent(location::setPhysicalAddress);
+        }
         return location;
     }
 
