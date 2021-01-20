@@ -39,6 +39,7 @@ public interface LinkForCareDataMapper {
     String[] TRUE_VALUES = {"TRUE", "1"};
     String[] FALSE_VALUES = {"FALSE", "0"};
     String SEMICOLON_REPLACEMENT = "__SEMICOLON__";
+    String OTHER_DOC_SUFFIX = "_OTHER";
 
     default Optional<Phone> extractPhone(LinkForCareData data) {
         if (StringUtils.isBlank(data.getOrganizationPhoneNumber())) {
@@ -196,7 +197,9 @@ public interface LinkForCareDataMapper {
             .filter(StringUtils::isNotBlank)
             .map(doc -> {
                 RequiredDocument document = new RequiredDocument();
-                document.setDocument(doc);
+                document.setDocument(doc.charAt(0) == ';' ? doc.substring(1).trim() : doc.trim());
+                document.setExternalDbId(data.getOrganizationId() +
+                    (doc.equals(data.getServiceRequiredDocumentOthers()) ? OTHER_DOC_SUFFIX : ""));
                 return document;
             })
             .collect(Collectors.toSet());
