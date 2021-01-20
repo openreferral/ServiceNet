@@ -101,13 +101,13 @@ public class OrganizationImportServiceTest {
         assertEquals(NEW_STRING, all.get(0).getName());
         assertEquals(NEW_BOOLEAN, all.get(0).getActive());
 
-        org = helper.generateNewOrganization(account);
+        Organization anotherOrg = helper.generateNewOrganization(account);
         String updatedName = "test";
         Boolean updatedActive = !NEW_BOOLEAN;
-        org.setName(updatedName);
-        org.setActive(updatedActive);
-        importService.createOrUpdateOrganization(org,
-            null, NEW_EXTERNAL_ID, PROVIDER, report, true);
+        anotherOrg.setName(updatedName);
+        anotherOrg.setActive(updatedActive);
+        importService.createOrUpdateOrganization(anotherOrg,
+            org, NEW_EXTERNAL_ID, PROVIDER, report, true);
 
         all = organizationService.findAllDTOs();
         assertEquals(1, all.size());
@@ -147,7 +147,7 @@ public class OrganizationImportServiceTest {
 
         assertEquals(1, fundingService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+            organization, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<FundingDTO> all = fundingService.findAll();
         assertEquals(1, all.size());
@@ -186,7 +186,7 @@ public class OrganizationImportServiceTest {
 
         assertEquals(1, programService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+            organization, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<ProgramDTO> all = programService.findAll();
         assertEquals(1, all.size());
@@ -225,7 +225,7 @@ public class OrganizationImportServiceTest {
 
         assertEquals(1, contactsService.findAll().size());
         importService.createOrUpdateOrganization(organizationToUpdate,
-            null, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
+            organization, NEW_EXTERNAL_ID, PROVIDER, new DataImportReport(), true);
 
         List<ContactDTO> all = contactsService.findAll();
         assertEquals(1, all.size());
@@ -245,7 +245,7 @@ public class OrganizationImportServiceTest {
         assertEquals(1, organizationService.findAllDTOs().size());
 
         org = importService.createOrUpdateOrganization(newOrg,
-            null, NEW_EXTERNAL_ID, PROVIDER, report, true);
+            org, NEW_EXTERNAL_ID, PROVIDER, report, true);
         assertNull(org);
     }
 }
