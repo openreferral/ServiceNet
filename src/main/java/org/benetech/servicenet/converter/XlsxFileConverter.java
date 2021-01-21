@@ -3,8 +3,6 @@ package org.benetech.servicenet.converter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.benetech.servicenet.util.StreamUtils;
 import org.slf4j.Logger;
@@ -30,7 +28,6 @@ public class XlsxFileConverter extends AbstractFileConverter {
         File jsonFile = convert(xlsx);
         ImportData conversionOutput = new ImportData();
         conversionOutput.setTemporaryFile(jsonFile);
-        conversionOutput.setJson(Files.readString(Paths.get(jsonFile.getPath())));
         return conversionOutput;
     }
 
