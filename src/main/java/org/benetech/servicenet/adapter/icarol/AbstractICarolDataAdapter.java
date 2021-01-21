@@ -49,7 +49,7 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
         ICarolDataToPersist dataToPersist = gatherMoreDetails(importData, uri);
         RelationManager manager = new RelationManager(importManager);
         DataImportReport dataImportReport = manager.persist(dataToPersist, importData);
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
         return dataImportReport;
     }
 

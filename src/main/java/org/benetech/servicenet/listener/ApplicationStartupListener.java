@@ -14,6 +14,6 @@ public class ApplicationStartupListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void runAfterStartup() {
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
     }
 }

@@ -60,7 +60,7 @@ public class LAACDataAdapter extends SingleDataAdapter {
                 log.warn("Skipping organization with name: " + entity.getOrganizationName(), e);
             }
         }
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
 
         return importData.getReport();
     }

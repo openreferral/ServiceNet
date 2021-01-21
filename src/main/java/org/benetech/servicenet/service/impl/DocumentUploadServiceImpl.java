@@ -129,7 +129,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName,
                 true)))
             .orElse(report);
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
         //TODO: Remove time counting logic (#264)
