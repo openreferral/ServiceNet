@@ -689,18 +689,22 @@ public class OrganizationServiceImpl implements OrganizationService {
         checkIns.forEach(checkIn -> {
             checkIn.setFrom(originalOrg);
             checkIn.setTo(originalOrg);
+            checkIn.setToLocation(null);
+            checkIn.setFromLocation(null);
             referralRepository.save(checkIn);
         });
 
         List<Referral> referralsTo = referralRepository.findAllToAndNotFrom(orgToUnclaim);
         referralsTo.forEach(referral -> {
             referral.setTo(originalOrg);
+            referral.setToLocation(null);
             referralRepository.save(referral);
         });
 
         List<Referral> referralsFrom = referralRepository.findAllFromAndNotTo(orgToUnclaim);
         referralsFrom.forEach(referral -> {
             referral.setFrom(originalOrg);
+            referral.setFromLocation(null);
             referralRepository.save(referral);
         });
 
