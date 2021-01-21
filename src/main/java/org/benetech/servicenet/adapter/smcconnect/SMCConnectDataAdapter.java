@@ -24,7 +24,7 @@ public class SMCConnectDataAdapter extends MultipleDataAdapter {
     public DataImportReport importData(MultipleImportData data) {
         verifyData(data);
         DataImportReport report = new SmcDataManager(importManager, data).importData(data);
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
         return report;
     }
 

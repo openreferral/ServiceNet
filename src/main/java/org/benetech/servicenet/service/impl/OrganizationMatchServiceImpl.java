@@ -268,8 +268,12 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Async
     @Override
+    @Transactional
+    // the connection is closed automatically at the end of transaction
+    @SuppressWarnings("PMD.CloseResource")
     public void createOrUpdateOrganizationMatches() {
-        try (Connection connection = DataSourceUtils.getConnection(dataSource)) {
+        Connection connection = DataSourceUtils.getConnection(dataSource);
+        try {
             connection.setAutoCommit(false);
             Optional<Organization> organizationOptional = organizationService
                 .findFirstThatNeedsMatching();
@@ -292,6 +296,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
 
     @Async
     @Override
+    @Transactional
     public void createOrUpdateOrganizationMatches(UUID organizationId) {
         createOrUpdateOrganizationMatchesSynchronously(organizationId, null);
     }

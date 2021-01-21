@@ -80,8 +80,12 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .systemAccount(providerName);
 
         ImportData conversionOutput = FileConverterFactory.getConverter(file, delimiter).convert(file);
-        byte[] parseDocumentBytes = stringGZIPService.compress(conversionOutput.getJson());
-        String parsedDocumentId = mongoDbService.saveParsedDocument(encodeBase64String(parseDocumentBytes));
+        String parsedDocumentId = null;
+        if (conversionOutput.getJson() != null) {
+            byte[] parseDocumentBytes = stringGZIPService.compress(conversionOutput.getJson());
+            parsedDocumentId = mongoDbService
+                .saveParsedDocument(encodeBase64String(parseDocumentBytes));
+        }
         String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
 
         DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
@@ -125,7 +129,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName,
                 true)))
             .orElse(report);
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
         //TODO: Remove time counting logic (#264)

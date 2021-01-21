@@ -42,7 +42,7 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
         }
 
         DataImportReport dataImportReport = persistanceManager.persistData(data);
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
         return dataImportReport;
     }
 

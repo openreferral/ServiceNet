@@ -53,7 +53,7 @@ public class ShelterTechDataAdapter extends SingleDataAdapter {
     public DataImportReport importData(SingleImportData importData) {
         ShelterTechRawData data = ShelterTechParser.collectData(importData.getSingleObjectData());
         persistOrganizations(data, importData);
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
 
         return importData.getReport();
     }

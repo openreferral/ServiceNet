@@ -61,7 +61,7 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
 
             report = persistLinkForCareData(entities, data);
         }
-        transactionSynchronizationService.updateOrganizationMatchesWithoutSynchronization();
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
         return report;
     }
 
