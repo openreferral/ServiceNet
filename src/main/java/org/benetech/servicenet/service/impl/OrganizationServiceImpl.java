@@ -211,6 +211,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationMapper.toEntity(organizationDTO);
         UserProfile userProfile = userService.getCurrentUserProfile();
         organization.setAccount(userProfile.getSystemAccount());
+        organization.setOnlyRemote(organizationDTO.getOnlyRemote());
         addUserProfile(organization, userProfile);
 
         if (organization.getId() != null) {
@@ -746,6 +747,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             location.setName(String.join(", ", physicalAddress.getAddress1(),
                 physicalAddress.getCity(), physicalAddress.getStateProvince()));
             location.setOpen247(locationDTO.getOpen247());
+            location.setRemote(locationDTO.getIsRemote());
             if (existingLocation != null) {
                 location.setRegularSchedule(existingLocation.getRegularSchedule());
                 location.setHolidaySchedules(existingLocation.getHolidaySchedules());

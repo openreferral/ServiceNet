@@ -116,6 +116,9 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @JsonIgnoreProperties("")
     private DocumentUpload sourceDocument;
 
+    @Column(name = "only_remote")
+    private boolean onlyRemote;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties("")
