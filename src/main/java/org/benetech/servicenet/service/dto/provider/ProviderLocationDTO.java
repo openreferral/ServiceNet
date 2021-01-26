@@ -24,6 +24,8 @@ public class ProviderLocationDTO implements Serializable {
 
     private Boolean open247;
 
+    private Boolean isRemote;
+
     private ProviderRegularScheduleDTO regularSchedule;
 
     private Set<ProviderHolidayScheduleDTO> holidaySchedules;
