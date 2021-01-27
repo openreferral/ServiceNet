@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Beneficiary;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
@@ -44,6 +45,8 @@ import java.util.Optional;
 public class ReferralServiceImpl implements ReferralService {
 
     private final Logger log = LoggerFactory.getLogger(ReferralServiceImpl.class);
+
+    private static final int NAME_WIDTH = 24;
 
     private final ReferralRepository referralRepository;
 
@@ -156,12 +159,13 @@ public class ReferralServiceImpl implements ReferralService {
         }
         SmsMessage smsMessage = new SmsMessage();
         smsMessage.setTo(beneficiary.getPhoneNumber());
+        String cboName = StringUtils.abbreviate(cbo.getName(), NAME_WIDTH);
         if (isBeneficiaryNew) {
             smsMessage.setMessage(messageService.get("sms.checkin.new",
-                cbo.getName(), IdentifierUtils.toBase36(beneficiary.getIdentifier())));
+                cboName, IdentifierUtils.toBase36(beneficiary.getIdentifier())));
         } else {
             smsMessage.setMessage(messageService.get("sms.checkin.existing",
-                cbo.getName(), IdentifierUtils.toBase36(beneficiary.getIdentifier())));
+                cboName, IdentifierUtils.toBase36(beneficiary.getIdentifier())));
         }
         smsService.send(smsMessage);
     }
@@ -169,11 +173,10 @@ public class ReferralServiceImpl implements ReferralService {
     @Override
     public void refer(Beneficiary beneficiary, UUID cboId, UUID fromLocId, Map<UUID, UUID> organizationLocs) {
         ZonedDateTime now = ZonedDateTime.now();
-        List<String> orgNames = new ArrayList<>();
+        List<String> recommendedReferrals = new ArrayList<>();
         Organization cbo = cboId != null ? organizationRepository.getOne(cboId) : null;
         organizationLocs.forEach((UUID orgId, UUID locId) -> {
             Organization organization = organizationRepository.getOne(orgId);
-            orgNames.add(organization.getName());
             Referral referral = new Referral();
             referral.setBeneficiary(beneficiary);
             referral.setFrom(cbo);
@@ -190,12 +193,21 @@ public class ReferralServiceImpl implements ReferralService {
             referral.sentAt(now);
 
             referralRepository.save(referral);
+            String orgName = StringUtils.abbreviate(organization.getName(), NAME_WIDTH);
+            recommendedReferrals.add(toLocation != null ?
+                orgName + ", " + StringUtils.abbreviate(toLocation.getName(), NAME_WIDTH)
+                : orgName);
         });
         SmsMessage smsMessage = new SmsMessage();
+        SmsMessage secondSmsMessage = new SmsMessage();
         smsMessage.setTo(beneficiary.getPhoneNumber());
+        secondSmsMessage.setTo(beneficiary.getPhoneNumber());
         smsMessage.setMessage(messageService.get("sms.referral.sent",
-            String.join(", ", orgNames), IdentifierUtils.toBase36(beneficiary.getIdentifier())));
+            String.join("\n", recommendedReferrals)));
+        secondSmsMessage.setMessage(messageService.get("sms.referral.sent2",
+            IdentifierUtils.toBase36(beneficiary.getIdentifier())));
         smsService.send(smsMessage);
+        smsService.send(secondSmsMessage);
     }
 
     @Override
