@@ -91,7 +91,6 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
         Organization organization = mapper.extractOrganization(entity);
         organization.setLocations(location != null ? Set.of(location) : new HashSet<>());
         organization.setServices(Set.of(service));
-        phones.forEach(phone -> phone.setOrganization(organization));
         organization.setPhones(phones);
         return organization;
     }
@@ -118,7 +117,6 @@ public class LinkForCareDataAdapter extends SingleDataAdapter {
         mapper.extractEligibility(entity).ifPresent(service::setEligibility);
         service.setTaxonomies(getServiceTaxonomiesToPersist(mapper, entity));
         Set<Phone> servicePhones = getPhonesToPersist(mapper, entity);
-        servicePhones.forEach(phone -> phone.setSrvc(service));
         service.setPhones(servicePhones);
         return service;
     }
