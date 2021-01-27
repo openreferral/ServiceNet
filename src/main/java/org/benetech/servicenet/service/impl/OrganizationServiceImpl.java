@@ -460,6 +460,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Organization findOneWithEagerProfileAndLocations(UUID id) {
+        return organizationRepository.findOneWithEagerProfileAndLocations(id);
+    }
+
+    @Override
     public Optional<Organization> findByIdOrExternalDbId(String id, UUID providerId) {
         List<Organization> orgList;
         try {

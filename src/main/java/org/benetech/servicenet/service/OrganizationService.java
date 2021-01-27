@@ -111,6 +111,8 @@ public interface OrganizationService {
 
     Organization findOneWithEagerAssociations(UUID id);
 
+    Organization findOneWithEagerProfileAndLocations(UUID id);
+
     Optional<Organization> findByIdOrExternalDbId(String id, UUID providerId);
 
     Optional<Organization> findWithEagerByIdOrExternalDbId(String id);
