@@ -43,6 +43,8 @@ public class UserDTO {
     @Size(max = 256)
     private String imageUrl;
 
+    private boolean verified;
+
     private boolean activated;
 
     @Size(min = 2, max = 6)
