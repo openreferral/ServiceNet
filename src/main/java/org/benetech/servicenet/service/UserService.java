@@ -34,6 +34,7 @@ import org.benetech.servicenet.security.SecurityUtils;
 import org.benetech.servicenet.service.dto.OwnerDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.dto.UserRegisterDTO;
+import org.benetech.servicenet.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +112,9 @@ public class UserService {
     public UserDTO registerUser(UserRegisterDTO userRegisterDTO) {
         try {
             return createOrUpdateUserProfile(
-                authClient.registerUser(userRegisterDTO), userRegisterDTO
+                authClient.registerUser(userRegisterDTO,
+                    RequestUtils.getXForwardedProto(), RequestUtils.getXForwardedHost()),
+                userRegisterDTO
             );
         } catch (HystrixBadRequestException e) {
             handleHystrixException(e);
@@ -128,7 +131,9 @@ public class UserService {
     public UserDTO updateUser(UserDTO userDTO) {
         try {
             return createOrUpdateUserProfile(
-                authClient.updateUser(userDTO), userDTO
+                authClient.updateUser(userDTO,
+                    RequestUtils.getXForwardedProto(), RequestUtils.getXForwardedHost()),
+                userDTO
             );
         } catch (HystrixBadRequestException e) {
             handleHystrixException(e);
