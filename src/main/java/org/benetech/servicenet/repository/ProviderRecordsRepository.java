@@ -580,6 +580,10 @@ public class ProviderRecordsRepository {
         List<Order> orderList = new ArrayList<>();
         addOrder(root, orderList, sort, Organization_.NAME);
         addOrder(root, orderList, sort, Organization_.UPDATED_AT);
+        if (!orderList.isEmpty()) {
+            // fallback ordering in case there are multiple records with the same name/updated date
+            addOrder(root, orderList, Sort.by(Organization_.ID), Organization_.ID);
+        }
         queryCriteria.orderBy(orderList);
     }
 
