@@ -54,6 +54,8 @@ public interface OrganizationService {
 
     Optional<Organization> findFirstThatNeedsMatching();
 
+    Optional<Organization> findFirstThatNeedsMatchingExcept(UUID id);
+
     Long countOrganizationsByNeedsMatching();
 
     List<OrganizationOptionDTO> findAllOptions();

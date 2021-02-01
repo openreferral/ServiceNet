@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.Beneficiary;
@@ -274,5 +275,20 @@ public class ReferralServiceImpl implements ReferralService {
             getReferralsToRecordCount(record),
             getReferralsFromRecordCount(record)
         );
+    }
+
+    @Override
+    public void removeLocations(Set<Location> locations) {
+        List<Referral> referrals = referralRepository.findAllByFromLocations(locations);
+        referrals.forEach(
+            referral -> referral.setFromLocation(null)
+        );
+        referralRepository.findAllByToLocations(locations).forEach(
+            referral -> {
+                referral.setToLocation(null);
+                referrals.add(referral);
+            }
+        );
+        referralRepository.saveAll(referrals);
     }
 }
