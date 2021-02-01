@@ -131,6 +131,8 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
 
     Optional<Organization> findFirstByNeedsMatchingIsTrue();
 
+    Optional<Organization> findFirstByNeedsMatchingIsTrueAndIdNot(UUID id);
+
     @Query("SELECT COUNT(org) FROM Organization org WHERE org.needsMatching = TRUE")
     Long countOrganizationsByNeedsMatchingIsTrue();
 

@@ -3,8 +3,10 @@ package org.benetech.servicenet.service;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.benetech.servicenet.domain.Beneficiary;
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.service.dto.CheckInsAndReferralsMadeForRecordDTO;
 import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
@@ -78,4 +80,6 @@ public interface ReferralService {
     Integer getReferralsFromRecordCount(Organization record);
 
     CheckInsAndReferralsMadeForRecordDTO getReferralsMadeForRecord(UUID recordId);
+
+    void removeLocations(Set<Location> locations);
 }

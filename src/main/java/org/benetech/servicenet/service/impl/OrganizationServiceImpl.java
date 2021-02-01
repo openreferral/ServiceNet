@@ -51,6 +51,7 @@ import org.benetech.servicenet.service.EligibilityService;
 import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.PhoneService;
+import org.benetech.servicenet.service.ReferralService;
 import org.benetech.servicenet.service.RequiredDocumentService;
 import org.benetech.servicenet.service.ServiceAtLocationService;
 import org.benetech.servicenet.service.ServiceService;
@@ -124,6 +125,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final PhoneService phoneService;
 
+    private final ReferralService referralService;
+
     private final EntityManager em;
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
@@ -136,8 +139,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         DailyUpdateService dailyUpdateService, EligibilityService eligibilityService,
         UserProfileRepository userProfileRepository, RequiredDocumentService requiredDocumentService,
         OrganizationMatchRepository organizationMatchRepository, ConflictService conflictService,
-        PhoneService phoneService,
-        OrganizationErrorRepository organizationErrorRepository, EntityManager em) {
+        PhoneService phoneService, OrganizationErrorRepository organizationErrorRepository,
+        ReferralService referralService, EntityManager em) {
         this.organizationRepository = organizationRepository;
         this.referralRepository = referralRepository;
         this.organizationMapper = organizationMapper;
@@ -158,6 +161,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.conflictService = conflictService;
         this.organizationErrorRepository = organizationErrorRepository;
         this.phoneService = phoneService;
+        this.referralService = referralService;
         this.em = em;
     }
 
@@ -268,8 +272,13 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Organization> findFirstThatNeedsMatching() {
-        log.debug("Request to get all Organizations");
         return organizationRepository.findFirstByNeedsMatchingIsTrue();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Organization> findFirstThatNeedsMatchingExcept(UUID id) {
+        return organizationRepository.findFirstByNeedsMatchingIsTrueAndIdNot(id);
     }
 
     @Override
@@ -760,6 +769,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             }
             locations.add(locationService.saveWithRelations(location));
         }
+        referralService.removeLocations(locationsToRemove);
         for (Location location : locationsToRemove) {
             locationService.delete(location.getId());
         }

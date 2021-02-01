@@ -275,8 +275,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
         Connection connection = DataSourceUtils.getConnection(dataSource);
         try {
             connection.setAutoCommit(false);
-            Optional<Organization> organizationOptional = organizationService
-                .findFirstThatNeedsMatching();
+            Optional<Organization> organizationOptional = organizationService.findFirstThatNeedsMatching();
             while (organizationOptional.isPresent()) {
                 Long total = organizationService.countOrganizationsByNeedsMatching();
                 try {
@@ -287,7 +286,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
                 } catch (SQLException matchingException) {
                     log.error(matchingException.getMessage(), matchingException);
                 }
-                organizationOptional = organizationService.findFirstThatNeedsMatching();
+                organizationOptional = organizationService.findFirstThatNeedsMatchingExcept(organizationOptional.get().getId());
             }
         } catch (SQLException sqlEx) {
             log.error(sqlEx.getMessage(), sqlEx);
