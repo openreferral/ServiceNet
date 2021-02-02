@@ -119,7 +119,8 @@ public class RecordBuilder {
             mapProviderLocations(filterLocations(organization.getLocations(), locationExclusions)),
             mapProviderServices(organization.getServices()),
             user,
-            mapDailyUpdates(organization.getDailyUpdates())
+            mapDailyUpdates(organization.getDailyUpdates()),
+            organization.isOnlyRemote()
         );
     }
 
@@ -134,7 +135,8 @@ public class RecordBuilder {
                 Location.class, baseExclusions)),
             mapProviderServices(buildCollection(organization.getServices(), Service.class, baseExclusions)),
             user,
-            mapDailyUpdates(organization.getDailyUpdates())
+            mapDailyUpdates(organization.getDailyUpdates()),
+            organization.isOnlyRemote()
         );
     }
 
