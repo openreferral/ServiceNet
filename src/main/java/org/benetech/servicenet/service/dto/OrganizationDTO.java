@@ -66,6 +66,12 @@ public class OrganizationDTO implements Serializable {
 
     private String externalDbId;
 
+    private String facebookUrl;
+
+    private String twitterUrl;
+
+    private String instagramUrl;
+
     private Set<UserProfile> userProfiles = new HashSet<>();
 
     private Set<PhoneDTO> phones;
@@ -75,6 +81,17 @@ public class OrganizationDTO implements Serializable {
         this.name = name;
         this.accountId = accountId;
         this.accountName = accountName;
+    }
+
+    public OrganizationDTO(UUID id, String name, UUID accountId, String accountName, String facebookUrl,
+        String twitterUrl, String instagramUrl) {
+        this.id = id;
+        this.name = name;
+        this.accountId = accountId;
+        this.accountName = accountName;
+        this.facebookUrl = facebookUrl;
+        this.twitterUrl = twitterUrl;
+        this.instagramUrl = instagramUrl;
     }
 
     public Boolean isActive() {

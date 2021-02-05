@@ -52,4 +52,15 @@ public class ProviderRecordDTO {
         this.organization = new OrganizationDTO(orgId, orgName, orgAccountId, orgAccountName);
         this.onlyRemote = onlyRemote;
     }
+
+    public ProviderRecordDTO(UUID orgId, String orgName, UUID orgAccountId, String orgAccountName,
+        String userLogin, ZonedDateTime lastUpdated, Boolean onlyRemote, String facebookUrl,
+        String twitterUrl, String instagramUrl) {
+        this.lastUpdated = lastUpdated;
+        this.userLogin = userLogin;
+        this.organization = new OrganizationDTO(
+            orgId, orgName, orgAccountId, orgAccountName, facebookUrl, twitterUrl, instagramUrl
+        );
+        this.onlyRemote = onlyRemote;
+    }
 }

@@ -217,4 +217,5 @@
     <include file="config/liquibase/changelog/20210118132727_organization_add_needs_matching.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210111092418_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210127142934_remove_duplicate_phones.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210203162706_organization_add_social_urls.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
