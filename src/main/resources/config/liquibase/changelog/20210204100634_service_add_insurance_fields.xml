@@ -1,0 +1,32 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext ../xml-schema/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog ../xml-schema/dbchangelog-3.6.xsd">
+
+    <property name="clobType" value="clob" dbms="oracle, h2, postgresql"/>
+    <property name="clobType" value="longtext" dbms="mysql"/>
+
+    <changeSet author="awalkowiak (generated)" id="1612516003216-9">
+        <addColumn tableName="service">
+            <column name="insurance_label" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="awalkowiak (generated)" id="1612516003216-10">
+        <addColumn tableName="service">
+            <column name="medicaid_accepted" type="boolean"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="awalkowiak (generated)" id="1612516003216-11">
+        <addColumn tableName="service">
+            <column name="medicare_accepted" type="boolean"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="awalkowiak (generated)" id="1612516003216-12">
+        <addColumn tableName="service">
+            <column name="safe_for_undocumented" type="${clobType}"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="awalkowiak (generated)" id="1612516003216-13">
+        <addColumn tableName="service">
+            <column name="uninsured_accepted" type="boolean"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

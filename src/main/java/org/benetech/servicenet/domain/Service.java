@@ -128,6 +128,24 @@ public class Service extends AbstractEntity implements Serializable, DeepCompara
     @Column(name = "successful_referrals")
     private Integer successfulReferrals;
 
+    @Column(name = "medicare_accepted")
+    private Boolean medicareAccepted;
+
+    @Column(name = "medicaid_accepted")
+    private Boolean medicaidAccepted;
+
+    @Column(name = "uninsured_accepted")
+    private Boolean uninsuredAccepted;
+
+    @Column(name = "insurance_label")
+    @Size(max = 255, message = "Field value is too long.")
+    private String insuranceLabel;
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "safe_for_undocumented", columnDefinition = "clob")
+    private String safeForUndocumented;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("services")
     private Organization organization;

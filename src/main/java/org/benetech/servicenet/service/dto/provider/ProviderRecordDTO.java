@@ -53,6 +53,7 @@ public class ProviderRecordDTO {
         this.onlyRemote = onlyRemote;
     }
 
+    @SuppressWarnings({"PMD.ExcessiveParameterList"})
     public ProviderRecordDTO(UUID orgId, String orgName, UUID orgAccountId, String orgAccountName,
         String userLogin, ZonedDateTime lastUpdated, Boolean onlyRemote, String facebookUrl,
         String twitterUrl, String instagramUrl) {

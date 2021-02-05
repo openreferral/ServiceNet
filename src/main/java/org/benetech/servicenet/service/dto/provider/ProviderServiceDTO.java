@@ -35,4 +35,15 @@ public class ProviderServiceDTO implements Serializable {
 
     @Lob
     private String fees;
+
+    private Boolean medicareAccepted;
+
+    private Boolean medicaidAccepted;
+
+    private Boolean uninsuredAccepted;
+
+    private String insuranceLabel;
+
+    @Lob
+    private String safeForUndocumented;
 }
