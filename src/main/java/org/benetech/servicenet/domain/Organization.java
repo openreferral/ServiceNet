@@ -173,6 +173,18 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Column(name = "covidProtocols", columnDefinition = "clob")
     private String covidProtocols;
 
+    @Column(name = "facebookUrl")
+    @Size(max = 255, message = "Field value is too long.")
+    private String facebookUrl;
+
+    @Column(name = "twitterUrl")
+    @Size(max = 255, message = "Field value is too long.")
+    private String twitterUrl;
+
+    @Column(name = "instagramUrl")
+    @Size(max = 255, message = "Field value is too long.")
+    private String instagramUrl;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public Organization(Organization org) {
@@ -192,6 +204,9 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.userProfiles = org.userProfiles;
         this.dailyUpdates = org.dailyUpdates;
         this.covidProtocols = org.covidProtocols;
+        this.facebookUrl = org.facebookUrl;
+        this.twitterUrl = org.twitterUrl;
+        this.instagramUrl = org.instagramUrl;
     }
 
     public Organization name(String name) {
@@ -412,6 +427,45 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.covidProtocols = covidProtocols;
     }
 
+    public Organization facebookUrl(String facebookUrl) {
+        this.facebookUrl = facebookUrl;
+        return this;
+    }
+
+    public String getFacebookUrl() {
+        return facebookUrl;
+    }
+
+    public void setFacebookUrl(String facebookUrl) {
+        this.facebookUrl = facebookUrl;
+    }
+
+    public Organization twitterUrl(String twitterUrl) {
+        this.twitterUrl = twitterUrl;
+        return this;
+    }
+
+    public String getTwitterUrl() {
+        return twitterUrl;
+    }
+
+    public void setTwitterUrl(String twitterUrl) {
+        this.twitterUrl = twitterUrl;
+    }
+
+    public Organization instagramUrl(String instagramUrl) {
+        this.instagramUrl = instagramUrl;
+        return this;
+    }
+
+    public String getInstagramUrl(String instagramUrl) {
+        return instagramUrl;
+    }
+
+    public void setInstagramUrl(String instagramUrl) {
+        this.instagramUrl = instagramUrl;
+    }
+
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "checkstyle:booleanExpressionComplexity"})
     @Override
     public boolean deepEquals(Object o) {
@@ -434,7 +488,10 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
             Objects.equals(org.legalStatus, this.legalStatus) &&
             Objects.equals(org.active, this.active) &&
             Objects.equals(org.externalDbId, this.externalDbId) &&
-            Objects.equals(org.covidProtocols, this.covidProtocols)
+            Objects.equals(org.covidProtocols, this.covidProtocols) &&
+            Objects.equals(org.facebookUrl, this.facebookUrl) &&
+            Objects.equals(org.twitterUrl, this.twitterUrl) &&
+            Objects.equals(org.instagramUrl, this.instagramUrl)
         )) {
             return false;
         }

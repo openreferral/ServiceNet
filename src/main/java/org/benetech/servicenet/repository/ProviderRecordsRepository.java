@@ -85,7 +85,8 @@ public class ProviderRecordsRepository {
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
             systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
-            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE)));
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE),
+            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, userProfiles, excludedUserProfile, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
@@ -255,7 +256,8 @@ public class ProviderRecordsRepository {
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
             systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
-            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE)));
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE),
+            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),

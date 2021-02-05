@@ -51,6 +51,12 @@ public class ProviderOrganizationDTO implements Serializable {
     @Getter
     private Boolean onlyRemote;
 
+    private String facebookUrl;
+
+    private String twitterUrl;
+
+    private String instagramUrl;
+
     @Getter
     private List<ProviderLocationDTO> locations;
 
