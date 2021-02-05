@@ -241,14 +241,45 @@ public class OrganizationResource {
      * GET  /provider-organization/:id : get the organization with given id for service provider.
      *
      * @param id the id of the organization to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the SimpleOrganizationDTO,
+     * @return the ResponseEntity with status 200 (OK) and with body the ProviderOrganizationDTO,
      * or with status 404 (Not Found)
      */
     @GetMapping("/provider-organization/{id}")
     @Timed
-    public ResponseEntity<ProviderOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id) {
+    public ResponseEntity<ProviderOrganizationDTO> getOrganizationForProvider(@PathVariable UUID id,
+        @RequestParam(required = false) boolean includeUpdates) {
         log.debug("REST request to get Organization : {}", id);
-        Optional<ProviderOrganizationDTO> organizationDTO = organizationService.findOneDTOForProvider(id);
+        Optional<ProviderOrganizationDTO> organizationDTO = organizationService.findOneDTOForProvider(id, includeUpdates);
+        return ResponseUtil.wrapOrNotFound(organizationDTO);
+    }
+
+    /**
+     * POST  /provider-organization/:id/apply-updates: apply updates for the given org id.
+     *
+     * @param id the id of the organization
+     * @return the ResponseEntity with status 200 (OK) and with body the ProviderOrganizationDTO,
+     * or with status 404 (Not Found)
+     */
+    @PostMapping("/provider-organization/{id}/apply-updates")
+    @Timed
+    public ResponseEntity<ProviderOrganizationDTO> applyUpdates(@PathVariable UUID id) {
+        log.debug("REST request to apply updates for Organization : {}", id);
+        Optional<ProviderOrganizationDTO> organizationDTO = organizationService.applyUpdates(id);
+        return ResponseUtil.wrapOrNotFound(organizationDTO);
+    }
+
+    /**
+     * POST  /provider-organization/:id/discard-updates: discard updates for the given org id.
+     *
+     * @param id the id of the organization
+     * @return the ResponseEntity with status 200 (OK) and with body the ProviderOrganizationDTO,
+     * or with status 404 (Not Found)
+     */
+    @PostMapping("/provider-organization/{id}/discard-updates")
+    @Timed
+    public ResponseEntity<ProviderOrganizationDTO> discardUpdates(@PathVariable UUID id) {
+        log.debug("REST request to apply updates for Organization : {}", id);
+        Optional<ProviderOrganizationDTO> organizationDTO = organizationService.discardUpdates(id);
         return ResponseUtil.wrapOrNotFound(organizationDTO);
     }
 

@@ -314,6 +314,13 @@ public class UserService {
                 .map(UserGroup::getId)
                 .collect(Collectors.toList()));
         }
+        if (userProfile.getOrganizations() != null) {
+            authUser.setOrganizationsWithUpdates(
+                userProfile.getOrganizations().stream()
+                .filter(Organization::isHasUpdates)
+                .map(Organization::getId)
+                .collect(Collectors.toList()));
+        }
         authUser.setAvatarBase64(userProfile.getAvatarBase64());
         authUser.setHasClaimedRecords(userProfile.getHasClaimedRecords());
         return authUser;

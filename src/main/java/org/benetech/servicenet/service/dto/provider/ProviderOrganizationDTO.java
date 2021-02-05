@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
+import org.benetech.servicenet.service.dto.ConflictDTO;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursRow;
 import org.benetech.servicenet.service.dto.PhoneDTO;
@@ -56,6 +58,13 @@ public class ProviderOrganizationDTO implements Serializable {
     private String twitterUrl;
 
     private String instagramUrl;
+
+    @Getter
+    private Boolean hasUpdates;
+
+    @Getter
+    @Setter
+    private List<ConflictDTO> updates;
 
     @Getter
     private List<ProviderLocationDTO> locations;

@@ -63,6 +63,12 @@ public class ConflictServiceImpl implements ConflictService {
         return conflictMapper.toDto(conflict);
     }
 
+    @Override
+    public
+    List<Conflict> saveAll(List<Conflict> conflicts) {
+        return conflictRepository.saveAll(conflicts);
+    }
+
     /**
      * Get all the conflicts.
      *
@@ -169,5 +175,10 @@ public class ConflictServiceImpl implements ConflictService {
         log.debug("Request to get all Conflicts with resourceId: {}.", resourceId);
         return conflictRepository.findByResourceIdAndPartnerResourceIdAndState(
             resourceId, partnerResourceId, ConflictStateEnum.PENDING);
+    }
+
+    @Override
+    public List<ConflictDTO> toDtos(List<Conflict> conflicts) {
+        return conflicts.stream().map(conflictMapper::toDto).collect(Collectors.toList());
     }
 }

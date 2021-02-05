@@ -1,5 +1,6 @@
 package org.benetech.servicenet.conflict;
 
+import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.conflict.detector.ConflictDetector;
@@ -28,7 +29,6 @@ import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class ConflictDetectionServiceImpl implements ConflictDetectionService {
@@ -46,10 +46,10 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
     private final MetadataService metadataService;
 
     public ConflictDetectionServiceImpl(ApplicationContext context,
-                                        EntityManager em,
-                                        OrganizationEquivalentsService organizationEquivalentsService,
-                                        ConflictService conflictService,
-                                        MetadataService metadataService) {
+        EntityManager em,
+        OrganizationEquivalentsService organizationEquivalentsService,
+        ConflictService conflictService,
+        MetadataService metadataService) {
         this.context = context;
         this.em = em;
         this.organizationEquivalentsService = organizationEquivalentsService;
@@ -86,8 +86,19 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
             log.debug("Searching for conflicts between " +
                 match.getOrganizationRecord().getAccount().getName() + "'s organization '" +
                 match.getOrganizationRecord().getName() + "' and " +
-                match.getOrganizationRecord().getAccount().getName() + "'s organization '" +
-                match.getOrganizationRecord().getName() + "' took: " + elapsedTime + "ms");
+                match.getPartnerVersion().getAccount().getName() + "'s organization '" +
+                match.getPartnerVersion().getName() + "' took: " + elapsedTime + "ms");
+        }
+        if (organization.getReplacedBy() != null) {
+            Organization replacement = organization.getReplacedBy();
+            OrganizationEquivalent orgEquivalent = organizationEquivalentsService
+                .generateEquivalent(organization, replacement);
+
+            List<EntityEquivalent> equivalents = gatherAllEquivalents(orgEquivalent);
+
+            List<Conflict> conflicts = detect(equivalents, organization.getAccount(), replacement.getAccount());
+            replacement.setHasUpdates(!conflicts.isEmpty());
+            em.persist(replacement);
         }
 
         long stopTime = System.currentTimeMillis();
@@ -124,7 +135,8 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         return equivalents;
     }
 
-    private void detect(List<EntityEquivalent> equivalents, SystemAccount owner, SystemAccount accepted) {
+    private List<Conflict> detect(List<EntityEquivalent> equivalents, SystemAccount owner, SystemAccount accepted) {
+        List<Conflict> conflicts = new ArrayList<>();
         for (EntityEquivalent eq : equivalents) {
             AbstractEntity current = (AbstractEntity) em.find(eq.getClazz(), eq.getBaseResourceId());
             AbstractEntity mirror = (AbstractEntity) em.find(eq.getClazz(), eq.getPartnerResourceId());
@@ -132,18 +144,22 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
             try {
                 ConflictDetector detector = context.getBean(
                     eq.getClazz().getSimpleName() + Constants.CONFLICT_DETECTOR_SUFFIX, ConflictDetector.class);
-                List<Conflict> conflicts = detector.detectConflicts(current, mirror);
+                List<Conflict> equivalentConflicts = detector.detectConflicts(current, mirror);
 
-                removeDuplicatesAndRejectOutdatedConflicts(conflicts, current.getId(), mirror.getId());
+                List<Conflict> existingConflicts = conflictService.findAllPendingWithResourceIdAndPartnerResourceId(current.getId(), mirror.getId());
+                removeDuplicatesAndRejectOutdatedConflicts(equivalentConflicts, existingConflicts);
 
-                conflicts.forEach(c -> addAccounts(c, owner, accepted));
-                conflicts.forEach(c -> addConflictingDates(eq, c));
+                equivalentConflicts.forEach(c -> addAccounts(c, owner, accepted));
+                equivalentConflicts.forEach(c -> addConflictingDates(eq, c));
 
-                persistConflicts(conflicts);
+                persistConflicts(equivalentConflicts);
+                conflicts.addAll(equivalentConflicts);
+                conflicts.addAll(existingConflicts);
             } catch (NoSuchBeanDefinitionException ex) {
                 log.warn("There is no conflict detector for {}", eq.getClazz().getSimpleName());
             }
         }
+        return conflicts;
     }
 
     private void addConflictingDates(EntityEquivalent eq, Conflict conflict) {
@@ -165,12 +181,7 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
         conflicts.forEach(em::persist);
     }
 
-    private void removeDuplicatesAndRejectOutdatedConflicts(List<Conflict> conflicts,
-        UUID resourceId, UUID partnerResourceId) {
-
-        List<Conflict> existingConflicts = conflictService.findAllPendingWithResourceIdAndPartnerResourceId(
-            resourceId, partnerResourceId);
-
+    private void removeDuplicatesAndRejectOutdatedConflicts(List<Conflict> conflicts, List<Conflict> existingConflicts) {
         conflicts.removeIf(conflict -> StringUtils.isBlank(conflict.getOfferedValue()));
 
         existingConflicts.forEach(conflict -> conflicts.stream()

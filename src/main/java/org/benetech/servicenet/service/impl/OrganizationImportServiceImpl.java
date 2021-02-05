@@ -157,6 +157,7 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         newOrg.setPrograms(orgFromDb.getPrograms());
         newOrg.setReplacedBy(orgFromDb.getReplacedBy());
         newOrg.setAdditionalSilos(orgFromDb.getAdditionalSilos());
+        newOrg.setPhones(orgFromDb.getPhones());
         if (newOrg.getUserProfiles() == null || newOrg.getUserProfiles().isEmpty()
             && orgFromDb.getUserProfiles() != null && !orgFromDb.getUserProfiles().isEmpty()) {
             newOrg.setUserProfiles(orgFromDb.getUserProfiles());

@@ -69,7 +69,7 @@ public class LinkForCareDataAdapterTest {
     private void assertExtractedOrganizations() {
         assertEquals(1, organizationService.findAll().size());
         for (Organization organization : organizationService.findAll()) {
-            ProviderOrganizationDTO dto = organizationService.findOneDTOForProvider(organization.getId()).orElse(null);
+            ProviderOrganizationDTO dto = organizationService.findOneDTOForProvider(organization.getId(), false).orElse(null);
             assertTrue(organization.isActive());
             assertNotNull(dto);
             assertEquals("asdasdasd dsd sd sd", dto.getName());
