@@ -11,5 +11,5 @@ public abstract class AbstractFileConverter {
      * @return converted file in JSON format
      * @throws IOException if there's problem with reading the file
      */
-    public abstract String convert(MultipartFile file) throws IOException;
+    public abstract ImportData convert(MultipartFile file) throws IOException;
 }

@@ -211,4 +211,12 @@
     <include file="config/liquibase/changelog/20201214101815_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20201216110335_changelog.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20201218161139_update_user_profile.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210108164949_update_location.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210108140311_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210114193640_add_linkforcare_systemaccount.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210118132727_organization_add_needs_matching.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210111092418_changelog.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210127142934_remove_duplicate_phones.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210203162706_organization_add_social_urls.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210204100634_service_add_insurance_fields.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

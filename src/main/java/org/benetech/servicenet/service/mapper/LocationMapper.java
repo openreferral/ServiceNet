@@ -43,12 +43,14 @@ public interface LocationMapper extends EntityMapper<LocationDTO, Location> {
     @Mapping(source = "organization.name", target = "organizationName")
     LocationDTO toDto(Location location);
 
+    @Mapping(target = "isRemote", source = "remote")
     @Mapping(target = "organizationId", source = "organization.id")
     SimpleLocationDTO toSimpleDto(Location location);
 
     @Mapping(target = "organizationId", source = "organization.id")
     LocationOptionDTO toOptionDto(Location location);
 
+    @Mapping(target = "isRemote", source = "remote")
     @Mapping(target = "address1", source = "physicalAddress.address1")
     @Mapping(target = "address2", source = "physicalAddress.address2")
     @Mapping(target = "city", source = "physicalAddress.city")

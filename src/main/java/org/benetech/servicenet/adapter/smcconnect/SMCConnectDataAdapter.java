@@ -5,6 +5,7 @@ import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.smcconnect.persistence.SmcDataManager;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,11 +17,15 @@ public class SMCConnectDataAdapter extends MultipleDataAdapter {
     @Autowired
     private ImportManager importManager;
 
+    @Autowired
+    private TransactionSynchronizationService transactionSynchronizationService;
+
     @Override
     public DataImportReport importData(MultipleImportData data) {
         verifyData(data);
-        return new SmcDataManager(importManager, data)
-            .importData(data);
+        DataImportReport report = new SmcDataManager(importManager, data).importData(data);
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
+        return report;
     }
 
     @Override

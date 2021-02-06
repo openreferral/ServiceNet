@@ -20,6 +20,7 @@ import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.ServiceTaxonomy;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.type.ListType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class LAACDataAdapter extends SingleDataAdapter {
 
     @Autowired
     private ImportManager importManager;
+
+    @Autowired
+    private TransactionSynchronizationService transactionSynchronizationService;
 
     @Override
     public DataImportReport importData(SingleImportData data) {
@@ -56,6 +60,7 @@ public class LAACDataAdapter extends SingleDataAdapter {
                 log.warn("Skipping organization with name: " + entity.getOrganizationName(), e);
             }
         }
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
 
         return importData.getReport();
     }
@@ -85,7 +90,7 @@ public class LAACDataAdapter extends SingleDataAdapter {
     }
 
     private Organization importOrganization(Organization organization, String externalDbId, ImportData importData) {
-        return importManager.createOrUpdateOrganization(organization, externalDbId, importData);
+        return importManager.createOrUpdateOrganization(organization, externalDbId, importData, true);
     }
 
     private Set<ServiceTaxonomy> getServiceTaxonomiesToPersist(LAACData entity) {

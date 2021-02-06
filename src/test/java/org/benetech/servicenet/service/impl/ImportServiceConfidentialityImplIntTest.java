@@ -238,7 +238,8 @@ public class ImportServiceConfidentialityImplIntTest {
         var created = importManager.createOrUpdateOrganization(
             organization,
             EXISTING_EXTERNAL_ID,
-            new ImportData(new DataImportReport(), PROVIDER, true)
+            new ImportData(new DataImportReport(), PROVIDER, true),
+            true
         );
 
         assertEquals(0, organizationService.findAllDTOs().size());
@@ -253,7 +254,8 @@ public class ImportServiceConfidentialityImplIntTest {
         importManager.createOrUpdateOrganization(
             newOrganization,
             EXISTING_EXTERNAL_ID,
-            new ImportData(new DataImportReport(), PROVIDER, true)
+            new ImportData(new DataImportReport(), PROVIDER, true),
+            true
         );
         assertEquals(1, organizationService.findAllDTOs().size());
 
@@ -262,7 +264,8 @@ public class ImportServiceConfidentialityImplIntTest {
         var updated = importManager.createOrUpdateOrganization(
             newOrganization,
             EXISTING_EXTERNAL_ID,
-            new ImportData(new DataImportReport(), PROVIDER, true)
+            new ImportData(new DataImportReport(), PROVIDER, true),
+            true
         );
 
         assertEquals(1, organizationService.findAllDTOs().size());

@@ -231,12 +231,12 @@ public class BeneficiaryResource {
         }
 
         organizationLocs.forEach((UUID orgId, UUID locId) -> {
-            Optional<Organization> org = organizationService.findOne(orgId);
-            if (org.isEmpty()) {
+            Organization org = organizationService.findOneWithEagerProfileAndLocations(orgId);
+            if (org == null) {
                 throw new BadRequestAlertException("Can not find organization referring to with provided ID",
                     ORG_ENTITY_NAME, "toorgidnotfound");
             }
-            if (locId == null && !org.get().getLocations().isEmpty()) {
+            if (locId == null && !org.getLocations().isEmpty()) {
                 throw new BadRequestAlertException("Location referring to has to be specified", REFERRAL_ENTITY_NAME, "tolocationidnotfound");
             }
         });

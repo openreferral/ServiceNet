@@ -2,7 +2,10 @@ package org.benetech.servicenet.repository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import org.benetech.servicenet.domain.Location;
+import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Referral;
 
 import org.benetech.servicenet.domain.UserProfile;
@@ -83,4 +86,24 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "GROUP BY toOrg "
         + "ORDER BY toOrg.name ASC")
     List<OrganizationOptionDTO> getMadeToOptionsForCurrentUser(@Param("currentUser") UserProfile currentUser);
+
+    @Query("SELECT referral FROM Referral referral "
+        + "WHERE (referral.to = :record AND referral.from = :record)")
+    List<Referral> findAllToAndFrom(@Param("record") Organization record);
+
+    @Query("SELECT referral FROM Referral referral "
+        + "WHERE (referral.to = :record AND referral.from != :record)")
+    List<Referral> findAllToAndNotFrom(@Param("record") Organization record);
+
+    @Query("SELECT referral FROM Referral referral "
+        + "WHERE (referral.to != :record AND referral.from = :record)")
+    List<Referral> findAllFromAndNotTo(@Param("record") Organization record);
+
+    @Query("SELECT referral FROM Referral referral "
+        + "WHERE referral.fromLocation IN :fromLocations")
+    List<Referral> findAllByFromLocations(@Param("fromLocations") Set<Location> fromLocations);
+
+    @Query("SELECT referral FROM Referral referral "
+        + "WHERE referral.toLocation IN :toLocations")
+    List<Referral> findAllByToLocations(@Param("toLocations") Set<Location> toLocations);
 }

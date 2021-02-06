@@ -2,7 +2,7 @@ package org.benetech.servicenet.service;
 
 public interface MongoDbService {
 
-    String saveParsedDocument(String file);
+    String saveParsedDocument(String data);
 
     String saveOriginalDocument(byte[] bytes);
 

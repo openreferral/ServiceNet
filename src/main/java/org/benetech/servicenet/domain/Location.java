@@ -90,6 +90,12 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
+    @Column(name = "open_247")
+    private boolean open247;
+
+    @Column(name = "is_remote")
+    private boolean isRemote;
+
     @OneToOne(mappedBy = "location", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private PhysicalAddress physicalAddress;
@@ -157,6 +163,8 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
         this.organization = loc.organization;
         this.lastVerifiedOn = loc.lastVerifiedOn;
         this.updatedAt = loc.updatedAt;
+        this.open247 = loc.open247;
+        this.isRemote = loc.isRemote;
     }
 
     public LatLng getCoordinates() {
@@ -348,6 +356,8 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
             Objects.equals(this.longitude, loc.longitude) &&
             Objects.equals(this.externalDbId, loc.externalDbId) &&
             Objects.equals(this.providerName, loc.providerName) &&
+            Objects.equals(this.open247, loc.open247) &&
+            Objects.equals(this.isRemote, loc.isRemote) &&
             CompareUtils.oneSidedDeepEquals(this.physicalAddress, loc.physicalAddress) &&
             CompareUtils.oneSidedDeepEquals(this.postalAddress, loc.postalAddress) &&
             CompareUtils.oneSidedDeepEquals(this.regularSchedule, loc.regularSchedule) &&

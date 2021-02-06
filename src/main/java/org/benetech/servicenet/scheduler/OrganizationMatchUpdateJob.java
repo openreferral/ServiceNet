@@ -1,11 +1,14 @@
 package org.benetech.servicenet.scheduler;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
+import org.benetech.servicenet.service.LocationMatchService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
+import org.benetech.servicenet.service.dto.LocationMatchDto;
 import org.benetech.servicenet.service.dto.MatchSimilarityDTO;
 import org.benetech.servicenet.service.dto.OrganizationMatchDTO;
 import org.quartz.JobExecutionContext;
@@ -30,6 +33,9 @@ public class OrganizationMatchUpdateJob extends BaseJob {
     @Autowired
     private OrganizationSimilarityCounter organizationSimilarityCounter;
 
+    @Autowired
+    private LocationMatchService locationMatchService;
+
     @Override
     public Date getStartTime() {
         return getOffsetDate(0);
@@ -49,6 +55,12 @@ public class OrganizationMatchUpdateJob extends BaseJob {
                 List<MatchSimilarityDTO> similarityDTOs = organizationSimilarityCounter.getMatchSimilarityDTOs(
                     organization, partner);
                 organizationMatchService.createOrganizationMatches(organization, partner, similarityDTOs);
+                List<LocationMatchDto> locationMatchesToRemove = new ArrayList<>();
+                similarityDTOs.stream().filter(dto -> dto.getMatchesToRemove() != null)
+                    .forEach(dto -> locationMatchesToRemove.addAll(dto.getMatchesToRemove()));
+                locationMatchesToRemove.forEach(lm -> {
+                    locationMatchService.delete(lm.getLocation(), lm.getMatchingLocation());
+                });
             }
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);

@@ -85,7 +85,8 @@ public class ProviderRecordsRepository {
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
             systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
-            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE),
+            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, userProfiles, excludedUserProfile, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
@@ -138,7 +139,7 @@ public class ProviderRecordsRepository {
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
             systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
-            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE)));
 
         Predicate predicate = cb.equal(selectRoot.get(Organization_.ACTIVE), true);
 
@@ -170,7 +171,7 @@ public class ProviderRecordsRepository {
 
             queryCriteria.select(cb.construct(ProviderRecordDTO.class, countRoot.get(Organization_.ID), countRoot.get(Organization_.NAME),
                 countSystemAccountJoin.get(SystemAccount_.ID), countSystemAccountJoin.get(SystemAccount_.NAME),
-                countUserProfileJoin.get(UserProfile_.LOGIN), countRoot.get(Organization_.UPDATED_AT)));
+                countUserProfileJoin.get(UserProfile_.LOGIN), countRoot.get(Organization_.UPDATED_AT), countRoot.get(Organization_.ID)));
 
             countCriteria.where(predicate);
             countCriteria.select(cb.countDistinct(countRoot));
@@ -219,7 +220,7 @@ public class ProviderRecordsRepository {
 
         queryCriteria.select(cb.construct(SimpleLocationDTO.class, addressJoin.get(PhysicalAddress_.ID), addressJoin.get(PhysicalAddress_.CITY),
             addressJoin.get(PhysicalAddress_.STATE_PROVINCE), addressJoin.get(PhysicalAddress_.REGION), orgJoin.get(Organization_.ID),
-            root.get(Location_.ID), root.get(Location_.NAME)));
+            root.get(Location_.ID), root.get(Location_.NAME), root.get(Location_.IS_REMOTE)));
 
         queryCriteria.where(orgJoin.get(Organization_.ID).in(orgIds));
 
@@ -255,7 +256,8 @@ public class ProviderRecordsRepository {
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
             systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
-            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT)));
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE),
+            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
@@ -580,6 +582,10 @@ public class ProviderRecordsRepository {
         List<Order> orderList = new ArrayList<>();
         addOrder(root, orderList, sort, Organization_.NAME);
         addOrder(root, orderList, sort, Organization_.UPDATED_AT);
+        if (!orderList.isEmpty()) {
+            // fallback ordering in case there are multiple records with the same name/updated date
+            addOrder(root, orderList, Sort.by(Organization_.ID), Organization_.ID);
+        }
         queryCriteria.orderBy(orderList);
     }
 

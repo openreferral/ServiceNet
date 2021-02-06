@@ -116,8 +116,8 @@ spring:
     execution:
       thread-name-prefix: service-net-task-
       pool:
-        core-size: 2
-        max-size: 4
+        core-size: 1
+        max-size: 1
         queue-capacity: 250
     scheduling:
       thread-name-prefix: service-net-scheduling-
@@ -164,8 +164,8 @@ info:
 
 jhipster:
   async:
-    core-pool-size: 2
-    max-pool-size: 4
+    core-pool-size: 1
+    max-pool-size: 1
     queue-capacity: 250
   clientApp:
     name: 'serviceNetApp'

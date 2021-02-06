@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.CascadeType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -93,6 +91,10 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Column(name = "active", nullable = false)
     private Boolean active = true;
 
+    @NotNull
+    @Column(name = "needs_matching", nullable = false)
+    private Boolean needsMatching = true;
+
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
@@ -113,6 +115,9 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private DocumentUpload sourceDocument;
+
+    @Column(name = "only_remote")
+    private boolean onlyRemote;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
@@ -163,13 +168,24 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<DailyUpdate> dailyUpdates = new HashSet<>();
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "covidProtocols", columnDefinition = "clob")
+    private String covidProtocols;
 
-    @PrePersist
-    @PreUpdate
-    public void addTimestamp() {
-        updatedAt = ZonedDateTime.now();
-    }
+    @Column(name = "facebookUrl")
+    @Size(max = 255, message = "Field value is too long.")
+    private String facebookUrl;
+
+    @Column(name = "twitterUrl")
+    @Size(max = 255, message = "Field value is too long.")
+    private String twitterUrl;
+
+    @Column(name = "instagramUrl")
+    @Size(max = 255, message = "Field value is too long.")
+    private String instagramUrl;
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public Organization(Organization org) {
         this.name = org.name;
@@ -187,6 +203,10 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.lastVerifiedOn = org.lastVerifiedOn;
         this.userProfiles = org.userProfiles;
         this.dailyUpdates = org.dailyUpdates;
+        this.covidProtocols = org.covidProtocols;
+        this.facebookUrl = org.facebookUrl;
+        this.twitterUrl = org.twitterUrl;
+        this.instagramUrl = org.instagramUrl;
     }
 
     public Organization name(String name) {
@@ -394,6 +414,58 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.additionalSilos = additionalSilos;
     }
 
+    public Organization covidProtocols(String covidProtocols) {
+        this.covidProtocols = covidProtocols;
+        return this;
+    }
+
+    public String getCovidProtocols() {
+        return covidProtocols;
+    }
+
+    public void setCovidProtocols(String covidProtocols) {
+        this.covidProtocols = covidProtocols;
+    }
+
+    public Organization facebookUrl(String facebookUrl) {
+        this.facebookUrl = facebookUrl;
+        return this;
+    }
+
+    public String getFacebookUrl() {
+        return facebookUrl;
+    }
+
+    public void setFacebookUrl(String facebookUrl) {
+        this.facebookUrl = facebookUrl;
+    }
+
+    public Organization twitterUrl(String twitterUrl) {
+        this.twitterUrl = twitterUrl;
+        return this;
+    }
+
+    public String getTwitterUrl() {
+        return twitterUrl;
+    }
+
+    public void setTwitterUrl(String twitterUrl) {
+        this.twitterUrl = twitterUrl;
+    }
+
+    public Organization instagramUrl(String instagramUrl) {
+        this.instagramUrl = instagramUrl;
+        return this;
+    }
+
+    public String getInstagramUrl(String instagramUrl) {
+        return instagramUrl;
+    }
+
+    public void setInstagramUrl(String instagramUrl) {
+        this.instagramUrl = instagramUrl;
+    }
+
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "checkstyle:booleanExpressionComplexity"})
     @Override
     public boolean deepEquals(Object o) {
@@ -415,15 +487,19 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
             Objects.equals(org.yearIncorporated, this.yearIncorporated) &&
             Objects.equals(org.legalStatus, this.legalStatus) &&
             Objects.equals(org.active, this.active) &&
-            Objects.equals(org.externalDbId, this.externalDbId)
+            Objects.equals(org.externalDbId, this.externalDbId) &&
+            Objects.equals(org.covidProtocols, this.covidProtocols) &&
+            Objects.equals(org.facebookUrl, this.facebookUrl) &&
+            Objects.equals(org.twitterUrl, this.twitterUrl) &&
+            Objects.equals(org.instagramUrl, this.instagramUrl)
         )) {
             return false;
         }
-        return CompareUtils.oneSidedDeepEquals(this.funding, org.funding) &&
-            CompareUtils.oneSidedDeepEquals(this.locations, org.locations) &&
-            CompareUtils.oneSidedDeepEquals(this.programs, org.programs) &&
-            CompareUtils.oneSidedDeepEquals(this.services, org.services) &&
-            CompareUtils.oneSidedDeepEquals(this.contacts, org.contacts);
+        return CompareUtils.oneSidedDeepEquals(org.funding, this.funding) &&
+            CompareUtils.oneSidedDeepEquals(org.locations, this.locations) &&
+            CompareUtils.oneSidedDeepEquals(org.programs, this.programs) &&
+            CompareUtils.oneSidedDeepEquals(org.services, this.services) &&
+            CompareUtils.oneSidedDeepEquals(org.contacts, this.contacts);
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove

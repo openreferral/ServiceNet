@@ -51,6 +51,21 @@ public class PhoneServiceImpl implements PhoneService {
         return phoneMapper.toDto(phone);
     }
 
+    @Override
+    public Phone saveEntity(PhoneDTO phoneDTO) {
+        log.debug("Request to save Phone : {}", phoneDTO);
+
+        Phone phone = phoneMapper.toEntity(phoneDTO);
+        phone = phoneRepository.save(phone);
+        return phone;
+    }
+
+    @Override
+    public Phone save(Phone phone) {
+        log.debug("Request to save Phone : {}", phone);
+        return phoneRepository.save(phone);
+    }
+
     /**
      * Get all the phones.
      *

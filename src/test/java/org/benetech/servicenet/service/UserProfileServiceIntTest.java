@@ -93,7 +93,7 @@ public class UserProfileServiceIntTest {
         user.setLogin("system");
 
         when(dateTimeProvider.getNow()).thenReturn(Optional.of(LocalDateTime.now()));
-        when(authClient.updateUser(any())).thenReturn(user);
+        when(authClient.updateUser(any(), any(), any())).thenReturn(user);
         when(authClient.createUser(any())).thenReturn(user);
         when(authClient.getUser(any())).thenReturn(user);
         auditingHandler.setDateTimeProvider(dateTimeProvider);

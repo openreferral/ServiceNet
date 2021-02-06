@@ -56,6 +56,33 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     Page<Organization> findAllWithUserProfile(Pageable pageable, @Param("userProfile") UserProfile userProfile);
 
     @Query(value = "SELECT org FROM Organization org "
+        + "LEFT JOIN FETCH org.userProfiles profiles "
+        + "LEFT JOIN FETCH org.account "
+        + "LEFT JOIN FETCH org.locations locs "
+        + "LEFT JOIN FETCH org.services srvs "
+        + "LEFT JOIN FETCH org.contacts "
+        + "LEFT JOIN FETCH org.phones "
+        + "LEFT JOIN FETCH org.programs "
+        + "LEFT JOIN FETCH locs.regularSchedule lRS "
+        + "LEFT JOIN FETCH lRS.openingHours "
+        + "LEFT JOIN FETCH locs.holidaySchedules "
+        + "LEFT JOIN FETCH locs.langs "
+        + "LEFT JOIN FETCH locs.accessibilities "
+        + "LEFT JOIN FETCH srvs.regularSchedule sRS "
+        + "LEFT JOIN FETCH sRS.openingHours "
+        + "LEFT JOIN FETCH srvs.holidaySchedules "
+        + "LEFT JOIN FETCH srvs.funding "
+        + "LEFT JOIN FETCH srvs.eligibility "
+        + "LEFT JOIN FETCH srvs.docs "
+        + "LEFT JOIN FETCH srvs.paymentsAccepteds "
+        + "LEFT JOIN FETCH srvs.langs "
+        + "LEFT JOIN FETCH srvs.taxonomies "
+        + "LEFT JOIN FETCH srvs.phones "
+        + "LEFT JOIN FETCH srvs.contacts "
+        + "WHERE org.id = :id ")
+    Organization findOneWithEagerAssociations(@Param("id") UUID id);
+
+    @Query(value = "SELECT org FROM Organization org "
         + "LEFT JOIN org.userProfiles profile "
         + "WHERE profile IN (:userProfiles) AND org.active = true")
     Page<Organization> findAllWithUserProfiles(Pageable pageable, @Param("userProfiles") List<UserProfile> userProfiles);
@@ -102,6 +129,13 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query("SELECT org FROM Organization org WHERE org.account.id = :ownerId")
     Page<Organization> findAllWithOwnerId(@Param("ownerId") UUID ownerId, Pageable pageable);
 
+    Optional<Organization> findFirstByNeedsMatchingIsTrue();
+
+    Optional<Organization> findFirstByNeedsMatchingIsTrueAndIdNot(UUID id);
+
+    @Query("SELECT COUNT(org) FROM Organization org WHERE org.needsMatching = TRUE")
+    Long countOrganizationsByNeedsMatchingIsTrue();
+
     @Query("SELECT org FROM Organization org "
         + "LEFT JOIN FETCH org.account "
         + "LEFT JOIN FETCH org.locations")
@@ -111,7 +145,7 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
         + "LEFT JOIN FETCH org.account "
         + "LEFT JOIN FETCH org.locations "
         + "WHERE org.id = :id")
-    Organization findOneWithEagerAssociations(@Param("id") UUID id);
+    Organization findOneWithEagerProfileAndLocations(@Param("id") UUID id);
 
     @Query("SELECT org FROM Organization org " +
         "LEFT JOIN FETCH org.contacts " +
@@ -123,8 +157,13 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
 
     List<Organization> findAllByIdOrExternalDbId(UUID id, String externalDbId);
 
-    @Query("SELECT org FROM Organization org WHERE org.account.name != :providerName AND org.active = True")
+    @Query("SELECT org FROM Organization org "
+        + "WHERE org.account.name != :providerName AND org.active = True")
     List<Organization> findAllByProviderNameNot(@Param("providerName") String providerName);
+
+    @Query("SELECT org.id FROM Organization org "
+        + "WHERE org.account.name != :providerName AND org.active = True")
+    List<UUID> findAllIdsByProviderNameNot(@Param("providerName") String providerName);
 
     @Query("SELECT org FROM Organization org WHERE org.id NOT IN :ids "
         + "AND org.account.name != :providerName AND org.active = True")

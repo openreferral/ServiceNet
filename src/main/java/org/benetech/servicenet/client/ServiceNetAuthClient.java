@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,7 +28,9 @@ public interface ServiceNetAuthClient {
     UserDTO createUser(UserDTO userDTO);
 
     @RequestMapping(value = "/api/users", method = RequestMethod.PUT)
-    UserDTO updateUser(UserDTO userDTO);
+    UserDTO updateUser(UserDTO userDTO,
+        @RequestHeader("x-forwarded-proto") String xForwardedProto,
+        @RequestHeader("x-forwarded-host") String xForwardedHost);
 
     @RequestMapping(value = "/api/users/{login}", method = RequestMethod.GET)
     UserDTO getUser(@PathVariable("login") String login);
@@ -53,5 +56,7 @@ public interface ServiceNetAuthClient {
     void deleteClient(@PathVariable("id") String id);
 
     @RequestMapping(value = "/api/register", method = RequestMethod.POST)
-    UserDTO registerUser(UserRegisterDTO userRegisterDTO);
+    UserDTO registerUser(UserRegisterDTO userRegisterDTO,
+        @RequestHeader("x-forwarded-proto") String xForwardedProto,
+        @RequestHeader("x-forwarded-host") String xForwardedHost);
 }

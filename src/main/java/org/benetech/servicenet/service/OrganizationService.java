@@ -52,6 +52,12 @@ public interface OrganizationService {
 
     List<Organization> findAll();
 
+    Optional<Organization> findFirstThatNeedsMatching();
+
+    Optional<Organization> findFirstThatNeedsMatchingExcept(UUID id);
+
+    Long countOrganizationsByNeedsMatching();
+
     List<OrganizationOptionDTO> findAllOptions();
 
     List<OrganizationOptionDTO> findAllOptions(String providerName);
@@ -65,6 +71,8 @@ public interface OrganizationService {
     Page<Organization> findAllByUserProfile(Pageable pageable, UserProfile userProfile);
 
     List<Organization> findAllOthersExcept(String providerName, List<UUID> exceptIds);
+
+    List<UUID> findAllOtherIds(String providerName);
 
     /**
      * Get all the organizations on page.
@@ -104,6 +112,8 @@ public interface OrganizationService {
     Optional<Organization> findOneByIdAndSilo(UUID id, Silo silo);
 
     Organization findOneWithEagerAssociations(UUID id);
+
+    Organization findOneWithEagerProfileAndLocations(UUID id);
 
     Optional<Organization> findByIdOrExternalDbId(String id, UUID providerId);
 

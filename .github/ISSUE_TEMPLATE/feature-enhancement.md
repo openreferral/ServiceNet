@@ -3,6 +3,11 @@
 
 **Description:**
 
+**User Story**\
+(encompasses persona, purpose, value) - e.g. As a [persona] i want to be able to [purpose] so that I can [value]:
+
+**Description:**
+
 **Scope**\
 (includes UI mockups, user flow, and out of scope):\
 

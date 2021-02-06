@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.service.dto.PhoneDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,10 @@ public interface PhoneService {
      * @return the persisted entity
      */
     PhoneDTO save(PhoneDTO phoneDTO);
+
+    Phone saveEntity(PhoneDTO phoneDTO);
+
+    Phone save(Phone phone);
 
     /**
      * Get all the phones.

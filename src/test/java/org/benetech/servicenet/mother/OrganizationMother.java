@@ -53,6 +53,9 @@ public class OrganizationMother {
     public static final Boolean DEFAULT_INACTIVE = false;
     public static final Boolean UPDATED_ACTIVE = true;
 
+    public static final String DEFAULT_COVID_PROTOCOLS = "AAAAAAAAAA";
+    public static final String UPDATED_COVID_PROTOCOLS = "BBBBBBBBBB";
+
     public static Organization createDefault(Boolean active) {
         Organization org = new Organization()
             .name(DEFAULT_NAME)
@@ -64,7 +67,8 @@ public class OrganizationMother {
             .taxId(DEFAULT_TAX_ID)
             .yearIncorporated(DEFAULT_YEAR_INCORPORATED)
             .legalStatus(DEFAULT_LEGAL_STATUS)
-            .active(active);
+            .active(active)
+            .covidProtocols(DEFAULT_COVID_PROTOCOLS);
         org.setAccount(SystemAccountMother.createDefault());
         org.setDailyUpdates(new HashSet<>());
         org.setUserProfiles(new HashSet<>());
@@ -83,7 +87,8 @@ public class OrganizationMother {
             .taxId(UPDATED_TAX_ID)
             .yearIncorporated(UPDATED_YEAR_INCORPORATED)
             .legalStatus(UPDATED_LEGAL_STATUS)
-            .active(UPDATED_ACTIVE);
+            .active(UPDATED_ACTIVE)
+            .covidProtocols(UPDATED_COVID_PROTOCOLS);
         org.setAccount(SystemAccountMother.createDifferent());
         org.setDailyUpdates(new HashSet<>());
         org.setUserProfiles(new HashSet<>());

@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.Getter;
 import org.benetech.servicenet.service.dto.DailyUpdateDTO;
 import org.benetech.servicenet.service.dto.OpeningHoursRow;
+import org.benetech.servicenet.service.dto.PhoneDTO;
 
 /**
  * A DTO for the Organization entity.
@@ -37,9 +38,24 @@ public class ProviderOrganizationDTO implements Serializable {
 
     private String update;
 
+    @Getter
+    private List<PhoneDTO> phones;
+
     private ZonedDateTime updatedAt;
 
     private String accountName;
+
+    @Lob
+    private String covidProtocols;
+
+    @Getter
+    private Boolean onlyRemote;
+
+    private String facebookUrl;
+
+    private String twitterUrl;
+
+    private String instagramUrl;
 
     @Getter
     private List<ProviderLocationDTO> locations;
