@@ -204,8 +204,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ProviderRecordDTO> getRecordsToClaim(Pageable pageable) {
-        return providerRecordsRepository.findRecordsToClaim(pageable);
+    public Page<ProviderRecordDTO> getRecordsToClaim(Pageable pageable, String search) {
+        return providerRecordsRepository.findRecordsToClaim(pageable, search);
     }
 
     @Override

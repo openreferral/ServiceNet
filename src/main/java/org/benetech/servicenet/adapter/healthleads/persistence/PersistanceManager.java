@@ -72,7 +72,7 @@ public class PersistanceManager {
             try {
                 Organization organization = getOrganizationToPersist(healthleadsOrganization);
                 importManager.createOrUpdateOrganization(
-                    organization, organization.getExternalDbId(), importData);
+                    organization, organization.getExternalDbId(), importData, true);
             } catch (Exception e) {
                 log.warn("Skipping organization with name: " + healthleadsOrganization.getName(), e);
             }

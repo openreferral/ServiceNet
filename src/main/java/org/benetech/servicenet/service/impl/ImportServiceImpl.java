@@ -1,17 +1,22 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.ImportService;
 import org.benetech.servicenet.service.LocationImportService;
+import org.benetech.servicenet.service.LocationService;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
-import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,11 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Component
 public class ImportServiceImpl implements ImportService {
-
-    @Autowired
-    private TransactionSynchronizationService transactionSynchronizationService;
 
     @Autowired
     private OrganizationImportService organizationImportService;
@@ -39,20 +42,32 @@ public class ImportServiceImpl implements ImportService {
     @Autowired
     private TaxonomyImportService taxonomyImportService;
 
+    @Autowired
+    private LocationService locationService;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @ConfidentialFilter
     public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
-                                                   ImportData importData) {
+                                                   ImportData importData, boolean overwriteLastUpdated) {
+        Optional<Organization> organizationFromDb =
+            organizationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(externalDbId, importData.getProviderName());
+        Set<UUID> locIds = new HashSet<>();
+        organizationFromDb.ifPresent(
+            organization -> organization.getLocations().stream()
+                .map(Location::getId)
+                .filter(Objects::nonNull)
+                .forEach(locIds::add));
         Organization organization = organizationImportService.createOrUpdateOrganization(
-            filledOrganization, externalDbId, importData.getProviderName(), importData.getReport());
+            filledOrganization, organizationFromDb.orElse(null), externalDbId, importData.getProviderName(), importData.getReport(), overwriteLastUpdated);
 
         if (organization != null) {
-            importLocations(filledOrganization.getLocations(), organization, importData);
+            importLocations(filledOrganization.getLocations(), organization, locIds, importData);
             importServices(filledOrganization.getServices(), organization,
                 importData.getProviderName(), importData.getReport());
-
-            registerSynchronizationOfMatchingOrganizations(organization);
         }
         return organization;
     }
@@ -89,16 +104,15 @@ public class ImportServiceImpl implements ImportService {
         org.setServices(savedServices);
     }
 
-    private void importLocations(Set<Location> locations, Organization org, ImportData importData) {
+    private void importLocations(Set<Location> locations, Organization org, Set<UUID> existingLocations, ImportData importData) {
         Set<Location> savedLocations = new HashSet<>();
         for (Location location : locations) {
             location.setOrganization(org);
             savedLocations.add(createOrUpdateLocation(location, location.getExternalDbId(), importData));
         }
+        existingLocations.stream()
+            .filter(id -> savedLocations.stream().noneMatch(sl -> sl.getId().equals(id)))
+            .forEach(id -> locationService.delete(id));
         org.setLocations(savedLocations);
-    }
-
-    private void registerSynchronizationOfMatchingOrganizations(Organization organization) {
-        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations(organization);
     }
 }

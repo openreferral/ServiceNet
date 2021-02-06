@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext ../xml-schema/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog ../xml-schema/dbchangelog-3.6.xsd">
+    <changeSet author="jkondrat" id="20210127142934-1">
+        <sql dbms="postgresql">
+DELETE FROM phone
+WHERE id IN
+    (SELECT id
+     FROM
+       (SELECT id,
+               Row_number() OVER (PARTITION BY jhi_number,
+                                               jhi_type,
+                                               organization_id,
+                                               srvc_id,
+                                               location_id,
+                                               contact_id,
+                                               shelter_id
+                                  ORDER BY id DESC)
+        FROM phone) duplicates
+     WHERE duplicates.row_number > 1);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

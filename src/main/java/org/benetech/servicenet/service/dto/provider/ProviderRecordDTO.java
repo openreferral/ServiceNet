@@ -31,21 +31,37 @@ public class ProviderRecordDTO {
 
     private Set<DailyUpdateDTO> dailyUpdates;
 
+    private Boolean onlyRemote;
+
     public ProviderRecordDTO(OrganizationDTO organization, ZonedDateTime lastUpdated,
         Set<SimpleLocationDTO> locations, Set<SimpleServiceDTO> services, UserDTO owner,
-        Set<DailyUpdateDTO> dailyUpdates) {
+        Set<DailyUpdateDTO> dailyUpdates, Boolean onlyRemote) {
         this.organization = organization;
         this.lastUpdated = lastUpdated;
         this.locations = locations;
         this.services = services;
         this.owner = owner;
         this.dailyUpdates = dailyUpdates;
+        this.onlyRemote = onlyRemote;
     }
 
     public ProviderRecordDTO(UUID orgId, String orgName, UUID orgAccountId, String orgAccountName,
-        String userLogin, ZonedDateTime lastUpdated) {
+        String userLogin, ZonedDateTime lastUpdated, Boolean onlyRemote) {
         this.lastUpdated = lastUpdated;
         this.userLogin = userLogin;
         this.organization = new OrganizationDTO(orgId, orgName, orgAccountId, orgAccountName);
+        this.onlyRemote = onlyRemote;
+    }
+
+    @SuppressWarnings({"PMD.ExcessiveParameterList"})
+    public ProviderRecordDTO(UUID orgId, String orgName, UUID orgAccountId, String orgAccountName,
+        String userLogin, ZonedDateTime lastUpdated, Boolean onlyRemote, String facebookUrl,
+        String twitterUrl, String instagramUrl) {
+        this.lastUpdated = lastUpdated;
+        this.userLogin = userLogin;
+        this.organization = new OrganizationDTO(
+            orgId, orgName, orgAccountId, orgAccountName, facebookUrl, twitterUrl, instagramUrl
+        );
+        this.onlyRemote = onlyRemote;
     }
 }

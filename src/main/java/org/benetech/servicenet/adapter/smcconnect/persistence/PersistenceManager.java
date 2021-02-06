@@ -69,7 +69,7 @@ class PersistenceManager {
             organizationToSave.setServices(services);
 
             importManager.createOrUpdateOrganization(
-                organizationToSave, smcOrganization.getId(), importData);
+                organizationToSave, smcOrganization.getId(), importData, true);
         }
     }
 

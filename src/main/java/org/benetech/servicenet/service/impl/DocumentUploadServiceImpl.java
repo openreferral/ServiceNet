@@ -1,5 +1,7 @@
 package org.benetech.servicenet.service.impl;
 
+import static org.apache.commons.codec.binary.Base64.encodeBase64String;
+
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -15,6 +17,7 @@ import org.benetech.servicenet.adapter.SingleDataAdapter;
 import org.benetech.servicenet.adapter.shared.model.FileInfo;
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
+import org.benetech.servicenet.converter.ImportData;
 import org.benetech.servicenet.converter.FileConverterFactory;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.DocumentUpload;
@@ -23,6 +26,8 @@ import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.MongoDbService;
+import org.benetech.servicenet.service.StringGZIPService;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
@@ -62,20 +67,31 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private StringGZIPService stringGZIPService;
+
+    @Autowired
+    private TransactionSynchronizationService transactionSynchronizationService;
+
     @Override
     public DocumentUploadDTO uploadFile(MultipartFile file, String delimiter, String providerName)
         throws IllegalArgumentException, IOException {
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now())
             .systemAccount(providerName);
 
-        String parsedDocument = FileConverterFactory.getConverter(file, delimiter).convert(file);
-        String parsedDocumentId = mongoDbService.saveParsedDocument(parsedDocument);
+        ImportData conversionOutput = FileConverterFactory.getConverter(file, delimiter).convert(file);
+        String parsedDocumentId = null;
+        if (conversionOutput.getJson() != null) {
+            byte[] parseDocumentBytes = stringGZIPService.compress(conversionOutput.getJson());
+            parsedDocumentId = mongoDbService
+                .saveParsedDocument(encodeBase64String(parseDocumentBytes));
+        }
         String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
 
         DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
         report.setDocumentUpload(documentUpload);
 
-        return importDataIfNeeded(getRealProviderName(providerName), parsedDocument, report, true);
+        return importDataIfNeeded(getRealProviderName(providerName), conversionOutput, report, true);
     }
 
     @Override
@@ -86,12 +102,14 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         DocumentUpload documentUpload = saveForSystemUser(new DocumentUpload(originalDocumentId, null));
         report.setDocumentUpload(documentUpload);
 
-        return importDataIfNeeded(providerName, json, report, false);
+        ImportData importData = new ImportData();
+        importData.setJson(json);
+
+        return importDataIfNeeded(providerName, importData, report, false);
     }
 
     @Override
     public boolean processFiles(final List<FileInfo> fileInfoList, final String providerName) {
-
         Optional<MultipleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getMultipleDataAdapter(providerName);
         if (adapter.isEmpty()) {
@@ -111,6 +129,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .map(a -> a.importData(new MultipleImportData(parsedDocuments, documentUploads, report, providerName,
                 true)))
             .orElse(report);
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
         //TODO: Remove time counting logic (#264)
@@ -184,7 +203,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         documentUploadRepository.deleteById(id);
     }
 
-    private DocumentUploadDTO importDataIfNeeded(String providerName, String parsedDocument, DataImportReport report,
+    private DocumentUploadDTO importDataIfNeeded(String providerName, ImportData importData, DataImportReport report,
                                                  boolean isFileUpload) {
         Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getSingleDataAdapter(providerName);
@@ -193,8 +212,11 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
             .map((a) -> {
                 long startTime = System.currentTimeMillis();
                 log.info("Data upload for " + providerName + " has started");
-                DataImportReport importReport = a.importData(new SingleImportData(parsedDocument, report,
-                    providerName, isFileUpload));
+                SingleImportData singleImportData = importData.getTemporaryFile() == null ?
+                    new SingleImportData(importData.getJson(), report, providerName, isFileUpload)
+                    : new SingleImportData(importData.getTemporaryFile(), report, providerName, isFileUpload);
+                DataImportReport importReport = a.importData(singleImportData);
+
                 long stopTime = System.currentTimeMillis();
                 long elapsedTime = stopTime - startTime;
                 log.info("Data upload for " + providerName + " took: " + elapsedTime + "ms");

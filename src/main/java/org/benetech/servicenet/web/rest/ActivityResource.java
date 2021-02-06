@@ -147,7 +147,8 @@ public class ActivityResource {
 
     @GetMapping("/records-to-claim")
     @Timed
-    public ResponseEntity<Page<ProviderRecordDTO>> getRecordsToClaim(Pageable pageable) {
-        return ResponseEntity.ok().body(activityService.getRecordsToClaim(pageable));
+    public ResponseEntity<Page<ProviderRecordDTO>> getRecordsToClaim(@PathParam("search") String search,
+        Pageable pageable) {
+        return ResponseEntity.ok().body(activityService.getRecordsToClaim(pageable, search));
     }
 }

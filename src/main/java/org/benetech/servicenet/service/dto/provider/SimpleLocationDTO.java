@@ -20,13 +20,16 @@ public class SimpleLocationDTO {
 
     private UUID organizationId;
 
+    private Boolean isRemote;
+
     public SimpleLocationDTO(UUID physicalAddressId, String physicalAddressCity,
         String physicalAddressStateProvince, String physicalAddressStateRegion, UUID orgId,
-        UUID id, String name) {
+        UUID id, String name, Boolean isRemote) {
         this.physicalAddress = new AddressDTO(physicalAddressId, physicalAddressCity,
             physicalAddressStateProvince, physicalAddressStateRegion);
         this.organizationId = orgId;
         this.id = id;
         this.name = name;
+        this.isRemote = isRemote;
     }
 }

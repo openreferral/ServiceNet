@@ -10,11 +10,11 @@ import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Funding;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationError;
+import org.benetech.servicenet.domain.Phone;
 import org.benetech.servicenet.domain.Program;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.repository.FundingRepository;
 import org.benetech.servicenet.service.OrganizationImportService;
-import org.benetech.servicenet.service.OrganizationService;
 import org.benetech.servicenet.service.SharedImportService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.annotation.ConfidentialFilter;
@@ -38,9 +38,6 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
     private EntityManager em;
 
     @Autowired
-    private OrganizationService organizationService;
-
-    @Autowired
     private SystemAccountService systemAccountService;
 
     @Autowired
@@ -51,8 +48,8 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
     @Override
     @Transactional
-    public Organization createOrUpdateOrganization(Organization filledOrganization, String externalDbId,
-        String providerName, DataImportReport report) {
+    public Organization createOrUpdateOrganization(Organization filledOrganization, Organization organizationFromDb,
+        String externalDbId, String providerName, DataImportReport report, boolean overwriteLastUpdated) {
         Organization organization = new Organization(filledOrganization);
         Optional<SystemAccount> systemAccount = systemAccountService.findByName(providerName);
 
@@ -63,17 +60,17 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
 
         EntityValidator.validateAndFix(organization, filledOrganization, report, externalDbId);
 
-        Optional<Organization> organizationFromDb =
-            organizationService.findWithEagerAssociations(externalDbId, providerName);
-        if (organizationFromDb.isPresent()) {
-            if (organizationFromDb.get().deepEquals(filledOrganization)) {
+        if (organizationFromDb != null) {
+            if (organizationFromDb.deepEquals(filledOrganization)) {
                 log.info("Organization " + organization.getName() + " didn't change, skipping");
                 return null;
             }
-            fillDataFromDb(organization, organizationFromDb.get());
+            fillDataFromDb(organization, organizationFromDb);
+            organization.setNeedsMatching(true);
             em.merge(organization);
             report.incrementNumberOfUpdatedOrgs();
         } else {
+            organization.setNeedsMatching(true);
             em.persist(organization);
             report.incrementNumberOfCreatedOrgs();
         }
@@ -81,8 +78,13 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         createOrUpdateFundingForOrganization(filledOrganization.getFunding(), organization);
         createOrUpdateProgramsForOrganization(filledOrganization.getPrograms(), organization);
         createOrUpdateContactsForOrganization(filledOrganization.getContacts(), organization);
+        createOrUpdatePhonesForOrganization(filledOrganization.getPhones(), organization);
 
-        organization.setUpdatedAt(ZonedDateTime.now());
+        if (filledOrganization.getUpdatedAt() != null && !overwriteLastUpdated) {
+            organization.setUpdatedAt(filledOrganization.getUpdatedAt());
+        } else {
+            organization.setUpdatedAt(ZonedDateTime.now());
+        }
         Organization org = em.merge(organization);
 
         Set<OrganizationError> errors = new HashSet<>();
@@ -130,6 +132,14 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         organization.setContacts(sharedImportService.createOrUpdateContacts(contacts));
     }
 
+    private void createOrUpdatePhonesForOrganization(Set<Phone> phones, Organization organization) {
+        phones.forEach(p -> {
+            EntityValidator.validateAndFix(p, organization, null, "");
+            p.setOrganization(organization);
+        });
+        sharedImportService.persistPhones(organization.getPhones(), phones);
+    }
+
     private void createOrUpdateFilteredProgramsForOrganization(Set<Program> programs, Organization organization) {
         programs.forEach(p -> {
             EntityValidator.validateAndFix(p, organization, null, "");
@@ -146,5 +156,10 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         newOrg.setContacts(orgFromDb.getContacts());
         newOrg.setPrograms(orgFromDb.getPrograms());
         newOrg.setReplacedBy(orgFromDb.getReplacedBy());
+        newOrg.setAdditionalSilos(orgFromDb.getAdditionalSilos());
+        if (newOrg.getUserProfiles() == null || newOrg.getUserProfiles().isEmpty()
+            && orgFromDb.getUserProfiles() != null && !orgFromDb.getUserProfiles().isEmpty()) {
+            newOrg.setUserProfiles(orgFromDb.getUserProfiles());
+        }
     }
 }

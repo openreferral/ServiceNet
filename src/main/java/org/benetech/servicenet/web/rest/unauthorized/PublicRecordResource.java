@@ -1,5 +1,7 @@
 package org.benetech.servicenet.web.rest.unauthorized;
 
+import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
+
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.service.SystemAccountService;
 import org.benetech.servicenet.service.TaxonomyService;
 import org.benetech.servicenet.service.UserService;
+import org.benetech.servicenet.service.dto.OrganizationOptionDTO;
 import org.benetech.servicenet.service.dto.SiloDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderRecordForMapDTO;
@@ -222,5 +225,18 @@ public class PublicRecordResource {
         if (!silo.isPublic()) {
             throw new BadRequestAlertException("Silo is not public", "providerRecord", "idnull");
         }
+    }
+
+    /**
+     * GET  /provider-organization-options : get all the organization options for ServiceProvider.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of organizations in body
+     */
+    @GetMapping("/provider-organization-options")
+    @Timed
+    public ResponseEntity<List<OrganizationOptionDTO>> getProviderOrganizationOptions() {
+        return ResponseEntity.ok().body(
+            organizationService.findAllOptions(SERVICE_PROVIDER)
+        );
     }
 }

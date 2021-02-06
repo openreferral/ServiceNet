@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.conflict.ConflictDetectionService;
 import org.benetech.servicenet.domain.MatchSimilarity;
@@ -17,6 +18,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.OrganizationMatch;
 import org.benetech.servicenet.matching.counter.OrganizationSimilarityCounter;
 import org.benetech.servicenet.mother.OrganizationMother;
+import org.benetech.servicenet.repository.LocationMatchRepository;
 import org.benetech.servicenet.repository.MatchSimilarityRepository;
 import org.benetech.servicenet.repository.OrganizationMatchRepository;
 import org.benetech.servicenet.service.MatchSimilarityService;
@@ -79,10 +81,16 @@ public class OrganizationMatchServiceImplTest {
     @Autowired
     private MatchSimilarityRepository matchSimilarityRepository;
 
+    @Autowired
+    private LocationMatchRepository locationMatchRepository;
+
     private OrganizationMatchService organizationMatchService;
 
     @Autowired
     private EntityManager em;
+
+    @Autowired
+    private DataSource dataSource;
 
     @Configuration
     static class AsyncConfiguration {
@@ -100,7 +108,7 @@ public class OrganizationMatchServiceImplTest {
         organizationMatchService = new OrganizationMatchServiceImpl(organizationMatchRepository,
             organizationMatchMapper, organizationService, organizationSimilarityCounter,
             conflictDetectionService, userService, matchSimilarityService,
-            matchSimilarityRepository, THRESHOLD);
+            matchSimilarityRepository, locationMatchRepository, em, dataSource, THRESHOLD);
         MatchSimilarityDTO completeSimilarity = new MatchSimilarityDTO();
         completeSimilarity.setSimilarity(BigDecimal.ONE);
         MATCHING_SIMILARITY_DTOS.add(completeSimilarity);
@@ -129,7 +137,7 @@ public class OrganizationMatchServiceImplTest {
         when(organizationSimilarityCounter.getTotalWeight(similarities)).thenReturn(totalWeight);
 
         int dbSize = organizationMatchService.findAll().size();
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1.getId());
         List<OrganizationMatchDTO> matches = organizationMatchService.findAll();
 
         assertEquals(dbSize + 2, matches.size());
@@ -161,7 +169,7 @@ public class OrganizationMatchServiceImplTest {
         when(organizationSimilarityCounter.getTotalWeight(any())).thenReturn(TOTAL_WEIGHT);
 
         int dbSize = organizationMatchService.findAll().size();
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1.getId());
 
         assertEquals(dbSize, organizationMatchService.findAll().size());
     }
@@ -181,7 +189,7 @@ public class OrganizationMatchServiceImplTest {
 
         when(organizationSimilarityCounter.countSimilarityRatio(org1, org2)).thenReturn(RATIO);
 
-        organizationMatchService.createOrUpdateOrganizationMatches(org1);
+        organizationMatchService.createOrUpdateOrganizationMatches(org1.getId());
 
         assertEquals(0, organizationMatchService.findAll().size());
     }

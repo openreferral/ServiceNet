@@ -33,9 +33,9 @@ public class OrganizationMatchDiscoveryJob extends BaseJob {
         log.info(getFullName() + " is being executed");
 
         try {
-            for (Organization org : organizationService.findAllWithEagerAssociations()) {
+            for (Organization org : organizationService.findAll()) {
                 organizationMatchService.createOrUpdateOrganizationMatchesSynchronously(
-                    org);
+                    org.getId(), null);
             }
         } catch (RuntimeException ex) {
             log.error(ex.getMessage(), ex);

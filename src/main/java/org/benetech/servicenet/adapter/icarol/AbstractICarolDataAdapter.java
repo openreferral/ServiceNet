@@ -21,6 +21,7 @@ import org.benetech.servicenet.adapter.icarol.model.ICarolSite;
 import org.benetech.servicenet.adapter.shared.model.SingleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.util.HttpUtils;
 import org.benetech.servicenet.util.ZonedDateTimeDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,18 @@ public abstract class AbstractICarolDataAdapter extends SingleDataAdapter {
     @Autowired
     private ImportManager importManager;
 
+    @Autowired
+    private TransactionSynchronizationService transactionSynchronizationService;
+
     @Override
     public abstract DataImportReport importData(SingleImportData importData);
 
     protected DataImportReport importData(SingleImportData importData, String uri) {
         ICarolDataToPersist dataToPersist = gatherMoreDetails(importData, uri);
         RelationManager manager = new RelationManager(importManager);
-        return manager.persist(dataToPersist, importData);
+        DataImportReport dataImportReport = manager.persist(dataToPersist, importData);
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
+        return dataImportReport;
     }
 
     protected abstract String getApiKey();

@@ -6,6 +6,7 @@ import org.benetech.servicenet.adapter.healthleads.persistence.PersistanceManage
 import org.benetech.servicenet.adapter.shared.model.MultipleImportData;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.manager.ImportManager;
+import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,9 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
 
     @Autowired
     private ImportManager importManager;
+
+    @Autowired
+    private TransactionSynchronizationService transactionSynchronizationService;
 
     @Override
     @Transactional
@@ -37,7 +41,9 @@ public class HealthleadsDataAdapter extends MultipleDataAdapter {
             }
         }
 
-        return persistanceManager.persistData(data);
+        DataImportReport dataImportReport = persistanceManager.persistData(data);
+        transactionSynchronizationService.registerSynchronizationOfMatchingOrganizations();
+        return dataImportReport;
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.benetech.servicenet.service;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -22,6 +23,7 @@ import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.errors.HystrixBadRequestAlertException;
 import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.repository.MetadataRepository;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.repository.ShelterRepository;
 import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
@@ -32,6 +34,7 @@ import org.benetech.servicenet.security.SecurityUtils;
 import org.benetech.servicenet.service.dto.OwnerDTO;
 import org.benetech.servicenet.service.dto.UserDTO;
 import org.benetech.servicenet.service.dto.UserRegisterDTO;
+import org.benetech.servicenet.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +83,9 @@ public class UserService {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
     /**
      * Create a new user.
      *
@@ -106,7 +112,9 @@ public class UserService {
     public UserDTO registerUser(UserRegisterDTO userRegisterDTO) {
         try {
             return createOrUpdateUserProfile(
-                authClient.registerUser(userRegisterDTO), userRegisterDTO
+                authClient.registerUser(userRegisterDTO,
+                    RequestUtils.getXForwardedProto(), RequestUtils.getXForwardedHost()),
+                userRegisterDTO
             );
         } catch (HystrixBadRequestException e) {
             handleHystrixException(e);
@@ -123,7 +131,9 @@ public class UserService {
     public UserDTO updateUser(UserDTO userDTO) {
         try {
             return createOrUpdateUserProfile(
-                authClient.updateUser(userDTO), userDTO
+                authClient.updateUser(userDTO,
+                    RequestUtils.getXForwardedProto(), RequestUtils.getXForwardedHost()),
+                userDTO
             );
         } catch (HystrixBadRequestException e) {
             handleHystrixException(e);
@@ -377,6 +387,22 @@ public class UserService {
         userProfile.setPhoneNumber(userDTO.getPhoneNumber());
         userProfile.setSystemAccount(getSystemAccount(userDTO));
 
+        if (userDTO instanceof UserRegisterDTO) {
+            UserRegisterDTO userRegisterDTO = (UserRegisterDTO) userDTO;
+            userProfile.setContactFirstName(userRegisterDTO.getContactFirstName());
+            userProfile.setContactLastName(userRegisterDTO.getContactLastName());
+            userProfile.setContactEmail(userRegisterDTO.getContactEmail());
+            if (userRegisterDTO.getOrganizations() != null) {
+                Set<Organization> organizations = userRegisterDTO.getOrganizations().stream()
+                    .map(id -> organizationRepository.getOne(id)).collect(Collectors.toSet());
+                organizations.forEach(org -> {
+                    Set<UserProfile> userProfiles = org.getUserProfiles() != null ? org.getUserProfiles() : new HashSet<>();
+                    userProfiles.add(userProfile);
+                    org.setUserProfiles(userProfiles);
+                });
+                userProfile.setOrganizations(organizations);
+            }
+        }
         Set<Shelter> shelters = sheltersFromUUIDs(userDTO.getShelters());
         Set<Shelter> removedShelters = userProfile.getShelters();
         if (removedShelters != null) {

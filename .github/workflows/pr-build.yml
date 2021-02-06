@@ -1,0 +1,31 @@
+name: Build and test on PRs
+
+on: pull_request
+
+jobs:
+  test-pr:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-maven-dep
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Install Maven dependencies (if new ones were added)
+      run: ./mvnw dependency:go-offline --no-transfer-progress
+
+    - name: Run backend&frontend tests
+      run: ./mvnw -Pprod clean verify --no-transfer-progress jacoco:report coveralls:report -DrepoToken=${{ secrets.COVERALLS_TOKEN }}
+

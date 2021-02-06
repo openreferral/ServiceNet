@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.Optional;
 import org.benetech.servicenet.TestPersistanceHelper;
 import org.benetech.servicenet.adapter.shared.model.ImportData;
 import org.benetech.servicenet.domain.DataImportReport;
@@ -7,11 +8,11 @@ import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.Taxonomy;
+import org.benetech.servicenet.repository.OrganizationRepository;
 import org.benetech.servicenet.service.LocationImportService;
 import org.benetech.servicenet.service.OrganizationImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.TaxonomyImportService;
-import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -51,10 +53,10 @@ public class ImportServiceImplIntTest {
     private ServiceImportService serviceImportService;
 
     @Mock
-    private TransactionSynchronizationService transactionSynchronizationService;
+    private TaxonomyImportService taxonomyImportService;
 
     @Mock
-    private TaxonomyImportService taxonomyImportService;
+    private OrganizationRepository organizationRepository;
 
     private TestPersistanceHelper helper;
 
@@ -78,8 +80,11 @@ public class ImportServiceImplIntTest {
         org.setServices(helper.mutableSet(service1, service2));
         org.setLocations(helper.mutableSet(location1, location2));
 
-        when(organizationImportService.createOrUpdateOrganization(any(Organization.class), anyString(),
-            anyString(), any(DataImportReport.class))).thenReturn(org);
+        when(organizationImportService.createOrUpdateOrganization(any(Organization.class), any(),
+            anyString(),
+            anyString(), any(DataImportReport.class), anyBoolean())).thenReturn(org);
+        when(organizationRepository.findOneWithEagerAssociationsByExternalDbIdAndProviderName(any(), any()))
+            .thenReturn(Optional.of(org));
         when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), any()))
             .thenReturn(location1);
         when(locationImportService.createOrUpdateLocation(any(Location.class), anyString(), any()))
@@ -89,16 +94,14 @@ public class ImportServiceImplIntTest {
         when(serviceImportService.createOrUpdateService(any(Service.class), anyString(), anyString(),
             any(DataImportReport.class))).thenReturn(service2);
 
-        importService.createOrUpdateOrganization(org, ORG_ID, new ImportData(new DataImportReport(), PROVIDER, true));
+        importService.createOrUpdateOrganization(org, ORG_ID, new ImportData(new DataImportReport(), PROVIDER, true), true);
 
         verify(organizationImportService)
-            .createOrUpdateOrganization(any(Organization.class), anyString(), anyString(), any(DataImportReport.class));
+            .createOrUpdateOrganization(any(Organization.class), any(), anyString(), anyString(), any(DataImportReport.class), anyBoolean());
         verify(locationImportService, times(2))
             .createOrUpdateLocation(any(Location.class), anyString(), any());
         verify(serviceImportService, times(2))
             .createOrUpdateService(any(Service.class), anyString(), anyString(), any(DataImportReport.class));
-        verify(transactionSynchronizationService)
-            .registerSynchronizationOfMatchingOrganizations(any(Organization.class));
     }
 
     @Test
