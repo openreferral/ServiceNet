@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.AbstractEntity;
+import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.DailyUpdate;
 import org.benetech.servicenet.domain.Eligibility;
 import org.benetech.servicenet.domain.GeocodingResult;
@@ -38,6 +39,7 @@ import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.Taxonomy;
 import org.benetech.servicenet.domain.UserGroup;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.domain.enumeration.ConflictStateEnum;
 import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.repository.OrganizationErrorRepository;
@@ -428,9 +430,54 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<ProviderOrganizationDTO> findOneDTOForProvider(UUID id) {
+    public Optional<ProviderOrganizationDTO> findOneDTOForProvider(UUID id, boolean includeUpdates) {
         log.debug("Request to get Organization : {}", id);
-        return findOne(id).map(this::mapToSimpleDto);
+        Optional<ProviderOrganizationDTO> orgOptional = findOne(id).map(this::mapToSimpleDto);
+        if (includeUpdates && orgOptional.isPresent()) {
+            ProviderOrganizationDTO dto = orgOptional.get();
+            List<Conflict> conflicts = conflictService.findAllPendingWithResourceIdAndPartnerResourceId(dto.getId(), dto.getReplacedById());
+            dto.setUpdates(conflictService.toDtos(conflicts));
+        }
+        return orgOptional;
+    }
+
+    @Override
+    @Transactional
+    public Optional<ProviderOrganizationDTO> applyUpdates(UUID id) {
+        log.debug("Request to apply updates for Organization : {}", id);
+        Organization org = organizationRepository.findOneWithEagerAssociations(id);
+        if (org != null) {
+            List<Conflict> conflicts = conflictService.findAllPendingWithResourceIdAndPartnerResourceId(id, org.getReplacedBy().getId());
+            conflicts.forEach(conflict -> {
+                conflict.setState(ConflictStateEnum.ACCEPTED);
+                conflict.setStateDate(ZonedDateTime.now());
+            });
+            org.applyUpdates(org.getReplacedBy());
+            org.setHasUpdates(false);
+            organizationRepository.save(org);
+            conflictService.saveAll(conflicts);
+            return Optional.of(mapToSimpleDto(org));
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public Optional<ProviderOrganizationDTO> discardUpdates(UUID id) {
+        log.debug("Request to discard updates for Organization : {}", id);
+        Organization org = organizationRepository.findOneWithEagerAssociations(id);
+        if (org != null) {
+            List<Conflict> conflicts = conflictService.findAllPendingWithResourceIdAndPartnerResourceId(id, org.getReplacedBy().getId());
+            conflicts.forEach(conflict -> {
+                conflict.setState(ConflictStateEnum.REJECTED);
+                conflict.setStateDate(ZonedDateTime.now());
+            });
+            org.setHasUpdates(false);
+            organizationRepository.save(org);
+            conflictService.saveAll(conflicts);
+            return Optional.of(mapToSimpleDto(org));
+        }
+        return Optional.empty();
     }
 
     /**

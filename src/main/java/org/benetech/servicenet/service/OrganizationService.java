@@ -141,7 +141,11 @@ public interface OrganizationService {
      */
     void reactivate(UUID id);
 
-    Optional<ProviderOrganizationDTO> findOneDTOForProvider(UUID id);
+    Optional<ProviderOrganizationDTO> findOneDTOForProvider(UUID id, boolean includeUpdates);
+
+    Optional<ProviderOrganizationDTO> applyUpdates(UUID id);
+
+    Optional<ProviderOrganizationDTO> discardUpdates(UUID id);
 
     Optional<ProviderOrganizationDTO> findOneDTOForProviderAndSilo(UUID id, Silo silo);
 

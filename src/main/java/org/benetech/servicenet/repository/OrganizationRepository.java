@@ -58,6 +58,7 @@ public interface OrganizationRepository extends JpaRepository<Organization, UUID
     @Query(value = "SELECT org FROM Organization org "
         + "LEFT JOIN FETCH org.userProfiles profiles "
         + "LEFT JOIN FETCH org.account "
+        + "LEFT JOIN FETCH org.replacedBy "
         + "LEFT JOIN FETCH org.locations locs "
         + "LEFT JOIN FETCH org.services srvs "
         + "LEFT JOIN FETCH org.contacts "

@@ -68,6 +68,8 @@ public class UserDTO {
 
     private List<UUID> organizations;
 
+    private List<UUID> organizationsWithUpdates;
+
     private UUID siloId;
 
     private Boolean siloIsReferralEnabled;
@@ -110,6 +112,10 @@ public class UserDTO {
         }
         if (userProfile.getOrganizations() != null) {
             this.organizations = userProfile.getOrganizations().stream()
+                .map(Organization::getId)
+                .collect(Collectors.toList());
+            this.organizationsWithUpdates = userProfile.getOrganizations().stream()
+                .filter(Organization::isHasUpdates)
                 .map(Organization::getId)
                 .collect(Collectors.toList());
         }
