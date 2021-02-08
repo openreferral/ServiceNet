@@ -13,14 +13,14 @@ assignees: ''
 **Description**
 
 **Scope**
-(includes UI mockups, user flow, and out of scope):\
+(includes UI mockups, user flow, and out of scope):
 
 **Acceptance criteria**
-(includes edge cases)  - e.g. Given I am [user] I want to [action] so that [goal of task]:\
+(includes edge cases)  - e.g. Given I am [user] I want to [action] so that [goal of task]:
 *
 
 **Dependencies**
-(links to other related tasks):\
+(links to other related tasks):
 *
 
 Any required **Analytics** for task:
