@@ -216,6 +216,13 @@ public class HolidaySchedule extends AbstractEntity implements Serializable, Dee
             "}";
     }
 
+    public String preview() {
+        if (isClosed()) {
+            return "Closed: " + getStartDate().toString();
+        }
+        return null;
+    }
+
     @SuppressWarnings("checkstyle:booleanExpressionComplexity")
     @Override
     public boolean deepEquals(Object o) {

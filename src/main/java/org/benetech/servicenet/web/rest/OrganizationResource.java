@@ -77,7 +77,7 @@ public class OrganizationResource {
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        org.benetech.servicenet.service.dto.OrganizationDTO result = organizationService.save(organizationDTO);
+        OrganizationDTO result = organizationService.save(organizationDTO);
         return ResponseEntity.created(new URI("/api/organizations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);

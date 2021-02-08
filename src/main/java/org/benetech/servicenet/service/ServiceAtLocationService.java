@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.service.dto.ServiceAtLocationDTO;
 import org.springframework.data.domain.Page;
@@ -54,6 +55,8 @@ public interface ServiceAtLocationService {
     Optional<ServiceAtLocationDTO> findOne(UUID id);
 
     Optional<ServiceAtLocation> findForExternalDb(String externalDbId, String providerName);
+
+    List<ServiceAtLocation> findByLocation(Location location);
 
     /**
      * Delete the "id" serviceAtLocation.
