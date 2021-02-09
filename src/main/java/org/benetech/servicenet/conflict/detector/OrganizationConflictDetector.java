@@ -39,12 +39,6 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
         conflicts.addAll(detectConflicts(current, offered, current.getDescription(), offered.getDescription(),
             "description"));
         conflicts.addAll(detectConflicts(current, offered, current.getEmail(), offered.getEmail(), "email"));
-        conflicts.addAll(detectConflicts(current, offered, current.getTaxStatus(), offered.getTaxStatus(), "taxStatus"));
-        conflicts.addAll(detectConflicts(current, offered, current.getTaxId(), offered.getTaxId(), "taxId"));
-        conflicts.addAll(detectConflicts(current, offered, current.getYearIncorporated(), offered.getYearIncorporated(),
-            "yearIncorporated"));
-        conflicts.addAll(detectConflicts(current, offered, current.getLegalStatus(), offered.getLegalStatus(),
-            "legalStatus"));
         if (detect(UrlNormalizationUtils.normalize(current.getUrl()), UrlNormalizationUtils.normalize(offered.getUrl()))) {
             conflicts.add(createConflict(current, offered, current.getUrl(), offered.getUrl(), "url"));
         }
@@ -54,6 +48,13 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
             conflicts.addAll(detectPhoneConflicts(current, offered));
             conflicts.addAll(detectLocationConflicts(current, offered));
             conflicts.addAll(detectServiceConflicts(current, offered));
+        } else {
+            conflicts.addAll(detectConflicts(current, offered, current.getTaxStatus(), offered.getTaxStatus(), "taxStatus"));
+            conflicts.addAll(detectConflicts(current, offered, current.getTaxId(), offered.getTaxId(), "taxId"));
+            conflicts.addAll(detectConflicts(current, offered, current.getYearIncorporated(), offered.getYearIncorporated(),
+                "yearIncorporated"));
+            conflicts.addAll(detectConflicts(current, offered, current.getLegalStatus(), offered.getLegalStatus(),
+                "legalStatus"));
         }
         return conflicts;
     }
