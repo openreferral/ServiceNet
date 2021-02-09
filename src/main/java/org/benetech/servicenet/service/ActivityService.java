@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service;
 
+import com.google.maps.model.LatLng;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,11 +40,11 @@ public interface ActivityService {
     Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
         Pageable pageable, ProviderFilterDTO providerFilterDTO,
         String search,
-        List<Double> boundaries);
+        List<Double> boundaries, LatLng center);
 
     Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
         Pageable pageable, ProviderFilterDTO providerFilterDTO,
-        String search, Silo silo, List<Double> boundaries);
+        String search, Silo silo, List<Double> boundaries, LatLng center);
 
     List<DeactivatedOrganizationDTO> getAllDeactivatedRecords();
 
