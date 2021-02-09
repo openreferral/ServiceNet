@@ -200,6 +200,7 @@ public interface LinkForCareDataMapper {
                 document.setDocument(doc.charAt(0) == ';' ? doc.substring(1).trim() : doc.trim());
                 document.setExternalDbId(data.getOrganizationId() +
                     (doc.equals(data.getServiceRequiredDocumentOthers()) ? OTHER_DOC_SUFFIX : ""));
+                document.setProviderName(LINK_FOR_CARE_PROVIDER);
                 return document;
             })
             .collect(Collectors.toSet());

@@ -1205,8 +1205,9 @@ public class OrganizationServiceImpl implements OrganizationService {
                 .providerName(SERVICE_PROVIDER)
                 .srvc(srvClone);
             if (doc.getExternalDbId() != null) {
+                String providerName = doc.getProviderName() != null ? doc.getProviderName() : service.getProviderName();
                 docClone.externalDbId(
-                    String.join(" - ", doc.getExternalDbId(), doc.getProviderName())
+                    String.join(" - ", doc.getExternalDbId(), providerName)
                 );
             }
             requiredDocumentService.save(docClone);
