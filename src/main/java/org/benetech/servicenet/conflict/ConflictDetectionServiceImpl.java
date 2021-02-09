@@ -1,5 +1,7 @@
 package org.benetech.servicenet.conflict;
 
+import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
+
 import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.config.Constants;
@@ -16,9 +18,11 @@ import org.benetech.servicenet.matching.model.OrganizationEquivalent;
 import org.benetech.servicenet.matching.service.impl.OrganizationEquivalentsService;
 import org.benetech.servicenet.service.ConflictService;
 import org.benetech.servicenet.service.MetadataService;
+import org.benetech.servicenet.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -44,6 +48,9 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
     private final ConflictService conflictService;
 
     private final MetadataService metadataService;
+
+    @Autowired
+    private OrganizationService organizationService;
 
     public ConflictDetectionServiceImpl(ApplicationContext context,
         EntityManager em,
@@ -89,14 +96,14 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
                 match.getPartnerVersion().getAccount().getName() + "'s organization '" +
                 match.getPartnerVersion().getName() + "' took: " + elapsedTime + "ms");
         }
-        if (organization.getReplacedBy() != null) {
-            Organization replacement = organization.getReplacedBy();
+        if (organization.getReplacedBy() != null && SERVICE_PROVIDER.equals(organization.getReplacedBy().getAccount().getName())) {
+            Organization replacement = organizationService.findOneWithEagerAssociations(organization.getReplacedBy().getId());
             OrganizationEquivalent orgEquivalent = organizationEquivalentsService
-                .generateEquivalent(organization, replacement);
+                .generateEquivalent(replacement, organization);
 
             List<EntityEquivalent> equivalents = gatherAllEquivalents(orgEquivalent);
 
-            List<Conflict> conflicts = detect(equivalents, organization.getAccount(), replacement.getAccount());
+            List<Conflict> conflicts = detect(equivalents, replacement.getAccount(), organization.getAccount());
             replacement.setHasUpdates(!conflicts.isEmpty());
             em.persist(replacement);
         }

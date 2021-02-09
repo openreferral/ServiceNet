@@ -1,5 +1,7 @@
 package org.benetech.servicenet.domain;
 
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -140,6 +142,11 @@ public class RegularSchedule extends AbstractEntity implements Serializable, Dee
             "id=" + getId() +
             "notes=" + getNotes() +
             "}";
+    }
+
+    public String preview() {
+        return openingHours.stream().sorted(Comparator.comparing(OpeningHours::getWeekday))
+            .map(OpeningHours::preview).collect(Collectors.joining("\n"));
     }
 
     @Override

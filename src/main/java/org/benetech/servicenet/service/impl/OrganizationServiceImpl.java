@@ -1,6 +1,9 @@
 package org.benetech.servicenet.service.impl;
 
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
+import static org.benetech.servicenet.util.CollectionUtils.getExistingItems;
+import static org.benetech.servicenet.util.CollectionUtils.getItemsToCreate;
+import static org.benetech.servicenet.util.CollectionUtils.getItemsToRemove;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -17,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.conflict.detector.OrganizationConflictDetector;
 import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.Conflict;
 import org.benetech.servicenet.domain.DailyUpdate;
@@ -83,6 +87,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @org.springframework.stereotype.Service
 @Transactional
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class OrganizationServiceImpl implements OrganizationService {
 
     private final Logger log = LoggerFactory.getLogger(OrganizationServiceImpl.class);
@@ -226,6 +231,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             organization.setServices(existingOrganization.getServices());
             organization.setDailyUpdates(existingOrganization.getDailyUpdates());
             organization.setPhones(existingOrganization.getPhones());
+            organization.setHasUpdates(existingOrganization.isHasUpdates());
         }
         organization.setUpdatedAt(ZonedDateTime.now());
         organization = organizationRepository.save(organization);
@@ -452,6 +458,18 @@ public class OrganizationServiceImpl implements OrganizationService {
                 conflict.setState(ConflictStateEnum.ACCEPTED);
                 conflict.setStateDate(ZonedDateTime.now());
             });
+            if (conflicts.stream().anyMatch(conflict -> conflict.getFieldName().startsWith(
+                OrganizationConflictDetector.PHONE))) {
+                applyPhoneUpdates(org, org.getReplacedBy());
+            }
+            if (conflicts.stream().anyMatch(conflict -> conflict.getFieldName().startsWith(
+                OrganizationConflictDetector.LOCATION))) {
+                applyLocationUpdates(org, org.getReplacedBy());
+                applyServiceUpdates(org, org.getReplacedBy());
+            } else if (conflicts.stream().anyMatch(conflict -> conflict.getFieldName().startsWith(
+                OrganizationConflictDetector.SERVICE))) {
+                applyServiceUpdates(org, org.getReplacedBy());
+            }
             org.applyUpdates(org.getReplacedBy());
             org.setHasUpdates(false);
             organizationRepository.save(org);
@@ -813,6 +831,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             if (existingLocation != null) {
                 location.setRegularSchedule(existingLocation.getRegularSchedule());
                 location.setHolidaySchedules(existingLocation.getHolidaySchedules());
+                location.setExternalDbId(existingLocation.getExternalDbId());
             }
             locations.add(locationService.saveWithRelations(location));
         }
@@ -841,6 +860,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 service.setEligibility(existingService.getEligibility());
                 service.setDocs(existingService.getDocs());
                 service.setPhones(existingService.getPhones());
+                service.setExternalDbId(existingService.getExternalDbId());
             }
             service.setProviderName(SERVICE_PROVIDER);
             service.setOrganization(organization);
@@ -1113,246 +1133,254 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
     }
 
-    @SuppressWarnings("PMD.NPathComplexity")
     private Set<Service> cloneServices(Set<Service> services, Organization orgClone, Set<Location> locations) {
         Set<Service> clonedServices = new HashSet<>();
         services.forEach((Service service) -> {
-            Service srvClone = new Service(service);
-            srvClone.setId(null);
-            srvClone.setProviderName(SERVICE_PROVIDER);
-            srvClone.setOrganization(orgClone);
-            if (service.getExternalDbId() != null) {
-                srvClone.setExternalDbId(
-                    String.join(" - ", service.getExternalDbId(), service.getProviderName())
-                );
-            }
-            srvClone.setTaxonomies(Collections.emptySet());
-            srvClone.setDocs(Collections.emptySet());
-            srvClone.setPhones(Collections.emptySet());
-            serviceService.save(srvClone);
-
-            Set<ServiceTaxonomy> serviceTaxonomies = service.getTaxonomies();
-            HashSet<ServiceTaxonomy> clonedTaxonomies = new HashSet<>();
-            serviceTaxonomies.forEach((ServiceTaxonomy serviceTaxonomy) -> {
-                ServiceTaxonomy serviceTaxonomyClone = new ServiceTaxonomy()
-                    .taxonomyDetails(serviceTaxonomy.getTaxonomyDetails())
-                    .providerName(SERVICE_PROVIDER)
-                    .srvc(srvClone);
-                if (serviceTaxonomy.getExternalDbId() != null) {
-                    serviceTaxonomyClone.externalDbId(
-                        String.join(" - ", serviceTaxonomy.getExternalDbId(), serviceTaxonomy.getProviderName())
-                    );
-                }
-
-                Taxonomy taxonomy = serviceTaxonomy.getTaxonomy();
-                if (taxonomy != null) {
-                    Taxonomy spExistingTaxonomy = taxonomyService
-                        .findByNameAndProviderName(taxonomy.getName(), SERVICE_PROVIDER);
-                    if (spExistingTaxonomy == null) {
-                        Taxonomy taxonomyClone = new Taxonomy()
-                            .name(taxonomy.getName())
-                            .taxonomyId(taxonomy.getTaxonomyId())
-                            .vocabulary(taxonomy.getVocabulary())
-                            .providerName(SERVICE_PROVIDER);
-                        if (taxonomy.getExternalDbId() != null) {
-                            taxonomyClone.externalDbId(
-                                String.join(" - ", taxonomy.getExternalDbId(), taxonomy.getProviderName())
-                            );
-                        }
-                        taxonomyService.save(taxonomyClone);
-                        serviceTaxonomyClone.taxonomy(taxonomyClone);
-                    } else {
-                        serviceTaxonomyClone.taxonomy(spExistingTaxonomy);
-                    }
-                }
-
-                serviceTaxonomyService.save(serviceTaxonomyClone);
-                clonedTaxonomies.add(serviceTaxonomyClone);
-            });
-            srvClone.setTaxonomies(clonedTaxonomies);
-
-            Set<RequiredDocument> docs = service.getDocs();
-            HashSet<RequiredDocument> clonedDocs = new HashSet<>();
-            docs.forEach((RequiredDocument doc) -> {
-                RequiredDocument docClone = new RequiredDocument()
-                    .document(doc.getDocument())
-                    .providerName(SERVICE_PROVIDER)
-                    .srvc(srvClone);
-                if (doc.getExternalDbId() != null) {
-                    docClone.externalDbId(
-                        String.join(" - ", doc.getExternalDbId(), doc.getProviderName())
-                    );
-                }
-                requiredDocumentService.save(docClone);
-                clonedDocs.add(docClone);
-            });
-            srvClone.setDocs(clonedDocs);
-
-            Set<Phone> phones = service.getPhones();
-            Set<Phone> clonedPhones = new HashSet<>();
-            if (phones != null) {
-                phones.forEach((Phone phone) -> {
-                    Phone phoneClone = new Phone(phone);
-                    phone.setSrvc(srvClone);
-                    clonedPhones.add(phoneService.save(phoneClone));
-                });
-                srvClone.setPhones(clonedPhones);
-            }
-
-            Eligibility eligibility = service.getEligibility();
-            if (eligibility != null) {
-                Eligibility clonedEligibility = new Eligibility()
-                    .eligibility(eligibility.getEligibility())
-                    .srvc(srvClone);
-                eligibilityService.save(clonedEligibility);
-                srvClone.setEligibility(clonedEligibility);
-            }
-
-            Set<ServiceAtLocation> sats = new HashSet<>();
-            for (ServiceAtLocation sat : service.getLocations()) {
-                Optional<Location> loc = locations.stream()
-                    .filter(l -> l.getExternalDbId() != null
-                        && l.getExternalDbId().startsWith(sat.getLocation().getExternalDbId()))
-                    .findFirst();
-                if (loc.isPresent()) {
-                    ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
-                    serviceAtLocation.setProviderName(SERVICE_PROVIDER);
-                    serviceAtLocation.setLocation(loc.get());
-                    sats.add(serviceAtLocationService.save(serviceAtLocation));
-                }
-            }
-            srvClone.setLocations(sats);
-            Service savedSvc = serviceService.save(srvClone);
-            savedSvc.getLocations().forEach(sat -> sat.setSrvc(savedSvc));
-            clonedServices.add(savedSvc);
+            clonedServices.add(cloneService(service, orgClone, locations));
         });
         return clonedServices;
+    }
+
+    @SuppressWarnings("PMD.NPathComplexity")
+    private Service cloneService(Service service, Organization orgClone, Set<Location> locations) {
+        Service srvClone = new Service(service);
+        srvClone.setId(null);
+        srvClone.setProviderName(SERVICE_PROVIDER);
+        srvClone.setOrganization(orgClone);
+        if (service.getExternalDbId() != null) {
+            srvClone.setExternalDbId(
+                String.join(" - ", service.getExternalDbId(), service.getProviderName())
+            );
+        }
+        srvClone.setTaxonomies(Collections.emptySet());
+        srvClone.setDocs(Collections.emptySet());
+        srvClone.setPhones(Collections.emptySet());
+        serviceService.save(srvClone);
+
+        Set<ServiceTaxonomy> serviceTaxonomies = service.getTaxonomies();
+        HashSet<ServiceTaxonomy> clonedTaxonomies = new HashSet<>();
+        serviceTaxonomies.forEach((ServiceTaxonomy serviceTaxonomy) -> {
+            ServiceTaxonomy serviceTaxonomyClone = new ServiceTaxonomy()
+                .taxonomyDetails(serviceTaxonomy.getTaxonomyDetails())
+                .providerName(SERVICE_PROVIDER)
+                .srvc(srvClone);
+            if (serviceTaxonomy.getExternalDbId() != null) {
+                serviceTaxonomyClone.externalDbId(
+                    String.join(" - ", serviceTaxonomy.getExternalDbId(), serviceTaxonomy.getProviderName())
+                );
+            }
+
+            Taxonomy taxonomy = serviceTaxonomy.getTaxonomy();
+            if (taxonomy != null) {
+                Taxonomy spExistingTaxonomy = taxonomyService
+                    .findByNameAndProviderName(taxonomy.getName(), SERVICE_PROVIDER);
+                if (spExistingTaxonomy == null) {
+                    Taxonomy taxonomyClone = new Taxonomy()
+                        .name(taxonomy.getName())
+                        .taxonomyId(taxonomy.getTaxonomyId())
+                        .vocabulary(taxonomy.getVocabulary())
+                        .providerName(SERVICE_PROVIDER);
+                    if (taxonomy.getExternalDbId() != null) {
+                        taxonomyClone.externalDbId(
+                            String.join(" - ", taxonomy.getExternalDbId(), taxonomy.getProviderName())
+                        );
+                    }
+                    taxonomyService.save(taxonomyClone);
+                    serviceTaxonomyClone.taxonomy(taxonomyClone);
+                } else {
+                    serviceTaxonomyClone.taxonomy(spExistingTaxonomy);
+                }
+            }
+
+            serviceTaxonomyService.save(serviceTaxonomyClone);
+            clonedTaxonomies.add(serviceTaxonomyClone);
+        });
+        srvClone.setTaxonomies(clonedTaxonomies);
+
+        Set<RequiredDocument> docs = service.getDocs();
+        HashSet<RequiredDocument> clonedDocs = new HashSet<>();
+        docs.forEach((RequiredDocument doc) -> {
+            RequiredDocument docClone = new RequiredDocument()
+                .document(doc.getDocument())
+                .providerName(SERVICE_PROVIDER)
+                .srvc(srvClone);
+            if (doc.getExternalDbId() != null) {
+                docClone.externalDbId(
+                    String.join(" - ", doc.getExternalDbId(), doc.getProviderName())
+                );
+            }
+            requiredDocumentService.save(docClone);
+            clonedDocs.add(docClone);
+        });
+        srvClone.setDocs(clonedDocs);
+
+        Set<Phone> phones = service.getPhones();
+        Set<Phone> clonedPhones = new HashSet<>();
+        if (phones != null) {
+            phones.forEach((Phone phone) -> {
+                Phone phoneClone = new Phone(phone);
+                phone.setSrvc(srvClone);
+                clonedPhones.add(phoneService.save(phoneClone));
+            });
+            srvClone.setPhones(clonedPhones);
+        }
+
+        Eligibility eligibility = service.getEligibility();
+        if (eligibility != null) {
+            Eligibility clonedEligibility = new Eligibility()
+                .eligibility(eligibility.getEligibility())
+                .srvc(srvClone);
+            eligibilityService.save(clonedEligibility);
+            srvClone.setEligibility(clonedEligibility);
+        }
+
+        Set<ServiceAtLocation> sats = new HashSet<>();
+        for (ServiceAtLocation sat : service.getLocations()) {
+            Optional<Location> loc = locations.stream()
+                .filter(l -> l.getExternalDbId() != null
+                    && l.getExternalDbId().startsWith(sat.getLocation().getExternalDbId()))
+                .findFirst();
+            if (loc.isPresent()) {
+                ServiceAtLocation serviceAtLocation = new ServiceAtLocation();
+                serviceAtLocation.setProviderName(SERVICE_PROVIDER);
+                serviceAtLocation.setLocation(loc.get());
+                sats.add(serviceAtLocationService.save(serviceAtLocation));
+            }
+        }
+        srvClone.setLocations(sats);
+        Service savedSvc = serviceService.save(srvClone);
+        savedSvc.getLocations().forEach(sat -> sat.setSrvc(savedSvc));
+        return savedSvc;
     }
 
     private Set<Location> cloneLocations(Set<Location> locations, Organization orgClone) {
         Set<Location> clonedLocations = new HashSet<>();
 
         locations.forEach((Location location) -> {
-            Location locClone = new Location(location);
-            locClone.setId(null);
-            locClone.setProviderName(SERVICE_PROVIDER);
-            locClone.setOrganization(orgClone);
-            if (location.getExternalDbId() != null) {
-                locClone.setExternalDbId(
-                    String.join(" - ", location.getExternalDbId(), location.getProviderName())
-                );
-            }
-            locClone.setHolidaySchedules(Collections.emptySet());
-            locationService.save(locClone);
-
-            PhysicalAddress physicalAddress = location.getPhysicalAddress();
-            PostalAddress postalAddress = location.getPostalAddress();
-
-            if (physicalAddress != null) {
-                PhysicalAddress physicalClone = new PhysicalAddress()
-                    .attention(physicalAddress.getAttention())
-                    .address1(physicalAddress.getAddress1())
-                    .address2(physicalAddress.getAddress2())
-                    .city(physicalAddress.getCity())
-                    .region(physicalAddress.getRegion())
-                    .stateProvince(physicalAddress.getStateProvince())
-                    .postalCode(physicalAddress.getPostalCode())
-                    .country(physicalAddress.getCountry())
-                    .location(locClone);
-                em.persist(physicalClone);
-                locClone.setPhysicalAddress(physicalClone);
-            } else if (postalAddress != null) {
-                PhysicalAddress physicalClone = new PhysicalAddress()
-                    .attention(postalAddress.getAttention())
-                    .address1(postalAddress.getAddress1())
-                    .address2(postalAddress.getAddress2())
-                    .city(postalAddress.getCity())
-                    .region(postalAddress.getRegion())
-                    .stateProvince(postalAddress.getStateProvince())
-                    .postalCode(postalAddress.getPostalCode())
-                    .country(postalAddress.getCountry())
-                    .location(locClone);
-                em.persist(physicalClone);
-                locClone.setPhysicalAddress(physicalClone);
-            }
-
-            if (postalAddress != null) {
-                PostalAddress postalClone = new PostalAddress()
-                    .attention(postalAddress.getAttention())
-                    .address1(postalAddress.getAddress1())
-                    .address2(postalAddress.getAddress2())
-                    .city(postalAddress.getCity())
-                    .region(postalAddress.getRegion())
-                    .stateProvince(postalAddress.getStateProvince())
-                    .postalCode(postalAddress.getPostalCode())
-                    .country(postalAddress.getCountry())
-                    .location(locClone);
-                em.persist(postalClone);
-                locClone.setPostalAddress(postalClone);
-            } else if (physicalAddress != null) {
-                PostalAddress postalClone = new PostalAddress()
-                    .attention(physicalAddress.getAttention())
-                    .address1(physicalAddress.getAddress1())
-                    .address2(physicalAddress.getAddress2())
-                    .city(physicalAddress.getCity())
-                    .region(physicalAddress.getRegion())
-                    .stateProvince(physicalAddress.getStateProvince())
-                    .postalCode(physicalAddress.getPostalCode())
-                    .country(physicalAddress.getCountry())
-                    .location(locClone);
-                em.persist(postalClone);
-                locClone.setPostalAddress(postalClone);
-            }
-
-            RegularSchedule regularSchedule = location.getRegularSchedule();
-            if (regularSchedule != null) {
-                RegularSchedule rsClone = new RegularSchedule()
-                    .notes(regularSchedule.getNotes())
-                    .location(locClone);
-                em.persist(rsClone);
-                Set<OpeningHours> clonedOpeningHours = new HashSet<>();
-                regularSchedule.getOpeningHours().forEach((OpeningHours oh) -> {
-                    OpeningHours ohClone = new OpeningHours()
-                        .weekday(oh.getWeekday())
-                        .opensAt(oh.getOpensAt())
-                        .closesAt(oh.getClosesAt())
-                        .regularSchedule(rsClone);
-                    em.persist(ohClone);
-                    clonedOpeningHours.add(ohClone);
-                });
-                rsClone.setOpeningHours(clonedOpeningHours);
-                locClone.setRegularSchedule(rsClone);
-            }
-
-            Set<HolidaySchedule> holidaySchedules = location.getHolidaySchedules();
-            HashSet<HolidaySchedule> clonedHs = new HashSet<>();
-            holidaySchedules.forEach(((HolidaySchedule hs) -> {
-                HolidaySchedule hsClone = new HolidaySchedule()
-                    .closed(hs.isClosed())
-                    .opensAt(hs.getOpensAt())
-                    .closesAt(hs.getClosesAt())
-                    .startDate(hs.getStartDate())
-                    .endDate(hs.getEndDate())
-
-                    .providerName(SERVICE_PROVIDER)
-                    .location(locClone);
-                if (hs.getExternalDbId() != null) {
-                    hsClone.externalDbId(String.join(" - ", hs.getExternalDbId(), hs.getProviderName()));
-                }
-                em.persist(hsClone);
-                clonedHs.add(hsClone);
-            }));
-            locClone.setHolidaySchedules(clonedHs);
-
-            location.getGeocodingResults().forEach((GeocodingResult gr) -> {
-                gr.getLocations().add(locClone);
-                em.persist(gr);
-            });
-
-            em.persist(locClone);
-            clonedLocations.add(locClone);
+            clonedLocations.add(cloneLocation(location, orgClone));
         });
         return clonedLocations;
+    }
+
+    private Location cloneLocation(Location location, Organization orgClone) {
+        Location locClone = new Location(location);
+        locClone.setId(null);
+        locClone.setProviderName(SERVICE_PROVIDER);
+        locClone.setOrganization(orgClone);
+        if (location.getExternalDbId() != null) {
+            locClone.setExternalDbId(
+                String.join(" - ", location.getExternalDbId(), location.getProviderName())
+            );
+        }
+        locClone.setHolidaySchedules(Collections.emptySet());
+        locationService.save(locClone);
+
+        PhysicalAddress physicalAddress = location.getPhysicalAddress();
+        PostalAddress postalAddress = location.getPostalAddress();
+
+        if (physicalAddress != null) {
+            PhysicalAddress physicalClone = new PhysicalAddress()
+                .attention(physicalAddress.getAttention())
+                .address1(physicalAddress.getAddress1())
+                .address2(physicalAddress.getAddress2())
+                .city(physicalAddress.getCity())
+                .region(physicalAddress.getRegion())
+                .stateProvince(physicalAddress.getStateProvince())
+                .postalCode(physicalAddress.getPostalCode())
+                .country(physicalAddress.getCountry())
+                .location(locClone);
+            em.persist(physicalClone);
+            locClone.setPhysicalAddress(physicalClone);
+        } else if (postalAddress != null) {
+            PhysicalAddress physicalClone = new PhysicalAddress()
+                .attention(postalAddress.getAttention())
+                .address1(postalAddress.getAddress1())
+                .address2(postalAddress.getAddress2())
+                .city(postalAddress.getCity())
+                .region(postalAddress.getRegion())
+                .stateProvince(postalAddress.getStateProvince())
+                .postalCode(postalAddress.getPostalCode())
+                .country(postalAddress.getCountry())
+                .location(locClone);
+            em.persist(physicalClone);
+            locClone.setPhysicalAddress(physicalClone);
+        }
+
+        if (postalAddress != null) {
+            PostalAddress postalClone = new PostalAddress()
+                .attention(postalAddress.getAttention())
+                .address1(postalAddress.getAddress1())
+                .address2(postalAddress.getAddress2())
+                .city(postalAddress.getCity())
+                .region(postalAddress.getRegion())
+                .stateProvince(postalAddress.getStateProvince())
+                .postalCode(postalAddress.getPostalCode())
+                .country(postalAddress.getCountry())
+                .location(locClone);
+            em.persist(postalClone);
+            locClone.setPostalAddress(postalClone);
+        } else if (physicalAddress != null) {
+            PostalAddress postalClone = new PostalAddress()
+                .attention(physicalAddress.getAttention())
+                .address1(physicalAddress.getAddress1())
+                .address2(physicalAddress.getAddress2())
+                .city(physicalAddress.getCity())
+                .region(physicalAddress.getRegion())
+                .stateProvince(physicalAddress.getStateProvince())
+                .postalCode(physicalAddress.getPostalCode())
+                .country(physicalAddress.getCountry())
+                .location(locClone);
+            em.persist(postalClone);
+            locClone.setPostalAddress(postalClone);
+        }
+
+        RegularSchedule regularSchedule = location.getRegularSchedule();
+        if (regularSchedule != null) {
+            RegularSchedule rsClone = new RegularSchedule()
+                .notes(regularSchedule.getNotes())
+                .location(locClone);
+            em.persist(rsClone);
+            Set<OpeningHours> clonedOpeningHours = new HashSet<>();
+            regularSchedule.getOpeningHours().forEach((OpeningHours oh) -> {
+                OpeningHours ohClone = new OpeningHours()
+                    .weekday(oh.getWeekday())
+                    .opensAt(oh.getOpensAt())
+                    .closesAt(oh.getClosesAt())
+                    .regularSchedule(rsClone);
+                em.persist(ohClone);
+                clonedOpeningHours.add(ohClone);
+            });
+            rsClone.setOpeningHours(clonedOpeningHours);
+            locClone.setRegularSchedule(rsClone);
+        }
+
+        Set<HolidaySchedule> holidaySchedules = location.getHolidaySchedules();
+        HashSet<HolidaySchedule> clonedHs = new HashSet<>();
+        holidaySchedules.forEach(((HolidaySchedule hs) -> {
+            HolidaySchedule hsClone = new HolidaySchedule()
+                .closed(hs.isClosed())
+                .opensAt(hs.getOpensAt())
+                .closesAt(hs.getClosesAt())
+                .startDate(hs.getStartDate())
+                .endDate(hs.getEndDate())
+
+                .providerName(SERVICE_PROVIDER)
+                .location(locClone);
+            if (hs.getExternalDbId() != null) {
+                hsClone.externalDbId(String.join(" - ", hs.getExternalDbId(), hs.getProviderName()));
+            }
+            em.persist(hsClone);
+            clonedHs.add(hsClone);
+        }));
+        locClone.setHolidaySchedules(clonedHs);
+
+        location.getGeocodingResults().forEach((GeocodingResult gr) -> {
+            gr.getLocations().add(locClone);
+            em.persist(gr);
+        });
+
+        em.persist(locClone);
+        return locClone;
     }
 
     private void addUserProfile(Organization organization, UserProfile userProfile) {
@@ -1365,5 +1393,69 @@ public class OrganizationServiceImpl implements OrganizationService {
         userProfiles.add(userProfile);
         organization.setUserProfiles(userProfiles);
         userProfile.getOrganizations().add(organization);
+    }
+
+    private void applyPhoneUpdates(Organization current, Organization offered) {
+        Set<Phone> currentPhones = current.getPhones();
+        getItemsToCreate(currentPhones, offered.getPhones(),
+            (c, o) -> c.getNumber().equals(o.getNumber()))
+            .forEach(newPhone -> {
+                currentPhones.add(newPhone);
+                em.persist(newPhone);
+            });
+        getItemsToRemove(currentPhones, offered.getPhones(),
+            (c, o) -> c.getNumber().equals(o.getNumber()))
+            .forEach(existingPhone -> {
+                currentPhones.remove(existingPhone);
+                phoneService.delete(existingPhone.getId());
+            });
+    }
+
+    private void applyLocationUpdates(Organization current, Organization offered) {
+        Set<Location> currentLocations = current.getLocations();
+        getExistingItems(currentLocations, offered.getLocations(),
+            (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
+            .forEach((currentLocation, offeredLocation) -> {
+                if (!currentLocation.deepEquals(offeredLocation)) {
+                    List<ServiceAtLocation> serviceAtLocations = serviceAtLocationService.findByLocation(currentLocation);
+                    currentLocations.remove(currentLocation);
+                    locationService.delete(currentLocation.getId());
+                    serviceAtLocations.forEach(
+                        sat -> {
+                            serviceAtLocationService.delete(sat.getId());
+                        }
+                    );
+                    em.flush();
+                    Location updatedLocation = cloneLocation(offeredLocation, current);
+                    currentLocations.add(updatedLocation);
+                }
+            });
+        getItemsToCreate(currentLocations, offered.getLocations(),
+            (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
+            .forEach(newLocation -> {
+                Location clonedLocation = cloneLocation(newLocation, current);
+                currentLocations.add(clonedLocation);
+            });
+    }
+
+    private void applyServiceUpdates(Organization current, Organization offered) {
+        Set<Service> currentServices = current.getServices();
+        getExistingItems(currentServices, offered.getServices(),
+            (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
+            .forEach((currentService, offeredService) -> {
+                if (!currentService.deepEquals(offeredService)) {
+                    currentServices.remove(currentService);
+                    serviceService.delete(currentService.getId());
+                    em.flush();
+                    Service clonedService = cloneService(offeredService, current, current.getLocations());
+                    currentServices.add(clonedService);
+                }
+            });
+        getItemsToCreate(currentServices, offered.getServices(),
+            (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
+            .forEach(newService -> {
+                Service clonedService = cloneService(newService, current, current.getLocations());
+                currentServices.add(clonedService);
+            });
     }
 }

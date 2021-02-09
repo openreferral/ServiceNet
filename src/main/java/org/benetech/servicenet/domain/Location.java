@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.maps.model.LatLng;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -334,6 +336,12 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
             ", latitude=" + getLatitude() +
             ", longitude=" + getLongitude() +
             "}";
+    }
+
+    public String holidaySchedulePreview() {
+        return holidaySchedules.stream().sorted(Comparator.comparing(HolidaySchedule::getStartDate))
+            .map(HolidaySchedule::preview).filter(Objects::nonNull).collect(
+            Collectors.joining("\n"));
     }
 
     @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})

@@ -222,14 +222,10 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.url = org.url;
         this.taxStatus = org.taxStatus;
         this.taxId = org.taxId;
-        this.yearIncorporated = org.yearIncorporated;
         this.legalStatus = org.legalStatus;
         this.updatedAt = org.updatedAt;
         this.lastVerifiedOn = org.lastVerifiedOn;
         this.covidProtocols = org.covidProtocols;
-        this.facebookUrl = org.facebookUrl;
-        this.twitterUrl = org.twitterUrl;
-        this.instagramUrl = org.instagramUrl;
     }
 
     public Organization name(String name) {
