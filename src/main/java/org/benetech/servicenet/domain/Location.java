@@ -339,9 +339,11 @@ public class Location extends AbstractEntity implements Serializable, DeepCompar
     }
 
     public String holidaySchedulePreview() {
-        return holidaySchedules.stream().sorted(Comparator.comparing(HolidaySchedule::getStartDate))
+        return holidaySchedules != null ? (
+            holidaySchedules.stream().sorted(Comparator.comparing(HolidaySchedule::getStartDate))
             .map(HolidaySchedule::preview).filter(Objects::nonNull).collect(
-            Collectors.joining("\n"));
+            Collectors.joining("\n"))
+        ) : null;
     }
 
     @SuppressWarnings({"checkstyle:cyclomaticComplexity", "checkstyle:booleanExpressionComplexity"})
