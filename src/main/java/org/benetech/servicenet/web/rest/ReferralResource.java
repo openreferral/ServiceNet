@@ -5,6 +5,7 @@ import java.io.File;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import javax.websocket.server.PathParam;
+import org.apache.commons.lang3.StringUtils;
 import org.benetech.servicenet.domain.UserProfile;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.service.ReferralService;
@@ -159,9 +160,23 @@ public class ReferralResource {
     @GetMapping("/referrals/search")
     public ResponseEntity<List<ReferralDTO>> searchReferrals(
         @PageableDefault(sort = "sentAt", direction = Direction.ASC) Pageable pageable,
-        @PathParam("since") ZonedDateTime since, @PathParam("status") String status) {
-        log.debug("REST request to get a page of Referrals");
-        Page<ReferralDTO> page = referralService.findCurrentUsersReferrals(since, status, pageable);
+        @PathParam("since") ZonedDateTime since, @PathParam("status") String status,
+        @PathParam("type") String type) {
+        ReferralType referralType = (type != null) ? ReferralType.valueOf(type) : ReferralType.OUTBOUND;
+        log.debug("REST request to get a page of " + type + " Referrals");
+        Page<ReferralDTO> page = (referralType == ReferralType.OUTBOUND) ?
+            referralService.findCurrentUsersReferrals(since, status, pageable)
+            : referralService.findReferralsMadeToCurrentUser(since, status, pageable);
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        // if the current user only has one organization, hide it from the search results
+        if (currentUser.getOrganizations() != null && currentUser.getOrganizations().size() == 1) {
+            UUID orgId = currentUser.getOrganizations().stream().findFirst().get().getId();
+            if (referralType == ReferralType.INBOUND) {
+                page.stream().filter(dto -> dto.getToId().equals(orgId)).forEach(dto -> dto.setToName(""));
+            } else {
+                page.stream().filter(dto -> dto.getFromId().equals(orgId)).forEach(dto -> dto.setFromName(""));
+            }
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -174,13 +189,18 @@ public class ReferralResource {
     @GetMapping(value = "/referrals/csv", produces = "text/csv")
     public ResponseEntity<FileSystemResource> getCurrentUsersReferralsCsv(
         @PageableDefault(sort = "sentAt", direction = Direction.ASC, size = Integer.MAX_VALUE) Pageable pageable,
-        @PathParam("since") ZonedDateTime since, @PathParam("status") String status) {
-        log.debug("REST request to get current user's Referrals as CSV");
+        @PathParam("since") ZonedDateTime since, @PathParam("status") String status,
+        @PathParam("type") String type) {
+        ReferralType referralType = (type != null) ? ReferralType.valueOf(type) : ReferralType.OUTBOUND;
+        log.debug("REST request to get current user's " + type + " Referrals as CSV");
         String[] headers = {"Beneficiary Phone Number", "Service Net ID", "Date Stamp", "Referred From", "Referred To", "Status"};
         String[] valueMappings = {"beneficiaryPhoneNumber", "id", "sentAt", "fromName", "toName", "status"};
-        List<ReferralDTO> referrals = referralService.findCurrentUsersReferrals(since, status, pageable).toList();
+        List<ReferralDTO> referrals  = (referralType == ReferralType.OUTBOUND) ?
+            referralService.findCurrentUsersReferrals(since, status, pageable).toList()
+            : referralService.findReferralsMadeToCurrentUser(since, status, pageable).toList();
         File csvOutputFile = ReportUtils
-            .createCsvReport("Beneficiary_Referral_History", referrals, headers, valueMappings);
+            .createCsvReport("Beneficiary_" + StringUtils.capitalize(referralType.toString().toLowerCase())
+                + "_Referral_History", referrals, headers, valueMappings);
 
         return ResponseEntity.ok()
             .header("Content-Disposition", "attachment; filename=" + csvOutputFile.getName())
