@@ -78,8 +78,13 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
             (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
             .forEach((currentLocation, offeredLocation) -> {
                 conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentLocation.getName(), offeredLocation.getName(), LOCATION + ".name"));
-                conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentLocation.getPhysicalAddress().getAddress2(), currentLocation.getPhysicalAddress().getAddress2(), LOCATION + ".address2"));
-                conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentLocation.getRegularSchedule().preview(), offeredLocation.getRegularSchedule().preview(), LOCATION + ".regularSchedule"));
+                conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentLocation.getPhysicalAddress().getAddress2(), offeredLocation.getPhysicalAddress().getAddress2(), LOCATION + ".address2"));
+                if (currentLocation.getRegularSchedule() != null || offeredLocation.getRegularSchedule() != null) {
+                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord,
+                        (currentLocation.getRegularSchedule() != null) ? currentLocation.getRegularSchedule().preview() : null,
+                        (offeredLocation.getRegularSchedule() != null) ? offeredLocation.getRegularSchedule().preview() : null,
+                        LOCATION + ".regularSchedule"));
+                }
                 conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentLocation.holidaySchedulePreview(), offeredLocation.holidaySchedulePreview(), LOCATION + ".holidaySchedule"));
                 if (LINK_FOR_CARE_PROVIDER.equals(originalRecord.getAccount().getName())) {
                     conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentLocation.isOpen247(), offeredLocation.isOpen247(), LOCATION + ".open247"));
@@ -117,10 +122,10 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
                     conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentService.getDocs().stream().findFirst().get().getDocument(),
                         offeredService.getDocs().stream().findFirst().get().getDocument(), SERVICE + ".requiredDocuments"));
                 }
-                String currentTaxonomies = currentService.getTaxonomies().stream().map(
-                    ServiceTaxonomy::getTaxonomy).map(Taxonomy::getName).sorted().collect(Collectors.joining(", "));
-                String offeredTaxonomies = offeredService.getTaxonomies().stream().map(
-                    ServiceTaxonomy::getTaxonomy).map(Taxonomy::getName).sorted().collect(Collectors.joining(", "));
+                String currentTaxonomies = (currentService.getTaxonomies() != null) ? currentService.getTaxonomies().stream().map(
+                    ServiceTaxonomy::getTaxonomy).map(Taxonomy::getName).sorted().collect(Collectors.joining(", ")) : null;
+                String offeredTaxonomies = (offeredService.getTaxonomies() != null) ? offeredService.getTaxonomies().stream().map(
+                    ServiceTaxonomy::getTaxonomy).map(Taxonomy::getName).sorted().collect(Collectors.joining(", ")) : null;
                     conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentTaxonomies, offeredTaxonomies, SERVICE + ".taxonomies"));
                 }
             );
