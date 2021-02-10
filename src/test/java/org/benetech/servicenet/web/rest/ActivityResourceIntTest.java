@@ -9,6 +9,7 @@ import org.benetech.servicenet.domain.Organization;
 import org.benetech.servicenet.domain.Organization_;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.domain.UserProfile;
+import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.repository.UserProfileRepository;
 import org.benetech.servicenet.scheduler.ReferenceDataGenerator;
 import org.benetech.servicenet.service.ActivityService;
@@ -71,6 +72,9 @@ public class ActivityResourceIntTest {
     @Autowired
     private UserProfileRepository userProfileRepository;
 
+    @Autowired
+    private GeocodingResultRepository geocodingResultRepository;
+
     private MockMvc restActivityMockMvc;
 
     final static int PAGE_SIZE = 5;
@@ -93,7 +97,7 @@ public class ActivityResourceIntTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         final ActivityResource activityResource = new ActivityResource(
-            activityService, userService
+            activityService, userService, geocodingResultRepository
         );
         restActivityMockMvc = MockMvcBuilders.standaloneSetup(activityResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

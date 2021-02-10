@@ -3,6 +3,7 @@ package org.benetech.servicenet.repository;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.UUID;
+import javax.persistence.Tuple;
 import org.benetech.servicenet.domain.GeocodingResult;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.UserProfile;
@@ -128,6 +129,19 @@ public interface GeocodingResultRepository extends JpaRepository<GeocodingResult
         + "ORDER BY gr.locality")
     SortedSet<String> getDistinctCityFromGeoResultsForServiceProviders(@Param("silo")
         Silo silo);
+
+    @Query(value = "SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY GR.latitude) AS lat, "
+        + "percentile_cont(0.5) WITHIN GROUP (ORDER BY GR.longitude) AS lng "
+        + "FROM geocoding_result GR, location_geocoding_results LGR, location L, organization O "
+        + "LEFT JOIN user_profile_organizations UPO ON UPO.organization_id = O.id "
+        + "LEFT JOIN user_profile UP ON UP.id = UPO.user_profile_id "
+        + "LEFT JOIN silo_organizations SO ON SO.organization_id = O.id "
+        + "WHERE "
+        + "(SO.silo_id = :siloId OR UP.silo_id = :siloId) "
+        + "and L.organization_id = O.id "
+        + "and LGR.location_id = L.id "
+        + "and LGR.geocoding_results_id = GR.id", nativeQuery = true)
+    Tuple getCenterPointForSilo(@Param("siloId") UUID siloId);
 
     List<GeocodingResult> findByFormattedAddressIsNullOrLocalityIsNullAndAddressIsNotNull();
 }

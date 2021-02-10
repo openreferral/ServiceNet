@@ -3,14 +3,17 @@ package org.benetech.servicenet.web.rest.unauthorized;
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.maps.model.LatLng;
 import io.github.jhipster.web.util.ResponseUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.Tuple;
 import org.benetech.servicenet.config.Constants;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.errors.BadRequestAlertException;
+import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.ActivityFilterService;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -74,6 +77,9 @@ public class PublicRecordResource {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GeocodingResultRepository geocodingResultRepository;
+
     @PostMapping("/all-provider-records/{silo}")
     @Timed
     public ResponseEntity<List<ProviderRecordDTO>> getProviderActivitiesPublic(
@@ -132,8 +138,13 @@ public class PublicRecordResource {
     ) {
         Optional<Silo> optSilo = siloService.getOneByName(siloName);
         this.checkSilo(optSilo);
+        LatLng center = null;
+        if (boundaries == null) {
+            Tuple tuple = geocodingResultRepository.getCenterPointForSilo(optSilo.get().getId());
+            center = new LatLng((Double) tuple.get("lat"), (Double) tuple.get("lng"));
+        }
         Page<ProviderRecordForMapDTO> page = activityService.getAllPartnerActivitiesForMap(
-            pageable, providerFilterDTO, search, optSilo.get(), boundaries);
+            pageable, providerFilterDTO, search, optSilo.get(), boundaries, center);
         HttpHeaders headers = PaginationUtil
             .generatePaginationHttpHeaders(page, "/public-api/all-provider-records-map");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
