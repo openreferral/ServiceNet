@@ -95,13 +95,13 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
         getItemsToRemove(clonedRecord.getLocations(), originalRecord.getLocations(),
             (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
             .forEach(currentLocation -> {
-                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentLocation.getName(), null, LOCATION));
+                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentLocation.getName(), null, LOCATION + ".removed"));
                 }
             );
         getItemsToCreate(clonedRecord.getLocations(), originalRecord.getLocations(),
             (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
             .forEach(offeredLocation -> {
-                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord, null, offeredLocation.getName(), LOCATION));
+                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord, null, offeredLocation.getName(), LOCATION + ".new"));
                 }
             );
         return conflicts;
@@ -132,13 +132,13 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
         getItemsToRemove(clonedRecord.getServices(), originalRecord.getServices(),
             (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
             .forEach(currentService -> {
-                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentService.getName(), null, SERVICE));
+                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentService.getName(), null, SERVICE + ".removed"));
                 }
             );
         getItemsToCreate(clonedRecord.getServices(), originalRecord.getServices(),
             (c, o) -> StringUtils.startsWith(c.getExternalDbId(), o.getExternalDbId()))
             .forEach(offeredService -> {
-                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord, null, offeredService.getName(), SERVICE));
+                    conflicts.addAll(detectConflicts(clonedRecord, originalRecord, null, offeredService.getName(), SERVICE + ".new"));
                 }
             );
         return conflicts;
