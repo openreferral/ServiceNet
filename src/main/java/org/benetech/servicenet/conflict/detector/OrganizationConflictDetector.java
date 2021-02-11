@@ -123,9 +123,9 @@ public class OrganizationConflictDetector extends AbstractDetector<Organization>
                         offeredService.getDocs().stream().findFirst().get().getDocument(), SERVICE + ".requiredDocuments"));
                 }
                 String currentTaxonomies = (currentService.getTaxonomies() != null) ? currentService.getTaxonomies().stream().map(
-                    ServiceTaxonomy::getTaxonomy).map(Taxonomy::getName).sorted().collect(Collectors.joining(", ")) : null;
+                    ServiceTaxonomy::getTaxonomy).map(Taxonomy::getName).filter(StringUtils::isNotBlank).sorted().collect(Collectors.joining(", ")) : null;
                 String offeredTaxonomies = (offeredService.getTaxonomies() != null) ? offeredService.getTaxonomies().stream().map(
-                    ServiceTaxonomy::getTaxonomy).map(Taxonomy::getName).sorted().collect(Collectors.joining(", ")) : null;
+                    ServiceTaxonomy::getTaxonomy).map(Taxonomy::getName).filter(StringUtils::isNotBlank).sorted().collect(Collectors.joining(", ")) : null;
                     conflicts.addAll(detectConflicts(clonedRecord, originalRecord, currentTaxonomies, offeredTaxonomies, SERVICE + ".taxonomies"));
                 }
             );
