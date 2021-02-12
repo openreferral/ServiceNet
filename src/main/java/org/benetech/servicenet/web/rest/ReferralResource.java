@@ -172,9 +172,9 @@ public class ReferralResource {
         if (currentUser.getOrganizations() != null && currentUser.getOrganizations().size() == 1) {
             UUID orgId = currentUser.getOrganizations().stream().findFirst().get().getId();
             if (referralType == ReferralType.INBOUND) {
-                page.stream().filter(dto -> dto.getToId().equals(orgId)).forEach(dto -> dto.setToName(""));
+                page.stream().filter(dto -> orgId.equals(dto.getToId())).forEach(dto -> dto.setToName(""));
             } else {
-                page.stream().filter(dto -> dto.getFromId().equals(orgId)).forEach(dto -> dto.setFromName(""));
+                page.stream().filter(dto -> orgId.equals(dto.getFromId())).forEach(dto -> dto.setFromName(""));
             }
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
