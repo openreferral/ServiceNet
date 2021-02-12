@@ -35,7 +35,7 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
     List<Referral> findAllByBeneficiaryIdAndReferredTo(@Param("beneficiaryId") UUID beneficiaryId, @Param("cboId") UUID cboId,
         @Param("locId") UUID locId);
 
-    @Query("SELECT referral FROM Referral referral "
+    @Query("SELECT DISTINCT referral FROM Referral referral "
         + "LEFT JOIN referral.from org "
         + "LEFT JOIN org.userProfiles userProfile "
         + "WHERE (userProfile = :fromUser OR referral.fromUser = :fromUser) "
@@ -45,7 +45,7 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
     Page<Referral> findByUserProfileSince(@Param("fromUser") UserProfile fromUser, @Param("since")
         ZonedDateTime since, @Param("isSent") Boolean isSent, @Param("isFulfilled") Boolean isFulfilled, Pageable pageable);
 
-    @Query("SELECT referral FROM Referral referral "
+    @Query("SELECT DISTINCT referral FROM Referral referral "
         + "LEFT JOIN referral.to org "
         + "LEFT JOIN org.userProfiles userProfile "
         + "WHERE userProfile = :toUser "
