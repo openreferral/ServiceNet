@@ -1,7 +1,5 @@
 package org.benetech.servicenet.service.impl;
 
-import static org.apache.commons.codec.binary.Base64.encodeBase64String;
-
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -26,7 +24,6 @@ import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.MongoDbService;
-import org.benetech.servicenet.service.StringGZIPService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
@@ -68,9 +65,6 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private StringGZIPService stringGZIPService;
-
-    @Autowired
     private TransactionSynchronizationService transactionSynchronizationService;
 
     @Override
@@ -82,9 +76,7 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         ImportData conversionOutput = FileConverterFactory.getConverter(file, delimiter).convert(file);
         String parsedDocumentId = null;
         if (conversionOutput.getJson() != null) {
-            byte[] parseDocumentBytes = stringGZIPService.compress(conversionOutput.getJson());
-            parsedDocumentId = mongoDbService
-                .saveParsedDocument(encodeBase64String(parseDocumentBytes));
+            parsedDocumentId = mongoDbService.saveParsedDocument(conversionOutput.getJson());
         }
         String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
 
