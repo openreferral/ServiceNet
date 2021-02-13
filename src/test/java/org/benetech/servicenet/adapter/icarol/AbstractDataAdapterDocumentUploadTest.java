@@ -73,9 +73,11 @@ public class AbstractDataAdapterDocumentUploadTest {
     private static MockServerClient mockServer = startClientAndServer(PORT);
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-        when(mongoDbService.saveOriginalDocument(any())).thenReturn(UUID.randomUUID().toString());
+        when(mongoDbService.saveOriginalDocument(any(), any(), any())).thenReturn(UUID.randomUUID().toString());
+        when(mongoDbService.findOriginalDocumentById(any())).thenReturn(
+            AdapterTestsUtils.readResourceAsString(ICAROL_CATALOG + IDS_FILE));
         testDatabaseManagement.clearDb();
     }
 

@@ -26,6 +26,7 @@ public class StreamUtils {
         }
         return tempFile;
     }
+
     public static File temporaryFile() throws IOException {
         final File tempFile = File.createTempFile(PREFIX, SUFFIX);
         tempFile.deleteOnExit();

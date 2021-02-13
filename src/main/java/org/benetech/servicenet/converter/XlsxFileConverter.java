@@ -1,17 +1,16 @@
 package org.benetech.servicenet.converter;
 
+import static org.benetech.servicenet.util.StreamUtils.temporaryFile;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.benetech.servicenet.util.StreamUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
-public class XlsxFileConverter extends AbstractFileConverter {
-    private final Logger log = LoggerFactory.getLogger(XlsxFileConverter.class);
+public class XlsxFileConverter extends AbstractDataConverter {
 
     public XlsxFileConverter() {
     }
@@ -38,12 +37,13 @@ public class XlsxFileConverter extends AbstractFileConverter {
     }
 
     @Override
-    public ImportData convert(MultipartFile file) throws IOException {
-        try {
-            return convert(file.getInputStream());
-        } catch (OpenXML4JException | SAXException e) {
-            log.error(e.getMessage(), e);
-            return null;
+    public ImportData convert(String content) throws IOException {
+        final File tempFile = temporaryFile();
+        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+            out.write(content.getBytes());
         }
+        ImportData conversionOutput = new ImportData();
+        conversionOutput.setTemporaryFile(tempFile);
+        return conversionOutput;
     }
 }

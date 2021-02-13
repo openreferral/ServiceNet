@@ -117,7 +117,7 @@ public class DocumentUploadResource {
     @PostMapping("/map")
     @Timed
     public ResponseEntity<Void> mapDocuments(@RequestBody List<String> files,  HttpServletRequest request)
-        throws JsonSyntaxException {
+        throws JsonSyntaxException, IOException {
         try {
             List<FileInfo> fileInfoList = new ArrayList<>();
             Gson gson = new Gson();

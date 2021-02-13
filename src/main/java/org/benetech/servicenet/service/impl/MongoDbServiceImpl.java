@@ -6,9 +6,11 @@ import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import org.benetech.servicenet.service.MongoDbService;
 import org.benetech.servicenet.service.StringGZIPService;
 import org.bson.Document;
+import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,8 @@ public class MongoDbServiceImpl implements MongoDbService {
     private static final String DATA = "data";
     private static final String PARSED = "parsed";
     private static final String COMPRESSED = "compressed";
+    private static final String TYPE = "type";
+    private static final String DELIMITER = "delimiter";
 
     @Autowired
     private MongoDbFactory mongoDbFactory;
@@ -35,10 +39,10 @@ public class MongoDbServiceImpl implements MongoDbService {
     private StringGZIPService stringGZIPService;
 
     @Override
-    public String saveParsedDocument(String data)  {
+    public String saveParsedDocument(String data, String type, String delimiter)  {
         try {
             byte[] compressed = stringGZIPService.compress(data);
-            return saveDocument(encodeBase64String(compressed), true, true);
+            return saveDocument(encodeBase64String(compressed), true, true, type, delimiter);
         } catch (IOException e) {
             log.debug("Error while saving parsed document", e);
             return null;
@@ -46,13 +50,18 @@ public class MongoDbServiceImpl implements MongoDbService {
     }
 
     @Override
-    public String saveOriginalDocument(byte[] bytes) {
-        return saveDocument(bytes, false, false);
+    public String saveOriginalDocument(byte[] bytes, String type, String delimiter) {
+        return saveDocument(bytes, false, false, type, delimiter);
     }
 
     @Override
     public String findOriginalDocumentById(String id) {
-        return findDocumentById(id).toString();
+        Object doc = findDocumentById(id);
+        if (doc instanceof Binary) {
+            return new String(((Binary) doc).getData(), StandardCharsets.UTF_8);
+        } else {
+            return doc.toString();
+        }
     }
 
     @Override
@@ -75,13 +84,15 @@ public class MongoDbServiceImpl implements MongoDbService {
         return document.get(DATA);
     }
 
-    private String saveDocument(Object file, boolean isParsed, boolean isCompressed) {
+    private String saveDocument(Object file, boolean isParsed, boolean isCompressed, String type, String delimiter) {
         Document document = new Document();
 
         BasicDBObject documentDetail = new BasicDBObject();
         documentDetail.put(DATA, file);
         documentDetail.put(PARSED, isParsed);
         documentDetail.put(COMPRESSED, isCompressed);
+        documentDetail.put(TYPE, type);
+        documentDetail.put(DELIMITER, delimiter);
         document.put(DETAIL, documentDetail);
         ObjectId id = new ObjectId();
         document.put(ID, id);

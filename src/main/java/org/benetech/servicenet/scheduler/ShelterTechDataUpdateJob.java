@@ -2,6 +2,7 @@ package org.benetech.servicenet.scheduler;
 
 import static org.benetech.servicenet.config.Constants.SHELTER_TECH_PROVIDER;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import org.benetech.servicenet.adapter.sheltertech.ShelterTechCollector;
@@ -44,7 +45,11 @@ public class ShelterTechDataUpdateJob extends BaseJob {
             .systemAccount(getSystemAccount());
         String response = ShelterTechCollector.getData();
 
-        documentUploadService.uploadApiData(response, getSystemAccount(), report);
+        try {
+            documentUploadService.uploadApiData(response, getSystemAccount(), report);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     protected String getSystemAccount() {
