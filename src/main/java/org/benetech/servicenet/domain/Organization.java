@@ -188,6 +188,9 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Size(max = 255, message = "Field value is too long.")
     private String instagramUrl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserProfile updatedBy;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public Organization(Organization org) {
@@ -210,6 +213,7 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.facebookUrl = org.facebookUrl;
         this.twitterUrl = org.twitterUrl;
         this.instagramUrl = org.instagramUrl;
+        this.updatedBy = org.updatedBy;
         this.needsMatching = org.needsMatching;
         this.hasUpdates = org.hasUpdates;
     }
@@ -483,6 +487,19 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
 
     public void setInstagramUrl(String instagramUrl) {
         this.instagramUrl = instagramUrl;
+    }
+
+    public Organization updatedBy(UserProfile updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
+    public UserProfile getUpdatedBy(UserProfile updatedBy) {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UserProfile updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public boolean isHasUpdates() {

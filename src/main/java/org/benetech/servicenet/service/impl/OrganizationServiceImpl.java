@@ -234,6 +234,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             organization.setHasUpdates(existingOrganization.isHasUpdates());
         }
         organization.setUpdatedAt(ZonedDateTime.now());
+        organization.setUpdatedBy(userProfile);
         organization = organizationRepository.save(organization);
 
         List<Location> locations = saveLocations(
@@ -1391,9 +1392,11 @@ public class OrganizationServiceImpl implements OrganizationService {
             organization.setUserProfiles(existingOrganization.getUserProfiles());
         }
         Set<UserProfile> userProfiles = organization.getUserProfiles() != null ? organization.getUserProfiles() : new HashSet<>();
-        userProfiles.add(userProfile);
-        organization.setUserProfiles(userProfiles);
-        userProfile.getOrganizations().add(organization);
+        if (userProfiles.isEmpty()) {
+            userProfiles.add(userProfile);
+            organization.setUserProfiles(userProfiles);
+            userProfile.getOrganizations().add(organization);
+        }
     }
 
     private void applyPhoneUpdates(Organization current, Organization offered) {
