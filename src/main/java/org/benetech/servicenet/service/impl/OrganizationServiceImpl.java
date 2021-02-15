@@ -453,24 +453,30 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to apply updates for Organization : {}", id);
         Organization org = organizationRepository.findOneWithEagerAssociations(id);
         if (org != null) {
-            List<Conflict> conflicts = conflictService.findAllPendingWithResourceIdAndPartnerResourceId(id, org.getReplacedBy().getId());
-            conflicts.forEach(conflict -> {
-                conflict.setState(ConflictStateEnum.ACCEPTED);
-                conflict.setStateDate(ZonedDateTime.now());
-            });
-            if (conflicts.stream().anyMatch(conflict -> conflict.getFieldName().startsWith(
-                OrganizationConflictDetector.PHONE))) {
-                applyPhoneUpdates(org, org.getReplacedBy());
+            List<Conflict> conflicts = new ArrayList<>();
+            if (org.getReplacedBy() != null) {
+                conflicts.addAll(conflictService
+                    .findAllPendingWithResourceIdAndPartnerResourceId(id,
+                        org.getReplacedBy().getId()));
+                conflicts.forEach(conflict -> {
+                    conflict.setState(ConflictStateEnum.ACCEPTED);
+                    conflict.setStateDate(ZonedDateTime.now());
+                });
+                if (conflicts.stream().anyMatch(conflict -> conflict.getFieldName().startsWith(
+                    OrganizationConflictDetector.PHONE))) {
+                    applyPhoneUpdates(org, org.getReplacedBy());
+                }
+                if (conflicts.stream().anyMatch(conflict -> conflict.getFieldName().startsWith(
+                    OrganizationConflictDetector.LOCATION))) {
+                    applyLocationUpdates(org, org.getReplacedBy());
+                    applyServiceUpdates(org, org.getReplacedBy());
+                } else if (conflicts.stream()
+                    .anyMatch(conflict -> conflict.getFieldName().startsWith(
+                        OrganizationConflictDetector.SERVICE))) {
+                    applyServiceUpdates(org, org.getReplacedBy());
+                }
+                org.applyUpdates(org.getReplacedBy());
             }
-            if (conflicts.stream().anyMatch(conflict -> conflict.getFieldName().startsWith(
-                OrganizationConflictDetector.LOCATION))) {
-                applyLocationUpdates(org, org.getReplacedBy());
-                applyServiceUpdates(org, org.getReplacedBy());
-            } else if (conflicts.stream().anyMatch(conflict -> conflict.getFieldName().startsWith(
-                OrganizationConflictDetector.SERVICE))) {
-                applyServiceUpdates(org, org.getReplacedBy());
-            }
-            org.applyUpdates(org.getReplacedBy());
             org.setHasUpdates(false);
             organizationRepository.save(org);
             conflictService.saveAll(conflicts);
@@ -485,11 +491,16 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to discard updates for Organization : {}", id);
         Organization org = organizationRepository.findOneWithEagerAssociations(id);
         if (org != null) {
-            List<Conflict> conflicts = conflictService.findAllPendingWithResourceIdAndPartnerResourceId(id, org.getReplacedBy().getId());
-            conflicts.forEach(conflict -> {
-                conflict.setState(ConflictStateEnum.REJECTED);
-                conflict.setStateDate(ZonedDateTime.now());
-            });
+            List<Conflict> conflicts = new ArrayList<>();
+            if (org.getReplacedBy() != null) {
+                conflicts.addAll(conflictService
+                    .findAllPendingWithResourceIdAndPartnerResourceId(id,
+                        org.getReplacedBy().getId()));
+                conflicts.forEach(conflict -> {
+                    conflict.setState(ConflictStateEnum.REJECTED);
+                    conflict.setStateDate(ZonedDateTime.now());
+                });
+            }
             org.setHasUpdates(false);
             organizationRepository.save(org);
             conflictService.saveAll(conflicts);

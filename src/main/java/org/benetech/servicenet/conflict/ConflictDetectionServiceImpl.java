@@ -104,7 +104,9 @@ public class ConflictDetectionServiceImpl implements ConflictDetectionService {
             List<EntityEquivalent> equivalents = gatherAllEquivalents(orgEquivalent);
 
             List<Conflict> conflicts = detect(equivalents, replacement.getAccount(), organization.getAccount());
-            replacement.setHasUpdates(!conflicts.isEmpty());
+            replacement.setHasUpdates(
+                conflicts.stream().anyMatch(c -> ConflictStateEnum.PENDING.equals(c.getState()))
+            );
             em.persist(replacement);
         }
 
