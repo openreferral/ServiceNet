@@ -37,7 +37,7 @@ public interface DocumentUploadService {
      * @param providerName name of selected provider
      * @return true success, false otherwise
      */
-    boolean processFiles(List<FileInfo> fileInfoList, String providerName);
+    boolean processFiles(List<FileInfo> fileInfoList, String providerName) throws IOException;
 
     /**
      * Save a result of API data collection in NoSQL database and information about it.
@@ -49,7 +49,7 @@ public interface DocumentUploadService {
      * @throws IllegalArgumentException if file type is not supported
      */
     DocumentUploadDTO uploadApiData(String json, String providerName, DataImportReport report)
-        throws IllegalArgumentException;
+        throws IllegalArgumentException, IOException;
 
     /**
      * Save a documentUpload.
@@ -89,7 +89,7 @@ public interface DocumentUploadService {
      * @return the list of entities
      */
     Page<DocumentUploadDTO> findAll(Pageable pageable);
-    
+
     /**
      * Get the "id" documentUpload.
      *
