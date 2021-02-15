@@ -29,6 +29,10 @@ public class ProviderRecordDTO {
 
     private UserDTO owner;
 
+    private String updatedByLogin;
+
+    private UserDTO updatedBy;
+
     private Set<DailyUpdateDTO> dailyUpdates;
 
     private Boolean onlyRemote;
@@ -56,9 +60,10 @@ public class ProviderRecordDTO {
     @SuppressWarnings({"PMD.ExcessiveParameterList"})
     public ProviderRecordDTO(UUID orgId, String orgName, UUID orgAccountId, String orgAccountName,
         String userLogin, ZonedDateTime lastUpdated, Boolean onlyRemote, String facebookUrl,
-        String twitterUrl, String instagramUrl) {
+        String twitterUrl, String instagramUrl, String updatedByLogin) {
         this.lastUpdated = lastUpdated;
         this.userLogin = userLogin;
+        this.updatedByLogin = updatedByLogin;
         this.organization = new OrganizationDTO(
             orgId, orgName, orgAccountId, orgAccountName, facebookUrl, twitterUrl, instagramUrl
         );

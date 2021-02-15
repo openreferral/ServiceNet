@@ -85,6 +85,8 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         } else {
             organization.setUpdatedAt(ZonedDateTime.now());
         }
+        // Set null to indicate, that update was done through import instead by user
+        organization.setUpdatedBy(null);
         Organization org = em.merge(organization);
 
         Set<OrganizationError> errors = new HashSet<>();
