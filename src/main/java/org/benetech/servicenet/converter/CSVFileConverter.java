@@ -7,23 +7,24 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
+import org.benetech.servicenet.util.BsonUtils;
 import org.benetech.servicenet.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVFileConverter extends AbstractFileConverter {
+public class CSVFileConverter extends AbstractDataConverter {
     private final Logger log = LoggerFactory.getLogger(CSVFileConverter.class);
 
     private char delimiter = ',';
 
     public CSVFileConverter(String delimiter) {
-        if (delimiter != null) {
+        if (StringUtils.isNotBlank(delimiter)) {
             this.delimiter = delimiter.charAt(0);
         }
     }
@@ -60,15 +61,11 @@ public class CSVFileConverter extends AbstractFileConverter {
         return convertRecords(originalRecords);
     }
 
-    public String convert(String csv) throws IOException {
-        File file = convertToFile(csv);
-        return Files.readString(Paths.get(file.getPath()));
-    }
-
     @Override
-    public ImportData convert(MultipartFile file) throws IOException {
+    public ImportData convert(Object data) throws IOException {
         ImportData conversionOutput = new ImportData();
-        conversionOutput.setJson(convert(file.getInputStream()));
+        File file = convertToFile(BsonUtils.docToString(data));
+        conversionOutput.setJson(Files.readString(Paths.get(file.getPath())));
         return conversionOutput;
     }
 }

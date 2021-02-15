@@ -44,6 +44,9 @@ public class DocumentUpload extends AbstractEntity implements Serializable {
     @Transient
     private String filename;
 
+    @Transient
+    private String delimiter;
+
     public DocumentUpload() {
     }
 
@@ -113,6 +116,15 @@ public class DocumentUpload extends AbstractEntity implements Serializable {
     public void setFilename(String filename) {
         this.filename = filename;
     }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

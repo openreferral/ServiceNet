@@ -1,15 +1,14 @@
 package org.benetech.servicenet.converter;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
+import org.benetech.servicenet.util.BsonUtils;
 
-public class JSONFileConverter extends AbstractFileConverter {
+public class JSONFileConverter extends AbstractDataConverter {
 
     @Override
-    public ImportData convert(MultipartFile file) throws IOException {
+    public ImportData convert(Object data) throws IOException {
         ImportData conversionOutput = new ImportData();
-        conversionOutput.setJson(new String(file.getBytes()));
+        conversionOutput.setJson(BsonUtils.docToString(data));
         return conversionOutput;
     }
 }

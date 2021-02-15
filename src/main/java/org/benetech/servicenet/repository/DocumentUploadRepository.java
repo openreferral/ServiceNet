@@ -24,6 +24,8 @@ public interface DocumentUploadRepository extends JpaRepository<DocumentUpload, 
 
     DocumentUpload findByParsedDocumentId(String parsedDocumentId);
 
+    DocumentUpload findByOriginalDocumentId(String originalDocumentId);
+
     @Query("select document_upload from DocumentUpload document_upload where document_upload.uploader.id = :id")
     List<DocumentUpload> findAllByUploaderId(@Param("id") UUID id);
 
