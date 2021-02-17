@@ -257,15 +257,18 @@ public class ProviderRecordsRepository {
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
         Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
         Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+        Join<Organization, UserProfile> updatedByJoin = selectRoot.join(Organization_.UPDATED_BY, JoinType.LEFT);
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
             systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
             userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE),
-            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL)));
+            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL),
+            updatedByJoin.get(UserProfile_.LOGIN)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
-            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT));
+            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT),
+            updatedByJoin.get(UserProfile_.LOGIN));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
         Query query = createQueryWithPageable(queryCriteria, pageable);
