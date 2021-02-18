@@ -1,16 +1,19 @@
 package org.benetech.servicenet.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import org.benetech.servicenet.domain.AbstractEntity;
 import org.benetech.servicenet.domain.DataImportReport;
 import org.benetech.servicenet.domain.Service;
 import org.benetech.servicenet.service.ServiceBasedImportService;
 import org.benetech.servicenet.service.ServiceImportService;
 import org.benetech.servicenet.service.ServiceService;
+import org.benetech.servicenet.service.ServiceTaxonomyService;
 import org.benetech.servicenet.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.EntityManager;
-import java.util.Optional;
 
 @Component
 public class ServiceImportServiceImpl implements ServiceImportService {
@@ -24,6 +27,9 @@ public class ServiceImportServiceImpl implements ServiceImportService {
     @Autowired
     private ServiceBasedImportService serviceBasedImportService;
 
+    @Autowired
+    private ServiceTaxonomyService serviceTaxonomyService;
+
     @Override
     public Service createOrUpdateService(Service filledService, String externalDbId, String providerName,
                                          DataImportReport report) {
@@ -31,10 +37,14 @@ public class ServiceImportServiceImpl implements ServiceImportService {
 
         Service service = new Service(filledService);
         Optional<Service> serviceFromDb = serviceService.findWithEagerAssociations(externalDbId, providerName);
+        List<String> taxonomiesToKeep = filledService.getTaxonomies().stream()
+            .map(t -> t.getTaxonomy().getTaxonomyId())
+            .collect(Collectors.toList());
         if (serviceFromDb.isPresent()) {
             if (serviceFromDb.get().deepEquals(filledService)) {
                 return serviceFromDb.get();
             }
+            deleteOldTaxonomies(serviceFromDb.get(), taxonomiesToKeep);
             fillDataFromDb(service, serviceFromDb.get());
             em.merge(service);
             report.incrementNumberOfUpdatedServices();
@@ -60,6 +70,13 @@ public class ServiceImportServiceImpl implements ServiceImportService {
         serviceBasedImportService.createOrUpdateMetadataForService(filledService.getMetadata(), service, report);
 
         return service;
+    }
+
+    private void deleteOldTaxonomies(Service serviceFromDb, List<String> taxonomiesToKeep) {
+        serviceFromDb.getTaxonomies().stream()
+            .filter(serviceTaxonomy -> !taxonomiesToKeep.contains(serviceTaxonomy.getTaxonomy().getTaxonomyId()))
+            .map(AbstractEntity::getId)
+            .forEach(uuid -> serviceTaxonomyService.delete(uuid));
     }
 
     private void fillDataFromDb(Service newService, Service serviceFromDb) {
