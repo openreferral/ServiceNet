@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.service.dto.SiloDTO;
 
+import org.benetech.servicenet.service.dto.provider.SiloWithLogoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,7 +22,7 @@ public interface SiloService {
      * @param siloDTO the entity to save.
      * @return the persisted entity.
      */
-    SiloDTO save(SiloDTO siloDTO);
+    SiloDTO save(SiloWithLogoDTO siloDTO);
 
     /**
      * Get all the silos.
@@ -45,7 +46,7 @@ public interface SiloService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<SiloDTO> findOne(UUID id);
+    Optional<SiloWithLogoDTO> findOne(UUID id);
 
     /**
      * Get the "id" silo.
@@ -54,6 +55,8 @@ public interface SiloService {
      * @return the entity.
      */
     Optional<SiloDTO> findOneByName(String name);
+
+    Optional<SiloWithLogoDTO> findOneByNameOrId(String nameOrId);
 
     Optional<Silo> getOneByName(String name);
 
