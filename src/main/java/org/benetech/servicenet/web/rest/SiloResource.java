@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.service.dto.SiloDTO;
+import org.benetech.servicenet.service.dto.provider.SiloWithLogoDTO;
 import org.benetech.servicenet.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class SiloResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/silos")
-    public ResponseEntity<SiloDTO> createSilo(@RequestBody SiloDTO siloDTO) throws URISyntaxException {
+    public ResponseEntity<SiloDTO> createSilo(@RequestBody SiloWithLogoDTO siloDTO) throws URISyntaxException {
         log.debug("REST request to save Silo : {}", siloDTO);
         if (siloDTO.getId() != null) {
             throw new BadRequestAlertException("A new silo cannot already have an ID", ENTITY_NAME, "idexists");
@@ -80,7 +81,7 @@ public class SiloResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/silos")
-    public ResponseEntity<SiloDTO> updateSilo(@RequestBody SiloDTO siloDTO) throws URISyntaxException {
+    public ResponseEntity<SiloDTO> updateSilo(@RequestBody SiloWithLogoDTO siloDTO) throws URISyntaxException {
         log.debug("REST request to update Silo : {}", siloDTO);
         if (siloDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -135,9 +136,9 @@ public class SiloResource {
      * or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/silos/{id}")
-    public ResponseEntity<SiloDTO> getSilo(@PathVariable UUID id) {
+    public ResponseEntity<SiloWithLogoDTO> getSilo(@PathVariable UUID id) {
         log.debug("REST request to get Silo : {}", id);
-        Optional<SiloDTO> siloDTO = siloService.findOne(id);
+        Optional<SiloWithLogoDTO> siloDTO = siloService.findOne(id);
         return ResponseUtil.wrapOrNotFound(siloDTO);
     }
 

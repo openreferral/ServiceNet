@@ -221,4 +221,6 @@
     <include file="config/liquibase/changelog/20210204100634_service_add_insurance_fields.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210204185230_organization_add_has_updates.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20210212085231_organization_add_updated_by.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20210218130721_add_silo_logo.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

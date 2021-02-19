@@ -29,6 +29,7 @@ import org.benetech.servicenet.service.dto.SystemAccountDTO;
 import org.benetech.servicenet.service.dto.TaxonomyDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderFilterDTO;
 import org.benetech.servicenet.service.dto.provider.ProviderOrganizationDTO;
+import org.benetech.servicenet.service.dto.provider.SiloWithLogoDTO;
 import org.benetech.servicenet.web.rest.TaxonomyFilterDTO;
 import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -249,5 +250,19 @@ public class PublicRecordResource {
         return ResponseEntity.ok().body(
             organizationService.findAllOptions(SERVICE_PROVIDER)
         );
+    }
+
+    /**
+     * {@code GET  /silos/:nameOrId} : get the "name" silo.
+     *
+     * @param nameOrId the name or id of the siloDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the siloDTO,
+     * or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/silos/{nameOrId}")
+    public ResponseEntity<Optional<SiloWithLogoDTO>> getSilo(@PathVariable String nameOrId) {
+        log.debug("REST request to get Silo : {}", nameOrId);
+        Optional<SiloWithLogoDTO> siloDTO = siloService.findOneByNameOrId(nameOrId);
+        return ResponseEntity.ok().body(siloDTO);
     }
 }

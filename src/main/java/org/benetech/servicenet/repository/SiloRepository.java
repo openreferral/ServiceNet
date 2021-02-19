@@ -14,4 +14,6 @@ import java.util.Optional;
 public interface SiloRepository extends JpaRepository<Silo, UUID> {
 
     Optional<Silo> getByName(String name);
+
+    Optional<Silo> getByNameOrId(String name, UUID id);
 }
