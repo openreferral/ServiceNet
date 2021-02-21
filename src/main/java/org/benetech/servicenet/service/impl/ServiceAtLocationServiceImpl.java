@@ -1,5 +1,6 @@
 package org.benetech.servicenet.service.impl;
 
+import org.benetech.servicenet.domain.Location;
 import org.benetech.servicenet.domain.ServiceAtLocation;
 import org.benetech.servicenet.repository.ServiceAtLocationRepository;
 import org.benetech.servicenet.service.ServiceAtLocationService;
@@ -110,6 +111,11 @@ public class ServiceAtLocationServiceImpl implements ServiceAtLocationService {
     @Override
     public Optional<ServiceAtLocation> findForExternalDb(String externalDbId, String providerName) {
         return serviceAtLocationRepository.findOneByExternalDbIdAndProviderName(externalDbId, providerName);
+    }
+
+    @Override
+    public List<ServiceAtLocation> findByLocation(Location location) {
+        return serviceAtLocationRepository.findAllByLocation(location);
     }
 
     /**

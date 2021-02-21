@@ -24,6 +24,14 @@ public interface ConflictService {
     ConflictDTO save(ConflictDTO conflictDTO);
 
     /**
+     * Save a list of conflicts.
+     *
+     * @param conflicts the entities to save
+     * @return the persisted entity
+     */
+    List<Conflict> saveAll(List<Conflict> conflicts);
+
+    /**
      * Get all the conflicts.
      *
      * @return the list of entities
@@ -84,4 +92,6 @@ public interface ConflictService {
      * @param partnerResourceId system account name
      */
     List<Conflict> findAllPendingWithResourceIdAndPartnerResourceId(UUID resourceId, UUID partnerResourceId);
+
+    List<ConflictDTO> toDtos(List<Conflict> conflicts);
 }

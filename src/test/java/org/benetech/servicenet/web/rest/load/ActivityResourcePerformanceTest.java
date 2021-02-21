@@ -3,6 +3,7 @@ package org.benetech.servicenet.web.rest.load;
 import org.benetech.servicenet.MockedUserTestConfiguration;
 import org.benetech.servicenet.ServiceNetApp;
 import org.benetech.servicenet.ZeroCodeSpringJUnit5Extension;
+import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.errors.ExceptionTranslator;
@@ -58,6 +59,9 @@ public class ActivityResourcePerformanceTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GeocodingResultRepository geocodingResultRepository;
+
     private MockMvc restActivityMockMvc;
 
     final static int PAGE_SIZE = 20;
@@ -66,7 +70,7 @@ public class ActivityResourcePerformanceTest {
     @BeforeEach
     public void setUp() {
         final ActivityResource activityResource = new ActivityResource(
-            activityService, userService
+            activityService, userService, geocodingResultRepository
         );
         MockitoAnnotations.initMocks(this);
         restActivityMockMvc = MockMvcBuilders.standaloneSetup(activityResource)

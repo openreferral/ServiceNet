@@ -35,7 +35,7 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
     List<Referral> findAllByBeneficiaryIdAndReferredTo(@Param("beneficiaryId") UUID beneficiaryId, @Param("cboId") UUID cboId,
         @Param("locId") UUID locId);
 
-    @Query("SELECT referral FROM Referral referral "
+    @Query("SELECT DISTINCT referral FROM Referral referral "
         + "LEFT JOIN referral.from org "
         + "LEFT JOIN org.userProfiles userProfile "
         + "WHERE (userProfile = :fromUser OR referral.fromUser = :fromUser) "
@@ -43,6 +43,16 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
         + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
         + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL)")
     Page<Referral> findByUserProfileSince(@Param("fromUser") UserProfile fromUser, @Param("since")
+        ZonedDateTime since, @Param("isSent") Boolean isSent, @Param("isFulfilled") Boolean isFulfilled, Pageable pageable);
+
+    @Query("SELECT DISTINCT referral FROM Referral referral "
+        + "LEFT JOIN referral.to org "
+        + "LEFT JOIN org.userProfiles userProfile "
+        + "WHERE userProfile = :toUser "
+        + "AND (COALESCE(:since, NULL) IS NULL OR referral.sentAt >= :since) "
+        + "AND (NOT :isSent = true OR (referral.sentAt IS NOT NULL AND referral.fulfilledAt IS NULL))"
+        + "AND (NOT :isFulfilled = true OR referral.fulfilledAt IS NOT NULL)")
+    Page<Referral> findMadeToUserProfileSince(@Param("toUser") UserProfile toUser, @Param("since")
         ZonedDateTime since, @Param("isSent") Boolean isSent, @Param("isFulfilled") Boolean isFulfilled, Pageable pageable);
 
     @Query("SELECT new org.benetech.servicenet.service.dto.ReferralMadeFromUserDTO("

@@ -15,7 +15,7 @@ class DataResolver {
     List<HealthleadsBaseData> getDataFromJson(final String json, final String filename) {
         DataType type;
         try {
-            type = DataType.valueOf(filename.toUpperCase());
+            type = DataType.valueOf(filename.toUpperCase().split("\\.")[0]);
         } catch (IllegalArgumentException | NullPointerException e) {
             return new ArrayList<>();
         }

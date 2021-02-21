@@ -279,6 +279,7 @@ public class OrganizationMatchServiceImpl implements OrganizationMatchService {
             while (organizationOptional.isPresent()) {
                 Long total = organizationService.countOrganizationsByNeedsMatching();
                 try {
+                    entityManager.clear();
                     createOrUpdateOrganizationMatchesSynchronously(
                         organizationOptional.get().getId(),
                         total);

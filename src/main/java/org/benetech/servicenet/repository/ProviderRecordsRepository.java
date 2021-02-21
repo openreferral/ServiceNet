@@ -2,6 +2,7 @@ package org.benetech.servicenet.repository;
 
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
+import com.google.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -82,15 +84,17 @@ public class ProviderRecordsRepository {
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
         Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
         Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+        Join<Organization, UserProfile> updatedByJoin = selectRoot.join(Organization_.UPDATED_BY, JoinType.LEFT);
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
             systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
             userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE),
-            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL)));
+            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL),
+            updatedByJoin.get(UserProfile_.LOGIN)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, userProfiles, excludedUserProfile, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
-            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT));
+            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), updatedByJoin.get(UserProfile_.LOGIN));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
         Query query = createQueryWithPageable(queryCriteria, pageable);
@@ -253,15 +257,18 @@ public class ProviderRecordsRepository {
         Root<Organization> selectRoot = queryCriteria.from(Organization.class);
         Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
         Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+        Join<Organization, UserProfile> updatedByJoin = selectRoot.join(Organization_.UPDATED_BY, JoinType.LEFT);
 
         queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
             systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
             userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE),
-            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL)));
+            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL),
+            updatedByJoin.get(UserProfile_.LOGIN)));
 
         addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, providerFilterDTO, search);
         queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
-            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT));
+            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT),
+            updatedByJoin.get(UserProfile_.LOGIN));
         addSorting(queryCriteria, pageable.getSort(), selectRoot);
 
         Query query = createQueryWithPageable(queryCriteria, pageable);
@@ -281,13 +288,13 @@ public class ProviderRecordsRepository {
         Pageable pageable, Silo silo,
         ProviderFilterDTO providerFilterDTO,
         String search, List<ExclusionsConfig> exclusions,
-        List<Double> boundaries) {
+        List<Double> boundaries, LatLng center) {
 
         CriteriaQuery<ProviderRecordForMapDTO> queryCriteria = cb.createQuery(ProviderRecordForMapDTO.class);
         Root<GeocodingResult> selectRoot = queryCriteria.from(GeocodingResult.class);
 
         Query query = addFiltersAndSelect(pageable, queryCriteria, selectRoot, providerFilterDTO, search, exclusions,
-            null, boundaries, silo);
+            null, boundaries, center, silo);
 
         List<ProviderRecordForMapDTO> results = query.getResultList();
 
@@ -296,14 +303,14 @@ public class ProviderRecordsRepository {
 
     public Page<ProviderRecordForMapDTO> findProviderRecordsForMap(Pageable pageable, UserProfile userProfile,
         ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions,
-        List<Double> boundaries) {
+        List<Double> boundaries, LatLng center) {
 
         CriteriaQuery<ProviderRecordForMapDTO> queryCriteria = cb.createQuery(ProviderRecordForMapDTO.class);
         Root<GeocodingResult> selectRoot = queryCriteria.from(GeocodingResult.class);
 
         Query query = addFiltersAndSelect(pageable, queryCriteria, selectRoot, providerFilterDTO, search,
             exclusions,
-            userProfile, boundaries, null);
+            userProfile, boundaries, center, null);
 
         List<ProviderRecordForMapDTO> results = query.getResultList();
 
@@ -321,11 +328,12 @@ public class ProviderRecordsRepository {
         return query;
     }
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     private <T> Query addFiltersAndSelect(Pageable pageable,
         CriteriaQuery<ProviderRecordForMapDTO> query, Root<GeocodingResult> root,
         ProviderFilterDTO providerFilterDTO, String search, List<ExclusionsConfig> exclusions,
-        UserProfile userProfile,
-        List<Double> boundaries, Silo silo) {
+        UserProfile userProfile, List<Double> boundaries, LatLng center,
+        Silo silo) {
         Join<GeocodingResult, Location> locationJoin = root.join(GeocodingResult_.LOCATIONS, JoinType.LEFT);
         Join<Location, Organization> organizationJoin = locationJoin.join(Location_.ORGANIZATION, JoinType.LEFT);
         Join<Organization, SystemAccount> systemAccountJoin = organizationJoin.join(Organization_.ACCOUNT, JoinType.LEFT);
@@ -367,6 +375,16 @@ public class ProviderRecordsRepository {
             predicate = cb.and(predicate, cb.and(
                 cb.ge(root.get(GeocodingResult_.LATITUDE), boundaries.get(0)),
                 cb.le(root.get(GeocodingResult_.LATITUDE), boundaries.get(2))));
+        } else if (center != null) {
+            Expression<Double> distance = cb.function(
+                "calculate_distance",
+                Double.class,
+                cb.parameter(Double.class, "lat"),
+                cb.parameter(Double.class, "lon"),
+                root.get(GeocodingResult_.LATITUDE),
+                root.get(GeocodingResult_.LONGITUDE)
+            );
+            query.orderBy(cb.asc(distance));
         }
 
         predicate = this.addTaxonomiesFilter(predicate, providerFilterDTO, serviceJoin);
@@ -377,7 +395,12 @@ public class ProviderRecordsRepository {
         query.select(cb.construct(ProviderRecordForMapDTO.class, organizationJoin.get(Organization_.ID),
             root.get(GeocodingResult_.ID), root.get(GeocodingResult_.ADDRESS), root.get(GeocodingResult_.LATITUDE), root.get(GeocodingResult_.LONGITUDE)));
         query.groupBy(root.get(GeocodingResult_.ID), organizationJoin.get(Organization_.ID));
-        return createQueryWithPageable(query, pageable);
+        Query q = createQueryWithPageable(query, pageable);
+        if (center != null) {
+            q.setParameter("lat", center.lat);
+            q.setParameter("lon", center.lng);
+        }
+        return q;
     }
 
     private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root,

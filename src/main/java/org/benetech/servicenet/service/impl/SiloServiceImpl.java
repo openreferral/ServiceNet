@@ -10,6 +10,7 @@ import org.benetech.servicenet.service.SiloService;
 import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.service.dto.SiloDTO;
+import org.benetech.servicenet.service.dto.provider.SiloWithLogoDTO;
 import org.benetech.servicenet.service.mapper.SiloMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class SiloServiceImpl implements SiloService {
      * @return the persisted entity.
      */
     @Override
-    public SiloDTO save(SiloDTO siloDTO) {
+    public SiloDTO save(SiloWithLogoDTO siloDTO) {
         log.debug("Request to save Silo : {}", siloDTO);
         Silo silo = siloMapper.toEntity(siloDTO);
         silo = siloRepository.save(silo);
@@ -89,10 +90,10 @@ public class SiloServiceImpl implements SiloService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<SiloDTO> findOne(UUID id) {
+    public Optional<SiloWithLogoDTO> findOne(UUID id) {
         log.debug("Request to get Silo : {}", id);
         return siloRepository.findById(id)
-            .map(siloMapper::toDto);
+            .map(this::toSiloWithLogo);
     }
 
     @Override
@@ -101,6 +102,31 @@ public class SiloServiceImpl implements SiloService {
         log.debug("Request to get Silo : {}", name);
         return siloRepository.getByName(name)
             .map(siloMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @SuppressWarnings("PMD.EmptyCatchBlock")
+    public Optional<SiloWithLogoDTO> findOneByNameOrId(String nameOrId) {
+        log.debug("Request to get Silo : {}", nameOrId);
+        UUID id = null;
+        try {
+            id = UUID.fromString(nameOrId);
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+        return siloRepository.getByNameOrId(nameOrId, id)
+            .map(this::toSiloWithLogo);
+    }
+
+    private SiloWithLogoDTO toSiloWithLogo(Silo silo) {
+        SiloWithLogoDTO siloWithLogoDTO = new SiloWithLogoDTO();
+        siloWithLogoDTO.setLogoBase64(silo.getLogoBase64());
+        siloWithLogoDTO.setId(silo.getId());
+        siloWithLogoDTO.setName(silo.getName());
+        siloWithLogoDTO.setPublic(silo.isPublic());
+        siloWithLogoDTO.setReferralEnabled(silo.isReferralEnabled());
+        return siloWithLogoDTO;
     }
 
     @Override

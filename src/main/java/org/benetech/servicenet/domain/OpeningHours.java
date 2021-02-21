@@ -1,7 +1,9 @@
 package org.benetech.servicenet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.DayOfWeek;
 import javax.persistence.FetchType;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -123,6 +125,11 @@ public class OpeningHours extends AbstractEntity implements Serializable, DeepCo
             ", opensAt='" + getOpensAt() + "'" +
             ", closesAt='" + getClosesAt() + "'" +
             "}";
+    }
+
+    public String preview() {
+        return StringUtils.capitalize(DayOfWeek.of(weekday + 1).toString().toLowerCase()) + ": "
+            + opensAt + "-" + closesAt;
     }
 
     @Override

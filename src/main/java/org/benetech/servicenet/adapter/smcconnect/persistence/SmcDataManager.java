@@ -48,7 +48,8 @@ public class SmcDataManager {
     }
 
     private boolean isOrganizationsFile(MultipleImportData data, int i) {
-        return DataType.valueOf(data.getDocumentUploads().get(i).getFilename().toUpperCase()).equals(DataType.ORGANIZATIONS);
+        return DataType.valueOf(data.getDocumentUploads().get(i).getFilename().toUpperCase().split("\\.")[0])
+            .equals(DataType.ORGANIZATIONS);
     }
 
     private DataImportReport persistData(DocumentUpload sourceDocument) {

@@ -67,6 +67,14 @@ public interface ReferralService {
      */
     Page<ReferralDTO> findCurrentUsersReferrals(ZonedDateTime since, String status, Pageable pageable);
 
+    /**
+     * Search for referrals made to curent user.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<ReferralDTO> findReferralsMadeToCurrentUser(ZonedDateTime since, String status, Pageable pageable);
+
     Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(UUID to, Pageable pageable);
 
     Page<ReferralMadeToUserDTO> getReferralsMadeToUser(String status, Pageable pageable);

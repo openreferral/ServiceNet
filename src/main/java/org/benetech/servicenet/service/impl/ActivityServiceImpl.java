@@ -2,6 +2,7 @@ package org.benetech.servicenet.service.impl;
 
 import static org.benetech.servicenet.config.Constants.SERVICE_PROVIDER;
 
+import com.google.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,8 +78,8 @@ public class ActivityServiceImpl implements ActivityService {
     public ActivityServiceImpl(ActivityRepository activityRepository, RecordsService recordsService,
         ExclusionsConfigService exclusionsConfigService, OrganizationMatchService organizationMatchService,
         OrganizationService organizationService, UserService userService,
-        ProviderRecordsRepository providerRecordsRepository,
-        OrganizationMapper organizationMapper, UserProfileRepository userProfileRepository) {
+        ProviderRecordsRepository providerRecordsRepository, OrganizationMapper organizationMapper,
+        UserProfileRepository userProfileRepository) {
         this.activityRepository = activityRepository;
         this.recordsService = recordsService;
         this.exclusionsConfigService = exclusionsConfigService;
@@ -212,21 +213,21 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional(readOnly = true)
     public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
         Pageable pageable, ProviderFilterDTO providerFilterDTO,
-        String search, List<Double> boundaries) {
+        String search, List<Double> boundaries, LatLng center) {
         UserProfile userProfile = userService.getCurrentUserProfile();
         List<ExclusionsConfig> exclusions = exclusionsConfigService.findAllBySystemAccountName(SERVICE_PROVIDER);
         return providerRecordsRepository
-            .findProviderRecordsForMap(pageable, userProfile, providerFilterDTO, search, exclusions, boundaries);
+            .findProviderRecordsForMap(pageable, userProfile, providerFilterDTO, search, exclusions, boundaries, center);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProviderRecordForMapDTO> getAllPartnerActivitiesForMap(
         Pageable pageable, ProviderFilterDTO providerFilterDTO,
-        String search, Silo silo, List<Double> boundaries) {
+        String search, Silo silo, List<Double> boundaries, LatLng center) {
         List<ExclusionsConfig> exclusions = exclusionsConfigService.findAllBySystemAccountName(SERVICE_PROVIDER);
         return providerRecordsRepository
-            .findAllWithFiltersForMap(pageable, silo, providerFilterDTO, search, exclusions, boundaries);
+            .findAllWithFiltersForMap(pageable, silo, providerFilterDTO, search, exclusions, boundaries, center);
     }
 
     @Override

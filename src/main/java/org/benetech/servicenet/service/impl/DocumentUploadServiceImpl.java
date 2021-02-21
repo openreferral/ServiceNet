@@ -1,7 +1,5 @@
 package org.benetech.servicenet.service.impl;
 
-import static org.apache.commons.codec.binary.Base64.encodeBase64String;
-
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -26,11 +24,11 @@ import org.benetech.servicenet.repository.DocumentUploadRepository;
 import org.benetech.servicenet.service.DataImportReportService;
 import org.benetech.servicenet.service.DocumentUploadService;
 import org.benetech.servicenet.service.MongoDbService;
-import org.benetech.servicenet.service.StringGZIPService;
 import org.benetech.servicenet.service.TransactionSynchronizationService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.DocumentUploadDTO;
 import org.benetech.servicenet.service.mapper.DocumentUploadMapper;
+import org.benetech.servicenet.util.BsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,9 +66,6 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private StringGZIPService stringGZIPService;
-
-    @Autowired
     private TransactionSynchronizationService transactionSynchronizationService;
 
     @Override
@@ -79,37 +74,31 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         DataImportReport report = new DataImportReport().startDate(ZonedDateTime.now())
             .systemAccount(providerName);
 
-        ImportData conversionOutput = FileConverterFactory.getConverter(file, delimiter).convert(file);
-        String parsedDocumentId = null;
-        if (conversionOutput.getJson() != null) {
-            byte[] parseDocumentBytes = stringGZIPService.compress(conversionOutput.getJson());
-            parsedDocumentId = mongoDbService
-                .saveParsedDocument(encodeBase64String(parseDocumentBytes));
-        }
-        String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes());
+        String originalDocumentId = mongoDbService.saveOriginalDocument(file.getBytes(), file.getContentType(), delimiter);
 
-        DocumentUpload documentUpload = saveForCurrentUser(new DocumentUpload(originalDocumentId, parsedDocumentId));
+        DocumentUpload documentUpload = new DocumentUpload(originalDocumentId, null);
+        documentUpload.setFilename(file.getOriginalFilename());
+        documentUpload.setDelimiter(delimiter);
+        documentUpload = saveForCurrentUser(documentUpload);
         report.setDocumentUpload(documentUpload);
 
-        return importDataIfNeeded(getRealProviderName(providerName), conversionOutput, report, true);
+        return importDataIfNeeded(getRealProviderName(providerName), report, true);
     }
 
     @Override
     public DocumentUploadDTO uploadApiData(String json, String providerName, DataImportReport report)
-        throws IllegalArgumentException {
+        throws IllegalArgumentException, IOException {
 
-        String originalDocumentId = mongoDbService.saveOriginalDocument(json.getBytes());
+        String originalDocumentId = mongoDbService.saveOriginalDocument(json.getBytes(), "json", null);
         DocumentUpload documentUpload = saveForSystemUser(new DocumentUpload(originalDocumentId, null));
         report.setDocumentUpload(documentUpload);
 
-        ImportData importData = new ImportData();
-        importData.setJson(json);
-
-        return importDataIfNeeded(providerName, importData, report, false);
+        return importDataIfNeeded(providerName, report, false);
     }
 
     @Override
-    public boolean processFiles(final List<FileInfo> fileInfoList, final String providerName) {
+    public boolean processFiles(final List<FileInfo> fileInfoList, final String providerName)
+        throws IOException {
         Optional<MultipleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getMultipleDataAdapter(providerName);
         if (adapter.isEmpty()) {
@@ -203,18 +192,29 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         documentUploadRepository.deleteById(id);
     }
 
-    private DocumentUploadDTO importDataIfNeeded(String providerName, ImportData importData, DataImportReport report,
-                                                 boolean isFileUpload) {
+    private DocumentUploadDTO importDataIfNeeded(String providerName, DataImportReport report, boolean isFileUpload)
+        throws IOException {
         Optional<SingleDataAdapter> adapter = new DataAdapterFactory(applicationContext)
             .getSingleDataAdapter(providerName);
+        DocumentUpload documentUpload = report.getDocumentUpload();
+        Object doc = mongoDbService.findOriginalDocumentById(documentUpload.getOriginalDocumentId());
+        ImportData importData = new ImportData();
+        if (documentUpload.getFilename() == null) {
+            // already got a json as an original doc
+            importData.setJson(BsonUtils.docToString(doc));
+        } else {
+            importData = FileConverterFactory.getConverter(
+                documentUpload.getFilename(), documentUpload.getDelimiter()).convert(doc);
+        }
 
+        ImportData finalImportData = importData;
         DataImportReport reportToSave = adapter
             .map((a) -> {
                 long startTime = System.currentTimeMillis();
                 log.info("Data upload for " + providerName + " has started");
-                SingleImportData singleImportData = importData.getTemporaryFile() == null ?
-                    new SingleImportData(importData.getJson(), report, providerName, isFileUpload)
-                    : new SingleImportData(importData.getTemporaryFile(), report, providerName, isFileUpload);
+                SingleImportData singleImportData = finalImportData.getTemporaryFile() == null ?
+                    new SingleImportData(finalImportData.getJson(), report, providerName, isFileUpload)
+                    : new SingleImportData(finalImportData.getTemporaryFile(), report, providerName, isFileUpload);
                 DataImportReport importReport = a.importData(singleImportData);
 
                 long stopTime = System.currentTimeMillis();
@@ -244,14 +244,24 @@ public class DocumentUploadServiceImpl implements DocumentUploadService {
         }
     }
 
-    private void fillLists(List<FileInfo> fileInfoList, List<String> parsedDocuments, List<DocumentUpload> documentUploads) {
+    private void fillLists(List<FileInfo> fileInfoList, List<String> parsedDocuments, List<DocumentUpload> documentUploads)
+        throws IOException {
         for (FileInfo fileInfo : fileInfoList) {
-            String parsedDoc = mongoDbService.findParsedDocumentById(fileInfo.getParsedDocumentId());
-            parsedDocuments.add(parsedDoc);
+            Object doc = mongoDbService.findOriginalDocumentById(fileInfo.getOriginalDocumentId());
 
-            DocumentUpload docUpload = documentUploadRepository.findByParsedDocumentId(fileInfo.getParsedDocumentId());
-            docUpload.setFilename(fileInfo.getFilename());
+            DocumentUpload docUpload = documentUploadRepository.findByOriginalDocumentId(fileInfo.getOriginalDocumentId());
+            if (docUpload.getFilename() == null) {
+                docUpload.setFilename(fileInfo.getFilename() + ".csv");
+            }
             documentUploads.add(docUpload);
+
+            if (docUpload.getFilename() == null) {
+                parsedDocuments.add(BsonUtils.docToString(doc));
+            } else {
+                ImportData importData = FileConverterFactory.getConverter(
+                    docUpload.getFilename(), docUpload.getDelimiter()).convert(doc);
+                parsedDocuments.add(importData.getJson());
+            }
         }
     }
 

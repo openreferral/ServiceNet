@@ -222,6 +222,16 @@ public class ReferralServiceImpl implements ReferralService {
     }
 
     @Override
+    public Page<ReferralDTO> findReferralsMadeToCurrentUser(ZonedDateTime since, String status, Pageable pageable) {
+        UserProfile currentUser = userService.getCurrentUserProfile();
+        return referralRepository.findMadeToUserProfileSince(currentUser,
+            since,
+            Objects.equals(status, Referral.SENT),
+            Objects.equals(status, Referral.FULFILLED), pageable)
+            .map(referralMapper::toDto);
+    }
+
+    @Override
     public Page<ReferralMadeFromUserDTO> getNumberOfReferralsMadeFromUser(UUID to, Pageable pageable) {
         UserProfile currentUser = userService.getCurrentUserProfile();
         if (to == null) {

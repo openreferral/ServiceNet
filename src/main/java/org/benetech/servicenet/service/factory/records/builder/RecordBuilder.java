@@ -156,6 +156,10 @@ public class RecordBuilder {
             UserDTO user = userService.getUser(providerRecord.getUserLogin());
             providerRecord.setOwner(user);
         }
+        if (providerRecord.getUpdatedByLogin() != null) {
+            UserDTO updatedBy = userService.getUser(providerRecord.getUpdatedByLogin());
+            providerRecord.setUpdatedBy(updatedBy);
+        }
         providerRecord.setLocations(filterLocationRecords(providerRecord.getLocations(), locationExclusions));
 
         return providerRecord;

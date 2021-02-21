@@ -112,6 +112,9 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @JoinColumn(unique = true)
     private Organization replacedBy;
 
+    @Column(name = "has_updates")
+    private boolean hasUpdates;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("")
     private DocumentUpload sourceDocument;
@@ -185,6 +188,9 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
     @Size(max = 255, message = "Field value is too long.")
     private String instagramUrl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserProfile updatedBy;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public Organization(Organization org) {
@@ -207,6 +213,23 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
         this.facebookUrl = org.facebookUrl;
         this.twitterUrl = org.twitterUrl;
         this.instagramUrl = org.instagramUrl;
+        this.updatedBy = org.updatedBy;
+        this.needsMatching = org.needsMatching;
+        this.hasUpdates = org.hasUpdates;
+    }
+
+    public final void applyUpdates(Organization org) {
+        this.name = org.name;
+        this.alternateName = org.alternateName;
+        this.description = org.description;
+        this.email = org.email;
+        this.url = org.url;
+        this.taxStatus = org.taxStatus;
+        this.taxId = org.taxId;
+        this.legalStatus = org.legalStatus;
+        this.updatedAt = org.updatedAt;
+        this.lastVerifiedOn = org.lastVerifiedOn;
+        this.covidProtocols = org.covidProtocols;
     }
 
     public Organization name(String name) {
@@ -464,6 +487,27 @@ public class Organization extends AbstractEntity implements Serializable, DeepCo
 
     public void setInstagramUrl(String instagramUrl) {
         this.instagramUrl = instagramUrl;
+    }
+
+    public Organization updatedBy(UserProfile updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
+    public UserProfile getUpdatedBy(UserProfile updatedBy) {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UserProfile updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public boolean isHasUpdates() {
+        return hasUpdates;
+    }
+
+    public void setHasUpdates(boolean hasUpdates) {
+        this.hasUpdates = hasUpdates;
     }
 
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity", "checkstyle:booleanExpressionComplexity"})

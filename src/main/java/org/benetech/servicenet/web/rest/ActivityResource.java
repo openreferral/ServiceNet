@@ -1,12 +1,16 @@
 package org.benetech.servicenet.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.maps.model.LatLng;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.persistence.Tuple;
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
+import org.benetech.servicenet.repository.GeocodingResultRepository;
 import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.UserService;
 import org.benetech.servicenet.service.dto.ActivityDTO;
@@ -43,9 +47,13 @@ public class ActivityResource {
 
     private final UserService userService;
 
-    public ActivityResource(ActivityService activityService, UserService userService) {
+    private final GeocodingResultRepository geocodingResultRepository;
+
+    public ActivityResource(ActivityService activityService, UserService userService,
+        GeocodingResultRepository geocodingResultRepository) {
         this.activityService = activityService;
         this.userService = userService;
+        this.geocodingResultRepository = geocodingResultRepository;
     }
 
     /**
@@ -114,8 +122,16 @@ public class ActivityResource {
     public ResponseEntity<List<ProviderRecordForMapDTO>> getAllProviderActivitiesForMap(
         @RequestBody ProviderFilterDTO providerFilterDTO, @RequestParam(required = false) String search,
         @RequestParam(required = false) List<Double> boundaries, Pageable pageable) {
+        LatLng center = null;
+        if (boundaries == null) {
+            Silo currentSilo = userService.getCurrentUserProfile().getSilo();
+            if (currentSilo != null) {
+                Tuple tuple = geocodingResultRepository.getCenterPointForSilo(currentSilo.getId());
+                center = new LatLng((Double) tuple.get("lat"), (Double) tuple.get("lng"));
+            }
+        }
         Page<ProviderRecordForMapDTO> page = activityService
-            .getAllPartnerActivitiesForMap(pageable, providerFilterDTO, search, boundaries);
+            .getAllPartnerActivitiesForMap(pageable, providerFilterDTO, search, boundaries, center);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/all-provider-records-map");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

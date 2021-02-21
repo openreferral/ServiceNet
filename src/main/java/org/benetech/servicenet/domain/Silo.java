@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 /**
  * A Silo.
@@ -51,6 +53,11 @@ public class Silo implements Serializable {
     @NotNull
     @Column(name = "is_referral_enabled", nullable = false)
     private Boolean isReferralEnabled = false;
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "logo_base64", columnDefinition = "clob")
+    private String logoBase64;
 
     @OneToMany(mappedBy = "silo", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -155,5 +162,13 @@ public class Silo implements Serializable {
 
     public void setOrganizations(Set<Organization> organizations) {
         this.organizations = organizations;
+    }
+
+    public String getLogoBase64() {
+        return logoBase64;
+    }
+
+    public void setLogoBase64(String logoBase64) {
+        this.logoBase64 = logoBase64;
     }
 }

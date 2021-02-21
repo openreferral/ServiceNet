@@ -3,23 +3,23 @@
 
 **Description:**
 
-**User Story**\
+**User Story**
 (encompasses persona, purpose, value) - e.g. As a [persona] i want to be able to [purpose] so that I can [value]:
 
-**Description:**
+**Description**
 
-**Scope**\
-(includes UI mockups, user flow, and out of scope):\
+**Scope**
+(includes UI mockups, user flow, and out of scope):
 
-**Acceptance criteria**\
-(includes edge cases)  - e.g. Given I am [user] I want to [action] so that [goal of task]:\
+**Acceptance criteria**
+(includes edge cases)  - e.g. Given I am [user] I want to [action] so that [goal of task]:
 *
 
-**Dependencies**\
-(links to other related tasks):\
+**Dependencies**
+(links to other related tasks):
 *
 
-Any required **analytics** for task:\
+Any required **Analytics** for task:
 *
 
 Dev Signoffs

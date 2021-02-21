@@ -13,8 +13,6 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring", uses = {})
 public interface BeneficiaryMapper extends EntityMapper<BeneficiaryDTO, Beneficiary> {
 
-
-
     default Beneficiary fromId(UUID id) {
         if (id == null) {
             return null;
