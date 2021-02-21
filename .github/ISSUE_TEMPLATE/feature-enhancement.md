@@ -1,11 +1,7 @@
----
-name: Feature Enhancement
-about: Suggest an idea for this project
-title: As a [persona] i want to be able to [purpose] so that I can [value]
-labels: 'enhancement'
-assignees: ''
+**User Story**\
+(encompasses persona, purpose, value) - e.g. As a [persona] i want to be able to [purpose] so that I can [value]:
 
----
+**Description:**
 
 **User Story**
 (encompasses persona, purpose, value) - e.g. As a [persona] i want to be able to [purpose] so that I can [value]:
