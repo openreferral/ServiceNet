@@ -59,6 +59,9 @@ public class Silo implements Serializable {
     @Column(name = "logo_base64", columnDefinition = "clob")
     private String logoBase64;
 
+    @Column(name = "label")
+    private String label;
+
     @OneToMany(mappedBy = "silo", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<UserProfile> userProfiles = new HashSet<>();
@@ -170,5 +173,13 @@ public class Silo implements Serializable {
 
     public void setLogoBase64(String logoBase64) {
         this.logoBase64 = logoBase64;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

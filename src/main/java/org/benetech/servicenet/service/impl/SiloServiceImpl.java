@@ -126,6 +126,7 @@ public class SiloServiceImpl implements SiloService {
         siloWithLogoDTO.setName(silo.getName());
         siloWithLogoDTO.setPublic(silo.isPublic());
         siloWithLogoDTO.setReferralEnabled(silo.isReferralEnabled());
+        siloWithLogoDTO.setLabel(silo.getLabel());
         return siloWithLogoDTO;
     }
 
