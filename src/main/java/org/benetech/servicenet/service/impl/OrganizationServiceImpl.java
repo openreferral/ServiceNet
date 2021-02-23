@@ -728,7 +728,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Set<Phone> clonedPhones = new HashSet<>();
         phones.forEach((Phone phone) -> {
             Phone phoneClone = new Phone(phone);
-            phone.setOrganization(orgClone);
+            phoneClone.setOrganization(orgClone);
             clonedPhones.add(phoneService.save(phoneClone));
         });
 
@@ -1232,7 +1232,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (phones != null) {
             phones.forEach((Phone phone) -> {
                 Phone phoneClone = new Phone(phone);
-                phone.setSrvc(srvClone);
+                phoneClone.setSrvc(srvClone);
                 clonedPhones.add(phoneService.save(phoneClone));
             });
             srvClone.setPhones(clonedPhones);
