@@ -36,10 +36,13 @@ public class SendGridMailServiceImpl implements SendGridMailService {
 
     @Override
     public void sendMail(String from, String to, String subj, String content) {
-        Email fromEmail = new Email(this.getValidEmailAddress(from));
+        Email fromEmail = new Email(receiverAddress);
         Email toEmail = new Email(to);
         Content mailContent = new Content(MAIL_CONTENT_TYPE, content);
         Mail mail = new Mail(fromEmail, subj, toEmail, mailContent);
+        mail.setReplyTo(
+            new Email(this.getValidEmailAddress(from))
+        );
 
         Request request = new Request();
         try {
