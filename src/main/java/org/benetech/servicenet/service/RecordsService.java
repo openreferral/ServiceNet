@@ -22,5 +22,5 @@ public interface RecordsService {
 
     RecordDetailsDTO getRecordDetailsFromOrganization(Organization organization);
 
-    Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords);
+    Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords, UUID systemAccountId);
 }

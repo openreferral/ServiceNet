@@ -204,6 +204,15 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    public Page<ProviderRecordDTO> getAllPartnerActivities(UUID siloId,
+        UUID systemAccountId,
+        Pageable pageable) {
+        Page<ProviderRecordDTO> providerRecords = providerRecordsRepository
+            .findAllBySiloAndSystemAccount(siloId, systemAccountId, pageable);
+        return filterProviderRecords(providerRecords, systemAccountId);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<ProviderRecordDTO> getRecordsToClaim(Pageable pageable, String search) {
         return providerRecordsRepository.findRecordsToClaim(pageable, search);
@@ -298,6 +307,10 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     private Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords) {
-        return recordsService.filterProviderRecords(providerRecords);
+        return filterProviderRecords(providerRecords, null);
+    }
+
+    private Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords, UUID systemAccountId) {
+        return recordsService.filterProviderRecords(providerRecords, systemAccountId);
     }
 }

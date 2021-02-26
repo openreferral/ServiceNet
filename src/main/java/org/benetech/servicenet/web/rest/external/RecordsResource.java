@@ -16,6 +16,7 @@ import org.benetech.servicenet.domain.enumeration.RecordType;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.security.AuthoritiesConstants;
 import org.benetech.servicenet.security.SecurityUtils;
+import org.benetech.servicenet.service.ActivityService;
 import org.benetech.servicenet.service.ClientProfileService;
 import org.benetech.servicenet.service.OrganizationMatchService;
 import org.benetech.servicenet.service.OrganizationService;
@@ -23,9 +24,15 @@ import org.benetech.servicenet.service.RecordsService;
 import org.benetech.servicenet.service.dto.external.RecordDetailsDTO;
 import org.benetech.servicenet.service.dto.external.RecordDto;
 import org.benetech.servicenet.service.dto.external.RecordRequest;
+import org.benetech.servicenet.service.dto.provider.ProviderRecordDTO;
+import org.benetech.servicenet.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +63,9 @@ public class RecordsResource {
 
     @Autowired
     private ClientProfileService clientProfileService;
+
+    @Autowired
+    private ActivityService activityService;
 
     /**
      * POST  /records : Resource to get the list of similar organizations
@@ -117,6 +127,33 @@ public class RecordsResource {
         Organization organization = optionalOrganization.get();
 
         return ResponseEntity.ok().body(recordsService.getRecordDetailsFromOrganization(organization));
+    }
+
+    /**
+     * GET  /all-records : Resource to get all the records for Client's Silo and System Account
+     *
+     * @return the ResponseEntity with status 200 (OK) and a list of ProviderRecordDTO
+     */
+    @PreAuthorize("hasRole('" + AuthoritiesConstants.EXTERNAL + "')")
+    @GetMapping("/all-records")
+    @Timed
+    @ApiOperation(value = "Resource to get all the records for Client's Silo and System Account.")
+    public ResponseEntity<List<ProviderRecordDTO>> getAllRecords(Pageable pageable) {
+        String clientId = SecurityUtils.getCurrentClientId();
+        Optional<ClientProfile> optionalClientProfile = clientProfileService.findById(clientId);
+        if (optionalClientProfile.isEmpty()) {
+            throw new BadRequestAlertException("There is no provider associated with this account.",
+                RecordType.ORGANIZATION.toString(), "id");
+        }
+        ClientProfile clientProfile = optionalClientProfile.get();
+        UUID siloId = (clientProfile.getSilo() != null) ? clientProfile.getSilo().getId() : null;
+        UUID systemAccountId = (clientProfile.getSystemAccount() != null) ? clientProfile.getSystemAccount().getId() : null;
+
+        Page<ProviderRecordDTO> page = activityService.getAllPartnerActivities(
+            siloId, systemAccountId, pageable);
+        HttpHeaders headers = PaginationUtil
+            .generatePaginationHttpHeaders(page, "/partner-api/all-records");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     private List<RecordDto> mapMatchesToExternalRecords(List<OrganizationMatch> matches, double similarity) {

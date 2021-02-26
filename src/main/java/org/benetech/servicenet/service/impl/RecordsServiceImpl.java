@@ -57,7 +57,7 @@ public class RecordsServiceImpl implements RecordsService {
     }
 
     @Override
-    public Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords) {
-        return recordFactory.filterProviderRecords(providerRecords);
+    public Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords, UUID systemAccountId) {
+        return recordFactory.filterProviderRecords(providerRecords, systemAccountId);
     }
 }

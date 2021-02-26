@@ -7,11 +7,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.benetech.servicenet.client.ServiceNetAuthClient;
 import org.benetech.servicenet.domain.ClientProfile;
+import org.benetech.servicenet.domain.Silo;
 import org.benetech.servicenet.domain.SystemAccount;
 import org.benetech.servicenet.errors.BadRequestAlertException;
 import org.benetech.servicenet.errors.ErrorConstants;
 import org.benetech.servicenet.errors.IdAlreadyUsedException;
 import org.benetech.servicenet.repository.ClientProfileRepository;
+import org.benetech.servicenet.repository.SiloRepository;
 import org.benetech.servicenet.repository.SystemAccountRepository;
 import org.benetech.servicenet.service.dto.ClientDTO;
 import org.benetech.servicenet.service.dto.ClientProfileDto;
@@ -42,6 +44,9 @@ public class ClientService {
 
     @Autowired
     private SystemAccountRepository systemAccountRepository;
+
+    @Autowired
+    private SiloRepository siloRepository;
 
     /**
      * Create a new client.
@@ -106,6 +111,9 @@ public class ClientService {
     private ClientDTO getRealDto(ClientDTO clientDTO) {
         clientProfileRepository.findByClientId(clientDTO.getClientId()).ifPresent(clientProfile -> {
             clientDTO.setSystemAccountId(clientProfile.getSystemAccount().getId());
+            if (clientProfile.getSilo() != null) {
+                clientDTO.setSiloId(clientProfile.getSilo().getId());
+            }
         });
         return clientDTO;
     }
@@ -113,6 +121,7 @@ public class ClientService {
     private void createOrUpdateClientProfile(ClientDTO authClientDTO, ClientDTO clientDto) {
         ClientProfile clientProfile = this.getOrCreateClientProfile(authClientDTO);
         clientProfile.setSystemAccount(getSystemAccount(clientDto));
+        clientProfile.setSilo(getSilo(clientDto));
         clientProfile.setClientId(clientDto.getClientId());
         clientProfileService.save(clientProfile);
     }
@@ -121,6 +130,14 @@ public class ClientService {
         UUID systemAccountId = clientDto.getSystemAccountId();
         if (systemAccountId != null) {
             return systemAccountRepository.findById(systemAccountId).orElse(null);
+        }
+        return null;
+    }
+
+    private Silo getSilo(ClientDTO clientDto) {
+        UUID siloId = clientDto.getSiloId();
+        if (siloId != null) {
+            return siloRepository.findById(siloId).orElse(null);
         }
         return null;
     }
