@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext ../xml-schema/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro ../xml-schema/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog ../xml-schema/dbchangelog-3.8.xsd">
+    <property name="uuidType" value="uuid" dbms="postgresql, h2"/>
+    <property name="uuidFunction" value="uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuidFunction" value="random_uuid()" dbms="h2"/>
+
+    <changeSet author="jkondrat" id="20210226191909-1">
+        <addColumn tableName="client_profile">
+            <column name="silo_id" type="${uuidType}">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

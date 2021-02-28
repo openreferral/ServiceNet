@@ -29,6 +29,11 @@ public class ClientProfile extends AbstractEntity implements Serializable {
     @NotNull
     @JsonIgnoreProperties("")
     private SystemAccount systemAccount;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @NotNull
+    @JsonIgnoreProperties("")
+    private Silo silo;
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
 
     public String getClientId() {
@@ -75,5 +80,13 @@ public class ClientProfile extends AbstractEntity implements Serializable {
 
     public void setSystemAccount(SystemAccount systemAccount) {
         this.systemAccount = systemAccount;
+    }
+
+    public Silo getSilo() {
+        return silo;
+    }
+
+    public void setSilo(Silo silo) {
+        this.silo = silo;
     }
 }

@@ -23,6 +23,8 @@ public class ClientDTO {
 
     private UUID systemAccountId;
 
+    private UUID siloId;
+
     @NotNull
     @Min(0)
     private Integer tokenValiditySeconds;
@@ -61,6 +63,14 @@ public class ClientDTO {
 
     public void setSystemAccountId(UUID systemAccount) {
         this.systemAccountId = systemAccount;
+    }
+
+    public UUID getSiloId() {
+        return siloId;
+    }
+
+    public void setSiloId(UUID siloId) {
+        this.siloId = siloId;
     }
 
     @Override

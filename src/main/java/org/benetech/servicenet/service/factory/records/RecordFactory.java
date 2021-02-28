@@ -58,10 +58,10 @@ public class RecordFactory {
     @Autowired
     private RecordBuilder recordBuilder;
 
-    public Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords) {
+    public Page<ProviderRecordDTO> filterProviderRecords(Page<ProviderRecordDTO> providerRecords, UUID systemAccountId) {
         Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
 
-        return providerRecords.map(providerRecord -> filterProviderRecord(providerRecord, exclusionsMap));
+        return providerRecords.map(providerRecord -> filterProviderRecord(providerRecord, exclusionsMap, systemAccountId));
     }
 
     public Optional<ActivityRecordDTO> getFilteredRecord(Organization organization) {
@@ -69,7 +69,7 @@ public class RecordFactory {
 
         Map<UUID, ExclusionsConfig> exclusions = exclusionsConfigService.getAllBySystemAccountId();
 
-        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusions);
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusions, null);
         Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
             .flatMap(e -> e.getExclusions().stream())
             .collect(Collectors.toSet());
@@ -106,7 +106,7 @@ public class RecordFactory {
 
         Map<UUID, ExclusionsConfig> exclusionsMap = exclusionsConfigService.getAllBySystemAccountId();
 
-        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusionsMap);
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(organization.getAccount().getId(), exclusionsMap, null);
         Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
             .flatMap(e -> e.getExclusions().stream())
             .collect(Collectors.toSet());
@@ -162,12 +162,19 @@ public class RecordFactory {
                 && x.getExcludedFields().contains(conflict.getFieldName()));
     }
 
-    private Set<ExclusionsConfig> getBaseExclusions(UUID accountId, Map<UUID, ExclusionsConfig> exclusionsMap) {
+    private Set<ExclusionsConfig> getBaseExclusions(UUID accountId, Map<UUID, ExclusionsConfig> exclusionsMap, UUID systemAccountId) {
         Set<ExclusionsConfig> exclusions = new HashSet<>();
 
-        userService.getCurrentSystemAccount()
-            .map(systemAccount -> Optional.ofNullable(exclusionsMap.get(systemAccount.getId())))
-            .ifPresent(exclusionsConfig -> exclusionsConfig.ifPresent(exclusions::add));
+        if (systemAccountId != null) {
+            ExclusionsConfig config = exclusionsMap.get(systemAccountId);
+            if (config != null) {
+                exclusions.add(config);
+            }
+        } else {
+            userService.getCurrentSystemAccount()
+                .map(systemAccount -> Optional.ofNullable(exclusionsMap.get(systemAccount.getId())))
+                .ifPresent(exclusionsConfig -> exclusionsConfig.ifPresent(exclusions::add));
+        }
 
         Optional.ofNullable(exclusionsMap.get(accountId))
             .ifPresent(exclusions::add);
@@ -185,8 +192,10 @@ public class RecordFactory {
         }
     }
 
-    private ProviderRecordDTO filterProviderRecord(ProviderRecordDTO providerRecord, Map<UUID, ExclusionsConfig> exclusionsMap) {
-        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(providerRecord.getOrganization().getAccountId(), exclusionsMap);
+    private ProviderRecordDTO filterProviderRecord(ProviderRecordDTO providerRecord, Map<UUID, ExclusionsConfig> exclusionsMap,
+        UUID systemAccountId) {
+        Set<ExclusionsConfig> baseExclusions = getBaseExclusions(providerRecord.getOrganization().getAccountId(), exclusionsMap,
+            systemAccountId);
         Set<FieldExclusion> fieldExclusions = baseExclusions.stream()
             .flatMap(e -> e.getExclusions().stream())
             .collect(Collectors.toSet());

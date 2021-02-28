@@ -284,6 +284,39 @@ public class ProviderRecordsRepository {
         return new PageImpl<>(results, pageable, total.intValue());
     }
 
+    public Page<ProviderRecordDTO> findAllBySiloAndSystemAccount(UUID silo, UUID systemAccount, Pageable pageable) {
+
+        CriteriaQuery<ProviderRecordDTO> queryCriteria = cb.createQuery(ProviderRecordDTO.class);
+        Root<Organization> selectRoot = queryCriteria.from(Organization.class);
+        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+        Join<Organization, UserProfile> updatedByJoin = selectRoot.join(Organization_.UPDATED_BY, JoinType.LEFT);
+
+        queryCriteria.select(cb.construct(ProviderRecordDTO.class, selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
+            systemAccountJoin.get(SystemAccount_.ID), systemAccountJoin.get(SystemAccount_.NAME),
+            userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT), selectRoot.get(Organization_.ONLY_REMOTE),
+            selectRoot.get(Organization_.FACEBOOK_URL), selectRoot.get(Organization_.TWITTER_URL), selectRoot.get(Organization_.INSTAGRAM_URL),
+            updatedByJoin.get(UserProfile_.LOGIN)));
+
+        addFilters(queryCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, systemAccount);
+        queryCriteria.groupBy(selectRoot.get(Organization_.ID), selectRoot.get(Organization_.NAME),
+            systemAccountJoin.get(SystemAccount_.ID), userProfileJoin.get(UserProfile_.LOGIN), selectRoot.get(Organization_.UPDATED_AT),
+            updatedByJoin.get(UserProfile_.LOGIN));
+        addSorting(queryCriteria, pageable.getSort(), selectRoot);
+
+        Query query = createQueryWithPageable(queryCriteria, pageable);
+
+        List<ProviderRecordDTO> results = query.getResultList();
+
+        Long total = 0L;
+        if (results != null && results.size() > 0) {
+            total = this.getTotal(silo, systemAccount);
+            fetchRelatedEntities(results);
+        }
+
+        return new PageImpl<>(results, pageable, total.intValue());
+    }
+
     public Page<ProviderRecordForMapDTO> findAllWithFiltersForMap(
         Pageable pageable, Silo silo,
         ProviderFilterDTO providerFilterDTO,
@@ -460,6 +493,15 @@ public class ProviderRecordsRepository {
         query.where(predicate);
     }
 
+    private <T> void addFilters(CriteriaQuery<T> query, Root<Organization> root,
+        Join<Organization, SystemAccount> systemAccountJoin, Join<Organization, UserProfile> userProfileJoin,
+        UUID silo, UUID systemAccount) {
+        Predicate predicate = getCommonPredicate(root, silo, systemAccount, systemAccountJoin,
+            userProfileJoin);
+
+        query.where(predicate);
+    }
+
     private Predicate getCommonPredicate(From<? extends AbstractEntity, Organization> from, Silo silo, String search,
         Join<Organization, SystemAccount> systemAccountJoin,
         Join<Organization, UserProfile> userProfileJoin, Join<Organization, Service> serviceJoin,
@@ -486,6 +528,32 @@ public class ProviderRecordsRepository {
         predicate = this.addSearch(predicate, search, from, serviceJoin, eligibilityJoin);
         return predicate;
     }
+
+    private Predicate getCommonPredicate(From<? extends AbstractEntity, Organization> from, UUID siloId, UUID systemAccountId,
+        Join<Organization, SystemAccount> systemAccountJoin,
+        Join<Organization, UserProfile> userProfileJoin) {
+        Predicate predicate;
+        predicate = cb.equal(from.get(Organization_.ACTIVE), true);
+        Join<Organization, Silo> siloJoin = from.join(Organization_.ADDITIONAL_SILOS, JoinType.LEFT);
+
+        if (siloId != null) {
+            predicate = cb.and(predicate,
+                cb.or(
+                    cb.and(
+                        cb.equal(systemAccountJoin.get(SystemAccount_.ID), systemAccountId),
+                        cb.equal(userProfileJoin.get(UserProfile_.SILO).get(Silo_.ID), siloId)
+                    ),
+                    cb.equal(siloJoin.get(Silo_.ID), siloId)
+                )
+            );
+        } else {
+            predicate = cb.and(predicate, cb.isNull(userProfileJoin.get(UserProfile_.SILO)));
+            predicate = cb.and(predicate, cb.equal(systemAccountJoin.get(SystemAccount_.ID), systemAccountId));
+        }
+
+        return predicate;
+    }
+
 
     private Predicate addSearch(Predicate predicate, String search,
         From<? extends AbstractEntity, Organization> from, Join<Organization, Service> serviceJoin,
@@ -596,6 +664,17 @@ public class ProviderRecordsRepository {
         Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
 
         this.addFilters(countCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, providerFilterDTO, search);
+        countCriteria.select(cb.countDistinct(selectRoot));
+        return em.createQuery(countCriteria).getSingleResult();
+    }
+
+    private Long getTotal(UUID silo, UUID systemAccount) {
+        CriteriaQuery<Long> countCriteria = cb.createQuery(Long.class);
+        Root<Organization> selectRoot = countCriteria.from(Organization.class);
+        Join<Organization, SystemAccount> systemAccountJoin = selectRoot.join(Organization_.ACCOUNT, JoinType.LEFT);
+        Join<Organization, UserProfile> userProfileJoin = selectRoot.join(Organization_.USER_PROFILES, JoinType.LEFT);
+
+        this.addFilters(countCriteria, selectRoot, systemAccountJoin, userProfileJoin, silo, systemAccount);
         countCriteria.select(cb.countDistinct(selectRoot));
         return em.createQuery(countCriteria).getSingleResult();
     }
